@@ -46,17 +46,60 @@ export class TargetDummy extends Phaser.GameObjects.Container {
     this.createDummySprite();
     this.createHealthBar();
 
-    // Enable click interaction on container & sprite
-    this.setSize(130, 140);
-    this.setInteractive({ useHandCursor: true });
+    // Enable generous centered hit area (150x205 px) covering entire sprite & HP bar
+    this.setupInteractivity();
+
+    this.setDepth(y);
+    scene.add.existing(this);
+  }
+
+  /**
+   * Sets up a generous 150x205 hitbox centered around the monster and stand ellipse.
+   */
+  public setupInteractivity(): void {
+    const hitRect = new Phaser.Geom.Rectangle(-75, -140, 150, 205);
+    this.setInteractive({
+      hitArea: hitRect,
+      hitAreaCallback: Phaser.Geom.Rectangle.Contains,
+      useHandCursor: true,
+    });
+
+    this.on('pointerover', () => {
+      if (this.currentHp > 0 && this.scene) {
+        this.scene.input.setDefaultCursor('pointer');
+      }
+    });
+
+    this.on('pointerout', () => {
+      if (this.scene) {
+        this.scene.input.setDefaultCursor('default');
+      }
+    });
+
     this.on('pointerdown', () => {
       if (this.currentHp > 0) {
         this.scene.events.emit('enemy_clicked', this);
       }
     });
+  }
 
-    this.setDepth(y);
-    scene.add.existing(this);
+  /**
+   * Returns the world Y coordinate of the top of the monster sprite.
+   */
+  public getTopY(): number {
+    const idleMeta = this.manifest.animations['idle'];
+    if (idleMeta) {
+      const topOffset = idleMeta.pivotY * idleMeta.frameHeight * 2.5;
+      return this.y - Math.round(topOffset);
+    }
+    return this.y - 130;
+  }
+
+  /**
+   * Returns the ideal Y coordinate for the floating target marker above this monster.
+   */
+  public getMarkerY(): number {
+    return this.getTopY() - 10;
   }
 
   private registerAnimations(): void {
@@ -360,7 +403,9 @@ export class TargetDummy extends Phaser.GameObjects.Container {
    */
   public playDefeatFade(onComplete?: () => void): void {
     this.disableInteractive();
-    this.sprite.disableInteractive();
+    if (this.scene) {
+      this.scene.input.setDefaultCursor('default');
+    }
 
     // 1. Red impact tint
     this.sprite.setTintFill(0xef4444);
@@ -405,12 +450,11 @@ export class TargetDummy extends Phaser.GameObjects.Container {
     }
     this.currentHp = this.maxHp;
 
-    // Reset base properties
+    // Reset base properties & re-enable 150x205 hitbox
     this.setPosition(this.baseX, this.baseY);
     this.setVisible(true);
     this.koBanner.setVisible(false);
-    this.setInteractive({ useHandCursor: true });
-    this.sprite.setInteractive({ useHandCursor: true });
+    this.setupInteractivity();
 
     // Initial state: transparent and scaled down
     this.sprite.setAlpha(0);
@@ -487,8 +531,7 @@ export class TargetDummy extends Phaser.GameObjects.Container {
     }
     this.currentHp = this.maxHp;
     this.setVisible(true);
-    this.setInteractive({ useHandCursor: true });
-    this.sprite.setInteractive({ useHandCursor: true });
+    this.setupInteractivity();
     this.sprite.setAlpha(1);
     this.sprite.clearTint();
     this.sprite.setScale(2.5);
@@ -498,26 +541,6 @@ export class TargetDummy extends Phaser.GameObjects.Container {
     this.chipBar.setAlpha(1);
     this.hpText.setAlpha(1);
     this.nameText.setAlpha(1);
-    this.koBanner.setVisible(false);
-    this.koBanner.setAlpha(1);
-
-    this.fgBar.width = this.barWidth;
-    this.chipBar.width = this.barWidth;
-    this.fgBar.fillColor = 0x22c55e;
-    this.hpText.setText(`${this.maxHp.toLocaleString()} / ${this.maxHp.toLocaleString()} HP`);
-    if (newMaxHp) {
-      this.maxHp = newMaxHp;
-    }
-    this.currentHp = this.maxHp;
-    this.setVisible(true);
-    this.sprite.setAlpha(1);
-    this.sprite.clearTint();
-    this.sprite.setScale(2.5);
-    this.setPosition(this.baseX, this.baseY);
-
-    this.fgBar.setAlpha(1);
-    this.chipBar.setAlpha(1);
-    this.hpText.setAlpha(1);
     this.koBanner.setVisible(false);
     this.koBanner.setAlpha(1);
 

@@ -60,6 +60,8 @@ export class BattleScene extends Phaser.Scene {
   private enemies: TargetDummy[] = [];
   private currentTarget: TargetDummy | null = null;
   private targetMarkerContainer!: Phaser.GameObjects.Container;
+  private markerVisual!: Phaser.GameObjects.Container;
+  private victoryTriggered: boolean = false;
 
   public get targetDummy(): TargetDummy {
     return this.currentTarget ?? this.enemies[0];
@@ -611,13 +613,16 @@ export class BattleScene extends Phaser.Scene {
 
   /**
    * Creates the visual JRPG target marker floating above the selected enemy.
+   * Uses an inner container (markerVisual) for local bobbing so it never interferes with world positioning.
    */
   private createTargetMarker(): void {
     this.targetMarkerContainer = this.add.container(0, 0);
     this.targetMarkerContainer.setDepth(2600);
     this.targetMarkerContainer.setVisible(false);
 
-    // Glowing red downward arrow ▼
+    this.markerVisual = this.add.container(0, 0);
+
+    // Glowing red downward arrow ▼ with tip at y = 0
     const arrow = this.add.text(0, 0, '▼', {
       fontFamily: 'Arial, sans-serif',
       fontSize: '22px',
@@ -625,25 +630,26 @@ export class BattleScene extends Phaser.Scene {
       stroke: '#450a0a',
       strokeThickness: 4,
       fontStyle: 'bold',
-    }).setOrigin(0.5);
+    }).setOrigin(0.5, 1.0);
 
-    // Pill label [ZIEL]
-    const labelBg = this.add.rectangle(0, -18, 52, 16, 0xdc2626, 0.95);
+    // Pill label [ZIEL] above the arrow
+    const labelBg = this.add.rectangle(0, -22, 52, 16, 0xdc2626, 0.95);
     labelBg.setStrokeStyle(1, 0xfecaca);
-    const labelText = this.add.text(0, -18, 'ZIEL', {
+    const labelText = this.add.text(0, -22, 'ZIEL', {
       fontFamily: 'monospace',
       fontSize: '10px',
       color: '#ffffff',
       fontStyle: 'bold',
     }).setOrigin(0.5);
 
-    this.targetMarkerContainer.add([arrow, labelBg, labelText]);
+    this.markerVisual.add([arrow, labelBg, labelText]);
+    this.targetMarkerContainer.add(this.markerVisual);
 
-    // Continuous floating bobbing animation
+    // Gentle local floating bobbing animation (±4px) that cannot corrupt world position
     this.tweens.add({
-      targets: this.targetMarkerContainer,
-      y: '-=8',
-      duration: 380,
+      targets: this.markerVisual,
+      y: -5,
+      duration: 420,
       yoyo: true,
       repeat: -1,
       ease: 'Sine.easeInOut',
@@ -651,14 +657,14 @@ export class BattleScene extends Phaser.Scene {
   }
 
   /**
-   * Sets the specified enemy as the active attack target and positions the marker.
+   * Sets the specified enemy as the active attack target and positions the marker directly above its head.
    */
   public setTarget(enemy: TargetDummy, smooth = true): void {
     if (!enemy || enemy.currentHp <= 0) return;
     this.currentTarget = enemy;
 
     const targetX = enemy.x;
-    const targetY = enemy.y - 82;
+    const targetY = enemy.getMarkerY();
 
     this.targetMarkerContainer.setVisible(
       this.combatState === 'PLAYER_TURN' || this.combatState === 'HERO_ATTACKING'
@@ -754,6 +760,8 @@ export class BattleScene extends Phaser.Scene {
       return;
     }
 
+    this.victoryTriggered = false;
+
     // Reset action flags
     aliveHeroes.forEach((h) => (h.hasActed = false));
 
@@ -786,7 +794,7 @@ export class BattleScene extends Phaser.Scene {
    */
   private advanceToNextHero(): void {
     const allDead = this.enemies.every((e) => e.currentHp <= 0);
-    if (allDead) {
+    if (allDead || this.combatState === 'VICTORY') {
       this.triggerVictory();
       return;
     }
@@ -815,7 +823,7 @@ export class BattleScene extends Phaser.Scene {
       this.roundBannerText.setColor('#f87171');
       this.updateCommandMenu();
       this.updatePartyStatusUi();
-      this.updateStatus('Alle Helden haben gehandelt! Werratte stürmt vor...');
+      this.updateStatus('Alle Helden haben gehandelt! Gegner greifen an...');
       this.time.delayedCall(450, () => this.executeEnemyTurn());
     }
   }
@@ -843,6 +851,7 @@ export class BattleScene extends Phaser.Scene {
       }
 
       // Attack button enabled
+      this.cmdAttackBtnBg.setInteractive({ useHandCursor: true });
       this.cmdAttackBtnBg.fillColor = 0x1d4ed8;
       this.cmdAttackBtnBg.setStrokeStyle(1.5, 0xe2e8f0);
       this.cmdAttackBtnText.setText(hero === this.barret ? '⚡ SALVE (Leertaste)' : '⚡ ANGRIFF (Leertaste)');
@@ -857,10 +866,51 @@ export class BattleScene extends Phaser.Scene {
       this.cmdModeBtnText?.setVisible(false);
 
       // Disable attack button
+      this.cmdAttackBtnBg.disableInteractive();
       this.cmdAttackBtnBg.fillColor = 0x081530;
       this.cmdAttackBtnBg.setStrokeStyle(1, 0x1e3a8a);
       this.cmdAttackBtnText.setText(this.combatState === 'HERO_ATTACKING' ? 'AKTION LÄUFT...' : 'GEGNER-PHASE');
       this.cmdAttackBtnText.setColor('#64748b');
+    }
+  }
+
+  /**
+   * Locks the command menu so remaining heroes or buttons cannot be clicked after fight end.
+   */
+  private lockCommandMenu(): void {
+    this.cmdAttackBtnBg.disableInteractive();
+    this.cmdAttackBtnBg.fillColor = 0x0f172a;
+    this.cmdAttackBtnBg.setStrokeStyle(1, 0x334155);
+    this.cmdAttackBtnText.setText('★ SIEG ★');
+    this.cmdAttackBtnText.setColor('#fbbf24');
+    this.cmdModeBtnBg?.setVisible(false);
+    this.cmdModeBtnText?.setVisible(false);
+  }
+
+  /**
+   * Called immediately whenever an enemy receives damage.
+   * If the target reaches 0 HP:
+   * - Immediately fades out the defeated enemy.
+   * - If ALL enemies are dead: immediately locks command menu, hides target marker,
+   *   sets combatState to VICTORY, and marks battle finished.
+   * - If other enemies are still alive: immediately retargets to next alive monster.
+   */
+  private handleTargetDamaged(target: TargetDummy): void {
+    if (target.currentHp <= 0) {
+      target.playDefeatFade();
+
+      const allDead = this.enemies.every((e) => e.currentHp <= 0);
+      if (allDead) {
+        this.combatState = 'VICTORY';
+        this.targetMarkerContainer.setVisible(false);
+        this.lockCommandMenu();
+        this.updateStatus(`K.O.! ${target.nameTag} besiegt! Alle Gegner eliminiert!`);
+      } else {
+        const next = this.autoRetarget();
+        if (next) {
+          this.updateStatus(`K.O.! ${target.nameTag} besiegt. Ziel gewechselt auf ${next.nameTag}.`);
+        }
+      }
     }
   }
 
@@ -955,9 +1005,9 @@ export class BattleScene extends Phaser.Scene {
       hero.hasActed = true;
       this.updatePartyStatusUi();
 
-      // Check Victory
+      // Check Victory: if all enemies are defeated or fight ended mid-turn, trigger victory immediately!
       const allDead = this.enemies.every((e) => e.currentHp <= 0);
-      if (allDead) {
+      if (allDead || this.combatState === 'VICTORY') {
         this.triggerVictory();
         return;
       }
@@ -971,7 +1021,15 @@ export class BattleScene extends Phaser.Scene {
    * Executes hero attack animation, movement, damage and returns to base.
    */
   private executeHeroSequence(hero: UnitActor, onComplete: () => void): void {
-    const target = this.currentTarget ?? this.autoRetarget();
+    // If all enemies are already dead, conclude immediately without performing attack
+    if (this.enemies.every((e) => e.currentHp <= 0) || this.combatState === 'VICTORY') {
+      onComplete();
+      return;
+    }
+
+    const target = this.currentTarget && this.currentTarget.currentHp > 0
+      ? this.currentTarget
+      : this.autoRetarget();
     if (!target) {
       onComplete();
       return;
@@ -979,8 +1037,6 @@ export class BattleScene extends Phaser.Scene {
 
     const homeX = hero.homeSlot.x;
     const homeY = hero.homeSlot.y;
-    const targetX = target.x;
-    const targetY = target.y;
     const config = hero.combatConfig;
 
     if (hero === this.barret) {
@@ -993,10 +1049,22 @@ export class BattleScene extends Phaser.Scene {
         const frameIdx = Number(frame.textureFrame);
         if (burstFrames.includes(frameIdx) && !firedFrames.has(frameIdx)) {
           firedFrames.add(frameIdx);
+
+          // If all enemies dead, stop firing immediately!
+          if (this.enemies.every((e) => e.currentHp <= 0) || this.combatState === 'VICTORY') {
+            return;
+          }
+
+          // Dynamically retarget to current alive target if previous bullet killed current target
+          const activeTarget = this.currentTarget && this.currentTarget.currentHp > 0
+            ? this.currentTarget
+            : this.autoRetarget();
+          if (!activeTarget) return;
+
           const isCrit = Math.random() < 0.2;
           let bulletDmg = Phaser.Math.Between(130, 180);
           if (isCrit) bulletDmg = Math.round(bulletDmg * 1.5);
-          this.fireBulletProjectile(homeX, homeY, targetX, targetY, bulletDmg, isCrit, target);
+          this.fireBulletProjectile(homeX, homeY, activeTarget.x, activeTarget.y, bulletDmg, isCrit, activeTarget);
         }
       };
 
@@ -1005,9 +1073,14 @@ export class BattleScene extends Phaser.Scene {
 
       hero.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
         hero.off(Phaser.Animations.Events.ANIMATION_UPDATE, onAnimUpdate);
-        if (firedFrames.size === 0) {
-          const isCrit = Math.random() < 0.2;
-          this.fireBulletProjectile(homeX, homeY, targetX, targetY, 550, isCrit, target);
+        if (firedFrames.size === 0 && !this.enemies.every((e) => e.currentHp <= 0) && this.combatState !== 'VICTORY') {
+          const fallback = this.currentTarget && this.currentTarget.currentHp > 0
+            ? this.currentTarget
+            : this.autoRetarget();
+          if (fallback) {
+            const isCrit = Math.random() < 0.2;
+            this.fireBulletProjectile(homeX, homeY, fallback.x, fallback.y, 550, isCrit, fallback);
+          }
         }
 
         // Standardized returnToIdle handles Barret's stationary recoil via manifest metadata
@@ -1021,7 +1094,12 @@ export class BattleScene extends Phaser.Scene {
       const onAnimUpdate = (_anim: Phaser.Animations.Animation, frame: Phaser.Animations.AnimationFrame) => {
         if (!hitTriggered && Number(frame.textureFrame) === config.hitFrameIndex) {
           hitTriggered = true;
-          this.fireMagicProjectile(homeX, homeY, targetX, targetY, target);
+          const activeTarget = this.currentTarget && this.currentTarget.currentHp > 0
+            ? this.currentTarget
+            : this.autoRetarget();
+          if (activeTarget && this.combatState !== 'VICTORY') {
+            this.fireMagicProjectile(homeX, homeY, activeTarget.x, activeTarget.y, activeTarget);
+          }
         }
       };
 
@@ -1030,17 +1108,26 @@ export class BattleScene extends Phaser.Scene {
 
       hero.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
         hero.off(Phaser.Animations.Events.ANIMATION_UPDATE, onAnimUpdate);
-        if (!hitTriggered) {
-          this.fireMagicProjectile(homeX, homeY, targetX, targetY, target);
+        if (!hitTriggered && !this.enemies.every((e) => e.currentHp <= 0) && this.combatState !== 'VICTORY') {
+          const fallback = this.currentTarget && this.currentTarget.currentHp > 0
+            ? this.currentTarget
+            : this.autoRetarget();
+          if (fallback) {
+            this.fireMagicProjectile(homeX, homeY, fallback.x, fallback.y, fallback);
+          }
         }
         hero.returnToIdle(onComplete);
       });
     } else {
       // --- MELEE MOVE-TO-TARGET (Cloud / Aerith Melee) ---
-      const attackArrivalX = targetX + config.targetOffsetX;
-      const attackArrivalY = targetY;
+      const activeTarget = this.currentTarget && this.currentTarget.currentHp > 0
+        ? this.currentTarget
+        : target;
 
-      this.updateStatus(`Aktion: ${hero.heroName} stürmt auf ${target.nameTag} vor...`);
+      const attackArrivalX = activeTarget.x + config.targetOffsetX;
+      const attackArrivalY = activeTarget.y;
+
+      this.updateStatus(`Aktion: ${hero.heroName} stürmt auf ${activeTarget.nameTag} vor...`);
       hero.playAnimation('move');
 
       this.tweens.add({
@@ -1055,7 +1142,10 @@ export class BattleScene extends Phaser.Scene {
           const onAnimUpdate = (_anim: Phaser.Animations.Animation, frame: Phaser.Animations.AnimationFrame) => {
             if (!hitTriggered && Number(frame.textureFrame) === config.hitFrameIndex) {
               hitTriggered = true;
-              this.applyHeroMeleeDamage(hero, target);
+              const hitTarget = this.currentTarget && this.currentTarget.currentHp > 0
+                ? this.currentTarget
+                : activeTarget;
+              this.applyHeroMeleeDamage(hero, hitTarget);
             }
           };
 
@@ -1064,8 +1154,11 @@ export class BattleScene extends Phaser.Scene {
 
           hero.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
             hero.off(Phaser.Animations.Events.ANIMATION_UPDATE, onAnimUpdate);
-            if (!hitTriggered) {
-              this.applyHeroMeleeDamage(hero, target);
+            if (!hitTriggered && !this.enemies.every((e) => e.currentHp <= 0) && this.combatState !== 'VICTORY') {
+              const hitTarget = this.currentTarget && this.currentTarget.currentHp > 0
+                ? this.currentTarget
+                : activeTarget;
+              this.applyHeroMeleeDamage(hero, hitTarget);
             }
 
             hero.playAnimation('move');
@@ -1104,12 +1197,7 @@ export class BattleScene extends Phaser.Scene {
 
     if (isCrit) baseDmg = Math.round(baseDmg * 1.5);
     target.applyDamage(baseDmg, isCrit, 'physical');
-    if (target.currentHp <= 0) {
-      target.playDefeatFade();
-      if (target === this.currentTarget) {
-        this.autoRetarget();
-      }
-    }
+    this.handleTargetDamaged(target);
   }
 
   private fireMagicProjectile(fromX: number, fromY: number, toX: number, toY: number, target: TargetDummy): void {
@@ -1133,12 +1221,7 @@ export class BattleScene extends Phaser.Scene {
         baseDmg = Math.round(baseDmg * this.aerithMagicMultiplier);
         const isCrit = Math.random() < 0.15;
         target.applyDamage(isCrit ? Math.round(baseDmg * 1.5) : baseDmg, isCrit, 'holy');
-        if (target.currentHp <= 0) {
-          target.playDefeatFade();
-          if (target === this.currentTarget) {
-            this.autoRetarget();
-          }
-        }
+        this.handleTargetDamaged(target);
       },
     });
   }
@@ -1175,12 +1258,7 @@ export class BattleScene extends Phaser.Scene {
         bullet.destroy();
         glow.destroy();
         target.applyDamage(damage, isCrit, 'physical');
-        if (target.currentHp <= 0) {
-          target.playDefeatFade();
-          if (target === this.currentTarget) {
-            this.autoRetarget();
-          }
-        }
+        this.handleTargetDamaged(target);
       },
     });
   }
@@ -1264,8 +1342,12 @@ export class BattleScene extends Phaser.Scene {
    * 5. 1.2s later, 3 PokeRogue reward cards slide up from the bottom.
    */
   private triggerVictory(): void {
+    if (this.victoryTriggered) return;
+    this.victoryTriggered = true;
+
     this.combatState = 'VICTORY';
     this.targetMarkerContainer.setVisible(false);
+    this.lockCommandMenu();
 
     // 1. All enemies red flash and alpha fadeout if visible
     this.enemies.forEach((enemy) => {
