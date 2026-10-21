@@ -1,24 +1,61 @@
 import Phaser from 'phaser';
 import { UnitManifest } from '../types/manifest';
 
+export interface UnitCombatConfig {
+  attackType: 'melee' | 'ranged';
+  targetOffsetX: number;
+  attackAnim: string;
+}
+
 export class UnitActor extends Phaser.GameObjects.Sprite {
   public readonly unitKey: string;
   public readonly manifest: UnitManifest;
   public currentAnimKey: string = '';
-  public readonly homeSlot: { x: number; y: number };
+  public homeSlot: { x: number; y: number };
+  public combatConfig: UnitCombatConfig;
 
-  constructor(scene: Phaser.Scene, x: number, y: number, unitKey: string, manifest: UnitManifest) {
+  constructor(
+    scene: Phaser.Scene,
+    x: number,
+    y: number,
+    unitKey: string,
+    manifest: UnitManifest,
+    combatConfig?: Partial<UnitCombatConfig>
+  ) {
     // Start with the idle spritesheet frame 0 as initial texture
     super(scene, x, y, `${unitKey}_idle`, 0);
     this.unitKey = unitKey;
     this.manifest = manifest;
     this.homeSlot = { x, y };
 
+    this.combatConfig = {
+      attackType: combatConfig?.attackType ?? 'melee',
+      targetOffsetX: combatConfig?.targetOffsetX ?? 90,
+      attackAnim: combatConfig?.attackAnim ?? 'atk',
+    };
+
     this.registerAnimations();
 
     // Default to idle animation
     this.playAnimation('idle');
+    this.updateDepth();
     scene.add.existing(this);
+  }
+
+  /**
+   * Updates sprite depth based on current Y coordinate for dynamic sorting.
+   */
+  public updateDepth(): void {
+    this.setDepth(this.y);
+  }
+
+  /**
+   * Sets the unit's logical home slot position.
+   */
+  public setHomeSlot(x: number, y: number): void {
+    this.homeSlot = { x, y };
+    this.setPosition(x, y);
+    this.updateDepth();
   }
 
   /**
