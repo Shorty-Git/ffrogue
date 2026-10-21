@@ -287,31 +287,13 @@ export class BattleScene extends Phaser.Scene {
   }
 
   private createArenaBackground(width: number, height: number): void {
-    const bg = this.add.graphics();
-    // Sky gradient
-    bg.fillGradientStyle(0x0a0f1d, 0x0a0f1d, 0x111827, 0x111827, 1);
-    bg.fillRect(0, 0, width, height);
+    // Authentic FFBE Battle Arena Background
+    const bg = this.add.image(width / 2, height / 2, 'battle_bg_01');
+    bg.setDepth(-100);
 
-    // Ground plane
-    bg.fillStyle(0x0f172a, 0.9);
-    bg.fillRect(0, 160, width, height - 160);
-
-    // Subtle arena floor grid
-    bg.lineStyle(1, 0x1e293b, 0.6);
-    for (let y = 180; y < height; y += 45) {
-      bg.lineBetween(0, y, width, y);
-    }
-    for (let x = 60; x < width; x += 80) {
-      bg.lineBetween(x, 160, x, height);
-    }
-
-    // Arena separator accent
-    bg.lineStyle(2, 0x38bdf8, 0.3);
-    bg.lineBetween(0, 160, width, 160);
-
-    // Center divider glow
-    bg.lineStyle(1, 0x64748b, 0.2);
-    bg.lineBetween(width / 2, 160, width / 2, height);
+    // Uniform cover-scaling so the background completely fills 1280x720 without aspect distortion
+    const scale = Math.max(width / bg.width, height / bg.height);
+    bg.setScale(scale);
   }
 
   private createCombatGrids(): void {
@@ -320,36 +302,30 @@ export class BattleScene extends Phaser.Scene {
 
     // Party 3-Slot Triangle Grid (Right, Arrow < pointing left)
     const partySlots = [
-      { x: 880, y: 360, label: 'Front-Mid (Cloud)' },
-      { x: 1040, y: 220, label: 'Back-Top (Aerith)' },
-      { x: 1040, y: 500, label: 'Back-Bot (Barret)' },
+      { x: 880, y: 360 },
+      { x: 1040, y: 220 },
+      { x: 1040, y: 500 },
     ];
 
     partySlots.forEach((slot) => {
-      g.fillStyle(0x0284c7, 0.15);
+      g.fillStyle(0x0284c7, 0.12);
       g.fillEllipse(slot.x, slot.y, 115, 40);
-      g.lineStyle(1, 0x38bdf8, 0.5);
+      g.lineStyle(1, 0x38bdf8, 0.4);
       g.strokeEllipse(slot.x, slot.y, 115, 40);
-
-      this.add.text(slot.x, slot.y + 20, slot.label, {
-        fontFamily: 'monospace',
-        fontSize: '10px',
-        color: '#64748b',
-      }).setOrigin(0.5).setDepth(11);
     });
 
-    // Enemy Slot (Left)
+    // Enemy Slots (Left)
     const enemySlots = [
-      { x: 220, y: 360, label: 'Back-Mid (Boss-Slot)', isBoss: true },
-      { x: 400, y: 220, label: 'Front-Top (Enemy 1)', isBoss: false },
-      { x: 400, y: 500, label: 'Front-Bot (Enemy 2)', isBoss: false },
+      { x: 220, y: 360, isBoss: true },
+      { x: 400, y: 220, isBoss: false },
+      { x: 400, y: 500, isBoss: false },
     ];
 
     enemySlots.forEach((slot) => {
       if (slot.isBoss) {
-        g.fillStyle(0xef4444, 0.2);
+        g.fillStyle(0xef4444, 0.15);
         g.fillEllipse(slot.x, slot.y, 160, 56);
-        g.lineStyle(2, 0xf87171, 0.8);
+        g.lineStyle(1, 0xf87171, 0.5);
         g.strokeEllipse(slot.x, slot.y, 160, 56);
       } else {
         g.fillStyle(0xef4444, 0.08);
@@ -357,12 +333,6 @@ export class BattleScene extends Phaser.Scene {
         g.lineStyle(1, 0xf87171, 0.3);
         g.strokeEllipse(slot.x, slot.y, 115, 40);
       }
-
-      this.add.text(slot.x, slot.y + (slot.isBoss ? 28 : 20), slot.label, {
-        fontFamily: 'monospace',
-        fontSize: '10px',
-        color: '#71717a',
-      }).setOrigin(0.5).setDepth(11);
     });
   }
 
