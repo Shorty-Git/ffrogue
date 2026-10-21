@@ -13,6 +13,7 @@ Entwicklung eines rundenbasierten 2D-Browser-Roguelikes (privat/nicht-kommerziel
 4. **Windows-Umgebung & 2-PC-Sync beachten:** Alle Terminal-Befehle müssen unter Windows (PowerShell/CMD) funktionieren. Halte das Repository über eine saubere `.gitignore` kompakt, damit jederzeit problemlos per `git push` / `git pull` zwischen zwei Windows-Rechnern gewechselt werden kann.
 5. **Strikte Trennung von Pipeline und Spiel:** Die Verarbeitung von FFBE-Rohdaten (CSV, CGG, CGS, Roh-Atlas) findet ausschließlich in `tools/` statt. Das Phaser-Spiel in `src/` lädt später nur fertig aufbereitete Standard-Spritesheets und saubere JSON-Metadaten.
 6. **Language Convention:** All code, comments, state enums, identifiers, and in-game UI strings must be written in English. German is only used for chat prompts with the developer.
+7. **Asset Dump Consultation:** Always consult `docs/asset_structure.md` before searching for or importing new assets from the dump.
 
 ## 3. Spezielle Anforderungen an die FFBE-Sprites
 - Keine falsch zugeschnittenen oder springenden Sprites.

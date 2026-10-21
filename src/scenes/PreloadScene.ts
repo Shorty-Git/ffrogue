@@ -59,49 +59,9 @@ export class PreloadScene extends Phaser.Scene {
     ['cloud', 'aerith', 'barret'].forEach((unitKey) => {
       this.load.json(`skills_${unitKey}`, `assets/units/${unitKey}/skills.json`);
     });
-
-    // Queue authentic FFBE visual skill effects
-    this.load.spritesheet('eff_slash_heavy', 'assets/effects/slash_heavy/slash_heavy.png', {
-      frameWidth: 404,
-      frameHeight: 297,
-    });
-    this.load.spritesheet('eff_curaga_light', 'assets/effects/curaga_light/curaga_light.png', {
-      frameWidth: 265,
-      frameHeight: 97,
-    });
-    this.load.spritesheet('eff_grenade_blast', 'assets/effects/grenade_blast/grenade_blast.png', {
-      frameWidth: 142,
-      frameHeight: 100,
-    });
   }
 
   create(): void {
-    // Register global skill effect animations
-    if (!this.anims.exists('eff_slash_heavy')) {
-      this.anims.create({
-        key: 'eff_slash_heavy',
-        frames: this.anims.generateFrameNumbers('eff_slash_heavy', { start: 0, end: 17 }),
-        frameRate: 18,
-        repeat: 0,
-      });
-    }
-    if (!this.anims.exists('eff_curaga_light')) {
-      this.anims.create({
-        key: 'eff_curaga_light',
-        frames: this.anims.generateFrameNumbers('eff_curaga_light', { start: 0, end: 51 }),
-        frameRate: 22,
-        repeat: 0,
-      });
-    }
-    if (!this.anims.exists('eff_grenade_blast')) {
-      this.anims.create({
-        key: 'eff_grenade_blast',
-        frames: this.anims.generateFrameNumbers('eff_grenade_blast', { start: 0, end: 16 }),
-        frameRate: 16,
-        repeat: 0,
-      });
-    }
-
     this.scene.start('BattleScene', {
       manifests: this.manifests,
     });
