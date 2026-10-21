@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { UnitActor } from '../entities/UnitActor';
+import { TargetDummy } from '../entities/TargetDummy';
 import { UnitManifest } from '../types/manifest';
 
 export class BattleScene extends Phaser.Scene {
@@ -15,7 +16,7 @@ export class BattleScene extends Phaser.Scene {
   private activeUnitBtnText!: Phaser.GameObjects.Text;
   private attackModeBtnContainer?: Phaser.GameObjects.Container;
   private attackModeBtnText?: Phaser.GameObjects.Text;
-  private targetDummy!: Phaser.GameObjects.Container;
+  private targetDummy!: TargetDummy;
 
   constructor() {
     super('BattleScene');
@@ -35,7 +36,7 @@ export class BattleScene extends Phaser.Scene {
     this.createCombatGrids();
 
     // 3. Target Dummy on Centered Single-Target Slot: Back-Mid (220, 360)
-    this.createTargetDummy(220, 360);
+    this.targetDummy = new TargetDummy(this, 220, 360);
 
     // 4. Instantiate Party Units:
     // Cloud on Front-Mid (880, 360) - Vanguard/Tank
@@ -153,7 +154,7 @@ export class BattleScene extends Phaser.Scene {
 
     // 2. Enemy 3-Slot Triangle Grid (Left, Arrow > pointing right, centered Boss slot)
     const enemySlots = [
-      { x: 220, y: 360, label: 'Back-Mid (Zentrierter Gegner / Boss)', isBoss: true },
+      { x: 220, y: 360, label: 'Back-Mid (Zentrierter Dummy / Boss)', isBoss: true },
       { x: 400, y: 220, label: 'Front-Top (Minion 1 - Frei)', isBoss: false },
       { x: 400, y: 500, label: 'Front-Bot (Minion 2 - Frei)', isBoss: false },
     ];
@@ -181,82 +182,39 @@ export class BattleScene extends Phaser.Scene {
     });
   }
 
-  private createTargetDummy(x: number, y: number): void {
-    this.targetDummy = this.add.container(x, y);
-
-    // Dummy base
-    const base = this.add.graphics();
-    base.fillStyle(0xef4444, 0.3);
-    base.fillCircle(0, -60, 28);
-    base.lineStyle(2, 0xf87171, 0.9);
-    base.strokeCircle(0, -60, 28);
-
-    // Target cross inside dummy
-    base.lineBetween(-20, -60, 20, -60);
-    base.lineBetween(0, -80, 0, -40);
-
-    // Dummy pole & stand
-    base.fillStyle(0x78716c, 1);
-    base.fillRect(-6, -32, 12, 32);
-    base.fillRect(-22, -4, 44, 4);
-
-    const nameText = this.add.text(0, -100, 'ZIEL-DUMMY (ZENTRIERT)', {
-      fontFamily: 'monospace',
-      fontSize: '11px',
-      color: '#f87171',
-      fontStyle: 'bold',
-    }).setOrigin(0.5);
-
-    // HP Bar background
-    const hpBg = this.add.rectangle(0, -114, 80, 8, 0x1f2937);
-    const hpBar = this.add.rectangle(-40, -114, 80, 8, 0xef4444).setOrigin(0, 0.5);
-
-    this.targetDummy.add([base, nameText, hpBg, hpBar]);
-    this.targetDummy.setDepth(y);
-  }
-
   private triggerTargetHit(): void {
     if (!this.targetDummy) return;
 
-    // Flash and punch shake effect at dummy's actual location
-    const originalX = this.targetDummy.x;
-    this.tweens.add({
-      targets: this.targetDummy,
-      x: originalX - 16,
-      duration: 60,
-      yoyo: true,
-      repeat: 3,
-      onComplete: () => {
-        this.targetDummy.x = originalX;
-      },
-    });
+    const unit = this.selectedUnit;
+    let baseDmg = 0;
+    let isCrit = false;
+    let dmgType: 'physical' | 'holy' = 'physical';
 
-    // Floating damage number
-    const isCloud = this.selectedUnit === this.cloud;
-    const dmg = isCloud
-      ? '9,999!'
-      : this.selectedUnit.combatConfig.attackType === 'ranged'
-      ? '5,420 (Holy)!'
-      : '3,850!';
-    const color = isCloud ? '#fbbf24' : '#67e8f9';
+    if (unit === this.cloud) {
+      // Cloud: 450-650 physical damage
+      baseDmg = Phaser.Math.Between(450, 650);
+      isCrit = Math.random() < 0.20; // 20% crit chance
+      dmgType = 'physical';
+    } else {
+      // Aerith
+      if (unit.combatConfig.attackType === 'ranged') {
+        // Magic / Skill: 700-900 holy damage
+        baseDmg = Phaser.Math.Between(700, 900);
+        isCrit = Math.random() < 0.15;
+        dmgType = 'holy';
+      } else {
+        // Melee staff strike: 180-260 physical damage
+        baseDmg = Phaser.Math.Between(180, 260);
+        isCrit = Math.random() < 0.15;
+        dmgType = 'physical';
+      }
+    }
 
-    const dmgText = this.add.text(this.targetDummy.x, this.targetDummy.y - 120, dmg, {
-      fontFamily: 'Arial, sans-serif',
-      fontSize: '28px',
-      color: color,
-      fontStyle: 'bold',
-      stroke: '#0f172a',
-      strokeThickness: 5,
-    }).setOrigin(0.5).setDepth(2000);
+    if (isCrit) {
+      baseDmg = Math.round(baseDmg * 1.5);
+    }
 
-    this.tweens.add({
-      targets: dmgText,
-      y: this.targetDummy.y - 180,
-      alpha: 0,
-      duration: 700,
-      ease: 'Cubic.easeOut',
-      onComplete: () => dmgText.destroy(),
-    });
+    this.targetDummy.applyDamage(baseDmg, isCrit, dmgType);
   }
 
   private fireRangedProjectile(fromX: number, fromY: number, toX: number, toY: number): void {
@@ -288,14 +246,14 @@ export class BattleScene extends Phaser.Scene {
     headerBg.setStrokeStyle(1, 0x1e293b);
     headerBg.setDepth(1000);
 
-    this.add.text(24, 16, 'FF ROGUE - ZENTRIERTES SINGLE-TARGET & HIT-FRAME TIMING', {
+    this.add.text(24, 16, 'FF ROGUE - TREFFER-FEEDBACK & 2-PHASEN HP-BALKEN', {
       fontFamily: 'monospace',
       fontSize: '16px',
       color: '#38bdf8',
       fontStyle: 'bold',
     }).setDepth(1001);
 
-    this.add.text(24, 36, 'Single-Target im Boss-Slot (220, 360) | Frame-genaue Treffer via animationupdate', {
+    this.add.text(24, 36, 'Impact-Shake, Weißer Flash, Floating Numbers mit Bounce & Chip-Damage HP-Balken', {
       fontFamily: 'monospace',
       fontSize: '12px',
       color: '#94a3b8',
@@ -315,19 +273,19 @@ export class BattleScene extends Phaser.Scene {
 
     // 1. UNIT TOGGLE BUTTON (Cloud <-> Aerith)
     const unitToggleContainer = this.createButton(
-      95,
+      90,
       barY - 14,
       'Einheit: CLOUD ▾',
       () => this.toggleActiveUnit(),
       '#0e7490',
       '#06b6d4',
-      125
+      120
     );
     this.activeUnitBtnText = unitToggleContainer.getAt(1) as Phaser.GameObjects.Text;
 
     // 2. AERITH ATTACK MODE TOGGLE (Basis-Angriff / Zauber / Skill)
     this.attackModeBtnContainer = this.createButton(
-      235,
+      230,
       barY - 14,
       'Aerith: BASIS-ANGRIFF ▾',
       () => this.toggleAerithAttackMode(),
@@ -348,7 +306,7 @@ export class BattleScene extends Phaser.Scene {
       { key: 'win', label: 'Win' },
     ];
 
-    let startX = 370;
+    let startX = 365;
     animButtons.forEach((btn) => {
       this.createButton(startX, barY - 14, btn.label, () => {
         if (this.isAttacking) return;
@@ -358,25 +316,31 @@ export class BattleScene extends Phaser.Scene {
         }
         this.selectedUnit.playAnimation(btn.key);
         this.updateStatus(`Animation gewechselt: ${this.selectedUnit.unitKey.toUpperCase()} -> ${btn.label.toUpperCase()}`);
-      }, '#1e293b', '#38bdf8', 68);
-      startX += 74;
+      }, '#1e293b', '#38bdf8', 65);
+      startX += 70;
     });
 
     // 4. TOGGLE DEBUG PIVOT MARKER BUTTON
-    this.createButton(startX + 18, barY - 14, 'Pivot An/Aus', () => {
+    this.createButton(startX + 15, barY - 14, 'Pivot An/Aus', () => {
       this.showDebugMarker = !this.showDebugMarker;
       this.updateStatus(`Debug-Pivot: ${this.showDebugMarker ? 'SICHTBAR' : 'VERSTECKT'}`);
-    }, '#475569', '#94a3b8', 95);
+    }, '#475569', '#94a3b8', 90);
 
-    // 5. MOVE-TO-TARGET ACTION BUTTON
+    // 5. RESET / HEAL DUMMY BUTTON
+    this.createButton(startX + 115, barY - 14, 'Dummy heilen', () => {
+      this.targetDummy.healFull();
+      this.updateStatus('Ziel-Dummy vollstaendig auf 5.000 HP geheilt!');
+    }, '#15803d', '#22c55e', 100);
+
+    // 6. ATTACK ACTION BUTTON
     this.createButton(
-      width - 150,
+      width - 125,
       barY - 14,
-      '⚡ Angriff ausfuehren',
+      '⚡ Angriff',
       () => this.executeAttack(),
       '#0369a1',
       '#38bdf8',
-      140
+      120
     );
   }
 
@@ -492,7 +456,6 @@ export class BattleScene extends Phaser.Scene {
       let hitTriggered = false;
 
       const onAnimUpdate = (_anim: Phaser.Animations.Animation, frame: Phaser.Animations.AnimationFrame) => {
-        // frame.textureFrame is the 0-based frame index from the spritesheet
         if (!hitTriggered && frame.textureFrame === config.hitFrameIndex) {
           hitTriggered = true;
           this.fireRangedProjectile(homeX, homeY, targetX, targetY);
