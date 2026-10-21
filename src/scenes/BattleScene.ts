@@ -34,8 +34,8 @@ export class BattleScene extends Phaser.Scene {
     // 2. Party & Enemy 3-vs-3 Triangle Grids
     this.createCombatGrids();
 
-    // 3. Target Dummy on Minion 1 Slot (400, 220)
-    this.createTargetDummy(400, 220);
+    // 3. Target Dummy on Centered Single-Target Slot: Back-Mid (220, 360)
+    this.createTargetDummy(220, 360);
 
     // 4. Instantiate Party Units:
     // Cloud on Front-Mid (880, 360) - Vanguard/Tank
@@ -43,15 +43,18 @@ export class BattleScene extends Phaser.Scene {
       attackType: 'melee',
       targetOffsetX: 90,
       attackAnim: 'atk',
+      hitFrameIndex: 2, // Frame 2: Buster Sword impacts forward
     });
     this.cloud.setScale(2.5);
     this.cloud.setFacingLeft(true);
 
     // Aerith on Back-Top (1040, 220) - Healer/Ranged
+    // Default to Basis-Angriff (Melee-Run with calibrated offset & Frame 19 hit)
     this.aerith = new UnitActor(this, 1040, 220, 'aerith', this.manifests.aerith, {
-      attackType: 'ranged',
-      targetOffsetX: 220,
-      attackAnim: 'magic_atk',
+      attackType: 'melee',
+      targetOffsetX: 200,
+      attackAnim: 'atk',
+      hitFrameIndex: 19, // Frame 19: Maximum forward leap & staff impact strike
     });
     this.aerith.setScale(2.5);
     this.aerith.setFacingLeft(true);
@@ -150,22 +153,23 @@ export class BattleScene extends Phaser.Scene {
 
     // 2. Enemy 3-Slot Triangle Grid (Left, Arrow > pointing right, centered Boss slot)
     const enemySlots = [
-      { x: 220, y: 360, label: 'Back-Mid (Boss-Slot)', isBoss: true },
-      { x: 400, y: 220, label: 'Front-Top (Minion 1 / Dummy)', isBoss: false },
-      { x: 400, y: 500, label: 'Front-Bot (Minion 2)', isBoss: false },
+      { x: 220, y: 360, label: 'Back-Mid (Zentrierter Gegner / Boss)', isBoss: true },
+      { x: 400, y: 220, label: 'Front-Top (Minion 1 - Frei)', isBoss: false },
+      { x: 400, y: 500, label: 'Front-Bot (Minion 2 - Frei)', isBoss: false },
     ];
 
     enemySlots.forEach((slot) => {
       if (slot.isBoss) {
-        // Larger prominent Boss ellipse
-        g.fillStyle(0xef4444, 0.18);
+        // Prominent Centered Single-Target / Boss ellipse
+        g.fillStyle(0xef4444, 0.2);
         g.fillEllipse(slot.x, slot.y, 160, 56);
-        g.lineStyle(2, 0xf87171, 0.7);
+        g.lineStyle(2, 0xf87171, 0.8);
         g.strokeEllipse(slot.x, slot.y, 160, 56);
       } else {
-        g.fillStyle(0xef4444, 0.12);
+        // Subtle minion slots (active when multiple enemies present)
+        g.fillStyle(0xef4444, 0.08);
         g.fillEllipse(slot.x, slot.y, 115, 40);
-        g.lineStyle(1, 0xf87171, 0.4);
+        g.lineStyle(1, 0xf87171, 0.3);
         g.strokeEllipse(slot.x, slot.y, 115, 40);
       }
 
@@ -196,9 +200,9 @@ export class BattleScene extends Phaser.Scene {
     base.fillRect(-6, -32, 12, 32);
     base.fillRect(-22, -4, 44, 4);
 
-    const nameText = this.add.text(0, -100, 'ZIEL-DUMMY', {
+    const nameText = this.add.text(0, -100, 'ZIEL-DUMMY (ZENTRIERT)', {
       fontFamily: 'monospace',
-      fontSize: '12px',
+      fontSize: '11px',
       color: '#f87171',
       fontStyle: 'bold',
     }).setOrigin(0.5);
@@ -214,8 +218,8 @@ export class BattleScene extends Phaser.Scene {
   private triggerTargetHit(): void {
     if (!this.targetDummy) return;
 
-    // Flash and punch shake effect
-    const originalX = 400;
+    // Flash and punch shake effect at dummy's actual location
+    const originalX = this.targetDummy.x;
     this.tweens.add({
       targets: this.targetDummy,
       x: originalX - 16,
@@ -229,10 +233,14 @@ export class BattleScene extends Phaser.Scene {
 
     // Floating damage number
     const isCloud = this.selectedUnit === this.cloud;
-    const dmg = isCloud ? '9,999!' : (this.selectedUnit.combatConfig.attackType === 'ranged' ? '5,420 (Holy)!' : '3,850!');
+    const dmg = isCloud
+      ? '9,999!'
+      : this.selectedUnit.combatConfig.attackType === 'ranged'
+      ? '5,420 (Holy)!'
+      : '3,850!';
     const color = isCloud ? '#fbbf24' : '#67e8f9';
 
-    const dmgText = this.add.text(400, 110, dmg, {
+    const dmgText = this.add.text(this.targetDummy.x, this.targetDummy.y - 120, dmg, {
       fontFamily: 'Arial, sans-serif',
       fontSize: '28px',
       color: color,
@@ -243,11 +251,34 @@ export class BattleScene extends Phaser.Scene {
 
     this.tweens.add({
       targets: dmgText,
-      y: 60,
+      y: this.targetDummy.y - 180,
       alpha: 0,
       duration: 700,
       ease: 'Cubic.easeOut',
       onComplete: () => dmgText.destroy(),
+    });
+  }
+
+  private fireRangedProjectile(fromX: number, fromY: number, toX: number, toY: number): void {
+    // Magic light projectile
+    const projectile = this.add.circle(fromX - 40, fromY - 40, 10, 0x67e8f9, 0.95);
+    projectile.setDepth(1500);
+
+    // Glowing aura
+    const aura = this.add.circle(fromX - 40, fromY - 40, 16, 0x38bdf8, 0.4);
+    aura.setDepth(1499);
+
+    this.tweens.add({
+      targets: [projectile, aura],
+      x: toX,
+      y: toY - 40,
+      duration: 180,
+      ease: 'Cubic.easeIn',
+      onComplete: () => {
+        projectile.destroy();
+        aura.destroy();
+        this.triggerTargetHit();
+      },
     });
   }
 
@@ -257,14 +288,14 @@ export class BattleScene extends Phaser.Scene {
     headerBg.setStrokeStyle(1, 0x1e293b);
     headerBg.setDepth(1000);
 
-    this.add.text(24, 16, 'FF ROGUE - 3-VS-3 DREIECKS-FORMATION & ATTACK-LOGIK', {
+    this.add.text(24, 16, 'FF ROGUE - ZENTRIERTES SINGLE-TARGET & HIT-FRAME TIMING', {
       fontFamily: 'monospace',
       fontSize: '16px',
       color: '#38bdf8',
       fontStyle: 'bold',
     }).setDepth(1001);
 
-    this.add.text(24, 36, 'Party (Rechts <): Cloud (Front) & Aerith (Back) | Y-Sorting & Differenzierte Angriffe', {
+    this.add.text(24, 36, 'Single-Target im Boss-Slot (220, 360) | Frame-genaue Treffer via animationupdate', {
       fontFamily: 'monospace',
       fontSize: '12px',
       color: '#94a3b8',
@@ -294,15 +325,15 @@ export class BattleScene extends Phaser.Scene {
     );
     this.activeUnitBtnText = unitToggleContainer.getAt(1) as Phaser.GameObjects.Text;
 
-    // 2. AERITH ATTACK MODE TOGGLE (Ranged / Melee)
+    // 2. AERITH ATTACK MODE TOGGLE (Basis-Angriff / Zauber / Skill)
     this.attackModeBtnContainer = this.createButton(
-      225,
+      235,
       barY - 14,
-      'Modus: FERNKAMPF ▾',
+      'Aerith: BASIS-ANGRIFF ▾',
       () => this.toggleAerithAttackMode(),
       '#1e293b',
       '#f472b6',
-      130
+      155
     );
     this.attackModeBtnText = this.attackModeBtnContainer.getAt(1) as Phaser.GameObjects.Text;
     this.updateAttackModeBtnVisibility();
@@ -317,7 +348,7 @@ export class BattleScene extends Phaser.Scene {
       { key: 'win', label: 'Win' },
     ];
 
-    let startX = 350;
+    let startX = 370;
     animButtons.forEach((btn) => {
       this.createButton(startX, barY - 14, btn.label, () => {
         if (this.isAttacking) return;
@@ -367,22 +398,26 @@ export class BattleScene extends Phaser.Scene {
   private toggleAerithAttackMode(): void {
     if (this.isAttacking || this.selectedUnit !== this.aerith) return;
 
-    if (this.aerith.combatConfig.attackType === 'ranged') {
-      this.aerith.combatConfig = {
-        attackType: 'melee',
-        targetOffsetX: 220, // Offset tuned for Aerith's internal 116px (290px world) sprite lunge
-        attackAnim: 'atk',
-      };
-      this.attackModeBtnText?.setText('Modus: NAHKAMPF-RUN ▾');
-      this.updateStatus('Aerith-Modus: NAHKAMPF (gleitet vor das Ziel mit Offset 220px)');
-    } else {
+    if (this.aerith.combatConfig.attackType === 'melee') {
+      // Switch to Zauber / Skill (Ranged)
       this.aerith.combatConfig = {
         attackType: 'ranged',
-        targetOffsetX: 220,
+        targetOffsetX: 0,
         attackAnim: 'magic_atk',
+        hitFrameIndex: 2, // Frame 2: Staff points forward, spells bursts
       };
-      this.attackModeBtnText?.setText('Modus: FERNKAMPF ▾');
-      this.updateStatus('Aerith-Modus: FERNKAMPF (bleibt auf Slot stehen & zaubert)');
+      this.attackModeBtnText?.setText('Aerith: ZAUBER / SKILL ▾');
+      this.updateStatus('Aerith-Modus: Zauber / Skill (Stationär am Platz | Hit auf Frame 2)');
+    } else {
+      // Switch to Basis-Angriff (Melee-Run)
+      this.aerith.combatConfig = {
+        attackType: 'melee',
+        targetOffsetX: 200, // Calibrated for Aerith's internal forward lunge
+        attackAnim: 'atk',
+        hitFrameIndex: 19, // Frame 19: Maximum forward leap & staff strike
+      };
+      this.attackModeBtnText?.setText('Aerith: BASIS-ANGRIFF ▾');
+      this.updateStatus('Aerith-Modus: Basis-Angriff (Melee-Run mit Stab-Schlag | Hit auf Frame 19)');
     }
   }
 
@@ -434,9 +469,7 @@ export class BattleScene extends Phaser.Scene {
   }
 
   /**
-   * Executes combat attack logic based on unit's combatConfig:
-   * - 'ranged': Unit stays on slot, casts/attacks without moving
-   * - 'melee': Unit glides forward to targetX + targetOffsetX, strikes, and returns
+   * Executes combat attack logic based on unit's combatConfig with frame-accurate impact timing.
    */
   public executeAttack(): void {
     if (this.isAttacking) return;
@@ -445,47 +478,45 @@ export class BattleScene extends Phaser.Scene {
     const unit = this.selectedUnit;
     const homeX = unit.homeSlot.x;
     const homeY = unit.homeSlot.y;
-    const targetX = 400; // Target dummy on Minion 1 slot
-    const targetY = 220;
+
+    // Centered single-target enemy dummy
+    const targetX = this.targetDummy.x; // 220
+    const targetY = this.targetDummy.y; // 360
 
     const unitName = unit.unitKey.toUpperCase();
     const config = unit.combatConfig;
 
     if (config.attackType === 'ranged') {
-      // --- RANGED ATTACK SEQUENCE (Stationary) ---
-      this.updateStatus(`Aktion: ${unitName} fuehrt Fernkampf/Zauber aus...`);
+      // --- RANGED ATTACK SEQUENCE (Stationary at home slot) ---
+      this.updateStatus(`Aktion: ${unitName} fuehrt Zauber / Skill aus (Hit-Frame: ${config.hitFrameIndex})...`);
+      let hitTriggered = false;
+
+      const onAnimUpdate = (_anim: Phaser.Animations.Animation, frame: Phaser.Animations.AnimationFrame) => {
+        // frame.textureFrame is the 0-based frame index from the spritesheet
+        if (!hitTriggered && frame.textureFrame === config.hitFrameIndex) {
+          hitTriggered = true;
+          this.fireRangedProjectile(homeX, homeY, targetX, targetY);
+        }
+      };
+
+      unit.on(Phaser.Animations.Events.ANIMATION_UPDATE, onAnimUpdate);
       unit.playAnimation(config.attackAnim);
 
-      // Staff cast impact trigger
-      this.time.delayedCall(300, () => {
-        // Subtle projectile / light orb travel effect
-        const projectile = this.add.circle(homeX - 50, homeY - 40, 9, 0x67e8f9, 0.95);
-        projectile.setDepth(1200);
-
-        this.tweens.add({
-          targets: projectile,
-          x: targetX,
-          y: targetY - 40,
-          duration: 180,
-          ease: 'Cubic.easeIn',
-          onComplete: () => {
-            projectile.destroy();
-            this.triggerTargetHit();
-          },
-        });
-      });
-
       unit.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+        unit.off(Phaser.Animations.Events.ANIMATION_UPDATE, onAnimUpdate);
+        if (!hitTriggered) {
+          this.fireRangedProjectile(homeX, homeY, targetX, targetY);
+        }
         unit.playAnimation('idle');
         this.isAttacking = false;
-        this.updateStatus(`Bereit - ${unitName} Fernangriff beendet!`);
+        this.updateStatus(`Bereit - ${unitName} Zauber erfolgreich beendet!`);
       });
     } else {
       // --- MELEE MOVE-TO-TARGET SEQUENCE ---
       const attackArrivalX = targetX + config.targetOffsetX;
       const attackArrivalY = targetY;
 
-      this.updateStatus(`Aktion: ${unitName} gleitet zum Ziel (Ziel-Offset: ${config.targetOffsetX}px)...`);
+      this.updateStatus(`Aktion: ${unitName} gleitet zum zentrierten Ziel (Offset: ${config.targetOffsetX}px)...`);
       unit.playAnimation('move');
 
       this.tweens.add({
@@ -495,16 +526,25 @@ export class BattleScene extends Phaser.Scene {
         duration: 380,
         ease: 'Cubic.easeInOut',
         onComplete: () => {
-          this.updateStatus(`Aktion: ${unitName} schlaegt zu ('${config.attackAnim}')...`);
+          this.updateStatus(`Aktion: ${unitName} schlaegt zu (Hit-Frame: ${config.hitFrameIndex})...`);
+          let hitTriggered = false;
+
+          const onAnimUpdate = (_anim: Phaser.Animations.Animation, frame: Phaser.Animations.AnimationFrame) => {
+            if (!hitTriggered && frame.textureFrame === config.hitFrameIndex) {
+              hitTriggered = true;
+              this.triggerTargetHit();
+            }
+          };
+
+          unit.on(Phaser.Animations.Events.ANIMATION_UPDATE, onAnimUpdate);
           unit.playAnimation(config.attackAnim);
 
-          // Impact timing (mid-strike)
-          const hitDelay = unit === this.cloud ? 300 : 350;
-          this.time.delayedCall(hitDelay, () => {
-            this.triggerTargetHit();
-          });
-
           unit.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+            unit.off(Phaser.Animations.Events.ANIMATION_UPDATE, onAnimUpdate);
+            if (!hitTriggered) {
+              this.triggerTargetHit();
+            }
+
             this.updateStatus(`Aktion: ${unitName} kehrt exakt auf Slot (${homeX}, ${homeY}) zurueck...`);
             unit.playAnimation('move');
             unit.setFacingLeft(false); // turn back

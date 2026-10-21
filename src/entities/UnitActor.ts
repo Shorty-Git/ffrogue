@@ -5,6 +5,7 @@ export interface UnitCombatConfig {
   attackType: 'melee' | 'ranged';
   targetOffsetX: number;
   attackAnim: string;
+  hitFrameIndex: number;
 }
 
 export class UnitActor extends Phaser.GameObjects.Sprite {
@@ -32,6 +33,7 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
       attackType: combatConfig?.attackType ?? 'melee',
       targetOffsetX: combatConfig?.targetOffsetX ?? 90,
       attackAnim: combatConfig?.attackAnim ?? 'atk',
+      hitFrameIndex: combatConfig?.hitFrameIndex ?? 2,
     };
 
     this.registerAnimations();
