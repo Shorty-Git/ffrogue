@@ -16,7 +16,7 @@ export class PreloadScene extends Phaser.Scene {
     const { width, height } = this.scale;
 
     // Loading UI
-    const loadingText = this.add.text(width / 2, height / 2 - 20, 'Lade Einheiten-Assets...', {
+    const loadingText = this.add.text(width / 2, height / 2 - 20, 'Loading unit assets...', {
       fontFamily: 'monospace',
       fontSize: '20px',
       color: '#38bdf8',

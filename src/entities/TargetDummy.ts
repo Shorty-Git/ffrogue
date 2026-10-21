@@ -44,7 +44,7 @@ export class TargetDummy extends Phaser.GameObjects.Container {
     this.manifest = manifest;
     this.maxHp = config?.maxHp ?? 5000;
     this.currentHp = this.maxHp;
-    this.nameTag = config?.nameTag ?? 'WERRATTE';
+    this.nameTag = config?.nameTag ?? 'DIRE RAT';
     this.isBoss = config?.isBoss ?? false;
 
     this.registerAnimations();
@@ -204,7 +204,7 @@ export class TargetDummy extends Phaser.GameObjects.Container {
     }).setOrigin(0.5);
 
     // 5. K.O. Banner (hidden by default)
-    this.koBanner = this.scene.add.text(0, -20, 'K.O. - BESIEGT', {
+    this.koBanner = this.scene.add.text(0, -20, 'DEFEATED', {
       fontFamily: 'monospace',
       fontSize: '13px',
       color: '#ffffff',
@@ -354,7 +354,7 @@ export class TargetDummy extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Counter-attack: Werratte glides to target, plays 'atk' animation, triggers impact damage, and glides back.
+   * Counter-attack: Dire Rat glides to target, plays 'atk' animation, triggers impact damage, and glides back.
    */
   public executeAttack(
     targetX: number,
@@ -543,7 +543,7 @@ export class TargetDummy extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Resets or respawns Werratte to full health and returns to base slot.
+   * Resets or respawns Dire Rat to full health and returns to base slot.
    */
   public resetCombat(newMaxHp?: number, nameTag?: string): void {
     if (newMaxHp) {

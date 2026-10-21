@@ -44,11 +44,11 @@ export interface EnemySlotConfig {
 
 export const ENCOUNTERS: Record<number, EnemySlotConfig[]> = {
   1: [
-    { x: 220, y: 360, hp: 5000, nameTag: 'WERRATTE (BOSS)', isBoss: true },
+    { x: 220, y: 360, hp: 5000, nameTag: 'DIRE RAT (BOSS)', isBoss: true },
   ],
   2: [
-    { x: 400, y: 220, hp: 3500, nameTag: 'WERRATTE A', isBoss: false },
-    { x: 400, y: 500, hp: 3500, nameTag: 'WERRATTE B', isBoss: false },
+    { x: 400, y: 220, hp: 3500, nameTag: 'DIRE RAT A', isBoss: false },
+    { x: 400, y: 500, hp: 3500, nameTag: 'DIRE RAT B', isBoss: false },
   ],
 };
 
@@ -130,7 +130,7 @@ export class BattleScene extends Phaser.Scene {
     this.events.on('enemy_clicked', (enemy: TargetDummy) => {
       if (this.combatState === 'PLAYER_TURN' && enemy.currentHp > 0) {
         this.setTarget(enemy, true);
-        this.updateStatus(`Ziel gewählt: ${enemy.nameTag} (${enemy.currentHp} HP)`);
+        this.updateStatus(`Target selected: ${enemy.nameTag} (${enemy.currentHp} HP)`);
       }
     });
 
@@ -284,8 +284,8 @@ export class BattleScene extends Phaser.Scene {
     // Enemy Slot (Left)
     const enemySlots = [
       { x: 220, y: 360, label: 'Back-Mid (Boss-Slot)', isBoss: true },
-      { x: 400, y: 220, label: 'Front-Top (Gegner 1)', isBoss: false },
-      { x: 400, y: 500, label: 'Front-Bot (Gegner 2)', isBoss: false },
+      { x: 400, y: 220, label: 'Front-Top (Enemy 1)', isBoss: false },
+      { x: 400, y: 500, label: 'Front-Bot (Enemy 2)', isBoss: false },
     ];
 
     enemySlots.forEach((slot) => {
@@ -314,21 +314,21 @@ export class BattleScene extends Phaser.Scene {
     headerBg.setStrokeStyle(1.5, 0x1e3a8a);
     headerBg.setDepth(1000);
 
-    this.roundBannerText = this.add.text(24, 16, `KAMPF ${this.fightNumber}/${this.totalFights} • RUNDE 1`, {
+    this.roundBannerText = this.add.text(24, 16, `BATTLE ${this.fightNumber}/${this.totalFights} • ROUND 1`, {
       fontFamily: 'monospace',
       fontSize: '16px',
       color: '#38bdf8',
       fontStyle: 'bold',
     }).setDepth(1001);
 
-    this.statusText = this.add.text(24, 36, 'Bereit für Aktionen...', {
+    this.statusText = this.add.text(24, 36, 'Ready for action...', {
       fontFamily: 'monospace',
       fontSize: '12px',
       color: '#94a3b8',
     }).setDepth(1001);
 
     // Reset Battle Button in Header
-    const resetBtn = this.createHeaderButton(width - 95, 28, 'Kampf Reset', () => {
+    const resetBtn = this.createHeaderButton(width - 95, 28, 'Reset Battle', () => {
       this.resetBattle();
     });
     resetBtn.setDepth(1001);
@@ -365,7 +365,7 @@ export class BattleScene extends Phaser.Scene {
     const panelY = height - 70; // Center at y = 650
     const panelHeight = 135;
 
-    // --- LEFT BOX: BEFEHLSMENÜ (Width: 320px, x: 20 to 340) ---
+    // --- LEFT BOX: COMMAND MENU (Width: 320px, x: 20 to 340) ---
     const leftW = 320;
     const leftX = 20 + leftW / 2; // 180
 
@@ -401,14 +401,14 @@ export class BattleScene extends Phaser.Scene {
     this.cmdModeBtnBg.on('pointerdown', () => this.toggleAerithMode());
     this.cmdModeBtnBg.setVisible(false);
 
-    this.cmdModeBtnText = this.add.text(leftW / 2 - 55, -panelHeight / 2 + 24, 'Nahkampf ▾', {
+    this.cmdModeBtnText = this.add.text(leftW / 2 - 55, -panelHeight / 2 + 24, 'Melee ▾', {
       fontFamily: 'monospace',
       fontSize: '9px',
       color: '#f472b6',
     }).setOrigin(0.5);
     this.cmdModeBtnText.setVisible(false);
 
-    // Button 1: [ANGRIFF] (Active - Royal Blue with silver border)
+    // Button 1: [ATTACK] (Active - Royal Blue with silver border)
     const btnW = leftW - 32;
     const btnH = 34;
 
@@ -416,7 +416,7 @@ export class BattleScene extends Phaser.Scene {
     this.cmdAttackBtnBg.setStrokeStyle(1.5, 0xe2e8f0);
     this.cmdAttackBtnBg.setInteractive({ useHandCursor: true });
 
-    this.cmdAttackBtnText = this.add.text(0, -6, '⚡ ANGRIFF (Leertaste)', {
+    this.cmdAttackBtnText = this.add.text(0, -6, '⚡ ATTACK (Space)', {
       fontFamily: 'monospace',
       fontSize: '12px',
       color: '#ffffff',
@@ -437,13 +437,13 @@ export class BattleScene extends Phaser.Scene {
       }
     });
 
-    // Button 2 & 3: Disabled Placeholders [FÄHIGKEIT] & [ABWEHR]
+    // Button 2 & 3: Disabled Placeholders [SKILL] & [DEFEND]
     const subBtnW = (btnW - 8) / 2;
     const subBtnY = 32;
 
     const skillBg = this.add.rectangle(-subBtnW / 2 - 4, subBtnY, subBtnW, 28, 0x081530, 0.7);
     skillBg.setStrokeStyle(1, 0x1e3a8a, 0.5);
-    const skillText = this.add.text(-subBtnW / 2 - 4, subBtnY, '✦ FÄHIGKEIT', {
+    const skillText = this.add.text(-subBtnW / 2 - 4, subBtnY, '✦ SKILL', {
       fontFamily: 'monospace',
       fontSize: '10px',
       color: '#64748b',
@@ -451,7 +451,7 @@ export class BattleScene extends Phaser.Scene {
 
     const guardBg = this.add.rectangle(subBtnW / 2 + 4, subBtnY, subBtnW, 28, 0x081530, 0.7);
     guardBg.setStrokeStyle(1, 0x1e3a8a, 0.5);
-    const guardText = this.add.text(subBtnW / 2 + 4, subBtnY, '🛡 ABWEHR', {
+    const guardText = this.add.text(subBtnW / 2 + 4, subBtnY, '🛡 DEFEND', {
       fontFamily: 'monospace',
       fontSize: '10px',
       color: '#64748b',
@@ -545,7 +545,7 @@ export class BattleScene extends Phaser.Scene {
       }).setOrigin(0, 0.5);
 
       // Status Badge
-      const statusText = this.add.text(rightW / 2 - 30, 0, 'BEREIT', {
+      const statusText = this.add.text(rightW / 2 - 30, 0, 'READY', {
         fontFamily: 'monospace',
         fontSize: '11px',
         color: '#94a3b8',
@@ -593,8 +593,8 @@ export class BattleScene extends Phaser.Scene {
         attackAnim: 'magic_atk',
         hitFrameIndex: 2,
       };
-      if (this.cmdModeBtnText) this.cmdModeBtnText.setText('Zauber ▾');
-      this.updateStatus('Aerith-Modus: Zauber / Heiliges Licht (700-900 Schaden)');
+      if (this.cmdModeBtnText) this.cmdModeBtnText.setText('Magic ▾');
+      this.updateStatus('Aerith Stance: Magic / Holy Light (700-900 DMG)');
     } else {
       this.aerith.combatConfig = {
         attackType: 'melee',
@@ -602,8 +602,8 @@ export class BattleScene extends Phaser.Scene {
         attackAnim: 'atk',
         hitFrameIndex: 19,
       };
-      if (this.cmdModeBtnText) this.cmdModeBtnText.setText('Nahkampf ▾');
-      this.updateStatus('Aerith-Modus: Basis-Nahkampf (180-260 Schaden)');
+      if (this.cmdModeBtnText) this.cmdModeBtnText.setText('Melee ▾');
+      this.updateStatus('Aerith Stance: Melee Attack (180-260 DMG)');
     }
   }
 
@@ -632,10 +632,10 @@ export class BattleScene extends Phaser.Scene {
       fontStyle: 'bold',
     }).setOrigin(0.5, 1.0);
 
-    // Pill label [ZIEL] above the arrow
+    // Pill label [TARGET] above the arrow
     const labelBg = this.add.rectangle(0, -22, 52, 16, 0xdc2626, 0.95);
     labelBg.setStrokeStyle(1, 0xfecaca);
-    const labelText = this.add.text(0, -22, 'ZIEL', {
+    const labelText = this.add.text(0, -22, 'TARGET', {
       fontFamily: 'monospace',
       fontSize: '10px',
       color: '#ffffff',
@@ -704,8 +704,8 @@ export class BattleScene extends Phaser.Scene {
   private spawnEncounter(fightNum: number, onComplete?: () => void): void {
     const configs = ENCOUNTERS[fightNum] || [
       // Fallback for fight 3+: scale fight 2 with HP scaling
-      { x: 400, y: 220, hp: Math.round(3500 * Math.pow(1.18, fightNum - 1)), nameTag: 'WERRATTE A', isBoss: false },
-      { x: 400, y: 500, hp: Math.round(3500 * Math.pow(1.18, fightNum - 1)), nameTag: 'WERRATTE B', isBoss: false },
+      { x: 400, y: 220, hp: Math.round(3500 * Math.pow(1.18, fightNum - 1)), nameTag: 'DIRE RAT A', isBoss: false },
+      { x: 400, y: 500, hp: Math.round(3500 * Math.pow(1.18, fightNum - 1)), nameTag: 'DIRE RAT B', isBoss: false },
     ];
 
     // Ensure enough TargetDummy instances in pool
@@ -781,12 +781,12 @@ export class BattleScene extends Phaser.Scene {
       this.setTarget(this.currentTarget, false);
     }
 
-    this.roundBannerText.setText(`KAMPF ${this.fightNumber}/${this.totalFights} • RUNDE ${this.currentRound}`);
+    this.roundBannerText.setText(`BATTLE ${this.fightNumber}/${this.totalFights} • ROUND ${this.currentRound}`);
     this.roundBannerText.setColor('#38bdf8');
 
     this.updateCommandMenu();
     this.updatePartyStatusUi();
-    this.updateStatus(`Runde ${this.currentRound}: ${this.getActiveHero()?.heroName} ist am Zug! [ANGRIFF] drücken.`);
+    this.updateStatus(`Round ${this.currentRound}: ${this.getActiveHero()?.heroName}'s turn! Press [ATTACK].`);
   }
 
   /**
@@ -815,15 +815,15 @@ export class BattleScene extends Phaser.Scene {
       this.combatState = 'PLAYER_TURN';
       this.updateCommandMenu();
       this.updatePartyStatusUi();
-      this.updateStatus(`Nächster Held: ${this.getActiveHero()?.heroName} ist am Zug!`);
+      this.updateStatus(`Next hero: ${this.getActiveHero()?.heroName}'s turn!`);
     } else {
       // All living heroes have acted this round -> Enemy turn!
       this.combatState = 'ENEMY_TURN';
-      this.roundBannerText.setText(`KAMPF ${this.fightNumber}/${this.totalFights} • GEGNER-ZUG`);
+      this.roundBannerText.setText(`BATTLE ${this.fightNumber}/${this.totalFights} • ENEMY TURN`);
       this.roundBannerText.setColor('#f87171');
       this.updateCommandMenu();
       this.updatePartyStatusUi();
-      this.updateStatus('Alle Helden haben gehandelt! Gegner greifen an...');
+      this.updateStatus('All heroes have acted! Enemies attacking...');
       this.time.delayedCall(450, () => this.executeEnemyTurn());
     }
   }
@@ -847,20 +847,20 @@ export class BattleScene extends Phaser.Scene {
       this.cmdModeBtnBg?.setVisible(isAerith);
       this.cmdModeBtnText?.setVisible(isAerith);
       if (isAerith && this.cmdModeBtnText) {
-        this.cmdModeBtnText.setText(hero.combatConfig.attackType === 'ranged' ? 'Zauber ▾' : 'Nahkampf ▾');
+        this.cmdModeBtnText.setText(hero.combatConfig.attackType === 'ranged' ? 'Magic ▾' : 'Melee ▾');
       }
 
       // Attack button enabled
       this.cmdAttackBtnBg.setInteractive({ useHandCursor: true });
       this.cmdAttackBtnBg.fillColor = 0x1d4ed8;
       this.cmdAttackBtnBg.setStrokeStyle(1.5, 0xe2e8f0);
-      this.cmdAttackBtnText.setText(hero === this.barret ? '⚡ SALVE (Leertaste)' : '⚡ ANGRIFF (Leertaste)');
+      this.cmdAttackBtnText.setText(hero === this.barret ? '⚡ BURST (Space)' : '⚡ ATTACK (Space)');
       this.cmdAttackBtnText.setColor('#ffffff');
     } else {
       if (this.combatState === 'ENEMY_TURN') {
-        this.cmdHeaderName.setText('▸ GEGNER');
+        this.cmdHeaderName.setText('▸ ENEMY');
         this.cmdHeaderName.setColor('#f87171');
-        this.cmdHeaderRole.setText('[WERRATTE]');
+        this.cmdHeaderRole.setText('[DIRE RAT]');
       }
       this.cmdModeBtnBg?.setVisible(false);
       this.cmdModeBtnText?.setVisible(false);
@@ -869,7 +869,7 @@ export class BattleScene extends Phaser.Scene {
       this.cmdAttackBtnBg.disableInteractive();
       this.cmdAttackBtnBg.fillColor = 0x081530;
       this.cmdAttackBtnBg.setStrokeStyle(1, 0x1e3a8a);
-      this.cmdAttackBtnText.setText(this.combatState === 'HERO_ATTACKING' ? 'AKTION LÄUFT...' : 'GEGNER-PHASE');
+      this.cmdAttackBtnText.setText(this.combatState === 'HERO_ATTACKING' ? 'ACTION...' : 'ENEMY TURN');
       this.cmdAttackBtnText.setColor('#64748b');
     }
   }
@@ -904,11 +904,11 @@ export class BattleScene extends Phaser.Scene {
         this.combatState = 'VICTORY';
         this.targetMarkerContainer.setVisible(false);
         this.lockCommandMenu();
-        this.updateStatus(`K.O.! ${target.nameTag} besiegt! Alle Gegner eliminiert!`);
+        this.updateStatus(`K.O.! ${target.nameTag} defeated! All enemies eliminated!`);
       } else {
         const next = this.autoRetarget();
         if (next) {
-          this.updateStatus(`K.O.! ${target.nameTag} besiegt. Ziel gewechselt auf ${next.nameTag}.`);
+          this.updateStatus(`K.O.! ${target.nameTag} defeated. Retargeting to ${next.nameTag}.`);
         }
       }
     }
@@ -972,13 +972,13 @@ export class BattleScene extends Phaser.Scene {
         row.statusText.setText('K.O.');
         row.statusText.setColor('#ef4444');
       } else if (hero.hasActed) {
-        row.statusText.setText('GEHANDELT');
+        row.statusText.setText('ACTED');
         row.statusText.setColor('#475569');
       } else if (isActive) {
-        row.statusText.setText('AM ZUG');
+        row.statusText.setText('ACTIVE');
         row.statusText.setColor('#fbbf24');
       } else {
-        row.statusText.setText('BEREIT');
+        row.statusText.setText('READY');
         row.statusText.setColor('#94a3b8');
       }
     });
@@ -997,7 +997,7 @@ export class BattleScene extends Phaser.Scene {
 
     const row = this.partyRows.get(hero.unitKey);
     if (row) {
-      row.statusText.setText('GREIFT AN...');
+      row.statusText.setText('ATTACKING...');
       row.statusText.setColor('#fbbf24');
     }
 
@@ -1044,7 +1044,7 @@ export class BattleScene extends Phaser.Scene {
 
     if (hero === this.barret) {
       // --- BARRET: GATLING GUN BURST (Frames 14, 17, 20, 23) ---
-      this.updateStatus(`Aktion: BARRET feuert Gatling-Gun-Salve auf ${target.nameTag}...`);
+      this.updateStatus(`Action: BARRET fires Gatling Gun burst at ${target.nameTag}...`);
       const burstFrames = [14, 17, 20, 23];
       const firedFrames = new Set<number>();
 
@@ -1091,7 +1091,7 @@ export class BattleScene extends Phaser.Scene {
       });
     } else if (config.attackType === 'ranged') {
       // --- AERITH: RANGED HOLY MAGIC ---
-      this.updateStatus(`Aktion: AERITH wirkt Heiliges Licht auf ${target.nameTag}...`);
+      this.updateStatus(`Action: AERITH casts Holy Light on ${target.nameTag}...`);
       let hitTriggered = false;
 
       const onAnimUpdate = (_anim: Phaser.Animations.Animation, frame: Phaser.Animations.AnimationFrame) => {
@@ -1130,7 +1130,7 @@ export class BattleScene extends Phaser.Scene {
       const attackArrivalX = activeTarget.x + config.targetOffsetX;
       const attackArrivalY = activeTarget.y;
 
-      this.updateStatus(`Aktion: ${hero.heroName} stürmt auf ${activeTarget.nameTag} vor...`);
+      this.updateStatus(`Action: ${hero.heroName} charges at ${activeTarget.nameTag}...`);
       hero.playAnimation('move');
 
       this.tweens.add({
@@ -1315,7 +1315,7 @@ export class BattleScene extends Phaser.Scene {
       // Target selection: Cloud if alive (Tank/Frontline), else first alive hero
       const heroTarget = currentAliveHeroes.includes(this.cloud) ? this.cloud : currentAliveHeroes[0];
       const stepStr = livingEnemies.length > 1 ? ` (${index + 1}/${livingEnemies.length})` : '';
-      this.updateStatus(`GEGNER-ZUG${stepStr}: ${enemy.nameTag} stürmt vor und greift ${heroTarget.heroName} an!`);
+      this.updateStatus(`ENEMY TURN${stepStr}: ${enemy.nameTag} charges and attacks ${heroTarget.heroName}!`);
 
       enemy.executeAttack(
         heroTarget.x,
@@ -1370,7 +1370,7 @@ export class BattleScene extends Phaser.Scene {
     // 3. Golden top victory banner
     this.roundBannerText.setText('★  V I C T O R Y  ★');
     this.roundBannerText.setColor('#fbbf24');
-    this.updateStatus(`Kampf ${this.fightNumber} von ${this.totalFights} erfolgreich abgeschlossen!`);
+    this.updateStatus(`Battle ${this.fightNumber} of ${this.totalFights} clear!`);
 
     // 4. Slide bottom HUD down off-screen
     this.tweens.add({
@@ -1401,29 +1401,29 @@ export class BattleScene extends Phaser.Scene {
     const rewards: RewardCardData[] = [
       {
         id: 'cloud_buff',
-        category: '✦ ANGRIFFS-BUFF',
+        category: '✦ ATK BUFF',
         categoryColor: '#fbbf24',
-        title: 'Mut-Buff',
+        title: 'Courage Buff',
         target: 'Cloud (Vanguard)',
-        desc: '+15% Schaden permanent',
+        desc: '+15% DMG permanent',
         icon: '⚔',
       },
       {
         id: 'aerith_buff',
-        category: '✦ MATERIA-BUFF',
+        category: '✦ MATERIA BUFF',
         categoryColor: '#f472b6',
-        title: 'Materia-Fokus',
+        title: 'Materia Focus',
         target: 'Aerith (Healer)',
-        desc: '+25% Magie & Heilung',
+        desc: '+25% Magic & Healing',
         icon: '✦',
       },
       {
         id: 'party_heal',
-        category: '✦ REGENERATION',
+        category: '✦ RECOVERY',
         categoryColor: '#4ade80',
-        title: 'Feld-Rast',
-        target: 'Gesamte Gruppe',
-        desc: 'Sofort +40% Max-HP Heilung',
+        title: 'Field Rest',
+        target: 'Entire Party',
+        desc: 'Restores 40% Max HP to party',
         icon: '💚',
       },
     ];
@@ -1465,7 +1465,7 @@ export class BattleScene extends Phaser.Scene {
       });
 
       // Target unit
-      const targetText = this.add.text(-cardW / 2 + 18, -cardH / 2 + 66, `Ziel: ${reward.target}`, {
+      const targetText = this.add.text(-cardW / 2 + 18, -cardH / 2 + 66, `Target: ${reward.target}`, {
         fontFamily: 'monospace',
         fontSize: '11px',
         color: '#94a3b8',
@@ -1523,7 +1523,7 @@ export class BattleScene extends Phaser.Scene {
       ease: 'Back.easeOut',
     });
 
-    this.updateStatus('Wähle eine Belohnung für deinen Run!');
+    this.updateStatus('Choose a reward for your run!');
   }
 
   /**
@@ -1555,12 +1555,12 @@ export class BattleScene extends Phaser.Scene {
     let confirmMsg = '';
     if (reward.id === 'cloud_buff') {
       this.cloudDmgMultiplier *= 1.15;
-      confirmMsg = `Mut-Buff erhalten! Cloud verursacht nun ${Math.round((this.cloudDmgMultiplier - 1) * 100)}% mehr Schaden.`;
+      confirmMsg = `Courage Buff acquired! Cloud now deals ${Math.round((this.cloudDmgMultiplier - 1) * 100)}% more damage.`;
     } else if (reward.id === 'aerith_buff') {
       this.aerithMagicMultiplier *= 1.25;
-      confirmMsg = `Materia-Fokus erhalten! Aerith wirkt ${Math.round((this.aerithMagicMultiplier - 1) * 100)}% stärkere Magie.`;
+      confirmMsg = `Materia Focus acquired! Aerith now casts ${Math.round((this.aerithMagicMultiplier - 1) * 100)}% stronger magic.`;
     } else if (reward.id === 'party_heal') {
-      confirmMsg = 'Feld-Rast! Alle überlebenden Helden wurden um 40% ihrer Max-HP geheilt.';
+      confirmMsg = 'Field Rest! All surviving heroes restored 40% of their Max HP.';
       this.turnOrder.forEach((hero) => {
         if (!hero.isDead) {
           const healAmount = Math.round(hero.maxHp * 0.4);
@@ -1589,8 +1589,8 @@ export class BattleScene extends Phaser.Scene {
 
     const nextFightNum = this.fightNumber + 1;
     const btnLabel = nextFightNum > this.totalFights
-      ? '★ RUN ERFOLGREICH BEENDEN ★'
-      : `⚔ NÄCHSTER KAMPF (${nextFightNum}/${this.totalFights}) ➔`;
+      ? '★ COMPLETE RUN ★'
+      : `⚔ NEXT BATTLE (${nextFightNum}/${this.totalFights}) ➔`;
 
     const btnText = this.add.text(0, 0, btnLabel, {
       fontFamily: 'monospace',
@@ -1667,8 +1667,8 @@ export class BattleScene extends Phaser.Scene {
     this.fightNumber++;
 
     if (this.fightNumber > this.totalFights) {
-      this.roundBannerText.setText('★ GLORREICHER RUN-SIEG! ★');
-      this.updateStatus('Alle 6 Kämpfe erfolgreich gemeistert! Glückwunsch!');
+      this.roundBannerText.setText('★ GLORIOUS RUN VICTORY! ★');
+      this.updateStatus('All 6 battles cleared! Congratulations!');
       return;
     }
 
@@ -1689,7 +1689,7 @@ export class BattleScene extends Phaser.Scene {
 
     // 5. Reset round counter and smoothly materialize the new enemy wave
     this.currentRound = 1;
-    this.updateStatus(`Kampf ${this.fightNumber}/${this.totalFights}: Neuer Gegner materialisiert sich...`);
+    this.updateStatus(`Battle ${this.fightNumber}/${this.totalFights}: New enemies approaching...`);
 
     this.spawnEncounter(this.fightNumber, () => {
       this.startRound();
@@ -1701,9 +1701,9 @@ export class BattleScene extends Phaser.Scene {
    */
   private triggerDefeat(): void {
     this.combatState = 'DEFEAT';
-    this.roundBannerText.setText('DEFEAT • NIEDERLAGE');
+    this.roundBannerText.setText('DEFEAT');
     this.roundBannerText.setColor('#ef4444');
-    this.updateStatus('NIEDERLAGE: Alle Helden sind im Kampf gefallen!');
+    this.updateStatus('DEFEAT: All heroes have fallen in battle!');
 
     if (this.defeatBanner) {
       this.defeatBanner.destroy();
@@ -1732,7 +1732,7 @@ export class BattleScene extends Phaser.Scene {
     const subText = this.add.text(
       0,
       -15,
-      `Gefallen in Kampf ${this.fightNumber}/${this.totalFights} (Runde ${this.currentRound})`,
+      `Fallen in Battle ${this.fightNumber}/${this.totalFights} (Round ${this.currentRound})`,
       {
         fontFamily: 'monospace',
         fontSize: '13px',
@@ -1744,7 +1744,7 @@ export class BattleScene extends Phaser.Scene {
     btnBg.setStrokeStyle(1, 0xffffff);
     btnBg.setInteractive({ useHandCursor: true });
 
-    const btnText = this.add.text(0, 50, 'Kampf wiederholen', {
+    const btnText = this.add.text(0, 50, 'Retry Battle', {
       fontFamily: 'monospace',
       fontSize: '14px',
       color: '#ffffff',
