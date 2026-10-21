@@ -7,6 +7,7 @@ export class BattleScene extends Phaser.Scene {
   private manifests!: Record<string, UnitManifest>;
   private cloud!: UnitActor;
   private aerith!: UnitActor;
+  private barret!: UnitActor;
   private selectedUnit!: UnitActor;
 
   private debugMarkerGraphics!: Phaser.GameObjects.Graphics;
@@ -60,6 +61,17 @@ export class BattleScene extends Phaser.Scene {
     this.aerith.setScale(2.5);
     this.aerith.setFacingLeft(true);
 
+    // Barret on Back-Bot (1040, 500) - Ranged Gunner
+    // Stationary ranged attack from slot with Gatling gun burst
+    this.barret = new UnitActor(this, 1040, 500, 'barret', this.manifests.barret, {
+      attackType: 'ranged',
+      targetOffsetX: 0,
+      attackAnim: 'atk',
+      hitFrameIndex: 14, // Frame 14: Gatling gun muzzle flash begins
+    });
+    this.barret.setScale(2.5);
+    this.barret.setFacingLeft(true);
+
     // Default active test unit is Cloud
     this.selectedUnit = this.cloud;
 
@@ -77,6 +89,7 @@ export class BattleScene extends Phaser.Scene {
     // Dynamic Y-depth sorting for all combat actors
     if (this.cloud) this.cloud.updateDepth();
     if (this.aerith) this.aerith.updateDepth();
+    if (this.barret) this.barret.updateDepth();
     if (this.targetDummy) this.targetDummy.setDepth(this.targetDummy.y);
 
     // Redraw debug pivot marker at selected unit's exact ground coordinates
@@ -136,7 +149,7 @@ export class BattleScene extends Phaser.Scene {
     const partySlots = [
       { x: 880, y: 360, label: 'Front-Mid (Cloud)' },
       { x: 1040, y: 220, label: 'Back-Top (Aerith)' },
-      { x: 1040, y: 500, label: 'Back-Bot (Frei)' },
+      { x: 1040, y: 500, label: 'Back-Bot (Barret)' },
     ];
 
     partySlots.forEach((slot) => {
@@ -195,6 +208,11 @@ export class BattleScene extends Phaser.Scene {
       baseDmg = Phaser.Math.Between(450, 650);
       isCrit = Math.random() < 0.20; // 20% crit chance
       dmgType = 'physical';
+    } else if (unit === this.barret) {
+      // Barret single shot fallback: 500-720 physical damage
+      baseDmg = Phaser.Math.Between(500, 720);
+      isCrit = Math.random() < 0.20;
+      dmgType = 'physical';
     } else {
       // Aerith
       if (unit.combatConfig.attackType === 'ranged') {
@@ -240,20 +258,59 @@ export class BattleScene extends Phaser.Scene {
     });
   }
 
+  private fireBulletProjectile(
+    fromX: number,
+    fromY: number,
+    toX: number,
+    toY: number,
+    damage: number,
+    isCrit: boolean
+  ): void {
+    // Barret's Gunfire Tracer Bullet
+    const startX = fromX - 60;
+    const startY = fromY - 32;
+    const endX = toX + 15;
+    const endY = toY - 20;
+
+    // Fast yellow-orange tracer bullet
+    const bullet = this.add.ellipse(startX, startY, 20, 5, 0xfde047);
+    bullet.setRotation(Math.atan2(endY - startY, endX - startX));
+    bullet.setDepth(1500);
+
+    const glow = this.add.ellipse(startX, startY, 28, 9, 0xf97316, 0.5);
+    glow.setRotation(Math.atan2(endY - startY, endX - startX));
+    glow.setDepth(1499);
+
+    this.tweens.add({
+      targets: [bullet, glow],
+      x: endX,
+      y: endY,
+      duration: 110,
+      ease: 'Linear',
+      onComplete: () => {
+        bullet.destroy();
+        glow.destroy();
+        if (this.targetDummy) {
+          this.targetDummy.applyDamage(damage, isCrit, 'physical');
+        }
+      },
+    });
+  }
+
   private createUI(width: number, height: number): void {
     // Header Info Banner
     const headerBg = this.add.rectangle(width / 2, 28, width, 56, 0x0f172a, 0.85);
     headerBg.setStrokeStyle(1, 0x1e293b);
     headerBg.setDepth(1000);
 
-    this.add.text(24, 16, 'FF ROGUE - TREFFER-FEEDBACK & 2-PHASEN HP-BALKEN', {
+    this.add.text(24, 16, 'FF ROGUE - 3ER-PARTY (CLOUD / AERITH / BARRET) VS WERRATTE', {
       fontFamily: 'monospace',
       fontSize: '16px',
       color: '#38bdf8',
       fontStyle: 'bold',
     }).setDepth(1001);
 
-    this.add.text(24, 36, 'Impact-Shake, Weißer Flash, Floating Numbers mit Bounce & Chip-Damage HP-Balken', {
+    this.add.text(24, 36, 'Melee Move-to-Target (Cloud/Aerith) & Ranged Salven (Aerith/Barret) mit Frame-Hit & HP-Bar', {
       fontFamily: 'monospace',
       fontSize: '12px',
       color: '#94a3b8',
@@ -350,6 +407,9 @@ export class BattleScene extends Phaser.Scene {
     if (this.selectedUnit === this.cloud) {
       this.selectedUnit = this.aerith;
       this.activeUnitBtnText.setText('Einheit: AERITH ▾');
+    } else if (this.selectedUnit === this.aerith) {
+      this.selectedUnit = this.barret;
+      this.activeUnitBtnText.setText('Einheit: BARRET ▾');
     } else {
       this.selectedUnit = this.cloud;
       this.activeUnitBtnText.setText('Einheit: CLOUD ▾');
@@ -450,8 +510,38 @@ export class BattleScene extends Phaser.Scene {
     const unitName = unit.unitKey.toUpperCase();
     const config = unit.combatConfig;
 
-    if (config.attackType === 'ranged') {
-      // --- RANGED ATTACK SEQUENCE (Stationary at home slot) ---
+    if (unit === this.barret) {
+      // --- BARRET RANGED GATLING GUN BURST (Stationary at home slot, Frames 14, 17, 20, 23) ---
+      this.updateStatus(`Aktion: BARRET feuert Gatling-Gun-Salve (Frames 14, 17, 20, 23)...`);
+      const burstFrames = [14, 17, 20, 23];
+      const firedFrames = new Set<number>();
+
+      const onAnimUpdate = (_anim: Phaser.Animations.Animation, frame: Phaser.Animations.AnimationFrame) => {
+        const frameIdx = Number(frame.textureFrame);
+        if (burstFrames.includes(frameIdx) && !firedFrames.has(frameIdx)) {
+          firedFrames.add(frameIdx);
+          const isCrit = Math.random() < 0.20;
+          let bulletDmg = Phaser.Math.Between(130, 180);
+          if (isCrit) bulletDmg = Math.round(bulletDmg * 1.5);
+          this.fireBulletProjectile(homeX, homeY, targetX, targetY, bulletDmg, isCrit);
+        }
+      };
+
+      unit.on(Phaser.Animations.Events.ANIMATION_UPDATE, onAnimUpdate);
+      unit.playAnimation(config.attackAnim);
+
+      unit.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+        unit.off(Phaser.Animations.Events.ANIMATION_UPDATE, onAnimUpdate);
+        if (firedFrames.size === 0) {
+          const isCrit = Math.random() < 0.20;
+          this.fireBulletProjectile(homeX, homeY, targetX, targetY, 550, isCrit);
+        }
+        unit.playAnimation('idle');
+        this.isAttacking = false;
+        this.updateStatus(`Bereit - BARRET Gatling-Gun-Salve erfolgreich abgeschlossen!`);
+      });
+    } else if (config.attackType === 'ranged') {
+      // --- AERITH RANGED ATTACK SEQUENCE (Stationary at home slot) ---
       this.updateStatus(`Aktion: ${unitName} fuehrt Zauber / Skill aus (Hit-Frame: ${config.hitFrameIndex})...`);
       let hitTriggered = false;
 

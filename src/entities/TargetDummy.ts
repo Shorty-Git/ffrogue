@@ -67,7 +67,7 @@ export class TargetDummy extends Phaser.GameObjects.Container {
     }
 
     // Name Tag floating above dummy
-    const nameText = this.scene.add.text(0, -158, 'TRAINING DUMMY (FFBE)', {
+    const nameText = this.scene.add.text(0, -158, 'WERRATTE / DIRE RAT', {
       fontFamily: 'monospace',
       fontSize: '11px',
       color: '#f87171',
