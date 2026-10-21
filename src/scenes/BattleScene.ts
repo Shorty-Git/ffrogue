@@ -58,7 +58,6 @@ export const ENCOUNTERS: Record<number, EnemySlotConfig[]> = {
 
 export class BattleScene extends Phaser.Scene {
   private manifests!: Record<string, UnitManifest>;
-  public effectManifests: Record<string, any> = {};
   private cloud!: UnitActor;
   private aerith!: UnitActor;
   private barret!: UnitActor;
@@ -125,9 +124,8 @@ export class BattleScene extends Phaser.Scene {
     super('BattleScene');
   }
 
-  init(data: { manifests: Record<string, UnitManifest>; effectManifests?: Record<string, any> }): void {
+  init(data: { manifests: Record<string, UnitManifest> }): void {
     this.manifests = data.manifests;
-    this.effectManifests = data.effectManifests ?? {};
   }
 
   create(): void {
@@ -1277,7 +1275,9 @@ export class BattleScene extends Phaser.Scene {
 
   /**
    * Cloud's Signature Skill: "Braver"
-   * Moves to target, plays limit_atk, triggers slash_heavy FFBE effect with screen-shake and heavy damage.
+   * Moves to target, plays Cloud's authentic limit_atk animation, triggers 80ms hit-stop,
+   * glowing razor slash beam (BlendModes.ADD), monster white flash, camera shake,
+   * golden CRITICAL popup, and returns to base.
    */
   private executeCloudBraver(onComplete: () => void): void {
     const target = this.currentTarget && this.currentTarget.currentHp > 0
@@ -1306,34 +1306,86 @@ export class BattleScene extends Phaser.Scene {
       onComplete: () => {
         this.cloud.playAnimation('limit_atk');
 
-        // Trigger heavy slash effect at downward strike
+        // Trigger heavy sword slash on downward strike
         this.time.delayedCall(160, () => {
           const hitTarget = this.currentTarget && this.currentTarget.currentHp > 0
             ? this.currentTarget
             : target;
 
-          const eff = this.add.sprite(hitTarget.x, hitTarget.y, 'effect_slash_heavy');
-          eff.setOrigin(0.7228, 0.4209);
-          eff.setScale(2.5);
-          eff.setDepth(1500);
-          eff.play('anim_effect_slash_heavy');
+          // 1. Hit-Stop (80ms pause on Cloud's animation for impact freeze)
+          this.cloud.anims.pause();
+          this.time.delayedCall(80, () => {
+            if (this.cloud.anims) {
+              this.cloud.anims.resume();
+            }
+          });
 
-          // Impact shake, flash, and damage
-          this.cameras.main.shake(180, 0.012);
-          this.cameras.main.flash(70, 255, 255, 255, false);
+          // 2. Monster white impact flash (70ms)
+          hitTarget.sprite.setTintFill(0xffffff);
+          this.time.delayedCall(70, () => {
+            hitTarget.sprite.clearTint();
+          });
 
+          // 3. Wuchtiger Kamera-Shake
+          this.cameras.main.shake(200, 0.015);
+
+          // 4. Glowing razor slash beam via Phaser Graphics with ADD blend mode (100% transparent, 0 black boxes)
+          const slashG = this.add.graphics();
+          slashG.setDepth(1800);
+          slashG.setBlendMode(Phaser.BlendModes.ADD);
+
+          const startX = hitTarget.x + 65;
+          const startY = hitTarget.y - 110;
+          const endX = hitTarget.x - 65;
+          const endY = hitTarget.y + 20;
+
+          // Outer cyan aura
+          slashG.lineStyle(10, 0x38bdf8, 0.7);
+          slashG.lineBetween(startX, startY, endX, endY);
+          // Inner bright white razor blade
+          slashG.lineStyle(3, 0xffffff, 1.0);
+          slashG.lineBetween(startX, startY, endX, endY);
+
+          this.tweens.add({
+            targets: slashG,
+            alpha: 0,
+            scaleX: 1.15,
+            scaleY: 1.15,
+            duration: 220,
+            ease: 'Cubic.easeOut',
+            onComplete: () => slashG.destroy(),
+          });
+
+          // 5. Critical damage calculation and golden "CRITICAL!" text
           let dmg = Phaser.Math.Between(1100, 1400);
           dmg = Math.round(dmg * this.cloudDmgMultiplier);
           hitTarget.applyDamage(dmg, true, 'physical');
-          this.handleTargetDamaged(hitTarget);
 
-          eff.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
-            eff.destroy();
+          const critText = this.add.text(hitTarget.x, hitTarget.y - 105, 'CRITICAL!', {
+            fontFamily: 'monospace',
+            fontSize: '15px',
+            color: '#facc15',
+            fontStyle: 'bold',
+            stroke: '#713f12',
+            strokeThickness: 3,
+          }).setOrigin(0.5).setDepth(2000);
+
+          this.tweens.add({
+            targets: critText,
+            y: hitTarget.y - 135,
+            alpha: 0,
+            scaleX: 1.2,
+            scaleY: 1.2,
+            duration: 650,
+            ease: 'Cubic.easeOut',
+            onComplete: () => critText.destroy(),
           });
+
+          this.handleTargetDamaged(hitTarget);
         });
 
-        // Conclude after slash effect finishes (approx 1050ms)
-        this.time.delayedCall(1100, () => {
+        // Conclude after sword impact follow-through
+        this.time.delayedCall(1000, () => {
           this.cloud.playAnimation('move');
           this.cloud.setFacingLeft(false);
 
@@ -1357,27 +1409,61 @@ export class BattleScene extends Phaser.Scene {
 
   /**
    * Aerith's Signature Skill: "Curaga"
-   * Casts magic_atk from home slot, triggers curaga_light FFBE effect radiating over party, restores HP.
+   * Plays Aerith's magic_atk pose from home slot, summons rising radiant green light pillars
+   * and sparkles (BlendModes.ADD) over all living heroes, restores 700-1000 HP.
    */
   private executeAerithCuraga(onComplete: () => void): void {
     this.updateStatus('Action: AERITH casts CURAGA on the party!');
     this.aerith.playAnimation('magic_atk');
 
-    // Spawn curaga_light over the party center (approx 980, 360)
-    const partyCenterX = 980;
-    const partyCenterY = 360;
-    const eff = this.add.sprite(partyCenterX, partyCenterY, 'effect_curaga_light');
-    eff.setOrigin(0.4755, 1.5258);
-    eff.setScale(2.5);
-    eff.setDepth(1500);
-    eff.play('anim_effect_curaga_light');
-
-    // Heal pulse at 350ms
-    this.time.delayedCall(350, () => {
-      this.cameras.main.flash(90, 210, 255, 210, false);
+    this.time.delayedCall(220, () => {
+      this.cameras.main.flash(120, 200, 255, 200, false);
 
       this.turnOrder.forEach((hero) => {
         if (!hero.isDead) {
+          // Radiant vertical light pillar with ADD blend mode
+          const pillar = this.add.graphics();
+          pillar.setDepth(1500);
+          pillar.setBlendMode(Phaser.BlendModes.ADD);
+
+          // Outer green aura
+          pillar.fillStyle(0x4ade80, 0.45);
+          pillar.fillRect(hero.x - 30, hero.y - 150, 60, 170);
+          // Inner brilliant white core
+          pillar.fillStyle(0xffffff, 0.8);
+          pillar.fillRect(hero.x - 12, hero.y - 150, 24, 170);
+
+          this.tweens.add({
+            targets: pillar,
+            alpha: 0,
+            scaleY: 1.3,
+            duration: 550,
+            ease: 'Cubic.easeOut',
+            onComplete: () => pillar.destroy(),
+          });
+
+          // Rising sparkling particles
+          for (let i = 0; i < 5; i++) {
+            const spark = this.add.circle(
+              hero.x + Phaser.Math.Between(-35, 35),
+              hero.y + Phaser.Math.Between(-25, 25),
+              Phaser.Math.Between(3, 7),
+              0x86efac,
+              0.9
+            );
+            spark.setDepth(1501).setBlendMode(Phaser.BlendModes.ADD);
+
+            this.tweens.add({
+              targets: spark,
+              y: spark.y - Phaser.Math.Between(60, 110),
+              alpha: 0,
+              duration: Phaser.Math.Between(450, 750),
+              delay: i * 50,
+              ease: 'Cubic.easeOut',
+              onComplete: () => spark.destroy(),
+            });
+          }
+
           let heal = Phaser.Math.Between(700, 1000);
           heal = Math.round(heal * this.aerithMagicMultiplier);
           hero.restoreHp(heal);
@@ -1386,15 +1472,15 @@ export class BattleScene extends Phaser.Scene {
       this.updatePartyStatusUi();
     });
 
-    eff.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
-      eff.destroy();
+    this.time.delayedCall(1100, () => {
       this.aerith.returnToIdle(onComplete);
     });
   }
 
   /**
    * Barret's Signature Skill: "Grenade Bomb"
-   * Shoots from home slot, detonates grenade_blast FFBE effect over all living monsters simultaneously.
+   * Shoots from home slot, triggers fiery explosion shockwaves (BlendModes.ADD),
+   * simultaneous monster white flashes, screen-shake, and deals 350-500 AoE damage.
    */
   private executeBarretGrenadeBomb(onComplete: () => void): void {
     this.updateStatus('Action: BARRET launches GRENADE BOMB at all enemies!');
@@ -1411,22 +1497,43 @@ export class BattleScene extends Phaser.Scene {
       this.cameras.main.flash(80, 255, 255, 255, false);
 
       livingEnemies.forEach((enemy) => {
-        const eff = this.add.sprite(enemy.x, enemy.y, 'effect_grenade_blast');
-        eff.setOrigin(0.4648, 0.8900);
-        eff.setScale(2.5);
-        eff.setDepth(1500);
-        eff.play('anim_effect_grenade_blast');
+        // 1. Monster white impact flash
+        enemy.sprite.setTintFill(0xffffff);
+        this.time.delayedCall(80, () => {
+          enemy.sprite.clearTint();
+        });
+
+        // 2. Fiery explosive shockwave via Phaser Graphics with ADD blend mode
+        const blast = this.add.graphics();
+        blast.setDepth(1500);
+        blast.setBlendMode(Phaser.BlendModes.ADD);
+
+        // Outer fiery orange blast
+        blast.fillStyle(0xf97316, 0.65);
+        blast.fillCircle(enemy.x, enemy.y - 45, 50);
+        // Mid golden fire
+        blast.fillStyle(0xfde047, 0.85);
+        blast.fillCircle(enemy.x, enemy.y - 45, 28);
+        // Inner white detonator core
+        blast.fillStyle(0xffffff, 1.0);
+        blast.fillCircle(enemy.x, enemy.y - 45, 14);
+
+        this.tweens.add({
+          targets: blast,
+          scaleX: 1.85,
+          scaleY: 1.85,
+          alpha: 0,
+          duration: 340,
+          ease: 'Cubic.easeOut',
+          onComplete: () => blast.destroy(),
+        });
 
         const dmg = Phaser.Math.Between(350, 500);
         enemy.applyDamage(dmg, false, 'physical');
         this.handleTargetDamaged(enemy);
-
-        eff.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
-          eff.destroy();
-        });
       });
 
-      this.time.delayedCall(1150, () => {
+      this.time.delayedCall(950, () => {
         this.barret.returnToIdle(onComplete);
       });
     });
