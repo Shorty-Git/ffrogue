@@ -34,12 +34,36 @@ interface RewardCardData {
   icon: string;
 }
 
+export interface EnemySlotConfig {
+  x: number;
+  y: number;
+  hp: number;
+  nameTag: string;
+  isBoss: boolean;
+}
+
+export const ENCOUNTERS: Record<number, EnemySlotConfig[]> = {
+  1: [
+    { x: 220, y: 360, hp: 5000, nameTag: 'WERRATTE (BOSS)', isBoss: true },
+  ],
+  2: [
+    { x: 400, y: 220, hp: 3500, nameTag: 'WERRATTE A', isBoss: false },
+    { x: 400, y: 500, hp: 3500, nameTag: 'WERRATTE B', isBoss: false },
+  ],
+};
+
 export class BattleScene extends Phaser.Scene {
   private manifests!: Record<string, UnitManifest>;
   private cloud!: UnitActor;
   private aerith!: UnitActor;
   private barret!: UnitActor;
-  private targetDummy!: TargetDummy;
+  private enemies: TargetDummy[] = [];
+  private currentTarget: TargetDummy | null = null;
+  private targetMarkerContainer!: Phaser.GameObjects.Container;
+
+  public get targetDummy(): TargetDummy {
+    return this.currentTarget ?? this.enemies[0];
+  }
 
   // Turn-Order State
   private turnOrder: UnitActor[] = [];
@@ -97,8 +121,16 @@ export class BattleScene extends Phaser.Scene {
     // 2. Combat Grids (Floor Slots)
     this.createCombatGrids();
 
-    // 3. Target Dummy (Werratte) on Back-Mid (220, 360)
-    this.targetDummy = new TargetDummy(this, 220, 360, this.manifests.training_dummy);
+    // 3. Target Marker for interactive selection
+    this.createTargetMarker();
+
+    // Listen for enemy clicks on the battlefield
+    this.events.on('enemy_clicked', (enemy: TargetDummy) => {
+      if (this.combatState === 'PLAYER_TURN' && enemy.currentHp > 0) {
+        this.setTarget(enemy, true);
+        this.updateStatus(`Ziel gewählt: ${enemy.nameTag} (${enemy.currentHp} HP)`);
+      }
+    });
 
     // 4. Instantiate Party Units
     // Cloud: Front-Mid (880, 360) - Vanguard (3.200 HP)
@@ -179,8 +211,8 @@ export class BattleScene extends Phaser.Scene {
       }
     });
 
-    // 8. Start Battle 1: Smooth spawn materialize animation, then unlocks Round 1!
-    this.targetDummy.playSpawnAnimation(5000, () => {
+    // 8. Start Battle 1: Materialize encounter 1, then unlocks Round 1!
+    this.spawnEncounter(1, () => {
       this.startRound();
     });
   }
@@ -190,7 +222,9 @@ export class BattleScene extends Phaser.Scene {
     if (this.cloud) this.cloud.updateDepth();
     if (this.aerith) this.aerith.updateDepth();
     if (this.barret) this.barret.updateDepth();
-    if (this.targetDummy) this.targetDummy.setDepth(this.targetDummy.y);
+    this.enemies.forEach((e) => {
+      if (e.visible) e.setDepth(e.y);
+    });
   }
 
   private createArenaBackground(width: number, height: number): void {
@@ -245,11 +279,11 @@ export class BattleScene extends Phaser.Scene {
       }).setOrigin(0.5).setDepth(11);
     });
 
-    // Enemy Slot (Left, Back-Mid)
+    // Enemy Slot (Left)
     const enemySlots = [
-      { x: 220, y: 360, label: 'Back-Mid (Werratte)', isBoss: true },
-      { x: 400, y: 220, label: 'Front-Top (Frei)', isBoss: false },
-      { x: 400, y: 500, label: 'Front-Bot (Frei)', isBoss: false },
+      { x: 220, y: 360, label: 'Back-Mid (Boss-Slot)', isBoss: true },
+      { x: 400, y: 220, label: 'Front-Top (Gegner 1)', isBoss: false },
+      { x: 400, y: 500, label: 'Front-Bot (Gegner 2)', isBoss: false },
     ];
 
     enemySlots.forEach((slot) => {
@@ -576,10 +610,140 @@ export class BattleScene extends Phaser.Scene {
   }
 
   /**
+   * Creates the visual JRPG target marker floating above the selected enemy.
+   */
+  private createTargetMarker(): void {
+    this.targetMarkerContainer = this.add.container(0, 0);
+    this.targetMarkerContainer.setDepth(2600);
+    this.targetMarkerContainer.setVisible(false);
+
+    // Glowing red downward arrow ▼
+    const arrow = this.add.text(0, 0, '▼', {
+      fontFamily: 'Arial, sans-serif',
+      fontSize: '22px',
+      color: '#ef4444',
+      stroke: '#450a0a',
+      strokeThickness: 4,
+      fontStyle: 'bold',
+    }).setOrigin(0.5);
+
+    // Pill label [ZIEL]
+    const labelBg = this.add.rectangle(0, -18, 52, 16, 0xdc2626, 0.95);
+    labelBg.setStrokeStyle(1, 0xfecaca);
+    const labelText = this.add.text(0, -18, 'ZIEL', {
+      fontFamily: 'monospace',
+      fontSize: '10px',
+      color: '#ffffff',
+      fontStyle: 'bold',
+    }).setOrigin(0.5);
+
+    this.targetMarkerContainer.add([arrow, labelBg, labelText]);
+
+    // Continuous floating bobbing animation
+    this.tweens.add({
+      targets: this.targetMarkerContainer,
+      y: '-=8',
+      duration: 380,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut',
+    });
+  }
+
+  /**
+   * Sets the specified enemy as the active attack target and positions the marker.
+   */
+  public setTarget(enemy: TargetDummy, smooth = true): void {
+    if (!enemy || enemy.currentHp <= 0) return;
+    this.currentTarget = enemy;
+
+    const targetX = enemy.x;
+    const targetY = enemy.y - 82;
+
+    this.targetMarkerContainer.setVisible(
+      this.combatState === 'PLAYER_TURN' || this.combatState === 'HERO_ATTACKING'
+    );
+
+    if (smooth && this.targetMarkerContainer.visible) {
+      this.tweens.add({
+        targets: this.targetMarkerContainer,
+        x: targetX,
+        y: targetY,
+        duration: 140,
+        ease: 'Cubic.easeOut',
+      });
+    } else {
+      this.targetMarkerContainer.setPosition(targetX, targetY);
+    }
+  }
+
+  /**
+   * Automatically switches targeting to the next alive enemy if current target dies.
+   */
+  private autoRetarget(): TargetDummy | null {
+    const nextAlive = this.enemies.find((e) => e.currentHp > 0);
+    if (nextAlive) {
+      this.setTarget(nextAlive, true);
+      return nextAlive;
+    } else {
+      this.currentTarget = null;
+      this.targetMarkerContainer.setVisible(false);
+      return null;
+    }
+  }
+
+  /**
+   * Spawns the encounter wave according to ENCOUNTERS data structure.
+   */
+  private spawnEncounter(fightNum: number, onComplete?: () => void): void {
+    const configs = ENCOUNTERS[fightNum] || [
+      // Fallback for fight 3+: scale fight 2 with HP scaling
+      { x: 400, y: 220, hp: Math.round(3500 * Math.pow(1.18, fightNum - 1)), nameTag: 'WERRATTE A', isBoss: false },
+      { x: 400, y: 500, hp: Math.round(3500 * Math.pow(1.18, fightNum - 1)), nameTag: 'WERRATTE B', isBoss: false },
+    ];
+
+    // Ensure enough TargetDummy instances in pool
+    while (this.enemies.length < configs.length) {
+      const dummy = new TargetDummy(this, 0, 0, this.manifests.training_dummy);
+      this.enemies.push(dummy);
+    }
+
+    // Hide any unused dummies from prior fights
+    for (let i = configs.length; i < this.enemies.length; i++) {
+      this.enemies[i].setVisible(false);
+      this.enemies[i].disableInteractive();
+    }
+
+    let completedCount = 0;
+    const totalToSpawn = configs.length;
+
+    configs.forEach((cfg, idx) => {
+      const enemy = this.enemies[idx];
+      enemy.setBaseSlot(cfg.x, cfg.y);
+      enemy.isBoss = cfg.isBoss;
+      enemy.setNameTag(cfg.nameTag);
+      enemy.setDepth(cfg.y);
+
+      // Play spawn animation on each enemy
+      enemy.playSpawnAnimation(cfg.hp, cfg.nameTag, () => {
+        completedCount++;
+        if (completedCount === totalToSpawn) {
+          const firstAlive = this.enemies.find((e) => e.currentHp > 0);
+          if (firstAlive) {
+            this.setTarget(firstAlive, false);
+          }
+          if (onComplete) onComplete();
+        }
+      });
+    });
+  }
+
+  /**
    * Starts a new combat round: resets living heroes' action flags and selects first alive hero.
    */
   private startRound(): void {
-    if (this.targetDummy.currentHp <= 0) {
+    const allDead = this.enemies.every((e) => e.currentHp <= 0);
+    if (allDead) {
       this.triggerVictory();
       return;
     }
@@ -602,6 +766,13 @@ export class BattleScene extends Phaser.Scene {
     this.activeHeroIndex = firstAliveIdx;
     this.combatState = 'PLAYER_TURN';
 
+    // Ensure active target is selected and marker is visible
+    if (!this.currentTarget || this.currentTarget.currentHp <= 0) {
+      this.autoRetarget();
+    } else {
+      this.setTarget(this.currentTarget, false);
+    }
+
     this.roundBannerText.setText(`KAMPF ${this.fightNumber}/${this.totalFights} • RUNDE ${this.currentRound}`);
     this.roundBannerText.setColor('#38bdf8');
 
@@ -614,7 +785,8 @@ export class BattleScene extends Phaser.Scene {
    * Advances the turn pointer to the next living hero who hasn't acted yet.
    */
   private advanceToNextHero(): void {
-    if (this.targetDummy.currentHp <= 0) {
+    const allDead = this.enemies.every((e) => e.currentHp <= 0);
+    if (allDead) {
       this.triggerVictory();
       return;
     }
@@ -784,7 +956,8 @@ export class BattleScene extends Phaser.Scene {
       this.updatePartyStatusUi();
 
       // Check Victory
-      if (this.targetDummy.currentHp <= 0) {
+      const allDead = this.enemies.every((e) => e.currentHp <= 0);
+      if (allDead) {
         this.triggerVictory();
         return;
       }
@@ -798,15 +971,21 @@ export class BattleScene extends Phaser.Scene {
    * Executes hero attack animation, movement, damage and returns to base.
    */
   private executeHeroSequence(hero: UnitActor, onComplete: () => void): void {
+    const target = this.currentTarget ?? this.autoRetarget();
+    if (!target) {
+      onComplete();
+      return;
+    }
+
     const homeX = hero.homeSlot.x;
     const homeY = hero.homeSlot.y;
-    const targetX = this.targetDummy.x;
-    const targetY = this.targetDummy.y;
+    const targetX = target.x;
+    const targetY = target.y;
     const config = hero.combatConfig;
 
     if (hero === this.barret) {
       // --- BARRET: GATLING GUN BURST (Frames 14, 17, 20, 23) ---
-      this.updateStatus(`Aktion: BARRET feuert Gatling-Gun-Salve...`);
+      this.updateStatus(`Aktion: BARRET feuert Gatling-Gun-Salve auf ${target.nameTag}...`);
       const burstFrames = [14, 17, 20, 23];
       const firedFrames = new Set<number>();
 
@@ -817,7 +996,7 @@ export class BattleScene extends Phaser.Scene {
           const isCrit = Math.random() < 0.2;
           let bulletDmg = Phaser.Math.Between(130, 180);
           if (isCrit) bulletDmg = Math.round(bulletDmg * 1.5);
-          this.fireBulletProjectile(homeX, homeY, targetX, targetY, bulletDmg, isCrit);
+          this.fireBulletProjectile(homeX, homeY, targetX, targetY, bulletDmg, isCrit, target);
         }
       };
 
@@ -828,7 +1007,7 @@ export class BattleScene extends Phaser.Scene {
         hero.off(Phaser.Animations.Events.ANIMATION_UPDATE, onAnimUpdate);
         if (firedFrames.size === 0) {
           const isCrit = Math.random() < 0.2;
-          this.fireBulletProjectile(homeX, homeY, targetX, targetY, 550, isCrit);
+          this.fireBulletProjectile(homeX, homeY, targetX, targetY, 550, isCrit, target);
         }
 
         // Standardized returnToIdle handles Barret's stationary recoil via manifest metadata
@@ -836,13 +1015,13 @@ export class BattleScene extends Phaser.Scene {
       });
     } else if (config.attackType === 'ranged') {
       // --- AERITH: RANGED HOLY MAGIC ---
-      this.updateStatus(`Aktion: AERITH wirkt Heiliges Licht...`);
+      this.updateStatus(`Aktion: AERITH wirkt Heiliges Licht auf ${target.nameTag}...`);
       let hitTriggered = false;
 
       const onAnimUpdate = (_anim: Phaser.Animations.Animation, frame: Phaser.Animations.AnimationFrame) => {
         if (!hitTriggered && Number(frame.textureFrame) === config.hitFrameIndex) {
           hitTriggered = true;
-          this.fireMagicProjectile(homeX, homeY, targetX, targetY);
+          this.fireMagicProjectile(homeX, homeY, targetX, targetY, target);
         }
       };
 
@@ -852,7 +1031,7 @@ export class BattleScene extends Phaser.Scene {
       hero.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
         hero.off(Phaser.Animations.Events.ANIMATION_UPDATE, onAnimUpdate);
         if (!hitTriggered) {
-          this.fireMagicProjectile(homeX, homeY, targetX, targetY);
+          this.fireMagicProjectile(homeX, homeY, targetX, targetY, target);
         }
         hero.returnToIdle(onComplete);
       });
@@ -861,7 +1040,7 @@ export class BattleScene extends Phaser.Scene {
       const attackArrivalX = targetX + config.targetOffsetX;
       const attackArrivalY = targetY;
 
-      this.updateStatus(`Aktion: ${hero.heroName} stürmt zum Ziel vor...`);
+      this.updateStatus(`Aktion: ${hero.heroName} stürmt auf ${target.nameTag} vor...`);
       hero.playAnimation('move');
 
       this.tweens.add({
@@ -876,7 +1055,7 @@ export class BattleScene extends Phaser.Scene {
           const onAnimUpdate = (_anim: Phaser.Animations.Animation, frame: Phaser.Animations.AnimationFrame) => {
             if (!hitTriggered && Number(frame.textureFrame) === config.hitFrameIndex) {
               hitTriggered = true;
-              this.applyHeroMeleeDamage(hero);
+              this.applyHeroMeleeDamage(hero, target);
             }
           };
 
@@ -886,7 +1065,7 @@ export class BattleScene extends Phaser.Scene {
           hero.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
             hero.off(Phaser.Animations.Events.ANIMATION_UPDATE, onAnimUpdate);
             if (!hitTriggered) {
-              this.applyHeroMeleeDamage(hero);
+              this.applyHeroMeleeDamage(hero, target);
             }
 
             hero.playAnimation('move');
@@ -910,7 +1089,7 @@ export class BattleScene extends Phaser.Scene {
     }
   }
 
-  private applyHeroMeleeDamage(hero: UnitActor): void {
+  private applyHeroMeleeDamage(hero: UnitActor, target: TargetDummy): void {
     let baseDmg = 0;
     let isCrit = false;
 
@@ -924,10 +1103,16 @@ export class BattleScene extends Phaser.Scene {
     }
 
     if (isCrit) baseDmg = Math.round(baseDmg * 1.5);
-    this.targetDummy.applyDamage(baseDmg, isCrit, 'physical');
+    target.applyDamage(baseDmg, isCrit, 'physical');
+    if (target.currentHp <= 0) {
+      target.playDefeatFade();
+      if (target === this.currentTarget) {
+        this.autoRetarget();
+      }
+    }
   }
 
-  private fireMagicProjectile(fromX: number, fromY: number, toX: number, toY: number): void {
+  private fireMagicProjectile(fromX: number, fromY: number, toX: number, toY: number, target: TargetDummy): void {
     const projectile = this.add.circle(fromX - 40, fromY - 40, 10, 0x67e8f9, 0.95);
     projectile.setDepth(1500);
 
@@ -947,7 +1132,13 @@ export class BattleScene extends Phaser.Scene {
         let baseDmg = Phaser.Math.Between(700, 900);
         baseDmg = Math.round(baseDmg * this.aerithMagicMultiplier);
         const isCrit = Math.random() < 0.15;
-        this.targetDummy.applyDamage(isCrit ? Math.round(baseDmg * 1.5) : baseDmg, isCrit, 'holy');
+        target.applyDamage(isCrit ? Math.round(baseDmg * 1.5) : baseDmg, isCrit, 'holy');
+        if (target.currentHp <= 0) {
+          target.playDefeatFade();
+          if (target === this.currentTarget) {
+            this.autoRetarget();
+          }
+        }
       },
     });
   }
@@ -958,7 +1149,8 @@ export class BattleScene extends Phaser.Scene {
     toX: number,
     toY: number,
     damage: number,
-    isCrit: boolean
+    isCrit: boolean,
+    target: TargetDummy
   ): void {
     const startX = fromX - 60;
     const startY = fromY - 32;
@@ -982,16 +1174,23 @@ export class BattleScene extends Phaser.Scene {
       onComplete: () => {
         bullet.destroy();
         glow.destroy();
-        this.targetDummy.applyDamage(damage, isCrit, 'physical');
+        target.applyDamage(damage, isCrit, 'physical');
+        if (target.currentHp <= 0) {
+          target.playDefeatFade();
+          if (target === this.currentTarget) {
+            this.autoRetarget();
+          }
+        }
       },
     });
   }
 
   /**
-   * Werratte executes counter-attack on live target.
+   * Sequential enemy turn: each living enemy attacks one after another with 250ms pause.
    */
   private executeEnemyTurn(): void {
-    if (this.targetDummy.currentHp <= 0) {
+    const livingEnemies = this.enemies.filter((e) => e.currentHp > 0);
+    if (livingEnemies.length === 0) {
       this.triggerVictory();
       return;
     }
@@ -1002,18 +1201,13 @@ export class BattleScene extends Phaser.Scene {
       return;
     }
 
-    const target = aliveHeroes.includes(this.cloud) ? this.cloud : aliveHeroes[0];
-    this.updateStatus(`GEGNER-ZUG: Werratte stürmt vor und greift ${target.heroName} an!`);
+    this.combatState = 'ENEMY_TURN';
+    this.targetMarkerContainer.setVisible(false);
+    this.updateCommandMenu();
 
-    this.targetDummy.executeAttack(
-      target.x,
-      target.y,
-      () => {
-        const dmg = Phaser.Math.Between(250, 400);
-        target.applyDamage(dmg);
-        this.updatePartyStatusUi();
-      },
-      () => {
+    const attackNextEnemy = (index: number) => {
+      if (index >= livingEnemies.length) {
+        // All alive enemies executed their counter-attacks
         const stillAlive = this.turnOrder.filter((h) => !h.isDead);
         if (stillAlive.length === 0) {
           this.triggerDefeat();
@@ -1021,13 +1215,49 @@ export class BattleScene extends Phaser.Scene {
           this.currentRound++;
           this.time.delayedCall(450, () => this.startRound());
         }
+        return;
       }
-    );
+
+      const enemy = livingEnemies[index];
+      if (enemy.currentHp <= 0) {
+        attackNextEnemy(index + 1);
+        return;
+      }
+
+      const currentAliveHeroes = this.turnOrder.filter((h) => !h.isDead);
+      if (currentAliveHeroes.length === 0) {
+        this.triggerDefeat();
+        return;
+      }
+
+      // Target selection: Cloud if alive (Tank/Frontline), else first alive hero
+      const heroTarget = currentAliveHeroes.includes(this.cloud) ? this.cloud : currentAliveHeroes[0];
+      const stepStr = livingEnemies.length > 1 ? ` (${index + 1}/${livingEnemies.length})` : '';
+      this.updateStatus(`GEGNER-ZUG${stepStr}: ${enemy.nameTag} stürmt vor und greift ${heroTarget.heroName} an!`);
+
+      enemy.executeAttack(
+        heroTarget.x,
+        heroTarget.y,
+        () => {
+          const dmg = Phaser.Math.Between(220, 360);
+          heroTarget.applyDamage(dmg);
+          this.updatePartyStatusUi();
+        },
+        () => {
+          // After attack completes, pause 250ms before the next enemy acts
+          this.time.delayedCall(250, () => {
+            attackNextEnemy(index + 1);
+          });
+        }
+      );
+    };
+
+    attackNextEnemy(0);
   }
 
   /**
    * Fluid Victory Staging:
-   * 1. Werratte fades out via alpha tween.
+   * 1. All enemies fade out via alpha tween.
    * 2. All living heroes continuously celebrate in their looping 'win' animations.
    * 3. Bottom JRPG panel slides smoothly down off-screen.
    * 4. Golden "VICTORY" banner smoothly fades in at the top.
@@ -1035,9 +1265,14 @@ export class BattleScene extends Phaser.Scene {
    */
   private triggerVictory(): void {
     this.combatState = 'VICTORY';
+    this.targetMarkerContainer.setVisible(false);
 
-    // 1. Werratte red flash and alpha fadeout
-    this.targetDummy.playDefeatFade();
+    // 1. All enemies red flash and alpha fadeout if visible
+    this.enemies.forEach((enemy) => {
+      if (enemy.visible) {
+        enemy.playDefeatFade();
+      }
+    });
 
     // 2. All living heroes start continuous looping win celebrations
     this.turnOrder.forEach((hero) => {
@@ -1351,10 +1586,7 @@ export class BattleScene extends Phaser.Scene {
       return;
     }
 
-    // 2. Scale Werratte for this encounter (+18% HP per fight)
-    const scaledHp = Math.round(5000 * Math.pow(1.18, this.fightNumber - 1));
-
-    // 3. Living heroes return from 'win' back to 'idle'
+    // 2. Living heroes return from 'win' back to 'idle'
     this.turnOrder.forEach((hero) => {
       if (!hero.isDead) {
         hero.playAnimation('idle');
@@ -1373,7 +1605,7 @@ export class BattleScene extends Phaser.Scene {
     this.currentRound = 1;
     this.updateStatus(`Kampf ${this.fightNumber}/${this.totalFights}: Neuer Gegner materialisiert sich...`);
 
-    this.targetDummy.playSpawnAnimation(scaledHp, () => {
+    this.spawnEncounter(this.fightNumber, () => {
       this.startRound();
     });
   }
@@ -1466,7 +1698,7 @@ export class BattleScene extends Phaser.Scene {
     this.turnOrder.forEach((hero) => hero.resetCombatState());
     this.bottomHudContainer.setY(0);
 
-    this.targetDummy.playSpawnAnimation(5000, () => {
+    this.spawnEncounter(1, () => {
       this.startRound();
     });
   }

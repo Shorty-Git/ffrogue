@@ -1,14 +1,23 @@
 import Phaser from 'phaser';
 import { UnitManifest } from '../types/manifest';
 
+export interface TargetDummyConfig {
+  maxHp?: number;
+  nameTag?: string;
+  isBoss?: boolean;
+}
+
 export class TargetDummy extends Phaser.GameObjects.Container {
   public maxHp: number = 5000;
   public currentHp: number = 5000;
-  public readonly baseX: number;
-  public readonly baseY: number;
+  public baseX: number;
+  public baseY: number;
+  public nameTag: string;
+  public isBoss: boolean;
   public readonly manifest: UnitManifest;
 
   public sprite!: Phaser.GameObjects.Sprite;
+  private nameText!: Phaser.GameObjects.Text;
   private barWidth: number = 140;
   private barHeight: number = 10;
   private fgBar!: Phaser.GameObjects.Rectangle;
@@ -17,15 +26,34 @@ export class TargetDummy extends Phaser.GameObjects.Container {
   private koBanner!: Phaser.GameObjects.Text;
   private chipTween?: Phaser.Tweens.Tween;
 
-  constructor(scene: Phaser.Scene, x: number, y: number, manifest: UnitManifest) {
+  constructor(
+    scene: Phaser.Scene,
+    x: number,
+    y: number,
+    manifest: UnitManifest,
+    config?: TargetDummyConfig
+  ) {
     super(scene, x, y);
     this.baseX = x;
     this.baseY = y;
     this.manifest = manifest;
+    this.maxHp = config?.maxHp ?? 5000;
+    this.currentHp = this.maxHp;
+    this.nameTag = config?.nameTag ?? 'WERRATTE';
+    this.isBoss = config?.isBoss ?? false;
 
     this.registerAnimations();
     this.createDummySprite();
     this.createHealthBar();
+
+    // Enable click interaction on container & sprite
+    this.setSize(130, 140);
+    this.setInteractive({ useHandCursor: true });
+    this.on('pointerdown', () => {
+      if (this.currentHp > 0) {
+        this.scene.events.emit('enemy_clicked', this);
+      }
+    });
 
     this.setDepth(y);
     scene.add.existing(this);
@@ -67,14 +95,28 @@ export class TargetDummy extends Phaser.GameObjects.Container {
     }
 
     // Name Tag floating under stand ellipse
-    const nameText = this.scene.add.text(0, 34, 'WERRATTE / DIRE RAT', {
+    this.nameText = this.scene.add.text(0, 34, this.nameTag, {
       fontFamily: 'monospace',
       fontSize: '11px',
       color: '#f87171',
       fontStyle: 'bold',
     }).setOrigin(0.5);
 
-    this.add([this.sprite, nameText]);
+    this.add([this.sprite, this.nameText]);
+  }
+
+  public setNameTag(name: string): void {
+    this.nameTag = name;
+    if (this.nameText) {
+      this.nameText.setText(name);
+    }
+  }
+
+  public setBaseSlot(x: number, y: number): void {
+    this.baseX = x;
+    this.baseY = y;
+    this.setPosition(x, y);
+    this.setDepth(y);
   }
 
   private createHealthBar(): void {
@@ -317,12 +359,15 @@ export class TargetDummy extends Phaser.GameObjects.Container {
    * Smooth defeat staging: red flash, UI fade, and alpha fadeout of monster sprite.
    */
   public playDefeatFade(onComplete?: () => void): void {
+    this.disableInteractive();
+    this.sprite.disableInteractive();
+
     // 1. Red impact tint
     this.sprite.setTintFill(0xef4444);
 
-    // Fade out HP bar and text
+    // Fade out HP bar, name text and banner
     this.scene.tweens.add({
-      targets: [this.fgBar, this.chipBar, this.hpText, this.koBanner],
+      targets: [this.fgBar, this.chipBar, this.hpText, this.nameText, this.koBanner],
       alpha: 0,
       duration: 200,
     });
@@ -351,9 +396,12 @@ export class TargetDummy extends Phaser.GameObjects.Container {
    * fades in with slight bounce (2.0 -> 2.65 -> 2.5),
    * white flash for 60ms, then transitions into idle and fades in HP bar.
    */
-  public playSpawnAnimation(newMaxHp?: number, onComplete?: () => void): void {
+  public playSpawnAnimation(newMaxHp?: number, nameTag?: string, onComplete?: () => void): void {
     if (newMaxHp) {
       this.maxHp = newMaxHp;
+    }
+    if (nameTag) {
+      this.setNameTag(nameTag);
     }
     this.currentHp = this.maxHp;
 
@@ -361,16 +409,19 @@ export class TargetDummy extends Phaser.GameObjects.Container {
     this.setPosition(this.baseX, this.baseY);
     this.setVisible(true);
     this.koBanner.setVisible(false);
+    this.setInteractive({ useHandCursor: true });
+    this.sprite.setInteractive({ useHandCursor: true });
 
     // Initial state: transparent and scaled down
     this.sprite.setAlpha(0);
     this.sprite.setScale(2.0); // 0.8x of 2.5
     this.sprite.clearTint();
 
-    // Reset HP bars (hidden initially, fade in during spawn)
+    // Reset HP bars & name text (hidden initially, fade in during spawn)
     this.fgBar.setAlpha(0);
     this.chipBar.setAlpha(0);
     this.hpText.setAlpha(0);
+    this.nameText.setAlpha(0);
     this.fgBar.width = this.barWidth;
     this.chipBar.width = this.barWidth;
     this.fgBar.fillColor = 0x22c55e;
@@ -412,7 +463,7 @@ export class TargetDummy extends Phaser.GameObjects.Container {
 
           // 4. Fade in HP bar & name tag
           this.scene.tweens.add({
-            targets: [this.fgBar, this.chipBar, this.hpText],
+            targets: [this.fgBar, this.chipBar, this.hpText, this.nameText],
             alpha: 1,
             duration: 180,
             onComplete: () => {
@@ -427,7 +478,33 @@ export class TargetDummy extends Phaser.GameObjects.Container {
   /**
    * Resets or respawns Werratte to full health and returns to base slot.
    */
-  public resetCombat(newMaxHp?: number): void {
+  public resetCombat(newMaxHp?: number, nameTag?: string): void {
+    if (newMaxHp) {
+      this.maxHp = newMaxHp;
+    }
+    if (nameTag) {
+      this.setNameTag(nameTag);
+    }
+    this.currentHp = this.maxHp;
+    this.setVisible(true);
+    this.setInteractive({ useHandCursor: true });
+    this.sprite.setInteractive({ useHandCursor: true });
+    this.sprite.setAlpha(1);
+    this.sprite.clearTint();
+    this.sprite.setScale(2.5);
+    this.setPosition(this.baseX, this.baseY);
+
+    this.fgBar.setAlpha(1);
+    this.chipBar.setAlpha(1);
+    this.hpText.setAlpha(1);
+    this.nameText.setAlpha(1);
+    this.koBanner.setVisible(false);
+    this.koBanner.setAlpha(1);
+
+    this.fgBar.width = this.barWidth;
+    this.chipBar.width = this.barWidth;
+    this.fgBar.fillColor = 0x22c55e;
+    this.hpText.setText(`${this.maxHp.toLocaleString()} / ${this.maxHp.toLocaleString()} HP`);
     if (newMaxHp) {
       this.maxHp = newMaxHp;
     }
