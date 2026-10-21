@@ -1385,18 +1385,27 @@ export class BattleScene extends Phaser.Scene {
           });
         }
 
-        // 2. White flash on target monster
+        // 2. Spawn authentic FFBE visual skill effect with Additive Blending
+        if (hero === this.cloud) {
+          this.spawnCombatEffect('eff_slash_heavy', hitTarget.x, hitTarget.y, 2.2);
+        } else if (hero === this.barret) {
+          this.spawnCombatEffect('eff_grenade_blast', hitTarget.x, hitTarget.y, 2.2);
+        } else if (hero === this.aerith) {
+          this.spawnCombatEffect('eff_curaga_light', hitTarget.x, hitTarget.y - 20, 2.0);
+        }
+
+        // 3. White flash on target monster
         hitTarget.sprite.setTintFill(0xffffff);
         this.time.delayedCall(70, () => {
           hitTarget.sprite.clearTint();
         });
 
-        // 3. Screen shake scaled by multiplier
+        // 4. Screen shake scaled by multiplier
         const intensity = skill.damageMultiplier >= 4.0 ? 0.020 : skill.damageMultiplier >= 2.5 ? 0.014 : 0.009;
         const duration = skill.damageMultiplier >= 4.0 ? 250 : 180;
         this.cameras.main.shake(duration, intensity);
 
-        // 4. Calculate damage
+        // 5. Calculate damage
         let base = hero === this.cloud ? Phaser.Math.Between(340, 440) * this.cloudDmgMultiplier
                  : hero === this.aerith ? Phaser.Math.Between(260, 340) * this.aerithMagicMultiplier
                  : Phaser.Math.Between(260, 360);
@@ -1412,6 +1421,17 @@ export class BattleScene extends Phaser.Scene {
       } else if (skill.scope === 'all_enemies') {
         const living = this.enemies.filter((e) => e.currentHp > 0);
         if (living.length === 0) return;
+
+        // Spawn authentic FFBE visual AoE effect with Additive Blending
+        living.forEach((e) => {
+          if (hero === this.cloud) {
+            this.spawnCombatEffect('eff_slash_heavy', e.x, e.y, 2.0);
+          } else if (hero === this.barret) {
+            this.spawnCombatEffect('eff_grenade_blast', e.x, e.y, 2.4);
+          } else if (hero === this.aerith) {
+            this.spawnCombatEffect('eff_curaga_light', e.x, e.y - 20, 2.2);
+          }
+        });
 
         // White flash all living enemies
         living.forEach((e) => {
@@ -1434,6 +1454,13 @@ export class BattleScene extends Phaser.Scene {
           this.handleTargetDamaged(e);
         });
       } else if (skill.scope === 'party') {
+        // Spawn authentic celestial cure pillar with Additive Blending on all living heroes
+        this.turnOrder.forEach((h) => {
+          if (!h.isDead) {
+            this.spawnCombatEffect('eff_curaga_light', h.x, h.y - 20, 2.0);
+          }
+        });
+
         // Screen flash
         this.cameras.main.flash(120, 200, 255, 200, false);
 
@@ -1526,6 +1553,31 @@ export class BattleScene extends Phaser.Scene {
       ease: 'Cubic.easeOut',
       onComplete: () => critText.destroy(),
     });
+  }
+
+  /**
+   * Spawns an authentic FFBE visual effect sprite with Additive Blending.
+   * Additive Blending guarantees 0% opacity on dark borders (preventing black bounding boxes),
+   * while sparks, flame arcs, and light beams blend seamlessly into the scene.
+   */
+  private spawnCombatEffect(
+    effectKey: string,
+    x: number,
+    y: number,
+    scale = 2.0,
+    onComplete?: () => void
+  ): Phaser.GameObjects.Sprite {
+    const sprite = this.add.sprite(x, y, effectKey);
+    sprite.setScale(scale);
+    sprite.setDepth(2000); // Frontmost layer above characters and monsters
+    sprite.setBlendMode(Phaser.BlendModes.ADD);
+
+    sprite.play(effectKey);
+    sprite.once('animationcomplete', () => {
+      sprite.destroy();
+      if (onComplete) onComplete();
+    });
+    return sprite;
   }
 
   /**
