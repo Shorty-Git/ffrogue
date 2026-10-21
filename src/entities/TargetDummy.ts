@@ -1,70 +1,84 @@
 import Phaser from 'phaser';
+import { UnitManifest } from '../types/manifest';
 
 export class TargetDummy extends Phaser.GameObjects.Container {
   public maxHp: number = 5000;
   public currentHp: number = 5000;
   public readonly baseX: number;
   public readonly baseY: number;
+  public readonly manifest: UnitManifest;
 
+  public sprite!: Phaser.GameObjects.Sprite;
   private barWidth: number = 140;
   private barHeight: number = 10;
   private fgBar!: Phaser.GameObjects.Rectangle;
   private chipBar!: Phaser.GameObjects.Rectangle;
   private hpText!: Phaser.GameObjects.Text;
   private koBanner!: Phaser.GameObjects.Text;
-  private flashOverlay!: Phaser.GameObjects.Graphics;
   private chipTween?: Phaser.Tweens.Tween;
 
-  constructor(scene: Phaser.Scene, x: number, y: number) {
+  constructor(scene: Phaser.Scene, x: number, y: number, manifest: UnitManifest) {
     super(scene, x, y);
     this.baseX = x;
     this.baseY = y;
+    this.manifest = manifest;
 
-    this.createDummyGraphics();
+    this.registerAnimations();
+    this.createDummySprite();
     this.createHealthBar();
 
     this.setDepth(y);
     scene.add.existing(this);
   }
 
-  private createDummyGraphics(): void {
-    // 1. Stand and pole
-    const stand = this.scene.add.graphics();
-    stand.fillStyle(0x78716c, 1);
-    stand.fillRect(-6, -32, 12, 32);
-    stand.fillRect(-24, -4, 48, 5);
+  private registerAnimations(): void {
+    if (!this.manifest || !this.manifest.animations) return;
 
-    // 2. Dummy target body
-    const body = this.scene.add.graphics();
-    body.fillStyle(0xef4444, 0.35);
-    body.fillCircle(0, -60, 28);
-    body.lineStyle(2, 0xf87171, 0.9);
-    body.strokeCircle(0, -60, 28);
+    for (const [animName, animMeta] of Object.entries(this.manifest.animations)) {
+      const phaserKey = `training_dummy_${animName}`;
+      if (!this.scene.anims.exists(phaserKey)) {
+        this.scene.anims.create({
+          key: phaserKey,
+          frames: animMeta.frames.map((f) => ({
+            key: phaserKey,
+            frame: f.index,
+            duration: f.durationMs,
+          })),
+          repeat: animName === 'idle' ? -1 : 0,
+        });
+      }
+    }
+  }
 
-    // Target cross inside dummy
-    body.lineBetween(-20, -60, 20, -60);
-    body.lineBetween(0, -80, 0, -40);
+  private createDummySprite(): void {
+    // Real authentic FFBE Training Dummy Sprite
+    const idleMeta = this.manifest.animations['idle'];
+    this.sprite = this.scene.add.sprite(0, 0, 'training_dummy_idle', 0);
+    this.sprite.setScale(2.5);
 
-    // 3. White Flash Overlay (silhouette)
-    this.flashOverlay = this.scene.add.graphics();
-    this.flashOverlay.fillStyle(0xffffff, 1);
-    this.flashOverlay.fillCircle(0, -60, 29);
-    this.flashOverlay.fillRect(-6, -32, 12, 32);
-    this.flashOverlay.setAlpha(0);
+    if (idleMeta) {
+      this.sprite.setOrigin(idleMeta.pivotX, idleMeta.pivotY);
+    } else {
+      this.sprite.setOrigin(0.5, 0.76);
+    }
 
-    // 4. Name Tag
-    const nameText = this.scene.add.text(0, -112, 'ZIEL-DUMMY', {
+    if (this.scene.anims.exists('training_dummy_idle')) {
+      this.sprite.play('training_dummy_idle');
+    }
+
+    // Name Tag floating above dummy
+    const nameText = this.scene.add.text(0, -158, 'TRAINING DUMMY (FFBE)', {
       fontFamily: 'monospace',
-      fontSize: '12px',
+      fontSize: '11px',
       color: '#f87171',
       fontStyle: 'bold',
     }).setOrigin(0.5);
 
-    this.add([stand, body, this.flashOverlay, nameText]);
+    this.add([this.sprite, nameText]);
   }
 
   private createHealthBar(): void {
-    const barY = -92;
+    const barY = -138;
     const halfWidth = this.barWidth / 2;
 
     // 1. Dark background with border
@@ -85,7 +99,7 @@ export class TargetDummy extends Phaser.GameObjects.Container {
     }).setOrigin(0.5);
 
     // 5. K.O. Banner (hidden by default)
-    this.koBanner = this.scene.add.text(0, -60, 'K.O. - BESIEGT', {
+    this.koBanner = this.scene.add.text(0, -80, 'K.O. - BESIEGT', {
       fontFamily: 'monospace',
       fontSize: '13px',
       color: '#ffffff',
@@ -98,7 +112,7 @@ export class TargetDummy extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Applies damage, triggers impact shake & flash, updates 2-phase HP bar and spawns bouncing floating number.
+   * Applies damage, triggers impact shake & white flash, updates 2-phase HP bar and spawns bouncing floating number.
    */
   public applyDamage(damage: number, isCritical = false, damageType: 'physical' | 'holy' = 'physical'): void {
     if (this.currentHp <= 0) {
@@ -107,16 +121,13 @@ export class TargetDummy extends Phaser.GameObjects.Container {
 
     this.currentHp = Math.max(0, this.currentHp - damage);
 
-    // 1. Impact Flash (White overlay for 60ms)
-    this.flashOverlay.setAlpha(0.95);
-    this.scene.tweens.add({
-      targets: this.flashOverlay,
-      alpha: 0,
-      duration: 80,
-      ease: 'Linear',
+    // 1. Impact Flash on real sprite (setTintFill white for 65ms)
+    this.sprite.setTintFill(0xffffff);
+    this.scene.time.delayedCall(65, () => {
+      this.sprite.clearTint();
     });
 
-    // 2. Impact Shake (horizontal vibration for 120ms)
+    // 2. Impact Shake (horizontal vibration for 105ms)
     this.scene.tweens.add({
       targets: this,
       x: this.baseX - 7,
@@ -176,7 +187,7 @@ export class TargetDummy extends Phaser.GameObjects.Container {
 
   private spawnDamagePopup(damage: number, isCritical: boolean, damageType: 'physical' | 'holy'): void {
     const startX = this.baseX + Phaser.Math.Between(-14, 14);
-    const startY = this.baseY - 125;
+    const startY = this.baseY - 170;
 
     let color = '#ffffff';
     let stroke = '#0f172a';
@@ -256,7 +267,7 @@ export class TargetDummy extends Phaser.GameObjects.Container {
     this.hpText.setText(`${this.maxHp.toLocaleString()} / ${this.maxHp.toLocaleString()} HP`);
 
     // Green healing text popup
-    const healText = this.scene.add.text(this.baseX, this.baseY - 130, '+5,000 HEAL', {
+    const healText = this.scene.add.text(this.baseX, this.baseY - 175, '+5,000 HEAL', {
       fontFamily: 'Arial, Helvetica, sans-serif',
       fontSize: '22px',
       color: '#4ade80',
@@ -268,7 +279,7 @@ export class TargetDummy extends Phaser.GameObjects.Container {
     this.scene.tweens.add({
       targets: healText,
       scale: 1.1,
-      y: this.baseY - 170,
+      y: this.baseY - 215,
       alpha: 0,
       duration: 750,
       ease: 'Cubic.easeOut',

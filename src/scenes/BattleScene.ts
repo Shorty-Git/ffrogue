@@ -36,7 +36,7 @@ export class BattleScene extends Phaser.Scene {
     this.createCombatGrids();
 
     // 3. Target Dummy on Centered Single-Target Slot: Back-Mid (220, 360)
-    this.targetDummy = new TargetDummy(this, 220, 360);
+    this.targetDummy = new TargetDummy(this, 220, 360, this.manifests.training_dummy);
 
     // 4. Instantiate Party Units:
     // Cloud on Front-Mid (880, 360) - Vanguard/Tank

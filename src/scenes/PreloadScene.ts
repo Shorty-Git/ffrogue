@@ -39,13 +39,15 @@ export class PreloadScene extends Phaser.Scene {
       progressBox.destroy();
     });
 
-    // Queue spritesheets for all units in manifests
+    // Queue spritesheets for all units and monsters in manifests
     if (this.manifests) {
       for (const [unitKey, manifest] of Object.entries(this.manifests)) {
         if (!manifest || !manifest.animations) continue;
 
+        const subfolder = (manifest as any).type === 'monster' ? 'monsters' : 'units';
+
         for (const [animKey, animMeta] of Object.entries(manifest.animations)) {
-          this.load.spritesheet(`${unitKey}_${animKey}`, `assets/units/${unitKey}/${animMeta.file}`, {
+          this.load.spritesheet(`${unitKey}_${animKey}`, `assets/${subfolder}/${unitKey}/${animMeta.file}`, {
             frameWidth: animMeta.frameWidth,
             frameHeight: animMeta.frameHeight,
           });
