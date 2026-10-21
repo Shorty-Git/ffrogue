@@ -10,13 +10,18 @@ export type CombatState =
   | 'VICTORY'
   | 'DEFEAT';
 
-interface HudCardElements {
+interface PartyRowUi {
   container: Phaser.GameObjects.Container;
-  hpText: Phaser.GameObjects.Text;
+  cursorText: Phaser.GameObjects.Text;
+  highlightBg: Phaser.GameObjects.Rectangle;
+  nameText: Phaser.GameObjects.Text;
+  roleText: Phaser.GameObjects.Text;
   fgBar: Phaser.GameObjects.Rectangle;
-  actionBg: Phaser.GameObjects.Rectangle;
-  actionText: Phaser.GameObjects.Text;
-  modeText?: Phaser.GameObjects.Text;
+  chipBar: Phaser.GameObjects.Rectangle;
+  hpText: Phaser.GameObjects.Text;
+  statusText: Phaser.GameObjects.Text;
+  chipTween?: Phaser.Tweens.Tween;
+  lastHp: number;
 }
 
 export class BattleScene extends Phaser.Scene {
@@ -26,18 +31,31 @@ export class BattleScene extends Phaser.Scene {
   private barret!: UnitActor;
   private targetDummy!: TargetDummy;
 
-  // Turn Loop & Combat State
+  // Turn-Order State
+  private turnOrder: UnitActor[] = [];
+  private activeHeroIndex: number = 0;
   private combatState: CombatState = 'PLAYER_TURN';
   private currentRound: number = 1;
 
-  // UI Header Elements
+  // Header UI
   private roundBannerText!: Phaser.GameObjects.Text;
   private statusText!: Phaser.GameObjects.Text;
 
-  // Bottom Party HUD Cards
-  private hudCards: Map<string, HudCardElements> = new Map();
+  // Classic JRPG Bottom HUD Elements
+  // 1. Left Box: Command Menu
+  private cmdHeaderName!: Phaser.GameObjects.Text;
+  private cmdHeaderRole!: Phaser.GameObjects.Text;
+  private cmdAttackBtnBg!: Phaser.GameObjects.Rectangle;
+  private cmdAttackBtnText!: Phaser.GameObjects.Text;
+  private cmdModeBtnBg?: Phaser.GameObjects.Rectangle;
+  private cmdModeBtnText?: Phaser.GameObjects.Text;
 
-  // End of Battle Overlay Banner
+  // 2. Right Box: Party Status
+  private partyRows: Map<string, PartyRowUi> = new Map();
+  private readonly rowBarWidth = 260;
+  private readonly rowBarHeight = 10;
+
+  // End of Battle Modal
   private endBattleBanner?: Phaser.GameObjects.Container;
 
   constructor() {
@@ -54,13 +72,13 @@ export class BattleScene extends Phaser.Scene {
     // 1. Arena Background
     this.createArenaBackground(width, height);
 
-    // 2. Party & Enemy 3-vs-3 Triangle Grids
+    // 2. Party & Enemy Combat Grids
     this.createCombatGrids();
 
-    // 3. Target Dummy (Werratte) on Centered Slot: Back-Mid (220, 360)
+    // 3. Target Dummy (Werratte) on Back-Mid (220, 360)
     this.targetDummy = new TargetDummy(this, 220, 360, this.manifests.training_dummy);
 
-    // 4. Instantiate Party Units with authentic HP & Roles
+    // 4. Instantiate Party Units
     // Cloud: Front-Mid (880, 360) - Vanguard (3.200 HP)
     this.cloud = new UnitActor(this, 880, 360, 'cloud', this.manifests.cloud, {
       maxHp: 3200,
@@ -74,14 +92,18 @@ export class BattleScene extends Phaser.Scene {
     this.cloud.setScale(2.5);
     this.cloud.setFacingLeft(true);
     this.cloud.setInteractive({ useHandCursor: true });
-    this.cloud.on('pointerdown', () => this.tryExecuteHeroAttack(this.cloud));
+    this.cloud.on('pointerdown', () => {
+      if (this.getActiveHero() === this.cloud) {
+        this.executeActiveHeroAttack();
+      }
+    });
 
-    // Aerith: Back-Top (1040, 220) - Healer / Ranged (2.100 HP)
+    // Aerith: Back-Top (1040, 220) - Healer (2.100 HP)
     this.aerith = new UnitActor(this, 1040, 220, 'aerith', this.manifests.aerith, {
       maxHp: 2100,
       heroName: 'AERITH',
       heroRole: 'HEALER',
-      attackType: 'melee', // default: staff melee run
+      attackType: 'melee', // default: staff melee strike
       targetOffsetX: 200,
       attackAnim: 'atk',
       hitFrameIndex: 19,
@@ -89,7 +111,11 @@ export class BattleScene extends Phaser.Scene {
     this.aerith.setScale(2.5);
     this.aerith.setFacingLeft(true);
     this.aerith.setInteractive({ useHandCursor: true });
-    this.aerith.on('pointerdown', () => this.tryExecuteHeroAttack(this.aerith));
+    this.aerith.on('pointerdown', () => {
+      if (this.getActiveHero() === this.aerith) {
+        this.executeActiveHeroAttack();
+      }
+    });
 
     // Barret: Back-Bot (1040, 500) - Tank / Gunner (4.500 HP)
     this.barret = new UnitActor(this, 1040, 500, 'barret', this.manifests.barret, {
@@ -104,14 +130,35 @@ export class BattleScene extends Phaser.Scene {
     this.barret.setScale(2.5);
     this.barret.setFacingLeft(true);
     this.barret.setInteractive({ useHandCursor: true });
-    this.barret.on('pointerdown', () => this.tryExecuteHeroAttack(this.barret));
+    this.barret.on('pointerdown', () => {
+      if (this.getActiveHero() === this.barret) {
+        this.executeActiveHeroAttack();
+      }
+    });
 
-    // 5. Build Clean Header & Bottom Party HUD
+    // Strict sequential turn order: Cloud -> Aerith -> Barret
+    this.turnOrder = [this.cloud, this.aerith, this.barret];
+
+    // 5. Header UI
     this.createHeaderUI(width);
-    this.createBottomPartyHud(width, height);
 
-    // 6. Start Round 1
-    this.startPlayerTurn();
+    // 6. Classic JRPG Bottom HUD
+    this.createClassicJRPGHud(width, height);
+
+    // 7. Global Keyboard Controls (Space / Enter triggers active hero attack)
+    this.input.keyboard?.on('keydown-SPACE', () => {
+      if (this.combatState === 'PLAYER_TURN') {
+        this.executeActiveHeroAttack();
+      }
+    });
+    this.input.keyboard?.on('keydown-ENTER', () => {
+      if (this.combatState === 'PLAYER_TURN') {
+        this.executeActiveHeroAttack();
+      }
+    });
+
+    // 8. Start Battle at Round 1
+    this.startRound();
   }
 
   update(): void {
@@ -174,7 +221,7 @@ export class BattleScene extends Phaser.Scene {
       }).setOrigin(0.5).setDepth(11);
     });
 
-    // Enemy Slots (Left, Arrow > pointing right, centered Boss slot)
+    // Enemy Slot (Left, Back-Mid)
     const enemySlots = [
       { x: 220, y: 360, label: 'Back-Mid (Werratte)', isBoss: true },
       { x: 400, y: 220, label: 'Front-Top (Frei)', isBoss: false },
@@ -207,7 +254,6 @@ export class BattleScene extends Phaser.Scene {
     headerBg.setStrokeStyle(1, 0x1e293b);
     headerBg.setDepth(1000);
 
-    // Title & Round
     this.roundBannerText = this.add.text(24, 16, 'RUNDE 1 • SPIELER-ZUG', {
       fontFamily: 'monospace',
       fontSize: '16px',
@@ -215,14 +261,13 @@ export class BattleScene extends Phaser.Scene {
       fontStyle: 'bold',
     }).setDepth(1001);
 
-    // Subtext status
     this.statusText = this.add.text(24, 36, 'Bereit für Aktionen...', {
       fontFamily: 'monospace',
       fontSize: '12px',
       color: '#94a3b8',
     }).setDepth(1001);
 
-    // Clean Reset Battle Button in Header
+    // Reset Battle Button in Header
     const resetBtn = this.createHeaderButton(width - 95, 28, 'Kampf Reset', () => {
       this.resetBattle();
     });
@@ -250,259 +295,476 @@ export class BattleScene extends Phaser.Scene {
   }
 
   /**
-   * Builds the modern 3-Card Party HUD at the bottom of the screen.
+   * Builds the authentic two-box Final Fantasy JRPG Bottom HUD.
+   * Left: Command Menu for active hero.
+   * Right: Vertical Party Status list with 2-phase HP bars.
    */
-  private createBottomPartyHud(width: number, height: number): void {
-    const barY = height - 52;
-    const barBg = this.add.rectangle(width / 2, barY, width, 104, 0x090d16, 0.95);
-    barBg.setStrokeStyle(1, 0x1e293b);
-    barBg.setDepth(1000);
+  private createClassicJRPGHud(width: number, height: number): void {
+    const panelY = height - 70; // Center at y = 650
+    const panelHeight = 135;
 
-    // 3 Cards spaced evenly
-    const cardWidth = 360;
-    const cardHeight = 84;
-    const cardsData = [
-      { unit: this.cloud, x: 210, color: '#38bdf8' },
-      { unit: this.aerith, x: 620, color: '#f472b6' },
-      { unit: this.barret, x: 1030, color: '#fbbf24' },
-    ];
+    // --- LEFT BOX: BEFEHLSMENÜ (Width: 320px, x: 20 to 340) ---
+    const leftW = 320;
+    const leftX = 20 + leftW / 2; // 180
 
-    cardsData.forEach(({ unit, x, color }) => {
-      const card = this.add.container(x, barY);
-      card.setDepth(1002);
+    const leftBox = this.add.container(leftX, panelY);
+    leftBox.setDepth(1002);
 
-      // Card Background
-      const cardBg = this.add.rectangle(0, 0, cardWidth, cardHeight, 0x111827, 0.95);
-      cardBg.setStrokeStyle(1, 0x334155);
+    const leftBg = this.add.rectangle(0, 0, leftW, panelHeight, 0x0f172a, 0.96);
+    leftBg.setStrokeStyle(2, 0x0284c7);
 
-      // Unit Name & Role
-      const nameText = this.add.text(-cardWidth / 2 + 16, -24, unit.heroName, {
+    // Header: Active Hero Name & Role
+    this.cmdHeaderName = this.add.text(-leftW / 2 + 16, -panelHeight / 2 + 16, '▸ CLOUD', {
+      fontFamily: 'monospace',
+      fontSize: '16px',
+      color: '#38bdf8',
+      fontStyle: 'bold',
+    });
+
+    this.cmdHeaderRole = this.add.text(-leftW / 2 + 115, -panelHeight / 2 + 18, '[VANGUARD]', {
+      fontFamily: 'monospace',
+      fontSize: '11px',
+      color: '#64748b',
+    });
+
+    // Aerith Mode Switch Pill (visible when Aerith is active)
+    this.cmdModeBtnBg = this.add.rectangle(leftW / 2 - 55, -panelHeight / 2 + 24, 88, 20, 0x1e293b, 0.95);
+    this.cmdModeBtnBg.setStrokeStyle(1, 0xf472b6);
+    this.cmdModeBtnBg.setInteractive({ useHandCursor: true });
+    this.cmdModeBtnBg.on('pointerdown', () => this.toggleAerithMode());
+    this.cmdModeBtnBg.setVisible(false);
+
+    this.cmdModeBtnText = this.add.text(leftW / 2 - 55, -panelHeight / 2 + 24, 'Nahkampf ▾', {
+      fontFamily: 'monospace',
+      fontSize: '9px',
+      color: '#f472b6',
+    }).setOrigin(0.5);
+    this.cmdModeBtnText.setVisible(false);
+
+    // Button 1: [ANGRIFF] (Active)
+    const btnW = leftW - 32;
+    const btnH = 34;
+
+    this.cmdAttackBtnBg = this.add.rectangle(0, -6, btnW, btnH, 0x0284c7, 0.95);
+    this.cmdAttackBtnBg.setStrokeStyle(1, 0x38bdf8);
+    this.cmdAttackBtnBg.setInteractive({ useHandCursor: true });
+
+    this.cmdAttackBtnText = this.add.text(0, -6, '⚡ ANGRIFF (Leertaste)', {
+      fontFamily: 'monospace',
+      fontSize: '12px',
+      color: '#ffffff',
+      fontStyle: 'bold',
+    }).setOrigin(0.5);
+
+    this.cmdAttackBtnBg.on('pointerover', () => {
+      if (this.combatState === 'PLAYER_TURN') {
+        this.cmdAttackBtnBg.setStrokeStyle(2, 0xffffff);
+      }
+    });
+    this.cmdAttackBtnBg.on('pointerout', () => {
+      this.cmdAttackBtnBg.setStrokeStyle(1, 0x38bdf8);
+    });
+    this.cmdAttackBtnBg.on('pointerdown', () => {
+      if (this.combatState === 'PLAYER_TURN') {
+        this.executeActiveHeroAttack();
+      }
+    });
+
+    // Button 2 & 3: Disabled Placeholders [FÄHIGKEIT] & [ABWEHR]
+    const subBtnW = (btnW - 8) / 2;
+    const subBtnY = 32;
+
+    const skillBg = this.add.rectangle(-subBtnW / 2 - 4, subBtnY, subBtnW, 28, 0x1e293b, 0.6);
+    skillBg.setStrokeStyle(1, 0x334155);
+    const skillText = this.add.text(-subBtnW / 2 - 4, subBtnY, '✦ FÄHIGKEIT', {
+      fontFamily: 'monospace',
+      fontSize: '10px',
+      color: '#64748b',
+    }).setOrigin(0.5);
+
+    const guardBg = this.add.rectangle(subBtnW / 2 + 4, subBtnY, subBtnW, 28, 0x1e293b, 0.6);
+    guardBg.setStrokeStyle(1, 0x334155);
+    const guardText = this.add.text(subBtnW / 2 + 4, subBtnY, '🛡 ABWEHR', {
+      fontFamily: 'monospace',
+      fontSize: '10px',
+      color: '#64748b',
+    }).setOrigin(0.5);
+
+    leftBox.add([
+      leftBg,
+      this.cmdHeaderName,
+      this.cmdHeaderRole,
+      this.cmdModeBtnBg,
+      this.cmdModeBtnText,
+      this.cmdAttackBtnBg,
+      this.cmdAttackBtnText,
+      skillBg,
+      skillText,
+      guardBg,
+      guardText,
+    ]);
+
+    // --- RIGHT BOX: PARTY STATUS (Width: 900px, x: 360 to 1260) ---
+    const rightW = width - leftW - 60; // 1280 - 320 - 60 = 900
+    const rightX = leftW + 40 + rightW / 2; // 360 + 450 = 810
+
+    const rightBox = this.add.container(rightX, panelY);
+    rightBox.setDepth(1002);
+
+    const rightBg = this.add.rectangle(0, 0, rightW, panelHeight, 0x0f172a, 0.96);
+    rightBg.setStrokeStyle(2, 0x334155);
+    rightBox.add(rightBg);
+
+    // 3 Vertical Rows: Cloud (y: -36), Aerith (y: 0), Barret (y: +36)
+    const rowYOffsets = [-38, 0, 38];
+
+    this.turnOrder.forEach((hero, idx) => {
+      const rowY = rowYOffsets[idx];
+      const rowContainer = this.add.container(0, rowY);
+
+      // Row background highlight (active state glow)
+      const highlightBg = this.add.rectangle(0, 0, rightW - 20, 32, 0x0284c7, 0.15);
+      highlightBg.setStrokeStyle(1, 0x38bdf8, 0.4);
+      highlightBg.setVisible(false);
+
+      // Interactive row click triggers active hero attack if clicked
+      highlightBg.setInteractive({ useHandCursor: true });
+      highlightBg.on('pointerdown', () => {
+        if (this.getActiveHero() === hero && this.combatState === 'PLAYER_TURN') {
+          this.executeActiveHeroAttack();
+        }
+      });
+
+      // Cursor arrow
+      const cursorText = this.add.text(-rightW / 2 + 20, 0, '▸', {
         fontFamily: 'monospace',
-        fontSize: '15px',
-        color: color,
+        fontSize: '16px',
+        color: '#38bdf8',
         fontStyle: 'bold',
-      });
+      }).setOrigin(0, 0.5).setVisible(false);
 
-      const roleText = this.add.text(-cardWidth / 2 + 95, -22, `[${unit.heroRole}]`, {
+      // Hero Name
+      const nameText = this.add.text(-rightW / 2 + 42, 0, hero.heroName, {
         fontFamily: 'monospace',
-        fontSize: '11px',
+        fontSize: '13px',
+        color: '#f8fafc',
+        fontStyle: 'bold',
+      }).setOrigin(0, 0.5);
+
+      // Hero Role
+      const roleText = this.add.text(-rightW / 2 + 130, 0, `[${hero.heroRole}]`, {
+        fontFamily: 'monospace',
+        fontSize: '10px',
         color: '#64748b',
-      });
+      }).setOrigin(0, 0.5);
 
-      // Health Bar
-      const barW = 190;
-      const barH = 10;
-      const barX = -cardWidth / 2 + 16;
-      const barYPos = 0;
+      // 2-Phase HP Bar
+      const barX = -rightW / 2 + 240;
+      const barBg = this.add.rectangle(barX + this.rowBarWidth / 2, 0, this.rowBarWidth + 4, this.rowBarHeight + 4, 0x1e293b, 1);
+      barBg.setStrokeStyle(1, 0x334155);
 
-      const hpBg = this.add.rectangle(barX + barW / 2, barYPos, barW, barH, 0x1e293b, 1);
-      hpBg.setStrokeStyle(1, 0x334155);
+      const chipBar = this.add.rectangle(barX, 0, this.rowBarWidth, this.rowBarHeight, 0xfbbf24).setOrigin(0, 0.5);
+      const fgBar = this.add.rectangle(barX, 0, this.rowBarWidth, this.rowBarHeight, 0x22c55e).setOrigin(0, 0.5);
 
-      const fgBar = this.add.rectangle(barX, barYPos, barW, barH, 0x22c55e, 1).setOrigin(0, 0.5);
-
-      const hpText = this.add.text(barX, 16, `${unit.currentHp.toLocaleString()} / ${unit.maxHp.toLocaleString()} HP`, {
+      // Numeric HP Text
+      const hpText = this.add.text(barX + this.rowBarWidth + 18, 0, `${hero.currentHp.toLocaleString()} / ${hero.maxHp.toLocaleString()} HP`, {
         fontFamily: 'monospace',
         fontSize: '11px',
         color: '#cbd5e1',
-      });
+      }).setOrigin(0, 0.5);
 
-      // Action Button (Right side of card)
-      const btnX = cardWidth / 2 - 62;
-      const btnY = 0;
-      const actionBg = this.add.rectangle(btnX, btnY, 96, 38, 0x0284c7, 0.95);
-      actionBg.setStrokeStyle(1, 0x38bdf8);
-      actionBg.setInteractive({ useHandCursor: true });
-
-      const actionText = this.add.text(btnX, btnY, '⚡ ANGRIFF', {
+      // Status Badge
+      const statusText = this.add.text(rightW / 2 - 30, 0, 'BEREIT', {
         fontFamily: 'monospace',
         fontSize: '11px',
-        color: '#ffffff',
+        color: '#94a3b8',
         fontStyle: 'bold',
-      }).setOrigin(0.5);
+      }).setOrigin(1, 0.5);
 
-      actionBg.on('pointerover', () => {
-        if (!unit.hasActed && !unit.isDead && this.combatState === 'PLAYER_TURN') {
-          actionBg.setStrokeStyle(2, 0xffffff);
-        }
-      });
-      actionBg.on('pointerout', () => {
-        actionBg.setStrokeStyle(1, 0x38bdf8);
-      });
-      actionBg.on('pointerdown', () => {
-        this.tryExecuteHeroAttack(unit);
-      });
-
-      card.add([cardBg, nameText, roleText, hpBg, fgBar, hpText, actionBg, actionText]);
-
-      let modeText: Phaser.GameObjects.Text | undefined;
-
-      // Special Mode Toggle for Aerith: Nahkampf <-> Zauber
-      if (unit === this.aerith) {
-        const modeBtnBg = this.add.rectangle(barX + 130, -22, 90, 18, 0x1e293b, 0.9);
-        modeBtnBg.setStrokeStyle(1, 0xf472b6);
-        modeBtnBg.setInteractive({ useHandCursor: true });
-
-        modeText = this.add.text(barX + 130, -22, 'Nahkampf ▾', {
-          fontFamily: 'monospace',
-          fontSize: '9px',
-          color: '#f472b6',
-        }).setOrigin(0.5);
-
-        modeBtnBg.on('pointerdown', () => {
-          this.toggleAerithMode();
-        });
-
-        card.add([modeBtnBg, modeText]);
-      }
-
-      this.hudCards.set(unit.unitKey, {
-        container: card,
-        hpText,
+      rowContainer.add([
+        highlightBg,
+        cursorText,
+        nameText,
+        roleText,
+        barBg,
+        chipBar,
         fgBar,
-        actionBg,
-        actionText,
-        modeText,
+        hpText,
+        statusText,
+      ]);
+
+      rightBox.add(rowContainer);
+
+      this.partyRows.set(hero.unitKey, {
+        container: rowContainer,
+        cursorText,
+        highlightBg,
+        nameText,
+        roleText,
+        fgBar,
+        chipBar,
+        hpText,
+        statusText,
+        lastHp: hero.maxHp,
       });
     });
   }
 
   private toggleAerithMode(): void {
-    if (this.combatState !== 'PLAYER_TURN' || this.aerith.hasActed || this.aerith.isDead) return;
+    if (this.getActiveHero() !== this.aerith || this.combatState !== 'PLAYER_TURN') return;
 
-    const hud = this.hudCards.get('aerith');
     if (this.aerith.combatConfig.attackType === 'melee') {
-      // Switch to Ranged Holy Magic
       this.aerith.combatConfig = {
         attackType: 'ranged',
         targetOffsetX: 0,
         attackAnim: 'magic_atk',
         hitFrameIndex: 2,
       };
-      if (hud?.modeText) hud.modeText.setText('Zauber ▾');
-      this.updateStatus('Aerith-Modus: Zauber / Heiliges Licht (Stationär | 700-900 Schaden)');
+      if (this.cmdModeBtnText) this.cmdModeBtnText.setText('Zauber ▾');
+      this.updateStatus('Aerith-Modus: Zauber / Heiliges Licht (700-900 Schaden)');
     } else {
-      // Switch to Melee Staff Strike
       this.aerith.combatConfig = {
         attackType: 'melee',
         targetOffsetX: 200,
         attackAnim: 'atk',
         hitFrameIndex: 19,
       };
-      if (hud?.modeText) hud.modeText.setText('Nahkampf ▾');
-      this.updateStatus('Aerith-Modus: Basis-Nahkampf (Stab-Schlag | 180-260 Schaden)');
+      if (this.cmdModeBtnText) this.cmdModeBtnText.setText('Nahkampf ▾');
+      this.updateStatus('Aerith-Modus: Basis-Nahkampf (180-260 Schaden)');
     }
   }
 
-  /**
-   * Refreshes all party HUD cards with HP and Action state.
-   */
-  private updateHudCards(): void {
-    const units = [this.cloud, this.aerith, this.barret];
-
-    units.forEach((unit) => {
-      const hud = this.hudCards.get(unit.unitKey);
-      if (!hud) return;
-
-      // 1. HP text and bar width
-      hud.hpText.setText(`${unit.currentHp.toLocaleString()} / ${unit.maxHp.toLocaleString()} HP`);
-      const pct = Math.max(0, unit.currentHp / unit.maxHp);
-      hud.fgBar.width = 190 * pct;
-
-      if (pct > 0.5) hud.fgBar.fillColor = 0x22c55e;
-      else if (pct > 0.25) hud.fgBar.fillColor = 0xf59e0b;
-      else hud.fgBar.fillColor = 0xef4444;
-
-      // 2. Action Button State
-      if (unit.isDead) {
-        hud.actionBg.fillColor = 0x450a0a;
-        hud.actionBg.setStrokeStyle(1, 0x991b1b);
-        hud.actionText.setText('K.O.');
-      } else if (unit.hasActed) {
-        hud.actionBg.fillColor = 0x1e293b;
-        hud.actionBg.setStrokeStyle(1, 0x475569);
-        hud.actionText.setText('GEHANDELT');
-      } else if (this.combatState === 'HERO_ATTACKING') {
-        hud.actionBg.fillColor = 0x075985;
-        hud.actionBg.setStrokeStyle(1, 0x38bdf8);
-        hud.actionText.setText('WARTET');
-      } else {
-        // Ready to act
-        hud.actionBg.fillColor = 0x0284c7;
-        hud.actionBg.setStrokeStyle(1, 0x38bdf8);
-        hud.actionText.setText(unit === this.barret ? '⚡ SALVE' : '⚡ ANGRIFF');
-      }
-    });
+  private getActiveHero(): UnitActor | undefined {
+    return this.turnOrder[this.activeHeroIndex];
   }
 
   /**
-   * Starts a new player turn. Resets all living heroes to active.
+   * Starts a new combat round: resets living heroes' action flags and selects first alive hero.
    */
-  private startPlayerTurn(): void {
+  private startRound(): void {
     if (this.targetDummy.currentHp <= 0) {
       this.triggerVictory();
       return;
     }
 
-    const aliveHeroes = [this.cloud, this.aerith, this.barret].filter((h) => !h.isDead);
+    const aliveHeroes = this.turnOrder.filter((h) => !h.isDead);
     if (aliveHeroes.length === 0) {
       this.triggerDefeat();
       return;
     }
 
-    this.combatState = 'PLAYER_TURN';
+    // Reset action flags
     aliveHeroes.forEach((h) => (h.hasActed = false));
+
+    // Find first alive hero index (starts at Cloud = 0)
+    let firstAliveIdx = 0;
+    while (firstAliveIdx < this.turnOrder.length && this.turnOrder[firstAliveIdx].isDead) {
+      firstAliveIdx++;
+    }
+
+    this.activeHeroIndex = firstAliveIdx;
+    this.combatState = 'PLAYER_TURN';
 
     this.roundBannerText.setText(`RUNDE ${this.currentRound} • SPIELER-ZUG`);
     this.roundBannerText.setColor('#38bdf8');
-    this.updateStatus('SPIELER-ZUG: Klicke auf einen Helden oder dessen Karte, um anzugreifen!');
-    this.updateHudCards();
+
+    this.updateCommandMenu();
+    this.updatePartyStatusUi();
+    this.updateStatus(`Runde ${this.currentRound}: ${this.getActiveHero()?.heroName} ist am Zug! [ANGRIFF] drücken.`);
   }
 
   /**
-   * Player attempts to trigger a hero's attack.
+   * Advances the turn pointer to the next living hero who hasn't acted yet.
+   * If all living heroes have acted, advances to enemy turn.
    */
-  public tryExecuteHeroAttack(hero: UnitActor): void {
-    if (this.combatState !== 'PLAYER_TURN') return;
-    if (hero.isDead || hero.hasActed) return;
-
-    this.combatState = 'HERO_ATTACKING';
-    const hud = this.hudCards.get(hero.unitKey);
-    if (hud) {
-      hud.actionBg.fillColor = 0xd97706;
-      hud.actionText.setText('GREIFT AN');
+  private advanceToNextHero(): void {
+    if (this.targetDummy.currentHp <= 0) {
+      this.triggerVictory();
+      return;
     }
 
-    this.executeHeroAttack(hero, () => {
-      hero.hasActed = true;
-      this.updateHudCards();
+    // Find next alive hero that hasn't acted
+    let nextIdx = this.activeHeroIndex + 1;
+    while (nextIdx < this.turnOrder.length) {
+      const hero = this.turnOrder[nextIdx];
+      if (!hero.isDead && !hero.hasActed) {
+        break;
+      }
+      nextIdx++;
+    }
 
-      // Check if Werratte died
-      if (this.targetDummy.currentHp <= 0) {
-        this.triggerVictory();
-        return;
+    if (nextIdx < this.turnOrder.length) {
+      // Next hero found
+      this.activeHeroIndex = nextIdx;
+      this.combatState = 'PLAYER_TURN';
+      this.updateCommandMenu();
+      this.updatePartyStatusUi();
+      this.updateStatus(`Nächster Held: ${this.getActiveHero()?.heroName} ist am Zug!`);
+    } else {
+      // All living heroes have acted this round -> Enemy turn!
+      this.combatState = 'ENEMY_TURN';
+      this.roundBannerText.setText(`RUNDE ${this.currentRound} • GEGNER-ZUG`);
+      this.roundBannerText.setColor('#f87171');
+      this.updateCommandMenu();
+      this.updatePartyStatusUi();
+      this.updateStatus('Alle Helden haben gehandelt! Werratte stürmt vor...');
+      this.time.delayedCall(450, () => this.executeEnemyTurn());
+    }
+  }
+
+  /**
+   * Updates the Left Command Menu based on active hero and combat state.
+   */
+  private updateCommandMenu(): void {
+    const hero = this.getActiveHero();
+
+    if (this.combatState === 'PLAYER_TURN' && hero && !hero.isDead && !hero.hasActed) {
+      // Hero active
+      this.cmdHeaderName.setText(`▸ ${hero.heroName}`);
+      let color = '#38bdf8';
+      if (hero === this.aerith) color = '#f472b6';
+      else if (hero === this.barret) color = '#fbbf24';
+      this.cmdHeaderName.setColor(color);
+      this.cmdHeaderRole.setText(`[${hero.heroRole}]`);
+
+      // Aerith mode button
+      const isAerith = hero === this.aerith;
+      this.cmdModeBtnBg?.setVisible(isAerith);
+      this.cmdModeBtnText?.setVisible(isAerith);
+      if (isAerith && this.cmdModeBtnText) {
+        this.cmdModeBtnText.setText(hero.combatConfig.attackType === 'ranged' ? 'Zauber ▾' : 'Nahkampf ▾');
       }
 
-      // Check if all alive heroes have acted
-      const aliveHeroes = [this.cloud, this.aerith, this.barret].filter((h) => !h.isDead);
-      const allActed = aliveHeroes.every((h) => h.hasActed);
+      // Attack button enabled
+      this.cmdAttackBtnBg.fillColor = 0x0284c7;
+      this.cmdAttackBtnBg.setStrokeStyle(1, 0x38bdf8);
+      this.cmdAttackBtnText.setText(hero === this.barret ? '⚡ SALVE (Leertaste)' : '⚡ ANGRIFF (Leertaste)');
+      this.cmdAttackBtnText.setColor('#ffffff');
+    } else {
+      // Hero attacking or Enemy turn
+      if (this.combatState === 'ENEMY_TURN') {
+        this.cmdHeaderName.setText('▸ GEGNER');
+        this.cmdHeaderName.setColor('#f87171');
+        this.cmdHeaderRole.setText('[WERRATTE]');
+      }
+      this.cmdModeBtnBg?.setVisible(false);
+      this.cmdModeBtnText?.setVisible(false);
 
-      if (allActed) {
-        this.combatState = 'ENEMY_TURN';
-        this.roundBannerText.setText(`RUNDE ${this.currentRound} • GEGNER-ZUG`);
-        this.roundBannerText.setColor('#f87171');
-        this.updateStatus('Alle Helden haben gehandelt! Werratte bereitet Gegenangriff vor...');
-        this.time.delayedCall(500, () => this.executeEnemyTurn());
+      // Disable attack button
+      this.cmdAttackBtnBg.fillColor = 0x1e293b;
+      this.cmdAttackBtnBg.setStrokeStyle(1, 0x475569);
+      this.cmdAttackBtnText.setText(this.combatState === 'HERO_ATTACKING' ? 'AKTION LÄUFT...' : 'GEGNER-PHASE');
+      this.cmdAttackBtnText.setColor('#64748b');
+    }
+  }
+
+  /**
+   * Refreshes all 3 rows in the Right Party Status box with cursor, highlights, and 2-phase HP.
+   */
+  private updatePartyStatusUi(): void {
+    const activeHero = this.getActiveHero();
+
+    this.turnOrder.forEach((hero) => {
+      const row = this.partyRows.get(hero.unitKey);
+      if (!row) return;
+
+      const isActive = this.combatState === 'PLAYER_TURN' && hero === activeHero && !hero.isDead && !hero.hasActed;
+
+      // 1. Cursor & Row Highlight
+      row.cursorText.setVisible(isActive);
+      row.highlightBg.setVisible(isActive);
+
+      if (isActive) {
+        row.nameText.setColor('#38bdf8');
+      } else if (hero.isDead) {
+        row.nameText.setColor('#64748b');
       } else {
-        this.combatState = 'PLAYER_TURN';
-        this.updateStatus('Wähle den nächsten verfügbaren Helden!');
+        row.nameText.setColor('#f8fafc');
+      }
+
+      // 2. 2-Phase HP Bar
+      const pct = Math.max(0, hero.currentHp / hero.maxHp);
+      const targetWidth = this.rowBarWidth * pct;
+
+      // Immediate Foreground Bar
+      row.fgBar.width = targetWidth;
+      if (pct > 0.5) row.fgBar.fillColor = 0x22c55e;
+      else if (pct > 0.25) row.fgBar.fillColor = 0xf59e0b;
+      else row.fgBar.fillColor = 0xef4444;
+
+      // Delayed Chip-Damage Bar (catches up after 200ms)
+      if (hero.currentHp < row.lastHp) {
+        if (row.chipTween) row.chipTween.stop();
+        this.time.delayedCall(200, () => {
+          row.chipTween = this.tweens.add({
+            targets: row.chipBar,
+            width: targetWidth,
+            duration: 400,
+            ease: 'Cubic.easeOut',
+          });
+        });
+        row.lastHp = hero.currentHp;
+      } else {
+        row.chipBar.width = targetWidth;
+        row.lastHp = hero.currentHp;
+      }
+
+      // Numeric HP text
+      row.hpText.setText(`${hero.currentHp.toLocaleString()} / ${hero.maxHp.toLocaleString()} HP`);
+
+      // 3. Status text
+      if (hero.isDead) {
+        row.statusText.setText('K.O.');
+        row.statusText.setColor('#ef4444');
+      } else if (hero.hasActed) {
+        row.statusText.setText('GEHANDELT');
+        row.statusText.setColor('#475569');
+      } else if (isActive) {
+        row.statusText.setText('AM ZUG');
+        row.statusText.setColor('#38bdf8');
+      } else {
+        row.statusText.setText('BEREIT');
+        row.statusText.setColor('#94a3b8');
       }
     });
   }
 
   /**
-   * Executes the individual attack sequence of the selected hero.
+   * Executes the active hero's attack and then advances the turn.
    */
-  private executeHeroAttack(hero: UnitActor, onComplete: () => void): void {
+  public executeActiveHeroAttack(): void {
+    if (this.combatState !== 'PLAYER_TURN') return;
+    const hero = this.getActiveHero();
+    if (!hero || hero.isDead || hero.hasActed) return;
+
+    this.combatState = 'HERO_ATTACKING';
+    this.updateCommandMenu();
+
+    const row = this.partyRows.get(hero.unitKey);
+    if (row) {
+      row.statusText.setText('GREIFT AN...');
+      row.statusText.setColor('#fbbf24');
+    }
+
+    this.executeHeroSequence(hero, () => {
+      hero.hasActed = true;
+      this.updatePartyStatusUi();
+
+      // Check Victory
+      if (this.targetDummy.currentHp <= 0) {
+        this.triggerVictory();
+        return;
+      }
+
+      // Advance to next hero
+      this.advanceToNextHero();
+    });
+  }
+
+  /**
+   * Executes the individual animation and movement sequence of a hero.
+   */
+  private executeHeroSequence(hero: UnitActor, onComplete: () => void): void {
     const homeX = hero.homeSlot.x;
     const homeY = hero.homeSlot.y;
     const targetX = this.targetDummy.x;
@@ -692,7 +954,7 @@ export class BattleScene extends Phaser.Scene {
   }
 
   /**
-   * Executes the Werratte counter-attack against a living hero (default: Cloud).
+   * Werratte executes counter-attack on live target (Cloud first, else Barret/Aerith).
    */
   private executeEnemyTurn(): void {
     if (this.targetDummy.currentHp <= 0) {
@@ -700,50 +962,45 @@ export class BattleScene extends Phaser.Scene {
       return;
     }
 
-    const aliveHeroes = [this.cloud, this.barret, this.aerith].filter((h) => !h.isDead);
+    const aliveHeroes = this.turnOrder.filter((h) => !h.isDead);
     if (aliveHeroes.length === 0) {
       this.triggerDefeat();
       return;
     }
 
-    // Default target: Cloud (Vanguard), else first available hero
     const target = aliveHeroes.includes(this.cloud) ? this.cloud : aliveHeroes[0];
-
     this.updateStatus(`GEGNER-ZUG: Werratte stürmt vor und greift ${target.heroName} an!`);
 
     this.targetDummy.executeAttack(
       target.x,
       target.y,
       () => {
-        // Impact callback: deal damage to target
+        // Impact
         const dmg = Phaser.Math.Between(250, 400);
         target.applyDamage(dmg);
-        this.updateHudCards();
+        this.updatePartyStatusUi();
       },
       () => {
         // Return completed
-        const stillAlive = [this.cloud, this.aerith, this.barret].filter((h) => !h.isDead);
+        const stillAlive = this.turnOrder.filter((h) => !h.isDead);
         if (stillAlive.length === 0) {
           this.triggerDefeat();
         } else {
           this.currentRound++;
-          this.time.delayedCall(450, () => this.startPlayerTurn());
+          this.time.delayedCall(450, () => this.startRound());
         }
       }
     );
   }
 
-  /**
-   * Victory handler: plays win animations on living heroes and displays victory card.
-   */
   private triggerVictory(): void {
     this.combatState = 'VICTORY';
     this.roundBannerText.setText('VICTORY! • SIEG!');
     this.roundBannerText.setColor('#4ade80');
     this.updateStatus('SIEG! Die Werratte wurde bezwungen!');
 
-    // Living heroes play authentic FFBE win celebration
-    [this.cloud, this.aerith, this.barret].forEach((hero) => {
+    // Living heroes play victory celebration
+    this.turnOrder.forEach((hero) => {
       if (!hero.isDead) {
         hero.playAnimation('win');
       }
@@ -752,9 +1009,6 @@ export class BattleScene extends Phaser.Scene {
     this.showEndBattleBanner(true);
   }
 
-  /**
-   * Defeat handler: displays defeat card.
-   */
   private triggerDefeat(): void {
     this.combatState = 'DEFEAT';
     this.roundBannerText.setText('DEFEAT • NIEDERLAGE');
@@ -764,9 +1018,6 @@ export class BattleScene extends Phaser.Scene {
     this.showEndBattleBanner(false);
   }
 
-  /**
-   * Displays victory or defeat modal banner.
-   */
   private showEndBattleBanner(isVictory: boolean): void {
     if (this.endBattleBanner) {
       this.endBattleBanner.destroy();
@@ -779,15 +1030,12 @@ export class BattleScene extends Phaser.Scene {
     const cardWidth = 440;
     const cardHeight = 220;
 
-    // Dimmed background backdrop
     const backdrop = this.add.rectangle(0, 0, width, height, 0x000000, 0.45);
     banner.add(backdrop);
 
-    // Card background
     const bg = this.add.rectangle(0, 0, cardWidth, cardHeight, 0x0f172a, 0.98);
     bg.setStrokeStyle(2, isVictory ? 0xfbbf24 : 0xef4444);
 
-    // Header Title
     const titleText = this.add.text(0, -60, isVictory ? '★ VICTORY! ★' : '☠ DEFEAT ☠', {
       fontFamily: 'monospace',
       fontSize: '28px',
@@ -795,7 +1043,6 @@ export class BattleScene extends Phaser.Scene {
       fontStyle: 'bold',
     }).setOrigin(0.5);
 
-    // Subtitle
     const subText = this.add.text(
       0,
       -15,
@@ -809,7 +1056,6 @@ export class BattleScene extends Phaser.Scene {
       }
     ).setOrigin(0.5);
 
-    // Restart button
     const btnBg = this.add.rectangle(0, 50, 200, 42, isVictory ? 0x15803d : 0x991b1b, 1);
     btnBg.setStrokeStyle(1, 0xffffff);
     btnBg.setInteractive({ useHandCursor: true });
@@ -829,9 +1075,6 @@ export class BattleScene extends Phaser.Scene {
     this.endBattleBanner = banner;
   }
 
-  /**
-   * Resets entire battle to Round 1 full health.
-   */
   public resetBattle(): void {
     if (this.endBattleBanner) {
       this.endBattleBanner.destroy();
@@ -839,12 +1082,10 @@ export class BattleScene extends Phaser.Scene {
     }
 
     this.currentRound = 1;
-    this.cloud.resetCombatState();
-    this.aerith.resetCombatState();
-    this.barret.resetCombatState();
+    this.turnOrder.forEach((hero) => hero.resetCombatState());
     this.targetDummy.resetCombat();
 
-    this.startPlayerTurn();
+    this.startRound();
   }
 
   private updateStatus(msg: string): void {

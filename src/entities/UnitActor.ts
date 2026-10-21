@@ -29,12 +29,6 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
   public isDead: boolean = false;
   public hasActed: boolean = false;
 
-  // Floating Mini-HUD above head
-  private floatingHud?: Phaser.GameObjects.Container;
-  private fgBar?: Phaser.GameObjects.Rectangle;
-  private barWidth: number = 52;
-  private barHeight: number = 5;
-
   constructor(
     scene: Phaser.Scene,
     x: number,
@@ -67,59 +61,6 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
     this.playAnimation('idle');
     this.updateDepth();
     scene.add.existing(this);
-
-    // Create floating overhead mini-bar
-    this.createFloatingHud();
-  }
-
-  protected preUpdate(time: number, delta: number): void {
-    super.preUpdate(time, delta);
-    if (this.floatingHud) {
-      this.floatingHud.setPosition(this.x, this.y - 105);
-      this.floatingHud.setDepth(this.depth + 10);
-    }
-  }
-
-  private createFloatingHud(): void {
-    const hud = this.scene.add.container(this.x, this.y - 105);
-    const halfWidth = this.barWidth / 2;
-
-    // 1. Dark background with subtle border
-    const bg = this.scene.add.rectangle(0, 0, this.barWidth + 4, this.barHeight + 4, 0x0f172a, 0.9);
-    bg.setStrokeStyle(1, 0x334155);
-
-    // 2. Foreground Health Fill
-    this.fgBar = this.scene.add
-      .rectangle(-halfWidth, 0, this.barWidth, this.barHeight, 0x22c55e)
-      .setOrigin(0, 0.5);
-
-    // 3. Mini Name Tag above bar
-    const nameText = this.scene.add
-      .text(0, -9, this.heroName, {
-        fontFamily: 'monospace',
-        fontSize: '9px',
-        fontStyle: 'bold',
-        color: '#cbd5e1',
-      })
-      .setOrigin(0.5);
-
-    hud.add([bg, this.fgBar, nameText]);
-    this.floatingHud = hud;
-  }
-
-  public updateFloatingBar(): void {
-    if (!this.fgBar || !this.floatingHud) return;
-
-    const pct = Math.max(0, this.currentHp / this.maxHp);
-    this.fgBar.width = this.barWidth * pct;
-
-    if (pct > 0.5) {
-      this.fgBar.fillColor = 0x22c55e; // Green
-    } else if (pct > 0.25) {
-      this.fgBar.fillColor = 0xf59e0b; // Amber
-    } else {
-      this.fgBar.fillColor = 0xef4444; // Red
-    }
   }
 
   /**
@@ -153,17 +94,11 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
     // 3. Floating Damage Popup
     this.spawnDamagePopup(damage);
 
-    // 4. Update Floating Bar
-    this.updateFloatingBar();
-
-    // 5. Check Death
+    // 4. Check Death
     if (this.currentHp <= 0) {
       this.isDead = true;
       this.hasActed = true;
       this.playAnimation('dead');
-      if (this.floatingHud) {
-        this.floatingHud.setVisible(false);
-      }
     }
   }
 
@@ -218,10 +153,6 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
     this.setPosition(this.homeSlot.x, this.homeSlot.y);
     this.setFacingLeft(true);
     this.playAnimation('idle');
-    this.updateFloatingBar();
-    if (this.floatingHud) {
-      this.floatingHud.setVisible(true);
-    }
   }
 
   /**

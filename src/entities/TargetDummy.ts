@@ -66,8 +66,8 @@ export class TargetDummy extends Phaser.GameObjects.Container {
       this.sprite.play('training_dummy_idle');
     }
 
-    // Name Tag floating above dummy
-    const nameText = this.scene.add.text(0, -158, 'WERRATTE / DIRE RAT', {
+    // Name Tag floating under stand ellipse
+    const nameText = this.scene.add.text(0, 34, 'WERRATTE / DIRE RAT', {
       fontFamily: 'monospace',
       fontSize: '11px',
       color: '#f87171',
@@ -78,7 +78,7 @@ export class TargetDummy extends Phaser.GameObjects.Container {
   }
 
   private createHealthBar(): void {
-    const barY = -138;
+    const barY = 48;
     const halfWidth = this.barWidth / 2;
 
     // 1. Dark background with border
@@ -92,14 +92,14 @@ export class TargetDummy extends Phaser.GameObjects.Container {
     this.fgBar = this.scene.add.rectangle(-halfWidth, barY, this.barWidth, this.barHeight, 0x22c55e).setOrigin(0, 0.5);
 
     // 4. HP Text Display (e.g. "5,000 / 5,000 HP")
-    this.hpText = this.scene.add.text(0, barY + 14, `${this.currentHp.toLocaleString()} / ${this.maxHp.toLocaleString()} HP`, {
+    this.hpText = this.scene.add.text(0, barY + 13, `${this.currentHp.toLocaleString()} / ${this.maxHp.toLocaleString()} HP`, {
       fontFamily: 'monospace',
       fontSize: '10px',
       color: '#cbd5e1',
     }).setOrigin(0.5);
 
     // 5. K.O. Banner (hidden by default)
-    this.koBanner = this.scene.add.text(0, -80, 'K.O. - BESIEGT', {
+    this.koBanner = this.scene.add.text(0, -20, 'K.O. - BESIEGT', {
       fontFamily: 'monospace',
       fontSize: '13px',
       color: '#ffffff',
@@ -187,7 +187,7 @@ export class TargetDummy extends Phaser.GameObjects.Container {
 
   private spawnDamagePopup(damage: number, isCritical: boolean, damageType: 'physical' | 'holy'): void {
     const startX = this.x + Phaser.Math.Between(-14, 14);
-    const startY = this.y - 170;
+    const startY = this.y - 70;
 
     let color = '#ffffff';
     let stroke = '#0f172a';
@@ -343,7 +343,7 @@ export class TargetDummy extends Phaser.GameObjects.Container {
     this.hpText.setText(`${this.maxHp.toLocaleString()} / ${this.maxHp.toLocaleString()} HP`);
 
     // Green healing text popup
-    const healText = this.scene.add.text(this.baseX, this.baseY - 175, '+5,000 HEAL', {
+    const healText = this.scene.add.text(this.baseX, this.baseY - 75, '+5,000 HEAL', {
       fontFamily: 'Arial, Helvetica, sans-serif',
       fontSize: '22px',
       color: '#4ade80',
@@ -355,7 +355,7 @@ export class TargetDummy extends Phaser.GameObjects.Container {
     this.scene.tweens.add({
       targets: healText,
       scale: 1.1,
-      y: this.baseY - 215,
+      y: this.baseY - 120,
       alpha: 0,
       duration: 750,
       ease: 'Cubic.easeOut',
