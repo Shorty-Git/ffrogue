@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { UnitActor } from '../entities/UnitActor';
 import { TargetDummy } from '../entities/TargetDummy';
 import { UnitManifest } from '../types/manifest';
-import { HERO_SKILLS } from '../types/skills';
+import { SkillConfig, UnitSkillsData } from '../types/skills';
 
 export type CombatState =
   | 'PLAYER_TURN'
@@ -10,6 +10,13 @@ export type CombatState =
   | 'ENEMY_TURN'
   | 'VICTORY'
   | 'DEFEAT';
+
+interface SkillBtnUi {
+  bg: Phaser.GameObjects.Rectangle;
+  nameText: Phaser.GameObjects.Text;
+  tagText: Phaser.GameObjects.Text;
+  skill: SkillConfig | null;
+}
 
 interface PartyRowUi {
   container: Phaser.GameObjects.Container;
@@ -104,10 +111,12 @@ export class BattleScene extends Phaser.Scene {
   private cmdAttackBtnText!: Phaser.GameObjects.Text;
   private cmdSkillBtnBg!: Phaser.GameObjects.Rectangle;
   private cmdSkillBtnText!: Phaser.GameObjects.Text;
-  private cmdSkillActionBtnBg!: Phaser.GameObjects.Rectangle;
-  private cmdSkillActionBtnText!: Phaser.GameObjects.Text;
+  private skillButtons: SkillBtnUi[] = [];
   private cmdSkillBackBtnBg!: Phaser.GameObjects.Rectangle;
   private cmdSkillBackBtnText!: Phaser.GameObjects.Text;
+
+  // Authentic Hero Skills
+  private unitSkills: Record<string, SkillConfig[]> = {};
 
   // 2. Right Box: Party Status
   private partyRows: Map<string, PartyRowUi> = new Map();
@@ -130,6 +139,16 @@ export class BattleScene extends Phaser.Scene {
 
   create(): void {
     const { width, height } = this.scale;
+
+    // Load preloaded unit skills from JSON cache
+    ['cloud', 'aerith', 'barret'].forEach((key) => {
+      const data = this.cache.json.get(`skills_${key}`) as UnitSkillsData;
+      if (data && Array.isArray(data.skills)) {
+        this.unitSkills[key] = data.skills;
+      } else {
+        this.unitSkills[key] = [];
+      }
+    });
 
     // 1. Arena Background
     this.createArenaBackground(width, height);
@@ -218,11 +237,11 @@ export class BattleScene extends Phaser.Scene {
     // 6. Classic Final Fantasy Deep-Navy Bottom HUD
     this.createClassicJRPGHud(width, height);
 
-    // 7. Global Keyboard Controls (Space / Enter triggers active action)
+    // 7. Global Keyboard Controls (Space / Enter triggers active action, 1/2/3 triggers skill, Esc cancels)
     this.input.keyboard?.on('keydown-SPACE', () => {
       if (this.combatState === 'PLAYER_TURN') {
         if (this.isSkillMenuOpen) {
-          this.executeActiveHeroSkill();
+          this.executeFirstAvailableSkill();
         } else {
           this.executeActiveHeroAttack();
         }
@@ -231,10 +250,23 @@ export class BattleScene extends Phaser.Scene {
     this.input.keyboard?.on('keydown-ENTER', () => {
       if (this.combatState === 'PLAYER_TURN') {
         if (this.isSkillMenuOpen) {
-          this.executeActiveHeroSkill();
+          this.executeFirstAvailableSkill();
         } else {
           this.executeActiveHeroAttack();
         }
+      }
+    });
+    this.input.keyboard?.on('keydown-ONE', () => this.tryExecuteSkillByIndex(0));
+    this.input.keyboard?.on('keydown-TWO', () => this.tryExecuteSkillByIndex(1));
+    this.input.keyboard?.on('keydown-THREE', () => this.tryExecuteSkillByIndex(2));
+    this.input.keyboard?.on('keydown-ESC', () => {
+      if (this.combatState === 'PLAYER_TURN' && this.isSkillMenuOpen) {
+        this.closeSkillSubMenu();
+      }
+    });
+    this.input.keyboard?.on('keydown-BACKSPACE', () => {
+      if (this.combatState === 'PLAYER_TURN' && this.isSkillMenuOpen) {
+        this.closeSkillSubMenu();
       }
     });
 
@@ -510,40 +542,62 @@ export class BattleScene extends Phaser.Scene {
       guardText,
     ]);
 
-    // Sub-Menu Container: Dynamic Skill Sub-Menu
+    // Sub-Menu Container: Dynamic Multi-Skill Sub-Menu
     this.cmdSkillContainer = this.add.container(0, 0);
     this.cmdSkillContainer.setVisible(false);
 
-    this.cmdSkillActionBtnBg = this.add.rectangle(0, -6, btnW, btnH, 0x4f46e5, 0.95);
-    this.cmdSkillActionBtnBg.setStrokeStyle(1.5, 0xe2e8f0);
-    this.cmdSkillActionBtnBg.setInteractive({ useHandCursor: true });
+    this.skillButtons = [];
+    const skillBtnW = btnW;
+    const skillBtnH = 22;
+    const rowYPositions = [-27, -2, 23];
 
-    this.cmdSkillActionBtnText = this.add.text(0, -6, '✦ Skill Name (15 MP)', {
-      fontFamily: 'monospace',
-      fontSize: '11px',
-      color: '#ffffff',
-      fontStyle: 'bold',
-    }).setOrigin(0.5);
+    for (let i = 0; i < 3; i++) {
+      const y = rowYPositions[i];
+      const bg = this.add.rectangle(0, y, skillBtnW, skillBtnH, 0x2563eb, 0.95);
+      bg.setStrokeStyle(1.2, 0xe2e8f0, 0.85);
+      bg.setInteractive({ useHandCursor: true });
 
-    this.cmdSkillActionBtnBg.on('pointerover', () => {
-      if (this.combatState === 'PLAYER_TURN') {
-        this.cmdSkillActionBtnBg.setStrokeStyle(2, 0xfbbf24);
-      }
-    });
-    this.cmdSkillActionBtnBg.on('pointerout', () => {
-      this.cmdSkillActionBtnBg.setStrokeStyle(1.5, 0xe2e8f0);
-    });
-    this.cmdSkillActionBtnBg.on('pointerdown', () => {
-      if (this.combatState === 'PLAYER_TURN') {
-        this.executeActiveHeroSkill();
-      }
-    });
+      const nameText = this.add.text(-skillBtnW / 2 + 10, y, `✦ Skill ${i + 1}`, {
+        fontFamily: 'monospace',
+        fontSize: '11px',
+        color: '#ffffff',
+        fontStyle: 'bold',
+      }).setOrigin(0, 0.5);
 
-    this.cmdSkillBackBtnBg = this.add.rectangle(0, subBtnY, btnW, 28, 0x0c204c, 0.9);
+      const tagText = this.add.text(skillBtnW / 2 - 10, y, `[0 MP]`, {
+        fontFamily: 'monospace',
+        fontSize: '10px',
+        color: '#93c5fd',
+      }).setOrigin(1, 0.5);
+
+      const btnUi: SkillBtnUi = { bg, nameText, tagText, skill: null };
+      this.skillButtons.push(btnUi);
+
+      bg.on('pointerover', () => {
+        if (btnUi.skill && this.combatState === 'PLAYER_TURN' && this.getActiveHero()?.currentMp! >= btnUi.skill.mpCost) {
+          bg.setStrokeStyle(2, 0xfbbf24);
+          this.updateStatus(`${btnUi.skill.name}: ${btnUi.skill.desc} (${btnUi.skill.scope}, ${btnUi.skill.mpCost} MP)`);
+        }
+      });
+      bg.on('pointerout', () => {
+        if (btnUi.skill && this.getActiveHero()?.currentMp! >= btnUi.skill.mpCost) {
+          bg.setStrokeStyle(1.2, 0xe2e8f0, 0.85);
+        }
+      });
+      bg.on('pointerdown', () => {
+        if (this.combatState === 'PLAYER_TURN' && btnUi.skill) {
+          this.executeSkillChoice(btnUi.skill);
+        }
+      });
+
+      this.cmdSkillContainer.add([bg, nameText, tagText]);
+    }
+
+    this.cmdSkillBackBtnBg = this.add.rectangle(0, 48, skillBtnW, 20, 0x0c204c, 0.9);
     this.cmdSkillBackBtnBg.setStrokeStyle(1, 0x94a3b8, 0.8);
     this.cmdSkillBackBtnBg.setInteractive({ useHandCursor: true });
 
-    this.cmdSkillBackBtnText = this.add.text(0, subBtnY, '◂ BACK (Attack Menu)', {
+    this.cmdSkillBackBtnText = this.add.text(0, 48, '◂ BACK (Attack Menu)', {
       fontFamily: 'monospace',
       fontSize: '10px',
       color: '#cbd5e1',
@@ -561,8 +615,6 @@ export class BattleScene extends Phaser.Scene {
     });
 
     this.cmdSkillContainer.add([
-      this.cmdSkillActionBtnBg,
-      this.cmdSkillActionBtnText,
       this.cmdSkillBackBtnBg,
       this.cmdSkillBackBtnText,
     ]);
@@ -983,29 +1035,45 @@ export class BattleScene extends Phaser.Scene {
       }
 
       if (this.isSkillMenuOpen) {
-        // Show Skill Sub-Menu
+        // Show Dynamic Skill Sub-Menu
         this.cmdMainContainer.setVisible(false);
         this.cmdSkillContainer.setVisible(true);
 
-        const skill = HERO_SKILLS[hero.unitKey];
-        if (skill) {
-          const hasMp = hero.currentMp >= skill.mpCost;
-          const scopeLabel = skill.scope === 'party' ? 'Party' : skill.scope === 'all_enemies' ? 'AoE' : 'Single';
+        const skills = this.unitSkills[hero.unitKey] || [];
+        this.skillButtons.forEach((btn, idx) => {
+          const skill = skills[idx];
+          btn.skill = skill || null;
 
-          if (hasMp) {
-            this.cmdSkillActionBtnBg.setInteractive({ useHandCursor: true });
-            this.cmdSkillActionBtnBg.fillColor = 0x4f46e5;
-            this.cmdSkillActionBtnBg.setStrokeStyle(1.5, 0xe2e8f0);
-            this.cmdSkillActionBtnText.setText(`✦ ${skill.name} (${scopeLabel}) [${skill.mpCost} MP]`);
-            this.cmdSkillActionBtnText.setColor('#ffffff');
+          if (skill) {
+            btn.bg.setVisible(true);
+            btn.nameText.setVisible(true);
+            btn.tagText.setVisible(true);
+
+            const hasMp = hero.currentMp >= skill.mpCost;
+            const scopeLabel = skill.scope === 'party' ? 'Party' : skill.scope === 'all_enemies' ? 'AoE' : 'Single';
+
+            btn.nameText.setText(`✦ ${skill.name}`);
+            btn.tagText.setText(`(${scopeLabel}) [${skill.mpCost} MP]`);
+
+            if (hasMp) {
+              btn.bg.setInteractive({ useHandCursor: true });
+              btn.bg.fillColor = 0x2563eb;
+              btn.bg.setStrokeStyle(1.2, 0xe2e8f0, 0.85);
+              btn.nameText.setColor('#ffffff');
+              btn.tagText.setColor('#93c5fd');
+            } else {
+              btn.bg.disableInteractive();
+              btn.bg.fillColor = 0x081530;
+              btn.bg.setStrokeStyle(1, 0x1e3a8a, 0.5);
+              btn.nameText.setColor('#64748b');
+              btn.tagText.setColor('#475569');
+            }
           } else {
-            this.cmdSkillActionBtnBg.disableInteractive();
-            this.cmdSkillActionBtnBg.fillColor = 0x081530;
-            this.cmdSkillActionBtnBg.setStrokeStyle(1, 0x1e3a8a);
-            this.cmdSkillActionBtnText.setText(`✦ ${skill.name} (No MP: ${hero.currentMp}/${skill.mpCost})`);
-            this.cmdSkillActionBtnText.setColor('#64748b');
+            btn.bg.setVisible(false);
+            btn.nameText.setVisible(false);
+            btn.tagText.setVisible(false);
           }
-        }
+        });
       } else {
         // Show Main Command Menu
         this.cmdMainContainer.setVisible(true);
@@ -1225,15 +1293,43 @@ export class BattleScene extends Phaser.Scene {
   }
 
   /**
-   * Executes the active hero's signature skill using dedicated MP and FFBE effects.
+   * Tries to execute the skill at slot index (0, 1, 2) from keyboard shortcut.
    */
+  public tryExecuteSkillByIndex(idx: number): void {
+    if (this.combatState !== 'PLAYER_TURN' || !this.isSkillMenuOpen) return;
+    const btn = this.skillButtons[idx];
+    if (btn && btn.skill) {
+      this.executeSkillChoice(btn.skill);
+    }
+  }
+
+  /**
+   * Executes the first affordable skill from active hero's skill list (triggered by Space/Enter in sub-menu).
+   */
+  public executeFirstAvailableSkill(): void {
+    if (this.combatState !== 'PLAYER_TURN') return;
+    const hero = this.getActiveHero();
+    if (!hero) return;
+    const skills = this.unitSkills[hero.unitKey] || [];
+    const affordable = skills.find((s) => hero.currentMp >= s.mpCost);
+    if (affordable) {
+      this.executeSkillChoice(affordable);
+    } else if (skills.length > 0) {
+      this.executeSkillChoice(skills[0]);
+    }
+  }
+
   public executeActiveHeroSkill(): void {
+    this.executeFirstAvailableSkill();
+  }
+
+  /**
+   * Dedicated entry point for executing a chosen SkillConfig.
+   */
+  public executeSkillChoice(skill: SkillConfig): void {
     if (this.combatState !== 'PLAYER_TURN') return;
     const hero = this.getActiveHero();
     if (!hero || hero.isDead || hero.hasActed) return;
-
-    const skill = HERO_SKILLS[hero.unitKey];
-    if (!skill) return;
 
     if (!hero.useMp(skill.mpCost)) {
       this.updateStatus(`Not enough MP to cast ${skill.name}! (Need ${skill.mpCost} MP, have ${hero.currentMp})`);
@@ -1251,13 +1347,7 @@ export class BattleScene extends Phaser.Scene {
       row.statusText.setColor('#c084fc');
     }
 
-    if (hero === this.cloud) {
-      this.executeCloudBraver(() => this.concludeHeroSkill(hero));
-    } else if (hero === this.aerith) {
-      this.executeAerithCuraga(() => this.concludeHeroSkill(hero));
-    } else if (hero === this.barret) {
-      this.executeBarretGrenadeBomb(() => this.concludeHeroSkill(hero));
-    }
+    this.executeGenericSkill(hero, skill, () => this.concludeHeroSkill(hero));
   }
 
   private concludeHeroSkill(hero: UnitActor): void {
@@ -1274,172 +1364,167 @@ export class BattleScene extends Phaser.Scene {
   }
 
   /**
-   * Cloud's Signature Skill: "Braver"
-   * Moves to target, plays Cloud's authentic standard 'atk' animation, triggers 80ms hit-stop,
-   * monster white flash, camera shake, golden CRITICAL popup, and returns to base.
+   * Universal data-driven skill executor:
+   * Handles moveType ('dash' vs 'stationary') and scope ('single_enemy', 'all_enemies', 'party').
    */
-  private executeCloudBraver(onComplete: () => void): void {
+  private executeGenericSkill(hero: UnitActor, skill: SkillConfig, onComplete: () => void): void {
     const target = this.currentTarget && this.currentTarget.currentHp > 0
       ? this.currentTarget
       : this.autoRetarget();
-    if (!target) {
-      onComplete();
-      return;
-    }
 
-    const homeX = this.cloud.homeSlot.x;
-    const homeY = this.cloud.homeSlot.y;
-    const arrivalX = target.x + 90;
-    const arrivalY = target.y;
+    const triggerImpact = () => {
+      if (skill.scope === 'single_enemy') {
+        const hitTarget = this.currentTarget && this.currentTarget.currentHp > 0 ? this.currentTarget : target;
+        if (!hitTarget) return;
 
-    this.cloud.setDepthBoost(true);
-    this.updateStatus(`Action: CLOUD unleashes BRAVER at ${target.nameTag}...`);
-    this.cloud.playAnimation('move');
-
-    this.tweens.add({
-      targets: this.cloud,
-      x: arrivalX,
-      y: arrivalY,
-      duration: 360,
-      ease: 'Cubic.easeInOut',
-      onComplete: () => {
-        this.cloud.playAnimation('atk');
-
-        // Trigger heavy sword slash on impact (hit frame 2)
-        this.time.delayedCall(160, () => {
-          const hitTarget = this.currentTarget && this.currentTarget.currentHp > 0
-            ? this.currentTarget
-            : target;
-
-          // 1. Hit-Stop (80ms pause on Cloud's animation for impact freeze)
-          this.cloud.anims.pause();
+        // 1. Hit-Stop if dashing
+        if (skill.moveType === 'dash') {
+          hero.anims.pause();
           this.time.delayedCall(80, () => {
-            if (this.cloud.anims) {
-              this.cloud.anims.resume();
-            }
+            if (hero.anims) hero.anims.resume();
           });
-
-          // 2. Monster white impact flash (70ms)
-          hitTarget.sprite.setTintFill(0xffffff);
-          this.time.delayedCall(70, () => {
-            hitTarget.sprite.clearTint();
-          });
-
-          // 3. Wuchtiger Kamera-Shake
-          this.cameras.main.shake(200, 0.015);
-
-          // 4. Critical damage calculation and golden "CRITICAL!" text
-          let dmg = Phaser.Math.Between(1100, 1400);
-          dmg = Math.round(dmg * this.cloudDmgMultiplier);
-          hitTarget.applyDamage(dmg, true, 'physical');
-
-          const critText = this.add.text(hitTarget.x, hitTarget.y - 105, 'CRITICAL!', {
-            fontFamily: 'monospace',
-            fontSize: '15px',
-            color: '#facc15',
-            fontStyle: 'bold',
-            stroke: '#713f12',
-            strokeThickness: 3,
-          }).setOrigin(0.5).setDepth(2000);
-
-          this.tweens.add({
-            targets: critText,
-            y: hitTarget.y - 135,
-            alpha: 0,
-            scaleX: 1.2,
-            scaleY: 1.2,
-            duration: 650,
-            ease: 'Cubic.easeOut',
-            onComplete: () => critText.destroy(),
-          });
-
-          this.handleTargetDamaged(hitTarget);
-        });
-
-        // Conclude after attack animation follow-through
-        this.time.delayedCall(650, () => {
-          this.cloud.playAnimation('move');
-          this.cloud.setFacingLeft(false);
-
-          this.tweens.add({
-            targets: this.cloud,
-            x: homeX,
-            y: homeY,
-            duration: 380,
-            ease: 'Cubic.easeInOut',
-            onComplete: () => {
-              this.cloud.setFacingLeft(true);
-              this.cloud.setDepthBoost(false);
-              this.cloud.playAnimation('idle');
-              onComplete();
-            },
-          });
-        });
-      },
-    });
-  }
-
-  /**
-   * Aerith's Signature Skill: "Curaga"
-   * Plays Aerith's magic_atk pose from home slot, soft green flash, restores 700-1000 HP
-   * to all living heroes with rising green +HP bounce numbers.
-   */
-  private executeAerithCuraga(onComplete: () => void): void {
-    this.updateStatus('Action: AERITH casts CURAGA on the party!');
-    this.aerith.playAnimation('magic_atk');
-
-    this.time.delayedCall(220, () => {
-      this.cameras.main.flash(120, 200, 255, 200, false);
-
-      this.turnOrder.forEach((hero) => {
-        if (!hero.isDead) {
-          let heal = Phaser.Math.Between(700, 1000);
-          heal = Math.round(heal * this.aerithMagicMultiplier);
-          hero.restoreHp(heal);
         }
-      });
-      this.updatePartyStatusUi();
-    });
 
-    this.time.delayedCall(950, () => {
-      this.aerith.returnToIdle(onComplete);
-    });
-  }
+        // 2. White flash on target monster
+        hitTarget.sprite.setTintFill(0xffffff);
+        this.time.delayedCall(70, () => {
+          hitTarget.sprite.clearTint();
+        });
 
-  /**
-   * Barret's Signature Skill: "Grenade Bomb"
-   * Shoots from home slot, simultaneous monster white flashes, screen-shake,
-   * and deals 350-500 AoE damage to all living monsters.
-   */
-  private executeBarretGrenadeBomb(onComplete: () => void): void {
-    this.updateStatus('Action: BARRET launches GRENADE BOMB at all enemies!');
-    this.barret.playAnimation('atk');
+        // 3. Screen shake scaled by multiplier
+        const intensity = skill.damageMultiplier >= 4.0 ? 0.020 : skill.damageMultiplier >= 2.5 ? 0.014 : 0.009;
+        const duration = skill.damageMultiplier >= 4.0 ? 250 : 180;
+        this.cameras.main.shake(duration, intensity);
 
-    this.time.delayedCall(180, () => {
-      const livingEnemies = this.enemies.filter((e) => e.currentHp > 0);
-      if (livingEnemies.length === 0) {
-        this.barret.returnToIdle(onComplete);
+        // 4. Calculate damage
+        let base = hero === this.cloud ? Phaser.Math.Between(340, 440) * this.cloudDmgMultiplier
+                 : hero === this.aerith ? Phaser.Math.Between(260, 340) * this.aerithMagicMultiplier
+                 : Phaser.Math.Between(260, 360);
+        const dmg = Math.round(base * skill.damageMultiplier);
+        const isCrit = skill.damageMultiplier >= 3.0;
+        hitTarget.applyDamage(dmg, isCrit, skill.motion === 'magic_atk' ? 'holy' : 'physical');
+
+        if (isCrit) {
+          this.showCritPopup(hitTarget.x, hitTarget.y - 105);
+        }
+
+        this.handleTargetDamaged(hitTarget);
+      } else if (skill.scope === 'all_enemies') {
+        const living = this.enemies.filter((e) => e.currentHp > 0);
+        if (living.length === 0) return;
+
+        // White flash all living enemies
+        living.forEach((e) => {
+          e.sprite.setTintFill(0xffffff);
+          this.time.delayedCall(80, () => e.sprite.clearTint());
+        });
+
+        // Screen shake
+        const intensity = skill.damageMultiplier >= 3.0 ? 0.016 : 0.010;
+        this.cameras.main.shake(220, intensity);
+
+        // Calculate damage per enemy
+        let base = hero === this.cloud ? Phaser.Math.Between(300, 380) * this.cloudDmgMultiplier
+                 : hero === this.aerith ? Phaser.Math.Between(280, 360) * this.aerithMagicMultiplier
+                 : Phaser.Math.Between(240, 320);
+        const dmg = Math.round(base * skill.damageMultiplier);
+
+        living.forEach((e) => {
+          e.applyDamage(dmg, skill.damageMultiplier >= 3.0, skill.motion === 'magic_atk' ? 'holy' : 'physical');
+          this.handleTargetDamaged(e);
+        });
+      } else if (skill.scope === 'party') {
+        // Screen flash
+        this.cameras.main.flash(120, 200, 255, 200, false);
+
+        let baseHeal = hero === this.aerith ? Phaser.Math.Between(500, 750) * this.aerithMagicMultiplier : 500;
+        const heal = Math.round(baseHeal * skill.damageMultiplier);
+
+        this.turnOrder.forEach((h) => {
+          if (!h.isDead) {
+            h.restoreHp(heal);
+          }
+        });
+        this.updatePartyStatusUi();
+      }
+    };
+
+    if (skill.moveType === 'dash') {
+      if (!target) {
+        onComplete();
         return;
       }
+      const homeX = hero.homeSlot.x;
+      const homeY = hero.homeSlot.y;
+      const arrivalX = target.x + (hero.combatConfig.targetOffsetX || 90);
+      const arrivalY = target.y;
 
-      this.cameras.main.shake(250, 0.015);
-      this.cameras.main.flash(80, 255, 255, 255, false);
+      hero.setDepthBoost(true);
+      this.updateStatus(`Action: ${hero.heroName} executes ${skill.name} on ${target.nameTag}!`);
+      hero.playAnimation('move');
 
-      livingEnemies.forEach((enemy) => {
-        // Monster white impact flash
-        enemy.sprite.setTintFill(0xffffff);
-        this.time.delayedCall(80, () => {
-          enemy.sprite.clearTint();
-        });
+      this.tweens.add({
+        targets: hero,
+        x: arrivalX,
+        y: arrivalY,
+        duration: 340,
+        ease: 'Cubic.easeInOut',
+        onComplete: () => {
+          hero.playAnimation(skill.motion || 'atk');
+          this.time.delayedCall(160, triggerImpact);
 
-        const dmg = Phaser.Math.Between(350, 500);
-        enemy.applyDamage(dmg, false, 'physical');
-        this.handleTargetDamaged(enemy);
+          this.time.delayedCall(650, () => {
+            hero.playAnimation('move');
+            hero.setFacingLeft(false);
+
+            this.tweens.add({
+              targets: hero,
+              x: homeX,
+              y: homeY,
+              duration: 360,
+              ease: 'Cubic.easeInOut',
+              onComplete: () => {
+                hero.setFacingLeft(true);
+                hero.setDepthBoost(false);
+                hero.playAnimation('idle');
+                onComplete();
+              },
+            });
+          });
+        },
       });
+    } else {
+      const scopeDesc = skill.scope === 'party' ? 'on party' : skill.scope === 'all_enemies' ? 'on all enemies' : `at ${target?.nameTag || 'enemy'}`;
+      this.updateStatus(`Action: ${hero.heroName} casts ${skill.name} ${scopeDesc}!`);
+      hero.playAnimation(skill.motion || 'magic_atk');
 
-      this.time.delayedCall(850, () => {
-        this.barret.returnToIdle(onComplete);
+      this.time.delayedCall(200, triggerImpact);
+
+      this.time.delayedCall(900, () => {
+        hero.returnToIdle(onComplete);
       });
+    }
+  }
+
+  private showCritPopup(x: number, y: number): void {
+    const critText = this.add.text(x, y, 'CRITICAL!', {
+      fontFamily: 'monospace',
+      fontSize: '15px',
+      color: '#facc15',
+      fontStyle: 'bold',
+      stroke: '#713f12',
+      strokeThickness: 3,
+    }).setOrigin(0.5).setDepth(2000);
+
+    this.tweens.add({
+      targets: critText,
+      y: y - 30,
+      alpha: 0,
+      scaleX: 1.2,
+      scaleY: 1.2,
+      duration: 650,
+      ease: 'Cubic.easeOut',
+      onComplete: () => critText.destroy(),
     });
   }
 

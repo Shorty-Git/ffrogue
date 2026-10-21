@@ -54,6 +54,11 @@ export class PreloadScene extends Phaser.Scene {
         }
       }
     }
+
+    // Queue authentic skill datasets for hero units
+    ['cloud', 'aerith', 'barret'].forEach((unitKey) => {
+      this.load.json(`skills_${unitKey}`, `assets/units/${unitKey}/skills.json`);
+    });
   }
 
   create(): void {

@@ -2,26 +2,8 @@
   "unitId": "207000405",
   "unitName": "Aerith",
   "game": "FFVII",
-  "extractedAt": "2026-10-21T20:42:07.593Z",
+  "extractedAt": "2026-10-21T20:47:41.117Z",
   "skills": [
-    {
-      "id": "banish",
-      "ffbeId": 10060,
-      "name": "Banish",
-      "rarity": 5,
-      "level": 1,
-      "type": "MAGIC",
-      "mpCost": 3,
-      "scope": "single_enemy",
-      "damageMultiplier": 1.2,
-      "hitCount": 1,
-      "attackFrames": [
-        80
-      ],
-      "moveType": "stationary",
-      "motion": "atk",
-      "desc": "Magic light damage (1.2x, SPR) to one enemy"
-    },
     {
       "id": "healing_wind",
       "ffbeId": 229750,
@@ -41,40 +23,22 @@
       "desc": "Restore 1000 (+3.4x, Heal) HP to all allies"
     },
     {
-      "id": "esunaga",
-      "ffbeId": 10190,
-      "name": "Esunaga",
+      "id": "curaja",
+      "ffbeId": 10290,
+      "name": "Curaja",
       "rarity": 5,
-      "level": 14,
+      "level": 77,
       "type": "MAGIC",
-      "mpCost": 21,
+      "mpCost": 30,
       "scope": "party",
-      "damageMultiplier": 1,
+      "damageMultiplier": 2,
       "hitCount": 1,
       "attackFrames": [
         120
       ],
       "moveType": "stationary",
-      "motion": "atk",
-      "desc": "Cure all status effects for all allies"
-    },
-    {
-      "id": "seal_evil",
-      "ffbeId": 229751,
-      "name": "Seal Evil",
-      "rarity": 5,
-      "level": 22,
-      "type": "ABILITY",
-      "mpCost": 48,
-      "scope": "all_enemies",
-      "damageMultiplier": 1,
-      "hitCount": 1,
-      "attackFrames": [
-        80
-      ],
-      "moveType": "stationary",
       "motion": "magic_atk",
-      "desc": "Reduce SPR by 60% for 3 turns to all enemies"
+      "desc": "Restore 2500 (+18x, Heal) HP to all allies"
     },
     {
       "id": "banishga",
@@ -85,7 +49,7 @@
       "type": "MAGIC",
       "mpCost": 30,
       "scope": "all_enemies",
-      "damageMultiplier": 20,
+      "damageMultiplier": 3,
       "hitCount": 8,
       "attackFrames": [
         42,
@@ -98,260 +62,8 @@
         182
       ],
       "moveType": "stationary",
-      "motion": "atk",
+      "motion": "magic_atk",
       "desc": "Magic light damage (20x, SPR) to all enemies"
-    },
-    {
-      "id": "dispelga",
-      "ffbeId": 10200,
-      "name": "Dispelga",
-      "rarity": 5,
-      "level": 42,
-      "type": "MAGIC",
-      "mpCost": 18,
-      "scope": "all_enemies",
-      "damageMultiplier": 1,
-      "hitCount": 1,
-      "attackFrames": [
-        120
-      ],
-      "moveType": "stationary",
-      "motion": "atk",
-      "desc": "Remove all buffs and debuffs from all enemies"
-    },
-    {
-      "id": "breath_of_the_earth",
-      "ffbeId": 229752,
-      "name": "Breath of the Earth",
-      "rarity": 5,
-      "level": 50,
-      "type": "ABILITY",
-      "mpCost": 36,
-      "scope": "party",
-      "damageMultiplier": 1,
-      "hitCount": 1,
-      "attackFrames": [
-        160
-      ],
-      "moveType": "stationary",
-      "motion": "magic_atk",
-      "desc": "Increase break resistance to ATK, DEF, MAG and SPR by 100% for 3 turns to all allies"
-    },
-    {
-      "id": "full_life",
-      "ffbeId": 10180,
-      "name": "Full-Life",
-      "rarity": 5,
-      "level": 58,
-      "type": "MAGIC",
-      "mpCost": 20,
-      "scope": "single_enemy",
-      "damageMultiplier": 1,
-      "hitCount": 1,
-      "attackFrames": [
-        120
-      ],
-      "moveType": "stationary",
-      "motion": "atk",
-      "desc": "Revive target from KO (100% HP)"
-    },
-    {
-      "id": "fury_brand",
-      "ffbeId": 229753,
-      "name": "Fury Brand",
-      "rarity": 5,
-      "level": 69,
-      "type": "ABILITY",
-      "mpCost": 48,
-      "scope": "party",
-      "damageMultiplier": 1,
-      "hitCount": 1,
-      "attackFrames": [
-        90
-      ],
-      "moveType": "stationary",
-      "motion": "magic_atk",
-      "desc": "Increase ATK by 110% for 3 turns to the rest of the party"
-    },
-    {
-      "id": "curaja",
-      "ffbeId": 10290,
-      "name": "Curaja",
-      "rarity": 5,
-      "level": 77,
-      "type": "MAGIC",
-      "mpCost": 30,
-      "scope": "party",
-      "damageMultiplier": 1,
-      "hitCount": 1,
-      "attackFrames": [
-        120
-      ],
-      "moveType": "stationary",
-      "motion": "atk",
-      "desc": "Restore 2500 (+18x, Heal) HP to all allies"
-    },
-    {
-      "id": "planet_protector",
-      "ffbeId": 229754,
-      "name": "Planet Protector",
-      "rarity": 5,
-      "level": 80,
-      "type": "ABILITY",
-      "mpCost": 30,
-      "scope": "party",
-      "damageMultiplier": 1,
-      "hitCount": 1,
-      "attackFrames": [
-        90
-      ],
-      "moveType": "stationary",
-      "motion": "magic_atk",
-      "desc": "Reduce damage taken by 30% to all allies for 3 turns"
-    },
-    {
-      "id": "holy",
-      "ffbeId": 10210,
-      "name": "Holy",
-      "rarity": 6,
-      "level": 8,
-      "type": "MAGIC",
-      "mpCost": 0,
-      "scope": "single_enemy",
-      "damageMultiplier": 1,
-      "hitCount": 1,
-      "attackFrames": [
-        450
-      ],
-      "moveType": "stationary",
-      "motion": "atk",
-      "desc": "Consume all MP to deal magic light damage (1x, SPR) with (0.3x, consumed MP) bonus damage to one enemy"
-    },
-    {
-      "id": "pulse_of_life",
-      "ffbeId": 229755,
-      "name": "Pulse of Life",
-      "rarity": 6,
-      "level": 19,
-      "type": "ABILITY",
-      "mpCost": 70,
-      "scope": "party",
-      "damageMultiplier": 1,
-      "hitCount": 1,
-      "attackFrames": [
-        90
-      ],
-      "moveType": "stationary",
-      "motion": "magic_atk",
-      "desc": "Revive all allies from KO (100% HP)"
-    },
-    {
-      "id": "reraise",
-      "ffbeId": 10230,
-      "name": "Reraise",
-      "rarity": 6,
-      "level": 37,
-      "type": "MAGIC",
-      "mpCost": 21,
-      "scope": "single_ally",
-      "damageMultiplier": 1,
-      "hitCount": 1,
-      "attackFrames": [
-        120
-      ],
-      "moveType": "stationary",
-      "motion": "atk",
-      "desc": "Auto-revive (80% HP) for 3 turns to one ally"
-    },
-    {
-      "id": "white_materia",
-      "ffbeId": 229756,
-      "name": "White Materia",
-      "rarity": 6,
-      "level": 46,
-      "type": "ABILITY",
-      "mpCost": 76,
-      "scope": "party",
-      "damageMultiplier": 1,
-      "hitCount": 1,
-      "attackFrames": [
-        160
-      ],
-      "moveType": "stationary",
-      "motion": "magic_atk",
-      "desc": "Restore 2500 (+18x, Heal) HP to all allies"
-    },
-    {
-      "id": "stop_detach",
-      "ffbeId": 213920,
-      "name": "Stop Detach",
-      "rarity": 6,
-      "level": 55,
-      "type": "ABILITY",
-      "mpCost": 20,
-      "scope": "party",
-      "damageMultiplier": 1,
-      "hitCount": 1,
-      "attackFrames": [
-        120
-      ],
-      "moveType": "stationary",
-      "motion": "magic_atk",
-      "desc": "Remove Stop debuff from all allies"
-    },
-    {
-      "id": "prayer_of_the_cetra",
-      "ffbeId": 229757,
-      "name": "Prayer of the Cetra",
-      "rarity": 6,
-      "level": 76,
-      "type": "ABILITY",
-      "mpCost": 56,
-      "scope": "party",
-      "damageMultiplier": 1,
-      "hitCount": 1,
-      "attackFrames": [
-        120
-      ],
-      "moveType": "stationary",
-      "motion": "magic_atk",
-      "desc": "Restore 1000 (+3.4x, Heal) HP to all allies"
-    },
-    {
-      "id": "overflowing_life",
-      "ffbeId": 229758,
-      "name": "Overflowing Life",
-      "rarity": 6,
-      "level": 88,
-      "type": "ABILITY",
-      "mpCost": 99,
-      "scope": "single_ally",
-      "damageMultiplier": 1,
-      "hitCount": 1,
-      "attackFrames": [
-        90
-      ],
-      "moveType": "stationary",
-      "motion": "magic_atk",
-      "desc": "Auto-revive (100% HP) for 3 turns to one ally"
-    },
-    {
-      "id": "lifestream",
-      "ffbeId": 229759,
-      "name": "Lifestream",
-      "rarity": 6,
-      "level": 95,
-      "type": "ABILITY",
-      "mpCost": 99,
-      "scope": "single_ally",
-      "damageMultiplier": 1,
-      "hitCount": 1,
-      "attackFrames": [
-        90
-      ],
-      "moveType": "stationary",
-      "motion": "magic_atk",
-      "desc": "Auto-revive (100% HP) for 3 turns to one ally"
     }
   ]
 }

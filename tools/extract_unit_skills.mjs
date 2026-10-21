@@ -13,6 +13,16 @@ const SOURCES = {
   magic: `${REPO_BASE}/skills_magic.json`,
 };
 
+// Curated signature presets for player heroes in MVP
+const SIGNATURE_PRESETS = {
+  '207000105': ['brave_slash', 'blade_beam', 'climhazzard'],
+  'cloud': ['brave_slash', 'blade_beam', 'climhazzard'],
+  '207000405': ['healing_wind', 'curaja', 'banishga'],
+  'aerith': ['healing_wind', 'curaja', 'banishga'],
+  '207000204': ['big_shot', 'grenade_bomb', 'satellite_beam'],
+  'barret': ['big_shot', 'grenade_bomb', 'satellite_beam'],
+};
+
 /**
  * Ensures data directory exists and required JSON files are downloaded and cached.
  */
@@ -155,7 +165,7 @@ Usage: node tools/extract_unit_skills.mjs [options]
 Options:
   -u, --unit <id|name>   Unit ID (e.g. 207000105) or Name (default: Cloud)
   -o, --out <path>       Output JSON file path (default: public/assets/units/<name>/skills.json)
-  -a, --all              Include all active skills (default: iconic signature skills only)
+  -a, --all              Include all active skills (default: curated signature skills)
   -h, --help             Show this help message
     `);
     process.exit(0);
@@ -184,7 +194,7 @@ Options:
   }
 
   const parsedSkills = [];
-  const seenNames = new Set();
+  const seenSlugs = new Set();
 
   for (const s of unit.skills) {
     let skillObj = null;
@@ -213,22 +223,34 @@ Options:
       continue;
     }
 
-    // Deduplicate by name (keep earlier or higher tier if identical name)
-    if (seenNames.has(name) && !options.all) {
+    const slug = name.toLowerCase().replace(/[^a-z0-9]/g, '_').replace(/_+/g, '_').replace(/^_|_$/g, '');
+
+    // Deduplicate by slug
+    if (seenSlugs.has(slug) && !options.all) {
       continue;
     }
-    seenNames.add(name);
+    seenSlugs.add(slug);
 
-    const slug = name.toLowerCase().replace(/[^a-z0-9]/g, '_').replace(/_+/g, '_').replace(/^_|_$/g, '');
-    const scope = extractScope(primaryEffect);
-    const multiplier = extractMultiplier(primaryEffect);
+    let scope = extractScope(primaryEffect);
+    let multiplier = extractMultiplier(primaryEffect);
     const attackFrames = skillObj.attack_frames?.[0] || [];
     const hitCount = skillObj.attack_count?.[0] || attackFrames.length || 1;
+
+    // Balance special magic/heal multipliers for standard RPG battle system
+    if (slug === 'banishga') multiplier = 3.0;
+    if (slug === 'curaja') {
+      multiplier = 2.0;
+      scope = 'party';
+    }
+    if (slug === 'healing_wind') {
+      multiplier = 1.0;
+      scope = 'party';
+    }
 
     // Move type: 1 = Dash to target, 4 = Stationary/Ranged
     const moveType = skillObj.move_type === 1 ? 'dash' : 'stationary';
     // Motion type: 1 = Attack, 2 = Magic Cast
-    const motion = skillObj.motion_type === 2 ? 'magic_atk' : 'atk';
+    const motion = skillObj.motion_type === 2 ? 'magic_atk' : (skillType === 'MAGIC' ? 'magic_atk' : 'atk');
 
     parsedSkills.push({
       id: slug,
@@ -251,15 +273,13 @@ Options:
   // Filter signature skills if --all is not specified
   let outputSkills = parsedSkills;
   if (!options.all) {
-    // Select iconic signature skills (e.g. 4-6 diverse skills covering single target, AoE, high-damage)
-    // For Cloud: Brave Slash, Cross Slash, Blade Beam, Climhazzard, Meteor Rain, Finishing Touch
-    outputSkills = parsedSkills.filter(sk => {
-      // Keep skills up to 7-star / iconic rarity, avoid overly inflated NV cooldown skills (>70 MP)
-      return sk.mpCost <= 65;
-    });
-
-    if (outputSkills.length > 6) {
-      outputSkills = outputSkills.slice(0, 6);
+    const preset = SIGNATURE_PRESETS[rootId] || SIGNATURE_PRESETS[unitSlug];
+    if (preset) {
+      outputSkills = preset
+        .map(slug => parsedSkills.find(s => s.id === slug))
+        .filter(Boolean);
+    } else {
+      outputSkills = parsedSkills.filter(sk => sk.mpCost <= 65).slice(0, 6);
     }
   }
 
