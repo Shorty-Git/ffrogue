@@ -186,7 +186,7 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
             frame: f.index,
             duration: f.durationMs,
           })),
-          repeat: animName === 'idle' || animName === 'move' ? -1 : 0,
+          repeat: animName === 'idle' || animName === 'move' || animName === 'win' ? -1 : 0,
         });
       }
     }

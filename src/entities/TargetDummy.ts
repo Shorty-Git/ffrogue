@@ -314,11 +314,62 @@ export class TargetDummy extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Resets Werratte to full health and returns to base slot.
+   * Smooth defeat staging: red flash, UI fade, and alpha fadeout of monster sprite.
    */
-  public resetCombat(): void {
-    this.healFull();
+  public playDefeatFade(onComplete?: () => void): void {
+    // 1. Red impact tint
+    this.sprite.setTintFill(0xef4444);
+
+    // Fade out HP bar and text
+    this.scene.tweens.add({
+      targets: [this.fgBar, this.chipBar, this.hpText, this.koBanner],
+      alpha: 0,
+      duration: 200,
+    });
+
+    this.scene.time.delayedCall(100, () => {
+      this.sprite.clearTint();
+      this.sprite.setTint(0xf87171);
+
+      // 2. Alpha fadeout over 650ms
+      this.scene.tweens.add({
+        targets: this.sprite,
+        alpha: 0,
+        duration: 650,
+        ease: 'Cubic.easeIn',
+        onComplete: () => {
+          this.setVisible(false);
+          if (onComplete) onComplete();
+        },
+      });
+    });
+  }
+
+  /**
+   * Resets or respawns Werratte to full health and returns to base slot.
+   */
+  public resetCombat(newMaxHp?: number): void {
+    if (newMaxHp) {
+      this.maxHp = newMaxHp;
+    }
+    this.currentHp = this.maxHp;
+    this.setVisible(true);
+    this.sprite.setAlpha(1);
+    this.sprite.clearTint();
+    this.sprite.setScale(2.5);
     this.setPosition(this.baseX, this.baseY);
+
+    this.fgBar.setAlpha(1);
+    this.chipBar.setAlpha(1);
+    this.hpText.setAlpha(1);
+    this.koBanner.setVisible(false);
+    this.koBanner.setAlpha(1);
+
+    this.fgBar.width = this.barWidth;
+    this.chipBar.width = this.barWidth;
+    this.fgBar.fillColor = 0x22c55e;
+    this.hpText.setText(`${this.maxHp.toLocaleString()} / ${this.maxHp.toLocaleString()} HP`);
+
     if (this.scene.anims.exists('training_dummy_idle')) {
       this.sprite.play('training_dummy_idle');
     }
