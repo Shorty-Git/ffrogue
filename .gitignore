@@ -1,0 +1,27 @@
+# Binaries & Tool Executables (große Binärdateien nicht im Git syncen)
+tools/bin/*
+!tools/bin/.gitkeep
+*.exe
+*.zip
+*.tar.gz
+
+# Node / Vite
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+
+# OS & Editor
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
