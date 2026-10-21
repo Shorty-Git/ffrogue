@@ -186,8 +186,8 @@ export class TargetDummy extends Phaser.GameObjects.Container {
   }
 
   private spawnDamagePopup(damage: number, isCritical: boolean, damageType: 'physical' | 'holy'): void {
-    const startX = this.baseX + Phaser.Math.Between(-14, 14);
-    const startY = this.baseY - 170;
+    const startX = this.x + Phaser.Math.Between(-14, 14);
+    const startY = this.y - 170;
 
     let color = '#ffffff';
     let stroke = '#0f172a';
@@ -246,6 +246,82 @@ export class TargetDummy extends Phaser.GameObjects.Container {
         });
       },
     });
+  }
+
+  /**
+   * Counter-attack: Werratte glides to target, plays 'atk' animation, triggers impact damage, and glides back.
+   */
+  public executeAttack(
+    targetX: number,
+    targetY: number,
+    onImpact: () => void,
+    onComplete: () => void
+  ): void {
+    if (this.currentHp <= 0) {
+      onComplete();
+      return;
+    }
+
+    const attackX = targetX - 85;
+    const attackY = targetY;
+
+    // 1. Move to target
+    this.scene.tweens.add({
+      targets: this,
+      x: attackX,
+      y: attackY,
+      duration: 320,
+      ease: 'Cubic.easeInOut',
+      onComplete: () => {
+        // 2. Play attack animation
+        if (this.scene.anims.exists('training_dummy_atk')) {
+          this.sprite.play('training_dummy_atk');
+        }
+
+        // Deal impact damage on frame 1 (~130ms)
+        let impactFired = false;
+        const impactTimer = this.scene.time.delayedCall(130, () => {
+          if (!impactFired) {
+            impactFired = true;
+            onImpact();
+          }
+        });
+
+        // 3. Return to base slot after attack completes
+        this.scene.time.delayedCall(300, () => {
+          if (!impactFired) {
+            impactFired = true;
+            impactTimer.remove();
+            onImpact();
+          }
+
+          this.scene.tweens.add({
+            targets: this,
+            x: this.baseX,
+            y: this.baseY,
+            duration: 360,
+            ease: 'Cubic.easeInOut',
+            onComplete: () => {
+              if (this.scene.anims.exists('training_dummy_idle') && this.currentHp > 0) {
+                this.sprite.play('training_dummy_idle');
+              }
+              onComplete();
+            },
+          });
+        });
+      },
+    });
+  }
+
+  /**
+   * Resets Werratte to full health and returns to base slot.
+   */
+  public resetCombat(): void {
+    this.healFull();
+    this.setPosition(this.baseX, this.baseY);
+    if (this.scene.anims.exists('training_dummy_idle')) {
+      this.sprite.play('training_dummy_idle');
+    }
   }
 
   /**
