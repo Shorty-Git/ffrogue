@@ -55,10 +55,6 @@ export class PreloadScene extends Phaser.Scene {
       }
     }
 
-    // Queue authentic battle backgrounds
-    this.load.image('battle_bg_01', 'assets/backgrounds/battle_bg_01.png');
-    this.load.image('battle_bg_cave', 'assets/backgrounds/battle_bg_cave.png');
-
     // Queue authentic skill datasets for hero units
     ['cloud', 'aerith', 'barret'].forEach((unitKey) => {
       this.load.json(`skills_${unitKey}`, `assets/units/${unitKey}/skills.json`);

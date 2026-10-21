@@ -287,13 +287,20 @@ export class BattleScene extends Phaser.Scene {
   }
 
   private createArenaBackground(width: number, height: number): void {
-    // Authentic FFBE Battle Arena Background
-    const bg = this.add.image(width / 2, height / 2, 'battle_bg_01');
+    const bg = this.add.graphics();
     bg.setDepth(-100);
 
-    // Uniform cover-scaling so the background completely fills 1280x720 without aspect distortion
-    const scale = Math.max(width / bg.width, height / bg.height);
-    bg.setScale(scale);
+    // 1. Sky / Upper Backdrop: Dark Fantasy Midnight Gradient (Deep Blue -> Night Black)
+    bg.fillGradientStyle(0x071126, 0x071126, 0x020617, 0x020617, 1);
+    bg.fillRect(0, 0, width, height);
+
+    // 2. Arena Combat Floor: Subtle darkened floor plane on which stands & shadows rest
+    bg.fillStyle(0x050a14, 0.85);
+    bg.fillRect(0, 170, width, height - 170);
+
+    // 3. Horizon accent line (delicate separation between distant backdrop and battle floor)
+    bg.lineStyle(1, 0x1e293b, 0.5);
+    bg.lineBetween(0, 170, width, 170);
   }
 
   private createCombatGrids(): void {
