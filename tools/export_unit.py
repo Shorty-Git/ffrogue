@@ -3,8 +3,9 @@ import sys
 import shutil
 import json
 import glob
+import argparse
 
-def export_unit(unit_id="207000105", unit_name="cloud", input_dir="tools/test_output", output_base="public/assets/units"):
+def export_unit(unit_id, unit_name, input_dir="tools/test_output", output_base="public/assets/units"):
     target_dir = os.path.join(output_base, unit_name)
     os.makedirs(target_dir, exist_ok=True)
     
@@ -67,7 +68,7 @@ def export_unit(unit_id="207000105", unit_name="cloud", input_dir="tools/test_ou
             "frames": frames_meta
         }
         
-        print(f"  [+] {anim_name:10s} -> {png_dest_filename} ({f_w}x{f_h}, {len(delays)} frames, pivot: ({pivot_x:.4f}, {pivot_y:.4f}))")
+        print(f"  [+] {anim_name:12s} -> {png_dest_filename} ({f_w}x{f_h}, {len(delays)} frames, pivot: ({pivot_x:.4f}, {pivot_y:.4f}))")
         
     manifest_path = os.path.join(target_dir, "manifest.json")
     with open(manifest_path, "w", encoding="utf-8") as f:
@@ -75,7 +76,36 @@ def export_unit(unit_id="207000105", unit_name="cloud", input_dir="tools/test_ou
         
     print(f"\nManifest successfully written to: {manifest_path}")
 
+def main():
+    parser = argparse.ArgumentParser(description="Export assembled FFBE unit assets to Phaser format.")
+    parser.add_argument("--id", "-i", type=str, default="207000105", help="Unit ID (e.g. 207000105 for Cloud, 207000405 for Aerith)")
+    parser.add_argument("--name", "-n", type=str, default=None, help="Unit name / target folder name (e.g. cloud, aerith)")
+    parser.add_argument("--input", "-in", dest="input_dir", type=str, default="tools/test_output", help="Input directory containing ffbetool output")
+    parser.add_argument("--output", "-out", dest="output_base", type=str, default="public/assets/units", help="Output base directory")
+    
+    # Also support positional arguments for backwards compatibility
+    parser.add_argument("pos_id", nargs="?", default=None, help="Positional Unit ID fallback")
+    parser.add_argument("pos_name", nargs="?", default=None, help="Positional Unit name fallback")
+    
+    args = parser.parse_args()
+    
+    unit_id = args.pos_id or args.id
+    unit_name = args.pos_name or args.name
+    
+    if not unit_name:
+        # Try to resolve from character_data.json if present
+        if os.path.exists("character_data.json"):
+            try:
+                with open("character_data.json", "r", encoding="utf-8") as f:
+                    cdata = json.load(f)
+                    if unit_id in cdata:
+                        unit_name = cdata[unit_id].get("name", "").lower().replace(" ", "_")
+            except Exception:
+                pass
+        if not unit_name:
+            unit_name = f"unit_{unit_id}"
+            
+    export_unit(unit_id, unit_name, args.input_dir, args.output_base)
+
 if __name__ == "__main__":
-    uid = sys.argv[1] if len(sys.argv) > 1 else "207000105"
-    uname = sys.argv[2] if len(sys.argv) > 2 else "cloud"
-    export_unit(uid, uname)
+    main()

@@ -3,20 +3,24 @@ import { UnitActor } from '../entities/UnitActor';
 import { UnitManifest } from '../types/manifest';
 
 export class BattleScene extends Phaser.Scene {
-  private cloudManifest!: UnitManifest;
+  private manifests!: Record<string, UnitManifest>;
   private cloud!: UnitActor;
+  private aerith!: UnitActor;
+  private selectedUnit!: UnitActor;
+
   private debugMarkerGraphics!: Phaser.GameObjects.Graphics;
   private showDebugMarker: boolean = true;
   private isAttacking: boolean = false;
   private statusText!: Phaser.GameObjects.Text;
+  private activeUnitBtnText!: Phaser.GameObjects.Text;
   private targetDummy!: Phaser.GameObjects.Container;
 
   constructor() {
     super('BattleScene');
   }
 
-  init(data: { cloudManifest: UnitManifest }): void {
-    this.cloudManifest = data.cloudManifest;
+  init(data: { manifests: Record<string, UnitManifest> }): void {
+    this.manifests = data.manifests;
   }
 
   create(): void {
@@ -31,10 +35,19 @@ export class BattleScene extends Phaser.Scene {
     // 3. Target Dummy on the Left
     this.createTargetDummy(340, 430);
 
-    // 4. Cloud UnitActor on Party Slot (Right side: 920, 430)
-    this.cloud = new UnitActor(this, 920, 430, 'cloud', this.cloudManifest);
+    // 4. Instantiate Party Units:
+    // Cloud on Front-Mid (920, 430)
+    this.cloud = new UnitActor(this, 920, 430, 'cloud', this.manifests.cloud);
     this.cloud.setScale(2.5);
-    this.cloud.setFacingLeft(true); // Cloud naturally faces left towards the enemy
+    this.cloud.setFacingLeft(true);
+
+    // Aerith on Front-Top (920, 310)
+    this.aerith = new UnitActor(this, 920, 310, 'aerith', this.manifests.aerith);
+    this.aerith.setScale(2.5);
+    this.aerith.setFacingLeft(true);
+
+    // Default active test unit is Cloud
+    this.selectedUnit = this.cloud;
 
     // 5. Debug Pivot Graphics
     this.debugMarkerGraphics = this.add.graphics();
@@ -43,19 +56,19 @@ export class BattleScene extends Phaser.Scene {
     // 6. UI Controls
     this.createUI(width, height);
 
-    this.updateStatus('Bereit - Animation: IDLE');
+    this.updateStatus(`Bereit - Aktive Einheit: ${this.selectedUnit.unitKey.toUpperCase()} (IDLE)`);
   }
 
   update(): void {
-    // Redraw debug pivot marker at Cloud's exact ground coordinates
+    // Redraw debug pivot marker at selected unit's exact ground coordinates
     this.debugMarkerGraphics.clear();
-    if (this.showDebugMarker && this.cloud) {
-      const cx = this.cloud.x;
-      const cy = this.cloud.y;
+    if (this.showDebugMarker && this.selectedUnit) {
+      const cx = this.selectedUnit.x;
+      const cy = this.selectedUnit.y;
 
       // Outer ring
       this.debugMarkerGraphics.lineStyle(2, 0xff0055, 0.9);
-      this.debugMarkerGraphics.strokeCircle(cx, cy, 8);
+      this.debugMarkerGraphics.strokeCircle(cx, cy, 9);
 
       // Inner solid point
       this.debugMarkerGraphics.fillStyle(0x00ffff, 1.0);
@@ -63,8 +76,8 @@ export class BattleScene extends Phaser.Scene {
 
       // Crosshair lines
       this.debugMarkerGraphics.lineStyle(1, 0x00ffff, 0.7);
-      this.debugMarkerGraphics.lineBetween(cx - 14, cy, cx + 14, cy);
-      this.debugMarkerGraphics.lineBetween(cx, cy - 14, cx, cy + 14);
+      this.debugMarkerGraphics.lineBetween(cx - 15, cy, cx + 15, cy);
+      this.debugMarkerGraphics.lineBetween(cx, cy - 15, cx, cy + 15);
     }
   }
 
@@ -76,24 +89,24 @@ export class BattleScene extends Phaser.Scene {
 
     // Ground plane
     bg.fillStyle(0x0f172a, 0.9);
-    bg.fillRect(0, 320, width, height - 320);
+    bg.fillRect(0, 240, width, height - 240);
 
     // Subtle arena floor grid
     bg.lineStyle(1, 0x1e293b, 0.6);
-    for (let y = 340; y < height; y += 40) {
+    for (let y = 260; y < height; y += 40) {
       bg.lineBetween(0, y, width, y);
     }
     for (let x = 60; x < width; x += 80) {
-      bg.lineBetween(x, 320, x, height);
+      bg.lineBetween(x, 240, x, height);
     }
 
     // Arena separator accent
     bg.lineStyle(2, 0x38bdf8, 0.3);
-    bg.lineBetween(0, 320, width, 320);
+    bg.lineBetween(0, 240, width, 240);
 
     // Center divider glow
     bg.lineStyle(1, 0x64748b, 0.2);
-    bg.lineBetween(width / 2, 320, width / 2, height);
+    bg.lineBetween(width / 2, 240, width / 2, height);
   }
 
   private createCombatGrids(): void {
@@ -101,7 +114,7 @@ export class BattleScene extends Phaser.Scene {
 
     // Player Party 2x3 Grid Slots (Right)
     const partySlots = [
-      { x: 920, y: 310, label: 'Front-Top' },
+      { x: 920, y: 310, label: 'Front-Top (Aerith)' },
       { x: 920, y: 430, label: 'Front-Mid (Cloud)' },
       { x: 920, y: 550, label: 'Front-Bot' },
       { x: 1070, y: 310, label: 'Back-Top' },
@@ -188,7 +201,8 @@ export class BattleScene extends Phaser.Scene {
     });
 
     // Floating damage number
-    const dmgText = this.add.text(340, 320, '9,999!', {
+    const dmg = this.selectedUnit === this.cloud ? '9,999!' : '4,850!';
+    const dmgText = this.add.text(340, 320, dmg, {
       fontFamily: 'Arial, sans-serif',
       fontSize: '28px',
       color: '#fbbf24',
@@ -212,14 +226,14 @@ export class BattleScene extends Phaser.Scene {
     const headerBg = this.add.rectangle(width / 2, 28, width, 56, 0x0f172a, 0.85);
     headerBg.setStrokeStyle(1, 0x1e293b);
 
-    this.add.text(24, 16, 'FF ROGUE - MEILENSTEIN 2', {
+    this.add.text(24, 16, 'FF ROGUE - PARTY-RASTER & PIPELINE-TEST', {
       fontFamily: 'monospace',
       fontSize: '16px',
       color: '#38bdf8',
       fontStyle: 'bold',
     });
 
-    this.add.text(24, 36, 'Phaser 3 + UnitActor mit dynamischem Pivot & Move-to-Target Test', {
+    this.add.text(24, 36, '2 Party-Mitglieder: Cloud (DPS) & Aerith (Heiler) mit dynamischem Pivot', {
       fontFamily: 'monospace',
       fontSize: '12px',
       color: '#94a3b8',
@@ -236,42 +250,73 @@ export class BattleScene extends Phaser.Scene {
     const barBg = this.add.rectangle(width / 2, barY, width, 80, 0x0f172a, 0.95);
     barBg.setStrokeStyle(1, 0x1e293b);
 
-    // Animation Buttons
+    // 1. UNIT TOGGLE BUTTON (Cloud <-> Aerith)
+    const unitToggleContainer = this.createButton(
+      100,
+      barY - 14,
+      'Einheit: CLOUD ▾',
+      () => this.toggleActiveUnit(),
+      '#0e7490',
+      '#06b6d4',
+      130
+    );
+    this.activeUnitBtnText = unitToggleContainer.getAt(1) as Phaser.GameObjects.Text;
+
+    // 2. ANIMATION SWITCH BUTTONS
     const animButtons = [
       { key: 'idle', label: 'Idle' },
       { key: 'move', label: 'Move' },
       { key: 'atk', label: 'Attack' },
-      { key: 'limit_atk', label: 'Limit Atk' },
+      { key: 'magic_atk', label: 'Magic' },
+      { key: 'limit_atk', label: 'Limit' },
       { key: 'win', label: 'Win' },
       { key: 'dead', label: 'Dead' },
     ];
 
-    let startX = 40;
+    let startX = 220;
     animButtons.forEach((btn) => {
       this.createButton(startX, barY - 14, btn.label, () => {
         if (this.isAttacking) return;
-        this.cloud.playAnimation(btn.key);
-        this.updateStatus(`Animation gewechselt: ${btn.label.toUpperCase()}`);
-      });
-      startX += 95;
+        if (!this.selectedUnit.manifest.animations[btn.key]) {
+          this.updateStatus(`[Info] ${this.selectedUnit.unitKey.toUpperCase()} hat keine '${btn.key}'-Animation.`);
+          return;
+        }
+        this.selectedUnit.playAnimation(btn.key);
+        this.updateStatus(`Animation gewechselt: ${this.selectedUnit.unitKey.toUpperCase()} -> ${btn.label.toUpperCase()}`);
+      }, '#1e293b', '#38bdf8', 76);
+      startX += 84;
     });
 
-    // Toggle Debug Marker Button
-    this.createButton(startX + 15, barY - 14, 'Pivot-Punkt An/Aus', () => {
+    // 3. TOGGLE DEBUG PIVOT MARKER BUTTON
+    this.createButton(startX + 20, barY - 14, 'Pivot An/Aus', () => {
       this.showDebugMarker = !this.showDebugMarker;
       this.updateStatus(`Debug-Pivot: ${this.showDebugMarker ? 'SICHTBAR' : 'VERSTECKT'}`);
-    }, '#64748b', '#94a3b8');
+    }, '#475569', '#94a3b8', 95);
 
-    // MOVE-TO-TARGET ACTION BUTTON
+    // 4. MOVE-TO-TARGET ACTION BUTTON
     this.createButton(
-      width - 200,
+      width - 150,
       barY - 14,
-      '⚡ Test Move-to-Target Attack',
+      '⚡ Move-to-Target',
       () => this.executeMoveToTargetAttack(),
       '#0369a1',
       '#38bdf8',
-      190
+      140
     );
+  }
+
+  private toggleActiveUnit(): void {
+    if (this.isAttacking) return;
+
+    if (this.selectedUnit === this.cloud) {
+      this.selectedUnit = this.aerith;
+      this.activeUnitBtnText.setText('Einheit: AERITH ▾');
+    } else {
+      this.selectedUnit = this.cloud;
+      this.activeUnitBtnText.setText('Einheit: CLOUD ▾');
+    }
+
+    this.updateStatus(`Ausgewaehlt: ${this.selectedUnit.unitKey.toUpperCase()} (Pos: ${this.selectedUnit.homeSlot.x}, ${this.selectedUnit.homeSlot.y})`);
   }
 
   private createButton(
@@ -316,64 +361,63 @@ export class BattleScene extends Phaser.Scene {
   }
 
   /**
-   * Executes the full FFBE-style Move-to-Target sequence:
-   * 1. Switch to 'move'
-   * 2. Tween forward to target position (440, 430)
-   * 3. Play 'atk' and trigger impact damage
-   * 4. Step/Glide back to home slot (920, 430)
-   * 5. Return to 'idle'
+   * Executes the full FFBE-style Move-to-Target sequence for the currently selected unit.
    */
   public executeMoveToTargetAttack(): void {
     if (this.isAttacking) return;
     this.isAttacking = true;
 
-    const homeX = this.cloud.homeSlot.x;
-    const homeY = this.cloud.homeSlot.y;
-    const targetAttackX = 450; // Just in front of the target dummy
+    const unit = this.selectedUnit;
+    const homeX = unit.homeSlot.x;
+    const homeY = unit.homeSlot.y;
+    const targetAttackX = 450;
     const targetAttackY = 430;
 
-    this.updateStatus('Aktion: 1. Move zum Ziel...');
+    const unitName = unit.unitKey.toUpperCase();
+    this.updateStatus(`Aktion: ${unitName} gleitet zum Ziel...`);
 
     // 1. Switch to 'move'
-    this.cloud.playAnimation('move');
+    unit.playAnimation('move');
 
-    // 2. Glide to target
+    // 2. Glide to target dummy
     this.tweens.add({
-      targets: this.cloud,
+      targets: unit,
       x: targetAttackX,
       y: targetAttackY,
       duration: 380,
       ease: 'Cubic.easeInOut',
       onComplete: () => {
-        // 3. Arrived at target: Play full 'atk' animation
-        this.updateStatus('Aktion: 2. Ausfuehrung Angriff (Buster Sword)...');
-        this.cloud.playAnimation('atk');
+        // 3. Arrived at target: Play 'atk' or 'magic_atk'
+        const animToPlay = unit.manifest.animations['atk'] ? 'atk' : 'magic_atk';
+        this.updateStatus(`Aktion: ${unitName} fuehrt '${animToPlay.toUpperCase()}' aus...`);
+        unit.playAnimation(animToPlay);
 
-        // Trigger impact midway or on specific strike frame
-        this.time.delayedCall(300, () => {
+        // Trigger impact midway through animation
+        const hitDelay = unit === this.cloud ? 300 : 250;
+        this.time.delayedCall(hitDelay, () => {
           this.triggerTargetHit();
         });
 
         // Listen for attack animation completion
-        this.cloud.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
-          this.updateStatus('Aktion: 3. Rueckweg zum Slot...');
+        unit.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+          this.updateStatus(`Aktion: ${unitName} kehrt auf Slot zurueck...`);
 
           // Turn / step back towards home slot
-          this.cloud.playAnimation('move');
-          this.cloud.setFacingLeft(false); // face backwards towards slot
+          unit.playAnimation('move');
+          unit.setFacingLeft(false); // face backwards towards slot
 
           this.tweens.add({
-            targets: this.cloud,
+            targets: unit,
             x: homeX,
             y: homeY,
             duration: 420,
             ease: 'Cubic.easeInOut',
             onComplete: () => {
               // 4. Back home: face enemy and resume idle
-              this.cloud.setFacingLeft(true);
-              this.cloud.playAnimation('idle');
+              unit.setFacingLeft(true);
+              unit.playAnimation('idle');
               this.isAttacking = false;
-              this.updateStatus('Bereit - Angriff erfolgreich abgeschlossen!');
+              this.updateStatus(`Bereit - ${unitName} hat den Angriff abgeschlossen!`);
             },
           });
         });

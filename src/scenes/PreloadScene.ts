@@ -2,21 +2,21 @@ import Phaser from 'phaser';
 import { UnitManifest } from '../types/manifest';
 
 export class PreloadScene extends Phaser.Scene {
-  private cloudManifest!: UnitManifest;
+  private manifests!: Record<string, UnitManifest>;
 
   constructor() {
     super('PreloadScene');
   }
 
-  init(data: { cloudManifest: UnitManifest }): void {
-    this.cloudManifest = data.cloudManifest;
+  init(data: { manifests: Record<string, UnitManifest> }): void {
+    this.manifests = data.manifests;
   }
 
   preload(): void {
     const { width, height } = this.scale;
 
     // Loading UI
-    const loadingText = this.add.text(width / 2, height / 2 - 20, 'Lade Assets...', {
+    const loadingText = this.add.text(width / 2, height / 2 - 20, 'Lade Einheiten-Assets...', {
       fontFamily: 'monospace',
       fontSize: '20px',
       color: '#38bdf8',
@@ -39,18 +39,22 @@ export class PreloadScene extends Phaser.Scene {
       progressBox.destroy();
     });
 
-    // Queue spritesheets for Cloud
-    if (this.cloudManifest && this.cloudManifest.animations) {
-      for (const [animKey, animMeta] of Object.entries(this.cloudManifest.animations)) {
-        this.load.spritesheet(`cloud_${animKey}`, `assets/units/cloud/${animMeta.file}`, {
-          frameWidth: animMeta.frameWidth,
-          frameHeight: animMeta.frameHeight,
-        });
+    // Queue spritesheets for all units in manifests
+    if (this.manifests) {
+      for (const [unitKey, manifest] of Object.entries(this.manifests)) {
+        if (!manifest || !manifest.animations) continue;
+
+        for (const [animKey, animMeta] of Object.entries(manifest.animations)) {
+          this.load.spritesheet(`${unitKey}_${animKey}`, `assets/units/${unitKey}/${animMeta.file}`, {
+            frameWidth: animMeta.frameWidth,
+            frameHeight: animMeta.frameHeight,
+          });
+        }
       }
     }
   }
 
   create(): void {
-    this.scene.start('BattleScene', { cloudManifest: this.cloudManifest });
+    this.scene.start('BattleScene', { manifests: this.manifests });
   }
 }
