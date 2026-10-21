@@ -3,20 +3,22 @@ import { UnitManifest } from '../types/manifest';
 
 export class PreloadScene extends Phaser.Scene {
   private manifests!: Record<string, UnitManifest>;
+  private effectManifests!: Record<string, any>;
 
   constructor() {
     super('PreloadScene');
   }
 
-  init(data: { manifests: Record<string, UnitManifest> }): void {
+  init(data: { manifests: Record<string, UnitManifest>; effectManifests?: Record<string, any> }): void {
     this.manifests = data.manifests;
+    this.effectManifests = data.effectManifests ?? {};
   }
 
   preload(): void {
     const { width, height } = this.scale;
 
     // Loading UI
-    const loadingText = this.add.text(width / 2, height / 2 - 20, 'Loading unit assets...', {
+    const loadingText = this.add.text(width / 2, height / 2 - 20, 'Loading battle assets...', {
       fontFamily: 'monospace',
       fontSize: '20px',
       color: '#38bdf8',
@@ -54,9 +56,41 @@ export class PreloadScene extends Phaser.Scene {
         }
       }
     }
+
+    // Queue spritesheets for all visual skill effects
+    if (this.effectManifests) {
+      for (const [effKey, effMeta] of Object.entries(this.effectManifests)) {
+        if (!effMeta || !effMeta.file) continue;
+        this.load.spritesheet(`effect_${effKey}`, `assets/effects/${effKey}/${effMeta.file}`, {
+          frameWidth: effMeta.frameWidth,
+          frameHeight: effMeta.frameHeight,
+        });
+      }
+    }
   }
 
   create(): void {
-    this.scene.start('BattleScene', { manifests: this.manifests });
+    // Register global animations for visual skill effects
+    if (this.effectManifests) {
+      for (const [effKey, effMeta] of Object.entries(this.effectManifests)) {
+        const phaserKey = `anim_effect_${effKey}`;
+        if (!this.anims.exists(phaserKey) && effMeta?.frames) {
+          this.anims.create({
+            key: phaserKey,
+            frames: effMeta.frames.map((f: any) => ({
+              key: `effect_${effKey}`,
+              frame: f.index,
+              duration: f.durationMs,
+            })),
+            repeat: 0,
+          });
+        }
+      }
+    }
+
+    this.scene.start('BattleScene', {
+      manifests: this.manifests,
+      effectManifests: this.effectManifests,
+    });
   }
 }

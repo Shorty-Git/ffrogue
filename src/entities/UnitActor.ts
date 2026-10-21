@@ -10,6 +10,7 @@ export interface UnitCombatConfig {
 
 export interface UnitActorConfig extends Partial<UnitCombatConfig> {
   maxHp?: number;
+  maxMp?: number;
   heroName?: string;
   heroRole?: string;
 }
@@ -29,6 +30,8 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
   // RPG Combat Attributes
   public maxHp: number;
   public currentHp: number;
+  public maxMp: number;
+  public currentMp: number;
   public heroName: string;
   public heroRole: string;
   public isDead: boolean = false;
@@ -50,6 +53,8 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
 
     this.maxHp = config?.maxHp ?? 3000;
     this.currentHp = this.maxHp;
+    this.maxMp = config?.maxMp ?? 100;
+    this.currentMp = this.maxMp;
     this.heroName = config?.heroName ?? unitKey.toUpperCase();
     this.heroRole = config?.heroRole ?? 'HERO';
 
@@ -148,10 +153,11 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
   }
 
   /**
-   * Resets unit to full HP, alive state, and idle animation.
+   * Resets unit to full HP, full MP, alive state, and idle animation.
    */
   public resetCombatState(): void {
     this.currentHp = this.maxHp;
+    this.currentMp = this.maxMp;
     this.isDead = false;
     this.hasActed = false;
     this.clearTint();
@@ -159,6 +165,84 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
     this.setFacingLeft(true);
     this.setDepthBoost(false);
     this.playAnimation('idle');
+  }
+
+  /**
+   * Spends MP if sufficient amount is available.
+   * Returns true if successful, false if insufficient.
+   */
+  public useMp(cost: number): boolean {
+    if (this.currentMp < cost) return false;
+    this.currentMp -= cost;
+    return true;
+  }
+
+  /**
+   * Restores HP up to maxHp and displays a green floating popup.
+   * Returns the actual amount healed.
+   */
+  public restoreHp(amount: number): number {
+    if (this.isDead || amount <= 0) return 0;
+    const prevHp = this.currentHp;
+    this.currentHp = Math.min(this.maxHp, this.currentHp + amount);
+    const actualHealed = this.currentHp - prevHp;
+
+    if (actualHealed > 0) {
+      this.setTintFill(0x4ade80);
+      this.scene.time.delayedCall(90, () => {
+        this.clearTint();
+      });
+      this.spawnHealPopup(actualHealed);
+    }
+    return actualHealed;
+  }
+
+  /**
+   * Restores MP up to maxMp.
+   */
+  public restoreMp(amount: number): number {
+    const prevMp = this.currentMp;
+    this.currentMp = Math.min(this.maxMp, this.currentMp + amount);
+    return this.currentMp - prevMp;
+  }
+
+  private spawnHealPopup(healAmount: number): void {
+    const px = this.x + Phaser.Math.Between(-8, 8);
+    const py = this.y - 70;
+
+    const popup = this.scene.add.text(px, py, `+${healAmount.toLocaleString()}`, {
+      fontFamily: 'monospace',
+      fontSize: '22px',
+      color: '#4ade80',
+      stroke: '#064e3b',
+      strokeThickness: 3,
+      fontStyle: 'bold',
+    }).setOrigin(0.5);
+    popup.setDepth(1600);
+    popup.setScale(0.7);
+
+    this.scene.tweens.add({
+      targets: popup,
+      scaleX: 1.15,
+      scaleY: 1.15,
+      y: py - 35,
+      duration: 250,
+      ease: 'Back.easeOut',
+      onComplete: () => {
+        this.scene.tweens.add({
+          targets: popup,
+          y: py - 65,
+          alpha: 0,
+          scaleX: 0.9,
+          scaleY: 0.9,
+          duration: 550,
+          ease: 'Cubic.easeIn',
+          onComplete: () => {
+            popup.destroy();
+          },
+        });
+      },
+    });
   }
 
   /**
