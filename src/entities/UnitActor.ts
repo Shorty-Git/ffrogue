@@ -20,6 +20,11 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
   public currentAnimKey: string = '';
   public homeSlot: { x: number; y: number };
   public combatConfig: UnitCombatConfig;
+  public isDepthBoosted: boolean = false;
+
+  public get homeY(): number {
+    return this.homeSlot.y;
+  }
 
   // RPG Combat Attributes
   public maxHp: number;
@@ -152,14 +157,30 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
     this.clearTint();
     this.setPosition(this.homeSlot.x, this.homeSlot.y);
     this.setFacingLeft(true);
+    this.setDepthBoost(false);
     this.playAnimation('idle');
   }
 
   /**
+   * Enables or disables temporary foreground action depth boost.
+   */
+  public setDepthBoost(boosted: boolean, customDepth: number = 1000): void {
+    this.isDepthBoosted = boosted;
+    if (boosted) {
+      this.setDepth(customDepth);
+    } else {
+      this.setDepth(this.homeY);
+    }
+  }
+
+  /**
    * Updates sprite depth based on current Y coordinate for dynamic sorting.
+   * If an action depth boost is active, depth is maintained.
    */
   public updateDepth(): void {
-    this.setDepth(this.y);
+    if (!this.isDepthBoosted) {
+      this.setDepth(this.y);
+    }
   }
 
   /**
@@ -168,7 +189,7 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
   public setHomeSlot(x: number, y: number): void {
     this.homeSlot = { x, y };
     this.setPosition(x, y);
-    this.updateDepth();
+    this.setDepthBoost(false);
   }
 
   /**
@@ -267,12 +288,14 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
         ease: 'Cubic.easeOut',
         onComplete: () => {
           this.x = this.homeSlot.x;
+          this.setDepthBoost(false);
           this.updateDepth();
           onComplete?.();
         },
       });
     } else {
       this.setPosition(this.homeSlot.x, this.homeSlot.y);
+      this.setDepthBoost(false);
       this.playAnimation('idle');
       this.updateDepth();
       onComplete?.();

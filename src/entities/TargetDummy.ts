@@ -12,6 +12,11 @@ export class TargetDummy extends Phaser.GameObjects.Container {
   public currentHp: number = 5000;
   public baseX: number;
   public baseY: number;
+  public isDepthBoosted: boolean = false;
+
+  public get homeY(): number {
+    return this.baseY;
+  }
   public nameTag: string;
   public isBoss: boolean;
   public readonly manifest: UnitManifest;
@@ -155,11 +160,26 @@ export class TargetDummy extends Phaser.GameObjects.Container {
     }
   }
 
+  public setDepthBoost(boosted: boolean, customDepth: number = 1000): void {
+    this.isDepthBoosted = boosted;
+    if (boosted) {
+      this.setDepth(customDepth);
+    } else {
+      this.setDepth(this.homeY);
+    }
+  }
+
+  public updateDepth(): void {
+    if (!this.isDepthBoosted) {
+      this.setDepth(this.y);
+    }
+  }
+
   public setBaseSlot(x: number, y: number): void {
     this.baseX = x;
     this.baseY = y;
     this.setPosition(x, y);
-    this.setDepth(y);
+    this.setDepthBoost(false);
   }
 
   private createHealthBar(): void {
@@ -347,6 +367,7 @@ export class TargetDummy extends Phaser.GameObjects.Container {
       return;
     }
 
+    this.setDepthBoost(true);
     const attackX = targetX - 85;
     const attackY = targetY;
 
@@ -390,6 +411,7 @@ export class TargetDummy extends Phaser.GameObjects.Container {
               if (this.scene.anims.exists('training_dummy_idle') && this.currentHp > 0) {
                 this.sprite.play('training_dummy_idle');
               }
+              this.setDepthBoost(false);
               onComplete();
             },
           });
@@ -402,6 +424,7 @@ export class TargetDummy extends Phaser.GameObjects.Container {
    * Smooth defeat staging: red flash, UI fade, and alpha fadeout of monster sprite.
    */
   public playDefeatFade(onComplete?: () => void): void {
+    this.setDepthBoost(false);
     this.disableInteractive();
     if (this.scene) {
       this.scene.input.setDefaultCursor('default');

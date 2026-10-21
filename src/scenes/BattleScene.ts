@@ -225,7 +225,7 @@ export class BattleScene extends Phaser.Scene {
     if (this.aerith) this.aerith.updateDepth();
     if (this.barret) this.barret.updateDepth();
     this.enemies.forEach((e) => {
-      if (e.visible) e.setDepth(e.y);
+      if (e.visible) e.updateDepth();
     });
   }
 
@@ -1039,6 +1039,9 @@ export class BattleScene extends Phaser.Scene {
     const homeY = hero.homeSlot.y;
     const config = hero.combatConfig;
 
+    // Temporarily boost acting hero depth to 1000 so hero is guaranteed in front of all monsters
+    hero.setDepthBoost(true);
+
     if (hero === this.barret) {
       // --- BARRET: GATLING GUN BURST (Frames 14, 17, 20, 23) ---
       this.updateStatus(`Aktion: BARRET feuert Gatling-Gun-Salve auf ${target.nameTag}...`);
@@ -1172,6 +1175,7 @@ export class BattleScene extends Phaser.Scene {
               ease: 'Cubic.easeInOut',
               onComplete: () => {
                 hero.setFacingLeft(true);
+                hero.setDepthBoost(false);
                 hero.playAnimation('idle');
                 onComplete();
               },
