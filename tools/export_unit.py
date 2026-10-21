@@ -4,6 +4,29 @@ import shutil
 import json
 import glob
 import argparse
+from PIL import Image
+
+def compute_feet_x(image_path, frame_idx, fw, fh, piv_x, piv_y):
+    try:
+        with Image.open(image_path) as img:
+            crop = img.crop((frame_idx * fw, 0, (frame_idx + 1) * fw, fh))
+            pixels = crop.load()
+            pts = []
+            for y in range(fh):
+                for x in range(fw):
+                    pix = pixels[x, y]
+                    if len(pix) >= 4 and pix[3] > 50:
+                        pts.append((x - piv_x, y - piv_y))
+            if not pts:
+                return 0.0
+            ys = [p[1] for p in pts]
+            max_y = max(ys)
+            feet_pts = [p for p in pts if p[1] >= max_y - 3]
+            feet_xs = [p[0] for p in feet_pts]
+            return round((min(feet_xs) + max(feet_xs)) / 2.0, 2)
+    except Exception as e:
+        print(f"Warning: Failed to compute feet_x for {image_path}: {e}")
+        return 0.0
 
 def export_unit(unit_id, unit_name, input_dir="tools/test_output", output_base="public/assets/units", unit_type="character"):
     # If output_base wasn't explicitly changed from default, route to monsters when type is monster
@@ -75,6 +98,32 @@ def export_unit(unit_id, unit_name, input_dir="tools/test_output", output_base="
         
         print(f"  [+] {anim_name:12s} -> {png_dest_filename} ({f_w}x{f_h}, {len(delays)} frames, pivot: ({pivot_x:.4f}, {pivot_y:.4f}))")
         
+    # Calculate recoilOffsetX for each animation relative to idle frame 0
+    idle_meta = manifest["animations"].get("idle")
+    if idle_meta:
+        idle_png = os.path.join(target_dir, idle_meta["file"])
+        idle_fw = idle_meta["frameWidth"]
+        idle_fh = idle_meta["frameHeight"]
+        idle_px = idle_meta["pivotX"] * idle_fw
+        idle_py = idle_meta["pivotY"] * idle_fh
+        idle_feet_x = compute_feet_x(idle_png, 0, idle_fw, idle_fh, idle_px, idle_py)
+        
+        for anim_name, meta in manifest["animations"].items():
+            if anim_name == "idle":
+                meta["recoilOffsetX"] = 0.0
+                continue
+            anim_png = os.path.join(target_dir, meta["file"])
+            fw = meta["frameWidth"]
+            fh = meta["frameHeight"]
+            px = meta["pivotX"] * fw
+            py = meta["pivotY"] * fh
+            last_idx = meta["frameCount"] - 1
+            last_feet_x = compute_feet_x(anim_png, last_idx, fw, fh, px, py)
+            diff = round(idle_feet_x - last_feet_x, 2)
+            meta["recoilOffsetX"] = diff if abs(diff) >= 0.5 else 0.0
+            if meta["recoilOffsetX"] != 0.0:
+                print(f"      recoilOffsetX for '{anim_name}': {meta['recoilOffsetX']} px (last frame {last_idx})")
+
     manifest_path = os.path.join(target_dir, "manifest.json")
     with open(manifest_path, "w", encoding="utf-8") as f:
         json.dump(manifest, f, indent=2)

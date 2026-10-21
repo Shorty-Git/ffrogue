@@ -831,21 +831,8 @@ export class BattleScene extends Phaser.Scene {
           this.fireBulletProjectile(homeX, homeY, targetX, targetY, 550, isCrit);
         }
 
-        // Offset Barret's logical x by -32.5px to match his forward foot stance at frame 27,
-        // so switching to idle has exactly 0 pixels visual jump!
-        hero.x = homeX - 32.5;
-        hero.playAnimation('idle');
-
-        // Smoothly glide Barret back into his home slot over 150ms
-        this.tweens.add({
-          targets: hero,
-          x: homeX,
-          duration: 150,
-          ease: 'Cubic.easeOut',
-          onComplete: () => {
-            onComplete();
-          },
-        });
+        // Standardized returnToIdle handles Barret's stationary recoil via manifest metadata
+        hero.returnToIdle(onComplete);
       });
     } else if (config.attackType === 'ranged') {
       // --- AERITH: RANGED HOLY MAGIC ---
@@ -867,8 +854,7 @@ export class BattleScene extends Phaser.Scene {
         if (!hitTriggered) {
           this.fireMagicProjectile(homeX, homeY, targetX, targetY);
         }
-        hero.playAnimation('idle');
-        onComplete();
+        hero.returnToIdle(onComplete);
       });
     } else {
       // --- MELEE MOVE-TO-TARGET (Cloud / Aerith Melee) ---

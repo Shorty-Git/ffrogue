@@ -230,4 +230,52 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
     }
     return this;
   }
+
+  /**
+   * Concludes an attack animation and transitions back to 'idle'.
+   * 
+   * Strict condition check:
+   * 1. The action was stationary (attackType === 'ranged').
+   * 2. The finished animation has a measurable foot offset (recoilOffsetX > 3 pixels).
+   * 
+   * If BOTH conditions are met (e.g. Barret's Gatling stance):
+   * Temporarily offsets the sprite's x position by the recoil amount so the switch
+   * to 'idle' has 0 visual jump, then executes a 150ms ease-out tween back to homeSlot.
+   * 
+   * In all other cases (Cloud melee, Aerith magic, zero-offset animations):
+   * Instantly transitions to 'idle' with zero delay or movement.
+   */
+  public returnToIdle(onComplete?: () => void): void {
+    const isStationary = this.combatConfig.attackType === 'ranged';
+    const animMeta = this.manifest.animations[this.currentAnimKey];
+    const recoilOffsetX = animMeta?.recoilOffsetX ?? 0;
+    const hasMeasurableRecoil = recoilOffsetX > 3;
+
+    if (isStationary && hasMeasurableRecoil) {
+      // Facing left (flipX = false) means forward is -X towards enemy.
+      const direction = this.flipX ? 1 : -1;
+      const screenOffset = direction * recoilOffsetX * Math.abs(this.scaleX);
+
+      this.x = this.homeSlot.x + screenOffset;
+      this.y = this.homeSlot.y;
+      this.playAnimation('idle');
+
+      this.scene.tweens.add({
+        targets: this,
+        x: this.homeSlot.x,
+        duration: 150,
+        ease: 'Cubic.easeOut',
+        onComplete: () => {
+          this.x = this.homeSlot.x;
+          this.updateDepth();
+          onComplete?.();
+        },
+      });
+    } else {
+      this.setPosition(this.homeSlot.x, this.homeSlot.y);
+      this.playAnimation('idle');
+      this.updateDepth();
+      onComplete?.();
+    }
+  }
 }

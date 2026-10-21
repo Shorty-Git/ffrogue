@@ -11,6 +11,7 @@ export interface AnimationMeta {
   frameCount: number;
   pivotX: number;
   pivotY: number;
+  recoilOffsetX?: number;
   frames: FrameMeta[];
 }
 
