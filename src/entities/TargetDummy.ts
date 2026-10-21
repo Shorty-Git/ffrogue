@@ -346,6 +346,85 @@ export class TargetDummy extends Phaser.GameObjects.Container {
   }
 
   /**
+   * Smooth spawn/materialize staging for new waves (400-500ms):
+   * Starts transparent and scaled down (0.8x of 2.5 = scale 2.0),
+   * fades in with slight bounce (2.0 -> 2.65 -> 2.5),
+   * white flash for 60ms, then transitions into idle and fades in HP bar.
+   */
+  public playSpawnAnimation(newMaxHp?: number, onComplete?: () => void): void {
+    if (newMaxHp) {
+      this.maxHp = newMaxHp;
+    }
+    this.currentHp = this.maxHp;
+
+    // Reset base properties
+    this.setPosition(this.baseX, this.baseY);
+    this.setVisible(true);
+    this.koBanner.setVisible(false);
+
+    // Initial state: transparent and scaled down
+    this.sprite.setAlpha(0);
+    this.sprite.setScale(2.0); // 0.8x of 2.5
+    this.sprite.clearTint();
+
+    // Reset HP bars (hidden initially, fade in during spawn)
+    this.fgBar.setAlpha(0);
+    this.chipBar.setAlpha(0);
+    this.hpText.setAlpha(0);
+    this.fgBar.width = this.barWidth;
+    this.chipBar.width = this.barWidth;
+    this.fgBar.fillColor = 0x22c55e;
+    this.hpText.setText(`${this.maxHp.toLocaleString()} / ${this.maxHp.toLocaleString()} HP`);
+
+    if (this.scene.anims.exists('training_dummy_idle')) {
+      this.sprite.play('training_dummy_idle');
+    }
+
+    // 1. Alpha fade-in (300ms)
+    this.scene.tweens.add({
+      targets: this.sprite,
+      alpha: 1,
+      duration: 300,
+      ease: 'Cubic.easeOut',
+    });
+
+    // 2. Scale bounce (2.0 -> 2.65 -> 2.5)
+    this.scene.tweens.add({
+      targets: this.sprite,
+      scaleX: 2.65,
+      scaleY: 2.65,
+      duration: 320,
+      ease: 'Back.easeOut',
+      onComplete: () => {
+        // Settle scale to 2.5
+        this.scene.tweens.add({
+          targets: this.sprite,
+          scaleX: 2.5,
+          scaleY: 2.5,
+          duration: 120,
+          ease: 'Cubic.easeInOut',
+        });
+
+        // 3. Quick white flash (60ms)
+        this.sprite.setTintFill(0xffffff);
+        this.scene.time.delayedCall(60, () => {
+          this.sprite.clearTint();
+
+          // 4. Fade in HP bar & name tag
+          this.scene.tweens.add({
+            targets: [this.fgBar, this.chipBar, this.hpText],
+            alpha: 1,
+            duration: 180,
+            onComplete: () => {
+              if (onComplete) onComplete();
+            },
+          });
+        });
+      },
+    });
+  }
+
+  /**
    * Resets or respawns Werratte to full health and returns to base slot.
    */
   public resetCombat(newMaxHp?: number): void {

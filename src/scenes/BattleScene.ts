@@ -179,8 +179,10 @@ export class BattleScene extends Phaser.Scene {
       }
     });
 
-    // 8. Start Battle 1, Round 1
-    this.startRound();
+    // 8. Start Battle 1: Smooth spawn materialize animation, then unlocks Round 1!
+    this.targetDummy.playSpawnAnimation(5000, () => {
+      this.startRound();
+    });
   }
 
   update(): void {
@@ -828,8 +830,22 @@ export class BattleScene extends Phaser.Scene {
           const isCrit = Math.random() < 0.2;
           this.fireBulletProjectile(homeX, homeY, targetX, targetY, 550, isCrit);
         }
+
+        // Offset Barret's logical x by -32.5px to match his forward foot stance at frame 27,
+        // so switching to idle has exactly 0 pixels visual jump!
+        hero.x = homeX - 32.5;
         hero.playAnimation('idle');
-        onComplete();
+
+        // Smoothly glide Barret back into his home slot over 150ms
+        this.tweens.add({
+          targets: hero,
+          x: homeX,
+          duration: 150,
+          ease: 'Cubic.easeOut',
+          onComplete: () => {
+            onComplete();
+          },
+        });
       });
     } else if (config.attackType === 'ranged') {
       // --- AERITH: RANGED HOLY MAGIC ---
@@ -1351,7 +1367,6 @@ export class BattleScene extends Phaser.Scene {
 
     // 2. Scale Werratte for this encounter (+18% HP per fight)
     const scaledHp = Math.round(5000 * Math.pow(1.18, this.fightNumber - 1));
-    this.targetDummy.resetCombat(scaledHp);
 
     // 3. Living heroes return from 'win' back to 'idle'
     this.turnOrder.forEach((hero) => {
@@ -1368,9 +1383,13 @@ export class BattleScene extends Phaser.Scene {
       ease: 'Cubic.easeOut',
     });
 
-    // 5. Reset round counter and start Round 1 of the new encounter
+    // 5. Reset round counter and smoothly materialize the new enemy wave
     this.currentRound = 1;
-    this.startRound();
+    this.updateStatus(`Kampf ${this.fightNumber}/${this.totalFights}: Neuer Gegner materialisiert sich...`);
+
+    this.targetDummy.playSpawnAnimation(scaledHp, () => {
+      this.startRound();
+    });
   }
 
   /**
@@ -1459,10 +1478,11 @@ export class BattleScene extends Phaser.Scene {
     this.aerithMagicMultiplier = 1.0;
 
     this.turnOrder.forEach((hero) => hero.resetCombatState());
-    this.targetDummy.resetCombat(5000);
-
     this.bottomHudContainer.setY(0);
-    this.startRound();
+
+    this.targetDummy.playSpawnAnimation(5000, () => {
+      this.startRound();
+    });
   }
 
   private updateStatus(msg: string): void {
