@@ -1,0 +1,56 @@
+import Phaser from 'phaser';
+import { UnitManifest } from '../types/manifest';
+
+export class PreloadScene extends Phaser.Scene {
+  private cloudManifest!: UnitManifest;
+
+  constructor() {
+    super('PreloadScene');
+  }
+
+  init(data: { cloudManifest: UnitManifest }): void {
+    this.cloudManifest = data.cloudManifest;
+  }
+
+  preload(): void {
+    const { width, height } = this.scale;
+
+    // Loading UI
+    const loadingText = this.add.text(width / 2, height / 2 - 20, 'Lade Assets...', {
+      fontFamily: 'monospace',
+      fontSize: '20px',
+      color: '#38bdf8',
+    }).setOrigin(0.5);
+
+    const progressBar = this.add.graphics();
+    const progressBox = this.add.graphics();
+    progressBox.fillStyle(0x1e293b, 0.8);
+    progressBox.fillRect(width / 2 - 160, height / 2 + 10, 320, 24);
+
+    this.load.on('progress', (value: number) => {
+      progressBar.clear();
+      progressBar.fillStyle(0x38bdf8, 1);
+      progressBar.fillRect(width / 2 - 156, height / 2 + 14, 312 * value, 16);
+    });
+
+    this.load.on('complete', () => {
+      loadingText.destroy();
+      progressBar.destroy();
+      progressBox.destroy();
+    });
+
+    // Queue spritesheets for Cloud
+    if (this.cloudManifest && this.cloudManifest.animations) {
+      for (const [animKey, animMeta] of Object.entries(this.cloudManifest.animations)) {
+        this.load.spritesheet(`cloud_${animKey}`, `assets/units/cloud/${animMeta.file}`, {
+          frameWidth: animMeta.frameWidth,
+          frameHeight: animMeta.frameHeight,
+        });
+      }
+    }
+  }
+
+  create(): void {
+    this.scene.start('BattleScene', { cloudManifest: this.cloudManifest });
+  }
+}
