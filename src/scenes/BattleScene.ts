@@ -1275,9 +1275,8 @@ export class BattleScene extends Phaser.Scene {
 
   /**
    * Cloud's Signature Skill: "Braver"
-   * Moves to target, plays Cloud's authentic limit_atk animation, triggers 80ms hit-stop,
-   * glowing razor slash beam (BlendModes.ADD), monster white flash, camera shake,
-   * golden CRITICAL popup, and returns to base.
+   * Moves to target, plays Cloud's authentic standard 'atk' animation, triggers 80ms hit-stop,
+   * monster white flash, camera shake, golden CRITICAL popup, and returns to base.
    */
   private executeCloudBraver(onComplete: () => void): void {
     const target = this.currentTarget && this.currentTarget.currentHp > 0
@@ -1304,9 +1303,9 @@ export class BattleScene extends Phaser.Scene {
       duration: 360,
       ease: 'Cubic.easeInOut',
       onComplete: () => {
-        this.cloud.playAnimation('limit_atk');
+        this.cloud.playAnimation('atk');
 
-        // Trigger heavy sword slash on downward strike
+        // Trigger heavy sword slash on impact (hit frame 2)
         this.time.delayedCall(160, () => {
           const hitTarget = this.currentTarget && this.currentTarget.currentHp > 0
             ? this.currentTarget
@@ -1329,34 +1328,7 @@ export class BattleScene extends Phaser.Scene {
           // 3. Wuchtiger Kamera-Shake
           this.cameras.main.shake(200, 0.015);
 
-          // 4. Glowing razor slash beam via Phaser Graphics with ADD blend mode (100% transparent, 0 black boxes)
-          const slashG = this.add.graphics();
-          slashG.setDepth(1800);
-          slashG.setBlendMode(Phaser.BlendModes.ADD);
-
-          const startX = hitTarget.x + 65;
-          const startY = hitTarget.y - 110;
-          const endX = hitTarget.x - 65;
-          const endY = hitTarget.y + 20;
-
-          // Outer cyan aura
-          slashG.lineStyle(10, 0x38bdf8, 0.7);
-          slashG.lineBetween(startX, startY, endX, endY);
-          // Inner bright white razor blade
-          slashG.lineStyle(3, 0xffffff, 1.0);
-          slashG.lineBetween(startX, startY, endX, endY);
-
-          this.tweens.add({
-            targets: slashG,
-            alpha: 0,
-            scaleX: 1.15,
-            scaleY: 1.15,
-            duration: 220,
-            ease: 'Cubic.easeOut',
-            onComplete: () => slashG.destroy(),
-          });
-
-          // 5. Critical damage calculation and golden "CRITICAL!" text
+          // 4. Critical damage calculation and golden "CRITICAL!" text
           let dmg = Phaser.Math.Between(1100, 1400);
           dmg = Math.round(dmg * this.cloudDmgMultiplier);
           hitTarget.applyDamage(dmg, true, 'physical');
@@ -1384,8 +1356,8 @@ export class BattleScene extends Phaser.Scene {
           this.handleTargetDamaged(hitTarget);
         });
 
-        // Conclude after sword impact follow-through
-        this.time.delayedCall(1000, () => {
+        // Conclude after attack animation follow-through
+        this.time.delayedCall(650, () => {
           this.cloud.playAnimation('move');
           this.cloud.setFacingLeft(false);
 
@@ -1409,8 +1381,8 @@ export class BattleScene extends Phaser.Scene {
 
   /**
    * Aerith's Signature Skill: "Curaga"
-   * Plays Aerith's magic_atk pose from home slot, summons rising radiant green light pillars
-   * and sparkles (BlendModes.ADD) over all living heroes, restores 700-1000 HP.
+   * Plays Aerith's magic_atk pose from home slot, soft green flash, restores 700-1000 HP
+   * to all living heroes with rising green +HP bounce numbers.
    */
   private executeAerithCuraga(onComplete: () => void): void {
     this.updateStatus('Action: AERITH casts CURAGA on the party!');
@@ -1421,49 +1393,6 @@ export class BattleScene extends Phaser.Scene {
 
       this.turnOrder.forEach((hero) => {
         if (!hero.isDead) {
-          // Radiant vertical light pillar with ADD blend mode
-          const pillar = this.add.graphics();
-          pillar.setDepth(1500);
-          pillar.setBlendMode(Phaser.BlendModes.ADD);
-
-          // Outer green aura
-          pillar.fillStyle(0x4ade80, 0.45);
-          pillar.fillRect(hero.x - 30, hero.y - 150, 60, 170);
-          // Inner brilliant white core
-          pillar.fillStyle(0xffffff, 0.8);
-          pillar.fillRect(hero.x - 12, hero.y - 150, 24, 170);
-
-          this.tweens.add({
-            targets: pillar,
-            alpha: 0,
-            scaleY: 1.3,
-            duration: 550,
-            ease: 'Cubic.easeOut',
-            onComplete: () => pillar.destroy(),
-          });
-
-          // Rising sparkling particles
-          for (let i = 0; i < 5; i++) {
-            const spark = this.add.circle(
-              hero.x + Phaser.Math.Between(-35, 35),
-              hero.y + Phaser.Math.Between(-25, 25),
-              Phaser.Math.Between(3, 7),
-              0x86efac,
-              0.9
-            );
-            spark.setDepth(1501).setBlendMode(Phaser.BlendModes.ADD);
-
-            this.tweens.add({
-              targets: spark,
-              y: spark.y - Phaser.Math.Between(60, 110),
-              alpha: 0,
-              duration: Phaser.Math.Between(450, 750),
-              delay: i * 50,
-              ease: 'Cubic.easeOut',
-              onComplete: () => spark.destroy(),
-            });
-          }
-
           let heal = Phaser.Math.Between(700, 1000);
           heal = Math.round(heal * this.aerithMagicMultiplier);
           hero.restoreHp(heal);
@@ -1472,15 +1401,15 @@ export class BattleScene extends Phaser.Scene {
       this.updatePartyStatusUi();
     });
 
-    this.time.delayedCall(1100, () => {
+    this.time.delayedCall(950, () => {
       this.aerith.returnToIdle(onComplete);
     });
   }
 
   /**
    * Barret's Signature Skill: "Grenade Bomb"
-   * Shoots from home slot, triggers fiery explosion shockwaves (BlendModes.ADD),
-   * simultaneous monster white flashes, screen-shake, and deals 350-500 AoE damage.
+   * Shoots from home slot, simultaneous monster white flashes, screen-shake,
+   * and deals 350-500 AoE damage to all living monsters.
    */
   private executeBarretGrenadeBomb(onComplete: () => void): void {
     this.updateStatus('Action: BARRET launches GRENADE BOMB at all enemies!');
@@ -1497,35 +1426,10 @@ export class BattleScene extends Phaser.Scene {
       this.cameras.main.flash(80, 255, 255, 255, false);
 
       livingEnemies.forEach((enemy) => {
-        // 1. Monster white impact flash
+        // Monster white impact flash
         enemy.sprite.setTintFill(0xffffff);
         this.time.delayedCall(80, () => {
           enemy.sprite.clearTint();
-        });
-
-        // 2. Fiery explosive shockwave via Phaser Graphics with ADD blend mode
-        const blast = this.add.graphics();
-        blast.setDepth(1500);
-        blast.setBlendMode(Phaser.BlendModes.ADD);
-
-        // Outer fiery orange blast
-        blast.fillStyle(0xf97316, 0.65);
-        blast.fillCircle(enemy.x, enemy.y - 45, 50);
-        // Mid golden fire
-        blast.fillStyle(0xfde047, 0.85);
-        blast.fillCircle(enemy.x, enemy.y - 45, 28);
-        // Inner white detonator core
-        blast.fillStyle(0xffffff, 1.0);
-        blast.fillCircle(enemy.x, enemy.y - 45, 14);
-
-        this.tweens.add({
-          targets: blast,
-          scaleX: 1.85,
-          scaleY: 1.85,
-          alpha: 0,
-          duration: 340,
-          ease: 'Cubic.easeOut',
-          onComplete: () => blast.destroy(),
         });
 
         const dmg = Phaser.Math.Between(350, 500);
@@ -1533,7 +1437,7 @@ export class BattleScene extends Phaser.Scene {
         this.handleTargetDamaged(enemy);
       });
 
-      this.time.delayedCall(950, () => {
+      this.time.delayedCall(850, () => {
         this.barret.returnToIdle(onComplete);
       });
     });
