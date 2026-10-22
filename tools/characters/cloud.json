@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 1,
+  "key": "cloud",
+  "spriteUnitId": "207000105",
+  "game": "FFVII",
+  "battle": {
+    "maxHp": 3200,
+    "maxMp": 100,
+    "heroName": "CLOUD",
+    "heroRole": "VANGUARD",
+    "attackType": "melee",
+    "targetOffsetX": 90,
+    "attackAnim": "atk",
+    "hitFrameIndex": 2
+  },
+  "scale": 2.5,
+  "reviewNote": "Existing MVP gameplay values; legacy commands do not claim complete FFBE mechanics or visuals.",
+  "skills": [
+    {
+      "id": "brave_slash",
+      "visualEffect": {
+        "key": "brave_slash",
+        "startFrame": 4
+      },
+      "ffbeId": 214800,
+      "name": "Brave Slash",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 18,
+      "scope": "single_enemy",
+      "damageMultiplier": 2,
+      "hitCount": 1,
+      "attackFrames": [
+        6
+      ],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Physical damage (2x, ATK) to one enemy",
+      "execution": "timeline-single-hit"
+    },
+    {
+      "id": "blade_beam",
+      "ffbeId": 214810,
+      "name": "Blade Beam",
+      "rarity": 5,
+      "level": 57,
+      "type": "ABILITY",
+      "mpCost": 30,
+      "scope": "all_enemies",
+      "damageMultiplier": 3,
+      "hitCount": 2,
+      "attackFrames": [
+        4,
+        8
+      ],
+      "moveType": "stationary",
+      "motion": "atk",
+      "desc": "Physical damage (3x, ATK) to all enemies",
+      "execution": "legacy"
+    },
+    {
+      "id": "climhazzard",
+      "ffbeId": 214820,
+      "name": "Climhazzard",
+      "rarity": 6,
+      "level": 28,
+      "type": "ABILITY",
+      "mpCost": 52,
+      "scope": "single_enemy",
+      "damageMultiplier": 5.5,
+      "hitCount": 1,
+      "attackFrames": [
+        4
+      ],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Physical damage (2.75x * 2 = 5.5x, ATK) to one enemy (ignore cover)",
+      "execution": "legacy"
+    }
+  ],
+  "portraitSource": "unit_icons/unit_icon_207000105.png"
+}

@@ -1,15 +1,22 @@
 import Phaser from 'phaser';
-import { UnitActor } from '../entities/UnitActor';
+import { UnitActor, UnitCombatConfig } from '../entities/UnitActor';
 import { TargetDummy } from '../entities/TargetDummy';
 import { UnitManifest } from '../types/manifest';
 import { SkillConfig, UnitSkillsData } from '../types/skills';
+import { EffectManifest } from '../types/effects';
+import { CharacterDefinition, ContentRegistry } from '../types/content';
+import { BATTLE_ART_SCALE, BATTLE_VIEW, getBattleLayout } from '../ui/battleLayout';
 
 export type CombatState =
+  | 'SPAWNING'
   | 'PLAYER_TURN'
   | 'HERO_ATTACKING'
   | 'ENEMY_TURN'
   | 'VICTORY'
   | 'DEFEAT';
+
+type PlannedAction = ({ kind: 'attack'; config: UnitCombatConfig } | { kind: 'skill'; skill: SkillConfig })
+  & { target: TargetDummy | null };
 
 interface SkillBtnUi {
   bg: Phaser.GameObjects.Rectangle;
@@ -53,13 +60,14 @@ export interface EnemySlotConfig {
   isBoss: boolean;
 }
 
+const ENEMY_SLOTS = getBattleLayout(BATTLE_VIEW.width, BATTLE_VIEW.height).enemies;
 export const ENCOUNTERS: Record<number, EnemySlotConfig[]> = {
   1: [
-    { x: 220, y: 360, hp: 5000, nameTag: 'DIRE RAT (BOSS)', isBoss: true },
+    { ...ENEMY_SLOTS.solo, hp: 5000, nameTag: 'DIRE RAT (BOSS)', isBoss: true },
   ],
   2: [
-    { x: 400, y: 220, hp: 3500, nameTag: 'DIRE RAT A', isBoss: false },
-    { x: 400, y: 500, hp: 3500, nameTag: 'DIRE RAT B', isBoss: false },
+    { ...ENEMY_SLOTS.top, hp: 3500, nameTag: 'DIRE RAT A', isBoss: false },
+    { ...ENEMY_SLOTS.bottom, hp: 3500, nameTag: 'DIRE RAT B', isBoss: false },
   ],
 };
 
@@ -73,6 +81,9 @@ export class BattleScene extends Phaser.Scene {
   private targetMarkerContainer!: Phaser.GameObjects.Container;
   private markerVisual!: Phaser.GameObjects.Container;
   private victoryTriggered: boolean = false;
+  private rewardSelected = false;
+  private pendingImpacts = 0;
+  private afterImpacts?: () => void;
 
   public get targetDummy(): TargetDummy {
     return this.currentTarget ?? this.enemies[0];
@@ -81,7 +92,8 @@ export class BattleScene extends Phaser.Scene {
   // Turn-Order State
   private turnOrder: UnitActor[] = [];
   private activeHeroIndex: number = 0;
-  private combatState: CombatState = 'PLAYER_TURN';
+  private plannedActions = new Map<UnitActor, PlannedAction>();
+  private combatState: CombatState = 'SPAWNING';
   private currentRound: number = 1;
 
   // Roguelike Run Stats & Multipliers
@@ -94,12 +106,15 @@ export class BattleScene extends Phaser.Scene {
   private roundBannerText!: Phaser.GameObjects.Text;
   private statusText!: Phaser.GameObjects.Text;
 
-  // Bottom JRPG HUD Master Container (for smooth slide-in / slide-out)
+  // Party panels and the transient command window share transition staging.
   private bottomHudContainer!: Phaser.GameObjects.Container;
+  private commandPanel!: Phaser.GameObjects.Container;
+  private isCommandMenuOpen = false;
 
-  // 1. Left Box: Command Menu
+  // Floating command window.
   private cmdHeaderName!: Phaser.GameObjects.Text;
   private cmdHeaderRole!: Phaser.GameObjects.Text;
+  private cmdPlanText!: Phaser.GameObjects.Text;
   private cmdModeBtnBg?: Phaser.GameObjects.Rectangle;
   private cmdModeBtnText?: Phaser.GameObjects.Text;
 
@@ -111,6 +126,8 @@ export class BattleScene extends Phaser.Scene {
   private cmdAttackBtnText!: Phaser.GameObjects.Text;
   private cmdSkillBtnBg!: Phaser.GameObjects.Rectangle;
   private cmdSkillBtnText!: Phaser.GameObjects.Text;
+  private cmdExecuteBtnBg!: Phaser.GameObjects.Rectangle;
+  private cmdExecuteBtnText!: Phaser.GameObjects.Text;
   private skillButtons: SkillBtnUi[] = [];
   private cmdSkillBackBtnBg!: Phaser.GameObjects.Rectangle;
   private cmdSkillBackBtnText!: Phaser.GameObjects.Text;
@@ -118,13 +135,12 @@ export class BattleScene extends Phaser.Scene {
   // Authentic Hero Skills
   private unitSkills: Record<string, SkillConfig[]> = {};
 
-  // 2. Right Box: Party Status
+  // Party status panels.
   private partyRows: Map<string, PartyRowUi> = new Map();
-  private readonly rowBarWidth = 260;
+  private readonly rowBarWidth = 235;
 
   // PokeRogue Reward Selection Container
   private rewardsContainer?: Phaser.GameObjects.Container;
-  private nextFightBtn?: Phaser.GameObjects.Container;
 
   // Defeat Modal (only for game over)
   private defeatBanner?: Phaser.GameObjects.Container;
@@ -135,13 +151,36 @@ export class BattleScene extends Phaser.Scene {
 
   init(data: { manifests: Record<string, UnitManifest> }): void {
     this.manifests = data.manifests;
+    this.enemies = [];
+    this.currentTarget = null;
+    this.turnOrder = [];
+    this.plannedActions.clear();
+    this.partyRows.clear();
+    this.skillButtons = [];
+    this.unitSkills = {};
+    this.activeHeroIndex = 0;
+    this.currentRound = 1;
+    this.fightNumber = 1;
+    this.cloudDmgMultiplier = 1;
+    this.aerithMagicMultiplier = 1;
+    this.victoryTriggered = false;
+    this.rewardSelected = false;
+    this.pendingImpacts = 0;
+    this.afterImpacts = undefined;
+    this.isSkillMenuOpen = false;
+    this.isCommandMenuOpen = false;
+    this.combatState = 'SPAWNING';
+    this.rewardsContainer = undefined;
+    this.defeatBanner = undefined;
   }
 
   create(): void {
     const { width, height } = this.scale;
+    const layout = getBattleLayout(width, height);
 
     // Load preloaded unit skills from JSON cache
-    ['cloud', 'aerith', 'barret'].forEach((key) => {
+    const registry = this.cache.json.get('content_registry') as ContentRegistry;
+    registry.characters.forEach((key) => {
       const data = this.cache.json.get(`skills_${key}`) as UnitSkillsData;
       if (data && Array.isArray(data.skills)) {
         this.unitSkills[key] = data.skills;
@@ -153,8 +192,6 @@ export class BattleScene extends Phaser.Scene {
     // 1. Arena Background
     this.createArenaBackground(width, height);
 
-    // 2. Combat Grids (Floor Slots)
-    this.createCombatGrids();
 
     // 3. Target Marker for interactive selection
     this.createTargetMarker();
@@ -163,72 +200,47 @@ export class BattleScene extends Phaser.Scene {
     this.events.on('enemy_clicked', (enemy: TargetDummy) => {
       if (this.combatState === 'PLAYER_TURN' && enemy.currentHp > 0) {
         this.setTarget(enemy, true);
+        const hero = this.getActiveHero();
+        const plan = hero && this.plannedActions.get(hero);
+        if (plan) plan.target = enemy;
         this.updateStatus(`Target selected: ${enemy.nameTag} (${enemy.currentHp} HP)`);
       }
     });
 
-    // 4. Instantiate Party Units
-    // Cloud: Front-Mid (880, 360) - Vanguard (3.200 HP, 100 MP)
-    this.cloud = new UnitActor(this, 880, 360, 'cloud', this.manifests.cloud, {
-      maxHp: 3200,
-      maxMp: 100,
-      heroName: 'CLOUD',
-      heroRole: 'VANGUARD',
-      attackType: 'melee',
-      targetOffsetX: 90,
-      attackAnim: 'atk',
-      hitFrameIndex: 2,
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.plannedActions.clear();
+      this.events.removeAllListeners('enemy_clicked');
+      this.input.keyboard?.removeAllListeners();
+      this.afterImpacts = undefined;
     });
-    this.cloud.setScale(2.5);
+
+    // 4. Instantiate Party Units
+    // Formation slots share the same viewport coordinates as movement and effects.
+    this.cloud = new UnitActor(this, layout.party.cloud.x, layout.party.cloud.y, 'cloud', this.manifests.cloud, (this.cache.json.get('character_cloud') as CharacterDefinition).battle);
+    this.cloud.setScale((this.cache.json.get('character_cloud') as CharacterDefinition).scale * BATTLE_ART_SCALE);
     this.cloud.setFacingLeft(true);
     this.cloud.setInteractive({ useHandCursor: true });
     this.cloud.on('pointerdown', () => {
-      if (this.getActiveHero() === this.cloud) {
-        this.executeActiveHeroAttack();
-      }
+      this.openHeroCommands(this.cloud);
     });
 
-    // Aerith: Back-Top (1040, 220) - Healer (2.100 HP, 220 MP)
-    this.aerith = new UnitActor(this, 1040, 220, 'aerith', this.manifests.aerith, {
-      maxHp: 2100,
-      maxMp: 220,
-      heroName: 'AERITH',
-      heroRole: 'HEALER',
-      attackType: 'melee', // default: staff strike
-      targetOffsetX: 200,
-      attackAnim: 'atk',
-      hitFrameIndex: 19,
-    });
-    this.aerith.setScale(2.5);
+    this.aerith = new UnitActor(this, layout.party.aerith.x, layout.party.aerith.y, 'aerith', this.manifests.aerith, (this.cache.json.get('character_aerith') as CharacterDefinition).battle);
+    this.aerith.setScale((this.cache.json.get('character_aerith') as CharacterDefinition).scale * BATTLE_ART_SCALE);
     this.aerith.setFacingLeft(true);
     this.aerith.setInteractive({ useHandCursor: true });
     this.aerith.on('pointerdown', () => {
-      if (this.getActiveHero() === this.aerith) {
-        this.executeActiveHeroAttack();
-      }
+      this.openHeroCommands(this.aerith);
     });
 
-    // Barret: Back-Bot (1040, 500) - Tank / Gunner (4.500 HP, 80 MP)
-    this.barret = new UnitActor(this, 1040, 500, 'barret', this.manifests.barret, {
-      maxHp: 4500,
-      maxMp: 80,
-      heroName: 'BARRET',
-      heroRole: 'TANK',
-      attackType: 'ranged',
-      targetOffsetX: 0,
-      attackAnim: 'atk',
-      hitFrameIndex: 14,
-    });
-    this.barret.setScale(2.5);
+    this.barret = new UnitActor(this, layout.party.barret.x, layout.party.barret.y, 'barret', this.manifests.barret, (this.cache.json.get('character_barret') as CharacterDefinition).battle);
+    this.barret.setScale((this.cache.json.get('character_barret') as CharacterDefinition).scale * BATTLE_ART_SCALE);
     this.barret.setFacingLeft(true);
     this.barret.setInteractive({ useHandCursor: true });
     this.barret.on('pointerdown', () => {
-      if (this.getActiveHero() === this.barret) {
-        this.executeActiveHeroAttack();
-      }
+      this.openHeroCommands(this.barret);
     });
 
-    // Strict sequential turn order: Cloud -> Aerith -> Barret
+    // Stable display order; the player can select any available hero.
     this.turnOrder = [this.cloud, this.aerith, this.barret];
 
     // 5. Header UI
@@ -237,37 +249,41 @@ export class BattleScene extends Phaser.Scene {
     // 6. Classic Final Fantasy Deep-Navy Bottom HUD
     this.createClassicJRPGHud(width, height);
 
-    // 7. Global Keyboard Controls (Space / Enter triggers active action, 1/2/3 triggers skill, Esc cancels)
-    this.input.keyboard?.on('keydown-SPACE', () => {
+    // Space/Enter prepare in the skill menu and commit from the command menu.
+    this.input.keyboard?.on('keydown-SPACE', (event: KeyboardEvent) => {
+      if (event.repeat) return;
       if (this.combatState === 'PLAYER_TURN') {
         if (this.isSkillMenuOpen) {
-          this.executeFirstAvailableSkill();
+          this.planFirstAvailableSkill();
         } else {
-          this.executeActiveHeroAttack();
+          this.executePlannedAction();
         }
       }
     });
-    this.input.keyboard?.on('keydown-ENTER', () => {
+    this.input.keyboard?.on('keydown-ENTER', (event: KeyboardEvent) => {
+      if (event.repeat) return;
       if (this.combatState === 'PLAYER_TURN') {
         if (this.isSkillMenuOpen) {
-          this.executeFirstAvailableSkill();
+          this.planFirstAvailableSkill();
         } else {
-          this.executeActiveHeroAttack();
+          this.executePlannedAction();
         }
       }
     });
-    this.input.keyboard?.on('keydown-ONE', () => this.tryExecuteSkillByIndex(0));
-    this.input.keyboard?.on('keydown-TWO', () => this.tryExecuteSkillByIndex(1));
-    this.input.keyboard?.on('keydown-THREE', () => this.tryExecuteSkillByIndex(2));
+    this.input.keyboard?.on('keydown-ONE', () => this.planSkillByIndex(0));
+    this.input.keyboard?.on('keydown-TWO', () => this.planSkillByIndex(1));
+    this.input.keyboard?.on('keydown-THREE', () => this.planSkillByIndex(2));
     this.input.keyboard?.on('keydown-ESC', () => {
       if (this.combatState === 'PLAYER_TURN' && this.isSkillMenuOpen) {
         this.closeSkillSubMenu();
-      }
+      } else if (this.isCommandMenuOpen) this.closeHeroCommands();
+      else this.cancelPlannedAction();
     });
     this.input.keyboard?.on('keydown-BACKSPACE', () => {
       if (this.combatState === 'PLAYER_TURN' && this.isSkillMenuOpen) {
         this.closeSkillSubMenu();
-      }
+      } else if (this.isCommandMenuOpen) this.closeHeroCommands();
+      else this.cancelPlannedAction();
     });
 
     // 8. Start Battle 1: Materialize encounter 1, then unlocks Round 1!
@@ -294,75 +310,30 @@ export class BattleScene extends Phaser.Scene {
     bg.fillGradientStyle(0x071126, 0x071126, 0x020617, 0x020617, 1);
     bg.fillRect(0, 0, width, height);
 
-    // 2. Arena Combat Floor: Subtle darkened floor plane on which stands & shadows rest
-    bg.fillStyle(0x050a14, 0.85);
-    bg.fillRect(0, 170, width, height - 170);
 
-    // 3. Horizon accent line (delicate separation between distant backdrop and battle floor)
-    bg.lineStyle(1, 0x1e293b, 0.5);
-    bg.lineBetween(0, 170, width, 170);
-  }
-
-  private createCombatGrids(): void {
-    const g = this.add.graphics();
-    g.setDepth(10);
-
-    // Party 3-Slot Triangle Grid (Right, Arrow < pointing left)
-    const partySlots = [
-      { x: 880, y: 360 },
-      { x: 1040, y: 220 },
-      { x: 1040, y: 500 },
-    ];
-
-    partySlots.forEach((slot) => {
-      g.fillStyle(0x0284c7, 0.12);
-      g.fillEllipse(slot.x, slot.y, 115, 40);
-      g.lineStyle(1, 0x38bdf8, 0.4);
-      g.strokeEllipse(slot.x, slot.y, 115, 40);
-    });
-
-    // Enemy Slots (Left)
-    const enemySlots = [
-      { x: 220, y: 360, isBoss: true },
-      { x: 400, y: 220, isBoss: false },
-      { x: 400, y: 500, isBoss: false },
-    ];
-
-    enemySlots.forEach((slot) => {
-      if (slot.isBoss) {
-        g.fillStyle(0xef4444, 0.15);
-        g.fillEllipse(slot.x, slot.y, 160, 56);
-        g.lineStyle(1, 0xf87171, 0.5);
-        g.strokeEllipse(slot.x, slot.y, 160, 56);
-      } else {
-        g.fillStyle(0xef4444, 0.08);
-        g.fillEllipse(slot.x, slot.y, 115, 40);
-        g.lineStyle(1, 0xf87171, 0.3);
-        g.strokeEllipse(slot.x, slot.y, 115, 40);
-      }
-    });
   }
 
   private createHeaderUI(width: number): void {
-    const headerBg = this.add.rectangle(width / 2, 28, width, 56, 0x071126, 0.92);
-    headerBg.setStrokeStyle(1.5, 0x1e3a8a);
+    const headerBg = this.add.rectangle(width / 2, 48, width, 96, 0x071126, 0.92);
+    headerBg.setStrokeStyle(1, 0x374f60);
     headerBg.setDepth(1000);
 
     this.roundBannerText = this.add.text(24, 16, `BATTLE ${this.fightNumber}/${this.totalFights} • ROUND 1`, {
-      fontFamily: 'monospace',
-      fontSize: '16px',
+      fontFamily: 'Arial',
+      fontSize: '23px',
       color: '#38bdf8',
       fontStyle: 'bold',
     }).setDepth(1001);
 
-    this.statusText = this.add.text(24, 36, 'Ready for action...', {
-      fontFamily: 'monospace',
-      fontSize: '12px',
+    this.statusText = this.add.text(24, 52, 'Ready for action...', {
+      fontFamily: 'Arial',
+      fontSize: '18px',
       color: '#94a3b8',
+      wordWrap: { width: width - 48 },
     }).setDepth(1001);
 
     // Reset Battle Button in Header
-    const resetBtn = this.createHeaderButton(width - 95, 28, 'Reset Battle', () => {
+    const resetBtn = this.createHeaderButton(width - 95, 28, 'Restart battle', () => {
       this.resetBattle();
     });
     resetBtn.setDepth(1001);
@@ -371,375 +342,170 @@ export class BattleScene extends Phaser.Scene {
   private createHeaderButton(x: number, y: number, label: string, onClick: () => void): Phaser.GameObjects.Container {
     const container = this.add.container(x, y);
     const bg = this.add.rectangle(0, 0, 110, 30, 0x0c204c, 0.95);
-    bg.setStrokeStyle(1.5, 0xe2e8f0);
+    bg.setStrokeStyle(1, 0x4b6576);
     bg.setInteractive({ useHandCursor: true });
 
     const txt = this.add.text(0, 0, label, {
-      fontFamily: 'monospace',
-      fontSize: '11px',
+      fontFamily: 'Arial',
+      fontSize: '16px',
       color: '#cbd5e1',
     }).setOrigin(0.5);
 
     bg.on('pointerover', () => bg.setStrokeStyle(2, 0xfbbf24));
-    bg.on('pointerout', () => bg.setStrokeStyle(1.5, 0xe2e8f0));
+    bg.on('pointerout', () => bg.setStrokeStyle(1, 0x4b6576));
     bg.on('pointerdown', onClick);
 
     container.add([bg, txt]);
     return container;
   }
 
-  /**
-   * Builds the authentic two-box Final Fantasy JRPG Bottom HUD.
-   * Features classic deep-navy gradient with crisp silver double border lines.
-   */
+  /** Three compact party panels; command controls occupy the field only while editing. */
   private createClassicJRPGHud(width: number, height: number): void {
-    this.bottomHudContainer = this.add.container(0, 0);
-    this.bottomHudContainer.setDepth(1002);
+    const layout = getBattleLayout(width, height);
+    this.bottomHudContainer = this.add.container(0, 0).setDepth(1002);
+    const partyBg = this.add.rectangle(width / 2, layout.partyTop + 138, width, 276, 0x0b172b, 0.98)
+      .setStrokeStyle(1, 0x50647a);
+    this.bottomHudContainer.add(partyBg);
 
-    const panelY = height - 70; // Center at y = 650
-    const panelHeight = 135;
-
-    // --- LEFT BOX: COMMAND MENU (Width: 320px, x: 20 to 340) ---
-    const leftW = 320;
-    const leftX = 20 + leftW / 2; // 180
-
-    const leftBox = this.add.container(leftX, panelY);
-
-    // Classic Final Fantasy Deep-Navy Gradient with fine silver double border
-    const leftG = this.add.graphics();
-    leftG.fillGradientStyle(0x0c204c, 0x0c204c, 0x050d22, 0x050d22, 0.98);
-    leftG.fillRoundedRect(-leftW / 2, -panelHeight / 2, leftW, panelHeight, 6);
-    leftG.lineStyle(1.5, 0xe2e8f0, 0.85);
-    leftG.strokeRoundedRect(-leftW / 2, -panelHeight / 2, leftW, panelHeight, 6);
-    leftG.lineStyle(1, 0x1e3a8a, 0.6);
-    leftG.strokeRoundedRect(-leftW / 2 + 3, -panelHeight / 2 + 3, leftW - 6, panelHeight - 6, 4);
-
-    // Header: Active Hero Name & Role
-    this.cmdHeaderName = this.add.text(-leftW / 2 + 16, -panelHeight / 2 + 16, '▸ CLOUD', {
-      fontFamily: 'monospace',
-      fontSize: '16px',
-      color: '#38bdf8',
-      fontStyle: 'bold',
+    this.turnOrder.forEach((hero, index) => {
+      const rowY = layout.partyTop + 44 + index * (layout.rowHeight + layout.rowGap);
+      const container = this.add.container(0, rowY);
+      const highlightBg = this.add.rectangle(width / 2, 0, width - 24, layout.rowHeight, 0x142a46)
+        .setStrokeStyle(1, 0x3f5876);
+      const cursorText = this.add.text(12, 0, '▸', { fontFamily: 'Arial', fontSize: '20px', color: '#e6ca87' }).setOrigin(0, 0.5);
+      const nameText = this.add.text(104, -23, hero.heroName, { fontFamily: 'Arial', fontSize: '21px', color: '#ffffff', fontStyle: 'bold' });
+      const roleText = this.add.text(104, 7, hero.heroRole, { fontFamily: 'Arial', fontSize: '13px', color: '#a1b1c9' });
+      const barX = 260;
+      const barBg = this.add.rectangle(barX, -3, this.rowBarWidth, 8, 0x060e1f).setOrigin(0, 0.5);
+      const chipBar = this.add.rectangle(barX, -3, this.rowBarWidth, 6, 0xe6ca87).setOrigin(0, 0.5);
+      const fgBar = this.add.rectangle(barX, -3, this.rowBarWidth, 6, 0x82c4a0).setOrigin(0, 0.5);
+      const hpText = this.add.text(barX, -27, '', { fontFamily: 'Arial', fontSize: '16px', color: '#e5edf8' });
+      const mpBarBg = this.add.rectangle(barX, 29, this.rowBarWidth, 6, 0x060e1f).setOrigin(0, 0.5);
+      const mpFgBar = this.add.rectangle(barX, 29, this.rowBarWidth, 4, 0x80a5ed).setOrigin(0, 0.5);
+      const mpText = this.add.text(barX, 7, '', { fontFamily: 'Arial', fontSize: '15px', color: '#a4bff1' });
+      const statusText = this.add.text(width - 35, 0, 'COMMAND', {
+        fontFamily: 'Arial', fontSize: '17px', color: '#e6ca87', align: 'right', wordWrap: { width: 155 },
+      }).setOrigin(1, 0.5);
+      container.add([highlightBg, cursorText, nameText, roleText, barBg, chipBar, fgBar, hpText, mpBarBg, mpFgBar, mpText, statusText]);
+      if (this.textures.exists(`portrait_${hero.unitKey}`)) {
+        container.add(this.add.image(58, 0, `portrait_${hero.unitKey}`).setScale(1.35));
+      }
+      // Commit on release, so a swipe can open editing without accidentally executing.
+      const selectArea = this.add.zone(width / 2 - 18, 0, width - 60, layout.rowHeight).setInteractive({ useHandCursor: true });
+      let press: { id: number; x: number; y: number } | undefined;
+      selectArea.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+        press = this.combatState === 'PLAYER_TURN' && !hero.isDead && !hero.hasActed
+          ? { id: pointer.id, x: pointer.worldX, y: pointer.worldY } : undefined;
+      });
+      selectArea.on('pointerout', () => { press = undefined; });
+      selectArea.on('pointerup', (pointer: Phaser.Input.Pointer) => {
+        const start = press;
+        press = undefined;
+        if (!start || pointer.id !== start.id) return;
+        const dx = pointer.worldX - start.x;
+        const dy = pointer.worldY - start.y;
+        if (Math.abs(dy) > 28 || dx < -28) return;
+        this.handleHeroPanelInput(hero, dx >= 28);
+      });
+      container.add(selectArea);
+      const edit = this.add.text(width - 19, 0, '›', { fontFamily: 'Arial', fontSize: '27px', color: '#9cb5d6' }).setOrigin(0.5);
+      const editArea = this.add.zone(width - 24, 0, 40, layout.rowHeight).setInteractive({ useHandCursor: true });
+      editArea.on('pointerup', () => this.openHeroCommands(hero));
+      container.add([edit, editArea]);
+      this.bottomHudContainer.add(container);
+      this.partyRows.set(hero.unitKey, { container, cursorText, highlightBg, nameText, roleText, fgBar, chipBar, hpText, mpBarBg, mpFgBar, mpText, statusText, lastHp: hero.maxHp });
     });
+    this.bottomHudContainer.add(this.add.text(width / 2, height - 6, 'TAP TO PREPARE · TAP PREPARED ACTION TO EXECUTE · SWIPE RIGHT TO EDIT', {
+      fontFamily: 'Arial', fontSize: '12px', color: '#8b9db6',
+    }).setOrigin(0.5, 1));
 
-    this.cmdHeaderRole = this.add.text(-leftW / 2 + 115, -panelHeight / 2 + 18, '[VANGUARD]', {
-      fontFamily: 'monospace',
-      fontSize: '11px',
-      color: '#94a3b8',
+    const panelWidth = width - 40;
+    this.commandPanel = this.add.container(width / 2, layout.commandY).setVisible(false);
+    const panelBg = this.add.rectangle(0, 0, panelWidth, 320, 0x10233f, 0.99).setStrokeStyle(2, 0xa7b8cc);
+    // Block input to actors under the floating command window.
+    panelBg.setInteractive();
+    this.commandPanel.add(panelBg);
+    this.cmdHeaderName = this.add.text(-panelWidth / 2 + 22, -143, 'CLOUD', {
+      fontFamily: 'Arial', fontSize: '25px', fontStyle: 'bold', color: '#f1f5f9',
     });
-
-    // Aerith Mode Switch Pill (visible when Aerith is active)
-    this.cmdModeBtnBg = this.add.rectangle(leftW / 2 - 55, -panelHeight / 2 + 24, 88, 20, 0x0e2454, 0.95);
-    this.cmdModeBtnBg.setStrokeStyle(1, 0xf472b6);
-    this.cmdModeBtnBg.setInteractive({ useHandCursor: true });
+    this.cmdHeaderRole = this.add.text(-panelWidth / 2 + 22, -109, 'VANGUARD', { fontFamily: 'Arial', fontSize: '15px', color: '#a6b9d1' });
+    this.cmdModeBtnBg = this.add.rectangle(165, -125, 120, 36, 0x243958).setStrokeStyle(1, 0x9c8cb2).setInteractive({ useHandCursor: true });
     this.cmdModeBtnBg.on('pointerdown', () => this.toggleAerithMode());
-    this.cmdModeBtnBg.setVisible(false);
-
-    this.cmdModeBtnText = this.add.text(leftW / 2 - 55, -panelHeight / 2 + 24, 'Melee ▾', {
-      fontFamily: 'monospace',
-      fontSize: '9px',
-      color: '#f472b6',
-    }).setOrigin(0.5);
-    this.cmdModeBtnText.setVisible(false);
-
-    // Button 1: [ATTACK] (Active - Royal Blue with silver border)
-    const btnW = leftW - 32;
-    const btnH = 34;
+    this.cmdModeBtnText = this.add.text(165, -125, 'Melee', { fontFamily: 'Arial', fontSize: '17px', color: '#e0c5eb' }).setOrigin(0.5);
+    const close = this.add.text(panelWidth / 2 - 22, -126, 'Close', { fontFamily: 'Arial', fontSize: '18px', color: '#bac9de' }).setOrigin(1, 0.5).setInteractive({ useHandCursor: true });
+    close.on('pointerdown', () => this.closeHeroCommands());
+    this.commandPanel.add([this.cmdHeaderName, this.cmdHeaderRole, this.cmdModeBtnBg, this.cmdModeBtnText, close]);
 
     this.cmdMainContainer = this.add.container(0, 0);
+    this.cmdPlanText = this.add.text(-panelWidth / 2 + 22, -68, 'Choose a command', { fontFamily: 'Arial', fontSize: '20px', color: '#c6d3e6' });
+    const button = (x: number, y: number, w: number, label: string, action: () => void) => {
+      const bg = this.add.rectangle(x, y, w, 48, 0x203d5d).setStrokeStyle(1, 0x728ca8).setInteractive({ useHandCursor: true });
+      const text = this.add.text(x, y, label, { fontFamily: 'Arial', fontSize: '21px', color: '#f1f5f9' }).setOrigin(0.5);
+      bg.on('pointerdown', action);
+      this.cmdMainContainer.add([bg, text]);
+      return { bg, text };
+    };
+    const attack = button(-160, -6, 292, 'Attack', () => this.planHeroAttack());
+    this.cmdAttackBtnBg = attack.bg; this.cmdAttackBtnText = attack.text;
+    const skill = button(160, -6, 292, 'Skill', () => this.openSkillSubMenu());
+    this.cmdSkillBtnBg = skill.bg; this.cmdSkillBtnText = skill.text;
+    button(-160, 62, 292, 'Clear action', () => { this.cancelPlannedAction(); this.closeHeroCommands(); });
+    const execute = button(160, 62, 292, 'Execute', () => this.executePlannedAction());
+    this.cmdExecuteBtnBg = execute.bg; this.cmdExecuteBtnText = execute.text;
+    this.cmdMainContainer.add([this.cmdPlanText, this.add.text(0, 120, 'Preparing does not spend MP or your turn.', { fontFamily: 'Arial', fontSize: '17px', color: '#9aafca' }).setOrigin(0.5)]);
 
-    this.cmdAttackBtnBg = this.add.rectangle(0, -6, btnW, btnH, 0x1d4ed8, 0.95);
-    this.cmdAttackBtnBg.setStrokeStyle(1.5, 0xe2e8f0);
-    this.cmdAttackBtnBg.setInteractive({ useHandCursor: true });
-
-    this.cmdAttackBtnText = this.add.text(0, -6, '⚡ ATTACK (Space)', {
-      fontFamily: 'monospace',
-      fontSize: '12px',
-      color: '#ffffff',
-      fontStyle: 'bold',
-    }).setOrigin(0.5);
-
-    this.cmdAttackBtnBg.on('pointerover', () => {
-      if (this.combatState === 'PLAYER_TURN') {
-        this.cmdAttackBtnBg.setStrokeStyle(2, 0xfbbf24);
-      }
-    });
-    this.cmdAttackBtnBg.on('pointerout', () => {
-      this.cmdAttackBtnBg.setStrokeStyle(1.5, 0xe2e8f0);
-    });
-    this.cmdAttackBtnBg.on('pointerdown', () => {
-      if (this.combatState === 'PLAYER_TURN') {
-        this.executeActiveHeroAttack();
-      }
-    });
-
-    // Button 2 & 3: [SKILL] & [DEFEND]
-    const subBtnW = (btnW - 8) / 2;
-    const subBtnY = 32;
-
-    this.cmdSkillBtnBg = this.add.rectangle(-subBtnW / 2 - 4, subBtnY, subBtnW, 28, 0x2563eb, 0.9);
-    this.cmdSkillBtnBg.setStrokeStyle(1, 0xe2e8f0, 0.8);
-    this.cmdSkillBtnBg.setInteractive({ useHandCursor: true });
-
-    this.cmdSkillBtnText = this.add.text(-subBtnW / 2 - 4, subBtnY, '✦ SKILL', {
-      fontFamily: 'monospace',
-      fontSize: '11px',
-      color: '#ffffff',
-      fontStyle: 'bold',
-    }).setOrigin(0.5);
-
-    this.cmdSkillBtnBg.on('pointerover', () => {
-      if (this.combatState === 'PLAYER_TURN') {
-        this.cmdSkillBtnBg.setStrokeStyle(2, 0xfbbf24);
-      }
-    });
-    this.cmdSkillBtnBg.on('pointerout', () => {
-      this.cmdSkillBtnBg.setStrokeStyle(1, 0xe2e8f0, 0.8);
-    });
-    this.cmdSkillBtnBg.on('pointerdown', () => {
-      if (this.combatState === 'PLAYER_TURN') {
-        this.openSkillSubMenu();
-      }
-    });
-
-    const guardBg = this.add.rectangle(subBtnW / 2 + 4, subBtnY, subBtnW, 28, 0x081530, 0.7);
-    guardBg.setStrokeStyle(1, 0x1e3a8a, 0.5);
-    const guardText = this.add.text(subBtnW / 2 + 4, subBtnY, '🛡 DEFEND', {
-      fontFamily: 'monospace',
-      fontSize: '10px',
-      color: '#64748b',
-    }).setOrigin(0.5);
-
-    this.cmdMainContainer.add([
-      this.cmdAttackBtnBg,
-      this.cmdAttackBtnText,
-      this.cmdSkillBtnBg,
-      this.cmdSkillBtnText,
-      guardBg,
-      guardText,
-    ]);
-
-    // Sub-Menu Container: Dynamic Multi-Skill Sub-Menu
-    this.cmdSkillContainer = this.add.container(0, 0);
-    this.cmdSkillContainer.setVisible(false);
-
+    this.cmdSkillContainer = this.add.container(0, 0).setVisible(false);
     this.skillButtons = [];
-    const skillBtnW = btnW;
-    const skillBtnH = 22;
-    const rowYPositions = [-27, -2, 23];
-
     for (let i = 0; i < 3; i++) {
-      const y = rowYPositions[i];
-      const bg = this.add.rectangle(0, y, skillBtnW, skillBtnH, 0x2563eb, 0.95);
-      bg.setStrokeStyle(1.2, 0xe2e8f0, 0.85);
-      bg.setInteractive({ useHandCursor: true });
-
-      const nameText = this.add.text(-skillBtnW / 2 + 10, y, `✦ Skill ${i + 1}`, {
-        fontFamily: 'monospace',
-        fontSize: '11px',
-        color: '#ffffff',
-        fontStyle: 'bold',
-      }).setOrigin(0, 0.5);
-
-      const tagText = this.add.text(skillBtnW / 2 - 10, y, `[0 MP]`, {
-        fontFamily: 'monospace',
-        fontSize: '10px',
-        color: '#93c5fd',
-      }).setOrigin(1, 0.5);
-
-      const btnUi: SkillBtnUi = { bg, nameText, tagText, skill: null };
-      this.skillButtons.push(btnUi);
-
+      const y = -54 + i * 62;
+      const bg = this.add.rectangle(0, y, panelWidth - 40, 54, 0x203d5d).setStrokeStyle(1, 0x728ca8).setInteractive({ useHandCursor: true });
+      const nameText = this.add.text(-panelWidth / 2 + 36, y - 9, '', { fontFamily: 'Arial', fontSize: '22px', color: '#ffffff' }).setOrigin(0, 0.5);
+      const tagText = this.add.text(-panelWidth / 2 + 36, y + 15, '', { fontFamily: 'Arial', fontSize: '15px', color: '#a4bff1' }).setOrigin(0, 0.5);
+      const ui: SkillBtnUi = { bg, nameText, tagText, skill: null };
+      bg.on('pointerdown', () => { if (ui.skill) this.planHeroSkill(ui.skill); });
       bg.on('pointerover', () => {
-        if (btnUi.skill && this.combatState === 'PLAYER_TURN' && this.getActiveHero()?.currentMp! >= btnUi.skill.mpCost) {
-          bg.setStrokeStyle(2, 0xfbbf24);
-          this.updateStatus(`${btnUi.skill.name}: ${btnUi.skill.desc} (${btnUi.skill.scope}, ${btnUi.skill.mpCost} MP)`);
-        }
+        if (this.combatState === 'PLAYER_TURN' && this.isSkillMenuOpen && ui.skill) this.getActiveHero()?.playCommandPose(ui.skill.motion === 'magic_atk');
       });
       bg.on('pointerout', () => {
-        if (btnUi.skill && this.getActiveHero()?.currentMp! >= btnUi.skill.mpCost) {
-          bg.setStrokeStyle(1.2, 0xe2e8f0, 0.85);
-        }
+        const hero = this.getActiveHero();
+        if (this.combatState === 'PLAYER_TURN' && this.isSkillMenuOpen && hero) this.refreshPlannedPose(hero);
       });
-      bg.on('pointerdown', () => {
-        if (this.combatState === 'PLAYER_TURN' && btnUi.skill) {
-          this.executeSkillChoice(btnUi.skill);
-        }
-      });
-
+      this.skillButtons.push(ui);
       this.cmdSkillContainer.add([bg, nameText, tagText]);
     }
-
-    this.cmdSkillBackBtnBg = this.add.rectangle(0, 48, skillBtnW, 20, 0x0c204c, 0.9);
-    this.cmdSkillBackBtnBg.setStrokeStyle(1, 0x94a3b8, 0.8);
-    this.cmdSkillBackBtnBg.setInteractive({ useHandCursor: true });
-
-    this.cmdSkillBackBtnText = this.add.text(0, 48, '◂ BACK (Attack Menu)', {
-      fontFamily: 'monospace',
-      fontSize: '10px',
-      color: '#cbd5e1',
-      fontStyle: 'bold',
-    }).setOrigin(0.5);
-
-    this.cmdSkillBackBtnBg.on('pointerover', () => {
-      this.cmdSkillBackBtnBg.setStrokeStyle(2, 0xfbbf24);
-    });
-    this.cmdSkillBackBtnBg.on('pointerout', () => {
-      this.cmdSkillBackBtnBg.setStrokeStyle(1, 0x94a3b8, 0.8);
-    });
-    this.cmdSkillBackBtnBg.on('pointerdown', () => {
-      this.closeSkillSubMenu();
-    });
-
-    this.cmdSkillContainer.add([
-      this.cmdSkillBackBtnBg,
-      this.cmdSkillBackBtnText,
-    ]);
-
-    leftBox.add([
-      leftG,
-      this.cmdHeaderName,
-      this.cmdHeaderRole,
-      this.cmdModeBtnBg,
-      this.cmdModeBtnText,
-      this.cmdMainContainer,
-      this.cmdSkillContainer,
-    ]);
-
-    // --- RIGHT BOX: PARTY STATUS (Width: 900px, x: 360 to 1260) ---
-    const rightW = width - leftW - 60; // 900
-    const rightX = leftW + 40 + rightW / 2; // 810
-
-    const rightBox = this.add.container(rightX, panelY);
-
-    const rightG = this.add.graphics();
-    rightG.fillGradientStyle(0x0c204c, 0x0c204c, 0x050d22, 0x050d22, 0.98);
-    rightG.fillRoundedRect(-rightW / 2, -panelHeight / 2, rightW, panelHeight, 6);
-    rightG.lineStyle(1.5, 0xe2e8f0, 0.85);
-    rightG.strokeRoundedRect(-rightW / 2, -panelHeight / 2, rightW, panelHeight, 6);
-    rightG.lineStyle(1, 0x1e3a8a, 0.6);
-    rightG.strokeRoundedRect(-rightW / 2 + 3, -panelHeight / 2 + 3, rightW - 6, panelHeight - 6, 4);
-
-    rightBox.add(rightG);
-
-    // 3 Vertical Rows: Cloud (y: -38), Aerith (y: 0), Barret (y: +38)
-    const rowYOffsets = [-38, 0, 38];
-
-    this.turnOrder.forEach((hero, idx) => {
-      const rowY = rowYOffsets[idx];
-      const rowContainer = this.add.container(0, rowY);
-
-      // Row background highlight (deep-cobalt glow when active)
-      const highlightBg = this.add.rectangle(0, 0, rightW - 20, 32, 0x1e40af, 0.25);
-      highlightBg.setStrokeStyle(1, 0x60a5fa, 0.5);
-      highlightBg.setVisible(false);
-
-      highlightBg.setInteractive({ useHandCursor: true });
-      highlightBg.on('pointerdown', () => {
-        if (this.getActiveHero() === hero && this.combatState === 'PLAYER_TURN') {
-          if (this.isSkillMenuOpen) {
-            this.executeActiveHeroSkill();
-          } else {
-            this.executeActiveHeroAttack();
-          }
-        }
-      });
-
-      // Cursor arrow
-      const cursorText = this.add.text(-rightW / 2 + 20, 0, '▸', {
-        fontFamily: 'monospace',
-        fontSize: '16px',
-        color: '#fbbf24',
-        fontStyle: 'bold',
-      }).setOrigin(0, 0.5).setVisible(false);
-
-      // Hero Name
-      const nameText = this.add.text(-rightW / 2 + 42, 0, hero.heroName, {
-        fontFamily: 'monospace',
-        fontSize: '13px',
-        color: '#f8fafc',
-        fontStyle: 'bold',
-      }).setOrigin(0, 0.5);
-
-      // Hero Role
-      const roleText = this.add.text(-rightW / 2 + 130, 0, `[${hero.heroRole}]`, {
-        fontFamily: 'monospace',
-        fontSize: '10px',
-        color: '#94a3b8',
-      }).setOrigin(0, 0.5);
-
-      // 2-Phase HP Bar (y = -6, height = 8)
-      const barX = -rightW / 2 + 240;
-      const barBg = this.add.rectangle(barX + this.rowBarWidth / 2, -6, this.rowBarWidth + 4, 10, 0x081530, 1);
-      barBg.setStrokeStyle(1, 0x1e3a8a);
-
-      const chipBar = this.add.rectangle(barX, -6, this.rowBarWidth, 8, 0xfbbf24).setOrigin(0, 0.5);
-      const fgBar = this.add.rectangle(barX, -6, this.rowBarWidth, 8, 0x22c55e).setOrigin(0, 0.5);
-
-      // Numeric HP Text
-      const hpText = this.add.text(barX + this.rowBarWidth + 16, -6, `${hero.currentHp.toLocaleString()} / ${hero.maxHp.toLocaleString()} HP`, {
-        fontFamily: 'monospace',
-        fontSize: '11px',
-        color: '#cbd5e1',
-      }).setOrigin(0, 0.5);
-
-      // Classic Blue MP Bar (y = +7, height = 5)
-      const mpBarBg = this.add.rectangle(barX + this.rowBarWidth / 2, 7, this.rowBarWidth + 4, 7, 0x081530, 1);
-      mpBarBg.setStrokeStyle(1, 0x1e3a8a);
-
-      const mpFgBar = this.add.rectangle(barX, 7, this.rowBarWidth, 5, 0x3b82f6).setOrigin(0, 0.5);
-
-      // Numeric MP Text
-      const mpText = this.add.text(barX + this.rowBarWidth + 16, 7, `MP ${hero.currentMp.toLocaleString()} / ${hero.maxMp.toLocaleString()}`, {
-        fontFamily: 'monospace',
-        fontSize: '10px',
-        color: '#93c5fd',
-      }).setOrigin(0, 0.5);
-
-      // Status Badge
-      const statusText = this.add.text(rightW / 2 - 30, 0, 'READY', {
-        fontFamily: 'monospace',
-        fontSize: '11px',
-        color: '#94a3b8',
-        fontStyle: 'bold',
-      }).setOrigin(1, 0.5);
-
-      rowContainer.add([
-        highlightBg,
-        cursorText,
-        nameText,
-        roleText,
-        barBg,
-        chipBar,
-        fgBar,
-        hpText,
-        mpBarBg,
-        mpFgBar,
-        mpText,
-        statusText,
-      ]);
-
-      rightBox.add(rowContainer);
-
-      this.partyRows.set(hero.unitKey, {
-        container: rowContainer,
-        cursorText,
-        highlightBg,
-        nameText,
-        roleText,
-        fgBar,
-        chipBar,
-        hpText,
-        mpBarBg,
-        mpFgBar,
-        mpText,
-        statusText,
-        lastHp: hero.maxHp,
-      });
-    });
-
-    this.bottomHudContainer.add([leftBox, rightBox]);
+    this.cmdSkillBackBtnBg = this.add.rectangle(0, 130, panelWidth - 40, 36, 0x162e4b).setStrokeStyle(1, 0x536e8e).setInteractive({ useHandCursor: true });
+    this.cmdSkillBackBtnText = this.add.text(0, 130, 'Back to commands', { fontFamily: 'Arial', fontSize: '18px', color: '#c4d1e3' }).setOrigin(0.5);
+    this.cmdSkillBackBtnBg.on('pointerdown', () => this.closeSkillSubMenu());
+    this.cmdSkillContainer.add([this.cmdSkillBackBtnBg, this.cmdSkillBackBtnText]);
+    this.commandPanel.add([this.cmdMainContainer, this.cmdSkillContainer]);
+    this.bottomHudContainer.add(this.commandPanel);
   }
+
+  /** A panel tap commits an existing plan; swipes and the edit chevron always open commands. */
+  public handleHeroPanelInput(hero: UnitActor, edit = false): void {
+    if (this.combatState !== 'PLAYER_TURN' || hero.isDead || hero.hasActed || !this.turnOrder.includes(hero)) return;
+    if (edit || !this.plannedActions.has(hero)) { this.openHeroCommands(hero); return; }
+    this.selectHero(hero);
+    this.executePlannedAction();
+  }
+
+  public openHeroCommands(hero: UnitActor): void {
+    if (this.combatState !== 'PLAYER_TURN' || hero.isDead || hero.hasActed || !this.turnOrder.includes(hero)) return;
+    this.selectHero(hero);
+    this.isCommandMenuOpen = true;
+    this.refreshPlannedPose(hero);
+    this.updateCommandMenu();
+  }
+
+  public closeHeroCommands(): void {
+    if (this.combatState !== 'PLAYER_TURN') return;
+    this.isCommandMenuOpen = false;
+    this.isSkillMenuOpen = false;
+    const hero = this.getActiveHero();
+    if (hero) this.refreshPlannedPose(hero);
+    this.updateCommandMenu();
+  }
+
 
   private toggleAerithMode(): void {
     if (this.getActiveHero() !== this.aerith || this.combatState !== 'PLAYER_TURN') return;
@@ -763,10 +529,96 @@ export class BattleScene extends Phaser.Scene {
       if (this.cmdModeBtnText) this.cmdModeBtnText.setText('Melee ▾');
       this.updateStatus('Aerith Stance: Melee Attack (180-260 DMG)');
     }
+    const plan = this.plannedActions.get(this.aerith);
+    if (plan?.kind === 'attack') {
+      plan.config = { ...this.aerith.combatConfig };
+      this.refreshPlannedPose(this.aerith);
+    }
   }
 
   private getActiveHero(): UnitActor | undefined {
     return this.turnOrder[this.activeHeroIndex];
+  }
+
+  /** Selecting an available hero never spends their action or MP. */
+  public selectHero(hero: UnitActor): void {
+    if (this.combatState !== 'PLAYER_TURN' || hero.isDead || hero.hasActed) return;
+    const index = this.turnOrder.indexOf(hero);
+    if (index < 0) return;
+    const previous = this.getActiveHero();
+    this.isSkillMenuOpen = false;
+    this.isCommandMenuOpen = false;
+    if (previous) this.refreshPlannedPose(previous);
+    this.activeHeroIndex = index;
+    this.refreshPlannedPose(hero);
+    const plan = this.plannedActions.get(hero);
+    if (plan?.target && plan.target.currentHp > 0) this.setTarget(plan.target, false);
+    this.updateCommandMenu();
+    this.updatePartyStatusUi();
+    this.updateStatus(`${hero.heroName} selected. Plan Attack or Skill, then Execute when ready.`);
+  }
+
+  private refreshPlannedPose(hero: UnitActor): void {
+    const plan = this.plannedActions.get(hero);
+    if (plan) hero.playCommandPose(plan.kind === 'skill' ? plan.skill.motion === 'magic_atk' : plan.config.attackAnim === 'magic_atk');
+    else if (hero === this.getActiveHero() && (this.isSkillMenuOpen || this.isCommandMenuOpen)) hero.playCommandPose();
+    else hero.clearCommandPose();
+  }
+
+  public planHeroAttack(): void {
+    const hero = this.getActiveHero();
+    if (this.combatState !== 'PLAYER_TURN' || !hero || hero.isDead || hero.hasActed) return;
+    this.plannedActions.set(hero, { kind: 'attack', config: { ...hero.combatConfig }, target: this.currentTarget });
+    this.finishPlanning(hero, 'Attack');
+  }
+
+  public planHeroSkill(skill: SkillConfig): void {
+    const hero = this.getActiveHero();
+    if (this.combatState !== 'PLAYER_TURN' || !hero || hero.isDead || hero.hasActed) return;
+    if (!(this.unitSkills[hero.unitKey] ?? []).includes(skill)) return;
+    if (hero.currentMp < skill.mpCost) {
+      this.updateStatus(`Not enough MP to prepare ${skill.name}.`);
+      return;
+    }
+    this.plannedActions.set(hero, { kind: 'skill', skill, target: this.currentTarget });
+    this.finishPlanning(hero, skill.name);
+  }
+
+  private finishPlanning(hero: UnitActor, label: string): void {
+    this.isSkillMenuOpen = false;
+    this.isCommandMenuOpen = false;
+    this.refreshPlannedPose(hero);
+    this.updateCommandMenu();
+    this.updatePartyStatusUi();
+    this.updateStatus(`${label} prepared. Tap ${hero.heroName}'s panel to execute; swipe right to edit.`);
+  }
+
+  public executePlannedAction(): void {
+    const hero = this.getActiveHero();
+    if (this.combatState !== 'PLAYER_TURN' || !hero || hero.isDead || hero.hasActed) return;
+    const plan = this.plannedActions.get(hero);
+    if (!plan) { this.updateStatus('Prepare an Attack or Skill first.'); return; }
+    if (plan.kind === 'skill' && hero.currentMp < plan.skill.mpCost) {
+      this.updateStatus(`Not enough MP to execute ${plan.skill.name}. Change the prepared command.`);
+      return;
+    }
+    if (plan.target && plan.target.currentHp > 0) this.setTarget(plan.target, false);
+    this.isCommandMenuOpen = false;
+    this.plannedActions.delete(hero);
+    if (plan.kind === 'attack') {
+      hero.combatConfig = { ...plan.config };
+      this.executeActiveHeroAttack();
+    } else this.executeSkillChoice(plan.skill);
+  }
+
+  public cancelPlannedAction(): void {
+    const hero = this.getActiveHero();
+    if (this.combatState !== 'PLAYER_TURN' || !hero || !this.plannedActions.has(hero)) return;
+    this.plannedActions.delete(hero);
+    this.refreshPlannedPose(hero);
+    this.updateCommandMenu();
+    this.updatePartyStatusUi();
+    this.updateStatus(`${hero.heroName}: Prepared command cleared.`);
   }
 
   /**
@@ -784,15 +636,15 @@ export class BattleScene extends Phaser.Scene {
     const arrow = this.add.text(0, 0, '▼', {
       fontFamily: 'Arial, sans-serif',
       fontSize: '22px',
-      color: '#ef4444',
-      stroke: '#450a0a',
+      color: '#e7d19b',
+      stroke: '#1b2432',
       strokeThickness: 4,
       fontStyle: 'bold',
     }).setOrigin(0.5, 1.0);
 
     // Pill label [TARGET] above the arrow
-    const labelBg = this.add.rectangle(0, -22, 52, 16, 0xdc2626, 0.95);
-    labelBg.setStrokeStyle(1, 0xfecaca);
+    const labelBg = this.add.rectangle(0, -22, 52, 16, 0x192c3b, 0.95);
+    labelBg.setStrokeStyle(1, 0xb69b63);
     const labelText = this.add.text(0, -22, 'TARGET', {
       fontFamily: 'monospace',
       fontSize: '10px',
@@ -821,6 +673,7 @@ export class BattleScene extends Phaser.Scene {
     if (!enemy || enemy.currentHp <= 0) return;
     this.currentTarget = enemy;
 
+    this.tweens.killTweensOf(this.targetMarkerContainer);
     const targetX = enemy.x;
     const targetY = enemy.getMarkerY();
 
@@ -860,10 +713,17 @@ export class BattleScene extends Phaser.Scene {
    * Spawns the encounter wave according to ENCOUNTERS data structure.
    */
   private spawnEncounter(fightNum: number, onComplete?: () => void): void {
+    this.combatState = 'SPAWNING';
+    this.currentTarget = null;
+    this.victoryTriggered = false;
+    this.plannedActions.clear();
+    this.rewardSelected = false;
+    this.targetMarkerContainer.setVisible(false);
+    this.lockCommandMenu();
     const configs = ENCOUNTERS[fightNum] || [
       // Fallback for fight 3+: scale fight 2 with HP scaling
-      { x: 400, y: 220, hp: Math.round(3500 * Math.pow(1.18, fightNum - 1)), nameTag: 'DIRE RAT A', isBoss: false },
-      { x: 400, y: 500, hp: Math.round(3500 * Math.pow(1.18, fightNum - 1)), nameTag: 'DIRE RAT B', isBoss: false },
+      { ...ENEMY_SLOTS.top, hp: Math.round(3500 * Math.pow(1.18, fightNum - 1)), nameTag: 'DIRE RAT A', isBoss: false },
+      { ...ENEMY_SLOTS.bottom, hp: Math.round(3500 * Math.pow(1.18, fightNum - 1)), nameTag: 'DIRE RAT B', isBoss: false },
     ];
 
     // Ensure enough TargetDummy instances in pool
@@ -874,6 +734,7 @@ export class BattleScene extends Phaser.Scene {
 
     // Hide any unused dummies from prior fights
     for (let i = configs.length; i < this.enemies.length; i++) {
+      this.enemies[i].currentHp = 0;
       this.enemies[i].setVisible(false);
       this.enemies[i].disableInteractive();
     }
@@ -921,7 +782,10 @@ export class BattleScene extends Phaser.Scene {
     this.victoryTriggered = false;
 
     // Reset action flags
-    aliveHeroes.forEach((h) => (h.hasActed = false));
+    aliveHeroes.forEach((h) => {
+      h.hasActed = false;
+      h.clearCommandPose();
+    });
 
     // Find first alive hero index (Cloud = 0)
     let firstAliveIdx = 0;
@@ -945,13 +809,14 @@ export class BattleScene extends Phaser.Scene {
 
     this.updateCommandMenu();
     this.updatePartyStatusUi();
-    this.updateStatus(`Round ${this.currentRound}: ${this.getActiveHero()?.heroName}'s turn! Press [ATTACK].`);
+    this.updateStatus(`Round ${this.currentRound}: Prepare commands for any ready heroes. Choose who executes first.`);
   }
 
   /**
    * Advances the turn pointer to the next living hero who hasn't acted yet.
    */
   private advanceToNextHero(): void {
+    if (this.combatState !== 'HERO_ATTACKING' && this.combatState !== 'VICTORY') return;
     const allDead = this.enemies.every((e) => e.currentHp <= 0);
     if (allDead || this.combatState === 'VICTORY') {
       this.triggerVictory();
@@ -959,23 +824,16 @@ export class BattleScene extends Phaser.Scene {
     }
 
     // Find next alive hero that hasn't acted
-    let nextIdx = this.activeHeroIndex + 1;
-    while (nextIdx < this.turnOrder.length) {
-      const hero = this.turnOrder[nextIdx];
-      if (!hero.isDead && !hero.hasActed) {
-        break;
-      }
-      nextIdx++;
-    }
+    const nextIdx = this.turnOrder.findIndex(hero => !hero.isDead && !hero.hasActed);
 
-    if (nextIdx < this.turnOrder.length) {
+    if (nextIdx >= 0) {
       // Next hero found
       this.activeHeroIndex = nextIdx;
       this.isSkillMenuOpen = false;
       this.combatState = 'PLAYER_TURN';
       this.updateCommandMenu();
       this.updatePartyStatusUi();
-      this.updateStatus(`Next hero: ${this.getActiveHero()?.heroName}'s turn!`);
+      this.updateStatus(`${this.getActiveHero()?.heroName} ready. You can select any remaining hero.`);
     } else {
       // All living heroes have acted this round -> Enemy turn!
       this.isSkillMenuOpen = false;
@@ -990,18 +848,28 @@ export class BattleScene extends Phaser.Scene {
   }
 
   /**
-   * Updates Left Command Menu based on active hero, combat state, and sub-menu state.
+   * Refreshes the floating command menu without changing prepared actions.
    */
   private updateCommandMenu(): void {
     const hero = this.getActiveHero();
+    this.commandPanel.setVisible(this.combatState === 'PLAYER_TURN' && this.isCommandMenuOpen);
+    this.cmdPlanText.setText(this.combatState === 'HERO_ATTACKING' ? 'Action in progress...' : 'Waiting for the next command');
+    const canExecute = this.combatState === 'PLAYER_TURN' && !!hero && !hero.isDead && !hero.hasActed && this.plannedActions.has(hero);
+    this.cmdExecuteBtnBg.setInteractive({ useHandCursor: true });
+    if (!canExecute) this.cmdExecuteBtnBg.disableInteractive();
+    this.cmdExecuteBtnBg.setFillStyle(canExecute ? 0x15803d : 0x081530, 0.95);
+    this.cmdExecuteBtnText.setColor(canExecute ? '#ffffff' : '#64748b');
+    this.cmdExecuteBtnText.setText('Execute');
 
     if (this.combatState === 'PLAYER_TURN' && hero && !hero.isDead && !hero.hasActed) {
-      this.cmdHeaderName.setText(`▸ ${hero.heroName}`);
+      this.cmdHeaderName.setText(hero.heroName);
+      const prepared = this.plannedActions.get(hero);
+      this.cmdPlanText.setText(prepared ? `${prepared.kind === 'skill' ? prepared.skill.name : 'Attack'} prepared` : 'Choose a command to prepare');
       let color = '#38bdf8';
       if (hero === this.aerith) color = '#f472b6';
       else if (hero === this.barret) color = '#fbbf24';
       this.cmdHeaderName.setColor(color);
-      this.cmdHeaderRole.setText(`[${hero.heroRole}]`);
+      this.cmdHeaderRole.setText(hero.heroRole);
 
       // Aerith mode button
       const isAerith = hero === this.aerith;
@@ -1034,7 +902,7 @@ export class BattleScene extends Phaser.Scene {
 
             if (hasMp) {
               btn.bg.setInteractive({ useHandCursor: true });
-              btn.bg.fillColor = 0x2563eb;
+              btn.bg.fillColor = 0x173249;
               btn.bg.setStrokeStyle(1.2, 0xe2e8f0, 0.85);
               btn.nameText.setColor('#ffffff');
               btn.tagText.setColor('#93c5fd');
@@ -1058,14 +926,14 @@ export class BattleScene extends Phaser.Scene {
 
         // Attack button enabled
         this.cmdAttackBtnBg.setInteractive({ useHandCursor: true });
-        this.cmdAttackBtnBg.fillColor = 0x1d4ed8;
+        this.cmdAttackBtnBg.fillColor = 0x173249;
         this.cmdAttackBtnBg.setStrokeStyle(1.5, 0xe2e8f0);
-        this.cmdAttackBtnText.setText(hero === this.barret ? '⚡ BURST (Space)' : '⚡ ATTACK (Space)');
+        this.cmdAttackBtnText.setText(hero === this.barret ? 'Attack · Burst' : 'Attack');
         this.cmdAttackBtnText.setColor('#ffffff');
 
         // Skill button enabled
         this.cmdSkillBtnBg.setInteractive({ useHandCursor: true });
-        this.cmdSkillBtnBg.fillColor = 0x2563eb;
+        this.cmdSkillBtnBg.fillColor = 0x173249;
         this.cmdSkillBtnBg.setStrokeStyle(1, 0xe2e8f0, 0.8);
         this.cmdSkillBtnText.setColor('#ffffff');
       }
@@ -1102,11 +970,16 @@ export class BattleScene extends Phaser.Scene {
     if (!hero || hero.isDead || hero.hasActed) return;
 
     this.isSkillMenuOpen = true;
+    this.isCommandMenuOpen = true;
+    hero.playCommandPose();
     this.updateCommandMenu();
   }
 
   public closeSkillSubMenu(): void {
+    if (this.combatState !== 'PLAYER_TURN') return;
     this.isSkillMenuOpen = false;
+    const hero = this.getActiveHero();
+    if (hero) this.refreshPlannedPose(hero);
     this.updateCommandMenu();
   }
 
@@ -1114,6 +987,8 @@ export class BattleScene extends Phaser.Scene {
    * Locks the command menu so remaining heroes or buttons cannot be clicked after fight end.
    */
   private lockCommandMenu(): void {
+    this.isCommandMenuOpen = false;
+    this.commandPanel?.setVisible(false);
     this.isSkillMenuOpen = false;
     this.cmdMainContainer.setVisible(true);
     this.cmdSkillContainer.setVisible(false);
@@ -1161,7 +1036,7 @@ export class BattleScene extends Phaser.Scene {
   }
 
   /**
-   * Refreshes all 3 rows in the Right Party Status box with cursor, highlights, 2-phase HP, and blue MP.
+   * Refreshes party panels, prepared actions, chip damage and MP.
    */
   private updatePartyStatusUi(): void {
     const activeHero = this.getActiveHero();
@@ -1174,7 +1049,10 @@ export class BattleScene extends Phaser.Scene {
 
       // 1. Cursor & Row Highlight
       row.cursorText.setVisible(isActive);
-      row.highlightBg.setVisible(isActive);
+      row.highlightBg.setVisible(true);
+      row.highlightBg.setFillStyle(isActive ? 0x193c4b : 0x0b1b2a, isActive ? 0.95 : 0.65);
+      row.highlightBg.setStrokeStyle(1, isActive ? 0xc2ac73 : 0x254152, isActive ? 1 : 0.6);
+      row.container.setAlpha(hero.isDead ? 0.45 : hero.hasActed ? 0.65 : 1);
 
       if (isActive) {
         row.nameText.setColor('#38bdf8');
@@ -1193,20 +1071,20 @@ export class BattleScene extends Phaser.Scene {
       else if (pct > 0.25) row.fgBar.fillColor = 0xf59e0b;
       else row.fgBar.fillColor = 0xef4444;
 
-      // Delayed Chip-Damage Bar (catches up after 200ms)
-      if (hero.currentHp < row.lastHp) {
-        if (row.chipTween) row.chipTween.stop();
-        this.time.delayedCall(200, () => {
+      // Keep the delay inside the tween so a later hit or heal can cancel it.
+      if (hero.currentHp !== row.lastHp) {
+        row.chipTween?.stop();
+        if (hero.currentHp < row.lastHp) {
           row.chipTween = this.tweens.add({
             targets: row.chipBar,
             width: targetWidth,
+            delay: 200,
             duration: 400,
             ease: 'Cubic.easeOut',
           });
-        });
-        row.lastHp = hero.currentHp;
-      } else {
-        row.chipBar.width = targetWidth;
+        } else {
+          row.chipBar.width = targetWidth;
+        }
         row.lastHp = hero.currentHp;
       }
 
@@ -1226,12 +1104,18 @@ export class BattleScene extends Phaser.Scene {
         row.statusText.setText('ACTED');
         row.statusText.setColor('#475569');
       } else if (isActive) {
-        row.statusText.setText('ACTIVE');
+        row.statusText.setText('COMMAND');
         row.statusText.setColor('#fbbf24');
       } else {
-        row.statusText.setText('READY');
+        row.statusText.setText('COMMAND');
         row.statusText.setColor('#94a3b8');
       }
+      const plan = this.plannedActions.get(hero);
+      if (plan && !hero.isDead && !hero.hasActed) {
+        row.statusText.setText(plan.kind === 'attack' ? 'ATTACK READY' : plan.skill.name.toUpperCase());
+        row.statusText.setFontSize(17);
+        row.statusText.setColor(plan.kind === 'skill' && plan.skill.motion === 'magic_atk' ? '#c084fc' : '#4ade80');
+      } else row.statusText.setFontSize(17);
     });
   }
 
@@ -1253,7 +1137,7 @@ export class BattleScene extends Phaser.Scene {
       row.statusText.setColor('#fbbf24');
     }
 
-    this.executeHeroSequence(hero, () => {
+    this.startHeroAction(hero, hero.combatConfig.attackAnim, () => this.executeHeroSequence(hero, () => {
       hero.hasActed = true;
       this.updatePartyStatusUi();
 
@@ -1266,38 +1150,34 @@ export class BattleScene extends Phaser.Scene {
 
       // Advance to next hero
       this.advanceToNextHero();
-    });
+    }));
   }
 
   /**
-   * Tries to execute the skill at slot index (0, 1, 2) from keyboard shortcut.
+   * Prepares the skill at slot index (0, 1, 2) from keyboard shortcut.
    */
-  public tryExecuteSkillByIndex(idx: number): void {
+  public planSkillByIndex(idx: number): void {
     if (this.combatState !== 'PLAYER_TURN' || !this.isSkillMenuOpen) return;
     const btn = this.skillButtons[idx];
     if (btn && btn.skill) {
-      this.executeSkillChoice(btn.skill);
+      this.planHeroSkill(btn.skill);
     }
   }
 
   /**
-   * Executes the first affordable skill from active hero's skill list (triggered by Space/Enter in sub-menu).
+   * Prepares the first affordable skill (Space/Enter in the skill menu).
    */
-  public executeFirstAvailableSkill(): void {
+  public planFirstAvailableSkill(): void {
     if (this.combatState !== 'PLAYER_TURN') return;
     const hero = this.getActiveHero();
     if (!hero) return;
     const skills = this.unitSkills[hero.unitKey] || [];
     const affordable = skills.find((s) => hero.currentMp >= s.mpCost);
     if (affordable) {
-      this.executeSkillChoice(affordable);
+      this.planHeroSkill(affordable);
     } else if (skills.length > 0) {
-      this.executeSkillChoice(skills[0]);
+      this.planHeroSkill(skills[0]);
     }
-  }
-
-  public executeActiveHeroSkill(): void {
-    this.executeFirstAvailableSkill();
   }
 
   /**
@@ -1324,7 +1204,21 @@ export class BattleScene extends Phaser.Scene {
       row.statusText.setColor('#c084fc');
     }
 
-    this.executeGenericSkill(hero, skill, () => this.concludeHeroSkill(hero));
+    this.startHeroAction(hero, skill.motion, () => this.executeGenericSkill(hero, skill, () => this.concludeHeroSkill(hero)));
+  }
+
+  /** Show one full magic readiness cycle before starting the cast timeline. */
+  private startHeroAction(hero: UnitActor, motion: string, action: () => void): void {
+    const preparation = motion === 'magic_atk' ? hero.manifest.animations.magic_standby : undefined;
+    if (!preparation) {
+      action();
+      return;
+    }
+    hero.playCommandPose(true);
+    const duration = preparation.frames.reduce((total, frame) => total + frame.durationMs, 0);
+    this.time.delayedCall(duration, () => {
+      if (this.combatState === 'HERO_ATTACKING' && !hero.isDead) action();
+    });
   }
 
   private concludeHeroSkill(hero: UnitActor): void {
@@ -1350,9 +1244,10 @@ export class BattleScene extends Phaser.Scene {
       : this.autoRetarget();
 
     const triggerImpact = () => {
+      if (this.combatState !== 'HERO_ATTACKING') return;
       if (skill.scope === 'single_enemy') {
         const hitTarget = this.currentTarget && this.currentTarget.currentHp > 0 ? this.currentTarget : target;
-        if (!hitTarget) return;
+        if (!hitTarget || hitTarget.currentHp <= 0) return;
 
         // 1. Hit-Stop if dashing
         if (skill.moveType === 'dash') {
@@ -1433,7 +1328,7 @@ export class BattleScene extends Phaser.Scene {
       }
       const homeX = hero.homeSlot.x;
       const homeY = hero.homeSlot.y;
-      const arrivalX = target.x + (hero.combatConfig.targetOffsetX || 90);
+      const arrivalX = target.x + hero.combatConfig.targetOffsetX * BATTLE_ART_SCALE;
       const arrivalY = target.y;
 
       hero.setDepthBoost(true);
@@ -1447,10 +1342,22 @@ export class BattleScene extends Phaser.Scene {
         duration: 340,
         ease: 'Cubic.easeInOut',
         onComplete: () => {
-          hero.playAnimation(skill.motion || 'atk');
-          this.time.delayedCall(160, triggerImpact);
+          hero.playAnimation(skill.motion);
+          if (skill.visualEffect) {
+            const effect = skill.visualEffect;
+            this.time.delayedCall(effect.startFrame * 1000 / 60, () => {
+              if (this.combatState === 'HERO_ATTACKING' && target.currentHp > 0) {
+                this.playSkillEffect(effect.key, target);
+              }
+            });
+          }
+          const impactDelay = skill.visualEffect ? (skill.attackFrames[0] ?? 6) * 1000 / 60 : 160;
+          this.time.delayedCall(impactDelay, triggerImpact);
 
-          this.time.delayedCall(650, () => {
+          const motionDuration = skill.visualEffect
+            ? hero.manifest.animations[skill.motion].frames.reduce((total, frame) => total + frame.durationMs, 0) + 80
+            : 650;
+          this.time.delayedCall(motionDuration, () => {
             hero.playAnimation('move');
             hero.setFacingLeft(false);
 
@@ -1463,7 +1370,7 @@ export class BattleScene extends Phaser.Scene {
               onComplete: () => {
                 hero.setFacingLeft(true);
                 hero.setDepthBoost(false);
-                hero.playAnimation('idle');
+                hero.playRestPose();
                 onComplete();
               },
             });
@@ -1473,14 +1380,33 @@ export class BattleScene extends Phaser.Scene {
     } else {
       const scopeDesc = skill.scope === 'party' ? 'on party' : skill.scope === 'all_enemies' ? 'on all enemies' : `at ${target?.nameTag || 'enemy'}`;
       this.updateStatus(`Action: ${hero.heroName} casts ${skill.name} ${scopeDesc}!`);
-      hero.playAnimation(skill.motion || 'magic_atk');
+      hero.playAnimation(skill.motion);
 
       this.time.delayedCall(200, triggerImpact);
 
       this.time.delayedCall(900, () => {
-        hero.returnToIdle(onComplete);
+        hero.returnToIdle(() => this.finishAfterImpacts(onComplete));
       });
     }
+  }
+
+  /** Play a prepared effect once, above actors and below combat feedback. */
+  private playSkillEffect(key: string, target: TargetDummy): void {
+    const meta = this.cache.json.get(`effect_${key}_manifest`) as EffectManifest | undefined;
+    if (!meta || !this.textures.exists(`effect_${key}`)) return;
+    const animationKey = `effect_${key}_play`;
+    if (!this.anims.exists(animationKey)) {
+      this.anims.create({ key: animationKey,
+        frames: this.anims.generateFrameNumbers(`effect_${key}`, { start: 0, end: meta.frameCount - 1 }),
+        frameRate: meta.frameRate, repeat: 0,
+      });
+    }
+    const center = target.sprite.getCenter(undefined, true);
+    const sprite = this.add.sprite(center.x, center.y, `effect_${key}`)
+      .setOrigin(meta.originX, meta.originY).setScale(meta.scale * BATTLE_ART_SCALE)
+      .setDepth(1100).setBlendMode(Phaser.BlendModes.ADD);
+    sprite.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => sprite.destroy());
+    sprite.play(animationKey);
   }
 
   private showCritPopup(x: number, y: number): void {
@@ -1576,7 +1502,7 @@ export class BattleScene extends Phaser.Scene {
         }
 
         // Standardized returnToIdle handles Barret's stationary recoil via manifest metadata
-        hero.returnToIdle(onComplete);
+        hero.returnToIdle(() => this.finishAfterImpacts(onComplete));
       });
     } else if (config.attackType === 'ranged') {
       // --- AERITH: RANGED HOLY MAGIC ---
@@ -1590,7 +1516,7 @@ export class BattleScene extends Phaser.Scene {
             ? this.currentTarget
             : this.autoRetarget();
           if (activeTarget && this.combatState !== 'VICTORY') {
-            this.fireMagicProjectile(homeX, homeY, activeTarget.x, activeTarget.y, activeTarget);
+            this.fireMagicProjectile(activeTarget);
           }
         }
       };
@@ -1605,10 +1531,10 @@ export class BattleScene extends Phaser.Scene {
             ? this.currentTarget
             : this.autoRetarget();
           if (fallback) {
-            this.fireMagicProjectile(homeX, homeY, fallback.x, fallback.y, fallback);
+            this.fireMagicProjectile(fallback);
           }
         }
-        hero.returnToIdle(onComplete);
+        hero.returnToIdle(() => this.finishAfterImpacts(onComplete));
       });
     } else {
       // --- MELEE MOVE-TO-TARGET (Cloud / Aerith Melee) ---
@@ -1616,7 +1542,7 @@ export class BattleScene extends Phaser.Scene {
         ? this.currentTarget
         : target;
 
-      const attackArrivalX = activeTarget.x + config.targetOffsetX;
+      const attackArrivalX = activeTarget.x + config.targetOffsetX * BATTLE_ART_SCALE;
       const attackArrivalY = activeTarget.y;
 
       this.updateStatus(`Action: ${hero.heroName} charges at ${activeTarget.nameTag}...`);
@@ -1665,7 +1591,7 @@ export class BattleScene extends Phaser.Scene {
               onComplete: () => {
                 hero.setFacingLeft(true);
                 hero.setDepthBoost(false);
-                hero.playAnimation('idle');
+                hero.playRestPose();
                 onComplete();
               },
             });
@@ -1676,6 +1602,7 @@ export class BattleScene extends Phaser.Scene {
   }
 
   private applyHeroMeleeDamage(hero: UnitActor, target: TargetDummy): void {
+    if (this.combatState !== 'HERO_ATTACKING' || target.currentHp <= 0) return;
     let baseDmg = 0;
     let isCrit = false;
 
@@ -1693,29 +1620,32 @@ export class BattleScene extends Phaser.Scene {
     this.handleTargetDamaged(target);
   }
 
-  private fireMagicProjectile(fromX: number, fromY: number, toX: number, toY: number, target: TargetDummy): void {
-    const projectile = this.add.circle(fromX - 40, fromY - 40, 10, 0x67e8f9, 0.95);
-    projectile.setDepth(1500);
+  private finishAfterImpacts(onComplete: () => void): void {
+    if (this.pendingImpacts === 0) onComplete();
+    else this.afterImpacts = onComplete;
+  }
 
-    const aura = this.add.circle(fromX - 40, fromY - 40, 16, 0x38bdf8, 0.4);
-    aura.setDepth(1499);
+  private resolvePendingImpact(): void {
+    this.pendingImpacts--;
+    if (this.pendingImpacts === 0) {
+      const onComplete = this.afterImpacts;
+      this.afterImpacts = undefined;
+      onComplete?.();
+    }
+  }
 
-    this.tweens.add({
-      targets: [projectile, aura],
-      x: toX,
-      y: toY - 40,
-      duration: 180,
-      ease: 'Cubic.easeIn',
-      onComplete: () => {
-        projectile.destroy();
-        aura.destroy();
-
+  private fireMagicProjectile(target: TargetDummy): void {
+    // Preserve travel timing without geometric placeholder spell effects.
+    this.pendingImpacts++;
+    this.time.delayedCall(180, () => {
+      if (this.combatState === 'HERO_ATTACKING' && target.currentHp > 0) {
         let baseDmg = Phaser.Math.Between(700, 900);
         baseDmg = Math.round(baseDmg * this.aerithMagicMultiplier);
         const isCrit = Math.random() < 0.15;
         target.applyDamage(isCrit ? Math.round(baseDmg * 1.5) : baseDmg, isCrit, 'holy');
         this.handleTargetDamaged(target);
-      },
+      }
+      this.resolvePendingImpact();
     });
   }
 
@@ -1728,6 +1658,7 @@ export class BattleScene extends Phaser.Scene {
     isCrit: boolean,
     target: TargetDummy
   ): void {
+    this.pendingImpacts++;
     const startX = fromX - 60;
     const startY = fromY - 32;
     const endX = toX + 15;
@@ -1750,8 +1681,11 @@ export class BattleScene extends Phaser.Scene {
       onComplete: () => {
         bullet.destroy();
         glow.destroy();
-        target.applyDamage(damage, isCrit, 'physical');
-        this.handleTargetDamaged(target);
+        if (this.combatState === 'HERO_ATTACKING' && target.currentHp > 0) {
+          target.applyDamage(damage, isCrit, 'physical');
+          this.handleTargetDamaged(target);
+        }
+        this.resolvePendingImpact();
       },
     });
   }
@@ -1760,6 +1694,7 @@ export class BattleScene extends Phaser.Scene {
    * Sequential enemy turn: each living enemy attacks one after another with 250ms pause.
    */
   private executeEnemyTurn(): void {
+    if (this.combatState !== 'ENEMY_TURN') return;
     const livingEnemies = this.enemies.filter((e) => e.currentHp > 0);
     if (livingEnemies.length === 0) {
       this.triggerVictory();
@@ -1777,6 +1712,7 @@ export class BattleScene extends Phaser.Scene {
     this.updateCommandMenu();
 
     const attackNextEnemy = (index: number) => {
+      if (this.combatState !== 'ENEMY_TURN') return;
       if (index >= livingEnemies.length) {
         // All alive enemies executed their counter-attacks
         const stillAlive = this.turnOrder.filter((h) => !h.isDead);
@@ -1837,6 +1773,7 @@ export class BattleScene extends Phaser.Scene {
   private triggerVictory(): void {
     if (this.victoryTriggered) return;
     this.victoryTriggered = true;
+    this.plannedActions.clear();
 
     this.combatState = 'VICTORY';
     this.targetMarkerContainer.setVisible(false);
@@ -1852,7 +1789,7 @@ export class BattleScene extends Phaser.Scene {
     // 2. All living heroes start continuous looping win celebrations
     this.turnOrder.forEach((hero) => {
       if (!hero.isDead) {
-        hero.playAnimation('win');
+        hero.playVictory();
       }
     });
 
@@ -1864,7 +1801,7 @@ export class BattleScene extends Phaser.Scene {
     // 4. Slide bottom HUD down off-screen
     this.tweens.add({
       targets: this.bottomHudContainer,
-      y: 180,
+      y: 300,
       duration: 400,
       ease: 'Cubic.easeIn',
     });
@@ -1883,8 +1820,8 @@ export class BattleScene extends Phaser.Scene {
       this.rewardsContainer.destroy();
     }
 
-    const { height } = this.scale;
-    this.rewardsContainer = this.add.container(0, 180); // starts off-screen below
+    const { width, height } = this.scale;
+    this.rewardsContainer = this.add.container(0, 300);
     this.rewardsContainer.setDepth(1500);
 
     const rewards: RewardCardData[] = [
@@ -1917,10 +1854,10 @@ export class BattleScene extends Phaser.Scene {
       },
     ];
 
-    const cardW = 340;
-    const cardH = 135;
-    const cardY = height - 75; // y: 645
-    const cardXs = [240, 640, 1040];
+    const cardW = (width - 64) / 3;
+    const cardH = 230;
+    const cardY = height - 140;
+    const cardXs = [width / 6, width / 2, width * 5 / 6];
 
     const cardContainers: Phaser.GameObjects.Container[] = [];
 
@@ -1939,31 +1876,34 @@ export class BattleScene extends Phaser.Scene {
 
       // Category Tag
       const catText = this.add.text(-cardW / 2 + 18, -cardH / 2 + 16, reward.category, {
-        fontFamily: 'monospace',
-        fontSize: '10px',
+        fontFamily: 'Arial',
+        fontSize: '15px',
         color: reward.categoryColor,
         fontStyle: 'bold',
       });
 
       // Icon & Title
       const titleText = this.add.text(-cardW / 2 + 18, -cardH / 2 + 36, `${reward.icon} ${reward.title}`, {
-        fontFamily: 'monospace',
-        fontSize: '18px',
+        fontFamily: 'Arial',
+        fontSize: '21px',
+        wordWrap: { width: cardW - 36 },
         color: '#ffffff',
         fontStyle: 'bold',
       });
 
       // Target unit
-      const targetText = this.add.text(-cardW / 2 + 18, -cardH / 2 + 66, `Target: ${reward.target}`, {
-        fontFamily: 'monospace',
-        fontSize: '11px',
+      const targetText = this.add.text(-cardW / 2 + 18, -cardH / 2 + 100, reward.target, {
+        fontFamily: 'Arial',
+        fontSize: '16px',
+        wordWrap: { width: cardW - 36 },
         color: '#94a3b8',
       });
 
       // Description
-      const descText = this.add.text(-cardW / 2 + 18, -cardH / 2 + 88, reward.desc, {
-        fontFamily: 'monospace',
-        fontSize: '13px',
+      const descText = this.add.text(-cardW / 2 + 18, -cardH / 2 + 152, reward.desc, {
+        fontFamily: 'Arial',
+        fontSize: '17px',
+        wordWrap: { width: cardW - 36 },
         color: '#fbbf24',
         fontStyle: 'bold',
       });
@@ -2023,6 +1963,9 @@ export class BattleScene extends Phaser.Scene {
     chosenCard: Phaser.GameObjects.Container,
     allCards: Phaser.GameObjects.Container[]
   ): void {
+    if (this.combatState !== 'VICTORY' || this.rewardSelected) return;
+    this.rewardSelected = true;
+
     // 1. Disable further clicks on all cards
     allCards.forEach((c) => {
       c.getAll().forEach((obj) => obj.disableInteractive());
@@ -2066,7 +2009,7 @@ export class BattleScene extends Phaser.Scene {
 
     // 4. Show Next Battle Button
     const { width, height } = this.scale;
-    const btnContainer = this.add.container(width / 2, height - 165);
+    const btnContainer = this.add.container(width / 2, height - 300);
     btnContainer.setDepth(2000);
     btnContainer.setScale(0.8);
     btnContainer.setAlpha(0);
@@ -2104,7 +2047,6 @@ export class BattleScene extends Phaser.Scene {
     });
 
     btnContainer.add([btnBg, btnText]);
-    this.nextFightBtn = btnContainer;
 
     this.tweens.add({
       targets: btnContainer,
@@ -2141,6 +2083,9 @@ export class BattleScene extends Phaser.Scene {
    * Advances to the next battle encounter with scaled enemy stats.
    */
   private startNextFight(): void {
+    if (this.combatState !== 'VICTORY' || !this.rewardSelected) return;
+    this.rewardSelected = false;
+
     // 1. Hide reward selection
     if (this.rewardsContainer) {
       this.tweens.add({
@@ -2159,14 +2104,14 @@ export class BattleScene extends Phaser.Scene {
 
     if (this.fightNumber > this.totalFights) {
       this.roundBannerText.setText('★ GLORIOUS RUN VICTORY! ★');
-      this.updateStatus('All 6 battles cleared! Congratulations!');
+      this.updateStatus(`All ${this.totalFights} battles cleared! Congratulations!`);
       return;
     }
 
     // 2. Living heroes return from 'win' back to 'idle'
     this.turnOrder.forEach((hero) => {
       if (!hero.isDead) {
-        hero.playAnimation('idle');
+        hero.playRestPose();
       }
     });
 
@@ -2191,6 +2136,7 @@ export class BattleScene extends Phaser.Scene {
    * Defeat handler: shows game over banner.
    */
   private triggerDefeat(): void {
+    this.plannedActions.clear();
     this.combatState = 'DEFEAT';
     this.roundBannerText.setText('DEFEAT');
     this.roundBannerText.setColor('#ef4444');
@@ -2254,30 +2200,10 @@ export class BattleScene extends Phaser.Scene {
    * Resets entire battle back to Fight 1, Round 1.
    */
   public resetBattle(): void {
-    if (this.defeatBanner) {
-      this.defeatBanner.destroy();
-      this.defeatBanner = undefined;
-    }
-    if (this.rewardsContainer) {
-      this.rewardsContainer.destroy();
-      this.rewardsContainer = undefined;
-    }
-    if (this.nextFightBtn) {
-      this.nextFightBtn.destroy();
-      this.nextFightBtn = undefined;
-    }
-
-    this.fightNumber = 1;
-    this.currentRound = 1;
-    this.cloudDmgMultiplier = 1.0;
-    this.aerithMagicMultiplier = 1.0;
-
-    this.turnOrder.forEach((hero) => hero.resetCombatState());
-    this.bottomHudContainer.setY(0);
-
-    this.spawnEncounter(1, () => {
-      this.startRound();
-    });
+    // Scene shutdown cancels timers, tweens and sprite listeners before rebuilding.
+    this.combatState = 'SPAWNING';
+    this.lockCommandMenu();
+    this.scene.restart({ manifests: this.manifests });
   }
 
   private updateStatus(msg: string): void {

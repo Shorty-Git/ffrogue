@@ -1,5 +1,8 @@
 import Phaser from 'phaser';
 import { UnitManifest } from '../types/manifest';
+import { BATTLE_ART_SCALE } from '../ui/battleLayout';
+
+const SPRITE_SCALE = 2.5 * BATTLE_ART_SCALE;
 
 export interface TargetDummyConfig {
   maxHp?: number;
@@ -30,6 +33,8 @@ export class TargetDummy extends Phaser.GameObjects.Container {
   private hpText!: Phaser.GameObjects.Text;
   private koBanner!: Phaser.GameObjects.Text;
   private chipTween?: Phaser.Tweens.Tween;
+  private defeatStarted = false;
+  private pointerHandlersRegistered = false;
 
   constructor(
     scene: Phaser.Scene,
@@ -69,6 +74,9 @@ export class TargetDummy extends Phaser.GameObjects.Container {
       useHandCursor: true,
     });
 
+    if (this.pointerHandlersRegistered) return;
+    this.pointerHandlersRegistered = true;
+
     this.on('pointerover', () => {
       if (this.currentHp > 0 && this.scene) {
         this.scene.input.setDefaultCursor('pointer');
@@ -94,7 +102,7 @@ export class TargetDummy extends Phaser.GameObjects.Container {
   public getTopY(): number {
     const idleMeta = this.manifest.animations['idle'];
     if (idleMeta) {
-      const topOffset = idleMeta.pivotY * idleMeta.frameHeight * 2.5;
+      const topOffset = idleMeta.pivotY * idleMeta.frameHeight * this.sprite.scaleY;
       return this.y - Math.round(topOffset);
     }
     return this.y - 130;
@@ -130,7 +138,7 @@ export class TargetDummy extends Phaser.GameObjects.Container {
     // Real authentic FFBE Training Dummy Sprite
     const idleMeta = this.manifest.animations['idle'];
     this.sprite = this.scene.add.sprite(0, 0, 'training_dummy_idle', 0);
-    this.sprite.setScale(2.5);
+    this.sprite.setScale(SPRITE_SCALE);
 
     if (idleMeta) {
       this.sprite.setOrigin(idleMeta.pivotX, idleMeta.pivotY);
@@ -220,9 +228,7 @@ export class TargetDummy extends Phaser.GameObjects.Container {
    * Applies damage, triggers impact shake & white flash, updates 2-phase HP bar and spawns bouncing floating number.
    */
   public applyDamage(damage: number, isCritical = false, damageType: 'physical' | 'holy' = 'physical'): void {
-    if (this.currentHp <= 0) {
-      damage = 0;
-    }
+    if (this.currentHp <= 0) return;
 
     this.currentHp = Math.max(0, this.currentHp - damage);
 
@@ -280,13 +286,12 @@ export class TargetDummy extends Phaser.GameObjects.Container {
       this.chipTween.stop();
     }
 
-    this.scene.time.delayedCall(200, () => {
-      this.chipTween = this.scene.tweens.add({
-        targets: this.chipBar,
-        width: targetWidth,
-        duration: 420,
-        ease: 'Cubic.easeOut',
-      });
+    this.chipTween = this.scene.tweens.add({
+      delay: 200,
+      targets: this.chipBar,
+      width: targetWidth,
+      duration: 420,
+      ease: 'Cubic.easeOut',
     });
   }
 
@@ -368,7 +373,7 @@ export class TargetDummy extends Phaser.GameObjects.Container {
     }
 
     this.setDepthBoost(true);
-    const attackX = targetX - 85;
+    const attackX = targetX - 85 * BATTLE_ART_SCALE;
     const attackY = targetY;
 
     // 1. Move to target
@@ -424,6 +429,8 @@ export class TargetDummy extends Phaser.GameObjects.Container {
    * Smooth defeat staging: red flash, UI fade, and alpha fadeout of monster sprite.
    */
   public playDefeatFade(onComplete?: () => void): void {
+    if (this.defeatStarted) return;
+    this.defeatStarted = true;
     this.setDepthBoost(false);
     this.disableInteractive();
     if (this.scene) {
@@ -460,8 +467,8 @@ export class TargetDummy extends Phaser.GameObjects.Container {
 
   /**
    * Smooth spawn/materialize staging for new waves (400-500ms):
-   * Starts transparent and scaled down (0.8x of 2.5 = scale 2.0),
-   * fades in with slight bounce (2.0 -> 2.65 -> 2.5),
+   * Starts transparent at 80% of the viewport's sprite scale,
+   * fades in with a slight bounce, then settles at the shared art scale,
    * white flash for 60ms, then transitions into idle and fades in HP bar.
    */
   public playSpawnAnimation(newMaxHp?: number, nameTag?: string, onComplete?: () => void): void {
@@ -471,17 +478,19 @@ export class TargetDummy extends Phaser.GameObjects.Container {
     if (nameTag) {
       this.setNameTag(nameTag);
     }
+    this.defeatStarted = false;
+    this.chipTween?.stop();
     this.currentHp = this.maxHp;
 
     // Reset base properties & re-enable 150x205 hitbox
     this.setPosition(this.baseX, this.baseY);
     this.setVisible(true);
-    this.koBanner.setVisible(false);
+    this.koBanner.setVisible(false).setAlpha(1);
     this.setupInteractivity();
 
     // Initial state: transparent and scaled down
     this.sprite.setAlpha(0);
-    this.sprite.setScale(2.0); // 0.8x of 2.5
+    this.sprite.setScale(SPRITE_SCALE * 0.8);
     this.sprite.clearTint();
 
     // Reset HP bars & name text (hidden initially, fade in during spawn)
@@ -506,19 +515,19 @@ export class TargetDummy extends Phaser.GameObjects.Container {
       ease: 'Cubic.easeOut',
     });
 
-    // 2. Scale bounce (2.0 -> 2.65 -> 2.5)
+    // 2. Scale bounce relative to the viewport's sprite scale.
     this.scene.tweens.add({
       targets: this.sprite,
-      scaleX: 2.65,
-      scaleY: 2.65,
+      scaleX: SPRITE_SCALE * 1.06,
+      scaleY: SPRITE_SCALE * 1.06,
       duration: 320,
       ease: 'Back.easeOut',
       onComplete: () => {
-        // Settle scale to 2.5
+        // Settle at the shared art scale.
         this.scene.tweens.add({
           targets: this.sprite,
-          scaleX: 2.5,
-          scaleY: 2.5,
+          scaleX: SPRITE_SCALE,
+          scaleY: SPRITE_SCALE,
           duration: 120,
           ease: 'Cubic.easeInOut',
         });
@@ -552,12 +561,14 @@ export class TargetDummy extends Phaser.GameObjects.Container {
     if (nameTag) {
       this.setNameTag(nameTag);
     }
+    this.defeatStarted = false;
+    this.chipTween?.stop();
     this.currentHp = this.maxHp;
     this.setVisible(true);
     this.setupInteractivity();
     this.sprite.setAlpha(1);
     this.sprite.clearTint();
-    this.sprite.setScale(2.5);
+    this.sprite.setScale(SPRITE_SCALE);
     this.setPosition(this.baseX, this.baseY);
 
     this.fgBar.setAlpha(1);
@@ -581,6 +592,8 @@ export class TargetDummy extends Phaser.GameObjects.Container {
    * Restores HP to 100%, clears K.O. state and animates HP bar back to full.
    */
   public healFull(): void {
+    this.defeatStarted = false;
+    this.chipTween?.stop();
     this.currentHp = this.maxHp;
     this.koBanner.setVisible(false);
 

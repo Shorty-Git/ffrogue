@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { ContentRegistry } from '../types/content';
 
 export class BootScene extends Phaser.Scene {
   constructor() {
@@ -6,26 +7,21 @@ export class BootScene extends Phaser.Scene {
   }
 
   preload(): void {
-    // Load unit manifests for party members and monsters
-    this.load.json('cloud_manifest', 'assets/units/cloud/manifest.json');
-    this.load.json('aerith_manifest', 'assets/units/aerith/manifest.json');
-    this.load.json('barret_manifest', 'assets/units/barret/manifest.json');
-    this.load.json('training_dummy_manifest', 'assets/monsters/training_dummy/manifest.json');
+    this.load.json('content_registry', 'assets/content.json');
   }
 
   create(): void {
-    const cloudManifest = this.cache.json.get('cloud_manifest');
-    const aerithManifest = this.cache.json.get('aerith_manifest');
-    const barretManifest = this.cache.json.get('barret_manifest');
-    const dummyManifest = this.cache.json.get('training_dummy_manifest');
-
-    this.scene.start('PreloadScene', {
-      manifests: {
-        cloud: cloudManifest,
-        aerith: aerithManifest,
-        barret: barretManifest,
-        training_dummy: dummyManifest,
-      },
+    const registry = this.cache.json.get('content_registry') as ContentRegistry;
+    for (const key of registry.characters) {
+      this.load.json(`${key}_manifest`, `assets/units/${key}/manifest.json`);
+      this.load.json(`character_${key}`, `assets/units/${key}/character.json`);
+    }
+    for (const key of registry.monsters) this.load.json(`${key}_manifest`, `assets/monsters/${key}/manifest.json`);
+    for (const key of registry.effects) this.load.json(`effect_${key}_manifest`, `assets/effects/${key}/manifest.json`);
+    this.load.once('complete', () => {
+      const manifests = Object.fromEntries([...registry.characters, ...registry.monsters].map(key => [key, this.cache.json.get(`${key}_manifest`)]));
+      this.scene.start('PreloadScene', { manifests });
     });
+    this.load.start();
   }
 }

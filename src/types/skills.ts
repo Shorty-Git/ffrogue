@@ -17,6 +17,7 @@ export interface SkillConfig {
   moveType: MoveType;
   motion: MotionType;
   desc: string;
+  visualEffect?: { key: string; startFrame: number };
 }
 
 export interface UnitSkillsData {

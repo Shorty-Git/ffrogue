@@ -267,6 +267,8 @@ Options:
       moveType,
       motion,
       desc: primaryEffect,
+      ...(String(rootId) === '207000105' && s.id === 214800
+        ? { visualEffect: { key: 'brave_slash', startFrame: 4 } } : {}),
     });
   }
 

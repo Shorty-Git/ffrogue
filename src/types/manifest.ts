@@ -18,5 +18,6 @@ export interface AnimationMeta {
 export interface UnitManifest {
   unitId: string;
   name: string;
+  type?: 'character' | 'monster';
   animations: Record<string, AnimationMeta>;
 }

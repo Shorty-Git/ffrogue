@@ -8,7 +8,10 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
-    "import:effects": "node tools/import_effect.mjs --preset all"
+    "import:effects": "node tools/import_effect.mjs --preset all",
+    "character:import": "node tools/import_character.mjs",
+    "effect:bake": "node tools/export_effect.mjs",
+    "test:pipeline": "node --test tools/test_character_pipeline.mjs"
   },
   "dependencies": {
     "phaser": "^3.88.2"

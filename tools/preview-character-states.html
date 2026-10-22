@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>Character state preview</title>
+<style>body{margin:0;background:#101827;color:white;font:16px monospace}button{margin:10px;padding:10px}canvas{image-rendering:pixelated}</style>
+<button id="low">Low HP (25%)</button><button id="heal">Heal</button>
+<button id="victory">Victory entrance + loop</button><button id="rest">Next wave / rest</button>
+<div id="game"></div>
+<script type="module">
+import Phaser from 'phaser';
+import { UnitActor } from '/src/entities/UnitActor.ts';
+const names = ['cloud', 'aerith', 'barret'];
+const manifests = await Promise.all(names.map(name => fetch(`/assets/units/${name}/manifest.json`).then(r => r.json())));
+new Phaser.Game({
+  type: Phaser.AUTO, width: 1000, height: 420, parent: 'game', pixelArt: true, roundPixels: true,
+  backgroundColor: '#101827',
+  scene: {
+    preload() {
+      names.forEach((name, i) => Object.entries(manifests[i].animations).forEach(([key, meta]) => {
+        this.load.spritesheet(`${name}_${key}`, `/assets/units/${name}/${meta.file}`, {
+          frameWidth: meta.frameWidth, frameHeight: meta.frameHeight,
+        });
+      }));
+    },
+    create() {
+      const actors = names.map((name, i) => new UnitActor(this, 170 + i * 330, 300, name, manifests[i], { maxHp: 100 }).setScale(2));
+      const labels = actors.map(actor => this.add.text(actor.x - 110, 335, '', { fontSize: '17px' }));
+      this.events.on('update', () => actors.forEach((actor, i) => labels[i].setText(`${names[i]}: ${actor.currentHp} HP\n${actor.currentAnimKey}`)));
+      document.querySelector('#low').onclick = () => actors.forEach(actor => { actor.currentHp = 25; actor.playRestPose(); });
+      document.querySelector('#heal').onclick = () => actors.forEach(actor => actor.restoreHp(75));
+      document.querySelector('#victory').onclick = () => actors.forEach(actor => actor.playVictory());
+      document.querySelector('#rest').onclick = () => actors.forEach(actor => actor.playRestPose());
+    },
+  },
+});
+</script>
+</html>

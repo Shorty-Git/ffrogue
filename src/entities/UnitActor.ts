@@ -1,10 +1,11 @@
 import Phaser from 'phaser';
 import { UnitManifest } from '../types/manifest';
+import { MotionType } from '../types/skills';
 
 export interface UnitCombatConfig {
   attackType: 'melee' | 'ranged';
   targetOffsetX: number;
-  attackAnim: string;
+  attackAnim: MotionType;
   hitFrameIndex: number;
 }
 
@@ -16,6 +17,8 @@ export interface UnitActorConfig extends Partial<UnitCombatConfig> {
 }
 
 export class UnitActor extends Phaser.GameObjects.Sprite {
+  public static readonly LOW_HP_RATIO = 0.25;
+  private victoryComplete?: () => void;
   public readonly unitKey: string;
   public readonly manifest: UnitManifest;
   public currentAnimKey: string = '';
@@ -34,7 +37,9 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
   public currentMp: number;
   public heroName: string;
   public heroRole: string;
-  public isDead: boolean = false;
+  public get isDead(): boolean {
+    return this.currentHp <= 0;
+  }
   public hasActed: boolean = false;
 
   constructor(
@@ -106,9 +111,10 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
 
     // 4. Check Death
     if (this.currentHp <= 0) {
-      this.isDead = true;
       this.hasActed = true;
       this.playAnimation('dead');
+    } else {
+      this.refreshRestPose();
     }
   }
 
@@ -158,7 +164,6 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
   public resetCombatState(): void {
     this.currentHp = this.maxHp;
     this.currentMp = this.maxMp;
-    this.isDead = false;
     this.hasActed = false;
     this.clearTint();
     this.setPosition(this.homeSlot.x, this.homeSlot.y);
@@ -172,6 +177,7 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
    * Returns true if successful, false if insufficient.
    */
   public useMp(cost: number): boolean {
+    if (!Number.isFinite(cost) || cost < 0) return false;
     if (this.currentMp < cost) return false;
     this.currentMp -= cost;
     return true;
@@ -193,6 +199,7 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
         this.clearTint();
       });
       this.spawnHealPopup(actualHealed);
+      this.refreshRestPose();
     }
     return actualHealed;
   }
@@ -291,7 +298,7 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
             frame: f.index,
             duration: f.durationMs,
           })),
-          repeat: animName === 'idle' || animName === 'move' || animName === 'win' ? -1 : 0,
+          repeat: ['idle', 'dying', 'move', 'win', 'standby', 'magic_standby'].includes(animName) ? -1 : 0,
         });
       }
     }
@@ -308,6 +315,10 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
       return this;
     }
 
+    if (this.victoryComplete) {
+      this.off(`animationcomplete-${this.unitKey}_win_before`, this.victoryComplete);
+      this.victoryComplete = undefined;
+    }
     this.currentAnimKey = animName;
 
     // Apply calculated anchor
@@ -318,6 +329,48 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
     const phaserKey = `${this.unitKey}_${animName}`;
     this.play(phaserKey, ignoreIfPlaying);
     return this;
+  }
+
+  /** Select the resting pose without changing position or action depth. */
+  public playRestPose(): void {
+    const pose = this.isDead ? 'dead'
+      : this.currentHp <= this.maxHp * UnitActor.LOW_HP_RATIO && this.manifest.animations.dying
+        ? 'dying' : 'idle';
+    this.playAnimation(pose, true);
+  }
+
+  /** Readiness while choosing a command; the scene owns selection/action locks. */
+  public playCommandPose(magic = false): void {
+    if (this.isDead) return;
+    const pose = magic && this.manifest.animations.magic_standby ? 'magic_standby' : 'standby';
+    if (this.manifest.animations[pose]) this.playAnimation(pose, true);
+    else this.playRestPose();
+  }
+
+  public clearCommandPose(): void {
+    if (this.currentAnimKey === 'standby' || this.currentAnimKey === 'magic_standby') this.playRestPose();
+  }
+
+  /** Healing and damage must not interrupt actions or victory celebrations. */
+  private refreshRestPose(): void {
+    if (this.currentAnimKey === 'idle' || this.currentAnimKey === 'dying') {
+      this.playRestPose();
+    }
+  }
+
+  /** Play the entrance once, then celebrate until the next encounter. */
+  public playVictory(): void {
+    if (this.isDead || this.currentAnimKey === 'win_before' || this.currentAnimKey === 'win') return;
+    if (!this.manifest.animations.win_before) {
+      this.playAnimation('win');
+      return;
+    }
+    this.playAnimation('win_before');
+    this.victoryComplete = () => {
+      this.victoryComplete = undefined;
+      if (!this.isDead && this.currentAnimKey === 'win_before') this.playAnimation('win');
+    };
+    this.once(`animationcomplete-${this.unitKey}_win_before`, this.victoryComplete);
   }
 
   /**
@@ -341,7 +394,7 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
    * 
    * Strict condition check:
    * 1. The action was stationary (attackType === 'ranged').
-   * 2. The finished animation has a measurable foot offset (recoilOffsetX > 3 pixels).
+   * 2. The finished animation has a measurable foot offset (absolute recoilOffsetX > 3 pixels).
    * 
    * If BOTH conditions are met (e.g. Barret's Gatling stance):
    * Temporarily offsets the sprite's x position by the recoil amount so the switch
@@ -354,7 +407,7 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
     const isStationary = this.combatConfig.attackType === 'ranged';
     const animMeta = this.manifest.animations[this.currentAnimKey];
     const recoilOffsetX = animMeta?.recoilOffsetX ?? 0;
-    const hasMeasurableRecoil = recoilOffsetX > 3;
+    const hasMeasurableRecoil = Math.abs(recoilOffsetX) > 3;
 
     if (isStationary && hasMeasurableRecoil) {
       // Facing left (flipX = false) means forward is -X towards enemy.
@@ -363,7 +416,7 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
 
       this.x = this.homeSlot.x + screenOffset;
       this.y = this.homeSlot.y;
-      this.playAnimation('idle');
+      this.playRestPose();
 
       this.scene.tweens.add({
         targets: this,
@@ -380,7 +433,7 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
     } else {
       this.setPosition(this.homeSlot.x, this.homeSlot.y);
       this.setDepthBoost(false);
-      this.playAnimation('idle');
+      this.playRestPose();
       this.updateDepth();
       onComplete?.();
     }

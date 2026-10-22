@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 1,
+  "key": "aerith",
+  "spriteUnitId": "207000405",
+  "game": "FFVII",
+  "battle": {
+    "maxHp": 2100,
+    "maxMp": 220,
+    "heroName": "AERITH",
+    "heroRole": "HEALER",
+    "attackType": "melee",
+    "targetOffsetX": 200,
+    "attackAnim": "atk",
+    "hitFrameIndex": 19
+  },
+  "scale": 2.5,
+  "reviewNote": "Existing MVP gameplay values; legacy commands do not claim complete FFBE mechanics or visuals.",
+  "skills": [
+    {
+      "id": "healing_wind",
+      "ffbeId": 229750,
+      "name": "Healing Wind",
+      "rarity": 5,
+      "level": 7,
+      "type": "ABILITY",
+      "mpCost": 26,
+      "scope": "party",
+      "damageMultiplier": 1,
+      "hitCount": 1,
+      "attackFrames": [
+        180
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Restore 1000 (+3.4x, Heal) HP to all allies",
+      "execution": "legacy"
+    },
+    {
+      "id": "curaja",
+      "ffbeId": 10290,
+      "name": "Curaja",
+      "rarity": 5,
+      "level": 77,
+      "type": "MAGIC",
+      "mpCost": 30,
+      "scope": "party",
+      "damageMultiplier": 2,
+      "hitCount": 1,
+      "attackFrames": [
+        120
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Restore 2500 (+18x, Heal) HP to all allies",
+      "execution": "legacy"
+    },
+    {
+      "id": "banishga",
+      "ffbeId": 10170,
+      "name": "Banishga",
+      "rarity": 5,
+      "level": 36,
+      "type": "MAGIC",
+      "mpCost": 30,
+      "scope": "all_enemies",
+      "damageMultiplier": 3,
+      "hitCount": 8,
+      "attackFrames": [
+        42,
+        62,
+        82,
+        102,
+        122,
+        142,
+        162,
+        182
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Magic light damage (20x, SPR) to all enemies",
+      "execution": "legacy"
+    }
+  ],
+  "portraitSource": "unit_icons/unit_icon_207000405.png"
+}

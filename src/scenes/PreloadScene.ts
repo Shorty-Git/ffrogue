@@ -1,5 +1,7 @@
 import Phaser from 'phaser';
 import { UnitManifest } from '../types/manifest';
+import { EffectManifest } from '../types/effects';
+import { CharacterDefinition, ContentRegistry } from '../types/content';
 
 export class PreloadScene extends Phaser.Scene {
   private manifests!: Record<string, UnitManifest>;
@@ -13,6 +15,13 @@ export class PreloadScene extends Phaser.Scene {
   }
 
   preload(): void {
+    const registry = this.cache.json.get('content_registry') as ContentRegistry;
+    for (const key of registry.effects) {
+      const effect = this.cache.json.get(`effect_${key}_manifest`) as EffectManifest;
+      this.load.spritesheet(`effect_${key}`, `assets/effects/${key}/${effect.file}`, {
+        frameWidth: effect.frameWidth, frameHeight: effect.frameHeight,
+      });
+    }
     const { width, height } = this.scale;
 
     // Loading UI
@@ -27,13 +36,15 @@ export class PreloadScene extends Phaser.Scene {
     progressBox.fillStyle(0x1e293b, 0.8);
     progressBox.fillRect(width / 2 - 160, height / 2 + 10, 320, 24);
 
-    this.load.on('progress', (value: number) => {
+    const onProgress = (value: number) => {
       progressBar.clear();
       progressBar.fillStyle(0x38bdf8, 1);
       progressBar.fillRect(width / 2 - 156, height / 2 + 14, 312 * value, 16);
-    });
+    };
+    this.load.on('progress', onProgress);
 
-    this.load.on('complete', () => {
+    this.load.once('complete', () => {
+      this.load.off('progress', onProgress);
       loadingText.destroy();
       progressBar.destroy();
       progressBox.destroy();
@@ -44,7 +55,7 @@ export class PreloadScene extends Phaser.Scene {
       for (const [unitKey, manifest] of Object.entries(this.manifests)) {
         if (!manifest || !manifest.animations) continue;
 
-        const subfolder = (manifest as any).type === 'monster' ? 'monsters' : 'units';
+        const subfolder = manifest.type === 'monster' ? 'monsters' : 'units';
 
         for (const [animKey, animMeta] of Object.entries(manifest.animations)) {
           this.load.spritesheet(`${unitKey}_${animKey}`, `assets/${subfolder}/${unitKey}/${animMeta.file}`, {
@@ -56,8 +67,10 @@ export class PreloadScene extends Phaser.Scene {
     }
 
     // Queue authentic skill datasets for hero units
-    ['cloud', 'aerith', 'barret'].forEach((unitKey) => {
+    registry.characters.forEach((unitKey) => {
       this.load.json(`skills_${unitKey}`, `assets/units/${unitKey}/skills.json`);
+      const character = this.cache.json.get(`character_${unitKey}`) as CharacterDefinition;
+      if (character.portrait) this.load.image(`portrait_${unitKey}`, `assets/units/${unitKey}/${character.portrait}`);
     });
   }
 

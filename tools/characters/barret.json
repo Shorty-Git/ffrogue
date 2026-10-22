@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "key": "barret",
+  "spriteUnitId": "207000205",
+  "game": "FFVII",
+  "battle": {
+    "maxHp": 4500,
+    "maxMp": 80,
+    "heroName": "BARRET",
+    "heroRole": "TANK",
+    "attackType": "ranged",
+    "targetOffsetX": 0,
+    "attackAnim": "atk",
+    "hitFrameIndex": 14
+  },
+  "scale": 2.5,
+  "reviewNote": "Existing MVP gameplay values; legacy commands do not claim complete FFBE mechanics or visuals.",
+  "skills": [
+    {
+      "id": "big_shot",
+      "ffbeId": 227870,
+      "name": "Big Shot",
+      "rarity": 4,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 16,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 1,
+      "attackFrames": [
+        130
+      ],
+      "moveType": "stationary",
+      "motion": "atk",
+      "desc": "Physical damage (2.5x, ATK) to one enemy",
+      "execution": "legacy"
+    },
+    {
+      "id": "grenade_bomb",
+      "ffbeId": 227872,
+      "name": "Grenade Bomb",
+      "rarity": 4,
+      "level": 60,
+      "type": "ABILITY",
+      "mpCost": 36,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.8,
+      "hitCount": 1,
+      "attackFrames": [
+        150
+      ],
+      "moveType": "stationary",
+      "motion": "atk",
+      "desc": "Physical damage (1.8x, ATK) to all enemies",
+      "execution": "legacy"
+    },
+    {
+      "id": "satellite_beam",
+      "ffbeId": 227874,
+      "name": "Satellite Beam",
+      "rarity": 6,
+      "level": 73,
+      "type": "ABILITY",
+      "mpCost": 45,
+      "scope": "all_enemies",
+      "damageMultiplier": 3,
+      "hitCount": 10,
+      "attackFrames": [
+        125,
+        135,
+        145,
+        155,
+        165,
+        175,
+        185,
+        195,
+        205,
+        215
+      ],
+      "moveType": "stationary",
+      "motion": "atk",
+      "desc": "Physical damage (3x, ATK) to all enemies",
+      "execution": "legacy"
+    }
+  ],
+  "portraitSource": "unit_icons/unit_icon_207000205.png"
+}

@@ -10,6 +10,35 @@ It provides complete directory maps, file naming conventions, ID decoding schema
 
 ## 1. High-Level Summary
 
+For new character and skill work, follow [the character import standard](character-import-workflow.md).
+The recipe-based importer supersedes the older download/import examples below.
+
+### Additional local ExviusReborn assets
+
+`ffbe_data-master/` is a separate ignored DanUgore datamining checkout. Treat it
+as offline metadata, not a runtime asset folder; Vite must not watch it.
+
+The repository-root `assets/` directory is a separate, Git-ignored source package
+from [ExviusReborn](https://github.com/Hirurawa/ExviusReborn). It is not the game's
+`public/assets/` directory. Vite must not watch this raw package.
+
+- `assets/static_data/ffbe-data.db`: SQLite master data; open read-only.
+- `assets/battle_effect/`: converted Effekseer `.efkefc` particle effects and some
+  original Matchlock/Bishamon `.bmsln` authoring files.
+- `assets/effect_resource/`: referenced textures and models.
+- Resolve skill visuals through `ability.effectFrames -> effect_group.effectData
+  -> effect.fileInfo`. **Do not join effectFrames directly to effect.effectId.**
+  Group IDs and effect IDs overlap but can identify unrelated visuals.
+- `effect.fileInfo` can contain colon-separated transform values after the file
+  name. `.bmb` master references generally correspond to `.efkefc` converted files.
+- Some groups describe engine behavior without `effectData`; some referenced
+  files are missing. Do not silently replace either with unrelated effects.
+- Runtime code must continue loading only processed sheets and clean JSON.
+
+See [Cloud effect research](research/cloud-skill-effects.md) for the first verified
+mapping and offline preview procedure. These converted effects have not yet been
+validated as pixel-identical reproductions of the original FFBE renderer.
+
 - **Total Directories:** 39
 - **Total Cataloged Files:** 147.752 files
 - **Primary Resource Types:**
