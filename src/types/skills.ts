@@ -18,6 +18,11 @@ export interface SkillConfig {
   motion: MotionType;
   desc: string;
   visualEffect?: { key: string; startFrame: number };
+  presentation?: {
+    impactFrame: number;
+    durationFrames: number;
+    effects: { key: string; startFrame: number; anchor: 'target' | 'target-group' | 'screen'; layer?: 'front' | 'back'; fit?: 'arena' }[];
+  };
 }
 
 export interface UnitSkillsData {

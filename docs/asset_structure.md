@@ -1,7 +1,10 @@
 # FFBE Asset Dump Atlas & Structure Guide
 
-This document is the canonical reference guide for the local repository `ffbe_asset_dump-main/`.
-It provides complete directory maps, file naming conventions, ID decoding schemas, and standard workflows for importing assets into our game.
+This document is the source-location and naming reference for the local
+`ffbe_asset_dump-main/` inventory and additional raw packages. Counts and naming
+examples describe the cataloged snapshot; they are not current availability or
+format-support guarantees. Consult [the asset pipeline handbook](asset-pipeline-handbook.md)
+for the current support boundary and task-specific workflows.
 
 > [!IMPORTANT]
 > Always consult this guide before searching for or importing units, monsters, battle backgrounds, or visual effects.
@@ -10,10 +13,21 @@ It provides complete directory maps, file naming conventions, ID decoding schema
 
 ## 1. High-Level Summary
 
-For new character and skill work, follow [the character import standard](character-import-workflow.md).
-The recipe-based importer supersedes the older download/import examples below.
+For characters and existing converted-effect publication, follow
+[the character import standard](character-import-workflow.md). For original
+skill reconstruction, follow [the skill workflow](skill-reconstruction-workflow.md).
+For backgrounds, follow [the background workflow](background-import-workflow.md).
+Do not treat historical direct-import commands as the reviewed publication path.
 
 ### Additional local ExviusReborn assets
+
+`com.square_enix.android_googleplay.FFBEWW/` is an additional local Android
+application backup supplied on 2026-10-22. Its `files/` directory contains original
+CPK archives. The entire backup is Git-ignored and excluded from Vite watching.
+Inspect archive member indexes before extracting selected assets into ignored
+`tools/data/` storage. Keep application preferences, caches and account data out of
+asset reports and runtime inputs. Archive presence alone does not establish
+effect availability, payload readability or rendering support.
 
 `ffbe_data-master/` is a separate ignored DanUgore datamining checkout. Treat it
 as offline metadata, not a runtime asset folder; Vite must not watch it.
@@ -30,7 +44,9 @@ from [ExviusReborn](https://github.com/Hirurawa/ExviusReborn). It is not the gam
   -> effect.fileInfo`. **Do not join effectFrames directly to effect.effectId.**
   Group IDs and effect IDs overlap but can identify unrelated visuals.
 - `effect.fileInfo` can contain colon-separated transform values after the file
-  name. `.bmb` master references generally correspond to `.efkefc` converted files.
+  name. `.bmb` master references may have `.efkefc` converted counterparts, but
+  the original BMB must be resolved from the CPK backup for original-data research.
+  A conversion is not proof of the original shader, UV, geometry or placement.
 - Some groups describe engine behavior without `effectData`; some referenced
   files are missing. Do not silently replace either with unrelated effects.
 - Runtime code must continue loading only processed sheets and clean JSON.
@@ -57,7 +73,7 @@ validated as pixel-identical reproductions of the original FFBE renderer.
 | :--- | :---: | :--- | :--- | :--- |
 | `abilities/` | 480 | .png (447), .bmb (31), .ssbp (2) | ability (269), global_ability (136) | Active skill & ability square icons (PNG) |
 | `animated_gifs/` | 37.968 | .gif (37968) | unit (37968) | Pre-rendered animated GIF previews for units, monsters & effects |
-| `battle_bg/` | 4.007 | .png (1389), .jpg (1351), .ssbp (1266) | battle_bg (3930), sg_battle (72) | Full 2D arena and battle background illustrations (PNG) |
+| `battle_bg/` | 4.007 | .png (1389), .jpg (1351), .ssbp (1266) | battle_bg (3930), sg_battle (72) | Background images, layered/atlas textures and SSBP animation data; inspect composition before use |
 | `catalog/` | 9 | .json (9) | unit_identity (2), legacy_unit (1) | Game dump JSON catalogs and index manifests |
 | `chain_ability/` | 61 | .png (61) | chain_ability (61) | Chaining family icons and badges |
 | `emblems/` | 472 | .png (472) | emblem (383), global_emblem (89) | Player profile rank emblems and badges |
@@ -131,15 +147,23 @@ Contains 46 standalone texture assets used for spells, beams, lasers, and summon
 - **Rings & Particles:** `eff_material_33_0016_ring18.png`, `lapis_eff_material_003_0016_cross2.png`, `thunder1_1_128_128.png`
 
 ### E. Battle Backgrounds (`battle_bg/`)
-Contains 4.007 arena backgrounds:
-- **Naming Pattern:** `battle_bg_<BG_ID>.png` (e.g. `battle_bg_0001_01.jpg`, `battle_bg_0001_01.png`, `battle_bg_0001_01.ssbp`, `battle_bg_0001_02.jpg`)
-- **Format:** Fully composed 2D arena textures (typically 640x480 or wider), ready for Phaser parallax or static arena rendering.
+The inventory contains 4.007 background-related files, not 4.007 verified complete scenes.
+- **Naming Pattern:** `battle_bg_<BG_ID>.<extension>`; stems can have numbered
+  suffixes and multiple JPG/PNG/SSBP companions.
+- **Interpretation:** A JPG can be the complete static scene while a same-stem PNG
+  contains atlas pieces or overlays. Inspect actual pixels, dimensions and alpha.
+  SSBP playback and original layered animation are not implemented by the current
+  background path. Do not interpret companion files as an ordered frame sequence.
+- **Current workflow:** [Background selection, provenance and arena fit](background-import-workflow.md).
 
 ---
 
 ## 4. 9-Digit Unit ID Deciphering Table
 
-FFBE uses structured 9-digit unit IDs (`GSS0000RR`):
+Many observed 9-digit unit IDs resemble `GSS0000RR`. The table below is a naming
+aid for the cataloged forms, not a general decoding or identity-join algorithm.
+Resolve the exact form and `unit.unitSeries` in the selected database; do not
+truncate digits, infer missing forms, or merge GL/JP rows by name.
 - **`G` (1st digit):** Game Category
   - `1`: FFBE Original (e.g. `100000102` Rain, `100000202` Lasswell, `100000302` Fina)
   - `2`: Mainline Final Fantasy
@@ -170,7 +194,7 @@ FFBE uses structured 9-digit unit IDs (`GSS0000RR`):
 | `331` | Xenogears | Fei (`331000105`), Elly (`331000205`) |
 | `335` | Kingdom Hearts | Sora (`335000105`), Cloud KH (`335000205`) |
 
-- **`RR` (Last 2 digits):** Unit Form / Rarity
+- **Observed suffix examples (not a universal rarity/NV rule):**
   - `03`: 3★ Base Form
   - `04`: 4★ Base Form
   - `05`: 5★ Base Form
@@ -182,31 +206,35 @@ FFBE uses structured 9-digit unit IDs (`GSS0000RR`):
 
 ## 5. Standard Import Workflows
 
-### Workflow 1: Inspecting an Asset Before Importing
-1. Check `animated_gifs/` to view the animation preview:
-   - For Cloud: `animated_gifs/unit_207000105_3atk_opac.gif`
-   - For Dire Rat: `animated_gifs/monster_10001_atk_opac.gif`
-2. Confirm the exact raw files exist in `unit_animated/` and `unit_animated_csv/`.
+### Inspect before publishing
 
-### Workflow 2: Importing a Character Unit
-Run the automated pipeline script:
+Confirm exact local filenames first. Unit preview GIFs can help compare body
+poses, but are not the source of a full composited skill. The catalog records
+no monster GIFs; do not assume a fabricated monster preview path exists.
+Read the atlas together with its matching CGG and CGS tracks.
+
+### Characters and existing converted effects
+
+Use the [recipe-based character workflow](character-import-workflow.md), starting
+with an inspection-only command:
+
 ```powershell
-# Using ID:
-node tools/import_unit.mjs --id 207000105 --name cloud
-
-# Or using Python:
-py tools/import_unit.py --id 207000105 --name cloud
-```
-This pulls raw files, runs `tools/bin/ffbetool.exe`, aligns pivots, and writes `public/assets/units/<name>/`.
-
-### Workflow 3: Importing a Monster
-```powershell
-# Example for Dire Rat (10001):
-py tools/import_unit.py --id 10001 --name dire_rat --type monster
+npm run character:import -- --recipe tools/characters/cloud.json
 ```
 
-### Workflow 4: Importing an Arena Background
-Copy the desired PNG directly from `ffbe_asset_dump-main/battle_bg/` into `public/assets/backgrounds/`:
-```powershell
-Copy-Item "ffbe_asset_dump-main/battle_bg/battle_bg_0001.png" "public/assets/backgrounds/arena_01.png"
-```
+The older `tools/import_unit.py` is a lower-level/legacy path, including monster
+sheet conversion. It does not supply the reviewed character/skill catalog and
+publication contract. No `tools/import_unit.mjs` exists in this checkout.
+Importing enemy art does not configure enemy abilities, AI, boss behavior or a
+generic monster-recipe pipeline. Review those integrations separately.
+
+### Backgrounds and original skills
+
+Use [the background workflow](background-import-workflow.md) for the exact
+Reactor/Forest sources, static copying, fit, ground plane and runtime integration.
+There is no general animated-background exporter or background catalog loader.
+
+Use [the original skill workflow](skill-reconstruction-workflow.md) for indexed
+CPK extraction, BMB/M3R decoding, matched BMSLN supplements, preview preparation,
+capability checks and unresolved renderer semantics. It produces research plans;
+it is not a replacement publication command for the current game's spritesheets.

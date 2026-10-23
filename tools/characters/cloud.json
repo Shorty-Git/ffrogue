@@ -57,7 +57,24 @@
       "moveType": "stationary",
       "motion": "atk",
       "desc": "Physical damage (3x, ATK) to all enemies",
-      "execution": "legacy"
+      "execution": "timeline-area",
+      "presentation": {
+        "impactFrame": 30,
+        "durationFrames": 96,
+        "effects": [
+          {
+            "key": "blade_beam_wave",
+            "startFrame": 0,
+            "anchor": "target-group"
+          },
+          {
+            "key": "blade_beam_hit",
+            "startFrame": 5,
+            "anchor": "target"
+          }
+        ]
+      },
+      "reviewNote": "Adapted roguelike presentation: one smooth pass, combined total 3x damage to all enemies at F30, numbers only. Source F4/F8 two-hit metadata is retained for provenance; source multi-hit distribution is intentionally merged. Clockwise 90-degree artwork correction around the tracked bright crescent body; the horizontal travel, effect scale and damage timing stay unchanged."
     },
     {
       "id": "climhazzard",

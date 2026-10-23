@@ -47,16 +47,20 @@ const output = path.join(prepared, recipe.key);
 const manifest = readJson(path.join(output, 'manifest.json'));
 if (JSON.stringify(Object.keys(manifest.animations).sort()) !== JSON.stringify(report.tracks)) throw Error('Sprite export omitted raw tracks');
 if (recipe.battle.hitFrameIndex >= manifest.animations[recipe.battle.attackAnim]?.frameCount) throw Error('Basic attack hit frame outside body animation');
-const effects = [...new Set(recipe.skills.flatMap(s => s.visualEffect ? [s.visualEffect.key] : []))];
+const effects = [...new Set(recipe.skills.flatMap(s => [
+  ...(s.visualEffect ? [s.visualEffect.key] : []), ...(s.presentation?.effects.map(e => e.key) ?? []),
+]))];
 for (const key of effects) {
   const definition = readJson(`tools/effects/${key}.json`);
   const baked = readJson(`public/assets/effects/${key}/manifest.json`);
   if (baked.recipeSha256 !== sha256(`tools/effects/${key}.json`)) throw Error(`Changed effect recipe: ${key}; bake again`);
   if (baked.sourceSha256 !== sha256(path.join(assets, definition.source))) throw Error(`Stale effect bake: ${key}`);
-  if (!baked.resources?.length || baked.resources.some(r => !fs.existsSync(r.file) || r.sha256 !== sha256(r.file))) throw Error(`Changed effect resources: ${key}`);
+  if (!Array.isArray(baked.resources) || baked.resources.some(r => !fs.existsSync(r.file) || r.sha256 !== sha256(r.file))) throw Error(`Changed effect resources: ${key}`);
   if (baked.sheetSha256 !== sha256(`public/assets/effects/${key}/${baked.file}`)) throw Error(`Changed effect sheet: ${key}`);
-  const values = ['frameWidth', 'frameHeight', 'frameCount', 'frameRate', 'originX', 'originY', 'scale', 'blend'];
-  if (values.some(k => baked[k] !== definition[k])) throw Error(`Effect bake settings differ: ${key}`);
+  const values = ['frameWidth', 'frameHeight', 'frameCount', 'frameRate', 'originX', 'originY', 'scale', 'blend', 'contentBounds'];
+  if (values.some(k => JSON.stringify(baked[k]) !== JSON.stringify(definition[k]))) throw Error(`Effect bake settings differ: ${key}`);
+  if ((baked.artworkRotationDegrees ?? 0) !== (definition.artworkRotationDegrees ?? 0)
+    || (baked.artworkPivot ?? 'origin') !== (definition.artworkPivot ?? 'origin')) throw Error(`Effect artwork settings differ: ${key}`);
   const png = fs.readFileSync(`public/assets/effects/${key}/${baked.file}`);
   const width = definition.frameWidth * definition.columns;
   const height = definition.frameHeight * Math.ceil(definition.frameCount / definition.columns);

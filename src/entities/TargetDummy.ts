@@ -25,14 +25,6 @@ export class TargetDummy extends Phaser.GameObjects.Container {
   public readonly manifest: UnitManifest;
 
   public sprite!: Phaser.GameObjects.Sprite;
-  private nameText!: Phaser.GameObjects.Text;
-  private barWidth: number = 140;
-  private barHeight: number = 10;
-  private fgBar!: Phaser.GameObjects.Rectangle;
-  private chipBar!: Phaser.GameObjects.Rectangle;
-  private hpText!: Phaser.GameObjects.Text;
-  private koBanner!: Phaser.GameObjects.Text;
-  private chipTween?: Phaser.Tweens.Tween;
   private defeatStarted = false;
   private pointerHandlersRegistered = false;
 
@@ -54,9 +46,8 @@ export class TargetDummy extends Phaser.GameObjects.Container {
 
     this.registerAnimations();
     this.createDummySprite();
-    this.createHealthBar();
 
-    // Enable generous centered hit area (150x205 px) covering entire sprite & HP bar
+    // Retain the generous selection area around the monster sprite.
     this.setupInteractivity();
 
     this.setDepth(y);
@@ -150,22 +141,11 @@ export class TargetDummy extends Phaser.GameObjects.Container {
       this.sprite.play('training_dummy_idle');
     }
 
-    // Name Tag floating under stand ellipse
-    this.nameText = this.scene.add.text(0, 34, this.nameTag, {
-      fontFamily: 'monospace',
-      fontSize: '11px',
-      color: '#f87171',
-      fontStyle: 'bold',
-    }).setOrigin(0.5);
-
-    this.add([this.sprite, this.nameText]);
+    this.add(this.sprite);
   }
 
   public setNameTag(name: string): void {
     this.nameTag = name;
-    if (this.nameText) {
-      this.nameText.setText(name);
-    }
   }
 
   public setDepthBoost(boosted: boolean, customDepth: number = 1000): void {
@@ -190,109 +170,35 @@ export class TargetDummy extends Phaser.GameObjects.Container {
     this.setDepthBoost(false);
   }
 
-  private createHealthBar(): void {
-    const barY = 48;
-    const halfWidth = this.barWidth / 2;
-
-    // 1. Dark background with border
-    const hpBg = this.scene.add.rectangle(0, barY, this.barWidth + 4, this.barHeight + 4, 0x0f172a, 0.95);
-    hpBg.setStrokeStyle(1, 0x334155);
-
-    // 2. Yellow/Amber Chip-Damage Bar (Background)
-    this.chipBar = this.scene.add.rectangle(-halfWidth, barY, this.barWidth, this.barHeight, 0xfbbf24).setOrigin(0, 0.5);
-
-    // 3. Dynamic Color Health Bar (Foreground)
-    this.fgBar = this.scene.add.rectangle(-halfWidth, barY, this.barWidth, this.barHeight, 0x22c55e).setOrigin(0, 0.5);
-
-    // 4. HP Text Display (e.g. "5,000 / 5,000 HP")
-    this.hpText = this.scene.add.text(0, barY + 13, `${this.currentHp.toLocaleString()} / ${this.maxHp.toLocaleString()} HP`, {
-      fontFamily: 'monospace',
-      fontSize: '10px',
-      color: '#cbd5e1',
-    }).setOrigin(0.5);
-
-    // 5. K.O. Banner (hidden by default)
-    this.koBanner = this.scene.add.text(0, -20, 'DEFEATED', {
-      fontFamily: 'monospace',
-      fontSize: '13px',
-      color: '#ffffff',
-      fontStyle: 'bold',
-      backgroundColor: '#dc2626',
-      padding: { x: 8, y: 4 },
-    }).setOrigin(0.5).setVisible(false);
-
-    this.add([hpBg, this.chipBar, this.fgBar, this.hpText, this.koBanner]);
-  }
-
   /**
-   * Applies damage, triggers impact shake & white flash, updates 2-phase HP bar and spawns bouncing floating number.
+   * Applies damage and displays its number; quiet presentations omit impact motion and tint.
    */
-  public applyDamage(damage: number, isCritical = false, damageType: 'physical' | 'holy' = 'physical'): void {
+  public applyDamage(damage: number, isCritical = false, damageType: 'physical' | 'holy' = 'physical', quiet = false): void {
     if (this.currentHp <= 0) return;
 
     this.currentHp = Math.max(0, this.currentHp - damage);
 
-    // 1. Impact Flash on real sprite (setTintFill white for 65ms)
-    this.sprite.setTintFill(0xffffff);
-    this.scene.time.delayedCall(65, () => {
-      this.sprite.clearTint();
-    });
+    if (!quiet) {
+      this.sprite.setTintFill(0xffffff);
+      this.scene.time.delayedCall(65, () => {
+        this.sprite.clearTint();
+      });
 
-    // 2. Impact Shake (horizontal vibration for 105ms)
-    this.scene.tweens.add({
-      targets: this,
-      x: this.baseX - 7,
-      duration: 35,
-      yoyo: true,
-      repeat: 2,
-      onComplete: () => {
-        this.x = this.baseX;
-      },
-    });
+      this.scene.tweens.add({
+        targets: this,
+        x: this.baseX - 7,
+        duration: 35,
+        yoyo: true,
+        repeat: 2,
+        onComplete: () => {
+          this.x = this.baseX;
+        },
+      });
+    }
 
     // 3. Floating Damage Number
     this.spawnDamagePopup(damage, isCritical, damageType);
 
-    // 4. 2-Phase HP Bar Update
-    this.updateHealthBar();
-
-    // 5. Check K.O.
-    if (this.currentHp <= 0) {
-      this.koBanner.setVisible(true);
-    }
-  }
-
-  private updateHealthBar(): void {
-    const pct = this.currentHp / this.maxHp;
-    const targetWidth = Math.max(0, this.barWidth * pct);
-
-    // 1. Foreground bar updates immediately
-    this.fgBar.width = targetWidth;
-
-    // Color gradient based on health remaining
-    if (pct > 0.5) {
-      this.fgBar.fillColor = 0x22c55e; // Green
-    } else if (pct > 0.25) {
-      this.fgBar.fillColor = 0xf59e0b; // Amber/Orange
-    } else {
-      this.fgBar.fillColor = 0xef4444; // Red
-    }
-
-    // Update text
-    this.hpText.setText(`${this.currentHp.toLocaleString()} / ${this.maxHp.toLocaleString()} HP`);
-
-    // 2. Chip-Damage bar smoothly catches up after 200ms delay
-    if (this.chipTween) {
-      this.chipTween.stop();
-    }
-
-    this.chipTween = this.scene.tweens.add({
-      delay: 200,
-      targets: this.chipBar,
-      width: targetWidth,
-      duration: 420,
-      ease: 'Cubic.easeOut',
-    });
   }
 
   private spawnDamagePopup(damage: number, isCritical: boolean, damageType: 'physical' | 'holy'): void {
@@ -426,7 +332,7 @@ export class TargetDummy extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Smooth defeat staging: red flash, UI fade, and alpha fadeout of monster sprite.
+   * Smooth defeat staging: red flash and alpha fadeout of monster sprite.
    */
   public playDefeatFade(onComplete?: () => void): void {
     if (this.defeatStarted) return;
@@ -439,13 +345,6 @@ export class TargetDummy extends Phaser.GameObjects.Container {
 
     // 1. Red impact tint
     this.sprite.setTintFill(0xef4444);
-
-    // Fade out HP bar, name text and banner
-    this.scene.tweens.add({
-      targets: [this.fgBar, this.chipBar, this.hpText, this.nameText, this.koBanner],
-      alpha: 0,
-      duration: 200,
-    });
 
     this.scene.time.delayedCall(100, () => {
       this.sprite.clearTint();
@@ -469,7 +368,7 @@ export class TargetDummy extends Phaser.GameObjects.Container {
    * Smooth spawn/materialize staging for new waves (400-500ms):
    * Starts transparent at 80% of the viewport's sprite scale,
    * fades in with a slight bounce, then settles at the shared art scale,
-   * white flash for 60ms, then transitions into idle and fades in HP bar.
+   * white flash for 60ms, then transitions into idle.
    */
   public playSpawnAnimation(newMaxHp?: number, nameTag?: string, onComplete?: () => void): void {
     if (newMaxHp) {
@@ -479,29 +378,17 @@ export class TargetDummy extends Phaser.GameObjects.Container {
       this.setNameTag(nameTag);
     }
     this.defeatStarted = false;
-    this.chipTween?.stop();
     this.currentHp = this.maxHp;
 
     // Reset base properties & re-enable 150x205 hitbox
     this.setPosition(this.baseX, this.baseY);
     this.setVisible(true);
-    this.koBanner.setVisible(false).setAlpha(1);
     this.setupInteractivity();
 
     // Initial state: transparent and scaled down
     this.sprite.setAlpha(0);
     this.sprite.setScale(SPRITE_SCALE * 0.8);
     this.sprite.clearTint();
-
-    // Reset HP bars & name text (hidden initially, fade in during spawn)
-    this.fgBar.setAlpha(0);
-    this.chipBar.setAlpha(0);
-    this.hpText.setAlpha(0);
-    this.nameText.setAlpha(0);
-    this.fgBar.width = this.barWidth;
-    this.chipBar.width = this.barWidth;
-    this.fgBar.fillColor = 0x22c55e;
-    this.hpText.setText(`${this.maxHp.toLocaleString()} / ${this.maxHp.toLocaleString()} HP`);
 
     if (this.scene.anims.exists('training_dummy_idle')) {
       this.sprite.play('training_dummy_idle');
@@ -537,15 +424,8 @@ export class TargetDummy extends Phaser.GameObjects.Container {
         this.scene.time.delayedCall(60, () => {
           this.sprite.clearTint();
 
-          // 4. Fade in HP bar & name tag
-          this.scene.tweens.add({
-            targets: [this.fgBar, this.chipBar, this.hpText, this.nameText],
-            alpha: 1,
-            duration: 180,
-            onComplete: () => {
-              if (onComplete) onComplete();
-            },
-          });
+          // Preserve the final materialization pause before unlocking the wave.
+          this.scene.time.delayedCall(180, () => onComplete?.());
         });
       },
     });
@@ -562,7 +442,6 @@ export class TargetDummy extends Phaser.GameObjects.Container {
       this.setNameTag(nameTag);
     }
     this.defeatStarted = false;
-    this.chipTween?.stop();
     this.currentHp = this.maxHp;
     this.setVisible(true);
     this.setupInteractivity();
@@ -571,43 +450,17 @@ export class TargetDummy extends Phaser.GameObjects.Container {
     this.sprite.setScale(SPRITE_SCALE);
     this.setPosition(this.baseX, this.baseY);
 
-    this.fgBar.setAlpha(1);
-    this.chipBar.setAlpha(1);
-    this.hpText.setAlpha(1);
-    this.nameText.setAlpha(1);
-    this.koBanner.setVisible(false);
-    this.koBanner.setAlpha(1);
-
-    this.fgBar.width = this.barWidth;
-    this.chipBar.width = this.barWidth;
-    this.fgBar.fillColor = 0x22c55e;
-    this.hpText.setText(`${this.maxHp.toLocaleString()} / ${this.maxHp.toLocaleString()} HP`);
-
     if (this.scene.anims.exists('training_dummy_idle')) {
       this.sprite.play('training_dummy_idle');
     }
   }
 
   /**
-   * Restores HP to 100%, clears K.O. state and animates HP bar back to full.
+   * Restores HP to 100%, clears the defeat state and shows a healing popup.
    */
   public healFull(): void {
     this.defeatStarted = false;
-    this.chipTween?.stop();
     this.currentHp = this.maxHp;
-    this.koBanner.setVisible(false);
-
-    // Animate bars back to full
-    this.scene.tweens.add({
-      targets: [this.fgBar, this.chipBar],
-      width: this.barWidth,
-      duration: 350,
-      ease: 'Cubic.easeOut',
-    });
-
-    this.fgBar.fillColor = 0x22c55e;
-    this.hpText.setText(`${this.maxHp.toLocaleString()} / ${this.maxHp.toLocaleString()} HP`);
-
     // Green healing text popup
     const healText = this.scene.add.text(this.baseX, this.baseY - 75, '+5,000 HEAL', {
       fontFamily: 'Arial, Helvetica, sans-serif',

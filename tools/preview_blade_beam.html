@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Blade Beam · Offline review</title>
+<style>
+body{margin:0;background:#121b1a;color:#e4dfce;font:14px Arial,sans-serif}main{max-width:1080px;margin:auto;padding:18px}h1{font-size:23px}p{line-height:1.5}button,select,input{accent-color:#a8bd91}button,select{background:#283a32;color:#eee8d6;border:1px solid #897e60;padding:8px;margin-right:8px}button:disabled{opacity:.4}.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}#frame{flex:1;min-width:180px}canvas{max-width:100%;height:auto;display:block;margin-top:12px;border:1px solid #655f4d}small{color:#b6c0ae}#status{color:#c9b77e}
+</style><main>
+<h1>Blade Beam · Offline choreography review</h1>
+<p>Source timing: green F0 · blue F5 · damage markers F4/F8 (50% each). <strong>Candidate placement, not approved FFBE playback.</strong></p>
+<p id="status">Loading and generating diagnostic sheets…</p>
+<p><label><input id="adapted" type="checkbox"> Game presentation: original orientation, one group impact at F30, no recoil</label></p>
+<div class="controls"><button id="play" disabled>Play</button><button id="restart" disabled>Restart</button>
+<select id="arena" aria-label="Arena"><option value="reactor">Reactor 01</option><option value="forest">Forest</option></select>
+<input id="frame" type="range" min="0" max="180" value="8" aria-label="Timeline frame"><output id="tick">F8</output></div>
+<p><small>Unrotated green at 300%, blue at F5. Game presentation combines the source's two hits into one total impact at F30. This research page applies no HP changes; the game uses the prepared sheets and presentation recipe.</small></p>
+<canvas id="preview" width="1000" height="800"></canvas>
+<p id="detail"></p>
+<style>#preview{max-height:calc(100vh - 300px);width:auto;min-height:220px}</style>
+<script src="/sdk/Sample/three.min.js"></script><script src="/sdk/effekseer.js"></script>
+<script>
+(async()=>{
+const cfg=await(await fetch('/config.json')).json(),status=document.querySelector('#status'),canvas=document.querySelector('#preview'),paint=canvas.getContext('2d');
+const frameInput=document.querySelector('#frame'),tick=document.querySelector('#tick'),arenaInput=document.querySelector('#arena'),literal={checked:false},rotation={value:'0,0,0'},adapted=document.querySelector('#adapted');
+for(const element of document.querySelectorAll('input,select'))element.disabled=true;
+const gpu=document.createElement('canvas');gpu.width=1000;gpu.height=800;
+const renderer=new THREE.WebGLRenderer({canvas:gpu,alpha:false,preserveDrawingBuffer:true});renderer.setClearColor(0,1);
+const scene=new THREE.Scene(),camera=new THREE.OrthographicCamera(-500,500,400,-400,.1,5000);
+camera.position.set(0,0,1000);camera.lookAt(new THREE.Vector3());camera.updateMatrixWorld();
+await new Promise((resolve,reject)=>effekseer.initRuntime('/sdk/effekseer.wasm',resolve,()=>reject(Error('SDK initialization failed'))));
+const context=effekseer.createContext();context.init(renderer.getContext());context.setCameraMatrix(camera.matrixWorldInverse.elements);
+const effects=[];
+for(const item of cfg.effects){let effect;await new Promise((resolve,reject)=>{effect=context.loadEffect(item.url,1,resolve,(m,u)=>reject(Error(m+' '+u)));});effects.push({...item,effect});}
+const images={};
+for(const url of [...Object.values(cfg.arenas).map(a=>a.url),'/prepared/units/cloud/atk.png','/prepared/units/cloud/idle.png','/prepared/monsters/training_dummy/idle.png']){
+ const image=new Image();await new Promise((resolve,reject)=>{image.onload=resolve;image.onerror=()=>reject(Error('Image failed '+url));image.src=url;});images[url]=image;
+}
+const samples=[0,1,4,5,8,12,20,30,45,60,90,120,150,180],results={approved:false,samples,individuals:[],composites:[],interpretation:cfg.interpretation};
+const save=async(name,body)=>{const response=await fetch('/output/'+name,{method:'POST',body});if(!response.ok)throw Error(name+': '+await response.text());};
+const blob=c=>new Promise(resolve=>c.toBlob(resolve));
+let current=-1,handles=[],playing=false,lastTime=0,carry=0,contacts={};
+function projection(width){camera.left=-width/2;camera.right=width/2;camera.top=width*.4;camera.bottom=-width*.4;camera.updateProjectionMatrix();context.setProjectionMatrix(camera.projectionMatrix.elements);}
+function drawGpu(){renderer.render(scene,camera);context.draw();renderer.resetState();}
+function spawn(item,x,y,scale,angles=[0,0,0]){const h=context.play(item.effect,x,y,0);h.setRandomSeed(cfg.seed);h.setScale(scale,scale,scale);h.setRotation(...angles.map(a=>a*Math.PI/180));handles.push(h);return h;}
+function sprite(image,meta,frame,x,y,scale){const cols=Math.floor(image.width/meta.frameWidth);paint.drawImage(image,frame%cols*meta.frameWidth,Math.floor(frame/cols)*meta.frameHeight,meta.frameWidth,meta.frameHeight,x-meta.pivotX*meta.frameWidth*scale,y-meta.pivotY*meta.frameHeight*scale,meta.frameWidth*scale,meta.frameHeight*scale);}
+function bodyFrame(meta,f){let elapsed=f*1000/60;for(let i=0;i<meta.frames.length;i++){elapsed-=meta.frames[i].durationMs;if(elapsed<0)return i;}return meta.frames.length-1;}
+function positions(){return cfg.arenas[arenaInput.value].layout.enemies;}
+function scheduled(f){const targets=Object.values(positions()).map(p=>({x:p.x,y:p.y-50}));
+ for(const item of effects)if(item.startFrame===f){
+  const anchors=item.anchor==='target-group'?[{x:targets.reduce((s,p)=>s+p.x,0)/targets.length,y:targets.reduce((s,p)=>s+p.y,0)/targets.length}]:targets;
+  for(const p of anchors)spawn(item,p.x-500+(literal.checked&&item.anchor==='target-group'?-1100:0),400-p.y,item.sourceScale,item.anchor==='target-group'&&!adapted.checked?rotation.value.split(',').map(Number):[0,0,0]);
+ }
+}
+function compose(f){const arena=cfg.arenas[arenaInput.value],layout=arena.layout,a=layout.arena;paint.fillStyle='#101919';paint.fillRect(0,0,1000,800);
+ const image=images[arena.url],scale=Math.max(a.width/image.width,a.height/image.height);paint.save();paint.beginPath();paint.rect(a.x,a.y,a.width,a.height);paint.clip();paint.drawImage(image,(1000-image.width*scale)/2,a.y+(a.height-image.height*scale)/2,image.width*scale,image.height*scale);paint.restore();
+ const actors=[...Object.values(layout.enemies).map(p=>({y:p.y,draw:()=>sprite(images['/prepared/monsters/training_dummy/idle.png'],cfg.rat.idle,0,p.x,p.y,cfg.rat.scale)})),{y:layout.party.cloud.y,draw:()=>sprite(images['/prepared/units/cloud/atk.png'],cfg.cloud.atk,bodyFrame(cfg.cloud.atk,f),layout.party.cloud.x,layout.party.cloud.y,cfg.cloud.scale)}];
+ actors.sort((a,b)=>a.y-b.y).forEach(a=>a.draw());paint.save();paint.globalCompositeOperation='lighter';paint.drawImage(gpu,0,0);paint.restore();
+ paint.font='16px Arial';paint.fillStyle='#ede8d8';paint.fillText('OFFLINE CANDIDATE · Blade Beam · F'+f+' / '+(f*1000/60).toFixed(1)+' ms',18,28);
+ if(!adapted.checked&&[4,8].includes(f)){paint.strokeStyle='#ff9e89';paint.lineWidth=3;for(const p of Object.values(layout.enemies)){paint.beginPath();paint.ellipse(p.x,p.y-48,50,55,0,0,Math.PI*2);paint.stroke();}paint.fillText('SOURCE HIT: 50% per target',650,28);}
+ if(adapted.checked){paint.font='bold 22px Arial';for(const [key,p] of Object.entries(layout.enemies)){const age=f-(contacts[key]??-999);if(age>=0&&age<18){paint.fillStyle='#ffe0a3';paint.fillText('HIT',p.x-18,p.y-115-age);}}}
+ frameInput.value=f;tick.textContent='F'+f;document.querySelector('#detail').textContent=adapted.checked?'GAME PRESENTATION: original orientation and scale; one combined 3x hit at F30 for all enemies, no recoil or additional flash. Source F4/F8 is preserved as metadata. The research preview shows impact labels only.':'Source comparison: Green F0, scale 3. Blue F5, scale 1. Raw offset not interpreted.';
+}
+function reset(){context.stopAll();handles=[];contacts={};current=-1;projection(1000);}
+function advance(f){while(current<f){current++;scheduled(current);context.update(1);if(adapted.checked&&current===30)for(const key of Object.keys(positions()))contacts[key]=30;}drawGpu();compose(f);}
+function seek(f){reset();advance(f);}
+function pixelStats(){const c=document.createElement('canvas');c.width=1000;c.height=800;const p=c.getContext('2d');p.drawImage(gpu,0,0);const d=p.getImageData(0,0,1000,800).data;let count=0,left=1000,top=800,right=-1,bottom=-1,edge=0;
+ for(let y=0;y<800;y++)for(let x=0;x<1000;x++){const i=(y*1000+x)*4;if(Math.max(d[i],d[i+1],d[i+2])>12){count++;left=Math.min(left,x);right=Math.max(right,x);top=Math.min(top,y);bottom=Math.max(bottom,y);if(x<2||x>997||y<2||y>797)edge++;}}
+ return {pixels:count,bounds:count?[left,top,right,bottom]:null,edgePixels:edge,alive:handles.filter(h=>h.exists).length};
+}
+function contact(){const c=document.createElement('canvas');c.width=1000;c.height=4*220;const p=c.getContext('2d');p.fillStyle='#101919';p.fillRect(0,0,c.width,c.height);return {canvas:c,ctx:p};}
+for(const [name,index,magnification] of [['green-unit',0,1],['green-source-scale',0,3],['blue-unit',1,1]]){
+ const cameraWidth=index===0?4096:2048;
+ status.textContent='Rendering '+name+'…';reset();projection(cameraWidth);spawn(effects[index],0,0,magnification);const sheet=contact(),stats=[];
+ for(let f=0;f<=cfg.endFrame;f++){context.update(1);if(samples.includes(f)){drawGpu();const i=samples.indexOf(f);sheet.ctx.drawImage(gpu,i%4*250,Math.floor(i/4)*220,250,200);sheet.ctx.fillStyle='#ede8d8';sheet.ctx.font='12px Arial';sheet.ctx.fillText(name+' · F'+f,i%4*250+6,Math.floor(i/4)*220+214);stats.push({frame:f,...pixelStats()});}}
+ await save(name+'.png',await blob(sheet.canvas));results.individuals.push({name,effect:effects[index].file,scale:magnification,cameraWidth,stats});await new Promise(requestAnimationFrame);
+}
+for(const key of ['reactor','forest']){arenaInput.value=key;reset();const sheet=contact(),stats=[];
+ for(let f=0;f<=cfg.endFrame;f++){current=f;scheduled(f);context.update(1);if(samples.includes(f)){drawGpu();compose(f);const i=samples.indexOf(f);sheet.ctx.drawImage(canvas,i%4*250,Math.floor(i/4)*220,250,200);sheet.ctx.fillStyle='#ede8d8';sheet.ctx.font='12px Arial';sheet.ctx.fillText('Candidate '+key+' · F'+f,i%4*250+6,Math.floor(i/4)*220+214);stats.push({frame:f,...pixelStats()});}}
+ await save('composite-'+key+'.png',await blob(sheet.canvas));results.composites.push({arena:key,rawOffsetApplied:false,stats});await new Promise(requestAnimationFrame);
+}
+adapted.checked=true;results.adapted=[];
+for(const key of ['reactor','forest']){arenaInput.value=key;reset();const sheet=contact();for(let f=0;f<=180;f++){advance(f);if(samples.includes(f)){const i=samples.indexOf(f);sheet.ctx.drawImage(canvas,i%4*250,Math.floor(i/4)*220,250,200);sheet.ctx.fillStyle='#ede8d8';sheet.ctx.font='12px Arial';sheet.ctx.fillText('Adapted '+key+' · F'+f,i%4*250+6,Math.floor(i/4)*220+214);}}await save('adapted-'+key+'.png',await blob(sheet.canvas));results.adapted.push({arena:key,contacts:{...contacts},rotationDegrees:0,artworkScale:1});}
+await save('results.json',JSON.stringify(results,null,2));
+arenaInput.value='reactor';seek(30);status.textContent='Review ready: original effects and game presentation saved. Combined impact at F30; no recoil.';
+document.querySelector('#play').disabled=false;document.querySelector('#restart').disabled=false;
+for(const element of document.querySelectorAll('input,select'))element.disabled=false;
+document.querySelector('#play').onclick=()=>{playing=!playing;lastTime=0;carry=0;document.querySelector('#play').textContent=playing?'Pause':'Play';if(playing&&current>=180)seek(0);};
+document.querySelector('#restart').onclick=()=>{playing=false;document.querySelector('#play').textContent='Play';seek(0);};
+frameInput.oninput=()=>{playing=false;document.querySelector('#play').textContent='Play';seek(Number(frameInput.value));};
+arenaInput.onchange=adapted.onchange=()=>seek(Number(frameInput.value));
+function loop(time){if(playing){if(lastTime)carry+=time-lastTime;while(carry>=1000/60&&current<180){advance(current+1);carry-=1000/60;}if(current>=180){playing=false;document.querySelector('#play').textContent='Play';}}lastTime=time;requestAnimationFrame(loop);}requestAnimationFrame(loop);
+})().catch(error=>{document.querySelector('#status').textContent='ERROR: '+error.message;console.error(error);});
+</script></main></html>

@@ -7,5 +7,6 @@ export interface EffectManifest {
   originX: number;
   originY: number;
   scale: number;
-  blend: 'ADD';
+  blend: 'ADD' | 'NORMAL';
+  contentBounds?: { x: number; y: number; width: number; height: number };
 }

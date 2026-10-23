@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { BATTLE_ARENAS } from '../data/battleArenas';
 import { UnitManifest } from '../types/manifest';
 import { EffectManifest } from '../types/effects';
 import { CharacterDefinition, ContentRegistry } from '../types/content';
@@ -15,6 +16,12 @@ export class PreloadScene extends Phaser.Scene {
   }
 
   preload(): void {
+    for (const arena of Object.values(BATTLE_ARENAS)) {
+      this.load.image(arena.texture, `assets/backgrounds/${arena.file}`);
+    }
+    for (const key of ['command_plate', 'party_plate', 'attack', 'magic', 'ability']) {
+      this.load.image(`ui_${key}`, `assets/ui/battle/${key}.png`);
+    }
     const registry = this.cache.json.get('content_registry') as ContentRegistry;
     for (const key of registry.effects) {
       const effect = this.cache.json.get(`effect_${key}_manifest`) as EffectManifest;

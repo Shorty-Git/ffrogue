@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
 import { readJson, assertKey, inspectEffect } from './lib/character-pipeline.mjs';
+import { artworkTransform } from './lib/effect-artwork.mjs';
 
 // Bake a reviewed single effect; composite skills need their own reviewed recipe/executor.
 const args = process.argv.slice(2);
@@ -13,11 +14,23 @@ if (args.includes('--help') || !args.includes('--recipe')) {
 }
 const recipe = readJson(value('--recipe'));
 assertKey(recipe.key);
-if (recipe.schemaVersion !== 1 || !recipe.review?.approved || recipe.blend !== 'ADD') throw Error('Only reviewed version 1 ADD recipes can be baked');
+if (recipe.schemaVersion !== 1 || !recipe.review?.approved || !['ADD', 'NORMAL'].includes(recipe.blend)) throw Error('Only reviewed version 1 ADD/NORMAL recipes can be baked');
+const rotation = recipe.emitterRotation ?? [0, 0, 0];
+if (!Array.isArray(rotation) || rotation.length !== 3 || rotation.some(v => !Number.isFinite(v))) throw Error('Invalid emitterRotation');
+const artworkRotation = recipe.artworkRotationDegrees ?? 0, artworkPivot = recipe.artworkPivot ?? 'origin';
+if (!Number.isFinite(artworkRotation) || !['origin', 'visible-bounds', 'bright-body'].includes(artworkPivot)
+  || (artworkRotation !== 0 && !recipe.review.presentationAdaptation)) throw Error('Artwork rotation requires a reviewed adaptation');
+if (![recipe.originX, recipe.originY].every(Number.isFinite)) throw Error('Invalid effect origin');
+if (recipe.contentBounds) {
+  const b = recipe.contentBounds;
+  if (![b.x, b.y, b.width, b.height].every(Number.isInteger) || b.x < 0 || b.y < 0 || b.width <= 0 || b.height <= 0
+    || b.x + b.width > recipe.frameWidth || b.y + b.height > recipe.frameHeight) throw Error('Invalid contentBounds');
+}
 for (const key of ['frameWidth', 'frameHeight', 'frameCount', 'columns', 'frameRate', 'cameraWidth', 'scale']) {
   if (!Number.isFinite(recipe[key]) || recipe[key] <= 0) throw Error(`Invalid bake setting: ${key}`);
 }
 if (recipe.frameRate !== 60) throw Error('Source effect simulation currently requires 60 FPS');
+if (!Number.isFinite(recipe.emitterScale ?? 1) || (recipe.emitterScale ?? 1) <= 0) throw Error('Invalid emitterScale');
 if (![recipe.frameWidth, recipe.frameHeight, recipe.frameCount, recipe.columns].every(Number.isInteger)) throw Error('Sheet geometry must use integer values');
 if (recipe.frameWidth * recipe.columns > 8192 || recipe.frameHeight * Math.ceil(recipe.frameCount / recipe.columns) > 8192) throw Error('Sheet exceeds 8192px texture budget');
 const assets = args.includes('--assets') ? value('--assets') : 'assets';
@@ -40,13 +53,15 @@ const meta = { file: 'impact.png', frameWidth: recipe.frameWidth, frameHeight: r
   sourceSha256: createHash('sha256').update(fs.readFileSync(source)).digest('hex'),
   recipeSha256: createHash('sha256').update(fs.readFileSync(value('--recipe'))).digest('hex'),
   resources: inspected.resources.map(r => ({ file: r.file, sha256: r.sha256 })),
+  ...(recipe.contentBounds ? { contentBounds: recipe.contentBounds } : {}),
+  ...(artworkRotation ? { artworkRotationDegrees: artworkRotation, artworkPivot } : {}),
   note: 'Converted ExviusReborn effect; orthographic bake, not verified against original FFBE playback.' };
 const html = `<!doctype html><meta charset="utf-8"><title>Effect export: ${recipe.key}</title>
 <p id="status">Rendering ${recipe.key}...</p><canvas id="preview" width="${recipe.frameWidth}" height="${recipe.frameHeight}"></canvas>
 <script src="/${sdk}/Sample/three.min.js"></script><script src="/${sdk}/effekseer.js"></script><script>
 const canvas=document.querySelector('canvas');
-const renderer=new THREE.WebGLRenderer({canvas,alpha:false,preserveDrawingBuffer:true});
-renderer.setClearColor(0,1);
+const renderer=new THREE.WebGLRenderer({canvas,alpha:${recipe.blend === 'NORMAL'},premultipliedAlpha:false,preserveDrawingBuffer:true});
+renderer.setClearColor(0,${recipe.blend === 'NORMAL' ? 0 : 1});
 const scene=new THREE.Scene();
 const camera=new THREE.OrthographicCamera(-${recipe.cameraWidth / 2},${recipe.cameraWidth / 2},${recipe.cameraWidth * recipe.frameHeight / recipe.frameWidth / 2},-${recipe.cameraWidth * recipe.frameHeight / recipe.frameWidth / 2},0.1,5000);
 camera.position.set(0,0,1000);camera.lookAt(new THREE.Vector3());camera.updateMatrixWorld();
@@ -56,8 +71,18 @@ try {
  context.setProjectionMatrix(camera.projectionMatrix.elements);context.setCameraMatrix(camera.matrixWorldInverse.elements);
  let effect;await new Promise((resolve,reject)=>{effect=context.loadEffect('${rawUrl(source)}',1,resolve,(m,u)=>reject(Error(m+' '+u)));});
  const sheet=document.createElement('canvas');sheet.width=${recipe.frameWidth * recipe.columns};sheet.height=${recipe.frameHeight * Math.ceil(recipe.frameCount / recipe.columns)};
- const ctx=sheet.getContext('2d');const handle=context.play(effect,0,0,0);handle.setRandomSeed(1);
- for(let i=0;i<${recipe.frameCount};i++) {context.update(1);renderer.render(scene,camera);context.draw();renderer.resetState();ctx.drawImage(canvas,i%${recipe.columns}*${recipe.frameWidth},Math.floor(i/${recipe.columns})*${recipe.frameHeight});}
+ const ctx=sheet.getContext('2d');const handle=context.play(effect,0,0,0);handle.setRandomSeed(1);handle.setScale(${recipe.emitterScale ?? 1},${recipe.emitterScale ?? 1},${recipe.emitterScale ?? 1});handle.setRotation(${rotation.map(v => v * Math.PI / 180).join(',')});
+ const artworkTransform=${artworkTransform.toString()};
+ const sample=document.createElement('canvas');sample.width=canvas.width;sample.height=canvas.height;const sampleCtx=sample.getContext('2d',{willReadFrequently:true});
+ for(let i=0;i<${recipe.frameCount};i++) {
+  context.update(1);renderer.render(scene,camera);context.draw();renderer.resetState();
+  const x=i%${recipe.columns}*canvas.width,y=Math.floor(i/${recipe.columns})*canvas.height;
+  if(${artworkRotation}!==0){
+   sampleCtx.clearRect(0,0,canvas.width,canvas.height);sampleCtx.drawImage(canvas,0,0);
+   const p=artworkTransform(sampleCtx.getImageData(0,0,canvas.width,canvas.height).data,canvas.width,canvas.height,${artworkRotation},'${artworkPivot}',${recipe.originX},${recipe.originY});
+   ctx.save();ctx.beginPath();ctx.rect(x,y,canvas.width,canvas.height);ctx.clip();ctx.translate(x+p.x,y+p.y);ctx.rotate(p.radians);ctx.drawImage(canvas,-p.x,-p.y);ctx.restore();
+  }else ctx.drawImage(canvas,x,y);
+ }
  const response=await fetch('/export',{method:'POST',body:await new Promise(resolve=>sheet.toBlob(resolve))});
  if(!response.ok) throw Error(await response.text());
  context.stopAll();context.releaseEffect(effect);document.querySelector('#status').textContent='Export complete: ${recipe.frameCount} frames at ${recipe.frameRate} FPS';

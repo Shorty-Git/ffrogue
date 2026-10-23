@@ -80,7 +80,36 @@
       "moveType": "stationary",
       "motion": "atk",
       "desc": "Physical damage (3x, ATK) to all enemies",
-      "execution": "legacy"
+      "execution": "timeline-area",
+      "motionReview": {
+        "sourceCode": 8,
+        "prepared": "atk",
+        "reason": "Explicit adapted casting motion: use the inspected prepared gun attack. The limit track contains a long jump/beam cinematic; source code 8 is not claimed to map to atk."
+      },
+      "presentation": {
+        "impactFrame": 165,
+        "durationFrames": 240,
+        "effects": [
+          {
+            "key": "satellite_marker",
+            "startFrame": 41,
+            "anchor": "target"
+          },
+          {
+            "key": "satellite_beam",
+            "startFrame": 60,
+            "anchor": "target"
+          },
+          {
+            "key": "satellite_fade",
+            "startFrame": 40,
+            "anchor": "screen",
+            "layer": "back",
+            "fit": "arena"
+          }
+        ]
+      },
+      "reviewNote": "Simplified roguelike area presentation: original marker, rotated blue beam and alpha screen fade; total 3x physical damage once at F165 without extra recoil. Source ten 10-percent hits F125..215 remain provenance and are intentionally combined. Unknown raw member offsets 150/-150 and fade offset 150 stay unapplied. No original-game fidelity claim. The original alpha fade is fitted to the arena using measured sheet content bounds; no replacement rectangle is drawn. Clockwise 45-degree artwork correction around each target origin makes the source diagonal beam horizontal; source XYZ rotation is retained separately."
     }
   ],
   "portraitSource": "unit_icons/unit_icon_207000205.png"

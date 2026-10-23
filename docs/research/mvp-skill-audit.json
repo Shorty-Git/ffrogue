@@ -1,0 +1,3019 @@
+{
+  "schemaVersion": 1,
+  "sourceDatabase": {
+    "file": "assets/static_data/ffbe-data.db",
+    "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+  },
+  "inspectedCode": [
+    {
+      "file": "tools/audit_mvp_skills.mjs",
+      "sha256": "055283f1dbf211589f0a3f2fff1e111a7c7d0b8bde4cf4c2b4692149259a39ac"
+    },
+    {
+      "file": "tools/lib/character-pipeline.mjs",
+      "sha256": "b04397b6ba3172a62513cb1d5aa419702d864e03412efee8c2acece212dca30f"
+    },
+    {
+      "file": "tools/export_effect.mjs",
+      "sha256": "f8c601cbe595fddd56cb8dad4b200e0657935efc2b7731000aa469483b385151"
+    },
+    {
+      "file": "src/scenes/BattleScene.ts",
+      "sha256": "5cbcda1110bf51aba92b047c81530a3a791d281d45414db3958653014640f488"
+    },
+    {
+      "file": "src/entities/UnitActor.ts",
+      "sha256": "a60b30af63da222f8524bcc8b8ae66bafda3b2d9d525e2a2d2fd574cd4a07539"
+    }
+  ],
+  "limits": [
+    "No effects were rendered, baked, published or visually approved in this audit.",
+    "File/dependency availability is not proof of correct original motion, camera or placement.",
+    "Numeric motionType 8 is intentionally left unmapped.",
+    "Source frame numbers are 60 Hz timeline ticks, not body-sheet frame indices.",
+    "Exact-stem search does not identify renamed alternatives or prove absence from every possible source."
+  ],
+  "characters": [
+    {
+      "spriteUnitId": "207000105",
+      "seriesId": 207000105,
+      "name": "Cloud",
+      "recipeFile": "tools/characters/cloud.json",
+      "recipeSha256": "062ddf956c70cd7a1ce8e618c461276f24b20905000ceceb0d3c82de6c36495c",
+      "runtimeFile": "public/assets/units/cloud/skills.json",
+      "manifestSha256": "4e2a597cf84ba8a54acaabae321472ac9764a88cd9094dc6599c15adfe98e463",
+      "runtimeSha256": "da8b12dce6d5f125cf28c100ef6d40391f2d9a03363f24d96a929d6f4265c390",
+      "tracks": [
+        "atk",
+        "dead",
+        "dying",
+        "idle",
+        "jump",
+        "limit_atk",
+        "magic_atk",
+        "magic_standby",
+        "move",
+        "standby",
+        "win",
+        "win_before"
+      ],
+      "missingStates": []
+    },
+    {
+      "spriteUnitId": "207000405",
+      "seriesId": 207000405,
+      "name": "Aerith",
+      "recipeFile": "tools/characters/aerith.json",
+      "recipeSha256": "1a66fe059bb9205cd534080579e0a2ac64026f8815551bae70226275a472ed85",
+      "runtimeFile": "public/assets/units/aerith/skills.json",
+      "manifestSha256": "868e8c96627258e558f99d6b9f7dc0d2f2513b8a9fa22e20ff4dafec2688539f",
+      "runtimeSha256": "bfb85a9b4e4ef98131c76db23eeeccbd0144b152ada0fbab63ace471d66781ce",
+      "tracks": [
+        "atk",
+        "dead",
+        "dying",
+        "idle",
+        "jump",
+        "limit_atk",
+        "limit_move",
+        "magic_atk",
+        "magic_standby",
+        "move",
+        "standby",
+        "win",
+        "win_before"
+      ],
+      "missingStates": []
+    },
+    {
+      "spriteUnitId": "207000205",
+      "seriesId": 207000204,
+      "name": "Barret",
+      "recipeFile": "tools/characters/barret.json",
+      "recipeSha256": "d12b91aafa76869a1ac23f6f689eccea553bfde2b496a80f4fe6d9785bb13397",
+      "runtimeFile": "public/assets/units/barret/skills.json",
+      "manifestSha256": "970a0658a034387058b5a1d9f280c05e3d28b4886528a46412d5358e1a66844a",
+      "runtimeSha256": "8a1b15e96c60e6d35e36791d74a272a359ab0aa68755531605801f0997b9b406",
+      "tracks": [
+        "atk",
+        "dead",
+        "dying",
+        "idle",
+        "jump",
+        "limit_atk",
+        "limit_move",
+        "magic_atk",
+        "magic_standby",
+        "move",
+        "standby",
+        "win",
+        "win_before"
+      ],
+      "missingStates": []
+    }
+  ],
+  "secondaryEvidence": [
+    {
+      "file": "ffbe_data-master/jp/ability.json",
+      "sha256": "dc95c9094774272d0b9fcf2306e61cba371aee9a5ff91a1ab80b03ca58b5e0f2",
+      "records": [
+        {
+          "id": 214810,
+          "value": {
+            "action_length": 0,
+            "attacks": [
+              {
+                "hit_dmg": [
+                  50,
+                  50
+                ],
+                "hit_frames": [
+                  4,
+                  8
+                ],
+                "hits": 2
+              }
+            ],
+            "dmg_type": "physical",
+            "effects": [
+              {
+                "action_id": 1,
+                "effect_frame": 0,
+                "params": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  300,
+                  0
+                ],
+                "skill atk%": 300,
+                "skill dmg inc%": 0,
+                "target_area": "all",
+                "target_side": "enemy"
+              }
+            ],
+            "elements": [],
+            "full_desc": "敵全体にダメージを与える。",
+            "gauge_cost": null,
+            "guide_id": 1540,
+            "icon": "ability_54.png",
+            "icon_id": 700000054,
+            "id": 214810,
+            "internal": false,
+            "limited_units": [],
+            "mp_cost": 30,
+            "name": "破晄撃",
+            "rarity": 6,
+            "short_desc": "敵全体にダメージ",
+            "skill_category": "offensive",
+            "skill_type": "active"
+          }
+        },
+        {
+          "id": 214820,
+          "value": {
+            "action_length": 0,
+            "attacks": [
+              {
+                "hit_dmg": [
+                  100
+                ],
+                "hit_frames": [
+                  4
+                ],
+                "hits": 1
+              }
+            ],
+            "dmg_type": "physical",
+            "effects": [
+              {
+                "action_id": 21,
+                "def ignore%": 50,
+                "effect_frame": 0,
+                "params": [
+                  0,
+                  0,
+                  275,
+                  -50
+                ],
+                "skill atk%": 275,
+                "target_area": "single",
+                "target_side": "enemy"
+              }
+            ],
+            "elements": [],
+            "full_desc": "敵1体に一部防御無視のダメージを与える。",
+            "gauge_cost": null,
+            "guide_id": 1541,
+            "icon": "ability_54.png",
+            "icon_id": 700000054,
+            "id": 214820,
+            "internal": false,
+            "limited_units": [],
+            "mp_cost": 52,
+            "name": "クライムハザード",
+            "rarity": 7,
+            "short_desc": "敵1体に一部防御無視ダメージ",
+            "skill_category": "offensive",
+            "skill_type": "active"
+          }
+        },
+        {
+          "id": 227870,
+          "value": {
+            "action_length": 88,
+            "attacks": [
+              {
+                "hit_dmg": [
+                  100
+                ],
+                "hit_frames": [
+                  130
+                ],
+                "hits": 1
+              }
+            ],
+            "dmg_type": "physical",
+            "effects": [
+              {
+                "action_id": 1,
+                "effect_frame": 0,
+                "params": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  250,
+                  0
+                ],
+                "skill atk%": 250,
+                "skill dmg inc%": 0,
+                "target_area": "single",
+                "target_side": "enemy"
+              }
+            ],
+            "elements": [],
+            "full_desc": "敵1体にダメージを与える。",
+            "gauge_cost": null,
+            "guide_id": 3555,
+            "icon": "ability_40.png",
+            "icon_id": 700000040,
+            "id": 227870,
+            "internal": false,
+            "limited_units": [],
+            "mp_cost": 16,
+            "name": "ヘビーショット",
+            "rarity": 5,
+            "short_desc": "敵1体にダメージ",
+            "skill_category": "offensive",
+            "skill_type": "active"
+          }
+        },
+        {
+          "id": 227872,
+          "value": {
+            "action_length": 88,
+            "attacks": [
+              {
+                "hit_dmg": [
+                  100
+                ],
+                "hit_frames": [
+                  150
+                ],
+                "hits": 1
+              }
+            ],
+            "dmg_type": "physical",
+            "effects": [
+              {
+                "action_id": 1,
+                "effect_frame": 0,
+                "params": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  180,
+                  0
+                ],
+                "skill atk%": 180,
+                "skill dmg inc%": 0,
+                "target_area": "all",
+                "target_side": "enemy"
+              },
+              {
+                "action_id": 24,
+                "debuff turns": 3,
+                "def debuff%": -35,
+                "effect_frame": 0,
+                "params": [
+                  0,
+                  -35,
+                  0,
+                  0,
+                  3,
+                  1
+                ],
+                "target_area": "all",
+                "target_side": "enemy"
+              }
+            ],
+            "elements": [],
+            "full_desc": "敵全体にダメージを与え、防御をダウンさせる。",
+            "gauge_cost": null,
+            "guide_id": 3557,
+            "icon": "ability_39.png",
+            "icon_id": 700000039,
+            "id": 227872,
+            "internal": false,
+            "limited_units": [],
+            "mp_cost": 36,
+            "name": "グレネードボム",
+            "rarity": 6,
+            "short_desc": "敵全体にダメージ+防御をダウン",
+            "skill_category": "offensive",
+            "skill_type": "active"
+          }
+        },
+        {
+          "id": 227874,
+          "value": {
+            "action_length": 40,
+            "attacks": [
+              {
+                "hit_dmg": [
+                  10,
+                  10,
+                  10,
+                  10,
+                  10,
+                  10,
+                  10,
+                  10,
+                  10,
+                  10
+                ],
+                "hit_frames": [
+                  125,
+                  135,
+                  145,
+                  155,
+                  165,
+                  175,
+                  185,
+                  195,
+                  205,
+                  215
+                ],
+                "hits": 10
+              }
+            ],
+            "dmg_type": "physical",
+            "effects": [
+              {
+                "action_id": 1,
+                "effect_frame": 0,
+                "params": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  300,
+                  0
+                ],
+                "skill atk%": 300,
+                "skill dmg inc%": 0,
+                "target_area": "all",
+                "target_side": "enemy"
+              }
+            ],
+            "elements": [],
+            "full_desc": "敵全体にダメージを与える。",
+            "gauge_cost": null,
+            "guide_id": 3559,
+            "icon": "ability_40.png",
+            "icon_id": 700000040,
+            "id": 227874,
+            "internal": false,
+            "limited_units": [],
+            "mp_cost": 45,
+            "name": "サテライトビーム",
+            "rarity": 7,
+            "short_desc": "敵全体にダメージ",
+            "skill_category": "offensive",
+            "skill_type": "active"
+          }
+        }
+      ]
+    },
+    {
+      "file": "ffbe_data-master/jp/magic.json",
+      "sha256": "4dd24d9592945164f342a55c5bec096d0f43a05e1dc3f82a870eb2af0dc32f55",
+      "records": [
+        {
+          "id": 10170,
+          "value": {
+            "action_length": 0,
+            "attacks": [
+              {
+                "hit_dmg": [
+                  100
+                ],
+                "hit_frames": [
+                  65
+                ],
+                "hits": 1
+              }
+            ],
+            "dmg_type": "magic",
+            "effects": [
+              {
+                "action_id": 103,
+                "convert cap": 99999,
+                "effect_frame": 40,
+                "params": [
+                  100,
+                  99999,
+                  180
+                ],
+                "skill mod%": 180,
+                "spr convert%": 100,
+                "target_area": "all",
+                "target_side": "enemy"
+              }
+            ],
+            "elements": [
+              "light"
+            ],
+            "full_desc": "敵全体に光属性のダメージを与える。",
+            "gauge_cost": null,
+            "guide_id": 19,
+            "icon": "ability_5.png",
+            "icon_id": 700000005,
+            "id": 10170,
+            "level": 6,
+            "mp_cost": 20,
+            "name": "バニシュガ",
+            "rarity": 6,
+            "short_desc": "敵全体に光属性ダメージ",
+            "skill_category": "offensive"
+          }
+        },
+        {
+          "id": 10290,
+          "value": {
+            "action_length": 40,
+            "attacks": [
+              {
+                "hit_dmg": [
+                  100
+                ],
+                "hit_frames": [
+                  120
+                ],
+                "hits": 1
+              }
+            ],
+            "dmg_type": "magic",
+            "effects": [
+              {
+                "action_id": 2,
+                "base heal": 2500,
+                "effect_frame": 0,
+                "heal mod": 18,
+                "params": [
+                  0,
+                  0,
+                  2500,
+                  1800,
+                  100
+                ],
+                "target_area": "all",
+                "target_side": "any"
+              }
+            ],
+            "elements": [],
+            "full_desc": "味方全体のHPを回復する。",
+            "gauge_cost": null,
+            "guide_id": 31,
+            "icon": "ability_4.png",
+            "icon_id": 700000004,
+            "id": 10290,
+            "level": 7,
+            "mp_cost": 30,
+            "name": "ケアルジャ",
+            "rarity": 7,
+            "short_desc": "味方全体のHPを回復",
+            "skill_category": "recovery"
+          }
+        }
+      ]
+    }
+  ],
+  "exactStemMatches": {
+    "atk_powergeyser_001_purple": [],
+    "eff_fullcure_white": [],
+    "wm_1029_cure5_front": [],
+    "wm_1017_banish2_back": [],
+    "wm_1017_banish2_front": [],
+    "wm_1006_banish_back": [],
+    "wm_1006_banish_front": [],
+    "sp_20108_hardshot": [],
+    "eff_convergence_explosion_orange": []
+  },
+  "skills": [
+    {
+      "character": "cloud",
+      "spriteUnitId": "207000105",
+      "seriesId": 207000105,
+      "id": "blade_beam",
+      "name": "Blade Beam",
+      "kind": "ABILITY",
+      "sourceId": 214810,
+      "learned": [
+        {
+          "rarity": 5,
+          "level": 57,
+          "nvLevel": 0,
+          "unlockType": 0,
+          "braveAbility": 0
+        }
+      ],
+      "source": {
+        "cost": 30,
+        "moveType": 4,
+        "motionType": 1,
+        "target": "1",
+        "targetRange": "2",
+        "attackFrames": "4:50:2:2-8:50:2:2",
+        "processId": "1",
+        "processParam": "0,0,0,0,0,0,300,0",
+        "effectFrames": "0:5003901:1:2:0&4:1000660:1:1:0"
+      },
+      "hits": [
+        {
+          "frame": 4,
+          "milliseconds": 66.667,
+          "weightPercent": 50,
+          "raw": "4:50:2:2"
+        },
+        {
+          "frame": 8,
+          "milliseconds": 133.333,
+          "weightPercent": 50,
+          "raw": "8:50:2:2"
+        }
+      ],
+      "effects": [
+        {
+          "branchIndex": 0,
+          "conditional": false,
+          "groups": [
+            {
+              "raw": "0:5003901:1:2:0",
+              "startFrame": 0,
+              "groupId": 5003901,
+              "name": "aerialslash_001_green(300)",
+              "layer": "front",
+              "anchor": "target-group",
+              "flags": [
+                "0"
+              ],
+              "soundsRaw": null,
+              "extraRaw": null,
+              "status": "resolved",
+              "members": [
+                {
+                  "raw": "0:5006511:99999999:1:2:2:-1100:0",
+                  "frame": 0,
+                  "effectId": 5006511,
+                  "scalePercent": 300,
+                  "groupFields": [
+                    "99999999",
+                    "1",
+                    "2",
+                    "2",
+                    "-1100",
+                    "0"
+                  ],
+                  "transform": [],
+                  "originalFile": "atk_aerialslash_001_green.bmb",
+                  "asset": {
+                    "file": "assets/battle_effect/atk_aerialslash_001_green.efkefc",
+                    "exists": true,
+                    "sha256": "53656125e7537719ad0e05631e63d0fbb477ce47be30900cf4f7e7534be87606",
+                    "resources": [
+                      {
+                        "reference": "../effect_resource/glowring_022.png",
+                        "type": 1,
+                        "flags": 1,
+                        "file": "assets/effect_resource/glowring_022.png",
+                        "exists": true,
+                        "sha256": "8d74ffce8aa871dc5f4beef243f45671060de9121930db7426848b89cafe9cef"
+                      },
+                      {
+                        "reference": "../effect_resource/glowball_010.png",
+                        "type": 1,
+                        "flags": 1,
+                        "file": "assets/effect_resource/glowball_010.png",
+                        "exists": true,
+                        "sha256": "c6d4c4d0184252fc2788c7cd95467d36729f5e9b1f3bea83fb3995ac261f5237"
+                      },
+                      {
+                        "reference": "../effect_resource/glow_011.png",
+                        "type": 1,
+                        "flags": 1,
+                        "file": "assets/effect_resource/glow_011.png",
+                        "exists": true,
+                        "sha256": "3260c40be64a9a9d22af1e38525199851fcfe850ab9a701d9fa1c1240ab052b7"
+                      },
+                      {
+                        "reference": "../effect_resource/glow_008_tcs2d2a1ec.png",
+                        "type": 1,
+                        "flags": 1,
+                        "file": "assets/effect_resource/glow_008_tcs2d2a1ec.png",
+                        "exists": true,
+                        "sha256": "4e30ad4cb5b34a8854310c356dbf2c423897e1fc28d85ef6820604b71c9841bf"
+                      },
+                      {
+                        "reference": "../effect_resource/glow_008.png",
+                        "type": 1,
+                        "flags": 1,
+                        "file": "assets/effect_resource/glow_008.png",
+                        "exists": true,
+                        "sha256": "3935d302e450a4dd011dc519ab38ceed7becb65ffbf41bf447ea9b0d640d8ed4"
+                      },
+                      {
+                        "reference": "../effect_resource/model_glow_004.efkmodel",
+                        "type": 3,
+                        "flags": 0,
+                        "file": "assets/effect_resource/model_glow_004.efkmodel",
+                        "exists": true,
+                        "sha256": "0bf25291980957226978ba91c02ce7d4bdc5a5b1b045024c8de9f6e5588050ca"
+                      },
+                      {
+                        "reference": "../effect_resource/model_glow_003.efkmodel",
+                        "type": 3,
+                        "flags": 0,
+                        "file": "assets/effect_resource/model_glow_003.efkmodel",
+                        "exists": true,
+                        "sha256": "4e24ef4a0d3bdcd4e3c85d67f7ab35852417b629aecda6a76e71e89308163d83"
+                      }
+                    ]
+                  },
+                  "status": "available-unreviewed"
+                }
+              ]
+            },
+            {
+              "raw": "4:1000660:1:1:0",
+              "startFrame": 4,
+              "groupId": 1000660,
+              "name": "slash5(blue)",
+              "layer": "front",
+              "anchor": "target",
+              "flags": [
+                "0"
+              ],
+              "soundsRaw": "1:1:1",
+              "extraRaw": null,
+              "status": "resolved",
+              "members": [
+                {
+                  "raw": "1:1000660:99999999:1:2:2:0:0",
+                  "frame": 1,
+                  "effectId": 1000660,
+                  "scalePercent": 100,
+                  "groupFields": [
+                    "99999999",
+                    "1",
+                    "2",
+                    "2",
+                    "0",
+                    "0"
+                  ],
+                  "transform": [],
+                  "originalFile": "atk_slash5_blue.bmb",
+                  "asset": {
+                    "file": "assets/battle_effect/atk_slash5_blue.efkefc",
+                    "exists": true,
+                    "sha256": "e8554c0cd0d947d10596080e79d0fa82d1df64b479211a4f54765453d51dc3c6",
+                    "resources": [
+                      {
+                        "reference": "../effect_resource/lapis_eff_material_019_common_0008_ball1.png",
+                        "type": 1,
+                        "flags": 1,
+                        "file": "assets/effect_resource/lapis_eff_material_019_common_0008_ball1.png",
+                        "exists": true,
+                        "sha256": "bb9f9ed08d2382d00b2fdce3cbe54fe12d5e28af1e272b09043632204f6476af"
+                      }
+                    ]
+                  },
+                  "status": "available-unreviewed"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "missingFiles": [],
+      "allEffectMembersAvailable": true,
+      "recipe": {
+        "id": "blade_beam",
+        "ffbeId": 214810,
+        "name": "Blade Beam",
+        "rarity": 5,
+        "level": 57,
+        "type": "ABILITY",
+        "mpCost": 30,
+        "scope": "all_enemies",
+        "damageMultiplier": 3,
+        "hitCount": 2,
+        "attackFrames": [
+          4,
+          8
+        ],
+        "moveType": "stationary",
+        "motion": "atk",
+        "desc": "Physical damage (3x, ATK) to all enemies",
+        "execution": "legacy"
+      },
+      "runtime": {
+        "id": "blade_beam",
+        "ffbeId": 214810,
+        "name": "Blade Beam",
+        "rarity": 5,
+        "level": 57,
+        "type": "ABILITY",
+        "mpCost": 30,
+        "scope": "all_enemies",
+        "damageMultiplier": 3,
+        "hitCount": 2,
+        "attackFrames": [
+          4,
+          8
+        ],
+        "moveType": "stationary",
+        "motion": "atk",
+        "desc": "Physical damage (3x, ATK) to all enemies"
+      },
+      "recipeRuntimeDifferences": [],
+      "body": {
+        "runtimeMotion": "atk",
+        "availableInRawTracks": true,
+        "prepared": true,
+        "frameCount": 12,
+        "durationMs": 950.01
+      },
+      "priority": 1,
+      "mechanics": "300% physical damage, two equally weighted hits to all enemies.",
+      "blockers": [
+        "Two-hit weighted damage scheduling.",
+        "Target-group versus per-target effect placement, including the raw -1100 member field; its units/meaning need review.",
+        "Composite effect playback: green slash at F0; blue slash group F4 + member F1 = F5."
+      ]
+    },
+    {
+      "character": "cloud",
+      "spriteUnitId": "207000105",
+      "seriesId": 207000105,
+      "id": "climhazzard",
+      "name": "Climhazzard",
+      "kind": "ABILITY",
+      "sourceId": 214820,
+      "learned": [
+        {
+          "rarity": 6,
+          "level": 28,
+          "nvLevel": 0,
+          "unlockType": 0,
+          "braveAbility": 0
+        }
+      ],
+      "source": {
+        "cost": 52,
+        "moveType": 1,
+        "motionType": 1,
+        "target": "1",
+        "targetRange": "1",
+        "attackFrames": "4:100:2:2",
+        "processId": "21",
+        "processParam": "0,0,275,-50",
+        "effectFrames": "0:5014250:1:1:0&20:5007070:1:1:0&20:7000970:1:1:0&0:5002080:2:4:0"
+      },
+      "hits": [
+        {
+          "frame": 4,
+          "milliseconds": 66.667,
+          "weightPercent": 100,
+          "raw": "4:100:2:2"
+        }
+      ],
+      "effects": [
+        {
+          "branchIndex": 0,
+          "conditional": false,
+          "groups": [
+            {
+              "raw": "0:5014250:1:1:0",
+              "startFrame": 0,
+              "groupId": 5014250,
+              "name": "crossslash(50)",
+              "layer": "front",
+              "anchor": "target",
+              "flags": [
+                "0"
+              ],
+              "soundsRaw": "0:1:1",
+              "extraRaw": null,
+              "status": "resolved",
+              "members": [
+                {
+                  "raw": "0:1001212:99999999:1:2:2:0:0",
+                  "frame": 0,
+                  "effectId": 1001212,
+                  "scalePercent": 50,
+                  "groupFields": [
+                    "99999999",
+                    "1",
+                    "2",
+                    "2",
+                    "0",
+                    "0"
+                  ],
+                  "transform": [
+                    "0",
+                    "0",
+                    "330"
+                  ],
+                  "originalFile": "atk_slash7_side_purple.bmb",
+                  "asset": {
+                    "file": "assets/battle_effect/atk_slash7_side_purple.efkefc",
+                    "exists": true,
+                    "sha256": "70865b590fda9d3b341b6df2725bfd6ddd3780adbdd97af5a18bc13db495054a",
+                    "resources": [
+                      {
+                        "reference": "../effect_resource/lapis_eff_material_019_common_0008_ball1.png",
+                        "type": 1,
+                        "flags": 1,
+                        "file": "assets/effect_resource/lapis_eff_material_019_common_0008_ball1.png",
+                        "exists": true,
+                        "sha256": "bb9f9ed08d2382d00b2fdce3cbe54fe12d5e28af1e272b09043632204f6476af"
+                      }
+                    ]
+                  },
+                  "status": "available-unreviewed"
+                },
+                {
+                  "raw": "0:1001213:99999999:1:2:2:0:0",
+                  "frame": 0,
+                  "effectId": 1001213,
+                  "scalePercent": 50,
+                  "groupFields": [
+                    "99999999",
+                    "1",
+                    "2",
+                    "2",
+                    "0",
+                    "0"
+                  ],
+                  "transform": [
+                    "0",
+                    "0",
+                    "210"
+                  ],
+                  "originalFile": "atk_slash7_side_purple.bmb",
+                  "asset": {
+                    "file": "assets/battle_effect/atk_slash7_side_purple.efkefc",
+                    "exists": true,
+                    "sha256": "70865b590fda9d3b341b6df2725bfd6ddd3780adbdd97af5a18bc13db495054a",
+                    "resources": [
+                      {
+                        "reference": "../effect_resource/lapis_eff_material_019_common_0008_ball1.png",
+                        "type": 1,
+                        "flags": 1,
+                        "file": "assets/effect_resource/lapis_eff_material_019_common_0008_ball1.png",
+                        "exists": true,
+                        "sha256": "bb9f9ed08d2382d00b2fdce3cbe54fe12d5e28af1e272b09043632204f6476af"
+                      }
+                    ]
+                  },
+                  "status": "available-unreviewed"
+                },
+                {
+                  "raw": "0:1001702:99999999:1:2:2:0:0",
+                  "frame": 0,
+                  "effectId": 1001702,
+                  "scalePercent": 200,
+                  "groupFields": [
+                    "99999999",
+                    "1",
+                    "2",
+                    "2",
+                    "0",
+                    "0"
+                  ],
+                  "transform": [],
+                  "originalFile": "atk_blow1_purple.bmb",
+                  "asset": {
+                    "file": "assets/battle_effect/atk_blow1_purple.efkefc",
+                    "exists": true,
+                    "sha256": "d14ec51253b19af75e6e3ed837df1973930f403955a5ef8ff488176f28c2dbca",
+                    "resources": [
+                      {
+                        "reference": "../effect_resource/lapis_eff_material_012_0051_ball2.png",
+                        "type": 1,
+                        "flags": 1,
+                        "file": "assets/effect_resource/lapis_eff_material_012_0051_ball2.png",
+                        "exists": true,
+                        "sha256": "10d4a87fec0ddb003df24fd8dd1b141332204f8bf27302ca9bd503739785477d"
+                      },
+                      {
+                        "reference": "../effect_resource/lapis_eff_material_012_0047_ball6.png",
+                        "type": 1,
+                        "flags": 1,
+                        "file": "assets/effect_resource/lapis_eff_material_012_0047_ball6.png",
+                        "exists": true,
+                        "sha256": "567d5eae0aa0fe49b0defa1c12c6468844d7df8fcf1aef394987404f9eaf6ca2"
+                      },
+                      {
+                        "reference": "../effect_resource/lapis_eff_material_019_common_0008_ball1.png",
+                        "type": 1,
+                        "flags": 1,
+                        "file": "assets/effect_resource/lapis_eff_material_019_common_0008_ball1.png",
+                        "exists": true,
+                        "sha256": "bb9f9ed08d2382d00b2fdce3cbe54fe12d5e28af1e272b09043632204f6476af"
+                      },
+                      {
+                        "reference": "../effect_resource/model_circle001_24pl.efkmodel",
+                        "type": 3,
+                        "flags": 0,
+                        "file": "assets/effect_resource/model_circle001_24pl.efkmodel",
+                        "exists": true,
+                        "sha256": "7df08c37406b12b330edf3dc5fa901958ee4d2eb2f45fcf5de25c1b044958983"
+                      }
+                    ]
+                  },
+                  "status": "available-unreviewed"
+                }
+              ]
+            },
+            {
+              "raw": "20:5007070:1:1:0",
+              "startFrame": 20,
+              "groupId": 5007070,
+              "name": "powergeyser1(purple)",
+              "layer": "front",
+              "anchor": "target",
+              "flags": [
+                "0"
+              ],
+              "soundsRaw": null,
+              "extraRaw": null,
+              "status": "resolved",
+              "members": [
+                {
+                  "raw": "0:5004170:99999999:2:2:2:0:40",
+                  "frame": 0,
+                  "effectId": 5004170,
+                  "scalePercent": 100,
+                  "groupFields": [
+                    "99999999",
+                    "2",
+                    "2",
+                    "2",
+                    "0",
+                    "40"
+                  ],
+                  "transform": [],
+                  "originalFile": "atk_powergeyser_001_purple.bmb",
+                  "asset": {
+                    "file": "assets/battle_effect/atk_powergeyser_001_purple.efkefc",
+                    "exists": false,
+                    "resources": []
+                  },
+                  "status": "missing-effect-file"
+                }
+              ]
+            },
+            {
+              "raw": "20:7000970:1:1:0",
+              "startFrame": 20,
+              "groupId": 7000970,
+              "name": "SPECIAL_EXPLODE_1",
+              "layer": "front",
+              "anchor": "target",
+              "flags": [
+                "0"
+              ],
+              "soundsRaw": "1:98:1",
+              "extraRaw": null,
+              "status": "sound-only-unreviewed",
+              "members": []
+            },
+            {
+              "raw": "0:5002080:2:4:0",
+              "startFrame": 0,
+              "groupId": 5002080,
+              "name": "strobe50(white)30F",
+              "layer": "back",
+              "anchor": "screen",
+              "flags": [
+                "0"
+              ],
+              "soundsRaw": null,
+              "extraRaw": null,
+              "status": "resolved",
+              "members": [
+                {
+                  "raw": "1:5002110:99999999:2:2:2:0:150",
+                  "frame": 1,
+                  "effectId": 5002110,
+                  "scalePercent": 100,
+                  "groupFields": [
+                    "99999999",
+                    "2",
+                    "2",
+                    "2",
+                    "0",
+                    "150"
+                  ],
+                  "transform": [],
+                  "originalFile": "eff_strobe_white_a50_f30.bmb",
+                  "asset": {
+                    "file": "assets/battle_effect/eff_strobe_white_a50_f30.efkefc",
+                    "exists": true,
+                    "sha256": "3c7217b063ce80355f84cc056b4ab99a716e4ddb8b7b4fe3d98eac3b327a5434",
+                    "resources": [
+                      {
+                        "reference": "../effect_resource/lapis_eff_material_012_0053_white.png",
+                        "type": 1,
+                        "flags": 1,
+                        "file": "assets/effect_resource/lapis_eff_material_012_0053_white.png",
+                        "exists": true,
+                        "sha256": "a290938892cb7246bd6ea8b139870c0c96b7efb0187856f352cf2d479628eb3b"
+                      }
+                    ]
+                  },
+                  "status": "available-unreviewed"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "missingFiles": [
+        "assets/battle_effect/atk_powergeyser_001_purple.efkefc"
+      ],
+      "allEffectMembersAvailable": false,
+      "recipe": {
+        "id": "climhazzard",
+        "ffbeId": 214820,
+        "name": "Climhazzard",
+        "rarity": 6,
+        "level": 28,
+        "type": "ABILITY",
+        "mpCost": 52,
+        "scope": "single_enemy",
+        "damageMultiplier": 5.5,
+        "hitCount": 1,
+        "attackFrames": [
+          4
+        ],
+        "moveType": "dash",
+        "motion": "atk",
+        "desc": "Physical damage (2.75x * 2 = 5.5x, ATK) to one enemy (ignore cover)",
+        "execution": "legacy"
+      },
+      "runtime": {
+        "id": "climhazzard",
+        "ffbeId": 214820,
+        "name": "Climhazzard",
+        "rarity": 6,
+        "level": 28,
+        "type": "ABILITY",
+        "mpCost": 52,
+        "scope": "single_enemy",
+        "damageMultiplier": 5.5,
+        "hitCount": 1,
+        "attackFrames": [
+          4
+        ],
+        "moveType": "dash",
+        "motion": "atk",
+        "desc": "Physical damage (2.75x * 2 = 5.5x, ATK) to one enemy (ignore cover)"
+      },
+      "recipeRuntimeDifferences": [],
+      "body": {
+        "runtimeMotion": "atk",
+        "availableInRawTracks": true,
+        "prepared": true,
+        "frameCount": 12,
+        "durationMs": 950.01
+      },
+      "mechanics": "275% physical damage with 50% DEF ignore (process 21); not ignore-cover.",
+      "blockers": [
+        "Missing purple power-geyser effect.",
+        "Rotated/scaled composite cuts, target impact and screen strobe.",
+        "SPECIAL_EXPLODE_1 group behavior is unresolved; its sound field does not establish that it is audio-only.",
+        "Runtime uses a simplified 5.5 multiplier and an inaccurate ignore-cover description; DEF-ignore mechanics are not implemented."
+      ]
+    },
+    {
+      "character": "aerith",
+      "spriteUnitId": "207000405",
+      "seriesId": 207000405,
+      "id": "healing_wind",
+      "name": "Healing Wind",
+      "kind": "ABILITY",
+      "sourceId": 229750,
+      "learned": [
+        {
+          "rarity": 5,
+          "level": 7,
+          "nvLevel": 0,
+          "unlockType": 0,
+          "braveAbility": 0
+        }
+      ],
+      "source": {
+        "cost": 26,
+        "moveType": 4,
+        "motionType": 2,
+        "target": "2@2",
+        "targetRange": "2@2",
+        "attackFrames": "180:100:2:2",
+        "processId": "2@5",
+        "processParam": "0,0,1000,340,100@1,2,3,4,5,6,7,8",
+        "effectFrames": "40:5016610:1:2:0"
+      },
+      "hits": [
+        {
+          "frame": 180,
+          "milliseconds": 3000,
+          "weightPercent": 100,
+          "raw": "180:100:2:2"
+        }
+      ],
+      "effects": [
+        {
+          "branchIndex": 0,
+          "conditional": false,
+          "groups": [
+            {
+              "raw": "40:5016610:1:2:0",
+              "startFrame": 40,
+              "groupId": 5016610,
+              "name": "fullcure_white",
+              "layer": "front",
+              "anchor": "target-group",
+              "flags": [
+                "0"
+              ],
+              "soundsRaw": "1:60:1",
+              "extraRaw": null,
+              "status": "resolved",
+              "members": [
+                {
+                  "raw": "0:5014960:99999999:2:2:2:0:240",
+                  "frame": 0,
+                  "effectId": 5014960,
+                  "scalePercent": 100,
+                  "groupFields": [
+                    "99999999",
+                    "2",
+                    "2",
+                    "2",
+                    "0",
+                    "240"
+                  ],
+                  "transform": [],
+                  "originalFile": "eff_fullcure_white.bmb",
+                  "asset": {
+                    "file": "assets/battle_effect/eff_fullcure_white.efkefc",
+                    "exists": false,
+                    "resources": []
+                  },
+                  "status": "missing-effect-file"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "missingFiles": [
+        "assets/battle_effect/eff_fullcure_white.efkefc"
+      ],
+      "allEffectMembersAvailable": false,
+      "recipe": {
+        "id": "healing_wind",
+        "ffbeId": 229750,
+        "name": "Healing Wind",
+        "rarity": 5,
+        "level": 7,
+        "type": "ABILITY",
+        "mpCost": 26,
+        "scope": "party",
+        "damageMultiplier": 1,
+        "hitCount": 1,
+        "attackFrames": [
+          180
+        ],
+        "moveType": "stationary",
+        "motion": "magic_atk",
+        "desc": "Restore 1000 (+3.4x, Heal) HP to all allies",
+        "execution": "legacy"
+      },
+      "runtime": {
+        "id": "healing_wind",
+        "ffbeId": 229750,
+        "name": "Healing Wind",
+        "rarity": 5,
+        "level": 7,
+        "type": "ABILITY",
+        "mpCost": 26,
+        "scope": "party",
+        "damageMultiplier": 1,
+        "hitCount": 1,
+        "attackFrames": [
+          180
+        ],
+        "moveType": "stationary",
+        "motion": "magic_atk",
+        "desc": "Restore 1000 (+3.4x, Heal) HP to all allies"
+      },
+      "recipeRuntimeDifferences": [],
+      "body": {
+        "runtimeMotion": "magic_atk",
+        "availableInRawTracks": true,
+        "prepared": true,
+        "frameCount": 4,
+        "durationMs": 266.68
+      },
+      "mechanics": "Healing process 2 with base 1000 and modifier 340; additional process 5 with parameters 1 through 8.",
+      "blockers": [
+        "Missing full-cure effect.",
+        "Party/group healing anchor and sustained clock through F180.",
+        "Second source process needs explicit semantic review and implementation; runtime only heals living allies with a simplified formula."
+      ]
+    },
+    {
+      "character": "aerith",
+      "spriteUnitId": "207000405",
+      "seriesId": 207000405,
+      "id": "curaja",
+      "name": "Curaja",
+      "kind": "MAGIC",
+      "sourceId": 10290,
+      "learned": [
+        {
+          "rarity": 5,
+          "level": 77,
+          "nvLevel": 0,
+          "unlockType": 0,
+          "braveAbility": 0
+        }
+      ],
+      "source": {
+        "cost": 30,
+        "moveType": null,
+        "motionType": null,
+        "target": "6",
+        "targetRange": "2",
+        "attackFrames": "120:100:2:2",
+        "processId": "2",
+        "processParam": "0,0,2500,1800,100",
+        "effectFrames": "40:3000750:1:2:0&40:3000760:2:2:0"
+      },
+      "hits": [
+        {
+          "frame": 120,
+          "milliseconds": 2000,
+          "weightPercent": 100,
+          "raw": "120:100:2:2"
+        }
+      ],
+      "effects": [
+        {
+          "branchIndex": 0,
+          "conditional": false,
+          "groups": [
+            {
+              "raw": "40:3000750:1:2:0",
+              "startFrame": 40,
+              "groupId": 3000750,
+              "name": "cure5_F",
+              "layer": "front",
+              "anchor": "target-group",
+              "flags": [
+                "0"
+              ],
+              "soundsRaw": "0:60:1",
+              "extraRaw": null,
+              "status": "resolved",
+              "members": [
+                {
+                  "raw": "0:3000760:99999999:2:2:2:0:200",
+                  "frame": 0,
+                  "effectId": 3000760,
+                  "scalePercent": 100,
+                  "groupFields": [
+                    "99999999",
+                    "2",
+                    "2",
+                    "2",
+                    "0",
+                    "200"
+                  ],
+                  "transform": [],
+                  "originalFile": "wm_1029_cure5_front.bmb",
+                  "asset": {
+                    "file": "assets/battle_effect/wm_1029_cure5_front.efkefc",
+                    "exists": false,
+                    "resources": []
+                  },
+                  "status": "missing-effect-file"
+                }
+              ]
+            },
+            {
+              "raw": "40:3000760:2:2:0",
+              "startFrame": 40,
+              "groupId": 3000760,
+              "name": "cure5_R",
+              "layer": "back",
+              "anchor": "target-group",
+              "flags": [
+                "0"
+              ],
+              "soundsRaw": null,
+              "extraRaw": null,
+              "status": "resolved",
+              "members": [
+                {
+                  "raw": "0:3000770:99999999:2:2:2:0:200",
+                  "frame": 0,
+                  "effectId": 3000770,
+                  "scalePercent": 100,
+                  "groupFields": [
+                    "99999999",
+                    "2",
+                    "2",
+                    "2",
+                    "0",
+                    "200"
+                  ],
+                  "transform": [],
+                  "originalFile": "wm_1029_cure5_back.bmb",
+                  "asset": {
+                    "file": "assets/battle_effect/wm_1029_cure5_back.efkefc",
+                    "exists": true,
+                    "sha256": "219c6eac56458a3644731271ea36406a765d6afb820a88e59aeee501c803da66",
+                    "resources": [
+                      {
+                        "reference": "../effect_resource/white.png",
+                        "type": 1,
+                        "flags": 1,
+                        "file": "assets/effect_resource/white.png",
+                        "exists": true,
+                        "sha256": "2847d45f8fecca51d8a4f9355c75b25f7e15564167647fcb624ea5c98c02307d"
+                      },
+                      {
+                        "reference": "../effect_resource/glow_014.png",
+                        "type": 1,
+                        "flags": 1,
+                        "file": "assets/effect_resource/glow_014.png",
+                        "exists": true,
+                        "sha256": "de6c2266cd31daec2f78e634d972712e0223450e0e41d2e19b2a7fd9d2c53182"
+                      },
+                      {
+                        "reference": "../effect_resource/aura_011.png",
+                        "type": 1,
+                        "flags": 1,
+                        "file": "assets/effect_resource/aura_011.png",
+                        "exists": true,
+                        "sha256": "8ef8e676cb1c02f907f08508b2b17cc6371fbd84626921da18fd2a111ce7c2d6"
+                      },
+                      {
+                        "reference": "../effect_resource/model_board_wall_1pl.efkmodel",
+                        "type": 3,
+                        "flags": 0,
+                        "file": "assets/effect_resource/model_board_wall_1pl.efkmodel",
+                        "exists": true,
+                        "sha256": "f8516bf6566c7d2de8e3bb9b60576b25d72dd8e8f76db553cc43f0991d9eedf3"
+                      },
+                      {
+                        "reference": "../effect_resource/model_aura_024.efkmodel",
+                        "type": 3,
+                        "flags": 0,
+                        "file": "assets/effect_resource/model_aura_024.efkmodel",
+                        "exists": true,
+                        "sha256": "2b70d932ac1bab80700ab95a2a7dd637d222445fea048aff63104a6924f21599"
+                      },
+                      {
+                        "reference": "../effect_resource/model_glow_001.efkmodel",
+                        "type": 3,
+                        "flags": 0,
+                        "file": "assets/effect_resource/model_glow_001.efkmodel",
+                        "exists": true,
+                        "sha256": "d6ddee6fedb5c5897f0370ac86d48a35cffb4c3f2e4512b720a9a9ad33dbe586"
+                      }
+                    ]
+                  },
+                  "status": "available-unreviewed"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "missingFiles": [
+        "assets/battle_effect/wm_1029_cure5_front.efkefc"
+      ],
+      "allEffectMembersAvailable": false,
+      "recipe": {
+        "id": "curaja",
+        "ffbeId": 10290,
+        "name": "Curaja",
+        "rarity": 5,
+        "level": 77,
+        "type": "MAGIC",
+        "mpCost": 30,
+        "scope": "party",
+        "damageMultiplier": 2,
+        "hitCount": 1,
+        "attackFrames": [
+          120
+        ],
+        "moveType": "stationary",
+        "motion": "magic_atk",
+        "desc": "Restore 2500 (+18x, Heal) HP to all allies",
+        "execution": "legacy"
+      },
+      "runtime": {
+        "id": "curaja",
+        "ffbeId": 10290,
+        "name": "Curaja",
+        "rarity": 5,
+        "level": 77,
+        "type": "MAGIC",
+        "mpCost": 30,
+        "scope": "party",
+        "damageMultiplier": 2,
+        "hitCount": 1,
+        "attackFrames": [
+          120
+        ],
+        "moveType": "stationary",
+        "motion": "magic_atk",
+        "desc": "Restore 2500 (+18x, Heal) HP to all allies"
+      },
+      "recipeRuntimeDifferences": [],
+      "body": {
+        "runtimeMotion": "magic_atk",
+        "availableInRawTracks": true,
+        "prepared": true,
+        "frameCount": 4,
+        "durationMs": 266.68
+      },
+      "mechanics": "Healing process 2 with base 2500 and modifier 1800; group target.",
+      "blockers": [
+        "Missing front layer; back layer alone is incomplete.",
+        "Front/back party-layer composition and healing event at F120.",
+        "Recipe magic_atk is an explicit runtime choice; the magic row has no motionType/moveType columns.",
+        "Runtime uses simplified healing rather than the source formula."
+      ]
+    },
+    {
+      "character": "aerith",
+      "spriteUnitId": "207000405",
+      "seriesId": 207000405,
+      "id": "banishga",
+      "name": "Banishga",
+      "kind": "MAGIC",
+      "sourceId": 10170,
+      "learned": [
+        {
+          "rarity": 5,
+          "level": 36,
+          "nvLevel": 0,
+          "unlockType": 0,
+          "braveAbility": 0
+        }
+      ],
+      "source": {
+        "cost": 30,
+        "moveType": null,
+        "motionType": null,
+        "target": "1",
+        "targetRange": "2",
+        "attackFrames": "42:8:2:2-62:8:2:2-82:8:2:2-102:8:2:2-122:8:2:2-142:8:2:2-162:8:2:2-182:44:2:2",
+        "processId": "103",
+        "processParam": "100,99999,2000",
+        "effectFrames": "76:99999999:1:4:0&40:5041363:2:2:0&40:5041362:1:2:0&40:5041361:2:1:0&40:5041360:1:1:0"
+      },
+      "hits": [
+        {
+          "frame": 42,
+          "milliseconds": 700,
+          "weightPercent": 8,
+          "raw": "42:8:2:2"
+        },
+        {
+          "frame": 62,
+          "milliseconds": 1033.333,
+          "weightPercent": 8,
+          "raw": "62:8:2:2"
+        },
+        {
+          "frame": 82,
+          "milliseconds": 1366.667,
+          "weightPercent": 8,
+          "raw": "82:8:2:2"
+        },
+        {
+          "frame": 102,
+          "milliseconds": 1700,
+          "weightPercent": 8,
+          "raw": "102:8:2:2"
+        },
+        {
+          "frame": 122,
+          "milliseconds": 2033.333,
+          "weightPercent": 8,
+          "raw": "122:8:2:2"
+        },
+        {
+          "frame": 142,
+          "milliseconds": 2366.667,
+          "weightPercent": 8,
+          "raw": "142:8:2:2"
+        },
+        {
+          "frame": 162,
+          "milliseconds": 2700,
+          "weightPercent": 8,
+          "raw": "162:8:2:2"
+        },
+        {
+          "frame": 182,
+          "milliseconds": 3033.333,
+          "weightPercent": 44,
+          "raw": "182:44:2:2"
+        }
+      ],
+      "effects": [
+        {
+          "branchIndex": 0,
+          "conditional": false,
+          "groups": [
+            {
+              "raw": "76:99999999:1:4:0",
+              "startFrame": 76,
+              "groupId": 99999999,
+              "name": "noeffect_nosound",
+              "layer": "front",
+              "anchor": "screen",
+              "flags": [
+                "0"
+              ],
+              "soundsRaw": null,
+              "extraRaw": null,
+              "status": "unresolved-group",
+              "members": []
+            },
+            {
+              "raw": "40:5041363:2:2:0",
+              "startFrame": 40,
+              "groupId": 5041363,
+              "name": "Lvup_banish2_RR",
+              "layer": "back",
+              "anchor": "target-group",
+              "flags": [
+                "0"
+              ],
+              "soundsRaw": null,
+              "extraRaw": null,
+              "status": "resolved",
+              "members": [
+                {
+                  "raw": "0:3000081:99999999:1:2:2:0:200",
+                  "frame": 0,
+                  "effectId": 3000081,
+                  "scalePercent": 100,
+                  "groupFields": [
+                    "99999999",
+                    "1",
+                    "2",
+                    "2",
+                    "0",
+                    "200"
+                  ],
+                  "transform": [],
+                  "originalFile": "wm_1017_banish2_back.bmb",
+                  "asset": {
+                    "file": "assets/battle_effect/wm_1017_banish2_back.efkefc",
+                    "exists": false,
+                    "resources": []
+                  },
+                  "status": "missing-effect-file"
+                }
+              ]
+            },
+            {
+              "raw": "40:5041362:1:2:0",
+              "startFrame": 40,
+              "groupId": 5041362,
+              "name": "Lvup_banish2_RF",
+              "layer": "front",
+              "anchor": "target-group",
+              "flags": [
+                "0"
+              ],
+              "soundsRaw": "0:54:1",
+              "extraRaw": null,
+              "status": "resolved",
+              "members": [
+                {
+                  "raw": "0:3000080:99999999:1:2:2:0:200",
+                  "frame": 0,
+                  "effectId": 3000080,
+                  "scalePercent": 100,
+                  "groupFields": [
+                    "99999999",
+                    "1",
+                    "2",
+                    "2",
+                    "0",
+                    "200"
+                  ],
+                  "transform": [],
+                  "originalFile": "wm_1017_banish2_front.bmb",
+                  "asset": {
+                    "file": "assets/battle_effect/wm_1017_banish2_front.efkefc",
+                    "exists": false,
+                    "resources": []
+                  },
+                  "status": "missing-effect-file"
+                }
+              ]
+            },
+            {
+              "raw": "40:5041361:2:1:0",
+              "startFrame": 40,
+              "groupId": 5041361,
+              "name": "Lvup_banish1_R",
+              "layer": "back",
+              "anchor": "target",
+              "flags": [
+                "0"
+              ],
+              "soundsRaw": "100:54:1,120:54:1,140:54:1",
+              "extraRaw": null,
+              "status": "resolved",
+              "members": [
+                {
+                  "raw": "20:3000071:99999999:1:2:2:0:0",
+                  "frame": 20,
+                  "effectId": 3000071,
+                  "scalePercent": 100,
+                  "groupFields": [
+                    "99999999",
+                    "1",
+                    "2",
+                    "2",
+                    "0",
+                    "0"
+                  ],
+                  "transform": [],
+                  "originalFile": "wm_1006_banish_back.bmb",
+                  "asset": {
+                    "file": "assets/battle_effect/wm_1006_banish_back.efkefc",
+                    "exists": false,
+                    "resources": []
+                  },
+                  "status": "missing-effect-file"
+                },
+                {
+                  "raw": "40:3000071:99999999:1:2:2:0:0",
+                  "frame": 40,
+                  "effectId": 3000071,
+                  "scalePercent": 100,
+                  "groupFields": [
+                    "99999999",
+                    "1",
+                    "2",
+                    "2",
+                    "0",
+                    "0"
+                  ],
+                  "transform": [],
+                  "originalFile": "wm_1006_banish_back.bmb",
+                  "asset": {
+                    "file": "assets/battle_effect/wm_1006_banish_back.efkefc",
+                    "exists": false,
+                    "resources": []
+                  },
+                  "status": "missing-effect-file"
+                },
+                {
+                  "raw": "60:3000071:99999999:1:2:2:0:0",
+                  "frame": 60,
+                  "effectId": 3000071,
+                  "scalePercent": 100,
+                  "groupFields": [
+                    "99999999",
+                    "1",
+                    "2",
+                    "2",
+                    "0",
+                    "0"
+                  ],
+                  "transform": [],
+                  "originalFile": "wm_1006_banish_back.bmb",
+                  "asset": {
+                    "file": "assets/battle_effect/wm_1006_banish_back.efkefc",
+                    "exists": false,
+                    "resources": []
+                  },
+                  "status": "missing-effect-file"
+                },
+                {
+                  "raw": "80:3000071:99999999:1:2:2:0:0",
+                  "frame": 80,
+                  "effectId": 3000071,
+                  "scalePercent": 100,
+                  "groupFields": [
+                    "99999999",
+                    "1",
+                    "2",
+                    "2",
+                    "0",
+                    "0"
+                  ],
+                  "transform": [],
+                  "originalFile": "wm_1006_banish_back.bmb",
+                  "asset": {
+                    "file": "assets/battle_effect/wm_1006_banish_back.efkefc",
+                    "exists": false,
+                    "resources": []
+                  },
+                  "status": "missing-effect-file"
+                },
+                {
+                  "raw": "100:3000071:99999999:1:2:2:0:0",
+                  "frame": 100,
+                  "effectId": 3000071,
+                  "scalePercent": 100,
+                  "groupFields": [
+                    "99999999",
+                    "1",
+                    "2",
+                    "2",
+                    "0",
+                    "0"
+                  ],
+                  "transform": [],
+                  "originalFile": "wm_1006_banish_back.bmb",
+                  "asset": {
+                    "file": "assets/battle_effect/wm_1006_banish_back.efkefc",
+                    "exists": false,
+                    "resources": []
+                  },
+                  "status": "missing-effect-file"
+                },
+                {
+                  "raw": "120:3000071:99999999:1:2:2:0:0",
+                  "frame": 120,
+                  "effectId": 3000071,
+                  "scalePercent": 100,
+                  "groupFields": [
+                    "99999999",
+                    "1",
+                    "2",
+                    "2",
+                    "0",
+                    "0"
+                  ],
+                  "transform": [],
+                  "originalFile": "wm_1006_banish_back.bmb",
+                  "asset": {
+                    "file": "assets/battle_effect/wm_1006_banish_back.efkefc",
+                    "exists": false,
+                    "resources": []
+                  },
+                  "status": "missing-effect-file"
+                },
+                {
+                  "raw": "140:3000071:99999999:1:2:2:0:0",
+                  "frame": 140,
+                  "effectId": 3000071,
+                  "scalePercent": 100,
+                  "groupFields": [
+                    "99999999",
+                    "1",
+                    "2",
+                    "2",
+                    "0",
+                    "0"
+                  ],
+                  "transform": [],
+                  "originalFile": "wm_1006_banish_back.bmb",
+                  "asset": {
+                    "file": "assets/battle_effect/wm_1006_banish_back.efkefc",
+                    "exists": false,
+                    "resources": []
+                  },
+                  "status": "missing-effect-file"
+                }
+              ]
+            },
+            {
+              "raw": "40:5041360:1:1:0",
+              "startFrame": 40,
+              "groupId": 5041360,
+              "name": "Lvup_banish1_F",
+              "layer": "front",
+              "anchor": "target",
+              "flags": [
+                "0"
+              ],
+              "soundsRaw": "20:54:1,40:54:1,60:54:1,80:54:1",
+              "extraRaw": null,
+              "status": "resolved",
+              "members": [
+                {
+                  "raw": "20:3000070:99999999:1:2:2:0:0",
+                  "frame": 20,
+                  "effectId": 3000070,
+                  "scalePercent": 100,
+                  "groupFields": [
+                    "99999999",
+                    "1",
+                    "2",
+                    "2",
+                    "0",
+                    "0"
+                  ],
+                  "transform": [],
+                  "originalFile": "wm_1006_banish_front.bmb",
+                  "asset": {
+                    "file": "assets/battle_effect/wm_1006_banish_front.efkefc",
+                    "exists": false,
+                    "resources": []
+                  },
+                  "status": "missing-effect-file"
+                },
+                {
+                  "raw": "40:3000070:99999999:1:2:2:0:0",
+                  "frame": 40,
+                  "effectId": 3000070,
+                  "scalePercent": 100,
+                  "groupFields": [
+                    "99999999",
+                    "1",
+                    "2",
+                    "2",
+                    "0",
+                    "0"
+                  ],
+                  "transform": [],
+                  "originalFile": "wm_1006_banish_front.bmb",
+                  "asset": {
+                    "file": "assets/battle_effect/wm_1006_banish_front.efkefc",
+                    "exists": false,
+                    "resources": []
+                  },
+                  "status": "missing-effect-file"
+                },
+                {
+                  "raw": "60:3000070:99999999:1:2:2:0:0",
+                  "frame": 60,
+                  "effectId": 3000070,
+                  "scalePercent": 100,
+                  "groupFields": [
+                    "99999999",
+                    "1",
+                    "2",
+                    "2",
+                    "0",
+                    "0"
+                  ],
+                  "transform": [],
+                  "originalFile": "wm_1006_banish_front.bmb",
+                  "asset": {
+                    "file": "assets/battle_effect/wm_1006_banish_front.efkefc",
+                    "exists": false,
+                    "resources": []
+                  },
+                  "status": "missing-effect-file"
+                },
+                {
+                  "raw": "80:3000070:99999999:1:2:2:0:0",
+                  "frame": 80,
+                  "effectId": 3000070,
+                  "scalePercent": 100,
+                  "groupFields": [
+                    "99999999",
+                    "1",
+                    "2",
+                    "2",
+                    "0",
+                    "0"
+                  ],
+                  "transform": [],
+                  "originalFile": "wm_1006_banish_front.bmb",
+                  "asset": {
+                    "file": "assets/battle_effect/wm_1006_banish_front.efkefc",
+                    "exists": false,
+                    "resources": []
+                  },
+                  "status": "missing-effect-file"
+                },
+                {
+                  "raw": "100:3000070:99999999:1:2:2:0:0",
+                  "frame": 100,
+                  "effectId": 3000070,
+                  "scalePercent": 100,
+                  "groupFields": [
+                    "99999999",
+                    "1",
+                    "2",
+                    "2",
+                    "0",
+                    "0"
+                  ],
+                  "transform": [],
+                  "originalFile": "wm_1006_banish_front.bmb",
+                  "asset": {
+                    "file": "assets/battle_effect/wm_1006_banish_front.efkefc",
+                    "exists": false,
+                    "resources": []
+                  },
+                  "status": "missing-effect-file"
+                },
+                {
+                  "raw": "120:3000070:99999999:1:2:2:0:0",
+                  "frame": 120,
+                  "effectId": 3000070,
+                  "scalePercent": 100,
+                  "groupFields": [
+                    "99999999",
+                    "1",
+                    "2",
+                    "2",
+                    "0",
+                    "0"
+                  ],
+                  "transform": [],
+                  "originalFile": "wm_1006_banish_front.bmb",
+                  "asset": {
+                    "file": "assets/battle_effect/wm_1006_banish_front.efkefc",
+                    "exists": false,
+                    "resources": []
+                  },
+                  "status": "missing-effect-file"
+                },
+                {
+                  "raw": "140:3000070:99999999:1:2:2:0:0",
+                  "frame": 140,
+                  "effectId": 3000070,
+                  "scalePercent": 100,
+                  "groupFields": [
+                    "99999999",
+                    "1",
+                    "2",
+                    "2",
+                    "0",
+                    "0"
+                  ],
+                  "transform": [],
+                  "originalFile": "wm_1006_banish_front.bmb",
+                  "asset": {
+                    "file": "assets/battle_effect/wm_1006_banish_front.efkefc",
+                    "exists": false,
+                    "resources": []
+                  },
+                  "status": "missing-effect-file"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "missingFiles": [
+        "assets/battle_effect/wm_1017_banish2_back.efkefc",
+        "assets/battle_effect/wm_1017_banish2_front.efkefc",
+        "assets/battle_effect/wm_1006_banish_back.efkefc",
+        "assets/battle_effect/wm_1006_banish_front.efkefc"
+      ],
+      "allEffectMembersAvailable": false,
+      "recipe": {
+        "id": "banishga",
+        "ffbeId": 10170,
+        "name": "Banishga",
+        "rarity": 5,
+        "level": 36,
+        "type": "MAGIC",
+        "mpCost": 30,
+        "scope": "all_enemies",
+        "damageMultiplier": 3,
+        "hitCount": 8,
+        "attackFrames": [
+          42,
+          62,
+          82,
+          102,
+          122,
+          142,
+          162,
+          182
+        ],
+        "moveType": "stationary",
+        "motion": "magic_atk",
+        "desc": "Magic light damage (20x, SPR) to all enemies",
+        "execution": "legacy"
+      },
+      "runtime": {
+        "id": "banishga",
+        "ffbeId": 10170,
+        "name": "Banishga",
+        "rarity": 5,
+        "level": 36,
+        "type": "MAGIC",
+        "mpCost": 30,
+        "scope": "all_enemies",
+        "damageMultiplier": 3,
+        "hitCount": 8,
+        "attackFrames": [
+          42,
+          62,
+          82,
+          102,
+          122,
+          142,
+          162,
+          182
+        ],
+        "moveType": "stationary",
+        "motion": "magic_atk",
+        "desc": "Magic light damage (20x, SPR) to all enemies"
+      },
+      "recipeRuntimeDifferences": [],
+      "body": {
+        "runtimeMotion": "magic_atk",
+        "availableInRawTracks": true,
+        "prepared": true,
+        "frameCount": 4,
+        "durationMs": 266.68
+      },
+      "mechanics": "Source process 103: parameters 100,99999,2000. Eight hits, weights 8% x 7 then 44%.",
+      "blockers": [
+        "Four unique required effect files are missing (16 scheduled member instances).",
+        "Mixed group/per-target front/back layers, repeated effects and an eight-hit weighted clock.",
+        "SPR-conversion/light mechanics are not represented by the runtime damage formula.",
+        "Group 99999999 is named noeffect_nosound; treat it as a candidate intentional no-op, not automatically as a missing visual.",
+        "Secondary JP snapshot disagrees with SQLite on cost, hit count/timing and modifier; do not merge versions."
+      ]
+    },
+    {
+      "character": "barret",
+      "spriteUnitId": "207000205",
+      "seriesId": 207000204,
+      "id": "big_shot",
+      "name": "Big Shot",
+      "kind": "ABILITY",
+      "sourceId": 227870,
+      "learned": [
+        {
+          "rarity": 4,
+          "level": 1,
+          "nvLevel": 0,
+          "unlockType": 0,
+          "braveAbility": 0
+        }
+      ],
+      "source": {
+        "cost": 16,
+        "moveType": 4,
+        "motionType": 8,
+        "target": "1",
+        "targetRange": "1",
+        "attackFrames": "130:100:2:2",
+        "processId": "1",
+        "processParam": "0,0,0,0,0,0,250,0",
+        "effectFrames": "88:5027690:1:1:0"
+      },
+      "hits": [
+        {
+          "frame": 130,
+          "milliseconds": 2166.667,
+          "weightPercent": 100,
+          "raw": "130:100:2:2"
+        }
+      ],
+      "effects": [
+        {
+          "branchIndex": 0,
+          "conditional": false,
+          "groups": [
+            {
+              "raw": "88:5027690:1:1:0",
+              "startFrame": 88,
+              "groupId": 5027690,
+              "name": "hardshotFF7",
+              "layer": "front",
+              "anchor": "target",
+              "flags": [
+                "0"
+              ],
+              "soundsRaw": "30:98:1,30:8:1",
+              "extraRaw": null,
+              "status": "resolved",
+              "members": [
+                {
+                  "raw": "0:5000480:99999999:1:2:2:0:0",
+                  "frame": 0,
+                  "effectId": 5000480,
+                  "scalePercent": 100,
+                  "groupFields": [
+                    "99999999",
+                    "1",
+                    "2",
+                    "2",
+                    "0",
+                    "0"
+                  ],
+                  "transform": [],
+                  "originalFile": "sp_20108_hardshot.bmb",
+                  "asset": {
+                    "file": "assets/battle_effect/sp_20108_hardshot.efkefc",
+                    "exists": false,
+                    "resources": []
+                  },
+                  "status": "missing-effect-file"
+                },
+                {
+                  "raw": "40:5000545:99999999:1:2:2:0:0",
+                  "frame": 40,
+                  "effectId": 5000545,
+                  "scalePercent": 300,
+                  "groupFields": [
+                    "99999999",
+                    "1",
+                    "2",
+                    "2",
+                    "0",
+                    "0"
+                  ],
+                  "transform": [],
+                  "originalFile": "eff_explosion_normal.bmb",
+                  "asset": {
+                    "file": "assets/battle_effect/eff_explosion_normal.efkefc",
+                    "exists": true,
+                    "sha256": "ee97f8f06bdbe48511e18429fbbe1272eb691112598b7520e5f353a77f9c8d8a",
+                    "resources": [
+                      {
+                        "reference": "../effect_resource/glow_008.png",
+                        "type": 1,
+                        "flags": 1,
+                        "file": "assets/effect_resource/glow_008.png",
+                        "exists": true,
+                        "sha256": "3935d302e450a4dd011dc519ab38ceed7becb65ffbf41bf447ea9b0d640d8ed4"
+                      },
+                      {
+                        "reference": "../effect_resource/aura_002.png",
+                        "type": 1,
+                        "flags": 1,
+                        "file": "assets/effect_resource/aura_002.png",
+                        "exists": true,
+                        "sha256": "1358eaa9b9d131013a5b8c158f9304afcbe03a594eabb6d48f0776af16889b1f"
+                      },
+                      {
+                        "reference": "../effect_resource/glow_001.png",
+                        "type": 1,
+                        "flags": 1,
+                        "file": "assets/effect_resource/glow_001.png",
+                        "exists": true,
+                        "sha256": "168ce30016fe51249f1a27ff74b523d7c38a827425fb131e60a4e8e800bbe460"
+                      },
+                      {
+                        "reference": "../effect_resource/model_glow_001.efkmodel",
+                        "type": 3,
+                        "flags": 0,
+                        "file": "assets/effect_resource/model_glow_001.efkmodel",
+                        "exists": true,
+                        "sha256": "d6ddee6fedb5c5897f0370ac86d48a35cffb4c3f2e4512b720a9a9ad33dbe586"
+                      },
+                      {
+                        "reference": "../effect_resource/model_glow_004.efkmodel",
+                        "type": 3,
+                        "flags": 0,
+                        "file": "assets/effect_resource/model_glow_004.efkmodel",
+                        "exists": true,
+                        "sha256": "0bf25291980957226978ba91c02ce7d4bdc5a5b1b045024c8de9f6e5588050ca"
+                      }
+                    ]
+                  },
+                  "status": "available-unreviewed"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "missingFiles": [
+        "assets/battle_effect/sp_20108_hardshot.efkefc"
+      ],
+      "allEffectMembersAvailable": false,
+      "recipe": {
+        "id": "big_shot",
+        "ffbeId": 227870,
+        "name": "Big Shot",
+        "rarity": 4,
+        "level": 1,
+        "type": "ABILITY",
+        "mpCost": 16,
+        "scope": "single_enemy",
+        "damageMultiplier": 2.5,
+        "hitCount": 1,
+        "attackFrames": [
+          130
+        ],
+        "moveType": "stationary",
+        "motion": "atk",
+        "desc": "Physical damage (2.5x, ATK) to one enemy",
+        "execution": "legacy"
+      },
+      "runtime": {
+        "id": "big_shot",
+        "ffbeId": 227870,
+        "name": "Big Shot",
+        "rarity": 4,
+        "level": 1,
+        "type": "ABILITY",
+        "mpCost": 16,
+        "scope": "single_enemy",
+        "damageMultiplier": 2.5,
+        "hitCount": 1,
+        "attackFrames": [
+          130
+        ],
+        "moveType": "stationary",
+        "motion": "atk",
+        "desc": "Physical damage (2.5x, ATK) to one enemy"
+      },
+      "recipeRuntimeDifferences": [],
+      "body": {
+        "runtimeMotion": "atk",
+        "availableInRawTracks": true,
+        "prepared": true,
+        "frameCount": 28,
+        "durationMs": 2133.32
+      },
+      "mechanics": "250% physical damage to one enemy, hit at F130.",
+      "blockers": [
+        "Missing hard-shot effect; the available explosion is only its second member.",
+        "Source motionType 8 is unmapped by the current pipeline; legacy extraction maps every non-2 ability motion to atk.",
+        "Stationary timeline: group at F88, explosion member at F128, damage at F130; source sound offsets remain unreviewed."
+      ]
+    },
+    {
+      "character": "barret",
+      "spriteUnitId": "207000205",
+      "seriesId": 207000204,
+      "id": "grenade_bomb",
+      "name": "Grenade Bomb",
+      "kind": "ABILITY",
+      "sourceId": 227872,
+      "learned": [
+        {
+          "rarity": 4,
+          "level": 60,
+          "nvLevel": 0,
+          "unlockType": 0,
+          "braveAbility": 0
+        }
+      ],
+      "source": {
+        "cost": 36,
+        "moveType": 4,
+        "motionType": 8,
+        "target": "1@1",
+        "targetRange": "2@2",
+        "attackFrames": "150:100:2:2",
+        "processId": "1@24",
+        "processParam": "0,0,0,0,0,0,180,0@0,-35,0,0,3,1",
+        "effectFrames": "88:5027710:1:2:0&148:5000350:1:1:0"
+      },
+      "hits": [
+        {
+          "frame": 150,
+          "milliseconds": 2500,
+          "weightPercent": 100,
+          "raw": "150:100:2:2"
+        }
+      ],
+      "effects": [
+        {
+          "branchIndex": 0,
+          "conditional": false,
+          "groups": [
+            {
+              "raw": "88:5027710:1:2:0",
+              "startFrame": 88,
+              "groupId": 5027710,
+              "name": "grenedbomb1",
+              "layer": "front",
+              "anchor": "target-group",
+              "flags": [
+                "0"
+              ],
+              "soundsRaw": "1:31:1",
+              "extraRaw": null,
+              "status": "resolved",
+              "members": [
+                {
+                  "raw": "0:5021840:99999999:2:2:2:0:150",
+                  "frame": 0,
+                  "effectId": 5021840,
+                  "scalePercent": 100,
+                  "groupFields": [
+                    "99999999",
+                    "2",
+                    "2",
+                    "2",
+                    "0",
+                    "150"
+                  ],
+                  "transform": [],
+                  "originalFile": "eff_convergence_explosion_orange.bmb",
+                  "asset": {
+                    "file": "assets/battle_effect/eff_convergence_explosion_orange.efkefc",
+                    "exists": false,
+                    "resources": []
+                  },
+                  "status": "missing-effect-file"
+                }
+              ]
+            },
+            {
+              "raw": "148:5000350:1:1:0",
+              "startFrame": 148,
+              "groupId": 5000350,
+              "name": "mentalbreak1",
+              "layer": "front",
+              "anchor": "target",
+              "flags": [
+                "0"
+              ],
+              "soundsRaw": "1:58:1",
+              "extraRaw": null,
+              "status": "resolved",
+              "members": [
+                {
+                  "raw": "1:5000320:99999999:1:2:2:0:40",
+                  "frame": 1,
+                  "effectId": 5000320,
+                  "scalePercent": 100,
+                  "groupFields": [
+                    "99999999",
+                    "1",
+                    "2",
+                    "2",
+                    "0",
+                    "40"
+                  ],
+                  "transform": [],
+                  "originalFile": "sp_20093_mentalbreak.bmb",
+                  "asset": {
+                    "file": "assets/battle_effect/sp_20093_mentalbreak.efkefc",
+                    "exists": true,
+                    "sha256": "ac3dfaaa4115343100d07fc997d52618bcd24c69b8de6527927048aa6abfec89",
+                    "resources": [
+                      {
+                        "reference": "../effect_resource/lightburst_006.png",
+                        "type": 1,
+                        "flags": 1,
+                        "file": "assets/effect_resource/lightburst_006.png",
+                        "exists": true,
+                        "sha256": "1c0ff2586712f3d3e0b439d12965fd0591e8c2fe322b0e44fb00e28556b59eac"
+                      },
+                      {
+                        "reference": "../effect_resource/lightburst_006_tcs2efb67f.png",
+                        "type": 1,
+                        "flags": 1,
+                        "file": "assets/effect_resource/lightburst_006_tcs2efb67f.png",
+                        "exists": true,
+                        "sha256": "b95ab2ac113c6b745f5d6e10fb201ea3e751620d18cdbaeebe117f79b17e5bc1"
+                      },
+                      {
+                        "reference": "../effect_resource/glow_001.png",
+                        "type": 1,
+                        "flags": 1,
+                        "file": "assets/effect_resource/glow_001.png",
+                        "exists": true,
+                        "sha256": "168ce30016fe51249f1a27ff74b523d7c38a827425fb131e60a4e8e800bbe460"
+                      },
+                      {
+                        "reference": "../effect_resource/glowring_011.png",
+                        "type": 1,
+                        "flags": 1,
+                        "file": "assets/effect_resource/glowring_011.png",
+                        "exists": true,
+                        "sha256": "caec0ef0011589efb4c168f5fee1eadfd1062deef66a6a0c9cf82d185fffc591"
+                      },
+                      {
+                        "reference": "../effect_resource/deffuse_aura_008.png",
+                        "type": 1,
+                        "flags": 1,
+                        "file": "assets/effect_resource/deffuse_aura_008.png",
+                        "exists": true,
+                        "sha256": "6fd2ecb14d891acc1a3d3232249afd412c0ac4690c59073d4fae06d925179305"
+                      },
+                      {
+                        "reference": "../effect_resource/glow_003.png",
+                        "type": 1,
+                        "flags": 1,
+                        "file": "assets/effect_resource/glow_003.png",
+                        "exists": true,
+                        "sha256": "5bca8e598561bb3bd34926b662c5c84215d3c20ed7900570385334b789291e20"
+                      },
+                      {
+                        "reference": "../effect_resource/hex_001.png",
+                        "type": 1,
+                        "flags": 1,
+                        "file": "assets/effect_resource/hex_001.png",
+                        "exists": true,
+                        "sha256": "0a3e133fd677996b0d44a1712574827b003b8016c756be6d75518726d2b76e42"
+                      },
+                      {
+                        "reference": "../effect_resource/pentagon_001.png",
+                        "type": 1,
+                        "flags": 1,
+                        "file": "assets/effect_resource/pentagon_001.png",
+                        "exists": true,
+                        "sha256": "65c4375bd858f22bdf3cbd4b5804c9a1086e48cfab158e8c01742b91eca41dc2"
+                      },
+                      {
+                        "reference": "../effect_resource/model_aura_008.efkmodel",
+                        "type": 3,
+                        "flags": 0,
+                        "file": "assets/effect_resource/model_aura_008.efkmodel",
+                        "exists": true,
+                        "sha256": "0e76786548b3b75a101661768fec09b0482de26d17f15d57548b527b364cc458"
+                      }
+                    ]
+                  },
+                  "status": "available-unreviewed"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "missingFiles": [
+        "assets/battle_effect/eff_convergence_explosion_orange.efkefc"
+      ],
+      "allEffectMembersAvailable": false,
+      "recipe": {
+        "id": "grenade_bomb",
+        "ffbeId": 227872,
+        "name": "Grenade Bomb",
+        "rarity": 4,
+        "level": 60,
+        "type": "ABILITY",
+        "mpCost": 36,
+        "scope": "all_enemies",
+        "damageMultiplier": 1.8,
+        "hitCount": 1,
+        "attackFrames": [
+          150
+        ],
+        "moveType": "stationary",
+        "motion": "atk",
+        "desc": "Physical damage (1.8x, ATK) to all enemies",
+        "execution": "legacy"
+      },
+      "runtime": {
+        "id": "grenade_bomb",
+        "ffbeId": 227872,
+        "name": "Grenade Bomb",
+        "rarity": 4,
+        "level": 60,
+        "type": "ABILITY",
+        "mpCost": 36,
+        "scope": "all_enemies",
+        "damageMultiplier": 1.8,
+        "hitCount": 1,
+        "attackFrames": [
+          150
+        ],
+        "moveType": "stationary",
+        "motion": "atk",
+        "desc": "Physical damage (1.8x, ATK) to all enemies"
+      },
+      "recipeRuntimeDifferences": [],
+      "body": {
+        "runtimeMotion": "atk",
+        "availableInRawTracks": true,
+        "prepared": true,
+        "frameCount": 28,
+        "durationMs": 2133.32
+      },
+      "mechanics": "180% physical damage to all enemies plus process 24: -35 DEF for 3 turns (secondary JP decoding agrees).",
+      "blockers": [
+        "Missing convergence/explosion effect; the available mental-break effect is incomplete on its own.",
+        "Source motionType 8 needs explicit mapping.",
+        "Group-target and per-target composite placement; the second visual starts at F148 + F1 = F149.",
+        "Runtime has no DEF-debuff state/duration or source damage/debuff event dispatcher."
+      ]
+    },
+    {
+      "character": "barret",
+      "spriteUnitId": "207000205",
+      "seriesId": 207000204,
+      "id": "satellite_beam",
+      "name": "Satellite Beam",
+      "kind": "ABILITY",
+      "sourceId": 227874,
+      "learned": [
+        {
+          "rarity": 6,
+          "level": 73,
+          "nvLevel": 0,
+          "unlockType": 0,
+          "braveAbility": 0
+        }
+      ],
+      "source": {
+        "cost": 45,
+        "moveType": 4,
+        "motionType": 8,
+        "target": "1",
+        "targetRange": "2",
+        "attackFrames": "125:10:2:2-135:10:2:2-145:10:2:2-155:10:2:2-165:10:2:2-175:10:2:2-185:10:2:2-195:10:2:2-205:10:2:2-215:10:2:2",
+        "processId": "1",
+        "processParam": "0,0,0,0,0,0,300,0",
+        "effectFrames": "40:5000190:1:1:0&60:5027730:1:1:0&40:5003690:2:4:0"
+      },
+      "hits": [
+        {
+          "frame": 125,
+          "milliseconds": 2083.333,
+          "weightPercent": 10,
+          "raw": "125:10:2:2"
+        },
+        {
+          "frame": 135,
+          "milliseconds": 2250,
+          "weightPercent": 10,
+          "raw": "135:10:2:2"
+        },
+        {
+          "frame": 145,
+          "milliseconds": 2416.667,
+          "weightPercent": 10,
+          "raw": "145:10:2:2"
+        },
+        {
+          "frame": 155,
+          "milliseconds": 2583.333,
+          "weightPercent": 10,
+          "raw": "155:10:2:2"
+        },
+        {
+          "frame": 165,
+          "milliseconds": 2750,
+          "weightPercent": 10,
+          "raw": "165:10:2:2"
+        },
+        {
+          "frame": 175,
+          "milliseconds": 2916.667,
+          "weightPercent": 10,
+          "raw": "175:10:2:2"
+        },
+        {
+          "frame": 185,
+          "milliseconds": 3083.333,
+          "weightPercent": 10,
+          "raw": "185:10:2:2"
+        },
+        {
+          "frame": 195,
+          "milliseconds": 3250,
+          "weightPercent": 10,
+          "raw": "195:10:2:2"
+        },
+        {
+          "frame": 205,
+          "milliseconds": 3416.667,
+          "weightPercent": 10,
+          "raw": "205:10:2:2"
+        },
+        {
+          "frame": 215,
+          "milliseconds": 3583.333,
+          "weightPercent": 10,
+          "raw": "215:10:2:2"
+        }
+      ],
+      "effects": [
+        {
+          "branchIndex": 0,
+          "conditional": false,
+          "groups": [
+            {
+              "raw": "40:5000190:1:1:0",
+              "startFrame": 40,
+              "groupId": 5000190,
+              "name": "nerau1",
+              "layer": "front",
+              "anchor": "target",
+              "flags": [
+                "0"
+              ],
+              "soundsRaw": "1:24:1",
+              "extraRaw": null,
+              "status": "resolved",
+              "members": [
+                {
+                  "raw": "1:5000140:99999999:1:2:2:0:40",
+                  "frame": 1,
+                  "effectId": 5000140,
+                  "scalePercent": 100,
+                  "groupFields": [
+                    "99999999",
+                    "1",
+                    "2",
+                    "2",
+                    "0",
+                    "40"
+                  ],
+                  "transform": [],
+                  "originalFile": "sp_20029_nerau.bmb",
+                  "asset": {
+                    "file": "assets/battle_effect/sp_20029_nerau.efkefc",
+                    "exists": true,
+                    "sha256": "3571fd84871f37309fcf467c63f7c9f6fb31aef251a68d99703bbf220ba607f1",
+                    "resources": [
+                      {
+                        "reference": "../effect_resource/eff_marker_001.png",
+                        "type": 1,
+                        "flags": 1,
+                        "file": "assets/effect_resource/eff_marker_001.png",
+                        "exists": true,
+                        "sha256": "096afdb2a76a72a29d4e2514b02f59cf78b9012ecc56b1c24f4840f3b54db9b9"
+                      },
+                      {
+                        "reference": "../effect_resource/eff_marker_003.png",
+                        "type": 1,
+                        "flags": 1,
+                        "file": "assets/effect_resource/eff_marker_003.png",
+                        "exists": true,
+                        "sha256": "639ecb007e4865e294cb195a2fa5bd6fbaf6e91ceafec8e88e33336b21f4d751"
+                      },
+                      {
+                        "reference": "../effect_resource/glow_003.png",
+                        "type": 1,
+                        "flags": 1,
+                        "file": "assets/effect_resource/glow_003.png",
+                        "exists": true,
+                        "sha256": "5bca8e598561bb3bd34926b662c5c84215d3c20ed7900570385334b789291e20"
+                      },
+                      {
+                        "reference": "../effect_resource/glowring_011.png",
+                        "type": 1,
+                        "flags": 1,
+                        "file": "assets/effect_resource/glowring_011.png",
+                        "exists": true,
+                        "sha256": "caec0ef0011589efb4c168f5fee1eadfd1062deef66a6a0c9cf82d185fffc591"
+                      },
+                      {
+                        "reference": "../effect_resource/glow_011_03.png",
+                        "type": 1,
+                        "flags": 1,
+                        "file": "assets/effect_resource/glow_011_03.png",
+                        "exists": true,
+                        "sha256": "5d46609d5ef9bbcfe5c02494d2e7abd293e3bc1b4d70bc2bae683a28d2e9cc58"
+                      },
+                      {
+                        "reference": "../effect_resource/model_glow_004.efkmodel",
+                        "type": 3,
+                        "flags": 0,
+                        "file": "assets/effect_resource/model_glow_004.efkmodel",
+                        "exists": true,
+                        "sha256": "0bf25291980957226978ba91c02ce7d4bdc5a5b1b045024c8de9f6e5588050ca"
+                      }
+                    ]
+                  },
+                  "status": "available-unreviewed"
+                }
+              ]
+            },
+            {
+              "raw": "60:5027730:1:1:0",
+              "startFrame": 60,
+              "groupId": 5027730,
+              "name": "sateraitbeam1",
+              "layer": "front",
+              "anchor": "target",
+              "flags": [
+                "0"
+              ],
+              "soundsRaw": "60:104:1",
+              "extraRaw": null,
+              "status": "resolved",
+              "members": [
+                {
+                  "raw": "0:5022081:99999999:1:2:2:150:-150",
+                  "frame": 0,
+                  "effectId": 5022081,
+                  "scalePercent": 100,
+                  "groupFields": [
+                    "99999999",
+                    "1",
+                    "2",
+                    "2",
+                    "150",
+                    "-150"
+                  ],
+                  "transform": [
+                    "0",
+                    "0",
+                    "45"
+                  ],
+                  "originalFile": "eff_large_beam_blue.bmb",
+                  "asset": {
+                    "file": "assets/battle_effect/eff_large_beam_blue.efkefc",
+                    "exists": true,
+                    "sha256": "b24a80991fa0b47f99c6f794c34b28ae1f6ec7b2880309a78c5a9077c0a74d7f",
+                    "resources": [
+                      {
+                        "reference": "../effect_resource/beam_003.png",
+                        "type": 1,
+                        "flags": 1,
+                        "file": "assets/effect_resource/beam_003.png",
+                        "exists": true,
+                        "sha256": "0f8cf7b1fd4ccf1ea3b2fb15eee9d2db0ec972d35b444ce9fe5edf430d8e0dfd"
+                      },
+                      {
+                        "reference": "../effect_resource/lapis_eff_material_008_thunder_0013_thunder6_3.png",
+                        "type": 1,
+                        "flags": 1,
+                        "file": "assets/effect_resource/lapis_eff_material_008_thunder_0013_thunder6_3.png",
+                        "exists": true,
+                        "sha256": "a8ff127e1a5aa577cead4640f5598f4575e49562c1152e0778ad2c8374479c6d"
+                      },
+                      {
+                        "reference": "../effect_resource/glowring_008.png",
+                        "type": 1,
+                        "flags": 1,
+                        "file": "assets/effect_resource/glowring_008.png",
+                        "exists": true,
+                        "sha256": "b1588161244c892e0c4c3c53f9c560c8f2a31ae8294fd85e8984842fc697af39"
+                      },
+                      {
+                        "reference": "../effect_resource/lapis_eff_material_021_ball_0000_bubble1.png",
+                        "type": 1,
+                        "flags": 1,
+                        "file": "assets/effect_resource/lapis_eff_material_021_ball_0000_bubble1.png",
+                        "exists": true,
+                        "sha256": "193a4aa4b990dbcc87dab1f89e7b225800b48fa174d84695db5332fd4161e868"
+                      },
+                      {
+                        "reference": "../effect_resource/lapis_eff_material_019_common_0008_ball1.png",
+                        "type": 1,
+                        "flags": 1,
+                        "file": "assets/effect_resource/lapis_eff_material_019_common_0008_ball1.png",
+                        "exists": true,
+                        "sha256": "bb9f9ed08d2382d00b2fdce3cbe54fe12d5e28af1e272b09043632204f6476af"
+                      },
+                      {
+                        "reference": "../effect_resource/lapis_eff_material_012_0025_stab3.png",
+                        "type": 1,
+                        "flags": 1,
+                        "file": "assets/effect_resource/lapis_eff_material_012_0025_stab3.png",
+                        "exists": true,
+                        "sha256": "6f58cfb00bd9f77cdabfdbf7d61280cfb2797c82a77877789fe093cfc5bb2303"
+                      },
+                      {
+                        "reference": "../effect_resource/tex_explosion_003.png",
+                        "type": 1,
+                        "flags": 1,
+                        "file": "assets/effect_resource/tex_explosion_003.png",
+                        "exists": true,
+                        "sha256": "b390020e43cd9288b3d69f41584a747d12f9f67d5d8294680f616c75111b74e6"
+                      },
+                      {
+                        "reference": "../effect_resource/lapis_eff_material_019_common_0020_fire25.png",
+                        "type": 1,
+                        "flags": 1,
+                        "file": "assets/effect_resource/lapis_eff_material_019_common_0020_fire25.png",
+                        "exists": true,
+                        "sha256": "0749abd3c534a2b5b8d72c68079a4d1230316d3476e27be0bb76b8bed40b1675"
+                      },
+                      {
+                        "reference": "../effect_resource/lapis_eff_material_019_common_0026_fire20.png",
+                        "type": 1,
+                        "flags": 1,
+                        "file": "assets/effect_resource/lapis_eff_material_019_common_0026_fire20.png",
+                        "exists": true,
+                        "sha256": "cb1d6a31334dd55f3c69e3247c325a32dbc04916a9764276579f836741888e60"
+                      },
+                      {
+                        "reference": "../effect_resource/glow_013.png",
+                        "type": 1,
+                        "flags": 1,
+                        "file": "assets/effect_resource/glow_013.png",
+                        "exists": true,
+                        "sha256": "3bc149e38b958d3b66575044245f715a3c982754bee907e4fc3dc2098e5f87d7"
+                      },
+                      {
+                        "reference": "../effect_resource/eff_material_33_0019_warp1.png",
+                        "type": 1,
+                        "flags": 1,
+                        "file": "assets/effect_resource/eff_material_33_0019_warp1.png",
+                        "exists": true,
+                        "sha256": "244a8acdb137ff4e5e4d115448ad1dd9093e1abb1ce4bb6fe4fc0295e5a15a96"
+                      },
+                      {
+                        "reference": "../effect_resource/model_board_wall_1pl.efkmodel",
+                        "type": 3,
+                        "flags": 0,
+                        "file": "assets/effect_resource/model_board_wall_1pl.efkmodel",
+                        "exists": true,
+                        "sha256": "f8516bf6566c7d2de8e3bb9b60576b25d72dd8e8f76db553cc43f0991d9eedf3"
+                      },
+                      {
+                        "reference": "../effect_resource/model_quad_004.efkmodel",
+                        "type": 3,
+                        "flags": 0,
+                        "file": "assets/effect_resource/model_quad_004.efkmodel",
+                        "exists": true,
+                        "sha256": "b09e114055261a4007590b0a29148f7dc2aa66c1fb073f57d6cc545d629d83df"
+                      },
+                      {
+                        "reference": "../effect_resource/model_cylinder_001.efkmodel",
+                        "type": 3,
+                        "flags": 0,
+                        "file": "assets/effect_resource/model_cylinder_001.efkmodel",
+                        "exists": true,
+                        "sha256": "5a28e7f95a7b802dd42bed0cc4af4f730414be0beb980220b8cb571f0d11762f"
+                      },
+                      {
+                        "reference": "../effect_resource/model_circle012_72pl_out_side_alpha.efkmodel",
+                        "type": 3,
+                        "flags": 0,
+                        "file": "assets/effect_resource/model_circle012_72pl_out_side_alpha.efkmodel",
+                        "exists": true,
+                        "sha256": "8b2421f9516095a30a644784dfcceb91ceefeaf396ddcbd5cc807d3b68637e3c"
+                      },
+                      {
+                        "reference": "../effect_resource/model_aura_033.efkmodel",
+                        "type": 3,
+                        "flags": 0,
+                        "file": "assets/effect_resource/model_aura_033.efkmodel",
+                        "exists": true,
+                        "sha256": "56180f23a32ed5cba92c1e04d6b5cb2ff31062abbc4c4c5465b12e495ce9165e"
+                      }
+                    ]
+                  },
+                  "status": "available-unreviewed"
+                }
+              ]
+            },
+            {
+              "raw": "40:5003690:2:4:0",
+              "startFrame": 40,
+              "groupId": 5003690,
+              "name": "fadeblack_a50_f120",
+              "layer": "back",
+              "anchor": "screen",
+              "flags": [
+                "0"
+              ],
+              "soundsRaw": null,
+              "extraRaw": null,
+              "status": "resolved",
+              "members": [
+                {
+                  "raw": "0:5006355:99999999:2:2:2:0:150",
+                  "frame": 0,
+                  "effectId": 5006355,
+                  "scalePercent": 100,
+                  "groupFields": [
+                    "99999999",
+                    "2",
+                    "2",
+                    "2",
+                    "0",
+                    "150"
+                  ],
+                  "transform": [],
+                  "originalFile": "eff_fadeblack_a50_f120.bmb",
+                  "asset": {
+                    "file": "assets/battle_effect/eff_fadeblack_a50_f120.efkefc",
+                    "exists": true,
+                    "sha256": "945bda97f69397f3ca056f00ff614b0b753f70d0d65cc987daa4117e8a2049bf",
+                    "resources": []
+                  },
+                  "status": "available-unreviewed"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "missingFiles": [],
+      "allEffectMembersAvailable": true,
+      "recipe": {
+        "id": "satellite_beam",
+        "ffbeId": 227874,
+        "name": "Satellite Beam",
+        "rarity": 6,
+        "level": 73,
+        "type": "ABILITY",
+        "mpCost": 45,
+        "scope": "all_enemies",
+        "damageMultiplier": 3,
+        "hitCount": 10,
+        "attackFrames": [
+          125,
+          135,
+          145,
+          155,
+          165,
+          175,
+          185,
+          195,
+          205,
+          215
+        ],
+        "moveType": "stationary",
+        "motion": "atk",
+        "desc": "Physical damage (3x, ATK) to all enemies",
+        "execution": "legacy"
+      },
+      "runtime": {
+        "id": "satellite_beam",
+        "ffbeId": 227874,
+        "name": "Satellite Beam",
+        "rarity": 6,
+        "level": 73,
+        "type": "ABILITY",
+        "mpCost": 45,
+        "scope": "all_enemies",
+        "damageMultiplier": 3,
+        "hitCount": 10,
+        "attackFrames": [
+          125,
+          135,
+          145,
+          155,
+          165,
+          175,
+          185,
+          195,
+          205,
+          215
+        ],
+        "moveType": "stationary",
+        "motion": "atk",
+        "desc": "Physical damage (3x, ATK) to all enemies"
+      },
+      "recipeRuntimeDifferences": [],
+      "body": {
+        "runtimeMotion": "atk",
+        "availableInRawTracks": true,
+        "prepared": true,
+        "frameCount": 28,
+        "durationMs": 2133.32
+      },
+      "priority": 2,
+      "mechanics": "300% physical damage to all enemies, ten hits with 10% weight each.",
+      "blockers": [
+        "Source motionType 8 needs explicit mapping.",
+        "Ten-hit weighted AoE clock lasting through F215.",
+        "Target marker at F41, beam at F60 with rotation 45 and raw member offsets 150/-150, screen fade at F40.",
+        "Mixed target/screen anchors and unverified original placement of a converted 3D beam."
+      ]
+    }
+  ],
+  "recommendation": {
+    "next": "blade_beam",
+    "alternative": "satellite_beam",
+    "reason": "Both Blade Beam effect files and all their direct dependencies are available. It reuses an existing source motion 1/atk, has two rather than ten damage events, and has no screen-wide effect. It still requires composite/group placement review and a multi-hit AoE executor."
+  }
+}

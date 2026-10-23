@@ -150,10 +150,49 @@ export function inspectCharacter(recipe, { assets = 'assets', dump = 'ffbe_asset
       if (!Number.isFinite(skill.damageMultiplier) || skill.damageMultiplier <= 0) issues.push('invalid-damage-multiplier');
       if (skill.execution === 'timeline-single-hit') {
         if (skill.hitCount !== 1 || skill.attackFrames?.length !== 1 || skill.scope !== 'single_enemy' || skill.moveType !== 'dash') issues.push('unsupported-timeline-execution');
-        const sourceFrames = parseTimeline(source?.raw?.attackFrames).map(f => Number(f.fields[0]));
+        const sourceFrames = parseTimeline(source?.raw?.attackFrames, /[-&,]/).map(f => Number(f.fields[0]));
         if (JSON.stringify(sourceFrames) !== JSON.stringify(skill.attackFrames)) issues.push('attack-frame-mismatch');
         if (!skill.visualEffect) issues.push('missing-reviewed-effect');
+      } else if (skill.execution === 'timeline-area') {
+        const p = skill.presentation;
+        if (source?.raw?.motionType != null && ![1, 2].includes(source.raw.motionType)
+          && (skill.motionReview?.sourceCode !== source.raw.motionType || skill.motionReview?.prepared !== skill.motion || !skill.motionReview?.reason)) issues.push('source-motion-needs-review');
+        if (skill.scope !== 'all_enemies' || skill.moveType !== 'stationary' || skill.visualEffect) issues.push('unsupported-area-presentation');
+        const sourceFrames = parseTimeline(source?.raw?.attackFrames, /[-&,]/).map(f => Number(f.fields[0]));
+        if (JSON.stringify(sourceFrames) !== JSON.stringify(skill.attackFrames) || skill.hitCount !== sourceFrames.length) issues.push('attack-frame-mismatch');
+        if (!p || !Number.isInteger(p.impactFrame) || p.impactFrame < 0 || !Number.isInteger(p.durationFrames)
+          || p.durationFrames <= p.impactFrame || !Array.isArray(p.effects) || !p.effects.length || !skill.reviewNote) issues.push('area-presentation-needs-review');
+        else {
+          const members = source?.effects.flatMap(b => b.groups.flatMap(g => g.members.map(m => ({ ...m, group: g })))) ?? [];
+          const covered = new Set();
+          for (const entry of p.effects) {
+            assertKey(entry.key);
+            const file = `tools/effects/${entry.key}.json`;
+            if (!fs.existsSync(file)) { issues.push('missing-effect-recipe'); continue; }
+            const effect = readJson(file);
+            if ((effect.artworkRotationDegrees ?? 0) !== 0 && !effect.review?.presentationAdaptation) issues.push('effect-artwork-adaptation-needs-review');
+            if (entry.fit != null && (entry.fit !== 'arena' || entry.anchor !== 'screen' || !effect.contentBounds)) issues.push('invalid-screen-fit');
+            if (!effect.review?.approved || !effect.review?.reason) issues.push('effect-needs-visual-review');
+            if (!Number.isInteger(entry.startFrame) || entry.startFrame < 0 || !['target', 'target-group', 'screen'].includes(entry.anchor)
+              || !['front', 'back'].includes(entry.layer ?? 'front')
+              || entry.startFrame + effect.frameCount > p.durationFrames) issues.push('invalid-effect-timeline');
+            const index = members.findIndex(m => m.effectId === effect.effectId && m.originalFile === effect.masterFile
+              && m.group.startFrame + m.frame === entry.startFrame && m.group.anchor === entry.anchor);
+            if (index < 0 || covered.has(index)) issues.push('effect-mapping-mismatch');
+            else {
+              covered.add(index);
+              const member = members[index];
+              if (member.status !== 'available-unreviewed') issues.push('effect-source-unavailable');
+              const rotation = member.transform.length ? member.transform.map(Number) : [0, 0, 0];
+              if ((effect.emitterScale ?? 1) !== member.scalePercent / 100
+                || JSON.stringify(effect.emitterRotation ?? [0, 0, 0]) !== JSON.stringify(rotation)
+                || member.group.layer !== (entry.layer ?? 'front')) issues.push('unsupported-effect-transform');
+            }
+          }
+          if (covered.size !== members.length || p.effects.length !== members.length) issues.push('incomplete-effect-presentation');
+        }
       } else if (skill.execution !== 'legacy') issues.push('execution-needs-review');
+      if (skill.presentation && skill.execution !== 'timeline-area') issues.push('presentation-execution-mismatch');
       if (source?.effects.some(branch => branch.conditional) && skill.execution !== 'legacy') issues.push('conditional-timeline-needs-review');
       const effectRecipe = skill.visualEffect ? `tools/effects/${skill.visualEffect.key}.json` : null;
       if (effectRecipe) {
@@ -169,7 +208,7 @@ export function inspectCharacter(recipe, { assets = 'assets', dump = 'ffbe_asset
         }
       }
       return { id: skill.id, ffbeId: skill.ffbeId, execution: skill.execution, issues,
-        visualStatus: skill.visualEffect ? 'reviewed-recipe-requires-sheet-validation' : 'no-runtime-vfx',
+        visualStatus: skill.visualEffect || skill.presentation ? 'reviewed-recipe-requires-sheet-validation' : 'no-runtime-vfx',
         sourceCost: source?.raw?.cost ?? null, gameplayCost: skill.mpCost };
     });
     const files = [path.join(dump, 'unit_animated', `unit_anime_${recipe.spriteUnitId}.png`),
