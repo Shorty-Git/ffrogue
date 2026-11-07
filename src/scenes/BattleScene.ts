@@ -206,7 +206,7 @@ export class BattleScene extends Phaser.Scene {
       const actor=this.createHeroActor(member.key,slots[i],manifest,
         {...def.battle,maxHp:Math.round(this.runContext.catalog[member.key].maxHp*member.stats.hp),
          maxMp:memberMaxMp(this.runContext.catalog[member.key],member)},def.scale);
-      actor.currentHp=member.hp;actor.currentMp=member.mp;return actor;
+      actor.currentHp=member.hp;actor.currentMp=member.mp;actor.limitGauge=member.limit??0;return actor;
     });
 
 
@@ -274,7 +274,7 @@ export class BattleScene extends Phaser.Scene {
     const left=Math.min(...points.map(p=>p.x)),top=Math.min(...points.map(p=>p.y));
     return new Phaser.Geom.Rectangle(left,top,Math.max(...points.map(p=>p.x))-left,Math.max(...points.map(p=>p.y))-top);
   });}
-  public runPartySnapshot(){return this.turnOrder.map(h=>({key:h.unitKey,hp:h.currentHp,mp:h.currentMp}));}
+  public runPartySnapshot(){return this.turnOrder.map(h=>({key:h.unitKey,hp:h.currentHp,mp:h.currentMp,limit:h.limitGauge}));}
   public isRunCommandWindow():boolean{return this.combatState==='PLAYER_TURN';}
   private finishRunEncounter(won:boolean):void{
     if(won){this.runVictoryStage='finishing';return;}

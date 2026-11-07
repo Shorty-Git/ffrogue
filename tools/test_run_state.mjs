@@ -120,3 +120,18 @@ test('obsolete stance fields are discarded from a saved battle without changing 
  store.save(run);
  assert.deepEqual(JSON.parse(storage.getItem(SAVE_KEY)),run);
 });
+test('the Limit gauge carries to the next battle only for standing heroes with a Limit Burst',()=>{
+ const lbCatalog={...catalog,cloud:{...catalog.cloud,limitBurst:read('public/assets/units/cloud/skills.json').skills.find(s=>s.type==='LIMIT')}};
+ const r=confirmParty(withCloud()),at=r.party.findIndex(m=>m.key==='cloud');
+ const shot=snapshot(r).map((s,i)=>({...s,limit:i===at?73.4:60}));
+ const next=completeBattle(r,lbCatalog,shot,true);
+ assert.equal(next.party[at].limit,73);
+ next.party.forEach((m,i)=>{if(i!==at)assert.equal(m.limit,undefined,'No Limit Burst, nothing to carry');});
+ assert.equal(validateRun(structuredClone(next),lbCatalog).party[at].limit,73);
+ const knocked=completeBattle(r,lbCatalog,shot.map((s,i)=>i===at?{...s,hp:0}:s),true);
+ assert.equal(knocked.party[at].limit,undefined,'A K.O. empties the gauge');
+ const legacy=completeBattle(r,lbCatalog,snapshot(r),true);
+ assert.equal(legacy.party[at].limit,undefined,'Snapshots without a gauge stay valid');
+ const bad=structuredClone(next);bad.party[at].limit=101;assert.throws(()=>validateRun(bad,lbCatalog));
+ bad.party[at].limit=50;assert.throws(()=>validateRun(bad,catalog),'A gauge needs a Limit Burst');
+});
