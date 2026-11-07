@@ -118,17 +118,6 @@ export class TargetDummy extends Phaser.GameObjects.Container {
     });
   }
 
-  /**
-   * Returns the world Y coordinate of the top of the monster sprite.
-   */
-  public getTopY(): number {
-    const idleMeta = this.manifest.animations['idle'];
-    if (idleMeta) {
-      const topOffset = idleMeta.pivotY * idleMeta.frameHeight * this.sprite.scaleY;
-      return this.y - Math.round(topOffset);
-    }
-    return this.y - 130;
-  }
 
   private registerAnimations(): void {
     if (!this.manifest || !this.manifest.animations) return;
@@ -485,61 +474,6 @@ export class TargetDummy extends Phaser.GameObjects.Container {
           this.scene.time.delayedCall(180, () => onComplete?.());
         });
       },
-    });
-  }
-
-  /**
-   * Resets or respawns Dire Rat to full health and returns to base slot.
-   */
-  public resetCombat(newMaxHp?: number, nameTag?: string): void {
-    if (newMaxHp) {
-      this.maxHp = newMaxHp;
-    }
-    if (nameTag) {
-      this.setNameTag(nameTag);
-    }
-    this.defeatStarted = false;
-    this.actionCursor = 0;
-    this.statusEffects = [];
-    this.currentHp = this.maxHp;
-    this.setVisible(true);
-    this.setupInteractivity();
-    this.sprite.setAlpha(1);
-    this.sprite.clearTint();
-    this.sprite.setScale(this.resourceScale);
-    this.setPosition(this.baseX, this.baseY);
-
-    if (this.scene.anims.exists(`${this.assetKey}_idle`)) {
-      const idle=this.manifest.animations.idle;this.sprite.setOrigin(idle.pivotX,idle.pivotY);
-      this.sprite.play(`${this.assetKey}_idle`);
-    }
-  }
-
-  /**
-   * Restores HP to 100%, clears the defeat state and shows a healing popup.
-   */
-  public healFull(): void {
-    this.defeatStarted = false;
-    this.statusEffects = [];
-    this.currentHp = this.maxHp;
-    // Green healing text popup
-    const healText = this.scene.add.text(this.baseX, this.baseY - 75, '+5,000 HEAL', {
-      fontFamily: 'Arial, Helvetica, sans-serif',
-      fontSize: '22px',
-      color: '#4ade80',
-      fontStyle: 'bold',
-      stroke: '#064e3b',
-      strokeThickness: 4,
-    }).setOrigin(0.5).setDepth(2500).setScale(0.7);
-
-    this.scene.tweens.add({
-      targets: healText,
-      scale: 1.1,
-      y: this.baseY - 120,
-      alpha: 0,
-      duration: 750,
-      ease: 'Cubic.easeOut',
-      onComplete: () => healText.destroy(),
     });
   }
 }
