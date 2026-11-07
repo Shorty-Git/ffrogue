@@ -64,6 +64,12 @@ Generic rules added 2026-11-07 (no per-skill exceptions):
 - Source scenes own the clock: no hit-stop pauses the caster's body during a prepared Source
   action (it drifted Omnislash's body >1 s behind its hits). Check any Limit Burst with
   `node tools/review_limit_burst_sync.mjs` (body drift per hit must stay ≤ 1 frame).
+- Screen backdrops (automatic for `placementCoordinates: ffbe-screen-api` bindings): a static,
+  uniform unit-XY Model in a screen-anchored effect whose authored width is ≥ the FFBE logical
+  width 640 (e.g. Omnislash's black dimming quad) gets `presentationCoverage` via
+  `prepare_scene_flashes.py --screen-backdrops` and is stretched over the whole canvas
+  (`host.view`); FFBE's field is smaller than ours, so source size left undimmed strips.
+  Colour/alpha curves stay source data. Accepted particle flashes keep the arena clip.
 
 ## Environment and tools
 

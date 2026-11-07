@@ -1,5 +1,19 @@
 # Skill reconstruction and export runbook
 
+## Current: automatic screen backdrops (2026-11-07)
+
+FFBE authors full-screen dimming as a uniform unit-XY Model sized to its 640-wide
+logical screen. tools/publish_scene_presentations.mjs now runs
+`prepare_scene_flashes.py --screen-backdrops` for every `ffbe-screen-api` binding:
+static (no curves, identity ControlNull ancestors), screen-anchored, uniform opaque
+texture, authored width >= 640 -> `presentationCoverage` (unit-xy-model). The
+battle host passes `view` = whole canvas for plans with such surfaces, so the
+dimming covers the visible background above/below the arena. Dry run on all five
+screen-API plans matched only Omnislash back node 3. The publisher now keeps
+placement/randomness bindings (it previously replaced the whole plan with the
+annotated file). Checks: test_scene_flashes (3), LB sync (15 hits, drift <= 1),
+Source review 19/19 applicable, screencast brightness of top/bottom strips.
+
 ## Current: first Limit Burst (Cloud, Omnislash) and visual approximation mode (2026-11-07)
 
 Acceptance bar per docs/vision.md: looks right, hits the target, impact on the enemy;

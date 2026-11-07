@@ -910,6 +910,11 @@ export class BattleScene extends Phaser.Scene {
     // Only plans with caster-unit members need the caster footprint; other hosts stay unchanged.
     const plan=(this.cache.json.get('scene_'+key+'_manifest') as PreparedSceneManifest|undefined)?.plan;
     if((plan?.members as {placement?:{rectangle?:string}}[]|undefined)?.some(member=>member.placement?.rectangle==='caster-unit'))host.casterUnit=this.casterFootprint(hero);
+    // Backdrop surfaces (dimming, uniform backgrounds) tint the whole canvas: the background shows
+    // above and below the arena and the opaque DOM HUD covers the rest. Accepted particle flashes
+    // and all other plans keep the arena clip unchanged.
+    if((plan?.effects as {nodes?:{presentationCoverage?:{primitive?:string}}[]}[]|undefined)?.some(effect=>effect.nodes?.some(node=>node.presentationCoverage?.primitive==='unit-xy-model')))
+      host.view={x:0,y:0,width:host.width,height:host.height};
     targets.forEach((target,index) => {
       const sprite = target instanceof UnitActor ? target : target.sprite, name = 'target'+index;
       host.targets[name] = {x:target.x,y:target.y};

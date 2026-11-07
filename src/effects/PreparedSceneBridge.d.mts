@@ -3,6 +3,8 @@ import type {PreparedSceneManifest} from './sceneProfile.mjs';
 export interface PreparedSceneHost {
   width: number; height: number;
   arena: {x:number;y:number;width:number;height:number};
+  /** Visible battlefield (defaults to arena): clip region and target of screen coverage surfaces. */
+  view?: {x:number;y:number;width:number;height:number};
   caster: {x:number;y:number};
   /** Caster footprint for source caster-unit rectangles (idle frame, pivot, scale). */
   casterUnit?: {frameWidth:number;frameHeight:number;pivotX:number;pivotY:number;scale:number};

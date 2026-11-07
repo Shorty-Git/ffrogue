@@ -108,7 +108,7 @@ export function createPreparedSceneBridge(scene, manifests) {
         renderer.resetState();
         renderer.setRenderTarget(null);
         gl.bindFramebuffer(gl.FRAMEBUFFER,previous.framebuffer);
-        const {host} = active, arena = host.arena;
+        const {host} = active, arena = host.view ?? host.arena;
         renderer.setViewport(0,0,phaser.width,phaser.height);
         renderer.setScissor(arena.x,host.height-arena.y-arena.height,arena.width,arena.height);
         renderer.setScissorTest(true);

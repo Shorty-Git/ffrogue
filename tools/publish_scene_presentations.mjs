@@ -33,15 +33,19 @@ for (const binding of recipe.bindings) {
     plan.randomnessReview=binding.randomnessReview;
     plan.members=plan.members.map((m,index)=>({...m,randomStreamKey:'member'+index}));
   }
-  if(binding.screenFlashPolicy!==undefined || binding.arenaSurfaces!==undefined){
+  // Generic rule for the FFBE screen API import path: full-screen backdrops fit the battlefield.
+  const screenBackdrops=binding.placementCoordinates==='ffbe-screen-api';
+  if(binding.screenFlashPolicy!==undefined || binding.arenaSurfaces!==undefined || screenBackdrops){
     if(binding.screenFlashPolicy!==undefined && binding.screenFlashPolicy!=='uniform-opaque-particle-arena')throw Error('Unsupported reviewed flash policy');
     if(binding.arenaSurfaces!==undefined && !Array.isArray(binding.arenaSurfaces))throw Error('Explicit reviewed arena surface list required');
     const python=args.includes('--python')?args[args.indexOf('--python')+1]:process.env.FFROGUE_PYTHON??'python';
     const result=spawnSync(python,['tools/prepare_scene_flashes.py','--plan',binding.plan,
       ...(binding.screenFlashPolicy?[]:['--skip-particles']),
-      ...(binding.arenaSurfaces?['--arena-surfaces',JSON.stringify(binding.arenaSurfaces)]:[])],{encoding:'utf8',maxBuffer:32*1024*1024});
+      ...(binding.arenaSurfaces?['--arena-surfaces',JSON.stringify(binding.arenaSurfaces)]:[]),
+      ...(screenBackdrops?['--screen-backdrops']:[])],{encoding:'utf8',maxBuffer:32*1024*1024});
     if(result.status!==0)throw Error('Flash preparation failed: '+result.stderr);
-    const prepared=JSON.parse(result.stdout);Object.assign(plan,prepared.plan);
+    // Only effect node annotations come back; placement/randomness bindings applied above stay.
+    const prepared=JSON.parse(result.stdout);plan.effects=prepared.plan.effects;
   }
   const resources = new Map();
   for (const effect of plan.effects) for (const [name, url] of Object.entries(effect.textures)) {
