@@ -144,6 +144,72 @@
         "scope": "all_enemies",
         "note": "Current ability_explain200300 and both historical GL/JP ability200300 entries explicitly describe all-enemy instant-KO. Current DB adds partial unmitigated fallback. Do not interpret process112 as ordinary single-target physical damage."
       }
+    },
+    {
+      "id": "cheer",
+      "ffbeId": 200450,
+      "name": "Cheer",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 20,
+      "scope": "party",
+      "damageMultiplier": 1,
+      "hitCount": 0,
+      "attackFrames": [
+        120
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Boost physical damage of all allies by 30% for 3 rounds. No HP damage.",
+      "execution": "prepared-friendly",
+      "reviewNote": "Authoring-free import 2026-11-08 (wave 4): shared Source preview profile with --approximate-unverified and original draw order; visual acceptance bar per docs/vision.md. Party ATK buff adapted to the existing physical-boost status (x1.3, 3 rounds); original stat formula not imported.",
+      "scenePresentation": "jack_cheer",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/wave4-20261108/cheer/source/skill-source.json",
+        "sha256": "87f8b633277ef34c9e3fe645e79fdd4dad5ef390247abde065e264d0a25c1169"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Stationary support cast with the magic_atk body (motion 2 / move 4)."
+        }
+      },
+      "allyTargeting": "living-allies",
+      "allyEvents": [
+        {
+          "frame": 120,
+          "effects": [
+            {
+              "kind": "physical-boost",
+              "multiplier": 1.3,
+              "turns": 3
+            }
+          ]
+        }
+      ],
+      "friendlyTargetReview": {
+        "sourceTarget": "2",
+        "sourceRange": "2",
+        "note": "Original target 2 / range 2 (process 3): party-wide stat buff. Adapted to physical-boost x1.3 for 3 rounds on all living allies."
+      }
     }
   ],
   "portraitSource": "unit_icons/unit_icon_254000603.png"

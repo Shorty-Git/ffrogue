@@ -156,10 +156,11 @@ document.querySelector('#run').onclick=function(){return run(this,async()=>{
  }
 });};
 document.querySelector('#friendly').onclick=function(){return run(this,async()=>{
- const key=scene.turnOrder.find(h=>scene.unitSkills[h.unitKey].some(s=>s.allyEvents&&s.scope==='party'))?.unitKey;
+ // The healing party contract (Chant); party buffs such as Fury Brand use physical-boost instead.
+ const key=scene.turnOrder.find(h=>scene.unitSkills[h.unitKey].some(s=>s.allyEvents&&s.scope==='party'&&s.allyEvents.some(e=>e.effects.some(x=>x.kind==='heal'))))?.unitKey;
  check(key,'This review requires an imported party support command');
  for(const mode of ['normal','capped','ko','last-ally','insufficient-hp','insufficient-mp','restart']){
-  await fresh(2);const hero=scene.turnOrder.find(h=>h.unitKey===key),skill=scene.unitSkills[key].find(s=>s.scope==='party'&&s.allyEvents);
+  await fresh(2);const hero=scene.turnOrder.find(h=>h.unitKey===key),skill=scene.unitSkills[key].find(s=>s.scope==='party'&&s.allyEvents&&s.allyEvents.some(e=>e.effects.some(x=>x.kind==='heal')));
   scene.selectHero(hero);const others=scene.turnOrder.filter(h=>h!==hero);others.forEach(h=>h.currentHp=mode==='capped'?h.maxHp-10:100);
   if(mode==='ko')others[0].currentHp=0;if(mode==='last-ally')others.forEach(h=>h.currentHp=0);
   if(mode==='insufficient-hp')hero.currentHp=skill.hpCost;if(mode==='insufficient-mp')hero.currentMp=skill.mpCost-1;

@@ -626,6 +626,138 @@
         ],
         "boundary": "Original process parameters and source markers do not execute as game balance rules"
       }
+    },
+    {
+      "id": "fury_brand",
+      "ffbeId": 229753,
+      "name": "Fury Brand",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 28,
+      "scope": "party",
+      "damageMultiplier": 1,
+      "hitCount": 0,
+      "attackFrames": [
+        90
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Boost physical damage of all allies by 30% for 3 rounds. No HP damage.",
+      "reviewNote": "Authoring-free import 2026-11-08 (wave 4): shared Source preview profile with --approximate-unverified and original draw order; visual acceptance bar per docs/vision.md. Party ATK buff adapted to the existing physical-boost status (x1.3, 3 rounds); original stat formula not imported.",
+      "scenePresentation": "aerith_fury_brand",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/wave4-20261108/furybrand/source/skill-source.json",
+        "sha256": "429fe9f02e23c0b9a485cec36c15d79b091f6b7afab84342664cc316b471c5b0"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Stationary support cast with the magic_atk body (motion 2 / move 4)."
+        }
+      },
+      "allyTargeting": "living-allies",
+      "allyEvents": [
+        {
+          "frame": 90,
+          "effects": [
+            {
+              "kind": "physical-boost",
+              "multiplier": 1.3,
+              "turns": 3
+            }
+          ]
+        }
+      ],
+      "friendlyTargetReview": {
+        "sourceTarget": "5@5",
+        "sourceRange": "2@2",
+        "note": "Original target 5@5 / range 2@2 (process 3@125): party-wide stat buff. Adapted to physical-boost x1.3 for 3 rounds on all living allies."
+      },
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 229753,
+        "database": {
+          "path": "assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 229753,
+          "name": "Fury Brand",
+          "rarity": 6,
+          "dispOrder": 4845,
+          "cost": 48,
+          "6p90IFnC": null,
+          "target": "5@5",
+          "targetRange": "2@2",
+          "oL6zdpD0": 3,
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 4,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 4,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 4,
+          "processId": "3@125",
+          "PI18xnkD": "0@0",
+          "processParam": "110,0,0,0,3,1,0@500,500",
+          "H4zD2IQ5": 0,
+          "motionType": 2,
+          "effectFrames": "40:5003680:2:4:0&60:5002771:2:2:0&100:5003110:1:1:0&100:7000800:2:4:0",
+          "attackFrames": "90:100:2:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000063,
+          "equipCondition": null,
+          "2QoE3PtB": 0,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": "10",
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Authoring-free import 2026-11-08 (wave 4): shared Source preview profile with --approximate-unverified and original draw order; visual acceptance bar per docs/vision.md. Party ATK buff adapted to the existing physical-boost status (x1.3, 3 rounds); original stat formula not imported.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography",
+          "allyTargeting"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
     }
   ]
 }

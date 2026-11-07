@@ -10,9 +10,9 @@ Last consolidated: 2026-11-07.
   expedition (2 areas, 4 encounters, Ochu and Guard Scorpion bosses) → rewards / awakening →
   result. Saves locally. Roster: Cloud, Aerith, Barret, Cloud of Darkness, Cloud AC, Delita,
   Jack (+ awakened forms up to 7★ / NV).
-- 21 Source skills (original FFBE effect data rendered in real time; authoring-free imports
-  2026-11-07/08: Cloud's Meteor Rain, Aerith's Banish and Holy, Delita's Northswain's Strike,
-  Barret's Big Shot and Ungarmax — Barret's first skills, so he joins the run pool)
+- 24 Source skills (original FFBE effect data rendered in real time; authoring-free imports
+  2026-11-07/08: Cloud's Meteor Rain, Aerith's Banish, Holy and Fury Brand, Delita's
+  Northswain's Strike and Northern Sky Apprentice, Barret's Big Shot and Ungarmax, Jack's Cheer)
   + 2 Limit Bursts
   (Cloud's Omnislash; Cloud AC's Omnislash Version 5, the first authoring-free import, 2026-11-07).
 - Battle UI (DOM `CombatHud` over Phaser): target-first (enemies clickable any time, crystal
@@ -161,8 +161,15 @@ Generic rules added 2026-11-07 (no per-skill exceptions):
 - Motion 8 (Barret's ranged commands) = stationary atk body, zero-prefix timing, from the native
   body observer (SKILL_RECONSTRUCTION_MAP). Big Shot compared with the BlueStacks original
   (charge flash, orange blast/explosion on the target) — matches.
-- Open import gate: Delita's Warring Slash needs repeated generation (repeatCount > 1) in the
-  frozen player.
+- Open import gates (roster scan 2026-11-08, tools/data/wave2-20261107/stage.json): BMB node
+  type 7 (1856-byte records, NOT a Particle variant: Particle offsets read garbage; no BMSLN
+  name in the 3957-project corpus) blocks ~25 roster skills and is the biggest next lever;
+  type 4 = EmitterSimpleParticle (592 bytes, verified on 163 CPK pairs, no decoder yet);
+  type 15 = FieldGoal (208 bytes, particle attractor). Also: Warring Slash needs repeated
+  generation in the frozen player; commands without effect timelines (Limit Braver etc.).
+- Party buffs (Fury Brand, Cheer) reuse the existing physical-boost status (x1.3, 3 rounds,
+  allyTargeting living-allies) and need a `friendlyTargetReview` with the source target/range.
+  Support skills without a game mechanic (Reraise, Speed Drink, Store, Return) stay unimported.
 - Cloud AC LB (15.2x, original LB level 1) kills most training enemies; balance is open.
 - LB gauge does not carry between battles; all Cloud forms use the 5★ Omnislash.
 - Cinzel name font: developer mildly unsure, kept for now.

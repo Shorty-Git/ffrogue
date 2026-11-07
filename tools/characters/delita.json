@@ -342,6 +342,95 @@
           "note": "Original motionType 1 / moveType 1: dash to the target and the atk body, unit attack prefix composed at offset 40."
         }
       }
+    },
+    {
+      "id": "northern_sky_apprentice",
+      "ffbeId": 226693,
+      "name": "Northern Sky Apprentice",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 30,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.8,
+      "hitCount": 8,
+      "attackFrames": [
+        70,
+        76,
+        82,
+        88,
+        94,
+        100,
+        106,
+        112
+      ],
+      "moveType": "stationary",
+      "motion": "atk",
+      "desc": "Physical damage (2.8x, ATK) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Authoring-free import 2026-11-08 (wave 4): shared Source preview profile with --approximate-unverified and original draw order; visual acceptance bar per docs/vision.md.",
+      "scenePresentation": "delita_northern_sky_apprentice",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/wave4-20261108/nsa/source/skill-source.json",
+        "sha256": "7907f881902106f6d2dbc11f779df092430579149e735be201219771c9a482e4"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 8,
+          "sourceMoveType": 4,
+          "note": "Motion 8: stationary atk body, zero-prefix timing (same rule as Barret)."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 70,
+          "weight": 0.1
+        },
+        {
+          "frame": 76,
+          "weight": 0.1
+        },
+        {
+          "frame": 82,
+          "weight": 0.1
+        },
+        {
+          "frame": 88,
+          "weight": 0.1
+        },
+        {
+          "frame": 94,
+          "weight": 0.1
+        },
+        {
+          "frame": 100,
+          "weight": 0.1
+        },
+        {
+          "frame": 106,
+          "weight": 0.1
+        },
+        {
+          "frame": 112,
+          "weight": 0.3
+        }
+      ]
     }
   ],
   "portraitSource": "unit_icons/unit_icon_253000205.png"

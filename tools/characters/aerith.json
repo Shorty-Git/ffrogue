@@ -260,6 +260,72 @@
           "note": "Magic rows carry no motionType/moveType; stationary magic_atk cast is a reviewed adaptation."
         }
       }
+    },
+    {
+      "id": "fury_brand",
+      "ffbeId": 229753,
+      "name": "Fury Brand",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 28,
+      "scope": "party",
+      "damageMultiplier": 1,
+      "hitCount": 0,
+      "attackFrames": [
+        90
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Boost physical damage of all allies by 30% for 3 rounds. No HP damage.",
+      "execution": "prepared-friendly",
+      "reviewNote": "Authoring-free import 2026-11-08 (wave 4): shared Source preview profile with --approximate-unverified and original draw order; visual acceptance bar per docs/vision.md. Party ATK buff adapted to the existing physical-boost status (x1.3, 3 rounds); original stat formula not imported.",
+      "scenePresentation": "aerith_fury_brand",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/wave4-20261108/furybrand/source/skill-source.json",
+        "sha256": "429fe9f02e23c0b9a485cec36c15d79b091f6b7afab84342664cc316b471c5b0"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Stationary support cast with the magic_atk body (motion 2 / move 4)."
+        }
+      },
+      "allyTargeting": "living-allies",
+      "allyEvents": [
+        {
+          "frame": 90,
+          "effects": [
+            {
+              "kind": "physical-boost",
+              "multiplier": 1.3,
+              "turns": 3
+            }
+          ]
+        }
+      ],
+      "friendlyTargetReview": {
+        "sourceTarget": "5@5",
+        "sourceRange": "2@2",
+        "note": "Original target 5@5 / range 2@2 (process 3@125): party-wide stat buff. Adapted to physical-boost x1.3 for 3 rounds on all living allies."
+      }
     }
   ],
   "portraitSource": "unit_icons/unit_icon_207000405.png"
