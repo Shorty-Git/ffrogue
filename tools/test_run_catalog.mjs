@@ -15,10 +15,10 @@ function fixture(){
  for(const f of content.forms)manifests[f.key]=read(`public/${f.assetPath}/manifest.json`);
  return {scene:{cache:{json:{get:k=>values[k]}}},values,manifests};
 }
-test('production run pool admits the 19 published Source contracts across six identities',()=>{
+test('production run pool admits the 21 published Source contracts across seven identities',()=>{
  const f=fixture(),catalog=runCatalog(f.scene,f.manifests);
- assert.equal(Object.keys(catalog).length,6);assert.equal(Object.values(catalog).flatMap(c=>c.skills).length,19);
- assert.ok(!catalog.barret);assert.notEqual(catalog.cloud.identity,catalog.cloud_ac.identity);
+ assert.equal(Object.keys(catalog).length,7);assert.equal(Object.values(catalog).flatMap(c=>c.skills).length,21);
+ assert.equal(catalog.barret.skills.length,2);assert.notEqual(catalog.cloud.identity,catalog.cloud_ac.identity);
  for(const c of Object.values(catalog))for(const s of c.skills){const copy=skillDescription(s);assert.ok(copy.includes(`${s.mpCost} MP`));assert.ok(copy.length>12);}
 });
 test('only prepared same-unit form with required body clips can become an awakening',()=>{

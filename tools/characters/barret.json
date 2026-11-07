@@ -20,7 +20,7 @@
       "id": "big_shot",
       "ffbeId": 227870,
       "name": "Big Shot",
-      "rarity": 4,
+      "rarity": 5,
       "level": 1,
       "type": "ABILITY",
       "mpCost": 16,
@@ -33,9 +33,42 @@
       "moveType": "stationary",
       "motion": "atk",
       "desc": "Physical damage (2.5x, ATK) to one enemy",
-      "execution": "not-imported",
-      "importStatus": "not-imported",
-      "unavailableReason": "Original visual resources and execution profile are not yet fully supported by the Source pipeline."
+      "execution": "prepared-source",
+      "damageEvents": [
+        {
+          "frame": 130,
+          "weight": 1
+        }
+      ],
+      "reviewNote": "Authoring-free import 2026-11-08 (wave 3): shared Source preview profile with --approximate-unverified and original draw order; visual acceptance bar per docs/vision.md.",
+      "scenePresentation": "barret_big_shot",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/wave3-20261108/bigshot/source/skill-source.json",
+        "sha256": "c611811630cc2a8b30f473473f7afe68272c7e9a230602e7e39e316864f3ddfd"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 8,
+          "sourceMoveType": 4,
+          "note": "Motion 8: native body observer (SKILL_RECONSTRUCTION_MAP) shows standby -> atk -> idle in place for Big Shot; stationary atk body, zero-prefix timing."
+        }
+      }
     },
     {
       "id": "grenade_bomb",
@@ -88,6 +121,145 @@
       "reviewNote": "Simplified roguelike area presentation: original marker, rotated blue beam and alpha screen fade; total 3x physical damage once at F165 without extra recoil. Source ten 10-percent hits F125..215 remain provenance and are intentionally combined. Unknown raw member offsets 150/-150 and fade offset 150 stay unapplied. No original-game fidelity claim. The original alpha fade is fitted to the arena using measured sheet content bounds; no replacement rectangle is drawn. Clockwise 45-degree artwork correction around each target origin makes the source diagonal beam horizontal; source XYZ rotation is retained separately.",
       "importStatus": "not-imported",
       "unavailableReason": "Original visual resources and execution profile are not yet fully supported by the Source pipeline."
+    },
+    {
+      "id": "ungarmax",
+      "ffbeId": 227875,
+      "name": "Ungarmax",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 40,
+      "scope": "single_enemy",
+      "damageMultiplier": 2,
+      "hitCount": 18,
+      "attackFrames": [
+        90,
+        95,
+        100,
+        105,
+        110,
+        115,
+        120,
+        125,
+        130,
+        135,
+        140,
+        145,
+        150,
+        155,
+        160,
+        165,
+        170,
+        175
+      ],
+      "moveType": "stationary",
+      "motion": "atk",
+      "desc": "Physical damage (2x, ATK) to one enemy in 18 shots",
+      "execution": "prepared-source",
+      "damageEvents": [
+        {
+          "frame": 90,
+          "weight": 0.05
+        },
+        {
+          "frame": 95,
+          "weight": 0.05
+        },
+        {
+          "frame": 100,
+          "weight": 0.05
+        },
+        {
+          "frame": 105,
+          "weight": 0.05
+        },
+        {
+          "frame": 110,
+          "weight": 0.05
+        },
+        {
+          "frame": 115,
+          "weight": 0.05
+        },
+        {
+          "frame": 120,
+          "weight": 0.05
+        },
+        {
+          "frame": 125,
+          "weight": 0.05
+        },
+        {
+          "frame": 130,
+          "weight": 0.05
+        },
+        {
+          "frame": 135,
+          "weight": 0.05
+        },
+        {
+          "frame": 140,
+          "weight": 0.05
+        },
+        {
+          "frame": 145,
+          "weight": 0.05
+        },
+        {
+          "frame": 150,
+          "weight": 0.05
+        },
+        {
+          "frame": 155,
+          "weight": 0.05
+        },
+        {
+          "frame": 160,
+          "weight": 0.05
+        },
+        {
+          "frame": 165,
+          "weight": 0.05
+        },
+        {
+          "frame": 170,
+          "weight": 0.05
+        },
+        {
+          "frame": 175,
+          "weight": 0.15
+        }
+      ],
+      "reviewNote": "Authoring-free import 2026-11-08 (wave 3): shared Source preview profile with --approximate-unverified and original draw order; visual acceptance bar per docs/vision.md.",
+      "scenePresentation": "barret_ungarmax",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/wave3-20261108/ungarmax/source/skill-source.json",
+        "sha256": "d8a478023b5a424a4d50b57d7ddc1e08ec6b02ca3eb719252905fa270ae966a8"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 8,
+          "sourceMoveType": 4,
+          "note": "Motion 8: native body observer (SKILL_RECONSTRUCTION_MAP) shows standby -> atk -> idle in place for Big Shot; stationary atk body, zero-prefix timing."
+        }
+      }
     }
   ],
   "portraitSource": "unit_icons/unit_icon_207000205.png"

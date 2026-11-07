@@ -7,7 +7,7 @@
       "id": "big_shot",
       "ffbeId": 227870,
       "name": "Big Shot",
-      "rarity": 4,
+      "rarity": 5,
       "level": 1,
       "type": "ABILITY",
       "mpCost": 16,
@@ -20,8 +20,41 @@
       "moveType": "stationary",
       "motion": "atk",
       "desc": "Physical damage (2.5x, ATK) to one enemy",
-      "importStatus": "not-imported",
-      "unavailableReason": "Original visual resources and execution profile are not yet fully supported by the Source pipeline.",
+      "damageEvents": [
+        {
+          "frame": 130,
+          "weight": 1
+        }
+      ],
+      "reviewNote": "Authoring-free import 2026-11-08 (wave 3): shared Source preview profile with --approximate-unverified and original draw order; visual acceptance bar per docs/vision.md.",
+      "scenePresentation": "barret_big_shot",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/wave3-20261108/bigshot/source/skill-source.json",
+        "sha256": "c611811630cc2a8b30f473473f7afe68272c7e9a230602e7e39e316864f3ddfd"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 8,
+          "sourceMoveType": 4,
+          "note": "Motion 8: native body observer (SKILL_RECONSTRUCTION_MAP) shows standby -> atk -> idle in place for Big Shot; stationary atk body, zero-prefix timing."
+        }
+      },
       "originalCommand": {
         "schema": "ffbe-command-source-v1",
         "kind": "ABILITY",
@@ -74,7 +107,7 @@
       },
       "gameplayReview": {
         "policy": "reviewed-roguelike",
-        "note": "",
+        "note": "Authoring-free import 2026-11-08 (wave 3): shared Source preview profile with --approximate-unverified and original draw order; visual acceptance bar per docs/vision.md.",
         "ownedFields": [
           "mpCost",
           "damageMultiplier",
@@ -83,7 +116,8 @@
           "scope",
           "damageEvents",
           "supportEvents",
-          "allyEvents"
+          "allyEvents",
+          "actionChoreography"
         ],
         "boundary": "Original process parameters and source markers do not execute as game balance rules"
       }
@@ -168,7 +202,8 @@
           "scope",
           "damageEvents",
           "supportEvents",
-          "allyEvents"
+          "allyEvents",
+          "actionChoreography"
         ],
         "boundary": "Original process parameters and source markers do not execute as game balance rules"
       }
@@ -263,7 +298,212 @@
           "scope",
           "damageEvents",
           "supportEvents",
-          "allyEvents"
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "ungarmax",
+      "ffbeId": 227875,
+      "name": "Ungarmax",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 40,
+      "scope": "single_enemy",
+      "damageMultiplier": 2,
+      "hitCount": 18,
+      "attackFrames": [
+        90,
+        95,
+        100,
+        105,
+        110,
+        115,
+        120,
+        125,
+        130,
+        135,
+        140,
+        145,
+        150,
+        155,
+        160,
+        165,
+        170,
+        175
+      ],
+      "moveType": "stationary",
+      "motion": "atk",
+      "desc": "Physical damage (2x, ATK) to one enemy in 18 shots",
+      "damageEvents": [
+        {
+          "frame": 90,
+          "weight": 0.05
+        },
+        {
+          "frame": 95,
+          "weight": 0.05
+        },
+        {
+          "frame": 100,
+          "weight": 0.05
+        },
+        {
+          "frame": 105,
+          "weight": 0.05
+        },
+        {
+          "frame": 110,
+          "weight": 0.05
+        },
+        {
+          "frame": 115,
+          "weight": 0.05
+        },
+        {
+          "frame": 120,
+          "weight": 0.05
+        },
+        {
+          "frame": 125,
+          "weight": 0.05
+        },
+        {
+          "frame": 130,
+          "weight": 0.05
+        },
+        {
+          "frame": 135,
+          "weight": 0.05
+        },
+        {
+          "frame": 140,
+          "weight": 0.05
+        },
+        {
+          "frame": 145,
+          "weight": 0.05
+        },
+        {
+          "frame": 150,
+          "weight": 0.05
+        },
+        {
+          "frame": 155,
+          "weight": 0.05
+        },
+        {
+          "frame": 160,
+          "weight": 0.05
+        },
+        {
+          "frame": 165,
+          "weight": 0.05
+        },
+        {
+          "frame": 170,
+          "weight": 0.05
+        },
+        {
+          "frame": 175,
+          "weight": 0.15
+        }
+      ],
+      "reviewNote": "Authoring-free import 2026-11-08 (wave 3): shared Source preview profile with --approximate-unverified and original draw order; visual acceptance bar per docs/vision.md.",
+      "scenePresentation": "barret_ungarmax",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/wave3-20261108/ungarmax/source/skill-source.json",
+        "sha256": "d8a478023b5a424a4d50b57d7ddc1e08ec6b02ca3eb719252905fa270ae966a8"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 8,
+          "sourceMoveType": 4,
+          "note": "Motion 8: native body observer (SKILL_RECONSTRUCTION_MAP) shows standby -> atk -> idle in place for Big Shot; stationary atk body, zero-prefix timing."
+        }
+      },
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 227875,
+        "database": {
+          "path": "assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 227875,
+          "name": "Ungarmax",
+          "rarity": 8,
+          "dispOrder": 3560,
+          "cost": 52,
+          "6p90IFnC": null,
+          "target": "1",
+          "targetRange": "1",
+          "oL6zdpD0": 3,
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 1,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 4,
+          "processId": "21",
+          "PI18xnkD": "0",
+          "processParam": "0,0,200,-50",
+          "H4zD2IQ5": 0,
+          "motionType": 8,
+          "effectFrames": "88:5027740:1:1:0&88:5003690:2:4:0",
+          "attackFrames": "90:5:2:2-95:5:2:2-100:5:2:2-105:5:2:2-110:5:2:2-115:5:2:2-120:5:2:2-125:5:2:2-130:5:2:2-135:5:2:2-140:5:2:2-145:5:2:2-150:5:2:2-155:5:2:2-160:5:2:2-165:5:2:2-170:5:2:2-175:15:2:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000019,
+          "equipCondition": null,
+          "2QoE3PtB": 0,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": null,
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Authoring-free import 2026-11-08 (wave 3): shared Source preview profile with --approximate-unverified and original draw order; visual acceptance bar per docs/vision.md.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
         ],
         "boundary": "Original process parameters and source markers do not execute as game balance rules"
       }

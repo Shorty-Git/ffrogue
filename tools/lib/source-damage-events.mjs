@@ -5,7 +5,9 @@ export function sourceDamageEvents(source, plan, unit = plan.composition?.unit) 
   if(source?.kind==='LIMIT'||source?.kind==='MAGIC')return sourceHitDistribution(source,plan,0);
   const composition=plan.composition,offset=composition?.skillFrameOffset;
   const motion=source?.raw?.motionType;
-  if(![1,2].includes(motion) || !Number.isSafeInteger(offset) || offset<0
+  // Motion 8 (Barret's ranged commands): native observer shows standby -> atk -> idle in place and
+  // the composition adds no unit prefix, so it shares the zero-prefix Motion-2 timing.
+  if(![1,2,8].includes(motion) || !Number.isSafeInteger(offset) || offset<0
     || composition?.skill?.abilityId!==source.id || composition.skill.motionType!==motion
     || composition.skill.effectFrames!==source.raw.effectFrames)
     throw Error('Matching supported source composition required for damage timing');

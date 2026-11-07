@@ -10,8 +10,9 @@ Last consolidated: 2026-11-07.
   expedition (2 areas, 4 encounters, Ochu and Guard Scorpion bosses) → rewards / awakening →
   result. Saves locally. Roster: Cloud, Aerith, Barret, Cloud of Darkness, Cloud AC, Delita,
   Jack (+ awakened forms up to 7★ / NV).
-- 19 Source skills (original FFBE effect data rendered in real time; authoring-free imports
-  2026-11-07: Cloud's Meteor Rain, Aerith's Banish and Holy, Delita's Northswain's Strike)
+- 21 Source skills (original FFBE effect data rendered in real time; authoring-free imports
+  2026-11-07/08: Cloud's Meteor Rain, Aerith's Banish and Holy, Delita's Northswain's Strike,
+  Barret's Big Shot and Ungarmax — Barret's first skills, so he joins the run pool)
   + 2 Limit Bursts
   (Cloud's Omnislash; Cloud AC's Omnislash Version 5, the first authoring-free import, 2026-11-07).
 - Battle UI (DOM `CombatHud` over Phaser): target-first (enemies clickable any time, crystal
@@ -157,8 +158,11 @@ Generic rules added 2026-11-07 (no per-skill exceptions):
   unknown node types 4/7/15, non-file groups and conditional branches.
 - Banish, Holy and Northswain's Strike await the developer's acceptance (GIFs sent 2026-11-07);
   only Meteor Rain was compared with the BlueStacks original so far.
-- Open import gates: Barret's abilities use motionType 8 (not yet supported); Delita's Warring
-  Slash needs repeated generation (repeatCount > 1) in the frozen player.
+- Motion 8 (Barret's ranged commands) = stationary atk body, zero-prefix timing, from the native
+  body observer (SKILL_RECONSTRUCTION_MAP). Big Shot compared with the BlueStacks original
+  (charge flash, orange blast/explosion on the target) — matches.
+- Open import gate: Delita's Warring Slash needs repeated generation (repeatCount > 1) in the
+  frozen player.
 - Cloud AC LB (15.2x, original LB level 1) kills most training enemies; balance is open.
 - LB gauge does not carry between battles; all Cloud forms use the 5★ Omnislash.
 - Cinzel name font: developer mildly unsure, kept for now.
