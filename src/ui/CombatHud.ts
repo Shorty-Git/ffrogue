@@ -1,9 +1,9 @@
-import {UI_PARTS as UI,gauge,gaugeRow,formatValue as number} from './ffbeGauge';
+import {UI_PARTS as UI,gauge,gaugeRow,formatValue as number,captureGauges,animateGauges} from './ffbeGauge';
 
 type HeroState = 'active' | 'ready' | 'acted' | 'ko';
 type PartyEntry = {name:string; portrait?:string; hp:number; maxHp:number; mp:number; maxMp:number; status:string; state:HeroState;
   active:boolean; disabled:boolean; target?:number};
-type Command = {name:string; icon:'attack'|'magic'|'ability'; cost:string; description:string; disabled:boolean; selected:boolean};
+type Command = {name:string; icon:'attack'|'magic'|'ability'; iconUrl?:string; cost:string; description:string; disabled:boolean; selected:boolean};
 type ArenaActor = {id:number; name:string; hp?:number; maxHp?:number; status?:string; boss?:boolean; marked:boolean; selectable:boolean;
   /** Current enemy target: drawn with the crystal target cursor. */ targeted:boolean;
   x:number; y:number; width:number; height:number};
@@ -63,13 +63,13 @@ export class CombatHud {
       <span class="portrait-frame">${hero.portrait?`<img src="${escapeHtml(hero.portrait)}" alt="" draggable="false">`:''}</span>
       <span class="party-info">
         <span class="party-head"><strong>${escapeHtml(hero.name)}</strong><small>${escapeHtml(hero.status)}</small></span>
-        ${gaugeRow('hp',hero.hp,hero.maxHp)}
-        ${gaugeRow('mp',hero.mp,hero.maxMp)}
+        ${gaugeRow('hp',hero.hp,hero.maxHp,`hero-${i}-hp`)}
+        ${gaugeRow('mp',hero.mp,hero.maxMp,`hero-${i}-mp`)}
       </span></button>`).join('');
 
     const commands=state.commands.map((command,i)=>command?`<button type="button" class="command" ${attrs('ability',i)} ${command.disabled?'disabled':''}
         aria-pressed="${command.selected}" title="${escapeHtml(command.description)}">
-      <img class="command-icon" src="${UI}${command.icon}.png" alt="" draggable="false">
+      <img class="command-icon ${command.iconUrl?'is-skill':''}" src="${command.iconUrl??UI+command.icon+'.png'}" alt="" draggable="false">
       <span class="command-text"><strong>${escapeHtml(command.name)}</strong><small>${escapeHtml(command.cost)}</small></span>
       <kbd>${i+1}</kbd></button>`:`<span class="command is-empty" aria-hidden="true"></span>`).join('');
 
@@ -77,14 +77,16 @@ export class CombatHud {
       const position=`left:${actor.x}%;top:${actor.y}%;width:${actor.width}%;height:${actor.height}%`;
       const plate=actor.hp===undefined?'':`<span class="arena-health ${actor.boss?'is-boss':''}">
         <span class="enemy-head"><strong>${escapeHtml(actor.name)}</strong><span>${number(actor.hp)} / ${number(actor.maxHp!)}</span></span>
-        ${gauge('enemy',actor.hp,actor.maxHp!,'HP')}${actor.status?`<small>${escapeHtml(actor.status)}</small>`:''}</span>`;
+        ${gauge('enemy',actor.hp,actor.maxHp!,'HP',`enemy-${actor.id}`)}${actor.status?`<small>${escapeHtml(actor.status)}</small>`:''}</span>`;
       return `<div class="arena-actor ${actor.marked?'is-marked':''} ${actor.targeted?'is-targeted':''}" style="${position}">${plate}${actor.targeted?TARGET_CURSOR:''}
         ${actor.selectable?`<button type="button" class="arena-hit" ${attrs('target',actor.id)} aria-label="Target ${escapeHtml(actor.name)}" aria-pressed="${actor.targeted}"></button>`:''}</div>`;
     }).join('');
 
+    const shown=captureGauges(this.root);
     this.root.innerHTML=`<div class="combat-caption"><strong>${escapeHtml(state.area)}</strong><span>${escapeHtml(state.phase)}</span></div>
       ${actors}<div class="combat-dock"><div class="combat-party">${party}</div><div class="ribbon-commands">${commands}</div>
       <div class="ribbon-prompt"><span role="status">${escapeHtml(state.message)}</span>${state.pending?`<button type="button" class="prompt-cancel" ${attrs('clear',0)}>Cancel <kbd>Esc</kbd></button>`:''}</div></div>`;
+    animateGauges(this.root,shown);
     if(focus)this.root.querySelector<HTMLElement>(`[data-focus="${focus}"]:not(:disabled)`)?.focus({preventScroll:true});
   }
 

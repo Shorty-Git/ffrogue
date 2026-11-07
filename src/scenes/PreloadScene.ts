@@ -1,3 +1,4 @@
+import {setSkillIcons} from '../ui/skillIcons';
 import Phaser from 'phaser';
 import { BATTLE_ARENAS } from '../data/battleArenas';
 import { UnitManifest } from '../types/manifest';
@@ -61,6 +62,8 @@ export class PreloadScene extends Phaser.Scene {
     // Reels/party views need idles only. BattleScene admits complete combat bodies.
     queueBodyAssets(this,bodyAssets(this.manifests,registry.characters.map(key=>({key,clips:['idle']})),(this.cache.json.get('run_content')as RunContent).forms));
 
+    // Original skill icons (tools/export_skill_icons.mjs).
+    this.load.json('skill_icons', 'assets/icons/skills/index.json');
     // Queue authentic skill datasets for hero units
     registry.characters.forEach((unitKey) => {
       this.load.json(`skills_${unitKey}`, `assets/units/${unitKey}/skills.json`);
@@ -70,6 +73,7 @@ export class PreloadScene extends Phaser.Scene {
   }
 
   create(): void {
+    setSkillIcons(this.cache.json.get('skill_icons'));
     if(new URLSearchParams(location.search).get('gallery')==='arenas'){
       openArenaGallery(this,this.manifests);
       return;

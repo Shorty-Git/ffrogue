@@ -1,5 +1,12 @@
 # Asset pipeline handbook
 
+UI parts and skill icons (2026-11-07): `tools/export_battle_ui.py` extracts the
+original FFBE battle UI parts (window frame, gauges, command icons) from the Godot
+atlas under `assets/ui/`, and `tools/export_skill_icons.mjs` publishes each skill's
+original icon via `ability/magic.iconId` (run it after every skill publication).
+Both write provenance with SHA-256. Details: `battle-layout.md` and
+`character-import-workflow.md` (section 5).
+
 The shared Source audio admission now covers twelve prepared presentations. See
 [Source combat audio](research/source-combat-audio.md) for the gated effect-group
 profile, exact bank/PCM provenance, supported events and known timing gaps.

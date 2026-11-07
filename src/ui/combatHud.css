@@ -45,16 +45,21 @@ body:has(#run-ui:not([data-phase=battle]):not([data-phase=rewards]):not([data-ph
 
 /* Original gauges: frame image with the bar inside the measured track. */
 .gauge{position:relative;display:block;width:100%;background:center/100% 100% no-repeat}
-.gauge-fill{position:absolute;display:block;background:center/100% 100% no-repeat}
-.gauge-hp{aspect-ratio:186/26;background-image:url(/assets/ui/battle/hp_gauge.png)}
-.gauge-mp{aspect-ratio:186/26;background-image:url(/assets/ui/battle/mp_gauge.png)}
-.gauge-hp .gauge-fill,.gauge-mp .gauge-fill{left:1.613%;top:73.08%;height:15.38%;width:calc(96.77% * var(--fill))}
+.gauge-fill,.gauge-trail{position:absolute;display:block;background:center/100% 100% no-repeat}
+/* Bars glide to new values; the red damage trail holds briefly, then follows (FFBE style). */
+.gauge-fill{transition:width .28s ease-out}
+.gauge-trail{background-image:url(/assets/ui/battle/enemy_hp_damage.png);transition:width .55s ease-in .35s}
+.gauge-hp{--track:.9677;aspect-ratio:186/26;background-image:url(/assets/ui/battle/hp_gauge.png)}
+.gauge-mp{--track:.9677;aspect-ratio:186/26;background-image:url(/assets/ui/battle/mp_gauge.png)}
+.gauge-hp :is(.gauge-fill,.gauge-trail),.gauge-mp .gauge-fill{left:1.613%;top:73.08%;height:15.38%;width:calc(100% * var(--track) * var(--fill))}
+.gauge-hp .gauge-trail{width:calc(100% * var(--track) * var(--trail))}
 .gauge-hp [data-level=high]{background-image:url(/assets/ui/battle/hp_bar_high.png)}
 .gauge-hp [data-level=mid]{background-image:url(/assets/ui/battle/hp_bar_mid.png)}
 .gauge-hp [data-level=low]{background-image:url(/assets/ui/battle/hp_bar_low.png)}
 .gauge-mp .gauge-fill{background-image:url(/assets/ui/battle/mp_bar.png)}
-.gauge-enemy{aspect-ratio:416/40;background-image:url(/assets/ui/battle/enemy_hp_gauge.png)}
-.gauge-enemy .gauge-fill{left:5.05%;top:20%;height:40%;width:calc(89.9% * var(--fill))}
+.gauge-enemy{--track:.899;aspect-ratio:416/40;background-image:url(/assets/ui/battle/enemy_hp_gauge.png)}
+.gauge-enemy :is(.gauge-fill,.gauge-trail){left:5.05%;top:20%;height:40%;width:calc(100% * var(--track) * var(--fill))}
+.gauge-enemy .gauge-trail{width:calc(100% * var(--track) * var(--trail))}
 .gauge-enemy [data-level=high]{background-image:url(/assets/ui/battle/enemy_hp_bar_high.png)}
 .gauge-enemy [data-level=mid]{background-image:url(/assets/ui/battle/enemy_hp_bar_mid.png)}
 .gauge-enemy [data-level=low]{background-image:url(/assets/ui/battle/enemy_hp_bar_low.png)}
@@ -99,10 +104,12 @@ body:has(#run-ui:not([data-phase=battle]):not([data-phase=rewards]):not([data-ph
 @keyframes target-cursor-bob{from{translate:0 0}to{translate:-6px 0}}
 /* Actors hit by the running command: crystal glow at their feet. */
 .arena-actor.is-marked::after{content:'';position:absolute;left:10%;right:10%;bottom:-4%;height:16%;border-radius:50%;background:radial-gradient(closest-side,#bfe2ff66,#bfe2ff00);pointer-events:none}
-@media(prefers-reduced-motion:reduce){.target-cursor,.party-card.is-target{animation:none}}
+@media(prefers-reduced-motion:reduce){.target-cursor,.party-card.is-target{animation:none}.gauge-fill,.gauge-trail{transition:none}}
 
 /* Settings toolbar (GameFlow) beside the battle. */
 .run-toolbar.combat-settings{top:var(--battle-toolbar-top,8px);right:var(--battle-toolbar-right,8px);display:block}
 .combat-settings summary.rpg-button{cursor:pointer;padding:5px 8px;font-size:14px;min-height:30px}
 .combat-settings[open]{background:#081a30f5;border:1px solid #7f9cb8;border-radius:4px;padding:4px}
 .combat-settings button{min-height:32px}
+/* Original skill icons sit on a dark slot like FFBE's ability list. */
+.command-icon.is-skill{border-radius:6px;background:radial-gradient(circle,#1d3d6e,#060f22 75%);box-shadow:inset 0 0 0 1px #8fb0d099,0 1px 2px #000a}

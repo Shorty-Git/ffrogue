@@ -1125,6 +1125,21 @@ so inspect/restore Git changes if an external disk error interrupts publication.
 Old unreferenced prepared files may remain on disk but are absent from the newly
 generated manifest and are not loaded.
 
+### Skill icons (after every skill publication)
+
+```powershell
+node tools/export_skill_icons.mjs
+```
+
+Resolves each published skill's `type:ffbeId` through `ability.iconId` /
+`magic.iconId` in `assets/static_data/ffbe-data.db` (iconId 7000000NN →
+`<dump>/abilities/ability_NN_HD.png`, else the SD file), copies the icons unchanged
+to `public/assets/icons/skills/` and writes `index.json` (lookup + source and
+SHA-256). FFBE shares icons between skills (Cloud's sword techniques all use 54).
+The export fails when a skill has no resolvable icon; the runtime then shows the
+generic attack/magic/ability command icon only for skills missing from the index.
+2026-11-07: 21 published skills → 8 icons.
+
 ## 6. Runtime loading and party placement
 
 1. `BootScene` loads `content.json`, then every registered manifest and character

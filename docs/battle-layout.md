@@ -88,9 +88,17 @@ slot lever and reels, awakening) are unchanged. The locked battle HUD stays visi
 under the reward, replacement and awakening popups instead of leaving an empty strip.
 Menus were checked at 1440x900 and 375x812 (no horizontal overflow).
 
-Not yet done: per-skill original icons (the dump has 480 under `abilities/`; a
-skill→icon mapping is needed), animated HP drain (the HUD re-renders its markup, so
-bars jump), and a dedicated Limit/LB gauge.
+Skill icons: commands, team-draw reels, member skill lists, replacement cards and
+skill rewards (as a badge on the portrait) show each skill's original FFBE icon from
+`tools/export_skill_icons.mjs` (see docs/character-import-workflow.md).
+
+HP/MP changes animate: before each HUD re-render `captureGauges` reads what every
+keyed gauge currently shows, `animateGauges` restarts the new markup from there and
+CSS transitions carry the bar (0.28 s) and, for HP, the original red damage trail
+(holds 0.35 s, then 0.55 s). Checked in Chrome: an Attack on a 3,500 HP rat moved the
+bar 1.00 → 0.85 in about 0.5 s and the trail followed by about 1.2 s.
+
+Not yet done: a dedicated Limit/LB gauge.
 
 Checked at 1920x1080, 1440x900, 1100x760 and 900x720: the dock fits without
 scrolling.

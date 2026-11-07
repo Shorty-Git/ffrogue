@@ -1,3 +1,4 @@
+import {skillIconUrl} from '../ui/skillIcons';
 import {CombatHud} from '../ui/CombatHud';
 import Phaser from 'phaser';
 import { UnitActor, UnitCombatConfig, type UnitActorConfig } from '../entities/UnitActor';
@@ -413,7 +414,7 @@ export class BattleScene extends Phaser.Scene {
       commands:[{name:'Attack',icon:'attack',cost:'0 MP',description:'Normal attack',disabled:!available,selected:plan?.kind==='attack'},
         ...[0,1,2].map(i=>{
           const action=skills[i];if(!action)return null;
-          return {name:action.name,icon:(action.motion==='magic_atk'?'magic':'ability') as 'magic'|'ability',cost:`${action.mpCost} MP${action.hpCost?' · '+action.hpCost+' HP':''}`,description:skillDescription(action),
+          return {name:action.name,icon:(action.motion==='magic_atk'?'magic':'ability') as 'magic'|'ability',iconUrl:skillIconUrl(action),cost:`${action.mpCost} MP${action.hpCost?' · '+action.hpCost+' HP':''}`,description:skillDescription(action),
             disabled:!available||!hero||hero.currentMp<action.mpCost||!!action.hpCost&&hero.currentHp<=action.hpCost||!this.canUseSourceSkill(action),selected:skill===action};
         })],
     });

@@ -68,3 +68,11 @@
 
 /* Replacement cards have no portrait column; keep their title full width on narrow screens. */
 @media(max-width:520px){.replacement-grid .reward-card{display:flex;flex-direction:column;align-items:stretch}}
+
+/* Original skill icons (tools/export_skill_icons.mjs). */
+.skill-icon{width:1.5em;height:1.5em;margin-right:.35em;vertical-align:-.4em}
+.reel-detail .skill-icon{width:1.7em;height:1.7em}
+.reward-card h2 .skill-icon{width:1.3em;height:1.3em}
+.reward-portrait.has-skill{position:relative;display:block;overflow:visible}
+.reward-portrait.has-skill>img:first-child{width:100%;height:100%;object-fit:contain;image-rendering:pixelated}
+.skill-badge{position:absolute;right:-28%;bottom:-24%;width:68%;height:68%;filter:drop-shadow(0 1px 2px #000)}
