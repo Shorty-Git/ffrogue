@@ -183,20 +183,6 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
   }
 
   /**
-   * Resets unit to full HP, full MP, alive state, and idle animation.
-   */
-  public resetCombatState(): void {
-    this.currentHp = this.maxHp;
-    this.currentMp = this.maxMp;
-    this.hasActed = false;
-    this.clearTint();
-    this.setPosition(this.homeSlot.x, this.homeSlot.y);
-    this.setFacingLeft(true);
-    this.setDepthBoost(false);
-    this.playAnimation('idle');
-  }
-
-  /**
    * Spends MP if sufficient amount is available.
    * Returns true if successful, false if insufficient.
    */
@@ -234,15 +220,6 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
       this.refreshRestPose();
     }
     return actualHealed;
-  }
-
-  /**
-   * Restores MP up to maxMp.
-   */
-  public restoreMp(amount: number): number {
-    const prevMp = this.currentMp;
-    this.currentMp = Math.min(this.maxMp, this.currentMp + amount);
-    return this.currentMp - prevMp;
   }
 
   private spawnHealPopup(healAmount: number): void {
@@ -304,15 +281,6 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
     if (!this.isDepthBoosted) {
       this.setDepth(this.y);
     }
-  }
-
-  /**
-   * Sets the unit's logical home slot position.
-   */
-  public setHomeSlot(x: number, y: number): void {
-    this.homeSlot = { x, y };
-    this.setPosition(x, y);
-    this.setDepthBoost(false);
   }
 
   /**

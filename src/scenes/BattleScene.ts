@@ -51,7 +51,8 @@ export class BattleScene extends Phaser.Scene {
   private runVictoryStage:'idle'|'finishing'|'celebrating'|'rewards'='idle';
   private arenaKey: BattleArenaKey = 'forest';
   private manifests!: Record<string, UnitManifest>;
-  private cloud!: UnitActor;
+  /** First party slot: enemies target it while it is alive. */
+  private frontlineHero!: UnitActor;
   private enemies: TargetDummy[] = [];
   private currentTarget: TargetDummy | null = null;
   private actionBanner?:ActionBanner;
@@ -208,7 +209,7 @@ export class BattleScene extends Phaser.Scene {
          maxMp:memberMaxMp(this.runContext.catalog[member.key],member)},def.scale);
       actor.currentHp=member.hp;actor.currentMp=member.mp;return actor;
     });
-    this.cloud=this.turnOrder[0];
+    this.frontlineHero=this.turnOrder[0];
 
     this.actionBanner=new ActionBanner(this);
     this.combatHud=new CombatHud(this.game.canvas,(action,index)=>{
@@ -1498,8 +1499,8 @@ export class BattleScene extends Phaser.Scene {
         return;
       }
 
-      // Target selection: Cloud if alive (Tank/Frontline), else first alive hero
-      const heroTarget = currentAliveHeroes.includes(this.cloud) ? this.cloud : currentAliveHeroes[0];
+      // Target selection: the first party slot while alive, else the first living hero.
+      const heroTarget = currentAliveHeroes.includes(this.frontlineHero) ? this.frontlineHero : currentAliveHeroes[0];
       const definition=ENEMY_CONTENT[enemy.assetKey];
       const action=definition?enemyAction(definition,enemy.actionCursor,enemy.currentHp/enemy.maxHp):null;
       if(action?.kind==='prepare'){

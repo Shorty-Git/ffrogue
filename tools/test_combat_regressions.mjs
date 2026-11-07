@@ -712,7 +712,7 @@ test('instant enemy events use the shared clock once, skip dead targets and resp
 
 test('multi-hit area damage weights the action total and skips defeated captured targets',()=>{
  const scene=battle(),hits=[[],[]];scene.combatState='HERO_ATTACKING';
- const unit={};scene.cloud=unit;
+ const unit={};scene.frontlineHero=unit;
  const targets=hits.map((list,i)=>({currentHp:1000,applyDamage(value){list.push(value);if(i===0)this.currentHp=0;}}));
  scene.enemies=targets;scene.sourceSceneKey=()=> 'fixture';scene.handleTargetDamaged=()=>{};
  scene.executePreparedSkill=(_hero,_skill,_key,_targets,impact,done)=>{impact(.25);impact(.75);done();};
@@ -804,7 +804,7 @@ test('friendly recipient sets exclude caster and K.O.; costs fail before spendin
 test('prepared boss charge deals no damage, burst hits each living hero once with defense and phase power',()=>{
  const s=battle(),timers=[],messages=[];s.events=new EventEmitter();s.updateStatus=m=>messages.push(m);
  const actors=[1000,1000,0].map((hp,i)=>({unitKey:'unit'+i,currentHp:hp,get isDead(){return this.currentHp<=0;},applyDamage(n){this.currentHp=Math.max(0,this.currentHp-n);}}));
- s.turnOrder=actors;s.cloud=actors[0];s.startRound=()=>{};s.time.delayedCall=(_ms,cb)=>{timers.push(cb);};
+ s.turnOrder=actors;s.frontlineHero=actors[0];s.startRound=()=>{};s.time.delayedCall=(_ms,cb)=>{timers.push(cb);};
  s.runContext={state:{areas:[{arena:'reactor',name:'Mako Reactor',normals:1}],encounter:1,party:[{key:'unit0',stats:{defense:1}},{key:'unit1',stats:{defense:2}}]}};
  let attacks=0;const e={assetKey:'guard_scorpion',nameTag:'Guard Scorpion',isBoss:true,maxHp:1000,currentHp:500,actionCursor:1,statusEffects:[],executeAttack(_x,_y,impact,done){attacks++;impact();done();}};s.enemies=[e];
  s.combatState='ENEMY_TURN';s.executeEnemyTurn();while(timers.length)timers.shift()();
