@@ -1,0 +1,57 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><base href="/"><title>Limit Burst test</title>
+<style>
+body{margin:0;background:#081428;color:#e7eef9;font:14px system-ui;display:flex;gap:18px;align-items:flex-start}
+#game-container{width:min(70vw,860px);height:calc(100vh - 8px);flex:none}
+aside{padding:16px;max-width:340px}h1{font:600 20px Georgia,serif;margin:0 0 8px}
+label{display:block;margin:8px 0}select,button{font:inherit;padding:6px 10px;margin:3px 0}
+button{cursor:pointer;background:#173a70;color:#fff;border:1px solid #8fb0d0;border-radius:4px}
+#status{white-space:pre-wrap;color:#b9cde1;font-size:13px;margin-top:10px}
+</style>
+<div id="game-container"></div>
+<aside>
+  <h1>Limit Burst test</h1>
+  <p>Training battle with the production BattleScene. Heroes that own a published Limit Burst
+     start with a full LIMIT gauge. Press <b>5</b> or the purple command to fire it.</p>
+  <label>Arena <select id="arena"></select></label>
+  <label>Enemies <select id="encounter"><option value="1">Boss dummy (5,000 HP)</option><option value="2">Two dummies (3,500 HP each)</option></select></label>
+  <label><input type="checkbox" id="keep-full" checked> Keep the gauge full each turn</label>
+  <button id="refill">Fill Limit gauge now</button>
+  <button id="restart">Restart battle</button>
+  <div id="status">Loading…</div>
+</aside>
+<script type="module">
+// Development review page: no save is written; the run is a fixed training run (src/run/trainingRun.ts).
+import {game} from '/src/main.ts';
+import {createTrainingRun} from '/src/run/trainingRun.ts';
+import {LB_MAX} from '/src/run/limitGauge.mjs';
+import {BATTLE_ARENAS} from '/src/data/battleArenas.ts';
+
+const $ = id => document.getElementById(id), status = $('status');
+const reviewed = await fetch('/assets/stages/reviewed.json').then(r => r.json());
+for (const key of [...new Set([...Object.keys(BATTLE_ARENAS), ...Object.keys(reviewed)])])
+  $('arena').add(new Option(reviewed[key]?.name ?? key, key));
+$('arena').value = Object.hasOwn(reviewed, 'reactor_05') ? 'reactor_05' : $('arena').options[0].value;
+const until = async test => { const end = performance.now() + 60000; while (!test()) { if (performance.now() > end) throw Error('Load timeout'); await new Promise(r => setTimeout(r, 50)); } };
+const scene = () => game.scene.getScene('BattleScene');
+const limitHeroes = () => (scene()?.turnOrder ?? []).filter(hero => scene().limitBursts?.[hero.unitKey]);
+
+function fill() {
+  for (const hero of limitHeroes()) if (!hero.isDead) hero.limitGauge = LB_MAX;
+}
+async function start() {
+  status.textContent = 'Starting battle…';
+  await until(() => game.registry.get('reviewManifests'));
+  const reserve = new URLSearchParams(location.search).get('reserve');
+  const run = createTrainingRun(game.cache, {encounter: Number($('encounter').value), arena: $('arena').value, ...(reserve ? {reserve} : {})});
+  game.scene.start('BattleScene', {manifests: game.registry.get('reviewManifests'), runContext: run.context});
+  await until(() => scene()?.sys.isActive() && scene().combatState === 'PLAYER_TURN');
+  fill();
+  const names = limitHeroes().map(hero => `${hero.heroName}: ${scene().limitBursts[hero.unitKey].name}`);
+  status.textContent = names.length ? 'Limit Bursts in this party:\n' + names.join('\n') : 'No hero in this party owns a published Limit Burst.';
+}
+setInterval(() => { if ($('keep-full').checked && scene()?.combatState === 'PLAYER_TURN') fill(); }, 250);
+$('refill').onclick = fill;
+$('restart').onclick = () => start().catch(error => status.textContent = 'FAIL ' + error.message);
+$('arena').onchange = $('encounter').onchange = $('restart').onclick;
+start().catch(error => status.textContent = 'FAIL ' + error.message);
+</script>

@@ -113,3 +113,8 @@ scrolling.
 In development builds `window.__ffrogueGame` exposes the running Phaser game for
 browser review scripts (`src/main.ts`). Training battles for review start with
 `createTrainingRun` (`src/run/trainingRun.ts`), e.g. encounter 2 for two enemies.
+
+Manual Limit Burst test: `/tools/test-source-limit-burst.html` (dev server) starts a training
+battle where every hero with a published Limit Burst has a full gauge; arena, enemy count,
+"keep full" and restart are on the page. `?reserve=<key>` swaps the third party member.
+No run save is written.
