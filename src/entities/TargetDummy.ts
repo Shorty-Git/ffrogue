@@ -130,13 +130,6 @@ export class TargetDummy extends Phaser.GameObjects.Container {
     return this.y - 130;
   }
 
-  /**
-   * Returns the ideal Y coordinate for the floating target marker above this monster.
-   */
-  public getMarkerY(): number {
-    return this.getTopY() - 10;
-  }
-
   private registerAnimations(): void {
     if (!this.manifest || !this.manifest.animations) return;
 

@@ -15,9 +15,3 @@ export const BATTLE_ARENAS = {
 
 export type BattleArenaKey = keyof typeof BATTLE_ARENAS;
 export type BattleArena = typeof BATTLE_ARENAS[BattleArenaKey];
-
-
-
-export function battleArenaKey(value: string | null): BattleArenaKey {
-  return value && Object.hasOwn(BATTLE_ARENAS,value) ? value as BattleArenaKey : 'forest';
-}

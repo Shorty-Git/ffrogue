@@ -489,6 +489,56 @@ test('party ribbon input rejects dead, acted and foreign heroes and terminal com
     scene.combatState = state; scene.pickRibbonHero(unit); scene.openHeroCommands(unit);
   }
 });
+function targetFirstBattle() {
+  const scene = battle(), unit = animatedHero(), sounds = [];
+  unit.combatConfig = { attackAnim: 'atk', attackType: 'melee' };
+  const a = { nameTag: 'A', currentHp: 100 }, b = { nameTag: 'B', currentHp: 100 };
+  scene.turnOrder = [unit]; scene.activeHeroIndex = 0; scene.combatState = 'PLAYER_TURN';
+  scene.enemies = [a, b]; scene.currentTarget = a; scene.plannedActions = new Map();
+  scene.runContext = { state: { party: [] }, uiSound: event => sounds.push(event) };
+  scene.refreshCombatHud = () => {}; scene.combatHud = { moveFocus() {} };
+  return { scene, unit, a, b, sounds };
+}
+test('enemy clicks and arrows retarget without spending an action, only during command selection', () => {
+  const { scene, unit, a, b, sounds } = targetFirstBattle();
+  scene.confirmRibbonTarget(1);
+  assert.equal(scene.currentTarget, b);
+  assert.equal(unit.hasActed, false); assert.equal(scene.plannedActions.size, 0); assert.deepEqual(sounds, ['select']);
+  scene.confirmRibbonTarget(1);
+  assert.deepEqual(sounds, ['select'], 'Re-clicking the current target is silent');
+  a.currentHp = 0; scene.confirmRibbonTarget(0);
+  assert.equal(scene.currentTarget, b, 'Defeated enemies cannot be targeted');
+  a.currentHp = 100; scene.combatState = 'HERO_ATTACKING'; scene.confirmRibbonTarget(0);
+  assert.equal(scene.currentTarget, b, 'A running action keeps its target');
+  scene.combatState = 'PLAYER_TURN';
+  scene.cycleTarget(1); assert.equal(scene.currentTarget, a);
+  scene.cycleTarget(-1); assert.equal(scene.currentTarget, b);
+  b.currentHp = 0; scene.cycleTarget(1); assert.equal(scene.currentTarget, a);
+  scene.cycleTarget(1); assert.equal(scene.currentTarget, a, 'Only living enemies are cycled');
+});
+test('Attack commits at once on the current target and falls back to a living enemy', () => {
+  const { scene, unit, a, b } = targetFirstBattle(), hits = [];
+  scene.executeActiveHeroAttack = () => { hits.push(scene.currentTarget); scene.combatState = 'HERO_ATTACKING'; };
+  scene.currentTarget = b;
+  scene.chooseRibbonAbility(0);
+  assert.deepEqual(hits, [b]); assert.equal(scene.plannedActions.size, 0);
+  scene.chooseRibbonAbility(0);
+  assert.equal(hits.length, 1, 'A second click during the action does nothing');
+  scene.combatState = 'PLAYER_TURN'; unit.hasActed = false; b.currentHp = 0;
+  scene.chooseRibbonAbility(0);
+  assert.deepEqual(hits, [b, a]);
+});
+test('single-ally skills still wait for an ally choice and Cancel keeps the action', () => {
+  const { scene, unit } = targetFirstBattle(); unit.unitKey = 'healer'; unit.currentMp = 100;
+  const cure = { ...JSON.parse(fs.readFileSync('public/assets/units/cloud/skills.json')).skills[0], id: 'cure', scope: 'single_ally', mpCost: 10 };
+  scene.unitSkills = { healer: [cure] }; scene.canUseSourceSkill = () => true;
+  let executed = 0; scene.executeSkillChoice = () => { executed++; };
+  scene.chooseRibbonAbility(1);
+  assert.equal(executed, 0); assert.equal(scene.plannedActions.get(unit)?.skill, cure);
+  assert.equal(unit.currentMp, 100); assert.equal(unit.hasActed, false);
+  scene.cancelPlannedAction();
+  assert.equal(scene.plannedActions.size, 0); assert.equal(unit.hasActed, false);
+});
 test('melee attacks approach the selected row and return home in both arenas', () => {
   const { getBattleLayout } = loadModule('src/ui/battleLayout.ts');
   const { BATTLE_ARENAS } = loadModule('src/data/battleArenas.ts');

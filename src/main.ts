@@ -27,3 +27,6 @@ const config: Phaser.Types.Core.GameConfig = {
 };
 
 export const game = new Phaser.Game(config);
+
+// Development only: lets browser review scripts reach the running instance.
+if (import.meta.env.DEV) (window as unknown as {__ffrogueGame?: Phaser.Game}).__ffrogueGame = game;

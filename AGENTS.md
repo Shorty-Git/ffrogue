@@ -1,13 +1,17 @@
 # Projekt-Kontext & Agenten-Regeln: FFBE Browser-Roguelike
 
 ## 1. Projektziel & Kern-Vision
-Entwicklung eines rundenbasierten 2D-Browser-Roguelikes (privat/nicht-kommerziell).
-- **Vorbilder:** Kampfsystem, Optik, Raster-Aufstellung (Party rechts, Gegner links) und "Move-to-Target"-Angriffsanimationen wie in *Final Fantasy Brave Exvius (FFBE)*. Run-Struktur (Kampf -> Belohnung/Buff wählen -> nächster Kampf) wie in *PokeRogue*.
-- **MVP-Umfang:** 3er-Party (z. B. Tank, Heiler, Damage Dealer) gegen 1–3 Gegner. 5 normale Kämpfe + 1 Bosskampf. Kein Open-World-Exploring, keine Story im MVP.
+Final Fantasy Rogue (FFRogue): ein privates, nicht-kommerzielles Final-Fantasy-Crossover-Roguelike auf Basis der Originalressourcen von *Final Fantasy Brave Exvius (FFBE)*.
+- **Vollständige Vision:** `docs/vision.md` (Zielbild, Pipelines, UI-Richtung, verbindliche Entwicklungsprinzipien, Präzisierungen des Entwicklers). Sie ist maßgeblich; diese Kurzfassung fasst nur zusammen.
+- **Spielkern:** Eine Slot Machine zieht eine zufällige 3er-Party aus dem Roster (eine Charakterfamilie höchstens einmal, Rerolls möglich). Eine Expedition führt durch Gebiete mit Kämpfen und Bossen; nach Kämpfen gibt es Belohnungen (neue Skills, Verbesserungen, Erwachen in echte FFBE-Formen). Jeder Charakter hat bis zu drei aktive Skills. Wiederspielwert entsteht aus Party, Skills, Gegnern und Welten.
+- **Vorbilder:** Optik, Sprites, Skill-Animationen und Aufstellung (Party rechts, Gegner links, "Move-to-Target"-Angriffe) wie in FFBE; Run-Struktur wie in *PokeRogue*. Das FFBE-Kampfsystem (Chains, Formeln) wird nicht nachgebaut.
+- **Langfristiges Ziel:** Charaktere, Skills, Gegner, Bosse, Arenen und Musik aus FF I–XVI und Ablegern über datengetriebene, wiederverwendbare Import-Pipelines.
+- **Messlatte für Skills:** Ein importierter Skill ist fertig, wenn er überzeugend aussieht, das Ziel trifft und der Einschlag sichtbar am Gegner sitzt. Pixel-, Positions- und Timing-Treue sind kein Abnahmekriterium; Reverse Engineering wird zeitlich begrenzt und generische Lösungen gehen vor Einzelfällen.
+- **Kampf-UI:** Hochformat am PC, tiefblau/silber, klare Werte. Ziele werden direkt in der Arena gewählt, Angriff und bis zu drei Skills ohne Untermenüs.
 - **Tech-Stack:** TypeScript, Phaser 3, Vite (für das Spiel), Python + Pillow (nur für Offline-Asset-Analyse/Pipeline-Skripte), Git zur Synchronisation zwischen zwei Windows-PCs.
 
 ## 2. Strikte Arbeitsweise für den KI-Agenten (ZWINGEND EINZUHALTEN)
-1. **Kleine, überprüfbare Schritte:** Erstelle NIals mehrere Systeme oder das halbe Spiel auf einmal. Arbeite immer nur den aktuell angeforderten Meilenstein ab und warte danach auf Freigabe.
+1. **Kleine, überprüfbare Schritte:** Erstelle nie mehrere Systeme oder das halbe Spiel auf einmal. Arbeite in kleinen, einzeln geprüften Meilensteinen. Der Entwickler hat autonomes Weiterarbeiten freigegeben: sinnvolle Schritte (Bereinigung, UI-Verbesserung, Doku-Pflege) selbstständig umsetzen, an Meilensteinen committen und im Nachgang berichten. Rückfragen nur bei echten Produktentscheidungen.
 2. **Keine erfundenen Tests:** Behaupte niemals, dass ein Tool, ein Build oder eine Animation funktioniert, wenn du es nicht tatsächlich über das Terminal ausgeführt und die Ausgabedateien geprüft hast. Nenne immer klar, was getestet wurde und was nicht.
 3. **Ursachenforschung statt Workarounds:** Wenn ein Skript, ein Pfad oder ein Sprite-Offset nicht stimmt, analysiere zuerst die Ursache (z. B. CSV/JSON-Datenstruktur), anstatt blinde Korrekturwerte im Code zu stapeln.
 4. **Windows-Umgebung & 2-PC-Sync beachten:** Alle Terminal-Befehle müssen unter Windows (PowerShell/CMD) funktionieren. Halte das Repository über eine saubere `.gitignore` kompakt, damit jederzeit problemlos per `git push` / `git pull` zwischen zwei Windows-Rechnern gewechselt werden kann.

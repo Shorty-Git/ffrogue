@@ -29,12 +29,18 @@ body:has(#run-ui:not([data-phase=battle])) .combat-ui,body:has(.encounter-transi
 .arena-health{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);display:grid;width:max-content;min-width:115px;max-width:190px;padding:4px 7px;gap:2px;border:1px solid #9fbdd6a0;border-radius:4px;background:#08182aeb;text-align:center;font-size:14px}
 .arena-health.is-boss{min-width:155px;border-color:#d5b579;color:#ffe3a8}
 .arena-health.is-boss meter,.arena-health.is-boss meter::-webkit-meter-bar{height:7px}
-.arena-actor.is-marked .arena-health{border-color:#ffe3a8;box-shadow:0 0 9px #ffe3a888}
-.combat-ui button.arena-hit{position:absolute;inset:0;pointer-events:auto;border:1px solid #ffe3a8b0;background:#f8eac517;border-radius:9px;padding:0}
-.combat-ui button.arena-hit:hover,.combat-ui button.arena-hit:focus-visible{background:#fff2b838;border-color:#fff1c9}
+.arena-actor.is-marked .arena-health,.arena-actor.is-targeted .arena-health{border-color:#e8f2ff;box-shadow:0 0 10px #9fd0ff77}
+/* Whole enemy body is the click area; no visible box, only a soft glow on hover. */
+.combat-ui button.arena-hit{position:absolute;inset:0;pointer-events:auto;border:0;background:none;border-radius:50%;padding:0;cursor:pointer}
+.combat-ui button.arena-hit:hover:not(:disabled){background:radial-gradient(closest-side,#bfe2ff2e,#bfe2ff00)}
+.combat-ui button.arena-hit:focus-visible{outline:2px dashed #e8f2ffb0;outline-offset:2px}
+.target-cursor{position:absolute;left:100%;top:50%;width:clamp(26px,3.4vw,40px);margin-left:2px;transform:translateY(-50%);pointer-events:none;filter:drop-shadow(0 0 4px #9fd0ffaa) drop-shadow(0 2px 2px #000a);animation:target-cursor-bob .9s ease-in-out infinite alternate}
+@keyframes target-cursor-bob{from{translate:0 0}to{translate:-6px 0}}
+@media(prefers-reduced-motion:reduce){.target-cursor{animation:none}}
 .run-toolbar.combat-settings{top:var(--battle-toolbar-top,8px);right:var(--battle-toolbar-right,8px);display:block}
 .combat-settings summary.rpg-button{cursor:pointer;padding:5px 8px;font-size:14px;min-height:30px}
 .combat-settings[open]{background:#081a30f5;border:1px solid #7f9cb8;border-radius:4px;padding:4px}
 .combat-settings button{min-height:32px}
 @media(max-height:760px){.combat-dock{padding:4px 7px}.ribbon-member{gap:0}.combat-ui button{padding:3px 5px}}
-.arena-actor.is-marked::after{content:'';position:absolute;inset:0;border:1px solid #ffe3a880;border-radius:9px;pointer-events:none}
+/* Actors hit by the running command: crystal glow at their feet. */
+.arena-actor.is-marked::after{content:'';position:absolute;left:10%;right:10%;bottom:-4%;height:16%;border-radius:50%;background:radial-gradient(closest-side,#bfe2ff66,#bfe2ff00);pointer-events:none}

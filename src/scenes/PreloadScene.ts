@@ -26,9 +26,6 @@ export class PreloadScene extends Phaser.Scene {
     for (const arena of Object.values(BATTLE_ARENAS)) {
       if(!('status' in arena))this.load.image(arena.texture, `assets/backgrounds/${arena.file}`);
     }
-    for (const key of ['command_plate', 'party_plate', 'attack', 'magic', 'ability']) {
-      this.load.image(`ui_${key}`, `assets/ui/battle/${key}.png`);
-    }
     const registry = this.cache.json.get('content_registry') as ContentRegistry;
     if (registry.scenePresentations?.length) {
       this.load.script('prepared_three', 'vendor/three-preview.js');

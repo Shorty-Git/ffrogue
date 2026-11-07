@@ -56,8 +56,6 @@ export class BattleScene extends Phaser.Scene {
   private actionSequence=0;
   private requiredBodies:BodyAsset[]=[];
   private stageAnimation?:StageAnimation;
-  private targetMarkerContainer!: Phaser.GameObjects.Container;
-  private markerVisual!: Phaser.GameObjects.Container;
   private victoryTriggered: boolean = false;
   private pendingImpacts = 0;
   private afterImpacts?: () => void;
@@ -162,9 +160,6 @@ export class BattleScene extends Phaser.Scene {
     this.createArenaBackground(width, height);
 
 
-    // 3. Target Marker for interactive selection
-    this.createTargetMarker();
-
     // Listen for enemy clicks on the battlefield
     this.events.on('enemy_clicked', (enemy: TargetDummy) => {
       const index=this.enemies.indexOf(enemy);
@@ -223,6 +218,8 @@ export class BattleScene extends Phaser.Scene {
       if(number){event.preventDefault();this.chooseRibbonAbility(Number(number[1])-1);}
       else if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(event.key)&&this.ribbonPlan()){
         event.preventDefault();this.combatHud?.moveFocus(['ArrowLeft','ArrowUp'].includes(event.key)?-1:1);
+      }else if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(event.key)&&this.combatState==='PLAYER_TURN'){
+        event.preventDefault();this.cycleTarget(['ArrowLeft','ArrowUp'].includes(event.key)?-1:1);
       }else if(event.key==='Enter'&&this.ribbonPlan()){
         const target=this.combatHud?.focusedTarget();
         if(control&&target===undefined&&control.getAttribute('data-command')!=='ability')return;
@@ -309,15 +306,25 @@ export class BattleScene extends Phaser.Scene {
     this.openHeroCommands(hero);
   }
 
+  /**
+   * Target-first commands: Attack and single-enemy skills hit the current target at once.
+   * Area, party and self skills also run at once; only single-ally skills wait for an ally choice.
+   */
   private chooseRibbonAbility(index:number):void{
+    const hero=this.getActiveHero();
+    if(!hero)return;
+    const skill=index===0?undefined:this.unitSkills[hero.unitKey]?.[index-1];
     if(index===0)this.planHeroAttack();
-    else{
-      const hero=this.getActiveHero(),skill=hero&&this.unitSkills[hero.unitKey]?.[index-1];
-      if(!skill)return;
-      this.planHeroSkill(skill);
-      const plan=this.ribbonPlan();
-      if(plan?.kind==='skill'&&plan.skill===skill&&['party','self','all_enemies'].includes(skill.scope)){
-        this.ribbonMarks=skill.scope==='all_enemies'?this.enemies.filter(enemy=>enemy.currentHp>0):this.friendlySkillTargets(hero,skill);
+    else if(skill)this.planHeroSkill(skill);
+    else return;
+    const plan=this.ribbonPlan();
+    if(plan&&(plan.kind==='attack'?index===0:plan.skill===skill)){
+      const scope=plan.kind==='skill'?plan.skill.scope:'single_enemy';
+      if(scope==='single_enemy'){
+        const target=this.currentTarget&&this.currentTarget.currentHp>0?this.currentTarget:this.autoRetarget();
+        if(target){plan.target=target;this.ribbonMarks=[target];this.executePlannedAction();}
+      }else if(scope!=='single_ally'&&plan.kind==='skill'){
+        this.ribbonMarks=scope==='all_enemies'?this.enemies.filter(enemy=>enemy.currentHp>0):this.friendlySkillTargets(hero,plan.skill);
         this.executePlannedAction();
       }
     }
@@ -325,9 +332,24 @@ export class BattleScene extends Phaser.Scene {
     if(this.ribbonPlan())this.combatHud.moveFocus(1);
   }
 
+  /** Changes the enemy target without spending an action; only during command selection. */
+  private retarget(enemy:TargetDummy|undefined):void{
+    if(this.combatState!=='PLAYER_TURN'||!enemy||enemy.currentHp<=0||enemy===this.currentTarget)return;
+    this.runContext.uiSound?.('select');
+    this.setTarget(enemy);
+    this.refreshCombatHud();
+  }
+
+  private cycleTarget(delta:number):void{
+    const living=this.enemies.filter(enemy=>enemy.currentHp>0);
+    if(!living.length)return;
+    const index=living.indexOf(this.currentTarget as TargetDummy);
+    this.retarget(living[(index<0?0:index+delta+living.length)%living.length]);
+  }
+
   private confirmRibbonTarget(index:number):void{
     const plan=this.ribbonPlan();
-    if(!plan)return;
+    if(!plan){this.retarget(this.enemies[index]);return;}
     const scope=plan.kind==='skill'?plan.skill.scope:'single_enemy';
     if(scope==='single_ally'){
       const ally=this.turnOrder[index-this.enemies.length];
@@ -338,7 +360,7 @@ export class BattleScene extends Phaser.Scene {
       const enemy=this.enemies[index];
       if(!enemy||enemy.currentHp<=0)return;
       this.runContext.uiSound?.('select');
-      this.setTarget(enemy,false);
+      this.setTarget(enemy);
       plan.target=enemy;
       this.executePlannedAction();
     }
@@ -349,7 +371,6 @@ export class BattleScene extends Phaser.Scene {
     const hero=this.getActiveHero(),plan=this.ribbonPlan();
     const available=this.combatState==='PLAYER_TURN'&&!!hero&&!hero.isDead&&!hero.hasActed;
     if(this.combatState!=='HERO_ATTACKING')this.ribbonMarks=[];
-    this.targetMarkerContainer.setVisible(false);
     const skill=plan?.kind==='skill'?plan.skill:undefined;
     const scope=skill?.scope??'single_enemy';
     const stage=this.currentEncounter();
@@ -366,18 +387,18 @@ export class BattleScene extends Phaser.Scene {
       const definition=ENEMY_CONTENT[enemy.assetKey];
       const intent=enemy.isBoss&&definition?.behavior?enemyAction(definition,enemy.actionCursor,enemy.currentHp/enemy.maxHp):undefined;
       const status=[intent&&[intent.name,intent.next,intent.phase].filter(Boolean).join(' · '),...enemy.statusEffects.map(effect=>effect.kind.replaceAll('-',' '))].filter(Boolean).join(' · ');
-      const selectable=!!plan&&scope==='single_enemy';
+      const selectable=this.combatState==='PLAYER_TURN'&&scope!=='single_ally';
       return [{id,name:enemy.nameTag,hp:enemy.currentHp,maxHp:enemy.maxHp,boss:enemy.isBoss,status,selectable,
-        marked:selectable||this.ribbonMarks.includes(enemy),...placement(enemy.sprite)}];
+        targeted:selectable&&enemy===this.currentTarget,marked:this.ribbonMarks.includes(enemy),...placement(enemy.sprite)}];
     });
     const skills=hero?(this.unitSkills[hero.unitKey]??[]).slice(0,3):[];
     this.combatHud.render({
       area:stage.title,phase:stage.boss?'Boss':`Battle ${this.fightNumber}`,pending:!!plan,
       message:plan?`${skill?.name??'Attack'} · ${scope==='single_ally'?'Choose an ally':'Choose an enemy'}`:
-        available?`Round ${this.currentRound} · Select a command`:this.statusMessage,
+        available?`Round ${this.currentRound} · ${hero.heroName} → ${this.currentTarget?.nameTag??'no target'}`:this.statusMessage,
       actors:[...actors,...this.turnOrder.flatMap((ally,i)=>{
         const selectable=!!plan&&scope==='single_ally'&&!ally.isDead&&ally.currentHp>0;
-        return selectable||this.ribbonMarks.includes(ally)?[{id:this.enemies.length+i,name:ally.heroName,selectable,marked:true,...placement(ally)}]:[];
+        return selectable||this.ribbonMarks.includes(ally)?[{id:this.enemies.length+i,name:ally.heroName,selectable,targeted:false,marked:true,...placement(ally)}]:[];
       })],
       party:this.turnOrder.map((member,i)=>{
         const boost=heroPhysicalMultiplier(member.sourceBuffs,this.currentRound);
@@ -443,7 +464,7 @@ export class BattleScene extends Phaser.Scene {
     this.activeHeroIndex = index;
     this.refreshPlannedPose(hero);
     const plan = this.plannedActions.get(hero);
-    if (plan?.target && plan.target.currentHp > 0) this.setTarget(plan.target, false);
+    if (plan?.target && plan.target.currentHp > 0) this.setTarget(plan.target);
     this.updateStatus(`${hero.heroName}: choose a command.`);
   }
 
@@ -503,7 +524,7 @@ export class BattleScene extends Phaser.Scene {
       this.runContext.uiSound?.('unavailable');
       this.updateStatus('Not enough HP to execute the prepared skill.'); return;
     }
-    if (plan.target && plan.target.currentHp > 0) this.setTarget(plan.target, false);
+    if (plan.target && plan.target.currentHp > 0) this.setTarget(plan.target);
     this.runContext.uiSound?.('confirm');
     this.isCommandMenuOpen = false;
     this.plannedActions.delete(hero);
@@ -522,77 +543,10 @@ export class BattleScene extends Phaser.Scene {
     this.updateStatus(`${hero.heroName}: Prepared command cleared.`);
   }
 
-  /**
-   * Creates the visual JRPG target marker floating above the selected enemy.
-   * Uses an inner container (markerVisual) for local bobbing so it never interferes with world positioning.
-   */
-  private createTargetMarker(): void {
-    this.targetMarkerContainer = this.add.container(0, 0);
-    this.targetMarkerContainer.setDepth(2600);
-    this.targetMarkerContainer.setVisible(false);
-
-    this.markerVisual = this.add.container(0, 0);
-
-    // Glowing red downward arrow ▼ with tip at y = 0
-    const arrow = this.add.text(0, 0, '▼', {
-      fontFamily: 'Arial, sans-serif',
-      fontSize: '22px',
-      color: '#e7d19b',
-      stroke: '#1b2432',
-      strokeThickness: 4,
-      fontStyle: 'bold',
-    }).setOrigin(0.5, 1.0);
-
-    // Pill label [TARGET] above the arrow
-    const labelBg = this.add.rectangle(0, -22, 52, 16, 0x192c3b, 0.95);
-    labelBg.setStrokeStyle(1, 0xb69b63);
-    const labelText = this.add.text(0, -22, 'TARGET', {
-      fontFamily: 'monospace',
-      fontSize: '10px',
-      color: '#ede8d8',
-      fontStyle: 'bold',
-    }).setOrigin(0.5);
-
-    this.markerVisual.add([arrow, labelBg, labelText]);
-    this.targetMarkerContainer.add(this.markerVisual);
-
-    // Gentle local floating bobbing animation (±4px) that cannot corrupt world position
-    this.tweens.add({
-      targets: this.markerVisual,
-      y: -5,
-      duration: 420,
-      yoyo: true,
-      repeat: -1,
-      ease: 'Sine.easeInOut',
-    });
-  }
-
-  /**
-   * Sets the specified enemy as the active attack target and positions the marker directly above its head.
-   */
-  public setTarget(enemy: TargetDummy, smooth = true): void {
+  /** Sets the active enemy target; the CombatHud shows it with the target cursor. */
+  public setTarget(enemy: TargetDummy): void {
     if (!enemy || enemy.currentHp <= 0) return;
     this.currentTarget = enemy;
-
-    this.tweens.killTweensOf(this.targetMarkerContainer);
-    const targetX = enemy.x;
-    const targetY = enemy.getMarkerY();
-
-    this.targetMarkerContainer.setVisible(
-      this.combatState === 'PLAYER_TURN' || this.combatState === 'HERO_ATTACKING'
-    );
-
-    if (smooth && this.targetMarkerContainer.visible) {
-      this.tweens.add({
-        targets: this.targetMarkerContainer,
-        x: targetX,
-        y: targetY,
-        duration: 140,
-        ease: 'Cubic.easeOut',
-      });
-    } else {
-      this.targetMarkerContainer.setPosition(targetX, targetY);
-    }
   }
 
   /**
@@ -601,11 +555,10 @@ export class BattleScene extends Phaser.Scene {
   private autoRetarget(): TargetDummy | null {
     const nextAlive = this.enemies.find((e) => e.currentHp > 0);
     if (nextAlive) {
-      this.setTarget(nextAlive, true);
+      this.setTarget(nextAlive);
       return nextAlive;
     } else {
       this.currentTarget = null;
-      this.targetMarkerContainer.setVisible(false);
       return null;
     }
   }
@@ -619,7 +572,6 @@ export class BattleScene extends Phaser.Scene {
     this.currentTarget = null;
     this.victoryTriggered = false;
     this.plannedActions.clear();
-    this.targetMarkerContainer.setVisible(false);
     this.isCommandMenuOpen = false;
     const enemySlots = getBattleLayout(this.scale.width, this.scale.height, BATTLE_ARENAS[this.arenaKey]).enemies;
     const configs = this.currentEncounter().enemies.map((config) => ({
@@ -663,7 +615,7 @@ export class BattleScene extends Phaser.Scene {
           onFormationReady?.();
           const firstAlive = this.enemies.find((e) => e.currentHp > 0);
           if (firstAlive) {
-            this.setTarget(firstAlive, false);
+            this.setTarget(firstAlive);
           }
           if(cfg.isBoss&&onComplete)this.announceBoss(cfg.nameTag,onComplete);
           else if (onComplete) onComplete();
@@ -721,7 +673,7 @@ export class BattleScene extends Phaser.Scene {
     if (!this.currentTarget || this.currentTarget.currentHp <= 0) {
       this.autoRetarget();
     } else {
-      this.setTarget(this.currentTarget, false);
+      this.setTarget(this.currentTarget);
     }
 
     this.updateStatus(`Round ${this.currentRound}: Prepare commands for any ready heroes. Choose who executes first.`);
@@ -781,7 +733,6 @@ export class BattleScene extends Phaser.Scene {
       const allDead = this.enemies.every((e) => e.currentHp <= 0);
       if (allDead) {
         this.combatState = 'VICTORY';
-        this.targetMarkerContainer.setVisible(false);
         this.isCommandMenuOpen = false;
         this.updateStatus(`K.O.! ${target.nameTag} defeated! All enemies eliminated!`);
       } else {
@@ -1436,7 +1387,6 @@ export class BattleScene extends Phaser.Scene {
     }
 
     this.combatState = 'ENEMY_TURN';
-    this.targetMarkerContainer.setVisible(false);
 
     const attackNextEnemy = (index: number) => {
       if (this.combatState !== 'ENEMY_TURN') return;
@@ -1528,7 +1478,6 @@ export class BattleScene extends Phaser.Scene {
     this.plannedActions.clear();
 
     this.combatState = 'VICTORY';
-    this.targetMarkerContainer.setVisible(false);
     this.isCommandMenuOpen = false;
     this.enemies.forEach((enemy) => {
       if (enemy.visible) enemy.playDefeatFade();

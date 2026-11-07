@@ -1,10 +1,14 @@
 type PartyEntry = {name:string; portrait?:string; hp:number; maxHp:number; mp:number; maxMp:number; status:string; active:boolean; disabled:boolean; target?:number};
 type Command = {name:string; cost:string; description:string; disabled:boolean; selected:boolean};
 type ArenaActor = {id:number; name:string; hp?:number; maxHp?:number; status?:string; boss?:boolean; marked:boolean; selectable:boolean;
+  /** Current enemy target: drawn with the crystal target cursor. */ targeted:boolean;
   x:number; y:number; width:number; height:number};
 export type CombatHudState = {
   area:string; phase:string; message:string; pending:boolean; party:PartyEntry[]; commands:(Command|null)[]; actors:ArenaActor[];
 };
+
+// Crystal arrow pointing at the target from the party side (party stands right of the enemies).
+const TARGET_CURSOR=`<svg class="target-cursor" viewBox="0 0 40 28" aria-hidden="true"><defs><linearGradient id="cursor-fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".45" stop-color="#cfe6ff"/><stop offset="1" stop-color="#6f9cc9"/></linearGradient></defs><path d="M2 14 L22 2 L19 10 L38 10 L38 18 L19 18 L22 26 Z" fill="url(#cursor-fill)" stroke="#0b1a2e" stroke-width="2" stroke-linejoin="round"/><path d="M8 14 L20 6.5 L18.5 12 L34 12" fill="none" stroke="#ffffff" stroke-width="1.4" stroke-linecap="round" opacity=".85"/></svg>`;
 
 const escapeHtml=(value:string)=>value.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
 
@@ -61,8 +65,8 @@ export class CombatHud {
     const actors=state.actors.map(actor=>{
       const position=`left:${actor.x}%;top:${actor.y}%;width:${actor.width}%;height:${actor.height}%`;
       const label=actor.hp===undefined?'':`<span class="arena-health ${actor.boss?'is-boss':''}"><strong>${escapeHtml(actor.name)}</strong><span>${actor.hp.toLocaleString()} / ${actor.maxHp!.toLocaleString()}</span>${meter('hp',actor.hp,actor.maxHp!)}${actor.status?`<small>${escapeHtml(actor.status)}</small>`:''}</span>`;
-      return `<div class="arena-actor ${actor.marked?'is-marked':''}" style="${position}">${label}
-        ${actor.selectable?`<button type="button" class="arena-hit" ${attrs('target',actor.id)} aria-label="Target ${escapeHtml(actor.name)}"></button>`:''}</div>`;
+      return `<div class="arena-actor ${actor.marked?'is-marked':''} ${actor.targeted?'is-targeted':''}" style="${position}">${label}${actor.targeted?TARGET_CURSOR:''}
+        ${actor.selectable?`<button type="button" class="arena-hit" ${attrs('target',actor.id)} aria-label="Target ${escapeHtml(actor.name)}" aria-pressed="${actor.targeted}"></button>`:''}</div>`;
     }).join('');
     this.root.innerHTML=`<div class="combat-caption"><strong>${escapeHtml(state.area)}</strong><span>${escapeHtml(state.phase)}</span></div>
       ${actors}<div class="combat-dock"><div class="combat-party">${party}</div><div class="ribbon-commands">${commands}</div>

@@ -86,7 +86,8 @@ async function matched(skillKey,frame,frozenBodies=false){
  const source=await capture(),state=scene.preparedScenes.snapshot();check(state.errors.length===0,'Scene bridge error');
  check(state.layers.back.every(node=>!node.visible),'Reference requires actor-separated back composition');
  const reference=await referenceFrame(scene.cache.json.get('scene_'+skill.scenePresentation+'_manifest'),state.host,frame,background);
- const overlays=[scene.enemyTargetPanel?.container,scene.targetMarkerContainer].filter(o=>o?.visible).map(object=>{const r=object.getBounds();return {x:Math.floor(r.x)-2,y:Math.floor(r.y)-2,width:Math.ceil(r.width)+4,height:Math.ceil(r.height)+4};});
+ // Battle overlays (HP labels, target cursor) are DOM elements outside the compared framebuffer.
+ const overlays=[];
  const previewDifference=await pixelDifference(source,reference,state.host.arena,overlays);
  check(previewDifference.above2===0,'Product framebuffer differs from the matched preview outside declared game overlays: '+JSON.stringify(previewDifference));
  const pair={skill:skillKey,frame,host:state.host,quality:state.quality,source,reference,previewDifference,

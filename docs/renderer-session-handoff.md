@@ -1,5 +1,15 @@
 # Renderer session handoff
 
+## Current: target-first battle ribbon (2026-11-07)
+
+UI milestone 1 from docs/vision.md: enemies are clickable at any time during
+command selection; the current target carries a crystal cursor; Attack and
+single-enemy skills commit with one click. Only single-ally skills still wait
+for an ally choice. The hidden Phaser target marker, the unused battle UI image
+preloads and `battleArenaKey` were removed. Contract and checks:
+docs/battle-layout.md. Next: milestone 2, the visual redesign of dock, party
+cards and enemy plates in the blue/silver direction.
+
 ## Current: debug battle path removed (2026-11-07)
 
 BattleScene requires a run context and always uses the DOM CombatHud.

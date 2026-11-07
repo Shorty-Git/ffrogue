@@ -99,9 +99,8 @@ try {
     const index=battle.turnOrder.indexOf(hero);
     await wait(()=>document.querySelector('[data-command=ability][data-index="0"]:not(:disabled)'));
     document.querySelector('[data-command=hero][data-index="'+index+'"]').click();
+    // Target-first ribbon: Attack hits the current target at once.
     document.querySelector('[data-command=ability][data-index="0"]').click();
-    await wait(()=>document.querySelector('.arena-hit'));
-    document.querySelector('.arena-hit').click();
     await wait(()=>hero.hasActed||flow.state.phase!=='battle');
    }
    if(flow.state.phase!=='rewards')throw Error('Combat did not reach rewards');
