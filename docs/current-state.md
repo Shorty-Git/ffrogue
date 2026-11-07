@@ -26,6 +26,11 @@ Last consolidated: 2026-11-07.
   standing; a K.O. empties it.
 - Enemy single-target attacks hit a random standing hero (`src/run/enemyTargeting.mjs`,
   combat RNG stream); before 2026-11-08 they always hit party slot 1.
+- Friendly effect kinds (`allyEvents`, stationary `self`/`party` skills): `heal`, `physical-boost`,
+  `auto-revive` (Reraise-style: `hpFraction`, `turns`; the next K.O. in the window revives once)
+  and `limit-fill` (`amount` 1–100 on the Limit gauge). Validated in `reviewedSkillEvents`,
+  scaled by skill level in `skillForRun`, described in the HUD by `skillDescription`. The last two
+  are data model + battle handling only (2026-11-08); no published skill uses them yet.
 
 ## Balance (2026-11-08, overnight cloud session)
 
@@ -197,7 +202,9 @@ Generic rules added 2026-11-07 (no per-skill exceptions):
   generation in the frozen player; commands without effect timelines (Limit Braver etc.).
 - Party buffs (Fury Brand, Cheer) reuse the existing physical-boost status (x1.3, 3 rounds,
   allyTargeting living-allies) and need a `friendlyTargetReview` with the source target/range.
-  Support skills without a game mechanic (Reraise, Speed Drink, Store, Return) stay unimported.
+  Support skills without a game mechanic (Speed Drink, Store, Return) stay unimported. Reraise now
+  has a game mechanic (`auto-revive`, see Product state) but still needs single-ally scope in the
+  presentation pipeline and its own Source review before import.
 - Balance values from 2026-11-08 are simulator-based and await play-testing by the developer.
 - All Cloud forms use the 5★ Omnislash.
 - Several node tests pin manifest SHA-256 values of Windows (CRLF) checkouts

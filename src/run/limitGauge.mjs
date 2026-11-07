@@ -21,3 +21,8 @@ export function carriedLimit(character,hp,gauge){
   if(!character?.limitBurst||!(hp>0)||!Number.isFinite(gauge))return 0;
   return clamp(gauge);
 }
+/** Reviewed support fill (e.g. a 'limit-fill' friendly effect); bounded like every other gain. */
+export function gainFromSupport(gauge, amount) {
+  if (!Number.isInteger(amount) || amount < 1 || amount > LB_MAX) throw Error('Invalid reviewed Limit fill');
+  return clamp(gauge + amount);
+}

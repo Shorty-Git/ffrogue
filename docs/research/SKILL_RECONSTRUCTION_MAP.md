@@ -1,5 +1,20 @@
 # FFRogue - Skill Reconstruction Map
 
+## Gameplay data model: auto-revive and Limit fill friendly effects (2026-11-08)
+
+Not a reconstruction step: no presentation, recipe or Source skill changed. Two reusable
+review-owned `allyEvents` kinds now exist for support skills that previously had no game effect:
+`auto-revive` (`hpFraction` 0..1, `turns` 1..9; Reraise-style status consumed by the next K.O.
+in its window) and `limit-fill` (`amount` 1..100 on the recipient's Limit gauge; heroes without a
+Limit Burst have no gauge). Validation lives in `reviewedSkillEvents`
+(src/effects/skillDamageTimeline.mjs); statuses in src/effects/heroBuffs.mjs; battle handling in
+BattleScene (friendly event loop, enemy impact). Scopes stay `self`/`party` (stationary). Reraise
+itself is still gated: single-ally scope is not admitted by sceneProfile/the presentation
+pipeline, and its MAGIC body/timing and rendering gates are unchanged. Speed Drink (double-limit)
+and Store (charge) need their own reviewed rules; neither is approximated by these kinds.
+Evidence: tools/test_friendly_support.mjs (5 pass), combat regression "a lethal enemy hit consumes
+auto-revive..." (57/57 pass). Not browser-verified: no published skill uses the kinds yet.
+
 ## Product update: authoring-free approximation unlocks Cloud AC's Limit Burst (2026-11-07)
 
 Critical-path change for P07/P10/P30 under the developer's visual bar (docs/vision.md): the
