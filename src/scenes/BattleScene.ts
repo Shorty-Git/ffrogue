@@ -1,5 +1,5 @@
 import {skillIconUrl} from '../ui/skillIcons';
-import {LB_MAX,gainFromAction,gainFromDamage,isFull} from '../run/limitGauge.mjs';
+import {LB_MAX,LB_PER_ACTION,gainFromAction,gainFromDamage,isFull} from '../run/limitGauge.mjs';
 import {enemyTargetIndex} from '../run/enemyTargeting.mjs';
 import {CombatHud} from '../ui/CombatHud';
 import Phaser from 'phaser';
@@ -18,7 +18,7 @@ import { applyHeroBuffs, heroPhysicalMultiplier } from '../effects/heroBuffs.mjs
 import {resolveEnemyInstant} from '../effects/enemyInstant.mjs';
 import {validateActionChoreography,actionTravel} from '../effects/actionChoreography.mjs';
 import type {RunBattleContext} from '../run/battleContext';
-import {nextRandom,skillForRun,memberMaxMp} from '../run/runState.mjs';
+import {nextRandom,skillForRun,memberMaxMp,encounters} from '../run/runState.mjs';
 import {skillDescription} from '../run/catalog';
 import {RPG,rpgHex,RPG_FONT} from '../ui/designTokens';
 import {rpgPanel} from '../ui/rpgPanel';
@@ -415,7 +415,7 @@ export class BattleScene extends Phaser.Scene {
     });
     const skills=hero?(this.unitSkills[hero.unitKey]??[]).slice(0,3):[];
     this.combatHud.render({
-      area:stage.title,phase:stage.boss?'Boss':`Battle ${this.fightNumber}`,pending:!!plan,
+      area:stage.title,phase:`${stage.boss?'Boss':'Battle'} ${this.fightNumber} / ${encounters(this.runContext.state.areas).length}`,pending:!!plan,
       message:plan?`${skill?.name??'Attack'} · ${scope==='single_ally'?'Choose an ally':'Choose an enemy'}`:
         available?`Round ${this.currentRound} · ${hero.heroName} → ${this.currentTarget?.nameTag??'no target'}`:this.statusMessage,
       actors:[...actors,...this.turnOrder.flatMap((ally,i)=>{
@@ -433,14 +433,14 @@ export class BattleScene extends Phaser.Scene {
           state,target,hp:member.currentHp,maxHp:member.maxHp,mp:member.currentMp,maxMp:member.maxMp,
           ...(this.limitBursts[member.unitKey]?{limit:{value:member.limitGauge,max:LB_MAX}}:{})};
       }),
-      commands:[{name:'Attack',icon:'attack',cost:'0 MP',description:'Normal attack',disabled:!available,selected:plan?.kind==='attack'},
+      commands:[{name:'Attack',icon:'attack',cost:'0 MP',description:'Physical damage to the target · 15% critical chance · no cost',disabled:!available,selected:plan?.kind==='attack'},
         ...[0,1,2].map(i=>{
           const action=skills[i];if(!action)return null;
-          return {name:action.name,icon:(action.motion==='magic_atk'?'magic':'ability') as 'magic'|'ability',iconUrl:skillIconUrl(action),cost:`${action.mpCost} MP${action.hpCost?' · '+action.hpCost+' HP':''}`,description:skillDescription(action),
+          return {name:action.name,icon:(action.motion==='magic_atk'?'magic':'ability') as 'magic'|'ability',iconUrl:skillIconUrl(action),cost:`${action.mpCost} MP${action.hpCost?' · '+action.hpCost+' HP':''}`,description:skillDescription(action)+(hero&&hero.currentMp<action.mpCost?` • Not enough MP (${hero.currentMp}/${action.mpCost})`:''),
             disabled:!available||!hero||hero.currentMp<action.mpCost||!!action.hpCost&&hero.currentHp<=action.hpCost||!this.canUseSourceSkill(action),selected:skill===action};
         }),
         ...(hero&&this.limitBursts[hero.unitKey]?[(()=>{const lb=this.limitBursts[hero.unitKey],ready=isFull(hero.limitGauge);
-          return {name:lb.name,icon:'limit' as const,cost:ready?'Limit ready':`Limit ${hero.limitGauge}%`,description:skillDescription(lb),
+          return {name:lb.name,icon:'limit' as const,cost:ready?'Limit ready':`Limit ${hero.limitGauge}%`,description:skillDescription(lb)+(ready?'':` • Limit gauge ${hero.limitGauge}/${LB_MAX}: +${LB_PER_ACTION} per action, damage taken also fills it; it carries to the next battle`),
             disabled:!available||!ready||!this.canUseSourceSkill(lb),selected:skill===lb,limit:true,ready};})()]:[])],
     });
   }
