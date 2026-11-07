@@ -68,7 +68,9 @@ export class CombatHud {
   private showPrompt():void {
     const line=this.root.querySelector<HTMLElement>('.ribbon-prompt [role=status]');
     if(!line||!this.state)return;
-    const command=this.hinted===undefined?undefined:this.state.commands[this.hinted];
+    // Hints belong to command selection; once every command is locked (enemy turn, victory) the battle message wins.
+    const selecting=this.state.commands.some(command=>command&&!command.disabled);
+    const command=this.hinted===undefined||!selecting?undefined:this.state.commands[this.hinted];
     line.classList.toggle('is-hint',!!command);
     line.textContent=command?`${command.name} · ${command.description}`:this.state.message;
   }
