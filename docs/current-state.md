@@ -61,6 +61,9 @@ Generic rules added 2026-11-07 (no per-skill exceptions):
 - Anchor mode 3 = caster unit rectangle (`caster-unit`); the host moves the caster so the
   source strike point lands on the target (`casterStrikeOffset`).
 - Limit Bursts: catalog kind `LIMIT`, hits from `limitburst.attackFrames`, body `limit_atk`.
+- Source scenes own the clock: no hit-stop pauses the caster's body during a prepared Source
+  action (it drifted Omnislash's body >1 s behind its hits). Check any Limit Burst with
+  `node tools/review_limit_burst_sync.mjs` (body drift per hit must stay ≤ 1 frame).
 
 ## Environment and tools
 
@@ -74,6 +77,9 @@ Generic rules added 2026-11-07 (no per-skill exceptions):
   restart the receipt server after code changes; `node tools/check_dev_server.mjs` checks freshness.
 - Dev hooks: `window.__ffrogueGame` (dev builds); `createTrainingRun` (`src/run/trainingRun.ts`)
   for fixed training battles (encounter 1 = boss dummy, 2 = two dummies).
+- Phone review (developer often remote): `node tools/capture_battle_screencast.mjs tools/data/<run>/frames`
+  then `<python> tools/screencast_to_gif.py tools/data/<run>/frames out.gif` and send the GIF
+  (CDP screencast, no ffmpeg download needed).
 - Manual pages: `/tools/test-source-scene.html` (Source review checks),
   `/tools/test-source-limit-burst.html` (Limit Burst playground), `?gallery=arenas`.
 
@@ -92,7 +98,6 @@ Generic rules added 2026-11-07 (no per-skill exceptions):
 
 ## Open items
 
-- Limit Burst damage numbers vs. visual hits in the animation (in progress 2026-11-07).
 - More Limit Bursts (limit_atk bodies exist for Cloud AC, Barret, Aerith, Jack, CoD).
 - LB gauge does not carry between battles; all Cloud forms use the 5★ Omnislash.
 - Cinzel name font: developer mildly unsure, kept for now.

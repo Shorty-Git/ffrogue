@@ -27,6 +27,11 @@ Pipeline changes (all explicit, none silent):
   party/enemy distances are translated to the FFRogue arena instead of a fixed recipe offset;
   presentations without caster-unit members keep the reviewed approach offset. First read of
   mode 3 as the target placed every Omnislash hit 280 px left of the enemy.
+- Timing follow-up: BattleScene's 80 ms hit-stop paused the caster's body on every hit of a
+  dashing skill while the Source effect/damage clock ran on; Omnislash's body drifted up to 15
+  frames (>1 s). Prepared Source actions no longer hit-stop. Measured with
+  `tools/review_limit_burst_sync.mjs`: body drift ≤ 1 frame at all 15 hits, target flashes at
+  the damage frames.
 - Scene manifests may run up to 900 frames (`MAX_SCENE_FRAMES`, was 600).
 - Body sheets wider than 16384 px (WebGL limit) wrap into a row-major grid
   (`tools/sheet_grid.py`, used by export_unit.py, prepare_cgg_body_layers.py and

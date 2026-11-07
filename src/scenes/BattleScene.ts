@@ -1101,8 +1101,10 @@ export class BattleScene extends Phaser.Scene {
         const hitTarget = skill.damageEvents ? target : this.currentTarget && this.currentTarget.currentHp > 0 ? this.currentTarget : target;
         if (!hitTarget || hitTarget.currentHp <= 0) return;
 
-        // 1. Hit-Stop if dashing
-        if (skill.moveType === 'dash') {
+        // 1. Hit-Stop if dashing. Source scenes own the clock: pausing the body there would let
+        // it fall behind the original effect/damage timeline (80 ms per hit; Omnislash's 15 hits
+        // drifted by over a second), so prepared Source actions never hit-stop.
+        if (skill.moveType === 'dash' && !sourceKey) {
           hero.anims.pause();
           this.time.delayedCall(80, () => {
             if (hero.anims) hero.anims.resume();
