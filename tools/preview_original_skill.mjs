@@ -92,7 +92,7 @@ const server=http.createServer(async(req,res)=>{try{
  }
  if(req.method==='POST'&&url.pathname==='/product-review'){
   if(req.headers.origin!==gameOrigin){res.writeHead(403).end();return;}
-  let body='';for await(const chunk of req){body+=chunk;if(body.length>32e6)throw Error('Product receipt too large');}
+  let body='';for await(const chunk of req){body+=chunk;if(body.length>128e6)throw Error('Product receipt too large');}
   const receipt=JSON.parse(body);if(receipt.passed!==true||!Array.isArray(receipt.results))throw Error('Expected completed product check');
   const folder=path.resolve('tools/data/visual-preservation/product-review');fs.mkdirSync(folder,{recursive:true});
   fs.writeFileSync(path.join(folder,'receipt.json'),JSON.stringify(receipt));

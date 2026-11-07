@@ -436,6 +436,95 @@
           "note": "Limit Burst: dash to the target, then the published limit_atk clip (10.9 s) under the 12.2 s original effect timeline. LB rows carry no motionType; 1 (physical) is a reviewed adaptation matching its single-target melee form."
         }
       }
+    },
+    {
+      "id": "meteor_rain",
+      "ffbeId": 214830,
+      "name": "Meteor Rain",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 45,
+      "scope": "all_enemies",
+      "damageMultiplier": 2,
+      "hitCount": 8,
+      "attackFrames": [
+        84,
+        92,
+        100,
+        108,
+        116,
+        124,
+        132,
+        140
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2x, ATK) to all enemies in 8 meteor strikes",
+      "execution": "prepared-source",
+      "damageEvents": [
+        {
+          "frame": 84,
+          "weight": 0.12
+        },
+        {
+          "frame": 92,
+          "weight": 0.12
+        },
+        {
+          "frame": 100,
+          "weight": 0.12
+        },
+        {
+          "frame": 108,
+          "weight": 0.12
+        },
+        {
+          "frame": 116,
+          "weight": 0.12
+        },
+        {
+          "frame": 124,
+          "weight": 0.12
+        },
+        {
+          "frame": 132,
+          "weight": 0.12
+        },
+        {
+          "frame": 140,
+          "weight": 0.16
+        }
+      ],
+      "reviewNote": "Authoring-free import 2026-11-07 (no matched BMSLN): shared Source preview profile with --approximate-unverified; visual acceptance bar per docs/vision.md, not native pixel parity.",
+      "scenePresentation": "cloud_meteor_rain",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/authoring-free-20261107/meteor/source/skill-source.json",
+        "sha256": "b37011bceffc3329023789454941219b24b3061cdd0e0c5e0e363bec3259a42b"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Original motionType 2 / moveType 4: stationary cast with the magic_atk body."
+        }
+      }
     }
   ],
   "portraitSource": "unit_icons/unit_icon_207000105.png"

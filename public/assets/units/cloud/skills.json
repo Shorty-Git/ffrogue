@@ -847,6 +847,160 @@
         ],
         "boundary": "Original process parameters and source markers do not execute as game balance rules"
       }
+    },
+    {
+      "id": "meteor_rain",
+      "ffbeId": 214830,
+      "name": "Meteor Rain",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 45,
+      "scope": "all_enemies",
+      "damageMultiplier": 2,
+      "hitCount": 8,
+      "attackFrames": [
+        84,
+        92,
+        100,
+        108,
+        116,
+        124,
+        132,
+        140
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2x, ATK) to all enemies in 8 meteor strikes",
+      "damageEvents": [
+        {
+          "frame": 84,
+          "weight": 0.12
+        },
+        {
+          "frame": 92,
+          "weight": 0.12
+        },
+        {
+          "frame": 100,
+          "weight": 0.12
+        },
+        {
+          "frame": 108,
+          "weight": 0.12
+        },
+        {
+          "frame": 116,
+          "weight": 0.12
+        },
+        {
+          "frame": 124,
+          "weight": 0.12
+        },
+        {
+          "frame": 132,
+          "weight": 0.12
+        },
+        {
+          "frame": 140,
+          "weight": 0.16
+        }
+      ],
+      "reviewNote": "Authoring-free import 2026-11-07 (no matched BMSLN): shared Source preview profile with --approximate-unverified; visual acceptance bar per docs/vision.md, not native pixel parity.",
+      "scenePresentation": "cloud_meteor_rain",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/authoring-free-20261107/meteor/source/skill-source.json",
+        "sha256": "b37011bceffc3329023789454941219b24b3061cdd0e0c5e0e363bec3259a42b"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Original motionType 2 / moveType 4: stationary cast with the magic_atk body."
+        }
+      },
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 214830,
+        "database": {
+          "path": "assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 214830,
+          "name": "Meteor Rain",
+          "rarity": 8,
+          "dispOrder": 1542,
+          "cost": 45,
+          "6p90IFnC": null,
+          "target": "1",
+          "targetRange": "2",
+          "oL6zdpD0": 3,
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 1,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 4,
+          "processId": "21",
+          "PI18xnkD": "0",
+          "processParam": "0,0,200,-50",
+          "H4zD2IQ5": 0,
+          "motionType": 2,
+          "effectFrames": "4:5014230:1:2:0",
+          "attackFrames": "84:12:2:2-92:12:2:2-100:12:2:2-108:12:2:2-116:12:2:2-124:12:2:2-132:12:2:2-140:16:2:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000029,
+          "equipCondition": null,
+          "2QoE3PtB": 1,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": null,
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Authoring-free import 2026-11-07 (no matched BMSLN): shared Source preview profile with --approximate-unverified; visual acceptance bar per docs/vision.md, not native pixel parity.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
     }
   ]
 }

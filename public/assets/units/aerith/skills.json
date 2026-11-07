@@ -394,6 +394,122 @@
         ],
         "boundary": "Original process parameters and source markers do not execute as game balance rules"
       }
+    },
+    {
+      "id": "banish",
+      "ffbeId": 10060,
+      "name": "Banish",
+      "rarity": 5,
+      "level": 1,
+      "type": "MAGIC",
+      "mpCost": 3,
+      "scope": "single_enemy",
+      "damageMultiplier": 1.2,
+      "hitCount": 1,
+      "attackFrames": [
+        80
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Holy magic damage (1.2x, MAG) to one enemy",
+      "damageEvents": [
+        {
+          "frame": 80,
+          "weight": 1
+        }
+      ],
+      "reviewNote": "Authoring-free import 2026-11-07 (no matched BMSLN): shared Source preview profile with --approximate-unverified; visual acceptance bar per docs/vision.md, not native pixel parity.",
+      "scenePresentation": "aerith_banish",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/authoring-free-20261107/intake/aerith-10060/skill-source.json",
+        "sha256": "1137161af93a945c89f476289f08f3bbe34cbf023ebbedc460884c96f68852b0"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Magic rows carry no motionType/moveType; stationary magic_atk cast is a reviewed adaptation."
+        }
+      },
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "MAGIC",
+        "id": 10060,
+        "database": {
+          "path": "assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "magicId": 10060,
+          "name": "Banish",
+          "rarity": 2,
+          "dispOrder": 6,
+          "cost": 3,
+          "target": "1",
+          "targetRange": "1",
+          "oL6zdpD0": 1,
+          "element": "0,0,0,0,0,0,1,0",
+          "Isb1GDe2": 2,
+          "J35nicFV": 0,
+          "magicType": 1,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "KosY4a18": 2,
+          "Af2Pc0Jz": 0,
+          "processId": "103",
+          "PI18xnkD": "0",
+          "processParam": "100,99999,120",
+          "H4zD2IQ5": 1,
+          "effectFrames": "40:3000070:1:1:0&40:3000071:2:1:0",
+          "attackFrames": "80:100:2:2",
+          "7irj9hAb": "1,1,1,0",
+          "iconId": 700000005,
+          "equipCondition": null,
+          "AegvG91P": "1,0",
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": "8",
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Authoring-free import 2026-11-07 (no matched BMSLN): shared Source preview profile with --approximate-unverified; visual acceptance bar per docs/vision.md, not native pixel parity.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
     }
   ]
 }

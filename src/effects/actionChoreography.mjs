@@ -9,8 +9,8 @@ export function validateActionChoreography(skill, durationFrames=Infinity, anima
   if(c.commandPose!==undefined&&(!['standby','magic-standby'].includes(c.commandPose)
     ||animations&&!animations[c.commandPose==='standby'?'standby':'magic_standby']?.frames?.length))
     throw Error('Explicit available command pose required');
-  // Limit Burst rows carry no motionType/moveType, so their reviewed values cannot be cross-checked.
-  if(skill.originalCommand&&skill.type!=='LIMIT'&&(skill.originalCommand.raw.motionType!==r.sourceMotionType
+  // Limit Burst and magic rows carry no motionType/moveType, so their reviewed values cannot be cross-checked.
+  if(skill.originalCommand&&skill.originalCommand.raw.motionType!==undefined&&(skill.originalCommand.raw.motionType!==r.sourceMotionType
     ||skill.originalCommand.raw.moveType!==r.sourceMoveType))throw Error('Choreography source identity changed');
   if(c.movement==='target'&&skill.moveType!=='dash'||c.movement==='stationary'&&skill.moveType!=='stationary'
     ||c.movement==='step'&&(c.travelTiming!=='move-cycle'||c.stepDistance!=='half-idle-height'))

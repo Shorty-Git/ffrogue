@@ -1,7 +1,8 @@
 /** Source timing for reviewed Motion-1 and zero-prefix Motion-2 profiles; no damage formula import. */
 export function sourceDamageEvents(source, plan, unit = plan.composition?.unit) {
-  // Limit Bursts have no unit attack prefix: their hits are limitburst.attackFrames at offset 0.
-  if(source?.kind==='LIMIT')return sourceHitDistribution(source,plan,0);
+  // Limit Bursts and magic have no unit attack prefix (their rows carry no motionType, like the
+  // zero-prefix Motion-2 profile): hits are the row's attackFrames at offset 0.
+  if(source?.kind==='LIMIT'||source?.kind==='MAGIC')return sourceHitDistribution(source,plan,0);
   const composition=plan.composition,offset=composition?.skillFrameOffset;
   const motion=source?.raw?.motionType;
   if(![1,2].includes(motion) || !Number.isSafeInteger(offset) || offset<0

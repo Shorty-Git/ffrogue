@@ -152,6 +152,60 @@
           "note": "Preserve the eight personally accepted full action sequences; no universal native motion-to-clip mapping is inferred."
         }
       }
+    },
+    {
+      "id": "banish",
+      "ffbeId": 10060,
+      "name": "Banish",
+      "rarity": 5,
+      "level": 1,
+      "type": "MAGIC",
+      "mpCost": 3,
+      "scope": "single_enemy",
+      "damageMultiplier": 1.2,
+      "hitCount": 1,
+      "attackFrames": [
+        80
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Holy magic damage (1.2x, MAG) to one enemy",
+      "execution": "prepared-source",
+      "damageEvents": [
+        {
+          "frame": 80,
+          "weight": 1
+        }
+      ],
+      "reviewNote": "Authoring-free import 2026-11-07 (no matched BMSLN): shared Source preview profile with --approximate-unverified; visual acceptance bar per docs/vision.md, not native pixel parity.",
+      "scenePresentation": "aerith_banish",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/authoring-free-20261107/intake/aerith-10060/skill-source.json",
+        "sha256": "1137161af93a945c89f476289f08f3bbe34cbf023ebbedc460884c96f68852b0"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Magic rows carry no motionType/moveType; stationary magic_atk cast is a reviewed adaptation."
+        }
+      }
     }
   ],
   "portraitSource": "unit_icons/unit_icon_207000405.png"

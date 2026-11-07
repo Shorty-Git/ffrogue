@@ -10,7 +10,8 @@ Last consolidated: 2026-11-07.
   expedition (2 areas, 4 encounters, Ochu and Guard Scorpion bosses) → rewards / awakening →
   result. Saves locally. Roster: Cloud, Aerith, Barret, Cloud of Darkness, Cloud AC, Delita,
   Jack (+ awakened forms up to 7★ / NV).
-- 15 Source skills (original FFBE effect data rendered in real time) + 2 Limit Bursts
+- 17 Source skills (original FFBE effect data rendered in real time; Cloud's Meteor Rain and
+  Aerith's Banish are the first authoring-free abilities, 2026-11-07) + 2 Limit Bursts
   (Cloud's Omnislash; Cloud AC's Omnislash Version 5, the first authoring-free import, 2026-11-07).
 - Battle UI (DOM `CombatHud` over Phaser): target-first (enemies clickable any time, crystal
   cursor), Attack + up to 3 skills + Limit Burst as one-click commands, original FFBE UI parts
@@ -40,6 +41,12 @@ Last consolidated: 2026-11-07.
 | Battle UI parts | `<python> tools/export_battle_ui.py` | battle-layout.md |
 | Long body sheets | `<python> tools/wrap_wide_sheets.py` (grid > 16384 px) | skill-reconstruction-workflow.md |
 | Backgrounds / music | see background-import-workflow.md | |
+
+Abilities (ABILITY rows) need the composed path first (unit attack prefix / zero-prefix Motion 2):
+`compose_skill_effects.py --unit-id <unit> --skill-id <id>` → `resolve_composed_skill.mjs` →
+`stage_original_skill.py` (see skill-reconstruction-workflow.md). MAGIC and LIMIT rows carry no
+motionType: plan → stage as below; their hits are the row's attackFrames at offset 0.
+Fire any skill for a phone GIF: `node tools/capture_battle_screencast.mjs <dir> --hero <i> --skill <id>`.
 
 Skill / Limit Burst import (example Omnislash; replace character and source id):
 ```powershell
@@ -122,9 +129,10 @@ Generic rules added 2026-11-07 (no per-skill exceptions):
 
 ## Open items
 
-- More Limit Bursts (limit_atk bodies exist for Barret, Aerith, Jack, CoD) and the many
-  abilities blocked only by missing authoring (Meteor Rain, Banish, ...): retry them with
-  the authoring-free path; remaining gates are unknown node types 4/7/15 and curves.
+- More Limit Bursts (limit_atk bodies exist for Barret, Aerith, Jack, CoD) and the remaining
+  abilities blocked only by missing authoring (ROSTER_SKILL_COVERAGE.md); other gates are
+  unknown node types 4/7/15, non-file groups and conditional branches.
+- Meteor Rain/Banish visuals await the developer's acceptance (GIFs sent 2026-11-07).
 - Cloud AC LB (15.2x, original LB level 1) kills most training enemies; balance is open.
 - LB gauge does not carry between battles; all Cloud forms use the 5★ Omnislash.
 - Cinzel name font: developer mildly unsure, kept for now.
