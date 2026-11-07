@@ -1,5 +1,10 @@
-/** Single-target enemy attacks always hit the first party slot while it stands (current rule). */
+/**
+ * Single-target enemy attacks pick a random standing hero (FFRogue rule, not original FFBE AI).
+ * Uses the persisted combat stream, so a reloaded encounter replays the same choices.
+ * Party-wide attacks do not call this.
+ */
 export function enemyTargetIndex(heroes,random){
-  const first=heroes.findIndex(h=>h.alive);
-  return heroes[0]?.alive?0:first;
+  const living=heroes.flatMap((hero,index)=>hero.alive?[index]:[]);
+  if(!living.length)return -1;
+  return living[Math.min(living.length-1,Math.floor(random()*living.length))];
 }
