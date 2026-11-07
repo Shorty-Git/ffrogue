@@ -1,5 +1,6 @@
 import {skillIconUrl} from '../ui/skillIcons';
 import {LB_MAX,gainFromAction,gainFromDamage,isFull} from '../run/limitGauge.mjs';
+import {enemyTargetIndex} from '../run/enemyTargeting.mjs';
 import {CombatHud} from '../ui/CombatHud';
 import Phaser from 'phaser';
 import { UnitActor, UnitCombatConfig, type UnitActorConfig } from '../entities/UnitActor';
@@ -51,7 +52,6 @@ export class BattleScene extends Phaser.Scene {
   private runVictoryStage:'idle'|'finishing'|'celebrating'|'rewards'='idle';
   private arenaKey: BattleArenaKey = 'forest';
   private manifests!: Record<string, UnitManifest>;
-  private cloud!: UnitActor;
   private enemies: TargetDummy[] = [];
   private currentTarget: TargetDummy | null = null;
   private actionBanner?:ActionBanner;
@@ -208,7 +208,7 @@ export class BattleScene extends Phaser.Scene {
          maxMp:memberMaxMp(this.runContext.catalog[member.key],member)},def.scale);
       actor.currentHp=member.hp;actor.currentMp=member.mp;return actor;
     });
-    this.cloud=this.turnOrder[0];
+
 
     this.actionBanner=new ActionBanner(this);
     this.combatHud=new CombatHud(this.game.canvas,(action,index)=>{
@@ -1498,8 +1498,8 @@ export class BattleScene extends Phaser.Scene {
         return;
       }
 
-      // Target selection: Cloud if alive (Tank/Frontline), else first alive hero
-      const heroTarget = currentAliveHeroes.includes(this.cloud) ? this.cloud : currentAliveHeroes[0];
+      // Single-target pick: src/run/enemyTargeting.mjs (shared with tools/simulate_run_balance.mjs).
+      const heroTarget = this.turnOrder[enemyTargetIndex(this.turnOrder.map(h=>({alive:!h.isDead,hp:h.currentHp,maxHp:h.maxHp})),()=>this.randomValue())];
       const definition=ENEMY_CONTENT[enemy.assetKey];
       const action=definition?enemyAction(definition,enemy.actionCursor,enemy.currentHp/enemy.maxHp):null;
       if(action?.kind==='prepare'){
