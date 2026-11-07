@@ -202,6 +202,20 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
   }
 
   /**
+   * Auto-revive (Reraise-style status): a K.O. hero stands up with `hp` HP.
+   * The state changes at once; the rest pose follows after the death frame is visible.
+   */
+  public revive(hp: number): number {
+    if (!this.isDead || !Number.isFinite(hp) || hp < 1) return 0;
+    this.currentHp = Math.min(this.maxHp, Math.round(hp));
+    this.spawnHealPopup(this.currentHp);
+    this.scene.time.delayedCall(450, () => {
+      if (!this.isDead && this.currentAnimKey === 'dead') this.playRestPose();
+    });
+    return this.currentHp;
+  }
+
+  /**
    * Restores HP up to maxHp and displays a green floating popup.
    * Returns the actual amount healed.
    */

@@ -22,6 +22,11 @@ Last consolidated: 2026-11-07.
   Details: `docs/battle-layout.md`.
 - Limit Burst gauge: `src/run/limitGauge.mjs` (battle-scoped; +25 per action, damage taken
   fills, LB empties it). Only heroes with a published `type: LIMIT` skill have one.
+- Friendly effect kinds (`allyEvents`, stationary `self`/`party` skills): `heal`, `physical-boost`,
+  `auto-revive` (Reraise-style: `hpFraction`, `turns`; the next K.O. in the window revives once)
+  and `limit-fill` (`amount` 1–100 on the Limit gauge). Validated in `reviewedSkillEvents`,
+  scaled by skill level in `skillForRun`, described in the HUD by `skillDescription`. The last two
+  are data model + battle handling only (2026-11-08); no published skill uses them yet.
 
 ## Decisions that shape all work (from the developer)
 
@@ -169,7 +174,9 @@ Generic rules added 2026-11-07 (no per-skill exceptions):
   generation in the frozen player; commands without effect timelines (Limit Braver etc.).
 - Party buffs (Fury Brand, Cheer) reuse the existing physical-boost status (x1.3, 3 rounds,
   allyTargeting living-allies) and need a `friendlyTargetReview` with the source target/range.
-  Support skills without a game mechanic (Reraise, Speed Drink, Store, Return) stay unimported.
+  Support skills without a game mechanic (Speed Drink, Store, Return) stay unimported. Reraise now
+  has a game mechanic (`auto-revive`, see Product state) but still needs single-ally scope in the
+  presentation pipeline and its own Source review before import.
 - Cloud AC LB (15.2x, original LB level 1) kills most training enemies; balance is open.
 - LB gauge does not carry between battles; all Cloud forms use the 5★ Omnislash.
 - Cinzel name font: developer mildly unsure, kept for now.

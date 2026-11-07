@@ -1,6 +1,7 @@
 // Serializable roguelike rules. Visual animations never consume these streams.
 import {STAGE_CONTENT,stageForArea} from './stageContent.mjs';
 import {awakeningPath,formAt,nextAwakening,rankValue,reviewedForms} from './unitForms.mjs';
+import {LB_MAX} from './limitGauge.mjs';
 export const RUN_VERSION=2;
 export const SAVE_KEY='ffrogue.run.v1';
 export const PROTOTYPE_AREAS=Object.values(STAGE_CONTENT).map(s=>({stageId:s.id,name:s.name,arena:s.arena,normals:s.normalFights}));
@@ -96,6 +97,8 @@ export function skillForRun(source,member){
  const skill=clone(source),level=member.skills.find(s=>s.id===source.id)?.level??1,boost=1+.2*(level-1);
  skill.damageMultiplier*=boost*(skill.damageType==='holy'?member.stats.magic:member.stats.attack);
  for(const e of skill.allyEvents??[])for(const f of e.effects)if(f.kind==='heal')f.amount=Math.round(f.amount*boost*member.stats.magic);
+  else if(f.kind==='limit-fill')f.amount=Math.min(LB_MAX,f.amount+10*(level-1));
+  else if(f.kind==='auto-revive'){f.hpFraction=Math.min(1,Math.round((f.hpFraction+.1*(level-1))*100)/100);f.turns=Math.min(9,f.turns+level-1);}
   else {f.multiplier=Math.min(3,f.multiplier+.1*(level-1));f.turns=Math.min(9,f.turns+level-1);}
  for(const e of skill.supportEvents??[])for(const f of e.effects)if(f.kind==='execute-or-damage')f.fallbackDamage=Math.min(99999,Math.round(f.fallbackDamage*boost*member.stats.attack));
   else f.phases=Math.min(9,f.phases+level-1);

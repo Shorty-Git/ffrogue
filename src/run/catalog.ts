@@ -37,7 +37,10 @@ export function skillDescription(s:SkillConfig):string{
  const target={single_enemy:'One enemy',all_enemies:'All enemies',single_ally:'One ally',party:s.allyTargeting==='other-living-allies'?'Other living allies':'Living party',self:'Self'}[s.scope];
  const parts=[`${s.mpCost} MP`,target];
  if(s.damageEvents)parts.push(`${Number(s.damageMultiplier.toFixed(2))}× ${s.damageType==='holy'?'magic':'physical'} power · ${s.damageEvents.length} hit${s.damageEvents.length===1?'':'s'}`);
- for(const e of s.allyEvents??[])for(const f of e.effects)parts.push(f.kind==='heal'?`Restore ${f.amount} HP (no revival)`:`Physical power +${Math.round((f.multiplier-1)*100)}% for ${f.turns} rounds`);
+ for(const e of s.allyEvents??[])for(const f of e.effects)parts.push(f.kind==='heal'?`Restore ${f.amount} HP (no revival)`
+  :f.kind==='limit-fill'?`Limit gauge +${f.amount}`
+  :f.kind==='auto-revive'?`Auto-revive with ${Math.round(f.hpFraction*100)}% HP if K.O. within ${f.turns} rounds`
+  :`Physical power +${Math.round((f.multiplier-1)*100)}% for ${f.turns} rounds`);
  for(const e of s.supportEvents??[])for(const f of e.effects){
   if(f.kind==='execute-or-damage')parts.push(`${Math.round(f.chance*100)}% instant KO; otherwise ${f.fallbackDamage} unmitigated damage${f.bossImmune?' · bosses resist KO':''}`);
   else parts.push(`${f.kind.replaceAll('-',' ')} ${f.multiplier?Math.round(Math.abs(f.multiplier-1)*100)+'% ':''}(${Math.round(f.chance*100)}% chance, ${f.phases} enemy phases)`);

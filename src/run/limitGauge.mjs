@@ -15,3 +15,8 @@ export function gainFromDamage(gauge, damage, maxHp) {
   return clamp(gauge + Math.max(1, LB_PER_FULL_HP_LOST * damage / Math.max(1, maxHp)));
 }
 export const isFull = gauge => gauge >= LB_MAX;
+/** Reviewed support fill (e.g. a 'limit-fill' friendly effect); bounded like every other gain. */
+export function gainFromSupport(gauge, amount) {
+  if (!Number.isInteger(amount) || amount < 1 || amount > LB_MAX) throw Error('Invalid reviewed Limit fill');
+  return clamp(gauge + amount);
+}

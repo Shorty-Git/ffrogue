@@ -21,8 +21,15 @@ export interface EnemyStatusEffect {
 export interface EnemyInstantEffect {kind:'execute-or-damage';chance:number;fallbackDamage:number;bossImmune:boolean;}
 export type EnemySkillEffect = EnemyStatusEffect | EnemyInstantEffect;
 export interface HeroBuffEffect {kind:'physical-boost';multiplier:number;turns:number;}
-export type FriendlySkillEffect = HeroBuffEffect | {kind:'heal';amount:number};
-export interface ActiveHeroBuff {kind:'physical-boost';multiplier:number;expiresAfterRound:number;}
+/** Reraise-style status: the next K.O. within `turns` rounds revives with hpFraction of max HP. */
+export interface AutoReviveEffect {kind:'auto-revive';hpFraction:number;turns:number;}
+/** Adds a bounded amount to the recipient's Limit gauge (heroes without a Limit Burst have none). */
+export interface LimitFillEffect {kind:'limit-fill';amount:number;}
+export type HeroStatusEffect = HeroBuffEffect | AutoReviveEffect;
+export type FriendlySkillEffect = HeroStatusEffect | LimitFillEffect | {kind:'heal';amount:number};
+export type ActiveHeroBuff =
+  | {kind:'physical-boost';multiplier:number;expiresAfterRound:number}
+  | {kind:'auto-revive';hpFraction:number;expiresAfterRound:number};
 export interface ActionChoreography {
   schema:'source-action-v1';
   movement:'target'|'step'|'stationary';
