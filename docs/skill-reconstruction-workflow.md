@@ -1,5 +1,28 @@
 # Skill reconstruction and export runbook
 
+## Lessons for every new skill import (2026-11-07, keep at the top)
+
+1. Missing BMSLN is not a stop: use `--approximate-unverified` (authoring-free stand-in). Read
+   `plan.approximations` afterwards; a long corpus-default list is normal, unknown enums,
+   held curves and `legacy-preview-tint` entries are the ones to look at.
+2. Abilities need the composed path (compose → resolve → stage_original_skill); MAGIC and LIMIT
+   rows have no motionType and use plan → stage directly.
+3. Compare with the original before tuning by eye: record the skill in the BlueStacks
+   reference instance (docs/current-state.md "Original reference"). Memory is unreliable
+   (Meteor Rain was remembered orange; the original is blue).
+4. If colours look dark/washed out, check draw order first, then colour sources in this order:
+   node colour, texture tint (bmb_texture_tint.py), flat/corner Quad colour, vertex RGBA, curves.
+5. Full-screen dark/coloured planes are backdrops: they must cover the canvas (automatic rule).
+6. Limit Bursts: run `node tools/review_limit_burst_sync.mjs --reserve <unit>` (drift ≤ 1 frame);
+   long clips are kept on screen via `extentX`.
+7. Never edit `src/effects/originalEffectPlayer.mjs` for a new rule: it is a frozen identity and
+   all published manifests pin its hash. Put host-side rules in PreparedSceneBridge.mjs or the
+   preparation tools, gated by a plan field so accepted skills stay byte-identical.
+8. Decode binary fields from matched pairs: search the BMSLN value as float32 inside each node
+   record over many pairs (local stages + CPK extraction); accept only offsets with 100 % hits.
+9. Send a phone GIF (`capture_battle_screencast.mjs --skill <id>`) and keep it pending until
+   the developer accepts the visuals.
+
 ## Current: authoring-free approximation (2026-11-07)
 
 Missing matched BMSLN is the dominant roster blocker (see ROSTER_SKILL_COVERAGE.md).
