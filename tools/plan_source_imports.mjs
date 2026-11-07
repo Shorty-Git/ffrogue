@@ -48,7 +48,8 @@ for(const request of requests){
   const file=path.join(output,request.character+'-inspection.json');fs.writeFileSync(file,JSON.stringify(report,null,2));
   reports.set(request.character,{report,file});
  }
- const {report,file}=reports.get(request.character),matches=report.catalog.filter(s=>(request.sourceId==='*'||s.id===request.sourceId)&&!s.passive);
+ const {report,file}=reports.get(request.character),matches=report.catalog.filter(s=>(request.sourceId==='*'?s.kind!=='LIMIT':s.id===request.sourceId)&&!s.passive);
+ // Limit Bursts are selected explicitly (character:limitBurstId); '*' keeps meaning abilities and magic.
  if(!matches.length||request.sourceId!=='*'&&matches.length!==1)throw Error('Missing or ambiguous owned active skill '+request.character+':'+request.sourceId);
  for(const skill of matches){
   let acquisition;

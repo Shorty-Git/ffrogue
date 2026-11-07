@@ -2,6 +2,11 @@
 import math
 import struct
 
+# Explicit approximation mode (prepare_original_preview.py --approximate-unverified):
+# when a list, active source curves on channels without a verified binary offset are
+# recorded here and held constant instead of failing the comparison. None = strict.
+APPROXIMATED_CURVES = None
+
 
 KEY_TYPES = {0: 'Constant', 1: 'Linear', 2: 'Spline', 3: 'BreakSpline'}
 CHANNELS = {
@@ -119,5 +124,8 @@ def compare_vector_curves(node, source):
     for element in source:
         array = element.find('KeyFrameArray')
         if array is not None and len(array) and element.tag not in supported_tags:
+            if APPROXIMATED_CURVES is not None:
+                APPROXIMATED_CURVES.append({'channel': element.tag, 'keys': len(array), 'treatment': 'held-constant'})
+                continue
             raise ValueError('Unverified active source curve channel: ' + element.tag)
     return checked

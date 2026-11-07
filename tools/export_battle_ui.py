@@ -21,6 +21,12 @@ REGIONS = {
     'attack': 'battle_com_icon_attack',
     'magic': 'battle_com_icon_magic',
     'ability': 'battle_com_icon_special',
+    'limit': 'battle_com_icon_limit',
+    # Limit Burst gauge.
+    'limit_gauge': 'battle_unit_limit_gauge',
+    'limit_gauge_full': 'battle_unit_limit_gauge_full',
+    'limit_bar': 'battle_unit_limit_bar',
+    'limit_bar_full': 'battle_unit_limit_bar_full',
     # Party card and gauges.
     'party_unit_base': 'battle_base_partyunit',
     'unit_icon_frame': 'battle_bg_unit_icon',

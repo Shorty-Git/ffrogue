@@ -5,18 +5,20 @@ import {createHash} from 'node:crypto';
 import {bodyAssets,heroBodyClips} from '../src/data/bodyAssets.mjs';
 const read=p=>JSON.parse(fs.readFileSync(p,'utf8'));
 test('published choreography and combat states are admitted for every unit and both original forms',()=>{
- const registry=read('public/assets/content.json'),run=read('public/assets/run-content.json');let skills=0;
+ const registry=read('public/assets/content.json'),run=read('public/assets/run-content.json');let skills=0,limits=0;
  for(const key of registry.characters){
   const m=read(`public/assets/units/${key}/manifest.json`),data=read(`public/assets/units/${key}/skills.json`).skills;
-  const clips=heroBodyClips(m,data);assert.ok(clips.includes('atk'));assert.ok(!clips.some(c=>c.startsWith('limit_')));
-  skills+=data.filter(s=>s.importStatus==='imported').length;
+  const clips=heroBodyClips(m,data);assert.ok(clips.includes('atk'));
+  // Limit Burst bodies load only for units that publish a Limit Burst.
+  assert.equal(clips.some(c=>c.startsWith('limit_')),data.some(s=>s.type==='LIMIT'&&s.importStatus==='imported'));
+  skills+=data.filter(s=>s.importStatus==='imported'&&s.type!=='LIMIT').length;limits+=data.filter(s=>s.importStatus==='imported'&&s.type==='LIMIT').length;
   for(const skill of data.filter(s=>s.importStatus==='imported'))for(const p of skill.actionChoreography.body.phases??[])assert.ok(clips.includes(p.clip));
   for(const f of run.forms.filter(f=>f.identityKey===key)){
    const form=read('public/'+f.assetPath+'/manifest.json'),a=bodyAssets({[f.key]:form},[{key:f.key,clips:heroBodyClips(form,data)}],run.forms);
    assert.ok(a.every(a=>a.texture.startsWith(f.key+'_')&&fs.existsSync('public/'+a.url)));
   }
  }
- assert.equal(skills,15);
+ assert.equal(skills,15);assert.equal(limits,1);
 });
 test('reviewed CGG passes retain the published strip geometry',()=>{
  const run=read('public/assets/run-content.json');
@@ -34,8 +36,10 @@ test('reviewed CGG passes retain the published strip geometry',()=>{
    for(const file of Object.values(meta.bodyLayers)){
     const png=fs.readFileSync(root+file);
     assert.ok(file.endsWith('.'+createHash('sha256').update(png).digest('hex').slice(0,16)+'.png'));
-    assert.equal(png.readUInt32BE(16),meta.frameWidth*meta.frameCount);
-    assert.equal(png.readUInt32BE(20),meta.frameHeight);
+    // Shared layout (tools/sheet_grid.py): one row up to 16384 px, otherwise a row-major grid.
+    const columns=meta.frameWidth*meta.frameCount<=16384?meta.frameCount:Math.floor(16384/meta.frameWidth);
+    assert.equal(png.readUInt32BE(16),columns*meta.frameWidth);
+    assert.equal(png.readUInt32BE(20),Math.ceil(meta.frameCount/columns)*meta.frameHeight);
    }
   }
  }

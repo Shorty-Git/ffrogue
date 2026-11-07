@@ -9,7 +9,8 @@ export function validateActionChoreography(skill, durationFrames=Infinity, anima
   if(c.commandPose!==undefined&&(!['standby','magic-standby'].includes(c.commandPose)
     ||animations&&!animations[c.commandPose==='standby'?'standby':'magic_standby']?.frames?.length))
     throw Error('Explicit available command pose required');
-  if(skill.originalCommand&&(skill.originalCommand.raw.motionType!==r.sourceMotionType
+  // Limit Burst rows carry no motionType/moveType, so their reviewed values cannot be cross-checked.
+  if(skill.originalCommand&&skill.type!=='LIMIT'&&(skill.originalCommand.raw.motionType!==r.sourceMotionType
     ||skill.originalCommand.raw.moveType!==r.sourceMoveType))throw Error('Choreography source identity changed');
   if(c.movement==='target'&&skill.moveType!=='dash'||c.movement==='stationary'&&skill.moveType!=='stationary'
     ||c.movement==='step'&&(c.travelTiming!=='move-cycle'||c.stepDistance!=='half-idle-height'))
@@ -20,7 +21,7 @@ export function validateActionChoreography(skill, durationFrames=Infinity, anima
     let previous=-1,previousEnd=0;
     for(const phase of c.body.phases){
       if(!Number.isInteger(phase.frame)||phase.frame<0||phase.frame<=previous||phase.frame>=durationFrames
-        ||!['atk','magic_atk'].includes(phase.clip))throw Error('Unsupported ordered body phase');
+        ||!['atk','magic_atk','limit_atk'].includes(phase.clip))throw Error('Unsupported ordered body phase');
       if(animations){
         const clip=animations[phase.clip];
         if(!clip?.frames?.length||!clip.frames.every(f=>Number.isFinite(f.durationMs)&&f.durationMs>0)

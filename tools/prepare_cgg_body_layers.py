@@ -11,6 +11,7 @@ import tempfile
 
 import numpy as np
 from PIL import Image
+from sheet_grid import sheet_size, frame_origin
 
 
 class FrameBoundsError(ValueError):
@@ -140,7 +141,7 @@ def prepare(tool, raw, prepared, output):
         meta = manifest['animations'][clip]
         width, height = meta['frameWidth'], meta['frameHeight']
         x, y = round(1000 - meta['pivotX'] * width), round(1000 - meta['pivotY'] * height)
-        sheets = [Image.new('RGBA', (width * len(poses_for_clip), height)) for _ in range(2)]
+        sheets = [Image.new('RGBA', sheet_size(width, height, len(poses_for_clip))) for _ in range(2)]
         for i, pose in enumerate(poses_for_clip):
             try:
                 layers = compose(pose, isolated, x, y, width, height)
@@ -148,7 +149,7 @@ def prepare(tool, raw, prepared, output):
                 manifest.setdefault('bodyLayerIssues', {})[clip] = f'Frame {i}: {error}'
                 break
             for sheet, frame in zip(sheets, layers):
-                sheet.paste(frame, (i * width, 0))
+                sheet.paste(frame, frame_origin(i, width, height, len(poses_for_clip)))
         else:
             if sheets[1].getbbox(alpha_only=True):
                 meta['bodyLayers'] = {layer: save_hashed_layer(sheet, output, clip, layer)

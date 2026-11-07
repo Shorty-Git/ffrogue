@@ -11,16 +11,23 @@ export const formatValue=(value:number)=>Math.max(0,Math.ceil(value)).toLocaleSt
  * A `key` marks the gauge for animated changes (see animateGauges); HP gauges also get the
  * red damage trail that lags behind the bar.
  */
-export function gauge(kind:'hp'|'mp'|'enemy',value:number,max:number,label:string,key?:string):string{
+export function gauge(kind:'hp'|'mp'|'enemy'|'limit',value:number,max:number,label:string,key?:string):string{
   const fill=ratio(value,max).toFixed(4);
+  const barLevel=kind==='mp'?'mp':kind==='limit'?(value>=max?'full':'charging'):level(value,max);
   return `<span class="gauge gauge-${kind}" role="meter" aria-label="${label}" aria-valuemin="0" aria-valuemax="${Math.max(1,max)}" aria-valuenow="${Math.max(0,value)}"${key?` data-key="${key}" data-fill="${fill}"`:''}>`+
-    (kind==='mp'?'':`<span class="gauge-trail" style="--trail:${fill}"></span>`)+
-    `<span class="gauge-fill" data-level="${kind==='mp'?'mp':level(value,max)}" style="--fill:${fill}"></span></span>`;
+    (kind==='mp'||kind==='limit'?'':`<span class="gauge-trail" style="--trail:${fill}"></span>`)+
+    `<span class="gauge-fill" data-level="${barLevel}" style="--fill:${fill}"></span></span>`;
 }
 
 /** Labelled HP or MP gauge row: value above the right end, as on the battle party cards. */
 export function gaugeRow(kind:'hp'|'mp',value:number,max:number,key?:string):string{
   return `<span class="gauge-row"><span class="gauge-value"><b>${formatValue(value)}</b>/${formatValue(max)}</span>${gauge(kind,value,max,kind.toUpperCase(),key)}</span>`;
+}
+
+/** Original LIMIT gauge with the charge in percent; glows when full. */
+export function limitRow(value:number,max:number,key?:string):string{
+  const full=value>=max;
+  return `<span class="gauge-row limit-row ${full?'is-full':''}">${gauge('limit',value,max,'Limit gauge',key)}<span class="limit-value">${full?'READY':Math.floor(ratio(value,max)*100)+'%'}</span></span>`;
 }
 
 type Shown={fill:number;trail:number};

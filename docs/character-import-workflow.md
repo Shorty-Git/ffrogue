@@ -1140,6 +1140,14 @@ The export fails when a skill has no resolvable icon; the runtime then shows the
 generic attack/magic/ability command icon only for skills missing from the index.
 2026-11-07: 21 published skills → 8 icons.
 
+### Limit Bursts
+
+A recipe skill with `type: "LIMIT"` and the form's `limitBurstId` as `ffbeId` publishes the
+Limit Burst like any Source skill (see skill-reconstruction-workflow.md). At runtime the
+catalog moves it to `limitBurst`: it never enters starter draws, rewards or the three
+skill slots and is used through the LB gauge. Its body clip (`limit_atk`) must exist on
+every admitted higher form. 2026-11-07: Cloud → Omnislash.
+
 ## 6. Runtime loading and party placement
 
 1. `BootScene` loads `content.json`, then every registered manifest and character

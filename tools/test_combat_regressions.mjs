@@ -539,6 +539,32 @@ test('single-ally skills still wait for an ally choice and Cancel keeps the acti
   scene.cancelPlannedAction();
   assert.equal(scene.plannedActions.size, 0); assert.equal(unit.hasActed, false);
 });
+test('Limit gauge rules: actions and damage fill it, capped at the maximum', () => {
+  const lb = loadModule('src/run/limitGauge.mjs');
+  assert.equal(lb.gainFromAction(0), lb.LB_PER_ACTION);
+  assert.equal(lb.gainFromAction(90), lb.LB_MAX);
+  assert.equal(lb.gainFromDamage(0, 1000, 2000), Math.round(lb.LB_PER_FULL_HP_LOST / 2));
+  assert.equal(lb.gainFromDamage(10, 1, 100000), 11, 'Any hit adds at least one point');
+  assert.equal(lb.gainFromDamage(10, 0, 1000), 10);
+  assert.equal(lb.isFull(lb.LB_MAX - 1), false); assert.equal(lb.isFull(lb.LB_MAX), true);
+});
+test('Limit Burst needs a full gauge, empties it at commit and earns nothing itself', () => {
+  const { scene, unit, b } = targetFirstBattle(); unit.unitKey = 'cloud'; unit.currentMp = 100;
+  const omnislash = { ...JSON.parse(fs.readFileSync('public/assets/units/cloud/skills.json')).skills.find(s => s.type === 'LIMIT') };
+  assert.equal(omnislash.id, 'omnislash');
+  scene.limitBursts = { cloud: omnislash }; scene.canUseSourceSkill = () => true; scene.currentTarget = b;
+  const committed = []; scene.executeSkillChoice = skill => { committed.push(skill.id); };
+  unit.limitGauge = 99; scene.chooseRibbonAbility(4);
+  assert.deepEqual(committed, [], 'A gauge below the maximum cannot fire');
+  unit.limitGauge = 100; scene.chooseRibbonAbility(4);
+  assert.deepEqual(committed, ['omnislash']); assert.equal(scene.plannedActions.size, 0);
+  // executeSkillChoice resets the gauge and marks the caster at commit (checked in the browser review).
+  scene.limitCasters.add(unit); unit.limitGauge = 0; scene.enemies = [{ currentHp: 0 }]; scene.triggerVictory = () => {};
+  scene.concludeHeroSkill(unit);
+  assert.equal(unit.limitGauge, 0, 'The Limit Burst itself does not refill the gauge');
+  unit.hasActed = false; scene.concludeHeroSkill(unit);
+  assert.equal(unit.limitGauge, 25, 'Ordinary skills fill it');
+});
 test('melee attacks approach the selected row and return home in both arenas', () => {
   const { getBattleLayout } = loadModule('src/ui/battleLayout.ts');
   const { BATTLE_ARENAS } = loadModule('src/data/battleArenas.ts');

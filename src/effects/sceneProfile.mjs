@@ -1,4 +1,6 @@
 export const SCENE_PROFILE = 'bmb-preview-scene-v1';
+/** Plausibility cap: 15 s at 60 fps. Limit Bursts run longer than abilities (Omnislash: 729 frames). */
+export const MAX_SCENE_FRAMES = 900;
 import {reviewedSkillEvents} from './skillDamageTimeline.mjs';
 import {validateActionChoreography} from './actionChoreography.mjs';
 import {FLAT_QUAD_RGB_PROFILE,COLOR_STREAM_POLICY,validateFlatQuadColor} from './sourceQuadColor.mjs';
@@ -19,7 +21,7 @@ export function validateSceneManifest(manifest) {
   if (manifest?.schemaVersion !== 1 || manifest.profile !== SCENE_PROFILE
     || manifest.quality !== 'experimental-preview' || manifest.originalFidelityVerified !== false
     || !/^[a-z][a-z0-9_]*$/.test(manifest.key) || !Number.isInteger(manifest.sourceId)
-    || !Number.isInteger(manifest.durationFrames) || manifest.durationFrames < 1 || manifest.durationFrames > 600
+    || !Number.isInteger(manifest.durationFrames) || manifest.durationFrames < 1 || manifest.durationFrames > MAX_SCENE_FRAMES
     || !manifest.provenance?.planSha256 || !manifest.provenance?.playerSha256)
     throw Error('Explicit experimental prepared-scene manifest required');
   const plan = manifest.plan;

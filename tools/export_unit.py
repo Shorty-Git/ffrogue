@@ -5,11 +5,13 @@ import json
 import glob
 import argparse
 from PIL import Image
+from sheet_grid import frame_origin, wrap_strip
 
-def compute_feet_x(image_path, frame_idx, fw, fh, piv_x, piv_y):
+def compute_feet_x(image_path, frame_idx, fw, fh, piv_x, piv_y, count):
     try:
         with Image.open(image_path) as img:
-            crop = img.crop((frame_idx * fw, 0, (frame_idx + 1) * fw, fh))
+            ox, oy = frame_origin(frame_idx, fw, fh, count)
+            crop = img.crop((ox, oy, ox + fw, oy + fh))
             pixels = crop.load()
             pts = []
             for y in range(fh):
@@ -69,6 +71,11 @@ def export_unit(unit_id, unit_name, input_dir="tools/test_output", output_base="
         png_dest_filename = f"{anim_name}.png"
         png_dest_path = os.path.join(target_dir, png_dest_filename)
         shutil.copyfile(png_src, png_dest_path)
+        with Image.open(png_dest_path) as strip:
+            strip.load()
+            wrapped = wrap_strip(strip, frame_rect["width"], frame_rect["height"], len(delays))
+        if wrapped is not strip:
+            wrapped.save(png_dest_path)
         
         f_w = frame_rect["width"]
         f_h = frame_rect["height"]
@@ -106,7 +113,7 @@ def export_unit(unit_id, unit_name, input_dir="tools/test_output", output_base="
         idle_fh = idle_meta["frameHeight"]
         idle_px = idle_meta["pivotX"] * idle_fw
         idle_py = idle_meta["pivotY"] * idle_fh
-        idle_feet_x = compute_feet_x(idle_png, 0, idle_fw, idle_fh, idle_px, idle_py)
+        idle_feet_x = compute_feet_x(idle_png, 0, idle_fw, idle_fh, idle_px, idle_py, idle_meta["frameCount"])
         
         for anim_name, meta in manifest["animations"].items():
             if anim_name == "idle":
@@ -118,7 +125,7 @@ def export_unit(unit_id, unit_name, input_dir="tools/test_output", output_base="
             px = meta["pivotX"] * fw
             py = meta["pivotY"] * fh
             last_idx = meta["frameCount"] - 1
-            last_feet_x = compute_feet_x(anim_png, last_idx, fw, fh, px, py)
+            last_feet_x = compute_feet_x(anim_png, last_idx, fw, fh, px, py, meta["frameCount"])
             diff = round(idle_feet_x - last_feet_x, 2)
             meta["recoilOffsetX"] = diff if abs(diff) >= 0.5 else 0.0
             if meta["recoilOffsetX"] != 0.0:

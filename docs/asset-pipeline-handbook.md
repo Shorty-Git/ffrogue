@@ -1,5 +1,11 @@
 # Asset pipeline handbook
 
+Limit Bursts (2026-11-07): the pipeline now admits a form's Limit Burst as skill
+type `LIMIT` (Cloud's Omnislash is the first). Visual approximation is an explicit opt-in
+(`--approximate-unverified`), long body clips wrap into a grid (`tools/sheet_grid.py`).
+Details and reproduction: `skill-reconstruction-workflow.md` (top entry).
+
+
 UI parts and skill icons (2026-11-07): `tools/export_battle_ui.py` extracts the
 original FFBE battle UI parts (window frame, gauges, command icons) from the Godot
 atlas under `assets/ui/`, and `tools/export_skill_icons.mjs` publishes each skill's

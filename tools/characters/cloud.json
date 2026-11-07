@@ -312,6 +312,130 @@
           "note": "Preserve the eight personally accepted full action sequences; no universal native motion-to-clip mapping is inferred."
         }
       }
+    },
+    {
+      "id": "omnislash",
+      "ffbeId": 207000105,
+      "name": "Omnislash",
+      "rarity": 5,
+      "level": 1,
+      "type": "LIMIT",
+      "mpCost": 0,
+      "scope": "single_enemy",
+      "damageMultiplier": 6.1,
+      "hitCount": 15,
+      "attackFrames": [
+        188,
+        206,
+        222,
+        254,
+        270,
+        282,
+        304,
+        326,
+        342,
+        356,
+        388,
+        406,
+        418,
+        448,
+        550
+      ],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Limit Burst: 15 strikes on one enemy (6.1x ATK in total, original LB level 1 power)",
+      "execution": "prepared-source",
+      "damageEvents": [
+        {
+          "frame": 188,
+          "weight": 0.05
+        },
+        {
+          "frame": 206,
+          "weight": 0.05
+        },
+        {
+          "frame": 222,
+          "weight": 0.05
+        },
+        {
+          "frame": 254,
+          "weight": 0.05
+        },
+        {
+          "frame": 270,
+          "weight": 0.05
+        },
+        {
+          "frame": 282,
+          "weight": 0.05
+        },
+        {
+          "frame": 304,
+          "weight": 0.05
+        },
+        {
+          "frame": 326,
+          "weight": 0.05
+        },
+        {
+          "frame": 342,
+          "weight": 0.05
+        },
+        {
+          "frame": 356,
+          "weight": 0.05
+        },
+        {
+          "frame": 388,
+          "weight": 0.05
+        },
+        {
+          "frame": 406,
+          "weight": 0.05
+        },
+        {
+          "frame": 418,
+          "weight": 0.05
+        },
+        {
+          "frame": 448,
+          "weight": 0.05
+        },
+        {
+          "frame": 550,
+          "weight": 0.3
+        }
+      ],
+      "reviewNote": "Limit Burst import 2026-11-07: original effect groups 8003710/11/12/13/25 through the shared Source preview profile; acceptance bar is visual (looks right, hits, impact on target), not native pixel parity.",
+      "scenePresentation": "cloud_omnislash",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/omnislash-20261107/intake/cloud-207000105/skill-source.json",
+        "sha256": "151394de8ff098f77c55a9c236568cea4f1afa188fff9a3dc5f7daebd17b52e7"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "target",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "limit_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 1,
+          "sourceMoveType": 1,
+          "note": "Limit Burst: dash to the target, then the published limit_atk clip (10.9 s) under the 12.2 s original effect timeline. LB rows carry no motionType; 1 (physical) is a reviewed adaptation matching its single-target melee form."
+        }
+      }
     }
   ],
   "portraitSource": "unit_icons/unit_icon_207000105.png"

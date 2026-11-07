@@ -1,9 +1,10 @@
-import {UI_PARTS as UI,gauge,gaugeRow,formatValue as number,captureGauges,animateGauges} from './ffbeGauge';
+import {UI_PARTS as UI,gauge,gaugeRow,limitRow,formatValue as number,captureGauges,animateGauges} from './ffbeGauge';
 
 type HeroState = 'active' | 'ready' | 'acted' | 'ko';
 type PartyEntry = {name:string; portrait?:string; hp:number; maxHp:number; mp:number; maxMp:number; status:string; state:HeroState;
-  active:boolean; disabled:boolean; target?:number};
-type Command = {name:string; icon:'attack'|'magic'|'ability'; iconUrl?:string; cost:string; description:string; disabled:boolean; selected:boolean};
+  active:boolean; disabled:boolean; target?:number; limit?:{value:number;max:number}};
+type Command = {name:string; icon:'attack'|'magic'|'ability'|'limit'; iconUrl?:string; cost:string; description:string; disabled:boolean; selected:boolean;
+  /** The hero's Limit Burst; `ready` once the LB gauge is full. */ limit?:boolean; ready?:boolean};
 type ArenaActor = {id:number; name:string; hp?:number; maxHp?:number; status?:string; boss?:boolean; marked:boolean; selectable:boolean;
   /** Current enemy target: drawn with the crystal target cursor. */ targeted:boolean;
   x:number; y:number; width:number; height:number};
@@ -65,9 +66,10 @@ export class CombatHud {
         <span class="party-head"><strong>${escapeHtml(hero.name)}</strong><small>${escapeHtml(hero.status)}</small></span>
         ${gaugeRow('hp',hero.hp,hero.maxHp,`hero-${i}-hp`)}
         ${gaugeRow('mp',hero.mp,hero.maxMp,`hero-${i}-mp`)}
+        ${hero.limit?limitRow(hero.limit.value,hero.limit.max,`hero-${i}-lb`):''}
       </span></button>`).join('');
 
-    const commands=state.commands.map((command,i)=>command?`<button type="button" class="command" ${attrs('ability',i)} ${command.disabled?'disabled':''}
+    const commands=state.commands.map((command,i)=>command?`<button type="button" class="command ${command.limit?'is-limit':''} ${command.ready?'is-ready':''}" ${attrs('ability',i)} ${command.disabled?'disabled':''}
         aria-pressed="${command.selected}" title="${escapeHtml(command.description)}">
       <img class="command-icon ${command.iconUrl?'is-skill':''}" src="${command.iconUrl??UI+command.icon+'.png'}" alt="" draggable="false">
       <span class="command-text"><strong>${escapeHtml(command.name)}</strong><small>${escapeHtml(command.cost)}</small></span>
@@ -84,7 +86,7 @@ export class CombatHud {
 
     const shown=captureGauges(this.root);
     this.root.innerHTML=`<div class="combat-caption"><strong>${escapeHtml(state.area)}</strong><span>${escapeHtml(state.phase)}</span></div>
-      ${actors}<div class="combat-dock"><div class="combat-party">${party}</div><div class="ribbon-commands">${commands}</div>
+      ${actors}<div class="combat-dock"><div class="combat-party">${party}</div><div class="ribbon-commands" style="--commands:${state.commands.length}">${commands}</div>
       <div class="ribbon-prompt"><span role="status">${escapeHtml(state.message)}</span>${state.pending?`<button type="button" class="prompt-cancel" ${attrs('clear',0)}>Cancel <kbd>Esc</kbd></button>`:''}</div></div>`;
     animateGauges(this.root,shown);
     if(focus)this.root.querySelector<HTMLElement>(`[data-focus="${focus}"]:not(:disabled)`)?.focus({preventScroll:true});

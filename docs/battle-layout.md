@@ -98,7 +98,12 @@ CSS transitions carry the bar (0.28 s) and, for HP, the original red damage trai
 (holds 0.35 s, then 0.55 s). Checked in Chrome: an Attack on a 3,500 HP rat moved the
 bar 1.00 → 0.85 in about 0.5 s and the trail followed by about 1.2 s.
 
-Not yet done: a dedicated Limit/LB gauge.
+Limit Burst (2026-11-07): heroes with a published Limit Burst get the original LIMIT
+gauge under MP and a fifth command (key 5). Rules in `src/run/limitGauge.mjs`
+(FFRogue rule, not the FFBE crystal formula): battle-scoped 0–100; +25 per own completed
+action; damage taken adds 60 × damage / max HP (at least 1); the Limit Burst needs 100,
+empties the gauge at commit and earns nothing itself. Full gauge: gold frame, glowing bar,
+"READY", pulsing purple command. Not yet: carrying the gauge between battles.
 
 Checked at 1920x1080, 1440x900, 1100x760 and 900x720: the dock fits without
 scrolling.

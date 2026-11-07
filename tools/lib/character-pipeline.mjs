@@ -199,6 +199,14 @@ export function inspectCharacter(recipe, { assets = 'assets', dump = 'ffbe_asset
         }
       }
     }
+    // The form's own Limit Burst (unit.limitBurstId). Its effect timeline uses the same group
+    // format as abilities; `effectFrame` is mirrored as `effectFrames` for shared consumers.
+    if (unit.limitBurstId) {
+      const raw = db.prepare('SELECT * FROM limitburst WHERE limitBurstId = ?').get(Number(unit.limitBurstId));
+      if (raw) byId.set(`LIMIT:${raw.limitBurstId}`, { kind: 'LIMIT', id: Number(raw.limitBurstId), name: raw.name, passive: false,
+        raw: { ...raw, effectFrames: raw.effectFrame }, learned: [{ rarity: unit.rare, level: 1, source: 'unit.limitBurstId' }],
+        effects: resolveEffects(db, assets, raw.effectFrame) });
+    }
     const catalog = [...byId.values()];
     for(const skill of catalog)if(String(skill.raw?.processId)==='130'){
       const match=/^(\d+),(\d+),(\d+):(\d+)$/.exec(String(skill.raw.processParam));

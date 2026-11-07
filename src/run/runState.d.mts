@@ -1,6 +1,8 @@
 import type {SkillConfig} from '../types/skills';
 export interface RunForm{form:string;unitId:string;rarity:number;rank?:'NV';identity:string;awakensFrom?:string;}
-export interface RunCharacter extends RunForm{canonicalIdentity:string;key:string;name:string;variantLabel?:string;maxHp:number;maxMp:number;skills:SkillConfig[];portrait:string;evolution?:RunForm;forms?:RunForm[];magicAvailable?:boolean;}
+export interface RunCharacter extends RunForm{canonicalIdentity:string;key:string;name:string;variantLabel?:string;maxHp:number;maxMp:number;skills:SkillConfig[];
+  /** The form's Limit Burst (skill type LIMIT); used through the LB gauge, never offered as a skill. */
+  limitBurst?:SkillConfig;portrait:string;evolution?:RunForm;forms?:RunForm[];magicAvailable?:boolean;}
 export type RunCatalog=Record<string,RunCharacter>;
 export interface RunMember extends RunForm{canonicalIdentity:string;key:string;skills:{id:string;level:number}[];stats:{attack:number;magic:number;defense:number;hp:number;mp?:number};hp:number;mp:number;}
 export interface AreaConfig{stageId?:string;name:string;arena:'forest'|'reactor'|'reactor_05';normals:number;}

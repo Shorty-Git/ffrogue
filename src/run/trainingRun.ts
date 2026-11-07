@@ -38,14 +38,15 @@ export function createTrainingRun(cache:Phaser.Cache.CacheManager,options:Traini
   const catalog:RunCatalog={},party:RunState['party']=[];
   for(const key of keys){
     const def=cache.json.get('character_'+key) as CharacterDefinition;
-    const skills=[...((cache.json.get('skills_'+key) as UnitSkillsData)?.skills??[])].sort(sourceFirst);
+    const published=(cache.json.get('skills_'+key) as UnitSkillsData)?.skills??[];
+    const skills=published.filter(s=>s.type!=='LIMIT').sort(sourceFirst),limitBurst=published.find(s=>s.type==='LIMIT');
     if(options.focus?.unit===key){
       const index=skills.findIndex(s=>s.id===options.focus!.skill);
       if(index<0)throw Error('Focus skill missing: '+options.focus.skill);
       skills.unshift(...skills.splice(index,1));
     }
     const maxHp=def.battle.maxHp??3000,maxMp=def.battle.maxMp??100;
-    catalog[key]={key,name:def.battle.heroName??key,form:key,maxHp,maxMp,skills,magicAvailable:def.battle.attackType==='ranged'} as RunCatalog[string];
+    catalog[key]={key,name:def.battle.heroName??key,form:key,maxHp,maxMp,skills,...(limitBurst?{limitBurst}:{}),magicAvailable:def.battle.attackType==='ranged'} as RunCatalog[string];
     const prior=options.carry?.find(m=>m.key===key);
     party.push({key,form:key,stats:{attack:1,magic:1,defense:1,hp:1,mp:1},skills:skills.map(s=>({id:s.id,level:1})),
       hp:prior?.hp??maxHp,mp:prior?.mp??maxMp} as RunState['party'][number]);

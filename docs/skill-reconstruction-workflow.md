@@ -1,5 +1,47 @@
 # Skill reconstruction and export runbook
 
+## Current: first Limit Burst (Cloud, Omnislash) and visual approximation mode (2026-11-07)
+
+Acceptance bar per docs/vision.md: looks right, hits the target, impact on the enemy;
+no native fidelity claim. Omnislash (limitburst 207000105, 15 hits, effect groups
+8003710/11/12/13/25, 729 frames) is published as `cloud_omnislash` and playable through
+the new LB gauge.
+
+Pipeline changes (all explicit, none silent):
+- `inspectCharacter` adds the form's own Limit Burst (`unit.limitBurstId`) as catalog kind
+  `LIMIT`; its `effectFrame` timeline is mirrored as `effectFrames`.
+- Recipe skills may use `type: "LIMIT"`; `sourceDamageEvents` reads LB hits directly from
+  `limitburst.attackFrames` (no unit-attack prefix); the choreography identity check skips
+  LIMIT rows, which carry no motionType/moveType; `limit_atk` is an admitted body phase.
+- `prepare_original_preview.py --approximate-unverified`: active source curves on channels
+  without a verified binary offset, animated two-texture colors/curves and anchor mode 3
+  (read as the command target) are held constant / mapped; unknown parent-control enum
+  values take the matching authoring project's named value for that node only. Every case
+  is listed in `plan.approximations`. Without the flag everything stays strict, and the
+  stable enum tables in `bmb_source_controls.py` are unchanged (the sparse scale-0 evidence
+  noted in test_bmb_source_controls.py still does not broaden the stable profile).
+- Scene manifests may run up to 900 frames (`MAX_SCENE_FRAMES`, was 600).
+- Body sheets wider than 16384 px (WebGL limit) wrap into a row-major grid
+  (`tools/sheet_grid.py`, used by export_unit.py, prepare_cgg_body_layers.py and
+  validate_character.py); `tools/wrap_wide_sheets.py` migrated the 22 published
+  `limit_atk` sheets, which previously rendered as a black box. Narrower sheets are
+  byte-identical.
+
+Reproduce:
+```powershell
+node tools/plan_source_imports.mjs --select cloud:207000105 --output tools/data/omnislash-20261107/intake
+<python> tools/stage_source_imports.py --selection tools/data/omnislash-20261107/intake/selection.json
+<python> tools/prepare_original_preview.py --source tools/data/omnislash-20261107/intake/cloud-207000105/skill-source.json --unit cloud --motion atk --recipe tools/characters/cloud.json --profile source-preview-v1 --authoring-directory assets/battle_effect --native-shaders-apk tools/data/memorial-audit/installed-base-v208.apk --native-shader-package tools/data/particle-native-audit/bmshaderpack.bin --renderer-reference tools/data/memorial-audit/diagnostic-v7/renderer-reference.json --approximate-unverified --output tools/data/omnislash-20261107/intake/cloud-207000105/plan.json
+node tools/publish_scene_presentations.mjs --recipe tools/presentations/cloud-omnislash.json
+node tools/import_character.mjs --recipe tools/characters/cloud.json --publish-skills-only --python <python>
+```
+Staging still reports the strict audit blockers (unverified curves); they are expected
+and covered by the approximation list. Approximations in this plan: 35x
+Texture1_Color_Scale_Rgb curve, 14x Rotate curve, 7x Texture1_Translate curve, 2x animated
+texture color, 17x anchor mode 3, 8x Null rotation raw 6 = On and 8x type-2 scale raw 0 =
+Off taken from the authoring projects. Visual check: headless Chrome frames of the full action.
+
+
 Reviewed Source effect-group sound publication now validates source identity,
 group fingerprints, common-bank dispatch, visual clock bounds and PCM hashes.
 Use [Source combat audio](research/source-combat-audio.md) for admission and

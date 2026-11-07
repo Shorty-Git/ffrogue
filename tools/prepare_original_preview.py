@@ -10,6 +10,7 @@ import re
 import struct
 from pathlib import Path
 from inspect_bmb import read_bmb
+import bmb_channels
 from inspect_m3r import read_m3r
 from bmb_playback_fields import attach_playback_fields
 from original_texture_layers import attach_texture_layers
@@ -30,6 +31,10 @@ def source_hit_markers(raw):
 def rectangle_for_group(anchor_mode, scope):
     """Mode3 is proven only for self commands whose target is the caster."""
     if anchor_mode == 3 and scope == 'self':
+        return 'target-unit'
+    if anchor_mode == 3 and bmb_channels.APPROXIMATED_CURVES is not None:
+        # Approximation mode: read mode 3 as the command's target unit (proven only for self).
+        bmb_channels.APPROXIMATED_CURVES.append({'placement': 'anchor-mode-3', 'scope': scope, 'treatment': 'target-unit'})
         return 'target-unit'
     if anchor_mode not in (1, 2, 4):
         raise ValueError('Unsupported source effect rectangle mode: ' + str(anchor_mode))
@@ -68,7 +73,10 @@ if __name__ == '__main__':
     p.add_argument('--native-particle-x', action='store_true', help='Opt-in deterministic OneX/ConstX display subset; requires native selection, Particle geometry and native Null locators')
     p.add_argument('--rectangle-placement', action='store_true', help='Explicit preview bridge: source axis/offset rules, arena half-field and prepared unit frame boxes, zero scatter')
     p.add_argument('--renderer-reference', type=Path, help='Verified native global geometry-scale receipt; requires rectangle placement')
+    p.add_argument('--approximate-unverified', action='store_true', help='Explicit visual approximation: hold active source curves on channels without a verified binary offset constant and record each one in plan.approximations')
     a = p.parse_args()
+    if a.approximate_unverified:
+        bmb_channels.APPROXIMATED_CURVES = []
     if a.profile:
         if not a.authoring_directory or a.authoring or a.fit_screen or a.distortion or a.quad_colors or a.shader_add_reference:
             p.error('The shared profile requires an explicit authoring directory and no manual authoring/fit/distortion overrides')
@@ -379,5 +387,8 @@ if __name__ == '__main__':
         plan['flatQuadColors'] = dict(profile='native-flat-quad-rgb-v1',
             randomness='reviewed-color-streams-v1',
             boundary='Original ConstFlat RGB semantics; deterministic per-instance host seeds, not measured FFBE RNG ownership')
+    if a.approximate_unverified:
+        plan['approximations'] = dict(profile='held-constant-unverified-curves-v1', curves=bmb_channels.APPROXIMATED_CURVES,
+            boundary='Visual approximation: these source curves are not evaluated; the effect is not a native-fidelity reconstruction.')
     a.output.write_text(json.dumps(plan, indent=2), encoding='utf-8')
     print('Prepared original-data experiment:', a.output)

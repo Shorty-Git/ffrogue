@@ -11,16 +11,18 @@ export function runCatalog(scene:Phaser.Scene,manifests:Record<string,UnitManife
  const registry=scene.cache.json.get('content_registry')as ContentRegistry,content=scene.cache.json.get('run_content')as RunContent,result:RunCatalog={};
  if(content?.schemaVersion!==1)throw Error('Prepared run content required');
  for(const key of registry.characters){const def=scene.cache.json.get('character_'+key)as CharacterDefinition,meta=content.units[key];
-  const skills=((scene.cache.json.get('skills_'+key)as UnitSkillsData)?.skills??[]).filter(s=>s.importStatus==='imported'&&s.requiresSourceScene&&s.scenePresentation);
+  const published=((scene.cache.json.get('skills_'+key)as UnitSkillsData)?.skills??[]).filter(s=>s.importStatus==='imported'&&s.requiresSourceScene&&s.scenePresentation);
+  // Limit Bursts use the LB gauge; they never enter starter draws, rewards or the three skill slots.
+  const skills=published.filter(s=>s.type!=='LIMIT'),limitBurst=published.find(s=>s.type==='LIMIT');
   if(!skills.length)continue;
   if(!meta||meta.unitId!==String(manifests[key].unitId))throw Error('Run character form mismatch: '+key);
   if(!meta.canonicalIdentity||!content.canonicalCharacters?.[meta.canonicalIdentity])throw Error('Reviewed canonical character identity required: '+key);
-  skills.forEach(s=>validateSceneAction(scene.cache.json.get('scene_'+s.scenePresentation+'_manifest'),s));
+  published.forEach(s=>validateSceneAction(scene.cache.json.get('scene_'+s.scenePresentation+'_manifest'),s));
   result[key]={key,name:def.battle.heroName??key,variantLabel:meta.variantLabel,identity:meta.identity,canonicalIdentity:meta.canonicalIdentity,unitId:meta.unitId,rarity:meta.rarity,form:key,
-   maxHp:def.battle.maxHp??3000,maxMp:def.battle.maxMp??100,skills,magicAvailable:def.battle.attackType==='ranged',portrait:`/assets/units/${key}/${def.portrait??'portrait.png'}`};
+   maxHp:def.battle.maxHp??3000,maxMp:def.battle.maxMp??100,skills,...(limitBurst?{limitBurst}:{}),magicAvailable:def.battle.attackType==='ranged',portrait:`/assets/units/${key}/${def.portrait??'portrait.png'}`};
   const candidates=content.forms.filter(f=>f.identityKey===key&&f.identity===meta.identity&&rankValue(f)>meta.rarity).sort((a,b)=>rankValue(a)-rankValue(b));
   const admitted=candidates.filter(form=>manifests[form.key]&&String(manifests[form.key].unitId)===form.unitId
-    &&['idle','move','atk','dead','dying','win','win_before',...skills.flatMap(s=>s.actionChoreography?.body.phases?.map(p=>p.clip)??[])].every(c=>!!manifests[form.key].animations[c]));
+    &&['idle','move','atk','dead','dying','win','win_before',...published.flatMap(s=>s.actionChoreography?.body.phases?.map(p=>p.clip)??[])].every(c=>!!manifests[form.key].animations[c]));
   const reachable=new Set([key]);
   result[key].forms=admitted.filter(form=>{
    if(!reachable.has(form.awakensFrom))return false;

@@ -44,6 +44,6 @@ test('wildcard intake selects every actual owned active command once, without gr
  assert.equal(result.status,0,result.stderr);
  const report=readJson(destination+'/cloud_of_darkness-inspection.json'),selection=readJson(destination+'/selection.json');
  assert.equal(selection.playableApproval,false);
- assert.deepEqual(selection.selection.map(s=>[s.kind,s.sourceId]),report.catalog.filter(s=>!s.passive).map(s=>[s.kind,s.id]));
+ assert.deepEqual(selection.selection.map(s=>[s.kind,s.sourceId]),report.catalog.filter(s=>!s.passive&&s.kind!=='LIMIT').map(s=>[s.kind,s.id]));
  assert.equal(selection.selection.length,11);
 });

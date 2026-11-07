@@ -1,5 +1,7 @@
 /** Source timing for reviewed Motion-1 and zero-prefix Motion-2 profiles; no damage formula import. */
 export function sourceDamageEvents(source, plan, unit = plan.composition?.unit) {
+  // Limit Bursts have no unit attack prefix: their hits are limitburst.attackFrames at offset 0.
+  if(source?.kind==='LIMIT')return sourceHitDistribution(source,plan,0);
   const composition=plan.composition,offset=composition?.skillFrameOffset;
   const motion=source?.raw?.motionType;
   if(![1,2].includes(motion) || !Number.isSafeInteger(offset) || offset<0
@@ -20,6 +22,11 @@ export function sourceDamageEvents(source, plan, unit = plan.composition?.unit) 
     const fields=entry.split(':');fields[0]=String(Number(fields[0])+offset);return fields.join(':');
   })].join('&'):source.raw.effectFrames;
   if(composition.effectFrames!==expected)throw Error('Prepared effect timeline differs from source composition');
+  return sourceHitDistribution(source,plan,offset);
+}
+
+/** Every serialized source hit with a complete 100 % distribution, shifted by the composed offset. */
+function sourceHitDistribution(source,plan,offset){
   const hits=String(source.raw.attackFrames).split('-').map(token=>{
     const fields=token.split(':').map(Number);
     if(!/^\d+:\d+:\d+:\d+$/.test(token) || fields.length!==4 || fields.some(v=>!Number.isSafeInteger(v)) || fields[0]<0 || fields[1]<=0)

@@ -1,4 +1,5 @@
 import {skillIconUrl} from '../ui/skillIcons';
+import {LB_MAX,gainFromAction,gainFromDamage,isFull} from '../run/limitGauge.mjs';
 import {CombatHud} from '../ui/CombatHud';
 import Phaser from 'phaser';
 import { UnitActor, UnitCombatConfig, type UnitActorConfig } from '../entities/UnitActor';
@@ -85,6 +86,10 @@ export class BattleScene extends Phaser.Scene {
   private hudRefreshAt=0;
   private ribbonMarks:(TargetDummy|UnitActor)[]=[];
   private isCommandMenuOpen = false;
+  /** Limit Bursts by hero key (catalog limitBurst); heroes without one have no LB gauge. */
+  private limitBursts:Record<string,SkillConfig>={};
+  /** Heroes whose running action is their Limit Burst: it earns no gauge itself. */
+  private limitCasters=new Set<UnitActor>();
 
   // Authentic Hero Skills
   private unitSkills: Record<string, SkillConfig[]> = {};
@@ -154,6 +159,8 @@ export class BattleScene extends Phaser.Scene {
     } catch (error) { this.sourceVisualError = String(error); }
     this.fightNumber=this.runContext.state.encounter+1;
     this.enemyEventRandom=()=>this.randomValue();
+    this.limitBursts={};this.limitCasters.clear();
+    for(const m of this.runContext.state.party){const lb=this.runContext.catalog[m.key].limitBurst;if(lb)this.limitBursts[m.key]=lb;}
     for(const m of this.runContext.state.party)this.unitSkills[m.key]=this.runContext.catalog[m.key].skills
       .filter(s=>m.skills.some(a=>a.id===s.id)).map(s=>skillForRun(s,m));
 
@@ -215,7 +222,7 @@ export class BattleScene extends Phaser.Scene {
       if(event.repeat||event.altKey||event.ctrlKey||event.metaKey||document.querySelector('.encounter-transition,.run-overlay'))return;
       const control=event.target instanceof HTMLElement&&event.target.closest('button,summary,input,select,textarea');
       if(control&&!control.closest('.combat-ui'))return;
-      const number=/^(?:Digit|Numpad)([1-4])$/.exec(event.code);
+      const number=/^(?:Digit|Numpad)([1-5])$/.exec(event.code);
       if(number){event.preventDefault();this.chooseRibbonAbility(Number(number[1])-1);}
       else if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(event.key)&&this.ribbonPlan()){
         event.preventDefault();this.combatHud?.moveFocus(['ArrowLeft','ArrowUp'].includes(event.key)?-1:1);
@@ -314,6 +321,7 @@ export class BattleScene extends Phaser.Scene {
   private chooseRibbonAbility(index:number):void{
     const hero=this.getActiveHero();
     if(!hero)return;
+    if(index===4){this.useLimitBurst(hero);this.refreshCombatHud();return;}
     const skill=index===0?undefined:this.unitSkills[hero.unitKey]?.[index-1];
     if(index===0)this.planHeroAttack();
     else if(skill)this.planHeroSkill(skill);
@@ -331,6 +339,19 @@ export class BattleScene extends Phaser.Scene {
     }
     this.refreshCombatHud();
     if(this.ribbonPlan())this.combatHud.moveFocus(1);
+  }
+
+  /** A full LB gauge commits the hero's Limit Burst on the current target at once. */
+  private useLimitBurst(hero:UnitActor):void{
+    const lb=this.limitBursts[hero.unitKey];
+    if(!lb||this.combatState!=='PLAYER_TURN'||hero.isDead||hero.hasActed)return;
+    if(!isFull(hero.limitGauge)||!this.canUseSourceSkill(lb)){this.runContext.uiSound?.('unavailable');this.updateStatus('The Limit gauge is not full yet.');return;}
+    const target=this.currentTarget&&this.currentTarget.currentHp>0?this.currentTarget:this.autoRetarget();
+    if(!target)return;
+    this.runContext.uiSound?.('select');
+    this.plannedActions.set(hero,{kind:'skill',skill:lb,target});
+    this.ribbonMarks=[target];
+    this.executePlannedAction();
   }
 
   /** Changes the enemy target without spending an action; only during command selection. */
@@ -409,14 +430,18 @@ export class BattleScene extends Phaser.Scene {
         const definition=this.cache.json.get(`character_${member.unitKey}`) as CharacterDefinition;
         return {name:member.heroName,portrait:definition.portrait?`/assets/units/${member.unitKey}/${definition.portrait}`:undefined,status:status+(boost>1?` · ATK +${Math.round((boost-1)*100)}%`:''),
           active:member===hero&&available,disabled:target===undefined&&(this.combatState!=='PLAYER_TURN'||member.isDead||member.hasActed||scope==='single_ally'),
-          state,target,hp:member.currentHp,maxHp:member.maxHp,mp:member.currentMp,maxMp:member.maxMp};
+          state,target,hp:member.currentHp,maxHp:member.maxHp,mp:member.currentMp,maxMp:member.maxMp,
+          ...(this.limitBursts[member.unitKey]?{limit:{value:member.limitGauge,max:LB_MAX}}:{})};
       }),
       commands:[{name:'Attack',icon:'attack',cost:'0 MP',description:'Normal attack',disabled:!available,selected:plan?.kind==='attack'},
         ...[0,1,2].map(i=>{
           const action=skills[i];if(!action)return null;
           return {name:action.name,icon:(action.motion==='magic_atk'?'magic':'ability') as 'magic'|'ability',iconUrl:skillIconUrl(action),cost:`${action.mpCost} MP${action.hpCost?' · '+action.hpCost+' HP':''}`,description:skillDescription(action),
             disabled:!available||!hero||hero.currentMp<action.mpCost||!!action.hpCost&&hero.currentHp<=action.hpCost||!this.canUseSourceSkill(action),selected:skill===action};
-        })],
+        }),
+        ...(hero&&this.limitBursts[hero.unitKey]?[(()=>{const lb=this.limitBursts[hero.unitKey],ready=isFull(hero.limitGauge);
+          return {name:lb.name,icon:'limit' as const,cost:ready?'Limit ready':`Limit ${hero.limitGauge}%`,description:skillDescription(lb),
+            disabled:!available||!ready||!this.canUseSourceSkill(lb),selected:skill===lb,limit:true,ready};})()]:[])],
     });
   }
 
@@ -759,6 +784,7 @@ export class BattleScene extends Phaser.Scene {
     this.announceCombatAction(hero.unitKey,hero.heroName,'attack','Attack','hero','attack','basic');
     this.startHeroAction(hero, hero.combatConfig.attackAnim, () => this.executeHeroSequence(hero, () => {
       hero.hasActed = true;
+      hero.limitGauge = gainFromAction(hero.limitGauge);
 
       // Check Victory: if all enemies are defeated or fight ended mid-turn, trigger victory immediately!
       const allDead = this.enemies.every((e) => e.currentHp <= 0);
@@ -797,12 +823,17 @@ export class BattleScene extends Phaser.Scene {
       this.updateStatus(`Not enough HP to use ${skill.name}. The caster must survive the cost.`);
       return;
     }
+    if (skill.type==='LIMIT' && (this.limitBursts[hero.unitKey]!==skill || !isFull(hero.limitGauge))) {
+      this.updateStatus('The Limit gauge is not full yet.');
+      return;
+    }
     if (!hero.useMp(skill.mpCost)) {
       this.updateStatus(`Not enough MP to cast ${skill.name}! (Need ${skill.mpCost} MP, have ${hero.currentMp})`);
       return;
     }
 
     if (skill.hpCost) hero.spendHp(skill.hpCost);
+    if (skill.type==='LIMIT') { hero.limitGauge = 0; this.limitCasters.add(hero); }
 
     this.combatState = 'HERO_ATTACKING';
 
@@ -835,6 +866,7 @@ export class BattleScene extends Phaser.Scene {
 
   private concludeHeroSkill(hero: UnitActor): void {
     hero.hasActed = true;
+    if (!this.limitCasters.delete(hero)) hero.limitGauge = gainFromAction(hero.limitGauge);
 
     const allDead = this.enemies.every((e) => e.currentHp <= 0);
     if (allDead || this.combatState === 'VICTORY') {
@@ -1453,6 +1485,7 @@ export class BattleScene extends Phaser.Scene {
             const defense=this.runContext.state.party.find(m=>m.key===target.unitKey)?.stats.defense??1;
             const dmg=Math.round(profile.damage*(action?.multiplier??1)*attackMultiplier/defense);
             target.applyDamage(dmg);
+            if(!target.isDead)target.limitGauge=gainFromDamage(target.limitGauge,dmg,target.maxHp);
             impacts.push({unit:target.unitKey,damage:dmg});
           }
           if(action)this.events.emit('enemy-impact',{key:enemy.assetKey,action,impacts,round:this.currentRound});

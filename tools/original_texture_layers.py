@@ -6,6 +6,14 @@ of the supported binary/project categories before attaching any supplement.
 import math
 import xml.etree.ElementTree as ET
 from inspect_bmb import compare_project
+import bmb_channels
+
+
+def unsupported(message, detail):
+    """Strict by default; the explicit approximation mode records and continues."""
+    if bmb_channels.APPROXIMATED_CURVES is None:
+        raise ValueError(message)
+    bmb_channels.APPROXIMATED_CURVES.append({**detail, 'treatment': 'initial-value-held-constant'})
 
 
 def attach_texture_layers(result, project):
@@ -27,11 +35,13 @@ def attach_texture_layers(result, project):
                     raise ValueError('Non-finite texture layer value')
                 return values
             for channel in ['Rgb', 'Alpha']:
-                if source.findtext(prefix + f'Color_Scale_{channel}_MotionType') != 'Constant':
-                    raise ValueError('Animated texture color is not supported by this experiment')
+                mode = source.findtext(prefix + f'Color_Scale_{channel}_MotionType')
+                if mode != 'Constant':
+                    unsupported('Animated texture color is not supported by this experiment', {'channel': prefix + f'Color_Scale_{channel}', 'mode': mode})
             for group in ['Translate', 'Rotate', 'Scale']:
-                if source.findtext(prefix + group + '_MotionType') not in ['Constant', 'NewtonDynamics']:
-                    raise ValueError('Animated texture curves require a separate capability')
+                mode = source.findtext(prefix + group + '_MotionType')
+                if mode not in ['Constant', 'NewtonDynamics']:
+                    unsupported('Animated texture curves require a separate capability', {'channel': prefix + group, 'mode': mode})
             if source.findtext(prefix + 'MappingType') != 'Basic' or source.findtext(f'Texture_Layer{layer}_TextureCropAnimationType') != '_1x1':
                 raise ValueError('Only basic unanimated texture mapping is supported')
             alpha = [float(source.findtext(prefix + f'Color_Scale_Alpha_Value_{term}')) for term in ['Initial','Range']]

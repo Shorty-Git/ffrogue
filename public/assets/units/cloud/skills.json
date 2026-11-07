@@ -672,6 +672,181 @@
         ],
         "boundary": "Original process parameters and source markers do not execute as game balance rules"
       }
+    },
+    {
+      "id": "omnislash",
+      "ffbeId": 207000105,
+      "name": "Omnislash",
+      "rarity": 5,
+      "level": 1,
+      "type": "LIMIT",
+      "mpCost": 0,
+      "scope": "single_enemy",
+      "damageMultiplier": 6.1,
+      "hitCount": 15,
+      "attackFrames": [
+        188,
+        206,
+        222,
+        254,
+        270,
+        282,
+        304,
+        326,
+        342,
+        356,
+        388,
+        406,
+        418,
+        448,
+        550
+      ],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Limit Burst: 15 strikes on one enemy (6.1x ATK in total, original LB level 1 power)",
+      "damageEvents": [
+        {
+          "frame": 188,
+          "weight": 0.05
+        },
+        {
+          "frame": 206,
+          "weight": 0.05
+        },
+        {
+          "frame": 222,
+          "weight": 0.05
+        },
+        {
+          "frame": 254,
+          "weight": 0.05
+        },
+        {
+          "frame": 270,
+          "weight": 0.05
+        },
+        {
+          "frame": 282,
+          "weight": 0.05
+        },
+        {
+          "frame": 304,
+          "weight": 0.05
+        },
+        {
+          "frame": 326,
+          "weight": 0.05
+        },
+        {
+          "frame": 342,
+          "weight": 0.05
+        },
+        {
+          "frame": 356,
+          "weight": 0.05
+        },
+        {
+          "frame": 388,
+          "weight": 0.05
+        },
+        {
+          "frame": 406,
+          "weight": 0.05
+        },
+        {
+          "frame": 418,
+          "weight": 0.05
+        },
+        {
+          "frame": 448,
+          "weight": 0.05
+        },
+        {
+          "frame": 550,
+          "weight": 0.3
+        }
+      ],
+      "reviewNote": "Limit Burst import 2026-11-07: original effect groups 8003710/11/12/13/25 through the shared Source preview profile; acceptance bar is visual (looks right, hits, impact on target), not native pixel parity.",
+      "scenePresentation": "cloud_omnislash",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/omnislash-20261107/intake/cloud-207000105/skill-source.json",
+        "sha256": "151394de8ff098f77c55a9c236568cea4f1afa188fff9a3dc5f7daebd17b52e7"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "target",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "limit_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 1,
+          "sourceMoveType": 1,
+          "note": "Limit Burst: dash to the target, then the published limit_atk clip (10.9 s) under the 12.2 s original effect timeline. LB rows carry no motionType; 1 (physical) is a reviewed adaptation matching its single-target melee form."
+        }
+      },
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "LIMIT",
+        "id": 207000105,
+        "database": {
+          "path": "assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "limitBurstId": 207000105,
+          "name": "Omnislash",
+          "limitBurstType": 1,
+          "target": "1",
+          "targetRange": "1",
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 1,
+          "J35nicFV": 0,
+          "skillType": 1,
+          "aR5i4ewA": 0,
+          "KosY4a18": 2,
+          "Af2Pc0Jz": 1,
+          "processId": "21",
+          "PI18xnkD": "0",
+          "processParam": "0,0,610,-50",
+          "H4zD2IQ5": 0,
+          "fileInfo": null,
+          "effectFrame": "1:8003710:2:4:0&0:8003711:1:3:0&0:8003712:1:3:0&0:8003713:1:3:0&0:8003725:1:3:0",
+          "attackFrames": "188:5:3:2-206:5:3:2-222:5:3:2-254:5:3:2-270:5:3:2-282:5:3:2-304:5:3:2-326:5:3:2-342:5:3:2-356:5:3:2-388:5:3:2-406:5:3:2-418:5:3:2-448:5:3:2-550:30:3:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000000,
+          "description": "Deal partial unmitigated damage to one enemy",
+          "58bfqWsR": 1,
+          "6ZEyK95f": null,
+          "effectFrames": "1:8003710:2:4:0&0:8003711:1:3:0&0:8003712:1:3:0&0:8003713:1:3:0&0:8003725:1:3:0"
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Limit Burst import 2026-11-07: original effect groups 8003710/11/12/13/25 through the shared Source preview profile; acceptance bar is visual (looks right, hits, impact on target), not native pixel parity.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
     }
   ]
 }

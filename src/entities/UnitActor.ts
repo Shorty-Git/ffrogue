@@ -36,6 +36,8 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
   public currentHp: number;
   public maxMp: number;
   public currentMp: number;
+  /** Battle-scoped Limit Burst gauge (src/run/limitGauge.mjs). */
+  public limitGauge = 0;
   public heroName: string;
   public heroRole: string;
   public get isDead(): boolean {

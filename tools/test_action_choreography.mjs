@@ -35,7 +35,7 @@ test('accepted body clips are explicit and missing/overlapping phase clips are b
   const body=read(`public/assets/units/${unit}/manifest.json`);
   for(const skill of read(`public/assets/units/${unit}/skills.json`).skills.filter(s=>s.scenePresentation)){
    const c=validateActionChoreography(skill,Infinity,body.animations);
-   assert.deepEqual(c.body,{mode:'clips',phases:[{frame:0,clip:skill.motion}]});
+   assert.deepEqual(c.body,{mode:'clips',phases:[{frame:0,clip:skill.type==='LIMIT'?'limit_atk':skill.motion}]});
   }
  }
  const skill=read('public/assets/units/cloud/skills.json').skills[0],body=read('public/assets/units/cloud/manifest.json');

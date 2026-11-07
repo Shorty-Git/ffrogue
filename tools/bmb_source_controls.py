@@ -100,7 +100,15 @@ def compare_source_controls(node, source, *, require_all=True, data=None):
                 raise ValueError('Missing source control: ' + name)
             continue
         if field['status'] != 'decoded':
-            raise ValueError('Unresolved binary parent control enum: ' + name)
+            import bmb_channels
+            if bmb_channels.APPROXIMATED_CURVES is None:
+                raise ValueError('Unresolved binary parent control enum: ' + name)
+            # Explicit approximation mode: take the matching authoring project's named value for
+            # this node only; the stable enum tables stay unchanged.
+            bmb_channels.APPROXIMATED_CURVES.append({'control': name, 'raw': field['raw'],
+                                                     'authoring': expected, 'treatment': 'authoring-value'})
+            field.update(value=expected, status='authoring-approximated')
+            continue
         definition = {**FIELDS.get(node['typeId'], {}), **INTAKE_FIELDS.get(node['typeId'], {})}[name]
         if definition[1] is None and (not math.isfinite(float(expected)) or not 0 <= float(expected) <= 1):
             raise ValueError('Invalid parent influence rate')

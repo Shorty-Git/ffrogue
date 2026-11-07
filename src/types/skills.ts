@@ -30,7 +30,8 @@ export interface ActionChoreography {
   stepDistance?:'half-idle-height';
   readiness:'none'|'magic-standby';
   commandPose?:'standby'|'magic-standby';
-  body:{mode:'rest';phases?:never}|{mode:'clips';phases:{frame:number;clip:MotionType}[]};
+  /** Limit Bursts play their own limit_atk body clip. */
+  body:{mode:'rest';phases?:never}|{mode:'clips';phases:{frame:number;clip:MotionType|'limit_atk'}[]};
   review:{basis:'accepted-gameplay'|'user-original-observation'|'reviewed-adaptation';sourceMotionType:number;sourceMoveType:number;note:string};
 }
 
@@ -47,7 +48,8 @@ export interface SkillConfig {
   name: string;
   rarity?: number | string;
   level?: number;
-  type?: 'ABILITY' | 'MAGIC';
+  /** LIMIT = the form's Limit Burst: offered through the LB gauge, never as an ordinary skill. */
+  type?: 'ABILITY' | 'MAGIC' | 'LIMIT';
   mpCost: number;
   /** Reviewed nonlethal caster cost, paid once after complete admission. */
   hpCost?: number;
