@@ -2,6 +2,9 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { DatabaseSync } from 'node:sqlite';
+import { validateSceneAction } from '../../src/effects/sceneProfile.mjs';
+import {sourceDamageEvents} from './source-damage-events.mjs';
+import {validateActionChoreography} from '../../src/effects/actionChoreography.mjs';
 
 export const readJson = file => JSON.parse(fs.readFileSync(file, 'utf8'));
 export const writeJson = (file, data) => {
@@ -60,6 +63,31 @@ export function inspectEffect(file, root) {
 export function parseTimeline(raw, separator = /[&,]/) {
   return (raw ?? '').split(separator).filter(Boolean).map(entry => ({ raw: entry, fields: entry.split(':') }));
 }
+
+/** Report unresolved original spatial dispatch without guessing a target/caster fallback. */
+export function unresolvedEffectAnchors(skill) {
+  return (skill.effects??[]).flatMap(branch=>(branch.groups??[])
+    .filter(group=>group.anchor==='unknown')
+    .map(group=>({groupId:group.groupId,raw:group.raw,flags:group.flags,
+      reason:'Original effect anchor has no supported mapping'})));
+}
+/** Native motion-1 composition: shift skill groups by the last unit-group start. */
+export function composeEffectFrames(unitFrames, skillFrames, motionType) {
+  const entries = raw => {
+    if (typeof raw !== 'string' || !raw.length || raw.split('&').some(v => !/^\d+:\d+(?::-?\d+){1,3}$/.test(v)))
+      throw Error('Only ordinary single-branch effect timelines are supported');
+    const parsed = raw.split('&').map(v => v.split(':'));
+    if (parsed.some(v => v.some(field => !Number.isSafeInteger(Number(field))))) throw Error('Invalid effect timeline integer');
+    return parsed;
+  };
+  const skill = entries(skillFrames);
+  if (motionType !== 1) return { effectFrames: skillFrames, skillFrameOffset: 0 };
+  const unit = entries(unitFrames);
+  const offset = Math.max(...unit.map(v => Number(v[0])));
+  return { effectFrames: [...unit, ...skill.map(v => [String(Number(v[0]) + offset), ...v.slice(1)])].map(v => v.join(':')).join('&'),
+    skillFrameOffset: offset };
+}
+
 export function resolveEffects(db, root, raw) {
   // Conditions are preserved, never flattened into unconditional spawns.
   return (raw ?? '').split('@').map((branch, branchIndex) => ({ branchIndex,
@@ -84,14 +112,55 @@ export function resolveEffects(db, root, raw) {
       });
       return { raw, startFrame: Number(frame), groupId: Number(id), name: group.name,
         layer: layer === '2' ? 'back' : layer === '1' ? 'front' : 'unknown',
-        anchor: ({ 1: 'target', 2: 'target-group', 3: 'caster', 4: 'screen' })[anchor] ?? 'unknown',
+        anchor: ({ 1: 'target', 2: 'target-group', 3: 'caster', 4: 'screen' })[anchor ?? (fields.length === 3 ? '1' : undefined)] ?? 'unknown',
         flags, soundsRaw: group['1fVZ3rKd'], extraRaw: group.rPHs9p8F,
         status: members.length ? 'resolved' : group['1fVZ3rKd'] ? 'sound-only-unreviewed' : 'unresolved-group', members };
     }),
   }));
 }
 
-export function inspectCharacter(recipe, { assets = 'assets', dump = 'ffbe_asset_dump-main' } = {}) {
+/** Reuse a complete matched-source comparison only while every input is unchanged. */
+export function loadControlAudit(file) {
+  const audit = readJson(file);
+  const required = ['tools/inspect_bmb.py','tools/bmb_channels.py','tools/bmb_parameters.py',
+    'tools/bmb_materials.py','tools/bmb_source_controls.py'];
+  if (audit.schema !== 'bmb-source-control-comparison-v1' || !Array.isArray(audit.results)
+    || !Array.isArray(audit.differences) || audit.differences.length
+    || required.some(p => audit.parserInputs?.[p] !== sha256(p)))
+    throw Error('Control audit is incomplete or parser evidence is stale');
+  for (const row of audit.results) {
+    if (!row.projectComparison?.hierarchyMatches || sha256(row.binary) !== row.sha256
+      || sha256(row.authoring) !== row.authoringSha256) throw Error('Control audit source identity changed');
+  }
+  return audit.results;
+}
+
+/** Clear only obsolete authoring-comparison errors, never renderer/resource/gameplay gates. */
+export function refineAuthoringBlockers(blockers, effects, comparisons) {
+  const confirmed = new Set();
+  for (const row of comparisons) {
+    const name = path.basename(row.binary);
+    const versions = new Set(effects.filter(e => e.name === name).map(e => e.sha256));
+    if (versions.size === 1 && versions.has(row.sha256) && row.projectComparison?.hierarchyMatches)
+      confirmed.add(name);
+  }
+  const superseded = blockers.filter(b => [...confirmed].some(name => b.startsWith(name + ':authoring-comparison:')));
+  return {blockers: blockers.filter(b => !superseded.includes(b)), superseded};
+}
+
+/** New imports must review placement independently of VFX and body choreography. */
+export function validateImportPlacement(skill, manifest, publishedSkills = []) {
+  const placement = manifest.plan?.rectanglePlacement;
+  if (placement?.coordinateSystem === 'ffbe-screen-api' && placement.coordinateReview?.trim()) return;
+  // Preserve historical accepted presentations, without admitting a new binding by name.
+  const existing = publishedSkills.some(previous => previous.importStatus === 'imported'
+    && previous.id === skill.id && previous.ffbeId === skill.ffbeId
+    && (previous.type ?? 'ABILITY') === (skill.type ?? 'ABILITY')
+    && previous.scenePresentation === skill.scenePresentation);
+  if (!existing) throw Error('New Source import requires an explicit reviewed placement coordinate contract');
+}
+
+export function inspectCharacter(recipe, { assets = 'assets', dump = 'ffbe_asset_dump-main', effectsRoot = 'tools/effects' } = {}) {
   assertKey(recipe.key);
   if (!/^\d+$/.test(recipe.spriteUnitId)) throw Error('spriteUnitId must be a numeric string');
   if (!Number.isFinite(recipe.scale) || recipe.scale <= 0) throw Error('Invalid character scale');
@@ -131,84 +200,121 @@ export function inspectCharacter(recipe, { assets = 'assets', dump = 'ffbe_asset
       }
     }
     const catalog = [...byId.values()];
+    for(const skill of catalog)if(String(skill.raw?.processId)==='130'){
+      const match=/^(\d+),(\d+),(\d+):(\d+)$/.exec(String(skill.raw.processParam));
+      if(match){
+        const raw=db.prepare('SELECT * FROM ability WHERE abilityId=?').get(Number(match[1]));
+        skill.commandReferences=raw?[{role:'referenced-ability',id:Number(match[1]),dispatchRaw:skill.raw.processParam,raw}]:[];
+      }
+    }
     const suffix = `_cgs_${recipe.spriteUnitId}.csv`;
     const csvDir = path.join(dump, 'unit_animated_csv');
     const names = fs.readdirSync(csvDir).filter(f => f.startsWith('unit_') && f.endsWith(suffix));
     const tracks = names.map(f => f.slice(5, -suffix.length)).sort();
     const required = ['idle', 'atk', 'move', 'dead', 'dying', 'win', 'win_before'];
     const missingStates = required.filter(state => !tracks.includes(state));
+    const publishedFile = `public/assets/units/${recipe.key}/skills.json`;
+    const publishedSkills = fs.existsSync(publishedFile) ? readJson(publishedFile).skills ?? [] : [];
     const selected = (recipe.skills ?? []).map(skill => {
       const source = byId.get(`${skill.type ?? 'ABILITY'}:${skill.ffbeId}`);
       const issues = [];
+      if (skill.scenePresentation) {
+        try {
+          assertKey(skill.scenePresentation);
+          const manifest = validateSceneAction(readJson(`public/assets/presentations/${skill.scenePresentation}/manifest.json`), skill);
+          validateImportPlacement(skill, manifest, publishedSkills);
+          if (manifest.sourceId !== skill.ffbeId || manifest.provenance.playerSha256 !== sha256('src/effects/originalEffectPlayer.mjs'))
+            throw Error('Experimental presentation source/player identity mismatch');
+        } catch (error) { issues.push(`scene-presentation-blocked: ${error.message}`); }
+      }
       if (!source?.raw) issues.push('not-in-series-learning-list');
       if (source?.passive) issues.push('passive-cannot-be-an-active-command');
-      if (!tracks.includes(skill.motion)) issues.push('missing-body-motion');
-      if (!['atk', 'magic_atk'].includes(skill.motion)) issues.push('unsupported-runtime-motion');
+      if(skill.sourceScopeReview){
+        const r=skill.sourceScopeReview;
+        const scope=source?.kind==='ABILITY'&&source.raw?.target==='1'
+          ?{'1':'single_enemy','2':'all_enemies'}[source.raw.targetRange]:undefined;
+        if(!r.note||!scope||r.scope!==scope||r.scope!==skill.scope||r.target!==source?.raw?.target||r.targetRange!==source?.raw?.targetRange)
+          issues.push('original-target-scope-review-mismatch');
+      }
       if (!Number.isFinite(skill.mpCost) || skill.mpCost < 0) issues.push('invalid-mp-cost');
-      if (!['single_enemy', 'all_enemies', 'party'].includes(skill.scope)) issues.push('unsupported-target-scope');
-      if (!['dash', 'stationary'].includes(skill.moveType)) issues.push('unsupported-movement');
-      if (!Number.isFinite(skill.damageMultiplier) || skill.damageMultiplier <= 0) issues.push('invalid-damage-multiplier');
-      if (skill.execution === 'timeline-single-hit') {
-        if (skill.hitCount !== 1 || skill.attackFrames?.length !== 1 || skill.scope !== 'single_enemy' || skill.moveType !== 'dash') issues.push('unsupported-timeline-execution');
-        const sourceFrames = parseTimeline(source?.raw?.attackFrames, /[-&,]/).map(f => Number(f.fields[0]));
-        if (JSON.stringify(sourceFrames) !== JSON.stringify(skill.attackFrames)) issues.push('attack-frame-mismatch');
-        if (!skill.visualEffect) issues.push('missing-reviewed-effect');
-      } else if (skill.execution === 'timeline-area') {
-        const p = skill.presentation;
-        if (source?.raw?.motionType != null && ![1, 2].includes(source.raw.motionType)
-          && (skill.motionReview?.sourceCode !== source.raw.motionType || skill.motionReview?.prepared !== skill.motion || !skill.motionReview?.reason)) issues.push('source-motion-needs-review');
-        if (skill.scope !== 'all_enemies' || skill.moveType !== 'stationary' || skill.visualEffect) issues.push('unsupported-area-presentation');
-        const sourceFrames = parseTimeline(source?.raw?.attackFrames, /[-&,]/).map(f => Number(f.fields[0]));
-        if (JSON.stringify(sourceFrames) !== JSON.stringify(skill.attackFrames) || skill.hitCount !== sourceFrames.length) issues.push('attack-frame-mismatch');
-        if (!p || !Number.isInteger(p.impactFrame) || p.impactFrame < 0 || !Number.isInteger(p.durationFrames)
-          || p.durationFrames <= p.impactFrame || !Array.isArray(p.effects) || !p.effects.length || !skill.reviewNote) issues.push('area-presentation-needs-review');
-        else {
-          const members = source?.effects.flatMap(b => b.groups.flatMap(g => g.members.map(m => ({ ...m, group: g })))) ?? [];
-          const covered = new Set();
-          for (const entry of p.effects) {
-            assertKey(entry.key);
-            const file = `tools/effects/${entry.key}.json`;
-            if (!fs.existsSync(file)) { issues.push('missing-effect-recipe'); continue; }
-            const effect = readJson(file);
-            if ((effect.artworkRotationDegrees ?? 0) !== 0 && !effect.review?.presentationAdaptation) issues.push('effect-artwork-adaptation-needs-review');
-            if (entry.fit != null && (entry.fit !== 'arena' || entry.anchor !== 'screen' || !effect.contentBounds)) issues.push('invalid-screen-fit');
-            if (!effect.review?.approved || !effect.review?.reason) issues.push('effect-needs-visual-review');
-            if (!Number.isInteger(entry.startFrame) || entry.startFrame < 0 || !['target', 'target-group', 'screen'].includes(entry.anchor)
-              || !['front', 'back'].includes(entry.layer ?? 'front')
-              || entry.startFrame + effect.frameCount > p.durationFrames) issues.push('invalid-effect-timeline');
-            const index = members.findIndex(m => m.effectId === effect.effectId && m.originalFile === effect.masterFile
-              && m.group.startFrame + m.frame === entry.startFrame && m.group.anchor === entry.anchor);
-            if (index < 0 || covered.has(index)) issues.push('effect-mapping-mismatch');
-            else {
-              covered.add(index);
-              const member = members[index];
-              if (member.status !== 'available-unreviewed') issues.push('effect-source-unavailable');
-              const rotation = member.transform.length ? member.transform.map(Number) : [0, 0, 0];
-              if ((effect.emitterScale ?? 1) !== member.scalePercent / 100
-                || JSON.stringify(effect.emitterRotation ?? [0, 0, 0]) !== JSON.stringify(rotation)
-                || member.group.layer !== (entry.layer ?? 'front')) issues.push('unsupported-effect-transform');
-            }
+      if (skill.importStatus === 'not-imported') {
+        if(skill.execution !== 'not-imported' || skill.scenePresentation || !skill.unavailableReason)
+          issues.push('unavailable-command-must-not-have-an-execution-binding');
+      } else {
+        if (!tracks.includes(skill.motion) || !['atk','magic_atk'].includes(skill.motion)) issues.push('missing-or-unsupported-body-motion');
+        if (skill.importStatus !== 'imported' || !skill.requiresSourceScene || !skill.scenePresentation || !skill.reviewNote)
+          issues.push('reviewed-source-import-required');
+        if (skill.presentation || skill.visualEffect || skill.sourcePresentation) issues.push('obsolete-render-binding');
+        if (!['dash','stationary'].includes(skill.moveType) || !Number.isFinite(skill.damageMultiplier)
+          || (skill.execution==='prepared-events'?skill.damageMultiplier!==0:skill.damageMultiplier<=0))
+          issues.push('invalid-reviewed-action');
+        try {
+          const manifest=validateSceneAction(readJson(`public/assets/presentations/${skill.scenePresentation}/manifest.json`),skill);
+          const publicBody=path.resolve(`public/assets/units/${recipe.key}/manifest.json`);
+          const bodyReceiptFile=`tools/data/characters/${recipe.key}/body-preparation.json`;
+          let body=fs.existsSync(publicBody)?readJson(publicBody):undefined;
+          if(!body&&fs.existsSync(bodyReceiptFile)){
+            const receipt=readJson(bodyReceiptFile),file=path.resolve(receipt.directory,'manifest.json');
+            if(!file.startsWith(path.resolve('tools/data')+path.sep)||sha256(file)!==receipt.manifestSha256)
+              throw Error('Checked body receipt is stale or outside staging');
+            body=readJson(file);
           }
-          if (covered.size !== members.length || p.effects.length !== members.length) issues.push('incomplete-effect-presentation');
-        }
-      } else if (skill.execution !== 'legacy') issues.push('execution-needs-review');
-      if (skill.presentation && skill.execution !== 'timeline-area') issues.push('presentation-execution-mismatch');
-      if (source?.effects.some(branch => branch.conditional) && skill.execution !== 'legacy') issues.push('conditional-timeline-needs-review');
-      const effectRecipe = skill.visualEffect ? `tools/effects/${skill.visualEffect.key}.json` : null;
-      if (effectRecipe) {
-        assertKey(skill.visualEffect.key);
-        if (!fs.existsSync(effectRecipe)) issues.push('missing-effect-recipe');
-        else {
-          const effect = readJson(effectRecipe);
-          const members = source?.effects.flatMap(b => b.groups.flatMap(g => g.members.map(m => ({ ...m, group: g })))) ?? [];
-          const matches = members.filter(m => m.effectId === effect.effectId && m.originalFile === effect.masterFile);
-          if (!matches.some(m => m.group.startFrame + m.frame === skill.visualEffect.startFrame && m.group.anchor === 'target')) issues.push('effect-mapping-mismatch');
-          if (members.length !== 1) issues.push('composite-timeline-needs-review');
-          if (!effect.review?.approved || !effect.review?.reason) issues.push('effect-needs-visual-review');
-        }
+          if(body&&String(body.unitId)!==recipe.spriteUnitId)throw Error('Character choreography body identity mismatch');
+          const choreography=validateActionChoreography({...skill,originalCommand:{raw:source.raw}},manifest.durationFrames,body?.animations);
+          if(!body&&(choreography.travelTiming==='move-cycle'||choreography.body.phases?.length>1))
+            throw Error('Prepare a checked body before multi-phase or step choreography');
+          if(choreography.body.mode==='clips'&&choreography.body.phases.some(p=>!tracks.includes(p.clip)))
+            throw Error('Reviewed body clip missing from source tracks');
+          const composition=manifest.plan.composition;
+          if(composition){
+            if(composition.skill.abilityId!==source.id || composition.skill.effectFrames!==source.raw.effectFrames)
+              throw Error('Prepared composition must match the original command');
+          }else{
+            const evidence=skill.preparedSourceReceipt,file=path.resolve(evidence?.file??'');
+            if(!file.startsWith(path.resolve('tools/data')+path.sep) || !evidence?.sha256
+              ||sha256(file)!==evidence.sha256 ||manifest.plan.sourceSha256!==evidence.sha256)
+              throw Error('Preserved non-composed preview requires its exact hashed original receipt');
+            const receipt=readJson(file);
+            if(receipt.skill.id!==source.id ||receipt.skill.kind!==source.kind
+              ||receipt.skill.raw.effectFrames!==source.raw.effectFrames ||receipt.skill.raw.attackFrames!==source.raw.attackFrames)
+              throw Error('Original receipt differs from the selected skill');
+          }
+          if(skill.execution==='prepared-source'){
+            if(!skill.damageEvents?.length)throw Error('Reviewed damage events required');
+            if(skill.damageTimingReview){
+              if(skill.damageTimingReview.basis!=='accepted-gameplay' || !skill.damageTimingReview.reason
+                || skill.hitCount!==skill.damageEvents.length)throw Error('Explicit reviewed gameplay timing required');
+            }else{
+              const expected=sourceDamageEvents(source,manifest.plan,unit);
+              if(JSON.stringify(expected)!==JSON.stringify(skill.damageEvents)||skill.hitCount!==expected.length
+                ||JSON.stringify(skill.attackFrames)!==JSON.stringify(manifest.plan.sourceHits.map(h=>h.frame)))
+                throw Error('Reviewed events differ from composed original hit data');
+            }
+          }else if(skill.execution==='prepared-events'){
+            const frames=parseTimeline(source.raw.attackFrames,/[-&,]/).map(f=>Number(f.fields[0]));
+            if(skill.damageEvents||source.raw.motionType!==2||composition.skillFrameOffset!==0
+              ||skill.hitCount!==frames.length||skill.supportEvents?.length!==frames.length
+              ||JSON.stringify(frames)!==JSON.stringify(skill.attackFrames)||!skill.sourceScopeReview
+              ||skill.supportEvents.some((e,i)=>e.frame!==frames[i]||e.effects.length!==1||e.effects[0].kind!=='execute-or-damage'))
+              throw Error('Exact original instant-event clocks and scope review required');
+          }else if(['prepared-support','prepared-self','prepared-friendly'].includes(skill.execution)){
+            const frames=parseTimeline(source.raw.attackFrames,/[-&,]/).map(f=>Number(f.fields[0]));
+            const events=skill.execution==='prepared-support'?skill.supportEvents:skill.allyEvents;
+            if(skill.hitCount!==0 || skill.damageEvents || !events?.length || source.raw.motionType!==2
+              ||composition.skillFrameOffset!==0 || events.some(e=>!frames.includes(e.frame))
+              ||JSON.stringify(frames)!==JSON.stringify(skill.attackFrames))throw Error('Reviewed non-damaging source markers required');
+            if(skill.execution==='prepared-self'&&(skill.scope!=='self'||source.raw.target!=='3'||source.raw.moveType!==4))
+              throw Error('Source self target and stationary profile required');
+            if(skill.execution==='prepared-friendly'&&(skill.scope!=='party'||source.raw.moveType!==4||!skill.allyTargeting
+              ||!skill.friendlyTargetReview?.note||skill.friendlyTargetReview.sourceTarget!==source.raw.target
+              ||skill.friendlyTargetReview.sourceRange!==source.raw.targetRange))
+              throw Error('Explicit original friendly-target review required');
+          }else throw Error('Only the Source skill execution profile can publish');
+          if(source.effects.some(b=>b.conditional))throw Error('Unresolved process-indexed timeline');
+        }catch(error){issues.push(`source-import-blocked: ${error.message}`);}
       }
       return { id: skill.id, ffbeId: skill.ffbeId, execution: skill.execution, issues,
-        visualStatus: skill.visualEffect || skill.presentation ? 'reviewed-recipe-requires-sheet-validation' : 'no-runtime-vfx',
+        visualStatus: skill.importStatus==='not-imported'?'not-imported':skill.scenePresentation?'source-scene':'not-imported',
         sourceCost: source?.raw?.cost ?? null, gameplayCost: skill.mpCost };
     });
     const files = [path.join(dump, 'unit_animated', `unit_anime_${recipe.spriteUnitId}.png`),

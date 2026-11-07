@@ -4,6 +4,7 @@ import path from 'node:path';
 import { createHash } from 'node:crypto';
 import { readJson, assertKey, inspectEffect } from './lib/character-pipeline.mjs';
 import { artworkTransform } from './lib/effect-artwork.mjs';
+import { sheetSampling, packEffectSheet } from './lib/effect-sampling.mjs';
 
 // Bake a reviewed single effect; composite skills need their own reviewed recipe/executor.
 const args = process.argv.slice(2);
@@ -15,6 +16,8 @@ if (args.includes('--help') || !args.includes('--recipe')) {
 const recipe = readJson(value('--recipe'));
 assertKey(recipe.key);
 if (recipe.schemaVersion !== 1 || !recipe.review?.approved || !['ADD', 'NORMAL'].includes(recipe.blend)) throw Error('Only reviewed version 1 ADD/NORMAL recipes can be baked');
+const sampling = sheetSampling(recipe.sampling);
+if (recipe.sampling && !recipe.review.samplingAdaptation) throw Error('Effect sampling requires an explicit display review');
 const rotation = recipe.emitterRotation ?? [0, 0, 0];
 if (!Array.isArray(rotation) || rotation.length !== 3 || rotation.some(v => !Number.isFinite(v))) throw Error('Invalid emitterRotation');
 const artworkRotation = recipe.artworkRotationDegrees ?? 0, artworkPivot = recipe.artworkPivot ?? 'origin';
@@ -32,7 +35,7 @@ for (const key of ['frameWidth', 'frameHeight', 'frameCount', 'columns', 'frameR
 if (recipe.frameRate !== 60) throw Error('Source effect simulation currently requires 60 FPS');
 if (!Number.isFinite(recipe.emitterScale ?? 1) || (recipe.emitterScale ?? 1) <= 0) throw Error('Invalid emitterScale');
 if (![recipe.frameWidth, recipe.frameHeight, recipe.frameCount, recipe.columns].every(Number.isInteger)) throw Error('Sheet geometry must use integer values');
-if (recipe.frameWidth * recipe.columns > 8192 || recipe.frameHeight * Math.ceil(recipe.frameCount / recipe.columns) > 8192) throw Error('Sheet exceeds 8192px texture budget');
+if ((recipe.frameWidth + 2 * sampling.gutter) * recipe.columns > 8192 || (recipe.frameHeight + 2 * sampling.gutter) * Math.ceil(recipe.frameCount / recipe.columns) > 8192) throw Error('Sheet exceeds 8192px texture budget');
 const assets = args.includes('--assets') ? value('--assets') : 'assets';
 const source = path.join(assets, recipe.source).replaceAll('\\', '/');
 const inspected = inspectEffect(source, assets);
@@ -50,6 +53,7 @@ fs.mkdirSync(out, { recursive: true });
 const meta = { file: 'impact.png', frameWidth: recipe.frameWidth, frameHeight: recipe.frameHeight, frameCount: recipe.frameCount,
   frameRate: recipe.frameRate, originX: recipe.originX, originY: recipe.originY, scale: recipe.scale, blend: recipe.blend,
   source, masterSource: recipe.masterFile, effectId: recipe.effectId,
+  ...(recipe.sampling ? { sampling: recipe.sampling } : {}),
   sourceSha256: createHash('sha256').update(fs.readFileSync(source)).digest('hex'),
   recipeSha256: createHash('sha256').update(fs.readFileSync(value('--recipe'))).digest('hex'),
   resources: inspected.resources.map(r => ({ file: r.file, sha256: r.sha256 })),
@@ -98,8 +102,13 @@ http.createServer(async (req, res) => {
       || png.readUInt32BE(20) !== recipe.frameHeight * Math.ceil(recipe.frameCount / recipe.columns)) {
       res.writeHead(400).end('Invalid PNG sheet'); return;
     }
-    meta.sheetSha256 = createHash('sha256').update(png).digest('hex');
-    fs.writeFileSync(`${out}/impact.png`, png);
+    if (sampling.gutter) {
+      const staged = `tools/data/effect-sampling/${recipe.key}-bake.png`;
+      fs.mkdirSync(path.dirname(staged), { recursive: true });fs.writeFileSync(staged, png);
+      meta.samplingProvenance = packEffectSheet(staged, `${out}/impact.png`, recipe,
+        args.includes('--python') ? value('--python') : process.env.FFROGUE_PYTHON ?? 'python');
+    } else fs.writeFileSync(`${out}/impact.png`, png);
+    meta.sheetSha256 = createHash('sha256').update(fs.readFileSync(`${out}/impact.png`)).digest('hex');
     fs.writeFileSync(`${out}/manifest.json`, JSON.stringify(meta, null, 2) + '\n');
     console.log(`Exported ${out}`); res.end('OK'); return;
   }

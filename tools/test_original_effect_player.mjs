@@ -1,9 +1,53 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { scalar, vectorCurve, instances, textureMatrix, displacementUv, coverScreenBounds, quadCornerColors, isUntexturedParticle, presentationPose, presentationMembers, presentationAnchor, parameters } from './original_effect_player.mjs';
+import { scalar, vectorCurve, instances, textureMatrix, displacementUv, coverScreenBounds, quadCornerColors, isUntexturedParticle, presentationPose, presentationMembers, presentationAnchor, sourceRectanglePoint, rendererGeometryScale, parameters } from './original_effect_player.mjs';
 
 const key = (frame, value, type = 'Linear', slopeLeft = 0, slopeRight = 0) =>
   ({ frame, value, type, slopeLeft, slopeRight });
+
+test('native renderer scale uses the measured reference without changing placement offsets', () => {
+  const reference={globalScale:1.774999976158142,screenWidth:640,screenHeight:1100,formulaMatches:true};
+  assert.equal(rendererGeometryScale(reference),reference.globalScale);
+  assert.equal(rendererGeometryScale({...reference,screenWidth:1100,screenHeight:640}),reference.globalScale);
+  assert.equal(rendererGeometryScale(undefined),1);
+  assert.throws(()=>rendererGeometryScale({...reference,globalScale:3}),/Invalid/);
+  assert.throws(()=>rendererGeometryScale({...reference,screenWidth:0}),/Invalid/);
+  assert.throws(()=>rendererGeometryScale({...reference,formulaMatches:false}),/Invalid/);
+  assert.deepEqual(sourceRectanglePoint({axisModes:[2,2],offset:[-1100,0]},
+    {x:0,y:0,width:320,height:666}),{x:-940,y:333});
+});
+
+test('source rectangle placement reproduces captured wave and blue-slash inputs', () => {
+  const wave={axisModes:[2,2],offset:[-1100,0]};
+  assert.deepEqual(sourceRectanglePoint(wave,{x:0,y:0,width:320,height:666},[8,0]),{x:-932,y:333});
+  const target={x:5.8000030517578125,y:155.60003662109375,width:339,height:409};
+  assert.deepEqual(sourceRectanglePoint({axisModes:[2,2],offset:[0,0]},target,[-4,4]),
+    {x:171.3000030517578,y:364.10003662109375});
+  assert.deepEqual(sourceRectanglePoint({axisModes:[4,6],offset:[10,-20]},target,[8,8]),
+    {x:target.x+10,y:target.y+target.height-20});
+  assert.throws(()=>sourceRectanglePoint({axisModes:[0,2],offset:[0,0]},target),/Unsupported/);
+});
+
+test('preview rectangle bridge keeps side effects independent of targets and tracks unit rectangles', () => {
+  const bridge={arena:{x:0,y:48,width:1000,height:752},
+    unit:{frameWidth:66,frameHeight:68,pivotX:0.439394,pivotY:0.764706},unitScale:2,unitsPerPixel:1,scatter:[0,0]};
+  const enemies={top:{x:320,y:550},bottom:{x:200,y:650}};
+  const wave={placement:{rectangle:'target-side',axisModes:[2,2],offset:[-1100,0]}};
+  assert.deepEqual(presentationAnchor(wave,{},enemies,'top',bridge),{x:-1350,y:-24,unitsToPixels:1});
+  assert.deepEqual(presentationAnchor(wave,{},enemies,'top',bridge),
+    presentationAnchor(wave,{},enemies,'bottom',bridge));
+  assert.deepEqual(presentationAnchor(wave,{},enemies,'top',{...bridge,unitsPerPixel:2}),
+    {x:-800,y:-24,unitsToPixels:0.5});
+  const screen={placement:{rectangle:'screen',axisModes:[2,2],offset:[0,150]}};
+  assert.deepEqual(presentationAnchor(screen,{},enemies,'top',bridge),{x:0,y:126,unitsToPixels:1});
+  assert.deepEqual(presentationAnchor(screen,{},enemies,'top',bridge),
+    presentationAnchor(screen,{},enemies,'bottom',bridge));
+  const hit={placement:{rectangle:'target-unit',axisModes:[2,2],offset:[0,0]}};
+  const before=presentationAnchor(hit,{},enemies,'top',bridge);
+  const after=presentationAnchor(hit,{}, {...enemies,top:{x:380,y:570}},'top',bridge);
+  assert.equal(after.x-before.x,60);assert.equal(after.y-before.y,-20);
+  assert.throws(()=>presentationAnchor(wave,{},enemies,'top'),/explicit preview bridge/);
+});
 
 test('reviewed movement keeps stationary casts at home and aligns dash body/effect clocks', () => {
   const home={x:800,y:450},enemy={x:200,y:500};

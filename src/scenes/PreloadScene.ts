@@ -1,8 +1,13 @@
 import Phaser from 'phaser';
 import { BATTLE_ARENAS } from '../data/battleArenas';
 import { UnitManifest } from '../types/manifest';
-import { EffectManifest } from '../types/effects';
 import { CharacterDefinition, ContentRegistry } from '../types/content';
+import {GameFlow} from '../run/GameFlow';
+import type {RunContent} from '../run/catalog';
+import {bodyAssets} from '../data/bodyAssets.mjs';
+import {queueBodyAssets} from './bodyLoading';
+import {STAGE_ANIMATIONS} from '../stages/StageAnimation';
+import {openArenaGallery} from '../ui/ArenaGallery';
 
 export class PreloadScene extends Phaser.Scene {
   private manifests!: Record<string, UnitManifest>;
@@ -16,18 +21,17 @@ export class PreloadScene extends Phaser.Scene {
   }
 
   preload(): void {
+    const reactor=STAGE_ANIMATIONS.reactor;
+    this.load.json(reactor.key,reactor.root+'/animation.json');
     for (const arena of Object.values(BATTLE_ARENAS)) {
-      this.load.image(arena.texture, `assets/backgrounds/${arena.file}`);
+      if(!('status' in arena))this.load.image(arena.texture, `assets/backgrounds/${arena.file}`);
     }
     for (const key of ['command_plate', 'party_plate', 'attack', 'magic', 'ability']) {
       this.load.image(`ui_${key}`, `assets/ui/battle/${key}.png`);
     }
     const registry = this.cache.json.get('content_registry') as ContentRegistry;
-    for (const key of registry.effects) {
-      const effect = this.cache.json.get(`effect_${key}_manifest`) as EffectManifest;
-      this.load.spritesheet(`effect_${key}`, `assets/effects/${key}/${effect.file}`, {
-        frameWidth: effect.frameWidth, frameHeight: effect.frameHeight,
-      });
+    if (registry.scenePresentations?.length) {
+      this.load.script('prepared_three', 'vendor/three-preview.js');
     }
     const { width, height } = this.scale;
 
@@ -57,21 +61,8 @@ export class PreloadScene extends Phaser.Scene {
       progressBox.destroy();
     });
 
-    // Queue spritesheets for all units and monsters in manifests
-    if (this.manifests) {
-      for (const [unitKey, manifest] of Object.entries(this.manifests)) {
-        if (!manifest || !manifest.animations) continue;
-
-        const subfolder = manifest.type === 'monster' ? 'monsters' : 'units';
-
-        for (const [animKey, animMeta] of Object.entries(manifest.animations)) {
-          this.load.spritesheet(`${unitKey}_${animKey}`, `assets/${subfolder}/${unitKey}/${animMeta.file}`, {
-            frameWidth: animMeta.frameWidth,
-            frameHeight: animMeta.frameHeight,
-          });
-        }
-      }
-    }
+    // Reels/party views need idles only. BattleScene admits complete combat bodies.
+    queueBodyAssets(this,bodyAssets(this.manifests,registry.characters.map(key=>({key,clips:['idle']})),(this.cache.json.get('run_content')as RunContent).forms));
 
     // Queue authentic skill datasets for hero units
     registry.characters.forEach((unitKey) => {
@@ -82,8 +73,12 @@ export class PreloadScene extends Phaser.Scene {
   }
 
   create(): void {
-    this.scene.start('BattleScene', {
-      manifests: this.manifests,
-    });
+    if(new URLSearchParams(location.search).get('gallery')==='arenas'){
+      openArenaGallery(this,this.manifests);
+      return;
+    }
+    // Review pages start BattleScene themselves with a fixed run context.
+    if(location.pathname.startsWith('/tools/test-source-')){this.game.registry.set('reviewManifests',this.manifests);return;}
+    this.game.registry.set('runFlow',new GameFlow(this,this.manifests));
   }
 }

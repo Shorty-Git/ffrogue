@@ -167,3 +167,53 @@ No application build or publication was needed for these offline tool changes.
 The subsequent [Blade Beam geometry and UV audit](blade-beam-source-geometry.md)
 isolates missing single-texture rotation/pivot handling. Its separate preview
 preserves these appearance changes and keeps placement conventions unresolved.
+# Productive flat Quad RGB correction (2026-11-01)
+
+Cunning Hero's Sword1323010 showed white slashes despite an exact original BMB
+and neutral grayscale texture. Cause: prepare_original_preview's corner-color
+path was restricted to Distortion; ordinary Add Quads lost their corner inputs.
+Their appearance reported unsupported corners and localColor used initialColor
+at the unrelated center-color slot, which is white. No active RGB curve was
+incorrectly marked dormant in this effect: all six Quads select Constant/flat.
+
+atk_slash6_rand_orange.bmb SHA
+f9500dc32a4900a13d15e16d33cbbd78bc6b7715b4b00cf25cf9cbafada2bb91 and exact
+projectc9ab8c18c32b19e99243ed19cedc1b7e4310e3c572edbe25f0d0e3fefa5b12f8
+agree on all corners/ranges/mode/flat. Nodes4/6/7 use RGB[1,.40654206,0]; node5
+uses[.82243001,.25156087,.07012691]; node9[1,.6307478,.34831461]; node11
+[1,.2885471,.05400956] with RGB range[.17021278,.17021278,.17021278].
+Different original node colors are preserved; there is no skill tint constant.
+
+Native InitConstFlat reads RGB at Quad+0x68/+0x78, draws three values and clamps
+RGB; its update retains the record. Alpha has its own module/curve and writer
+channel. Serialized corner A=0 must NOT multiply that alpha. The bounded RGB
+initializer reuses nativeLifecycle.initializeNativeVector(ColorConst), checked
+against retained native-quad-writers.json init records and RNG terminal states.
+No new ordinary video or diagnostic installation was required. Unicorn was not
+available in the current Python environment; the attempted new chain probe did
+not run and is NOT evidence. Retained successful native references were reused.
+
+New opt-in native-flat-quad-rgb-v1 accepts only exact matched Constant/flat Quads,
+including bounded source RGB ranges. Curve/non-flat/unknown inputs fail closed;
+existing dynamic alpha remains unchanged. Source seeds/whole-effect RNG ownership
+are NOT recovered. reviewed-color-streams-v1 derives separate deterministic
+per-member/per-instance host seeds, leaving transform/member streams untouched.
+The known native sampling/clamping arithmetic is separate from this host policy.
+
+Tools: original_flat_quad_color.py, prepare_original_preview --flat-quad-rgb,
+sourceQuadColor.mjs, common originalEffectPlayer and sceneProfile admission.
+The old distortion RGBA path remains separate and unchanged. Intake now emits
+colorPreparation hints/required arguments without granting whole-effect support.
+Source/runtime audits explicitly identify quad-flat-rgb instead of an unresolved
+white corner fallback. This does not implement curved/non-flat corner RGB.
+
+Evidence tools/data/sword-color-20261101/: raw-corners,plan,reference-identity,
+before/after-browser,placement-color-check,area-browser,baseline-browser,
+party-browser,renderer-coverage,preservation-check,node-validation JSON and
+color-comparison.png. Original sword-reference.mp4/frame16 under the earlier
+delita-placement-20261101 folder provides the warm-color reference. Different
+camera/formation/effect ages prohibit a pixel-fidelity claim. Product before/after
+F42/54/90 and two-target F54 keep identical hosts, anchors and member samples.
+Chant's three comparison frames remain pixel-identical; frozen Cloud frames0
+changed pixels. Four area lifecycle cases pass, including nine hits on both
+living targets, early K.O., victory/wave and restart. All14 commands are unchanged.

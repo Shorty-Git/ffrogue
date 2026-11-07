@@ -1,4 +1,5 @@
 import path from 'node:path';
+import { sheetSampling } from './effect-sampling.mjs';
 import { inspectCharacter, inspectEffect, readJson, sha256 } from './character-pipeline.mjs';
 
 // Availability and reviewed execution are separate gates. Legacy commands never
@@ -12,7 +13,7 @@ export function planSkillBatch({ characters = ['cloud', 'aerith', 'barret'], sel
     const inspected = inspectCharacter(recipe, { assets, dump });
     for (const skill of recipe.skills) {
       const id = `${character}/${skill.id}`;
-      if (selection ? !selection.includes(id) : !all && skill.execution !== 'legacy') continue;
+      if (selection ? !selection.includes(id) : !all && skill.importStatus !== 'not-imported') continue;
       found.add(id);
       const selected = inspected.selected.find(s => s.id === skill.id);
       const source = inspected.catalog.find(s => s.id === skill.ffbeId && s.kind === (skill.type ?? 'ABILITY'));
@@ -21,10 +22,11 @@ export function planSkillBatch({ characters = ['cloud', 'aerith', 'barret'], sel
       const missingResources = [...new Set(members.flatMap(m => m.asset?.resources ?? []).filter(r => !r.exists).map(r => r.file))];
       const blockers = [...(selected?.issues ?? ['missing-inspection'])];
       if (inspected.missingStates.length) blockers.push('missing-character-states');
-      if (skill.execution === 'legacy') blockers.push('execution-and-composition-review-required');
+      if (skill.importStatus === 'not-imported' || skill.execution === 'legacy') blockers.push('execution-and-composition-review-required');
       if (missingFiles.length) blockers.push('missing-source-effects');
       if (missingResources.length) blockers.push('missing-effect-resources');
-      const keys = [...new Set([...(skill.visualEffect ? [skill.visualEffect.key] : []), ...(skill.presentation?.effects.map(e => e.key) ?? [])])];
+      const presentation = selected?.compiledPresentation?.presentation ?? skill.presentation;
+      const keys = [...new Set([...(skill.visualEffect ? [skill.visualEffect.key] : []), ...(presentation?.effects.map(e => e.key) ?? [])])];
       if (!keys.length) blockers.push('no-reviewed-effect-mapping');
       const ready = !blockers.length;
       skills.push({ id, name: skill.name, execution: skill.execution, status: ready ? 'ready' : 'blocked', blockers: [...new Set(blockers)], missingFiles, missingResources, effects: keys });
@@ -50,6 +52,7 @@ export function isEffectBakeCurrent(recipeFile, { assets = 'assets', effectsRoot
       && manifest.recipeSha256 === sha256(recipeFile)
       && manifest.sourceSha256 === source.sha256
       && manifest.sheetSha256 === sha256(`${folder}/impact.png`)
+      && JSON.stringify(sheetSampling(manifest.sampling)) === JSON.stringify(sheetSampling(recipe.sampling))
       && JSON.stringify(manifest.resources) === JSON.stringify(source.resources.map(r => ({ file: r.file, sha256: r.sha256 })))
       && source.resources.every(r => r.exists);
   } catch { return false; }

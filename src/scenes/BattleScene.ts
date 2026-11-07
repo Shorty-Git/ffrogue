@@ -1,13 +1,35 @@
+import {CombatHud} from '../ui/CombatHud';
 import Phaser from 'phaser';
-import { UnitActor, UnitCombatConfig } from '../entities/UnitActor';
+import { UnitActor, UnitCombatConfig, type UnitActorConfig } from '../entities/UnitActor';
 import { TargetDummy } from '../entities/TargetDummy';
 import { UnitManifest } from '../types/manifest';
 import { SkillConfig, UnitSkillsData } from '../types/skills';
-import { EffectManifest } from '../types/effects';
 import { CharacterDefinition, ContentRegistry } from '../types/content';
 import { BATTLE_ART_SCALE, getBattleLayout } from '../ui/battleLayout';
 import { BATTLE_ARENAS, BattleArenaKey } from '../data/battleArenas';
-import { EnemyTargetPanel } from '../ui/EnemyTargetPanel';
+import { createPreparedSceneBridge, type PreparedSceneBridge, type PreparedSceneHost } from '../effects/PreparedSceneBridge.mjs';
+import { validateSceneManifest, validateSceneAction } from '../effects/sceneProfile.mjs';
+import { reviewedSkillEvents,skillDamageType } from '../effects/skillDamageTimeline.mjs';
+import { applyEnemyStatuses, isEnemyActionBlocked, ageEnemyStatuses, enemyAttackMultiplier } from '../effects/enemyStatus.mjs';
+import { applyHeroBuffs, heroPhysicalMultiplier } from '../effects/heroBuffs.mjs';
+import {resolveEnemyInstant} from '../effects/enemyInstant.mjs';
+import {validateActionChoreography,actionTravel} from '../effects/actionChoreography.mjs';
+import type {RunBattleContext} from '../run/battleContext';
+import {nextRandom,skillForRun,memberMaxMp} from '../run/runState.mjs';
+import {skillDescription} from '../run/catalog';
+import {RPG,rpgHex,RPG_FONT} from '../ui/designTokens';
+import {rpgPanel} from '../ui/rpgPanel';
+import {runEncounter} from '../run/runBalance.mjs';
+import {ENEMY_CONTENT,enemyAction} from '../run/stageContent.mjs';
+import {ActionBanner,type CombatActionNotice} from '../ui/ActionBanner';
+import {bodyAssets,heroBodyClips,type BodyAsset} from '../data/bodyAssets.mjs';
+import {queueBodyAssets,missingBodyAssets,setBodySampling} from './bodyLoading';
+import basicAttackCues from '../audio/basicAttackCues';
+import {enemyDissolveCues,isCombatCue,type CombatCue} from '../audio/combatCues';
+import type {PreparedSceneManifest} from '../effects/sceneProfile.mjs';
+
+import type {RunContent} from '../run/catalog';
+import {StageAnimation,queueStageTextures} from '../stages/StageAnimation';
 
 export type CombatState =
   | 'SPAWNING'
@@ -20,74 +42,31 @@ export type CombatState =
 type PlannedAction = ({ kind: 'attack'; config: UnitCombatConfig } | { kind: 'skill'; skill: SkillConfig })
   & { target: TargetDummy | null };
 
-interface SkillBtnUi {
-  bg: Phaser.GameObjects.Rectangle;
-  nameText: Phaser.GameObjects.Text;
-  tagText: Phaser.GameObjects.Text;
-  skill: SkillConfig | null;
-  icon?: Phaser.GameObjects.Image;
-}
-
-interface PartyRowUi {
-  container: Phaser.GameObjects.Container;
-  cursorText: Phaser.GameObjects.Text;
-  highlightBg: Phaser.GameObjects.Rectangle;
-  nameText: Phaser.GameObjects.Text;
-  roleText: Phaser.GameObjects.Text;
-  fgBar: Phaser.GameObjects.Rectangle;
-  chipBar: Phaser.GameObjects.Rectangle;
-  hpText: Phaser.GameObjects.Text;
-  mpBarBg: Phaser.GameObjects.Rectangle;
-  mpFgBar: Phaser.GameObjects.Rectangle;
-  mpText: Phaser.GameObjects.Text;
-  statusText: Phaser.GameObjects.Text;
-  chipTween?: Phaser.Tweens.Tween;
-  lastHp: number;
-}
-
-interface RewardCardData {
-  id: 'cloud_buff' | 'aerith_buff' | 'party_heal';
-  category: string;
-  categoryColor: string;
-  title: string;
-  target: string;
-  desc: string;
-  icon: string;
-}
-
-export interface EnemySlotConfig {
-  slot: 'center' | 'top' | 'bottom';
-  hp: number;
-  nameTag: string;
-  isBoss: boolean;
-}
-
-export const ENCOUNTERS: Record<number, EnemySlotConfig[]> = {
-  1: [
-    { slot: 'center', hp: 5000, nameTag: 'DIRE RAT (BOSS)', isBoss: true },
-  ],
-  2: [
-    { slot: 'top', hp: 3500, nameTag: 'DIRE RAT A', isBoss: false },
-    { slot: 'bottom', hp: 3500, nameTag: 'DIRE RAT B', isBoss: false },
-  ],
-};
-
 export class BattleScene extends Phaser.Scene {
+  private runContext!:RunBattleContext;
+
+  private runSettled=false;
+  private runVictoryStage:'idle'|'finishing'|'celebrating'|'rewards'='idle';
   private arenaKey: BattleArenaKey = 'forest';
-  private previewTrio = false;
   private manifests!: Record<string, UnitManifest>;
   private cloud!: UnitActor;
-  private aerith!: UnitActor;
-  private barret!: UnitActor;
   private enemies: TargetDummy[] = [];
   private currentTarget: TargetDummy | null = null;
-  private enemyTargetPanel?: EnemyTargetPanel;
+  private actionBanner?:ActionBanner;
+  private actionSequence=0;
+  private requiredBodies:BodyAsset[]=[];
+  private stageAnimation?:StageAnimation;
   private targetMarkerContainer!: Phaser.GameObjects.Container;
   private markerVisual!: Phaser.GameObjects.Container;
   private victoryTriggered: boolean = false;
-  private rewardSelected = false;
   private pendingImpacts = 0;
   private afterImpacts?: () => void;
+  private preparedScenes?: PreparedSceneBridge;
+  private sourceVisualError?: string;
+  // Tests can control gameplay draws without replacing Phaser's global random source.
+  private enemyEventRandom: () => number = Math.random;
+  private activeSkillActions = 0;
+  private skillActors = new Set<UnitActor>();
 
   public get targetDummy(): TargetDummy {
     return this.currentTarget ?? this.enemies[0];
@@ -100,99 +79,84 @@ export class BattleScene extends Phaser.Scene {
   private combatState: CombatState = 'SPAWNING';
   private currentRound: number = 1;
 
-  // Roguelike Run Stats & Multipliers
   private fightNumber: number = 1;
-  private readonly totalFights: number = 6;
-  private cloudDmgMultiplier: number = 1.0;
-  private aerithMagicMultiplier: number = 1.0;
-
-  // Header UI
-  private roundBannerText!: Phaser.GameObjects.Text;
-  private statusText!: Phaser.GameObjects.Text;
-
-  // Party panels and the transient command window share transition staging.
-  private bottomHudContainer!: Phaser.GameObjects.Container;
-  private commandPanel!: Phaser.GameObjects.Container;
+  /** Latest gameplay status line, shown by the CombatHud while no command is pending. */
+  private statusMessage = '';
+  private combatHud!:CombatHud;
+  private hudRefreshAt=0;
+  private ribbonMarks:(TargetDummy|UnitActor)[]=[];
   private isCommandMenuOpen = false;
-
-  // Floating command window.
-  private cmdHeaderName!: Phaser.GameObjects.Text;
-  private cmdHeaderRole!: Phaser.GameObjects.Text;
-  private cmdPlanText!: Phaser.GameObjects.Text;
-  private cmdModeBtnBg?: Phaser.GameObjects.Rectangle;
-  private cmdModeBtnText?: Phaser.GameObjects.Text;
-
-  // Sub-Menu Navigation
-  private isSkillMenuOpen: boolean = false;
-  private cmdMainContainer!: Phaser.GameObjects.Container;
-  private cmdSkillContainer!: Phaser.GameObjects.Container;
-  private cmdAttackBtnBg!: Phaser.GameObjects.Rectangle;
-  private cmdAttackBtnText!: Phaser.GameObjects.Text;
-  private cmdSkillBtnBg!: Phaser.GameObjects.Rectangle;
-  private cmdSkillBtnText!: Phaser.GameObjects.Text;
-  private cmdExecuteBtnBg!: Phaser.GameObjects.Rectangle;
-  private cmdExecuteBtnText!: Phaser.GameObjects.Text;
-  private skillButtons: SkillBtnUi[] = [];
 
   // Authentic Hero Skills
   private unitSkills: Record<string, SkillConfig[]> = {};
-
-  // Party status panels.
-  private partyRows: Map<string, PartyRowUi> = new Map();
-  private readonly rowBarWidth = 145;
-
-  // PokeRogue Reward Selection Container
-  private rewardsContainer?: Phaser.GameObjects.Container;
-
-  // Defeat Modal (only for game over)
-  private defeatBanner?: Phaser.GameObjects.Container;
 
   constructor() {
     super('BattleScene');
   }
 
-  init(data: { manifests: Record<string, UnitManifest> }): void {
-    const query = new URLSearchParams(window.location.search);
-    this.arenaKey = query.get('arena') === 'reactor' ? 'reactor' : 'forest';
-    this.previewTrio = query.get('formation') === 'trio';
+  init(data: { manifests: Record<string, UnitManifest>;runContext:RunBattleContext }): void {
+
+    this.runContext=data.runContext;this.runSettled=data.runContext.state.phase==='rewards';this.runVictoryStage='idle';
+    this.activeSkillActions = 0;
+    this.skillActors.clear();
+    this.arenaKey=this.currentEncounter().arena;
     this.manifests = data.manifests;
     this.enemies = [];
+    this.actionBanner=undefined;this.actionSequence=0;
     this.currentTarget = null;
     this.turnOrder = [];
     this.plannedActions.clear();
-    this.partyRows.clear();
-    this.skillButtons = [];
+    this.ribbonMarks=[];
     this.unitSkills = {};
     this.activeHeroIndex = 0;
     this.currentRound = 1;
     this.fightNumber = 1;
-    this.cloudDmgMultiplier = 1;
-    this.aerithMagicMultiplier = 1;
     this.victoryTriggered = false;
-    this.rewardSelected = false;
     this.pendingImpacts = 0;
     this.afterImpacts = undefined;
-    this.isSkillMenuOpen = false;
     this.isCommandMenuOpen = false;
     this.combatState = 'SPAWNING';
-    this.rewardsContainer = undefined;
-    this.defeatBanner = undefined;
+    this.statusMessage = '';
+  }
+
+  preload():void {
+    const arena=BATTLE_ARENAS[this.arenaKey];
+    if('status' in arena&&!this.textures.exists(arena.texture))this.load.image(arena.texture,`assets/stages/${this.arenaKey}/${arena.file}`);
+    queueStageTextures(this,this.arenaKey);
+    const requests=this.runContext.state.party.map(m=>({key:m.form,clips:heroBodyClips(this.manifests[m.form],
+      (this.cache.json.get('skills_'+m.key)as UnitSkillsData).skills,(this.cache.json.get('character_'+m.key)as CharacterDefinition).battle.attackAnim)}));
+    for(const key of new Set(this.currentEncounter().enemies.map(e=>e.key)))requests.push({key,clips:['idle',...(ENEMY_CONTENT[key]?[ENEMY_CONTENT[key].attack.clip]:[])]});
+    this.requiredBodies=bodyAssets(this.manifests,requests,(this.cache.json.get('run_content')as RunContent).forms);
+    queueBodyAssets(this,this.requiredBodies);
   }
 
   create(): void {
     const { width, height } = this.scale;
+    const missing=missingBodyAssets(this,this.requiredBodies);
+    if(missing.length){
+      const message='Battle assets unavailable. Reload to retry.\n'+missing.join(', ');
+      if(this.runContext.entryReady)this.runContext.entryReady(new Error(message));
+      else this.add.text(40,100,message,{color:'#ffffff',fontSize:'20px',wordWrap:{width:width-80}});
+      return;
+    }
     const layout = getBattleLayout(width, height, BATTLE_ARENAS[this.arenaKey]);
 
     // Load preloaded unit skills from JSON cache
     const registry = this.cache.json.get('content_registry') as ContentRegistry;
-    registry.characters.forEach((key) => {
-      const data = this.cache.json.get(`skills_${key}`) as UnitSkillsData;
-      if (data && Array.isArray(data.skills)) {
-        this.unitSkills[key] = data.skills;
-      } else {
-        this.unitSkills[key] = [];
-      }
+    this.sourceVisualError = undefined;
+    this.events.on('prepared-scene-error', (message: string) => {
+      this.sourceVisualError = message;
+      this.updateStatus('Skill visuals unavailable. Restart to retry. Normal attacks remain available.');
     });
+    try {
+      const prepared = (registry.scenePresentations ?? []).map(key => validateSceneManifest(this.cache.json.get(`scene_${key}_manifest`)));
+      if (prepared.length && this.game.renderer.type === Phaser.WEBGL) this.preparedScenes = createPreparedSceneBridge(this, prepared);
+      else this.sourceVisualError = 'Source skills require WebGL and published presentations';
+    } catch (error) { this.sourceVisualError = String(error); }
+    this.fightNumber=this.runContext.state.encounter+1;
+    this.enemyEventRandom=()=>this.randomValue();
+    for(const m of this.runContext.state.party)this.unitSkills[m.key]=this.runContext.catalog[m.key].skills
+      .filter(s=>m.skills.some(a=>a.id===s.id)).map(s=>skillForRun(s,m));
 
     // 1. Arena Background
     this.createArenaBackground(width, height);
@@ -203,105 +167,241 @@ export class BattleScene extends Phaser.Scene {
 
     // Listen for enemy clicks on the battlefield
     this.events.on('enemy_clicked', (enemy: TargetDummy) => {
-      if (this.combatState === 'PLAYER_TURN' && enemy.currentHp > 0) {
-        this.setTarget(enemy, true);
-        const hero = this.getActiveHero();
-        const plan = hero && this.plannedActions.get(hero);
-        if (plan) plan.target = enemy;
-        this.updateStatus(`Target selected: ${enemy.nameTag} (${enemy.currentHp} HP)`);
-      }
+      const index=this.enemies.indexOf(enemy);
+      if(index>=0)this.confirmRibbonTarget(index);
     });
 
+    this.events.on('enemy-dissolve',(enemy:TargetDummy)=>{
+      const cue=enemyDissolveCues[String(enemy.manifest.unitId)];
+      if(cue)this.emitCombatSound(cue,'enemy-dissolve');
+    });
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.combatHud?.destroy();
+      this.runContext.stopCombatSounds?.();
+      this.events.removeAllListeners('enemy-dissolve');
       this.plannedActions.clear();
       this.events.removeAllListeners('enemy_clicked');
       this.input.keyboard?.removeAllListeners();
       this.afterImpacts = undefined;
+      this.preparedScenes?.destroy();
+      this.preparedScenes = undefined;
+      this.events.removeAllListeners('prepared-scene-error');
     });
 
     // 4. Instantiate Party Units
     // Formation slots share the same viewport coordinates as movement and effects.
-    this.cloud = new UnitActor(this, layout.party.cloud.x, layout.party.cloud.y, 'cloud', this.manifests.cloud, (this.cache.json.get('character_cloud') as CharacterDefinition).battle);
-    this.cloud.setScale((this.cache.json.get('character_cloud') as CharacterDefinition).scale * BATTLE_ART_SCALE);
-    this.cloud.setFacingLeft(true);
-    this.cloud.setInteractive({ useHandCursor: true });
-    this.cloud.on('pointerdown', () => {
-      this.openHeroCommands(this.cloud);
-    });
-
-    this.aerith = new UnitActor(this, layout.party.aerith.x, layout.party.aerith.y, 'aerith', this.manifests.aerith, (this.cache.json.get('character_aerith') as CharacterDefinition).battle);
-    this.aerith.setScale((this.cache.json.get('character_aerith') as CharacterDefinition).scale * BATTLE_ART_SCALE);
-    this.aerith.setFacingLeft(true);
-    this.aerith.setInteractive({ useHandCursor: true });
-    this.aerith.on('pointerdown', () => {
-      this.openHeroCommands(this.aerith);
-    });
-
-    this.barret = new UnitActor(this, layout.party.barret.x, layout.party.barret.y, 'barret', this.manifests.barret, (this.cache.json.get('character_barret') as CharacterDefinition).battle);
-    this.barret.setScale((this.cache.json.get('character_barret') as CharacterDefinition).scale * BATTLE_ART_SCALE);
-    this.barret.setFacingLeft(true);
-    this.barret.setInteractive({ useHandCursor: true });
-    this.barret.on('pointerdown', () => {
-      this.openHeroCommands(this.barret);
-    });
-
-    // Stable display order; the player can select any available hero.
-    this.turnOrder = [this.cloud, this.aerith, this.barret];
-
-    // 5. Header UI
-    this.createHeaderUI(width);
-
-    // 6. Classic Final Fantasy Deep-Navy Bottom HUD
-    this.createClassicJRPGHud(width, height);
-
-    // Space/Enter prepare in the skill menu and commit from the command menu.
-    this.input.keyboard?.on('keydown-SPACE', (event: KeyboardEvent) => {
-      if (event.repeat) return;
-      if (this.combatState === 'PLAYER_TURN') {
-        if (this.isSkillMenuOpen) {
-          this.planFirstAvailableSkill();
-        } else {
-          this.executePlannedAction();
-        }
+    const slots=[layout.party.cloud,layout.party.aerith,layout.party.barret];
+    this.turnOrder=this.runContext.state.party.map((member,i)=>{
+      const def=this.cache.json.get(`character_${member.key}`) as CharacterDefinition;
+      const manifest={...this.manifests[member.form],assetKey:member.form};
+      const linear=(this.runContext.bodyTextureFilter??this.cache.json.get('run_rules')?.bodyTextureFilter)==='linear';
+      for(const clip of Object.keys(manifest.animations)){
+        const key=`${member.form}_${clip}`;
+        setBodySampling(this,key,linear);
+        setBodySampling(this,key+'_emission',linear);
       }
+      const actor=this.createHeroActor(member.key,slots[i],manifest,
+        {...def.battle,maxHp:Math.round(this.runContext.catalog[member.key].maxHp*member.stats.hp),
+         maxMp:memberMaxMp(this.runContext.catalog[member.key],member)},def.scale);
+      actor.currentHp=member.hp;actor.currentMp=member.mp;return actor;
     });
-    this.input.keyboard?.on('keydown-ENTER', (event: KeyboardEvent) => {
-      if (event.repeat) return;
-      if (this.combatState === 'PLAYER_TURN') {
-        if (this.isSkillMenuOpen) {
-          this.planFirstAvailableSkill();
-        } else {
-          this.executePlannedAction();
-        }
-      }
+    this.cloud=this.turnOrder[0];
+
+    this.actionBanner=new ActionBanner(this);
+    this.combatHud=new CombatHud(this.game.canvas,(action,index)=>{
+      if(action==='hero')this.pickRibbonHero(this.turnOrder[index]);
+      if(action==='ability')this.chooseRibbonAbility(index);
+      if(action==='clear')this.cancelPlannedAction();
+      if(action==='target')this.confirmRibbonTarget(index);
+      this.refreshCombatHud();
     });
-    this.input.keyboard?.on('keydown-ESC', () => {
-      if (this.combatState === 'PLAYER_TURN' && this.isSkillMenuOpen) {
-        this.closeSkillSubMenu();
-      } else if (this.isCommandMenuOpen) this.closeHeroCommands();
-      else this.cancelPlannedAction();
+    this.input.keyboard?.on('keydown',(event:KeyboardEvent)=>{
+      if(event.repeat||event.altKey||event.ctrlKey||event.metaKey||document.querySelector('.encounter-transition,.run-overlay'))return;
+      const control=event.target instanceof HTMLElement&&event.target.closest('button,summary,input,select,textarea');
+      if(control&&!control.closest('.combat-ui'))return;
+      const number=/^(?:Digit|Numpad)([1-4])$/.exec(event.code);
+      if(number){event.preventDefault();this.chooseRibbonAbility(Number(number[1])-1);}
+      else if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(event.key)&&this.ribbonPlan()){
+        event.preventDefault();this.combatHud?.moveFocus(['ArrowLeft','ArrowUp'].includes(event.key)?-1:1);
+      }else if(event.key==='Enter'&&this.ribbonPlan()){
+        const target=this.combatHud?.focusedTarget();
+        if(control&&target===undefined&&control.getAttribute('data-command')!=='ability')return;
+        event.preventDefault();
+        if(target!==undefined)this.confirmRibbonTarget(target);
+        else this.combatHud?.moveFocus(1);
+      }else if(event.key==='Escape'){event.preventDefault();this.cancelPlannedAction();}
+      this.refreshCombatHud();
     });
-    this.input.keyboard?.on('keydown-BACKSPACE', () => {
-      if (this.combatState === 'PLAYER_TURN' && this.isSkillMenuOpen) {
-        this.closeSkillSubMenu();
-      } else if (this.isCommandMenuOpen) this.closeHeroCommands();
-      else this.cancelPlannedAction();
-    });
+    this.hudRefreshAt=0;
 
     // 8. Start Battle 1: Materialize encounter 1, then unlocks Round 1!
-    this.spawnEncounter(1, () => {
+    if(this.runContext.state.phase==='rewards'){this.triggerVictory();return;}
+    this.spawnEncounter(() => {
       this.startRound();
+    }, this.runContext.entryReady ? ()=>this.reportEncounterFrame() : undefined);
+  }
+
+  private createHeroActor(key:string,slot:{x:number;y:number},manifest:UnitManifest,config:UnitActorConfig,scale:number):UnitActor{
+    const actor=new UnitActor(this,slot.x,slot.y,key,manifest,config);
+    actor.setScale(scale*BATTLE_ART_SCALE);actor.setFacingLeft(true);actor.setInteractive({useHandCursor:true});
+    actor.on('pointerdown',()=>this.pickRibbonHero(actor));
+    return actor;
+  }
+  private reportEncounterFrame():void{
+    const entryReady=this.runContext.entryReady;
+    const rendered=()=>{this.events.off(Phaser.Scenes.Events.SHUTDOWN,cleanup);entryReady?.();};
+    const cleanup=()=>this.game.events.off(Phaser.Core.Events.POST_RENDER,rendered);
+    this.game.events.once(Phaser.Core.Events.POST_RENDER,rendered);
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN,cleanup);
+  }
+
+  private currentEncounter(){return this.runContext.encounter??runEncounter(this.runContext.state);}
+  private randomValue():number{return nextRandom(this.runContext.state,'combat');}
+  private randomBetween(min:number,max:number):number{return min+Math.floor(this.randomValue()*(max-min+1));}
+  public runArenaBounds(){return getBattleLayout(this.scale.width,this.scale.height).arena;}
+  public runPartyBounds(){return this.turnOrder.map(h=>{
+    const pose=h.hasVictoryPose?h.manifest.animations.win:undefined;
+    if(!pose)return h.getBounds();
+    // A verified resting pose may still use the much larger intro canvas.
+    // Use its equivalent win-frame bounds for UI layout; never alter the actor.
+    const x=(h.flipX?1-pose.pivotX:pose.pivotX)*pose.frameWidth,y=pose.pivotY*pose.frameHeight,m=h.getWorldTransformMatrix();
+    const points=[[0,0],[pose.frameWidth,0],[0,pose.frameHeight],[pose.frameWidth,pose.frameHeight]].map(([px,py])=>m.transformPoint(px-x,py-y));
+    const left=Math.min(...points.map(p=>p.x)),top=Math.min(...points.map(p=>p.y));
+    return new Phaser.Geom.Rectangle(left,top,Math.max(...points.map(p=>p.x))-left,Math.max(...points.map(p=>p.y))-top);
+  });}
+  public runPartySnapshot(){return this.turnOrder.map(h=>({key:h.unitKey,hp:h.currentHp,mp:h.currentMp}));}
+  public isRunCommandWindow():boolean{return this.combatState==='PLAYER_TURN';}
+  private finishRunEncounter(won:boolean):void{
+    if(won){this.runVictoryStage='finishing';return;}
+    if(this.runSettled)return;
+    const finish=()=>{if(this.runSettled)return;if(this.activeSkillActions>0||this.pendingImpacts>0){this.time.delayedCall(40,finish);return;}
+      this.runSettled=true;this.preparedScenes?.stop();this.runContext.settle(this.turnOrder,won);};
+    this.time.delayedCall(350,finish);
+  }
+
+  /** Persist once after gameplay; wait for VFX/fades, then actual victory clip events. */
+  private advanceRunVictory():void{
+    if(this.runVictoryStage!=='finishing'||this.activeSkillActions>0||this.pendingImpacts>0)return;
+    if(!this.runSettled){this.runSettled=true;this.runContext.settle(this.turnOrder,true);}
+    if(this.preparedScenes?.snapshot().active||this.enemies.some(e=>e.visible))return;
+    this.runVictoryStage='celebrating';
+
+    this.actionBanner?.clear();
+    const living=this.turnOrder.filter(h=>!h.isDead);let remaining=living.length;
+    const ready=()=>{if(this.runVictoryStage!=='celebrating')return;this.runVictoryStage='rewards';this.runContext.rewardsReady();};
+    if(!remaining){ready();return;}
+    living.forEach(hero=>hero.playVictoryCycle(()=>{remaining--;if(!remaining)ready();}));
+  }
+
+  private ribbonPlan(){
+    const hero=this.getActiveHero();
+    return this.combatState==='PLAYER_TURN'&&hero&&!hero.isDead&&!hero.hasActed?this.plannedActions.get(hero):undefined;
+  }
+
+  private pickRibbonHero(hero:UnitActor):void{
+    const plan=this.ribbonPlan();
+    if(plan&&plan.kind==='skill'&&plan.skill.scope==='single_ally'){
+      const index=this.turnOrder.indexOf(hero);
+      if(index>=0)this.confirmRibbonTarget(this.enemies.length+index);
+      return;
+    }
+    if(hero!==this.getActiveHero()&&plan)this.cancelPlannedAction();
+    this.openHeroCommands(hero);
+  }
+
+  private chooseRibbonAbility(index:number):void{
+    if(index===0)this.planHeroAttack();
+    else{
+      const hero=this.getActiveHero(),skill=hero&&this.unitSkills[hero.unitKey]?.[index-1];
+      if(!skill)return;
+      this.planHeroSkill(skill);
+      const plan=this.ribbonPlan();
+      if(plan?.kind==='skill'&&plan.skill===skill&&['party','self','all_enemies'].includes(skill.scope)){
+        this.ribbonMarks=skill.scope==='all_enemies'?this.enemies.filter(enemy=>enemy.currentHp>0):this.friendlySkillTargets(hero,skill);
+        this.executePlannedAction();
+      }
+    }
+    this.refreshCombatHud();
+    if(this.ribbonPlan())this.combatHud.moveFocus(1);
+  }
+
+  private confirmRibbonTarget(index:number):void{
+    const plan=this.ribbonPlan();
+    if(!plan)return;
+    const scope=plan.kind==='skill'?plan.skill.scope:'single_enemy';
+    if(scope==='single_ally'){
+      const ally=this.turnOrder[index-this.enemies.length];
+      if(!ally||ally.isDead||ally.currentHp<=0)return;
+      this.runContext.uiSound?.('select');
+      this.executePlannedAction(ally);
+    }else if(scope==='single_enemy'){
+      const enemy=this.enemies[index];
+      if(!enemy||enemy.currentHp<=0)return;
+      this.runContext.uiSound?.('select');
+      this.setTarget(enemy,false);
+      plan.target=enemy;
+      this.executePlannedAction();
+    }
+    this.refreshCombatHud();
+  }
+
+  private refreshCombatHud():void {
+    const hero=this.getActiveHero(),plan=this.ribbonPlan();
+    const available=this.combatState==='PLAYER_TURN'&&!!hero&&!hero.isDead&&!hero.hasActed;
+    if(this.combatState!=='HERO_ATTACKING')this.ribbonMarks=[];
+    this.targetMarkerContainer.setVisible(false);
+    const skill=plan?.kind==='skill'?plan.skill:undefined;
+    const scope=skill?.scope??'single_enemy';
+    const stage=this.currentEncounter();
+    const camera=this.cameras.main;
+    const placement=(sprite:Phaser.GameObjects.Sprite)=>{
+      const bounds=sprite.getBounds();
+      const matrix=(camera as Phaser.Cameras.Scene2D.Camera & {matrix:Phaser.GameObjects.Components.TransformMatrix}).matrix;
+      const center=matrix.transformPoint(bounds.centerX-camera.scrollX,bounds.centerY-camera.scrollY);
+      return {x:center.x/this.scale.width*100,y:center.y/this.scale.height*100,
+        width:bounds.width*camera.zoomX/this.scale.width*100,height:bounds.height*camera.zoomY/this.scale.height*100};
+    };
+    const actors:import('../ui/CombatHud').CombatHudState['actors']=this.enemies.flatMap((enemy,id)=>{
+      if(enemy.currentHp<=0)return [];
+      const definition=ENEMY_CONTENT[enemy.assetKey];
+      const intent=enemy.isBoss&&definition?.behavior?enemyAction(definition,enemy.actionCursor,enemy.currentHp/enemy.maxHp):undefined;
+      const status=[intent&&[intent.name,intent.next,intent.phase].filter(Boolean).join(' · '),...enemy.statusEffects.map(effect=>effect.kind.replaceAll('-',' '))].filter(Boolean).join(' · ');
+      const selectable=!!plan&&scope==='single_enemy';
+      return [{id,name:enemy.nameTag,hp:enemy.currentHp,maxHp:enemy.maxHp,boss:enemy.isBoss,status,selectable,
+        marked:selectable||this.ribbonMarks.includes(enemy),...placement(enemy.sprite)}];
+    });
+    const skills=hero?(this.unitSkills[hero.unitKey]??[]).slice(0,3):[];
+    this.combatHud.render({
+      area:stage.title,phase:stage.boss?'Boss':`Battle ${this.fightNumber}`,pending:!!plan,
+      message:plan?`${skill?.name??'Attack'} · ${scope==='single_ally'?'Choose an ally':'Choose an enemy'}`:
+        available?`Round ${this.currentRound} · Select a command`:this.statusMessage,
+      actors:[...actors,...this.turnOrder.flatMap((ally,i)=>{
+        const selectable=!!plan&&scope==='single_ally'&&!ally.isDead&&ally.currentHp>0;
+        return selectable||this.ribbonMarks.includes(ally)?[{id:this.enemies.length+i,name:ally.heroName,selectable,marked:true,...placement(ally)}]:[];
+      })],
+      party:this.turnOrder.map((member,i)=>{
+        const boost=heroPhysicalMultiplier(member.sourceBuffs,this.currentRound);
+        const status=member.isDead?'K.O.':member.hasActed?'Acted':member===hero&&available?'Active':'Ready';
+        const target=plan&&scope==='single_ally'&&!member.isDead&&member.currentHp>0?this.enemies.length+i:undefined;
+        const definition=this.cache.json.get(`character_${member.unitKey}`) as CharacterDefinition;
+        return {name:member.heroName,portrait:definition.portrait?`/assets/units/${member.unitKey}/${definition.portrait}`:undefined,status:status+(boost>1?` · ATK +${Math.round((boost-1)*100)}%`:''),
+          active:member===hero&&available,disabled:target===undefined&&(this.combatState!=='PLAYER_TURN'||member.isDead||member.hasActed||scope==='single_ally'),
+          target,hp:member.currentHp,maxHp:member.maxHp,mp:member.currentMp,maxMp:member.maxMp};
+      }),
+      commands:[{name:'Attack',cost:'0 MP',description:'Normal attack',disabled:!available,selected:plan?.kind==='attack'},
+        ...[0,1,2].map(i=>{
+          const action=skills[i];if(!action)return null;
+          return {name:action.name,cost:`${action.mpCost} MP${action.hpCost?' · '+action.hpCost+' HP':''}`,description:skillDescription(action),
+            disabled:!available||!hero||hero.currentMp<action.mpCost||!!action.hpCost&&hero.currentHp<=action.hpCost||!this.canUseSourceSkill(action),selected:skill===action};
+        })],
     });
   }
 
   update(): void {
-    this.enemyTargetPanel?.update(
-      ['PLAYER_TURN', 'HERO_ATTACKING', 'ENEMY_TURN'].includes(this.combatState) ? this.currentTarget : null
-    );
+    if(this.time.now>=this.hudRefreshAt){this.hudRefreshAt=this.time.now+80;this.refreshCombatHud();}
+    this.advanceRunVictory();
     // Dynamic Y-depth sorting
-    if (this.cloud) this.cloud.updateDepth();
-    if (this.aerith) this.aerith.updateDepth();
-    if (this.barret) this.barret.updateDepth();
+    this.turnOrder.forEach(hero => hero.updateDepth());
     this.enemies.forEach((e) => {
       if (e.visible) e.updateDepth();
     });
@@ -315,195 +415,16 @@ export class BattleScene extends Phaser.Scene {
     // Cover the arena proportionally; source floor bounds use this same crop.
     background.setScale(Math.max(arena.width / background.width, arena.height / background.height));
     background.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
+    this.stageAnimation=StageAnimation.create(this,this.arenaKey,arena);
   }
 
-  private createHeaderUI(width: number): void {
-    this.enemyTargetPanel = new EnemyTargetPanel(this);
-    const headerBg = this.add.rectangle(width / 2, 24, width, 48, 0x141d1d, 0.96);
-    headerBg.setStrokeStyle(1, 0x655f4d);
-    headerBg.setDepth(1000);
-
-    this.roundBannerText = this.add.text(20, 5, `BATTLE ${this.fightNumber}/${this.totalFights} • ROUND 1`, {
-      fontFamily: 'Arial',
-      fontSize: '18px',
-      color: '#d3c29a',
-    }).setDepth(1001);
-
-    this.statusText = this.add.text(20, 27, 'Ready for action...', {
-      fontFamily: 'Arial',
-      fontSize: '16px',
-      color: '#adb5aa',
-      wordWrap: { width: width - 40 },
-      maxLines: 1,
-    }).setDepth(1001);
-
-    // Reset Battle Button in Header
-    const resetBtn = this.createHeaderButton(width - 65, 20, 'Restart', () => {
-      this.resetBattle();
-    });
-    resetBtn.setDepth(1001);
-  }
-
-  private createHeaderButton(x: number, y: number, label: string, onClick: () => void): Phaser.GameObjects.Container {
-    const container = this.add.container(x, y);
-    const bg = this.add.rectangle(0, 0, 90, 30, 0x202b29, 0.95);
-    bg.setStrokeStyle(1, 0x655f4d);
-    bg.setInteractive({ useHandCursor: true });
-
-    const txt = this.add.text(0, 0, label, {
-      fontFamily: 'Arial',
-      fontSize: '16px',
-      color: '#c8cebf',
-    }).setOrigin(0.5);
-
-    bg.on('pointerover', () => bg.setStrokeStyle(1, 0xc2ac73));
-    bg.on('pointerout', () => bg.setStrokeStyle(1, 0x655f4d));
-    bg.on('pointerdown', onClick);
-
-    container.add([bg, txt]);
-    return container;
-  }
-
-  /** Persistent desktop dock: party selection and all commands remain visible. */
-  private createClassicJRPGHud(width: number, height: number): void {
-    const layout = getBattleLayout(width, height);
-    const top = layout.partyTop;
-    this.bottomHudContainer = this.add.container(0, 0).setDepth(1002);
-    this.bottomHudContainer.add(this.add.rectangle(width / 2, top + 150, width, 300, 0x101919, 0.98));
-    const gap = 10;
-    const cardWidth = (width - 32 - gap * 2) / 3;
-    this.turnOrder.forEach((hero, index) => {
-      const container = this.add.container(16 + index * (cardWidth + gap), top + 64);
-      const plate = this.add.image(cardWidth / 2, 0, 'ui_party_plate').setDisplaySize(cardWidth, 112).setAlpha(0.7);
-      const highlightBg = this.add.rectangle(cardWidth / 2, 0, cardWidth, 112, 0x293632, 0.3).setStrokeStyle(1, 0x655f4d);
-      const cursorText = this.add.text(6, -42, '›', { fontSize: '22px', color: '#d3bc83' });
-      const nameText = this.add.text(70, -44, hero.heroName, { fontFamily: 'Arial', fontSize: '19px', color: '#ede8d8', fontStyle: 'bold' });
-      const roleText = this.add.text(70, -21, hero.heroRole, { fontFamily: 'Arial', fontSize: '12px', color: '#a4afa5' });
-      const barX = 70;
-      const barBg = this.add.rectangle(barX, 13, this.rowBarWidth, 5, 0x101715).setOrigin(0, 0.5);
-      const chipBar = this.add.rectangle(barX, 13, this.rowBarWidth, 5, 0xd3bc83).setOrigin(0, 0.5);
-      const fgBar = this.add.rectangle(barX, 13, this.rowBarWidth, 5, 0x8eaf80).setOrigin(0, 0.5);
-      const hpText = this.add.text(barX, -6, '', { fontFamily: 'Arial', fontSize: '13px', color: '#dedfce' });
-      const mpBarBg = this.add.rectangle(barX, 43, this.rowBarWidth, 4, 0x101715).setOrigin(0, 0.5);
-      const mpFgBar = this.add.rectangle(barX, 43, this.rowBarWidth, 4, 0x829da9).setOrigin(0, 0.5);
-      const mpText = this.add.text(barX, 24, '', { fontFamily: 'Arial', fontSize: '13px', color: '#a2b7bf' });
-      const statusText = this.add.text(cardWidth - 12, -18, 'SELECT', {
-        fontFamily: 'Arial', fontSize: '12px', color: '#d3bc83', align: 'right', wordWrap: { width: 84 },
-      }).setOrigin(1, 0);
-      container.add([plate, highlightBg, cursorText, nameText, roleText, barBg, chipBar, fgBar, hpText, mpBarBg, mpFgBar, mpText, statusText]);
-      container.add(this.add.image(33, -12, `portrait_${hero.unitKey}`).setScale(1.2));
-      const selectArea = this.add.zone(cardWidth / 2, 0, cardWidth, 112).setInteractive({ useHandCursor: true });
-      selectArea.on('pointerup', () => this.handleHeroPanelInput(hero));
-      container.add(selectArea);
-      this.bottomHudContainer.add(container);
-      this.partyRows.set(hero.unitKey, { container, cursorText, highlightBg, nameText, roleText, fgBar, chipBar, hpText, mpBarBg, mpFgBar, mpText, statusText, lastHp: hero.maxHp });
-    });
-
-    this.commandPanel = this.add.container(width / 2, layout.commandY);
-    this.commandPanel.add(this.add.image(0, 0, 'ui_command_plate').setDisplaySize(width - 24, 164));
-    this.cmdHeaderName = this.add.text(-width / 2 + 24, -75, 'CLOUD', { fontFamily: 'Arial', fontSize: '16px', fontStyle: 'bold', color: '#ede8d8' });
-    this.cmdHeaderRole = this.add.text(-width / 2 + 130, -75, '', { fontFamily: 'Arial', fontSize: '13px', color: '#a4afa5' });
-    this.cmdPlanText = this.add.text(-width / 2 + 24, 57, '', { fontFamily: 'Arial', fontSize: '12px', color: '#c8cebf', wordWrap: { width: 720 }, maxLines: 2 });
-    this.commandPanel.add([this.cmdHeaderName, this.cmdHeaderRole, this.cmdPlanText]);
-    this.cmdMainContainer = this.add.container(0, 0);
-    this.cmdSkillContainer = this.add.container(0, 0);
-    const startX = -width / 2 + 24;
-    const optionWidth = 174;
-    const option = (index: number, title: string, iconKey: string, action: () => void) => {
-      const x = startX + index * 182;
-      const bg = this.add.rectangle(x + optionWidth / 2, 2, optionWidth, 80, 0x293632, 0.5).setStrokeStyle(1, 0x655f4d).setInteractive({ useHandCursor: true });
-      const icon = this.add.image(x + 29, 1, iconKey).setDisplaySize(48, 48);
-      const nameText = this.add.text(x + 58, -22, title, { fontFamily: 'Arial', fontSize: '15px', color: '#ede8d8', wordWrap: { width: 110 } });
-      const tagText = this.add.text(x + 58, 22, '', { fontFamily: 'Arial', fontSize: '12px', color: '#a2b7bf' });
-      bg.on('pointerdown', action);
-      bg.on('pointerover', () => bg.setAlpha(0.8));
-      bg.on('pointerout', () => bg.setAlpha(1));
-      this.cmdSkillContainer.add([bg, icon, nameText, tagText]);
-      return { bg, nameText, tagText, icon, skill: null };
-    };
-    const attack = option(0, 'Attack', 'ui_attack', () => this.planHeroAttack());
-    attack.tagText.setText('Q · No MP');
-    this.cmdAttackBtnBg = attack.bg;
-    this.cmdAttackBtnText = attack.nameText;
-    this.skillButtons = Array.from({ length: 3 }, (_, index) => {
-      const ui: SkillBtnUi = option(index + 1, '', 'ui_ability', () => { if (ui.skill) this.planHeroSkill(ui.skill); });
-      ui.bg.on('pointerover', () => {
-        if (ui.skill) this.cmdPlanText.setText(ui.skill.desc);
-      });
-      ui.bg.on('pointerout', () => this.updateCommandMenu());
-      return ui;
-    });
-    this.cmdExecuteBtnBg = this.add.rectangle(width / 2 - 112, 5, 164, 74, 0x45634d).setStrokeStyle(1, 0xc2ac73).setInteractive({ useHandCursor: true });
-    this.cmdExecuteBtnBg.on('pointerdown', () => this.executePlannedAction());
-    this.cmdExecuteBtnText = this.add.text(width / 2 - 112, 5, 'Execute', { fontFamily: 'Arial', fontSize: '18px', color: '#ede8d8', align: 'center' }).setOrigin(0.5);
-    this.cmdModeBtnBg = this.add.rectangle(width / 2 - 112, -64, 164, 26, 0x293632).setInteractive({ useHandCursor: true });
-    this.cmdModeBtnBg.on('pointerdown', () => this.toggleAerithMode());
-    this.cmdModeBtnText = this.add.text(width / 2 - 112, -64, 'Melee', { fontFamily: 'Arial', fontSize: '13px', color: '#cba6b1' }).setOrigin(0.5);
-    this.cmdSkillBtnBg = this.add.rectangle(width / 2 - 112, 66, 164, 25, 0x141d1d).setInteractive({ useHandCursor: true });
-    this.cmdSkillBtnBg.on('pointerdown', () => this.cancelPlannedAction());
-    this.cmdSkillBtnText = this.add.text(width / 2 - 112, 66, 'Clear', { fontFamily: 'Arial', fontSize: '13px', color: '#a4afa5' }).setOrigin(0.5);
-    this.commandPanel.add([this.cmdMainContainer, this.cmdSkillContainer, this.cmdExecuteBtnBg, this.cmdExecuteBtnText, this.cmdModeBtnBg, this.cmdModeBtnText, this.cmdSkillBtnBg, this.cmdSkillBtnText]);
-    this.bottomHudContainer.add(this.commandPanel);
-    ['ONE', 'TWO', 'THREE'].forEach((key, index) => this.input.keyboard?.on(`keydown-${key}`, () => this.openHeroCommands(this.turnOrder[index])));
-    this.input.keyboard?.on('keydown-Q', () => this.planHeroAttack());
-    ['W', 'E', 'R'].forEach((key, index) => this.input.keyboard?.on(`keydown-${key}`, () => {
-      const hero = this.getActiveHero();
-      const skill = hero && this.unitSkills[hero.unitKey]?.[index];
-      if (skill) this.planHeroSkill(skill);
-    }));
-  }
-
-  /** Selecting a party card never commits a prepared command. */
-  public handleHeroPanelInput(hero: UnitActor, _edit = false): void {
-    if (this.combatState !== 'PLAYER_TURN' || hero.isDead || hero.hasActed || !this.turnOrder.includes(hero)) return;
-    this.openHeroCommands(hero);
-  }
+  public stageAnimationSnapshot(){return this.stageAnimation?.snapshot()??null;}
 
   public openHeroCommands(hero: UnitActor): void {
     if (this.combatState !== 'PLAYER_TURN' || hero.isDead || hero.hasActed || !this.turnOrder.includes(hero)) return;
     this.selectHero(hero);
     this.isCommandMenuOpen = true;
     this.refreshPlannedPose(hero);
-    this.updateCommandMenu();
-  }
-
-  public closeHeroCommands(): void {
-    if (this.combatState !== 'PLAYER_TURN') return;
-    this.isCommandMenuOpen = false;
-    this.isSkillMenuOpen = false;
-    const hero = this.getActiveHero();
-    if (hero) this.refreshPlannedPose(hero);
-    this.updateCommandMenu();
-  }
-
-
-  private toggleAerithMode(): void {
-    if (this.getActiveHero() !== this.aerith || this.combatState !== 'PLAYER_TURN') return;
-
-    if (this.aerith.combatConfig.attackType === 'melee') {
-      this.aerith.combatConfig = {
-        attackType: 'ranged',
-        targetOffsetX: 0,
-        attackAnim: 'magic_atk',
-        hitFrameIndex: 2,
-      };
-      if (this.cmdModeBtnText) this.cmdModeBtnText.setText('Magic ▾');
-      this.updateStatus('Aerith Stance: Magic / Holy Light (700-900 DMG)');
-    } else {
-      this.aerith.combatConfig = {
-        attackType: 'melee',
-        targetOffsetX: 200,
-        attackAnim: 'atk',
-        hitFrameIndex: 19,
-      };
-      if (this.cmdModeBtnText) this.cmdModeBtnText.setText('Melee ▾');
-      this.updateStatus('Aerith Stance: Melee Attack (180-260 DMG)');
-    }
-    const plan = this.plannedActions.get(this.aerith);
-    if (plan?.kind === 'attack') {
-      plan.config = { ...this.aerith.combatConfig };
-      this.refreshPlannedPose(this.aerith);
-    }
   }
 
   private getActiveHero(): UnitActor | undefined {
@@ -516,28 +437,31 @@ export class BattleScene extends Phaser.Scene {
     const index = this.turnOrder.indexOf(hero);
     if (index < 0) return;
     const previous = this.getActiveHero();
-    this.isSkillMenuOpen = false;
+    if(previous!==hero)this.runContext.uiSound?.('select');
     this.isCommandMenuOpen = false;
     if (previous) this.refreshPlannedPose(previous);
     this.activeHeroIndex = index;
     this.refreshPlannedPose(hero);
     const plan = this.plannedActions.get(hero);
     if (plan?.target && plan.target.currentHp > 0) this.setTarget(plan.target, false);
-    this.updateCommandMenu();
-    this.updatePartyStatusUi();
-    this.updateStatus(`${hero.heroName}: choose a command below, then Execute.`);
+    this.updateStatus(`${hero.heroName}: choose a command.`);
   }
 
   private refreshPlannedPose(hero: UnitActor): void {
     const plan = this.plannedActions.get(hero);
-    if (plan) hero.playCommandPose(plan.kind === 'skill' ? plan.skill.motion === 'magic_atk' : plan.config.attackAnim === 'magic_atk');
-    else if (hero === this.getActiveHero() && (this.isSkillMenuOpen || this.isCommandMenuOpen)) hero.playCommandPose();
+    if (plan) hero.playCommandPose(plan.kind === 'skill'
+      ? plan.skill.actionChoreography?.commandPose!==undefined
+        ? plan.skill.actionChoreography.commandPose==='magic-standby'
+        : plan.skill.motion === 'magic_atk'
+      : plan.config.attackAnim === 'magic_atk');
+    else if (hero === this.getActiveHero() && this.isCommandMenuOpen) hero.playCommandPose();
     else hero.clearCommandPose();
   }
 
   public planHeroAttack(): void {
     const hero = this.getActiveHero();
     if (this.combatState !== 'PLAYER_TURN' || !hero || hero.isDead || hero.hasActed) return;
+    this.runContext.uiSound?.('select');
     this.plannedActions.set(hero, { kind: 'attack', config: { ...hero.combatConfig }, target: this.currentTarget });
     this.finishPlanning(hero, 'Attack');
   }
@@ -546,48 +470,55 @@ export class BattleScene extends Phaser.Scene {
     const hero = this.getActiveHero();
     if (this.combatState !== 'PLAYER_TURN' || !hero || hero.isDead || hero.hasActed) return;
     if (!(this.unitSkills[hero.unitKey] ?? []).includes(skill)) return;
+    if (!this.canUseSourceSkill(skill)) { this.runContext.uiSound?.('unavailable'); this.updateStatus('This skill requires ready Source visuals.'); return; }
     if (hero.currentMp < skill.mpCost) {
+      this.runContext.uiSound?.('unavailable');
       this.updateStatus(`Not enough MP to prepare ${skill.name}.`);
       return;
     }
+    if (skill.hpCost && hero.currentHp<=skill.hpCost) { this.runContext.uiSound?.('unavailable'); this.updateStatus('Not enough HP to prepare this skill.'); return; }
+    this.runContext.uiSound?.('select');
     this.plannedActions.set(hero, { kind: 'skill', skill, target: this.currentTarget });
     this.finishPlanning(hero, skill.name);
   }
 
   private finishPlanning(hero: UnitActor, label: string): void {
-    this.isSkillMenuOpen = false;
     this.isCommandMenuOpen = false;
     this.refreshPlannedPose(hero);
-    this.updateCommandMenu();
-    this.updatePartyStatusUi();
-    this.updateStatus(`${label} ready. Choose a target, then Execute or press Space.`);
+    this.updateStatus(`${label} ready. Choose a target.`);
   }
 
-  public executePlannedAction(): void {
+  public executePlannedAction(ally?:UnitActor): void {
     const hero = this.getActiveHero();
     if (this.combatState !== 'PLAYER_TURN' || !hero || hero.isDead || hero.hasActed) return;
     const plan = this.plannedActions.get(hero);
-    if (!plan) { this.updateStatus('Prepare an Attack or Skill first.'); return; }
+    if (!plan) { this.runContext.uiSound?.('unavailable'); this.updateStatus('Prepare an Attack or Skill first.'); return; }
+    if (plan.kind === 'skill' && !this.canUseSourceSkill(plan.skill)) { this.runContext.uiSound?.('unavailable'); this.updateStatus('This skill requires ready Source visuals.'); return; }
     if (plan.kind === 'skill' && hero.currentMp < plan.skill.mpCost) {
+      this.runContext.uiSound?.('unavailable');
       this.updateStatus(`Not enough MP to execute ${plan.skill.name}. Change the prepared command.`);
       return;
     }
+    if (plan.kind==='skill' && plan.skill.hpCost && hero.currentHp<=plan.skill.hpCost) {
+      this.runContext.uiSound?.('unavailable');
+      this.updateStatus('Not enough HP to execute the prepared skill.'); return;
+    }
     if (plan.target && plan.target.currentHp > 0) this.setTarget(plan.target, false);
+    this.runContext.uiSound?.('confirm');
     this.isCommandMenuOpen = false;
     this.plannedActions.delete(hero);
     if (plan.kind === 'attack') {
       hero.combatConfig = { ...plan.config };
       this.executeActiveHeroAttack();
-    } else this.executeSkillChoice(plan.skill);
+    } else this.executeSkillChoice(plan.skill,ally);
   }
 
   public cancelPlannedAction(): void {
     const hero = this.getActiveHero();
     if (this.combatState !== 'PLAYER_TURN' || !hero || !this.plannedActions.has(hero)) return;
+    this.runContext.uiSound?.('back');
     this.plannedActions.delete(hero);
     this.refreshPlannedPose(hero);
-    this.updateCommandMenu();
-    this.updatePartyStatusUi();
     this.updateStatus(`${hero.heroName}: Prepared command cleared.`);
   }
 
@@ -682,35 +613,31 @@ export class BattleScene extends Phaser.Scene {
   /**
    * Spawns the encounter wave according to ENCOUNTERS data structure.
    */
-  private spawnEncounter(fightNum: number, onComplete?: () => void): void {
+  private spawnEncounter(onComplete?: () => void, onFormationReady?:()=>void): void {
+    this.preparedScenes?.stop();
     this.combatState = 'SPAWNING';
     this.currentTarget = null;
     this.victoryTriggered = false;
     this.plannedActions.clear();
-    this.rewardSelected = false;
     this.targetMarkerContainer.setVisible(false);
-    this.lockCommandMenu();
+    this.isCommandMenuOpen = false;
     const enemySlots = getBattleLayout(this.scale.width, this.scale.height, BATTLE_ARENAS[this.arenaKey]).enemies;
-    const preview: EnemySlotConfig[] | undefined = this.previewTrio && fightNum === 1
-      ? [
-        { slot: 'top', hp: 3500, nameTag: 'DIRE RAT A', isBoss: false },
-        { slot: 'center', hp: 3500, nameTag: 'DIRE RAT B', isBoss: false },
-        { slot: 'bottom', hp: 3500, nameTag: 'DIRE RAT C', isBoss: false },
-      ] : undefined;
-    const configs = (preview ?? ENCOUNTERS[fightNum] ?? [
-      // Fallback for fight 3+: scale fight 2 with HP scaling
-      { slot: 'top' as const, hp: Math.round(3500 * Math.pow(1.18, fightNum - 1)), nameTag: 'DIRE RAT A', isBoss: false },
-      { slot: 'bottom' as const, hp: Math.round(3500 * Math.pow(1.18, fightNum - 1)), nameTag: 'DIRE RAT B', isBoss: false },
-    ]).map((config) => ({
+    const configs = this.currentEncounter().enemies.map((config) => ({
       ...config,
       ...enemySlots[config.slot],
     }));
 
-    // Ensure enough TargetDummy instances in pool
-    while (this.enemies.length < configs.length) {
-      const dummy = new TargetDummy(this, 0, 0, this.manifests.training_dummy);
-      this.enemies.push(dummy);
-    }
+    // Keep the existing actor class; prepared content selects its texture namespace.
+    configs.forEach((config,index)=>{
+      const key=config.key;
+      if(this.enemies[index]?.assetKey===key)return;
+      this.enemies[index]?.destroy();
+      const definition=ENEMY_CONTENT[key],manifest=this.manifests[key];
+      if(!manifest||!definition&&!this.runContext.encounter)throw Error('Unpublished enemy body: '+key);
+      const arena=getBattleLayout(this.scale.width,this.scale.height,BATTLE_ARENAS[this.arenaKey]).arena;
+      this.enemies[index]=new TargetDummy(this,config.x,config.y,manifest,definition?{assetKey:key,scale:definition.scale,attack:definition.attack,
+        bounds:{left:arena.x+8,right:arena.x+arena.width-8,top:arena.y+8,bottom:arena.y+arena.height-8}}:undefined);
+    });
 
     // Hide any unused dummies from prior fights
     for (let i = configs.length; i < this.enemies.length; i++) {
@@ -733,14 +660,28 @@ export class BattleScene extends Phaser.Scene {
       enemy.playSpawnAnimation(cfg.hp, cfg.nameTag, () => {
         completedCount++;
         if (completedCount === totalToSpawn) {
+          onFormationReady?.();
           const firstAlive = this.enemies.find((e) => e.currentHp > 0);
           if (firstAlive) {
             this.setTarget(firstAlive, false);
           }
-          if (onComplete) onComplete();
+          if(cfg.isBoss&&onComplete)this.announceBoss(cfg.nameTag,onComplete);
+          else if (onComplete) onComplete();
         }
       });
     });
+  }
+
+  /** Skippable presentation only; actual spawn completion remains the input barrier. */
+  private announceBoss(name:string,onComplete:()=>void):void{
+    const profile=this.currentEncounter(),root=this.add.container(this.scale.width/2,290).setDepth(2600);
+    root.add([rpgPanel(this,0,0,700,128),this.add.text(0,-38,profile.theme,{fontFamily:RPG_FONT,fontSize:'19px',color:rpgHex(RPG.muted)}).setOrigin(.5,0),
+      this.add.text(0,-10,name.toUpperCase(),{fontFamily:RPG_FONT,fontSize:'34px',fontStyle:'bold',color:rpgHex(RPG.gold)}).setOrigin(.5,0),
+      this.add.text(0,35,'BOSS ENCOUNTER · Tap to begin',{fontFamily:RPG_FONT,fontSize:'17px',color:rpgHex(RPG.ink)}).setOrigin(.5,0)]);
+    let complete=false;let tween:Phaser.Tweens.Tween|undefined;
+    const finish=()=>{if(complete)return;complete=true;tween?.stop();root.destroy();onComplete();};
+    root.setSize(700,128).setInteractive().once('pointerdown',finish);
+    tween=this.tweens.add({targets:root,alpha:0,delay:window.matchMedia('(prefers-reduced-motion: reduce)').matches?0:650,duration:180,onComplete:finish});
   }
 
   /**
@@ -774,7 +715,6 @@ export class BattleScene extends Phaser.Scene {
     }
 
     this.activeHeroIndex = firstAliveIdx;
-    this.isSkillMenuOpen = false;
     this.combatState = 'PLAYER_TURN';
 
     // Ensure active target is selected and marker is visible
@@ -784,11 +724,6 @@ export class BattleScene extends Phaser.Scene {
       this.setTarget(this.currentTarget, false);
     }
 
-    this.roundBannerText.setText(`BATTLE ${this.fightNumber}/${this.totalFights} • ROUND ${this.currentRound}`);
-    this.roundBannerText.setColor('#d3c29a');
-
-    this.updateCommandMenu();
-    this.updatePartyStatusUi();
     this.updateStatus(`Round ${this.currentRound}: Prepare commands for any ready heroes. Choose who executes first.`);
   }
 
@@ -809,108 +744,26 @@ export class BattleScene extends Phaser.Scene {
     if (nextIdx >= 0) {
       // Next hero found
       this.activeHeroIndex = nextIdx;
-      this.isSkillMenuOpen = false;
       this.combatState = 'PLAYER_TURN';
-      this.updateCommandMenu();
-      this.updatePartyStatusUi();
       this.updateStatus(`${this.getActiveHero()?.heroName} ready. You can select any remaining hero.`);
     } else {
       // All living heroes have acted this round -> Enemy turn!
-      this.isSkillMenuOpen = false;
       this.combatState = 'ENEMY_TURN';
-      this.roundBannerText.setText(`BATTLE ${this.fightNumber}/${this.totalFights} • ENEMY TURN`);
-      this.roundBannerText.setColor('#f87171');
-      this.updateCommandMenu();
-      this.updatePartyStatusUi();
       this.updateStatus('All heroes have acted! Enemies attacking...');
       this.time.delayedCall(450, () => this.executeEnemyTurn());
     }
   }
 
-  /**
-   * Refreshes the floating command menu without changing prepared actions.
-   */
-  private updateCommandMenu(): void {
-    const hero = this.getActiveHero();
-    const available = this.combatState === 'PLAYER_TURN' && !!hero && !hero.isDead && !hero.hasActed;
-    const prepared = hero && this.plannedActions.get(hero);
-    this.commandPanel.setVisible(true);
-    this.cmdMainContainer.setVisible(true);
-    this.cmdSkillContainer.setVisible(true);
-    this.cmdHeaderName.setText(hero?.heroName ?? 'COMMANDS');
-    this.cmdHeaderRole.setText(available ? 'Choose a command' : 'Waiting for the next action');
-    this.cmdPlanText.setText(prepared ? `Ready: ${prepared.kind === 'attack' ? 'Attack' : prepared.skill.name} · Space to execute` : '1–3: hero · Q/W/E/R: command · Space: execute');
-    const enable = (bg: Phaser.GameObjects.Rectangle, enabled: boolean, selected = false) => {
-      if (enabled) bg.setInteractive({ useHandCursor: true }); else bg.disableInteractive();
-      bg.setFillStyle(selected ? 0x45634d : 0x182422, enabled ? 0.8 : 0.5);
-      bg.setStrokeStyle(1, selected ? 0xd3bc83 : 0x655f4d);
-    };
-    enable(this.cmdAttackBtnBg, available, prepared?.kind === 'attack');
-    this.cmdAttackBtnText.setText(hero === this.barret ? 'Attack · Burst' : 'Attack');
-    this.cmdAttackBtnText.setAlpha(available ? 1 : 0.4);
-    const skills = hero ? this.unitSkills[hero.unitKey] ?? [] : [];
-    this.skillButtons.forEach((button, index) => {
-      const skill = skills[index];
-      button.skill = skill ?? null;
-      const affordable = available && !!skill && hero.currentMp >= skill.mpCost;
-      enable(button.bg, affordable, prepared?.kind === 'skill' && prepared.skill === skill);
-      button.nameText.setText(skill?.name ?? 'Unavailable');
-      button.tagText.setText(skill ? `${['W', 'E', 'R'][index]} · ${skill.mpCost} MP` : '');
-      button.nameText.setAlpha(affordable ? 1 : 0.45);
-      button.tagText.setColor(available && skill && !affordable ? '#ca7768' : '#a2b7bf');
-      button.icon?.setTexture(skill?.motion === 'magic_atk' ? 'ui_magic' : 'ui_ability').setAlpha(affordable ? 1 : 0.35);
-    });
-    enable(this.cmdExecuteBtnBg, available && !!prepared);
-    this.cmdExecuteBtnText.setText(available && prepared ? 'Execute ▶' : 'Execute');
-    this.cmdExecuteBtnText.setAlpha(available && prepared ? 1 : 0.4);
-    enable(this.cmdSkillBtnBg, available && !!prepared);
-    const isAerith = available && hero === this.aerith;
-    this.cmdModeBtnBg?.setVisible(isAerith);
-    this.cmdModeBtnText?.setVisible(isAerith).setText(hero?.combatConfig.attackType === 'ranged' ? 'Stance: Magic' : 'Stance: Melee');
+  private canUseSourceSkill(skill: SkillConfig): boolean {
+    return !this.sourceVisualError && skill.importStatus !== 'not-imported' && !!this.sourceSceneKey(skill,
+      skill.scope === 'party' ? this.friendlySkillTargets(this.getActiveHero(),skill).length
+        : skill.scope === 'all_enemies' ? this.enemies.filter(enemy => enemy.currentHp > 0).length : 1);
   }
 
-  public openSkillSubMenu(): void {
-    if (this.combatState !== 'PLAYER_TURN') return;
-    const hero = this.getActiveHero();
-    if (!hero || hero.isDead || hero.hasActed) return;
-
-    this.isSkillMenuOpen = true;
-    this.isCommandMenuOpen = true;
-    hero.playCommandPose();
-    this.updateCommandMenu();
-  }
-
-  public closeSkillSubMenu(): void {
-    if (this.combatState !== 'PLAYER_TURN') return;
-    this.isSkillMenuOpen = false;
-    const hero = this.getActiveHero();
-    if (hero) this.refreshPlannedPose(hero);
-    this.updateCommandMenu();
-  }
-
-  /**
-   * Locks the command menu so remaining heroes or buttons cannot be clicked after fight end.
-   */
-  private lockCommandMenu(): void {
-    this.isCommandMenuOpen = false;
-    this.commandPanel?.setVisible(false);
-    this.isSkillMenuOpen = false;
-    this.cmdMainContainer.setVisible(true);
-    this.cmdSkillContainer.setVisible(false);
-
-    this.cmdAttackBtnBg.disableInteractive();
-    this.cmdAttackBtnBg.fillColor = 0x141d1d;
-    this.cmdAttackBtnBg.setStrokeStyle(1, 0x514f42);
-    this.cmdAttackBtnText.setText('★ VICTORY ★');
-    this.cmdAttackBtnText.setColor('#d3bc83');
-
-    this.cmdSkillBtnBg.disableInteractive();
-    this.cmdSkillBtnBg.fillColor = 0x141d1d;
-    this.cmdSkillBtnBg.setStrokeStyle(1, 0x514f42);
-    this.cmdSkillBtnText.setColor('#8a938a');
-
-    this.cmdModeBtnBg?.setVisible(false);
-    this.cmdModeBtnText?.setVisible(false);
+  private friendlySkillTargets(hero: UnitActor | undefined, skill: SkillConfig): UnitActor[] {
+    if (!hero) return [];
+    return (skill.scope==='party' ? this.turnOrder : [hero]).filter(ally =>
+      !ally.isDead && ally.currentHp>0 && (skill.allyTargeting!=='other-living-allies' || ally!==hero));
   }
 
   /**
@@ -929,7 +782,7 @@ export class BattleScene extends Phaser.Scene {
       if (allDead) {
         this.combatState = 'VICTORY';
         this.targetMarkerContainer.setVisible(false);
-        this.lockCommandMenu();
+        this.isCommandMenuOpen = false;
         this.updateStatus(`K.O.! ${target.nameTag} defeated! All enemies eliminated!`);
       } else {
         const next = this.autoRetarget();
@@ -941,90 +794,6 @@ export class BattleScene extends Phaser.Scene {
   }
 
   /**
-   * Refreshes party panels, prepared actions, chip damage and MP.
-   */
-  private updatePartyStatusUi(): void {
-    const activeHero = this.getActiveHero();
-
-    this.turnOrder.forEach((hero) => {
-      const row = this.partyRows.get(hero.unitKey);
-      if (!row) return;
-
-      const isActive = this.combatState === 'PLAYER_TURN' && hero === activeHero && !hero.isDead && !hero.hasActed;
-
-      // 1. Cursor & Row Highlight
-      row.cursorText.setVisible(isActive);
-      row.highlightBg.setVisible(true);
-      row.highlightBg.setFillStyle(isActive ? 0x344139 : 0x1b2523, isActive ? 0.45 : 0.25);
-      row.highlightBg.setStrokeStyle(1, isActive ? 0xc2ac73 : 0x514f42, isActive ? 1 : 0.6);
-      row.container.setAlpha(hero.isDead ? 0.45 : hero.hasActed ? 0.65 : 1);
-
-      if (isActive) {
-        row.nameText.setColor('#d3c29a');
-      } else if (hero.isDead) {
-        row.nameText.setColor('#8a938a');
-      } else {
-        row.nameText.setColor('#ede8d8');
-      }
-
-      // 2. 2-Phase HP Bar
-      const pct = Math.max(0, hero.currentHp / hero.maxHp);
-      const targetWidth = this.rowBarWidth * pct;
-
-      row.fgBar.width = targetWidth;
-      if (pct > 0.5) row.fgBar.fillColor = 0x8eaf80;
-      else if (pct > 0.25) row.fgBar.fillColor = 0xc2a56b;
-      else row.fgBar.fillColor = 0xca7768;
-
-      // Keep the delay inside the tween so a later hit or heal can cancel it.
-      if (hero.currentHp !== row.lastHp) {
-        row.chipTween?.stop();
-        if (hero.currentHp < row.lastHp) {
-          row.chipTween = this.tweens.add({
-            targets: row.chipBar,
-            width: targetWidth,
-            delay: 200,
-            duration: 400,
-            ease: 'Cubic.easeOut',
-          });
-        } else {
-          row.chipBar.width = targetWidth;
-        }
-        row.lastHp = hero.currentHp;
-      }
-
-      // Numeric HP text
-      row.hpText.setText(`${hero.currentHp.toLocaleString()} / ${hero.maxHp.toLocaleString()} HP`);
-
-      // 3. Classic Blue MP Bar & Text
-      const mpPct = Math.max(0, hero.currentMp / hero.maxMp);
-      row.mpFgBar.width = this.rowBarWidth * mpPct;
-      row.mpText.setText(`MP ${hero.currentMp.toLocaleString()} / ${hero.maxMp.toLocaleString()}`);
-
-      // 4. Status text
-      if (hero.isDead) {
-        row.statusText.setText('K.O.');
-        row.statusText.setColor('#ef4444');
-      } else if (hero.hasActed) {
-        row.statusText.setText('ACTED');
-        row.statusText.setColor('#788478');
-      } else if (isActive) {
-        row.statusText.setText('SELECTED');
-        row.statusText.setColor('#d3bc83');
-      } else {
-        row.statusText.setText('SELECT');
-        row.statusText.setColor('#a4afa5');
-      }
-      const plan = this.plannedActions.get(hero);
-      if (plan && !hero.isDead && !hero.hasActed) {
-        row.statusText.setText(plan.kind === 'attack' ? 'ATTACK READY' : plan.skill.name.toUpperCase());
-        row.statusText.setFontSize(12);
-        row.statusText.setColor(plan.kind === 'skill' && plan.skill.motion === 'magic_atk' ? '#c6b1cf' : '#a9c58e');
-      } else row.statusText.setFontSize(12);
-    });
-  }
-
-  /**
    * Executes the active hero's attack and then advances the turn.
    */
   public executeActiveHeroAttack(): void {
@@ -1033,18 +802,10 @@ export class BattleScene extends Phaser.Scene {
     if (!hero || hero.isDead || hero.hasActed) return;
 
     this.combatState = 'HERO_ATTACKING';
-    this.isSkillMenuOpen = false;
-    this.updateCommandMenu();
 
-    const row = this.partyRows.get(hero.unitKey);
-    if (row) {
-      row.statusText.setText('ATTACKING...');
-      row.statusText.setColor('#d3bc83');
-    }
-
+    this.announceCombatAction(hero.unitKey,hero.heroName,'attack','Attack','hero','attack','basic');
     this.startHeroAction(hero, hero.combatConfig.attackAnim, () => this.executeHeroSequence(hero, () => {
       hero.hasActed = true;
-      this.updatePartyStatusUi();
 
       // Check Victory: if all enemies are defeated or fight ended mid-turn, trigger victory immediately!
       const allDead = this.enemies.every((e) => e.currentHp <= 0);
@@ -1059,57 +820,50 @@ export class BattleScene extends Phaser.Scene {
   }
 
   /**
-   * Prepares the skill at slot index (0, 1, 2) from keyboard shortcut.
-   */
-  public planSkillByIndex(idx: number): void {
-    if (this.combatState !== 'PLAYER_TURN' || !this.isSkillMenuOpen) return;
-    const btn = this.skillButtons[idx];
-    if (btn && btn.skill) {
-      this.planHeroSkill(btn.skill);
-    }
-  }
-
-  /**
-   * Prepares the first affordable skill (Space/Enter in the skill menu).
-   */
-  public planFirstAvailableSkill(): void {
-    if (this.combatState !== 'PLAYER_TURN') return;
-    const hero = this.getActiveHero();
-    if (!hero) return;
-    const skills = this.unitSkills[hero.unitKey] || [];
-    const affordable = skills.find((s) => hero.currentMp >= s.mpCost);
-    if (affordable) {
-      this.planHeroSkill(affordable);
-    } else if (skills.length > 0) {
-      this.planHeroSkill(skills[0]);
-    }
-  }
-
-  /**
    * Dedicated entry point for executing a chosen SkillConfig.
    */
-  public executeSkillChoice(skill: SkillConfig): void {
+  public executeSkillChoice(skill: SkillConfig,ally?:UnitActor): void {
     if (this.combatState !== 'PLAYER_TURN') return;
     const hero = this.getActiveHero();
     if (!hero || hero.isDead || hero.hasActed) return;
-
+    if (!this.canUseSourceSkill(skill)) {
+      this.updateStatus(!skill.scenePresentation || skill.importStatus === 'not-imported'
+        ? 'This skill has not been imported.' : 'Skill visuals are unavailable. No MP was spent.');
+      return;
+    }
+    if(skill.scope==='single_ally'&&(!ally||!this.turnOrder.includes(ally)||ally.isDead||ally.currentHp<=0))return;
+    const sourceCount = skill.scope === 'party' ? this.friendlySkillTargets(hero,skill).length
+      : skill.scope === 'all_enemies' ? this.enemies.filter(enemy => enemy.currentHp > 0).length : 1;
+    try {
+      if (!reviewedSkillEvents(skill)?.length) throw Error('Reviewed gameplay events required');
+      validateSceneAction(this.cache.json.get(`scene_${skill.scenePresentation}_manifest`), skill);
+      validateActionChoreography(skill,undefined,hero.manifest.animations);
+    } catch { this.updateStatus('Skill import is incompatible. No MP was spent.'); return; }
+    const admittedSourceKey = this.sourceSceneKey(skill, sourceCount)!;
+    if (skill.hpCost && hero.currentHp<=skill.hpCost) {
+      this.updateStatus(`Not enough HP to use ${skill.name}. The caster must survive the cost.`);
+      return;
+    }
     if (!hero.useMp(skill.mpCost)) {
       this.updateStatus(`Not enough MP to cast ${skill.name}! (Need ${skill.mpCost} MP, have ${hero.currentMp})`);
       return;
     }
 
+    if (skill.hpCost) hero.spendHp(skill.hpCost);
+
     this.combatState = 'HERO_ATTACKING';
-    this.isSkillMenuOpen = false;
-    this.updateCommandMenu();
-    this.updatePartyStatusUi();
 
-    const row = this.partyRows.get(hero.unitKey);
-    if (row) {
-      row.statusText.setText('SKILL...');
-      row.statusText.setColor('#c6b1cf');
-    }
-
-    this.startHeroAction(hero, skill.motion, () => this.executeGenericSkill(hero, skill, () => this.concludeHeroSkill(hero)));
+    this.activeSkillActions++;
+    this.announceCombatAction(hero.unitKey,hero.heroName,skill.id,skill.name,'hero','skill','source');
+    this.skillActors.add(hero);
+    let finished = false;
+    this.startHeroAction(hero, skill.actionChoreography!.readiness==='magic-standby'?'magic_atk':'atk', () => this.executeGenericSkill(hero, skill, () => {
+      if (finished) return;
+      finished = true;
+      this.activeSkillActions--;
+      this.skillActors.delete(hero);
+      this.concludeHeroSkill(hero);
+    }, admittedSourceKey,ally));
   }
 
   /** Show one full magic readiness cycle before starting the cast timeline. */
@@ -1128,7 +882,6 @@ export class BattleScene extends Phaser.Scene {
 
   private concludeHeroSkill(hero: UnitActor): void {
     hero.hasActed = true;
-    this.updatePartyStatusUi();
 
     const allDead = this.enemies.every((e) => e.currentHp <= 0);
     if (allDead || this.combatState === 'VICTORY') {
@@ -1139,23 +892,204 @@ export class BattleScene extends Phaser.Scene {
     this.advanceToNextHero();
   }
 
+  private sourceSceneKey(skill: SkillConfig, count = 1): string | undefined {
+    return !this.sourceVisualError && skill.scenePresentation && this.preparedScenes?.canPlay(skill.scenePresentation,count)
+      ? skill.scenePresentation : undefined;
+  }
+
+  private playPreparedScene(key: string, hero: UnitActor, targets: (TargetDummy | UnitActor)[], onComplete?: () => void): void {
+    const host: PreparedSceneHost = {width:this.scale.width,height:this.scale.height,
+      arena:getBattleLayout(this.scale.width,this.scale.height,BATTLE_ARENAS[this.arenaKey]).arena,
+      caster:{x:hero.x,y:hero.y},targets:{},units:{}};
+    targets.forEach((target,index) => {
+      const sprite = target instanceof UnitActor ? target : target.sprite, name = 'target'+index;
+      host.targets[name] = {x:target.x,y:target.y};
+      host.units[name] = {frameWidth:sprite.frame.width,frameHeight:sprite.frame.height,
+        pivotX:sprite.originX,pivotY:sprite.originY,scale:sprite.scaleX * (target instanceof UnitActor ? 1 : target.scaleX)};
+    });
+    const audio=(this.cache.json.get('scene_'+key+'_manifest') as PreparedSceneManifest|undefined)?.audioSource;
+    const cues=audio?.playbackSupported?audio.events:[];
+    let next=0;
+    this.preparedScenes!.play(key,host,onComplete,cues.length?frame=>{
+      while(next<cues.length&&cues[next].frame<=frame){
+        const event=cues[next++];
+        const cue=event.resource?.key;
+        if(cue&&isCombatCue(cue))this.emitCombatSound(cue,'source',event.frame);
+      }
+    }:undefined);
+  }
+
+  private emitCombatSound(cue:CombatCue,event:string,sourceFrame?:number):void {
+    this.events.emit('combat-sfx',{cue,event,sourceFrame});
+    this.runContext.combatSound?.(cue,sourceFrame!==undefined);
+  }
+
+  private basicImpactSound(hero:UnitActor,isCritical:boolean):void {
+    const source=basicAttackCues[String(hero.manifest.unitId) as keyof typeof basicAttackCues];
+    const cue=source&&'SE:'+source.cueId;
+    if(cue&&isCombatCue(cue))this.emitCombatSound(cue,'basic-impact');
+    if(isCritical)this.emitCombatSound('System:69','critical-impact');
+  }
+
+  /** Body completion starts recovery; effects and reviewed damage own separate clocks. */
+  private executePreparedSkill(hero: UnitActor, skill: SkillConfig, key: string, targets: (TargetDummy | UnitActor)[],
+    impact: (weight: number) => void, onComplete: () => void): void {
+    const motion = this.preparedScenes!.choreography(key);
+    const choreography=validateActionChoreography(skill,undefined,hero.manifest.animations);
+    const travel=actionTravel(choreography,motion,hero);
+    const target = targets[0];
+    let event: string | undefined;
+    let bodyDone = false, impactDone = false, closed = false, recovering=false;
+    const timers: Phaser.Time.TimerEvent[] = [];
+    const bodyTimers: Phaser.Time.TimerEvent[] = [];
+    const stopTimers = () => { timers.forEach(timer => timer.remove(false)); timers.length = 0; };
+    const cleanup = () => {
+      stopTimers();
+      if(event)hero.off(event, recover);
+      bodyTimers.forEach(timer=>timer.remove(false));bodyTimers.length=0;
+      this.events.off('shutdown', cancel);
+    };
+    const cancel = () => { closed = true; cleanup(); };
+    const finish = () => {
+      if (closed || !bodyDone || !impactDone) return;
+      closed = true;
+      cleanup();
+      this.finishAfterImpacts(onComplete);
+    };
+    const rested = () => {
+      if (closed) return;
+      hero.setFacingLeft(true);
+      hero.setDepthBoost(false);
+      // Runs start the whole celebration after the shared VFX/fade barrier.
+      hero.playRestPose();
+      bodyDone = true;
+      finish();
+    };
+    const recover = () => {
+      if (closed||recovering) return;
+      recovering=true;
+      if (choreography.movement !== 'stationary') {
+        hero.playAnimation('move');
+        hero.setFacingLeft(false);
+        this.tweens.add({targets:hero,x:hero.homeSlot.x,y:hero.homeSlot.y,
+          duration:travel.returnMs,ease:'Cubic.easeInOut',onComplete:rested});
+      } else if(choreography.body.mode==='rest')rested();
+      else hero.returnToIdle(rested);
+    };
+    const start = () => {
+      if (closed) return;
+      if(choreography.body.mode==='rest')hero.playRestPose();
+      else{
+        const phases=choreography.body.phases;
+        if(phases[0].frame>0)hero.playRestPose();
+        phases.forEach((phase,index)=>{
+          const play=()=>{
+            if(closed)return;
+            if(index===phases.length-1){event=`animationcomplete-${hero.manifest.assetKey??hero.unitKey}_${phase.clip}`;hero.once(event,recover);}
+            hero.playAnimation(phase.clip);
+          };
+          if(phase.frame===0)play();
+          else bodyTimers.push(this.time.delayedCall(phase.frame*1000/60,play));
+        });
+      }
+      // Decorative tails finish independently, or are replaced by the next source presentation.
+      this.playPreparedScene(key,hero,targets);
+      const events = reviewedSkillEvents(skill)!;
+      let remaining = events.length;
+      const consumed = new Set<number>();
+      events.forEach((entry, index) => {
+        const timer = this.time.delayedCall(entry.frame * 1000 / 60, () => {
+          if (closed || impactDone || consumed.has(index)) return;
+          consumed.add(index);
+          if (!hero.isDead) {
+            if (entry.allyEffects) {
+              for (const ally of targets) if (ally instanceof UnitActor && !ally.isDead) {
+                for (const effect of entry.allyEffects) {
+                  if (effect.kind==='heal') ally.restoreHp(effect.amount);
+                  else {
+                    ally.sourceBuffs=applyHeroBuffs(ally.sourceBuffs,[effect],this.currentRound);
+                    const text=this.add.text(ally.x,ally.y-100,'PHYSICAL BOOST',{fontSize:'16px',color:'#f9e2af',fontFamily:'Arial'}).setOrigin(.5).setDepth(1200);
+                    this.tweens.add({targets:text,y:text.y-40,alpha:0,duration:900,onComplete:()=>text.destroy()});
+                  }
+                }
+              }
+              
+              this.updateStatus(`${skill.name}: friendly effects applied.`);
+            } else if (entry.effects) {
+              for (const enemy of targets) if (enemy instanceof TargetDummy && enemy.currentHp > 0) {
+                const statuses=entry.effects.filter(effect=>effect.kind!=='execute-or-damage');
+                for(const effect of entry.effects)if(effect.kind==='execute-or-damage'&&enemy.currentHp>0){
+                  const outcome=resolveEnemyInstant(effect,enemy,this.enemyEventRandom);
+                  enemy.applyDamage(outcome.amount,false,'unmitigated',true);
+                  this.handleTargetDamaged(enemy);
+                }
+                if(!statuses.length||enemy.currentHp<=0)continue;
+                enemy.statusEffects = applyEnemyStatuses(enemy.statusEffects, statuses);
+                const text=this.add.text(enemy.x,enemy.y-100,enemy.statusEffects.map(s=>({'magic-weakness':'MAGIC WEAK','physical-weakness':'ARMOR BREAK','attack-down':'ATTACK DOWN','silence':'SILENCE','stop':'STOP'}[s.kind])).join(' / '),
+                  {fontSize:'16px',color:'#cba6b1',fontFamily:'Arial'}).setOrigin(.5).setDepth(1200);
+                this.tweens.add({targets:text,y:text.y-40,alpha:0,duration:900,onComplete:()=>text.destroy()});
+              }
+              if(this.combatState!=='VICTORY')this.updateStatus(`${skill.name}: ${entry.effects.some(e=>e.kind==='execute-or-damage')?'enemy events':'status effects'} applied.`);
+            } else impact(entry.weight ?? 1);
+          }
+          remaining--;
+          // A locked target's remaining hits cannot spill into another target's visual anchor.
+          if (remaining === 0 || hero.isDead || this.combatState === 'VICTORY' || !targets.some(t => t.currentHp > 0)) {
+            impactDone = true;
+            stopTimers();
+            if(choreography.body.mode==='rest')recover();
+          }
+          finish();
+        });
+        if (timer) timers.push(timer);
+      });
+    };
+    this.events.once('shutdown', cancel);
+    this.updateStatus(`Action: ${hero.heroName} uses ${skill.name}!`);
+    if (choreography.movement !== 'stationary') {
+      hero.setDepthBoost(true);
+      hero.playAnimation('move');
+      // Preserve the game's reviewed foot placement; source camera placement is separate.
+      this.tweens.add({targets:hero,
+        x:choreography.movement==='step'?hero.homeSlot.x-travel.stepDistance!:target.x + hero.combatConfig.targetOffsetX * BATTLE_ART_SCALE,
+        y:choreography.movement==='step'?hero.homeSlot.y:target.y,
+        duration:travel.approachMs,ease:'Cubic.easeInOut',onComplete:start});
+    } else start();
+  }
+
   /**
    * Universal data-driven skill executor:
    * Handles moveType ('dash' vs 'stationary') and scope ('single_enemy', 'all_enemies', 'party').
    */
-  private executeGenericSkill(hero: UnitActor, skill: SkillConfig, onComplete: () => void): void {
-    if (skill.presentation) {
-      this.executeAreaPresentation(hero, skill, onComplete);
+  private executeGenericSkill(hero: UnitActor, skill: SkillConfig, onComplete: () => void, admittedSourceKey?: string, ally?:UnitActor): void {
+    if (skill.allyEvents) {
+      const targets=ally?[ally]:this.friendlySkillTargets(hero,skill);
+      const key=admittedSourceKey ?? this.sourceSceneKey(skill,targets.length);
+      if(key&&targets.length)this.executePreparedSkill(hero,skill,key,targets,()=>{},onComplete);
+      else onComplete();
+      return;
+    }
+    if (skill.supportEvents && !skill.damageEvents) {
+      const targets = skill.scope === 'all_enemies' ? this.enemies.filter(e=>e.currentHp>0) : this.currentTarget ? [this.currentTarget] : [];
+      const key = admittedSourceKey ?? this.sourceSceneKey(skill,targets.length);
+      if (key && targets.length) this.executePreparedSkill(hero,skill,key,targets,()=>{},onComplete);
+      else onComplete();
+      return;
+    }
+    if (skill.damageEvents && skill.scope === 'all_enemies') {
+      this.executeSourceAreaSkill(hero, skill, onComplete, admittedSourceKey);
       return;
     }
     const target = this.currentTarget && this.currentTarget.currentHp > 0
       ? this.currentTarget
       : this.autoRetarget();
+    const sourceKey = admittedSourceKey ?? this.sourceSceneKey(skill);
 
-    const triggerImpact = () => {
+    let actionBase: number | undefined;
+    const triggerImpact = (weight = 1) => {
       if (this.combatState !== 'HERO_ATTACKING') return;
       if (skill.scope === 'single_enemy') {
-        const hitTarget = this.currentTarget && this.currentTarget.currentHp > 0 ? this.currentTarget : target;
+        const hitTarget = skill.damageEvents ? target : this.currentTarget && this.currentTarget.currentHp > 0 ? this.currentTarget : target;
         if (!hitTarget || hitTarget.currentHp <= 0) return;
 
         // 1. Hit-Stop if dashing
@@ -1178,12 +1112,11 @@ export class BattleScene extends Phaser.Scene {
         this.cameras.main.shake(duration, intensity);
 
         // 4. Calculate damage
-        let base = hero === this.cloud ? Phaser.Math.Between(340, 440) * this.cloudDmgMultiplier
-                 : hero === this.aerith ? Phaser.Math.Between(260, 340) * this.aerithMagicMultiplier
-                 : Phaser.Math.Between(260, 360);
-        const dmg = Math.round(base * skill.damageMultiplier);
+        const rolled = this.skillBaseDamage(hero, skill);
+        actionBase ??= rolled;
+        const dmg = Math.round(actionBase * skill.damageMultiplier * weight);
         const isCrit = skill.damageMultiplier >= 3.0;
-        hitTarget.applyDamage(dmg, isCrit, skill.motion === 'magic_atk' ? 'holy' : 'physical');
+        hitTarget.applyDamage(dmg, isCrit, skillDamageType(skill));
 
         if (isCrit) {
           this.showCritPopup(hitTarget.x, hitTarget.y - 105);
@@ -1205,174 +1138,49 @@ export class BattleScene extends Phaser.Scene {
         this.cameras.main.shake(220, intensity);
 
         // Calculate damage per enemy
-        let base = hero === this.cloud ? Phaser.Math.Between(300, 380) * this.cloudDmgMultiplier
-                 : hero === this.aerith ? Phaser.Math.Between(280, 360) * this.aerithMagicMultiplier
-                 : Phaser.Math.Between(240, 320);
-        const dmg = Math.round(base * skill.damageMultiplier);
+        const rolled = this.skillBaseDamage(hero, skill);
+        actionBase ??= rolled;
+        const dmg = Math.round(actionBase * skill.damageMultiplier * weight);
 
         living.forEach((e) => {
-          e.applyDamage(dmg, skill.damageMultiplier >= 3.0, skill.motion === 'magic_atk' ? 'holy' : 'physical');
+          e.applyDamage(dmg, skill.damageMultiplier >= 3.0, skillDamageType(skill));
           this.handleTargetDamaged(e);
         });
-      } else if (skill.scope === 'party') {
-        // Screen flash
-        this.cameras.main.flash(120, 200, 255, 200, false);
-
-        let baseHeal = hero === this.aerith ? Phaser.Math.Between(500, 750) * this.aerithMagicMultiplier : 500;
-        const heal = Math.round(baseHeal * skill.damageMultiplier);
-
-        this.turnOrder.forEach((h) => {
-          if (!h.isDead) {
-            h.restoreHp(heal);
-          }
-        });
-        this.updatePartyStatusUi();
       }
     };
 
-    if (skill.moveType === 'dash') {
-      if (!target) {
-        onComplete();
-        return;
-      }
-      const homeX = hero.homeSlot.x;
-      const homeY = hero.homeSlot.y;
-      const arrivalX = target.x + hero.combatConfig.targetOffsetX * BATTLE_ART_SCALE;
-      const arrivalY = target.y;
-
-      hero.setDepthBoost(true);
-      this.updateStatus(`Action: ${hero.heroName} executes ${skill.name} on ${target.nameTag}!`);
-      hero.playAnimation('move');
-
-      this.tweens.add({
-        targets: hero,
-        x: arrivalX,
-        y: arrivalY,
-        duration: 340,
-        ease: 'Cubic.easeInOut',
-        onComplete: () => {
-          hero.playAnimation(skill.motion);
-          if (skill.visualEffect) {
-            const effect = skill.visualEffect;
-            this.time.delayedCall(effect.startFrame * 1000 / 60, () => {
-              if (this.combatState === 'HERO_ATTACKING' && target.currentHp > 0) {
-                this.playSkillEffect(effect.key, target);
-              }
-            });
-          }
-          const impactDelay = skill.visualEffect ? (skill.attackFrames[0] ?? 6) * 1000 / 60 : 160;
-          this.time.delayedCall(impactDelay, triggerImpact);
-
-          const motionDuration = skill.visualEffect
-            ? hero.manifest.animations[skill.motion].frames.reduce((total, frame) => total + frame.durationMs, 0) + 80
-            : 650;
-          this.time.delayedCall(motionDuration, () => {
-            hero.playAnimation('move');
-            hero.setFacingLeft(false);
-
-            this.tweens.add({
-              targets: hero,
-              x: homeX,
-              y: homeY,
-              duration: 360,
-              ease: 'Cubic.easeInOut',
-              onComplete: () => {
-                hero.setFacingLeft(true);
-                hero.setDepthBoost(false);
-                hero.playRestPose();
-                onComplete();
-              },
-            });
-          });
-        },
-      });
-    } else {
-      const scopeDesc = skill.scope === 'party' ? 'on party' : skill.scope === 'all_enemies' ? 'on all enemies' : `at ${target?.nameTag || 'enemy'}`;
-      this.updateStatus(`Action: ${hero.heroName} casts ${skill.name} ${scopeDesc}!`);
-      hero.playAnimation(skill.motion);
-
-      this.time.delayedCall(200, triggerImpact);
-
-      this.time.delayedCall(900, () => {
-        hero.returnToIdle(() => this.finishAfterImpacts(onComplete));
-      });
+    if (sourceKey && target) {
+      this.executePreparedSkill(hero, skill, sourceKey, [target], triggerImpact, onComplete);
+      return;
     }
-  }
-
-  /** Play a prepared effect once, above actors and below combat feedback. */
-  private playSkillEffect(key: string, target: TargetDummy): void {
-    const center = target.sprite.getCenter(undefined, true);
-    this.playSkillEffectAt(key, center.x, center.y);
+    // Source admission happens before MP; never substitute body-only or baked effects.
+    onComplete();
   }
 
   /** Shared stationary area presentation; source hit metadata remains separate. */
-  private executeAreaPresentation(hero: UnitActor, skill: SkillConfig, onComplete: () => void): void {
-    const presentation = skill.presentation!;
+  private executeSourceAreaSkill(hero: UnitActor, skill: SkillConfig, onComplete: () => void, admittedSourceKey?: string): void {
     const targets = this.enemies.filter(enemy => enemy.currentHp > 0);
     if (!targets.length) { onComplete(); return; }
-    const anchors = targets.map(enemy => ({ x: enemy.x, y: enemy.y - 50 }));
-    const group = { x: anchors.reduce((sum, p) => sum + p.x, 0) / anchors.length,
-      y: anchors.reduce((sum, p) => sum + p.y, 0) / anchors.length };
     this.updateStatus(`Action: ${hero.heroName} uses ${skill.name} on all enemies!`);
-    hero.playAnimation(skill.motion);
-    for (const effect of presentation.effects) {
-      this.time.delayedCall(effect.startFrame * 1000 / 60, () => {
-        if (this.combatState !== 'HERO_ATTACKING') return;
-        const points = effect.anchor === 'screen'
-          ? [{ x: this.scale.width / 2, y: getBattleLayout(this.scale.width, this.scale.height, BATTLE_ARENAS[this.arenaKey]).partyTop / 2 }]
-          : effect.anchor === 'target-group' ? [group] : anchors;
-        for (const point of points) {
-          this.playSkillEffectAt(effect.key, point.x, point.y, effect.layer ?? 'front', effect.fit === 'arena');
-        }
-      });
-    }
-    this.time.delayedCall(presentation.impactFrame * 1000 / 60, () => {
+    const sourceKey = admittedSourceKey ?? this.sourceSceneKey(skill,targets.length);
+    let actionBase: number | undefined;
+    const impact = (weight = 1) => {
       if (this.combatState !== 'HERO_ATTACKING') return;
-      const base = hero === this.cloud ? Phaser.Math.Between(300, 380) * this.cloudDmgMultiplier
-        : hero === this.aerith ? Phaser.Math.Between(280, 360) * this.aerithMagicMultiplier
-        : Phaser.Math.Between(240, 320);
-      const damage = Math.round(base * skill.damageMultiplier);
+      const rolled = this.skillBaseDamage(hero, skill);
+      actionBase ??= rolled;
+      const damage = Math.round(actionBase * skill.damageMultiplier * weight);
       for (const enemy of targets) {
         if (enemy.currentHp <= 0) continue;
-        enemy.applyDamage(damage, false, skill.motion === 'magic_atk' ? 'holy' : 'physical', true);
+        enemy.applyDamage(damage, false, skillDamageType(skill), true);
         this.handleTargetDamaged(enemy);
       }
-      this.updatePartyStatusUi();
-    });
-    const motionMs = hero.manifest.animations[skill.motion].frames.reduce((sum, frame) => sum + frame.durationMs, 0);
-    this.time.delayedCall(Math.max(motionMs, presentation.durationFrames * 1000 / 60), () => {
-      hero.returnToIdle(() => this.finishAfterImpacts(onComplete));
-    });
-  }
-
-  private playSkillEffectAt(key: string, x: number, y: number, layer: 'front' | 'back' = 'front', fitArena = false): void {
-    const meta = this.cache.json.get(`effect_${key}_manifest`) as EffectManifest | undefined;
-    if (!meta || !this.textures.exists(`effect_${key}`)) return;
-    const animationKey = `effect_${key}_play`;
-    if (!this.anims.exists(animationKey)) {
-      this.anims.create({ key: animationKey,
-        frames: this.anims.generateFrameNumbers(`effect_${key}`, { start: 0, end: meta.frameCount - 1 }),
-        frameRate: meta.frameRate, repeat: 0,
-      });
+      
+    };
+    if (sourceKey) {
+      this.executePreparedSkill(hero, skill, sourceKey, targets, impact, onComplete);
+      return;
     }
-    const sprite = this.add.sprite(x, y, `effect_${key}`)
-      .setOrigin(meta.originX, meta.originY).setScale(meta.scale * BATTLE_ART_SCALE)
-      .setDepth(layer === 'back' ? -50 : 1100)
-      .setBlendMode(meta.blend === 'NORMAL' ? Phaser.BlendModes.NORMAL : Phaser.BlendModes.ADD);
-    const field = getBattleLayout(this.scale.width, this.scale.height, BATTLE_ARENAS[this.arenaKey]).arena;
-    if (fitArena && meta.contentBounds) {
-      const bounds = meta.contentBounds, scaleX = field.width / bounds.width, scaleY = field.height / bounds.height;
-      sprite.setScale(scaleX, scaleY).setPosition(
-        field.x - (bounds.x - meta.originX * meta.frameWidth) * scaleX,
-        field.y - (bounds.y - meta.originY * meta.frameHeight) * scaleY);
-    }
-    const clip = this.make.graphics({}, false);
-    clip.fillStyle(0xffffff).fillRect(field.x, field.y, field.width, field.height);
-    const mask = clip.createGeometryMask();
-    sprite.setMask(mask);
-    sprite.once('destroy', () => { sprite.clearMask(); mask.destroy(); clip.destroy(); });
-    sprite.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => sprite.destroy());
-    sprite.play(animationKey);
+    onComplete();
   }
 
   private showCritPopup(x: number, y: number): void {
@@ -1423,7 +1231,7 @@ export class BattleScene extends Phaser.Scene {
     // Temporarily boost acting hero depth to 1000 so hero is guaranteed in front of all monsters
     hero.setDepthBoost(true);
 
-    if (hero === this.barret) {
+    if (hero.unitKey === 'barret') {
       // --- BARRET: GATLING GUN BURST (Frames 14, 17, 20, 23) ---
       this.updateStatus(`Action: BARRET fires Gatling Gun burst at ${target.nameTag}...`);
       const burstFrames = [14, 17, 20, 23];
@@ -1445,8 +1253,8 @@ export class BattleScene extends Phaser.Scene {
             : this.autoRetarget();
           if (!activeTarget) return;
 
-          const isCrit = Math.random() < 0.2;
-          let bulletDmg = Phaser.Math.Between(130, 180);
+          const isCrit = this.randomValue() < 0.2;
+          let bulletDmg = this.randomBetween(130, 180);
           if (isCrit) bulletDmg = Math.round(bulletDmg * 1.5);
           this.fireBulletProjectile(homeX, homeY, activeTarget.x, activeTarget.y, bulletDmg, isCrit, activeTarget);
         }
@@ -1462,7 +1270,7 @@ export class BattleScene extends Phaser.Scene {
             ? this.currentTarget
             : this.autoRetarget();
           if (fallback) {
-            const isCrit = Math.random() < 0.2;
+            const isCrit = this.randomValue() < 0.2;
             this.fireBulletProjectile(homeX, homeY, fallback.x, fallback.y, 550, isCrit, fallback);
           }
         }
@@ -1470,40 +1278,8 @@ export class BattleScene extends Phaser.Scene {
         // Standardized returnToIdle handles Barret's stationary recoil via manifest metadata
         hero.returnToIdle(() => this.finishAfterImpacts(onComplete));
       });
-    } else if (config.attackType === 'ranged') {
-      // --- AERITH: RANGED HOLY MAGIC ---
-      this.updateStatus(`Action: AERITH casts Holy Light on ${target.nameTag}...`);
-      let hitTriggered = false;
-
-      const onAnimUpdate = (_anim: Phaser.Animations.Animation, frame: Phaser.Animations.AnimationFrame) => {
-        if (!hitTriggered && Number(frame.textureFrame) === config.hitFrameIndex) {
-          hitTriggered = true;
-          const activeTarget = this.currentTarget && this.currentTarget.currentHp > 0
-            ? this.currentTarget
-            : this.autoRetarget();
-          if (activeTarget && this.combatState !== 'VICTORY') {
-            this.fireMagicProjectile(activeTarget);
-          }
-        }
-      };
-
-      hero.on(Phaser.Animations.Events.ANIMATION_UPDATE, onAnimUpdate);
-      hero.playAnimation(config.attackAnim);
-
-      hero.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
-        hero.off(Phaser.Animations.Events.ANIMATION_UPDATE, onAnimUpdate);
-        if (!hitTriggered && !this.enemies.every((e) => e.currentHp <= 0) && this.combatState !== 'VICTORY') {
-          const fallback = this.currentTarget && this.currentTarget.currentHp > 0
-            ? this.currentTarget
-            : this.autoRetarget();
-          if (fallback) {
-            this.fireMagicProjectile(fallback);
-          }
-        }
-        hero.returnToIdle(() => this.finishAfterImpacts(onComplete));
-      });
     } else {
-      // --- MELEE MOVE-TO-TARGET (Cloud / Aerith Melee) ---
+      // --- MELEE MOVE-TO-TARGET ---
       const activeTarget = this.currentTarget && this.currentTarget.currentHp > 0
         ? this.currentTarget
         : target;
@@ -1567,21 +1343,20 @@ export class BattleScene extends Phaser.Scene {
     }
   }
 
+  /** Skill base roll; run attack/magic ranks are already folded into skill multipliers. */
+  private skillBaseDamage(hero: UnitActor, skill: SkillConfig): number {
+    const roll = this.randomBetween(300, 380);
+    return roll * (skillDamageType(skill)==='holy' ? 1 : heroPhysicalMultiplier(hero.sourceBuffs,this.currentRound));
+  }
+
   private applyHeroMeleeDamage(hero: UnitActor, target: TargetDummy): void {
     if (this.combatState !== 'HERO_ATTACKING' || target.currentHp <= 0) return;
-    let baseDmg = 0;
-    let isCrit = false;
+    let baseDmg = this.randomBetween(300,380)*(this.runContext.state.party.find(m=>m.key===hero.unitKey)?.stats.attack??1);
+    const isCrit = this.randomValue()<.15;
 
-    if (hero === this.cloud) {
-      baseDmg = Phaser.Math.Between(450, 650);
-      baseDmg = Math.round(baseDmg * this.cloudDmgMultiplier);
-      isCrit = Math.random() < 0.2;
-    } else {
-      baseDmg = Phaser.Math.Between(180, 260);
-      isCrit = Math.random() < 0.15;
-    }
-
+    baseDmg = Math.round(baseDmg * heroPhysicalMultiplier(hero.sourceBuffs,this.currentRound));
     if (isCrit) baseDmg = Math.round(baseDmg * 1.5);
+    this.basicImpactSound(hero,isCrit);
     target.applyDamage(baseDmg, isCrit, 'physical');
     this.handleTargetDamaged(target);
   }
@@ -1598,21 +1373,6 @@ export class BattleScene extends Phaser.Scene {
       this.afterImpacts = undefined;
       onComplete?.();
     }
-  }
-
-  private fireMagicProjectile(target: TargetDummy): void {
-    // Preserve travel timing without geometric placeholder spell effects.
-    this.pendingImpacts++;
-    this.time.delayedCall(180, () => {
-      if (this.combatState === 'HERO_ATTACKING' && target.currentHp > 0) {
-        let baseDmg = Phaser.Math.Between(700, 900);
-        baseDmg = Math.round(baseDmg * this.aerithMagicMultiplier);
-        const isCrit = Math.random() < 0.15;
-        target.applyDamage(isCrit ? Math.round(baseDmg * 1.5) : baseDmg, isCrit, 'holy');
-        this.handleTargetDamaged(target);
-      }
-      this.resolvePendingImpact();
-    });
   }
 
   private fireBulletProjectile(
@@ -1648,6 +1408,8 @@ export class BattleScene extends Phaser.Scene {
         bullet.destroy();
         glow.destroy();
         if (this.combatState === 'HERO_ATTACKING' && target.currentHp > 0) {
+          const actor=this.getActiveHero();
+          if(actor)this.basicImpactSound(actor,isCrit);
           target.applyDamage(damage, isCrit, 'physical');
           this.handleTargetDamaged(target);
         }
@@ -1675,7 +1437,6 @@ export class BattleScene extends Phaser.Scene {
 
     this.combatState = 'ENEMY_TURN';
     this.targetMarkerContainer.setVisible(false);
-    this.updateCommandMenu();
 
     const attackNextEnemy = (index: number) => {
       if (this.combatState !== 'ENEMY_TURN') return;
@@ -1697,6 +1458,15 @@ export class BattleScene extends Phaser.Scene {
         return;
       }
 
+      const blocked = isEnemyActionBlocked(enemy.statusEffects, 'physical');
+      const attackMultiplier = enemyAttackMultiplier(enemy.statusEffects);
+      enemy.statusEffects = ageEnemyStatuses(enemy.statusEffects);
+      if (blocked) {
+        this.updateStatus(`${enemy.nameTag} is stopped.`);
+        this.time.delayedCall(250, () => attackNextEnemy(index + 1));
+        return;
+      }
+
       const currentAliveHeroes = this.turnOrder.filter((h) => !h.isDead);
       if (currentAliveHeroes.length === 0) {
         this.triggerDefeat();
@@ -1705,16 +1475,36 @@ export class BattleScene extends Phaser.Scene {
 
       // Target selection: Cloud if alive (Tank/Frontline), else first alive hero
       const heroTarget = currentAliveHeroes.includes(this.cloud) ? this.cloud : currentAliveHeroes[0];
+      const definition=ENEMY_CONTENT[enemy.assetKey];
+      const action=definition?enemyAction(definition,enemy.actionCursor,enemy.currentHp/enemy.maxHp):null;
+      if(action?.kind==='prepare'){
+        this.announceCombatAction(enemy.assetKey,enemy.nameTag,action.name,action.next??action.name,'enemy','prepare','ffrogue');
+        enemy.actionCursor++;
+        this.updateStatus(`${enemy.nameTag}: ${action.name}. ${action.next} hits the party next!`);
+        this.events.emit('enemy-action',{key:enemy.assetKey,action,cursor:enemy.actionCursor,round:this.currentRound});
+        this.time.delayedCall(450,()=>attackNextEnemy(index+1));return;
+      }
+      if(action)enemy.actionCursor++;
+      this.announceCombatAction(enemy.assetKey??'training_dummy',enemy.nameTag,action?.name??'attack',action?.name??'Attack','enemy','attack',action?'ffrogue':'basic');
       const stepStr = livingEnemies.length > 1 ? ` (${index + 1}/${livingEnemies.length})` : '';
-      this.updateStatus(`ENEMY TURN${stepStr}: ${enemy.nameTag} charges and attacks ${heroTarget.heroName}!`);
+      this.updateStatus(`ENEMY TURN${stepStr}: ${enemy.nameTag} ${action?'uses '+action.name+' on':'attacks'} ${action?.scope==='party'?'the party':heroTarget.heroName}!`);
+      if(action)this.events.emit('enemy-action',{key:enemy.assetKey,action,cursor:enemy.actionCursor,round:this.currentRound});
 
       enemy.executeAttack(
         heroTarget.x,
         heroTarget.y,
         () => {
-          const dmg = Phaser.Math.Between(220, 360);
-          heroTarget.applyDamage(dmg);
-          this.updatePartyStatusUi();
+          const profile=this.currentEncounter();
+          const targets=action?.scope==='party'?this.turnOrder.filter(h=>!h.isDead):[heroTarget];
+          const impacts:{unit:string;damage:number}[]=[];
+          for(const target of targets){
+            const defense=this.runContext.state.party.find(m=>m.key===target.unitKey)?.stats.defense??1;
+            const dmg=Math.round(profile.damage*(action?.multiplier??1)*attackMultiplier/defense);
+            target.applyDamage(dmg);
+            impacts.push({unit:target.unitKey,damage:dmg});
+          }
+          if(action)this.events.emit('enemy-impact',{key:enemy.assetKey,action,impacts,round:this.currentRound});
+          
         },
         () => {
           // After attack completes, pause 250ms before the next enemy acts
@@ -1729,12 +1519,8 @@ export class BattleScene extends Phaser.Scene {
   }
 
   /**
-   * Fluid Victory Staging:
-   * 1. All enemies fade out via alpha tween.
-   * 2. All living heroes continuously celebrate in their looping 'win' animations.
-   * 3. Bottom JRPG panel slides smoothly down off-screen.
-   * 4. Golden "VICTORY" banner smoothly fades in at the top.
-   * 5. 1.2s later, 3 PokeRogue reward cards slide up from the bottom.
+   * Lock once. Runs persist after gameplay, then keep the live arena through
+   * natural effect completion and actual victory clip cycles.
    */
   private triggerVictory(): void {
     if (this.victoryTriggered) return;
@@ -1743,438 +1529,26 @@ export class BattleScene extends Phaser.Scene {
 
     this.combatState = 'VICTORY';
     this.targetMarkerContainer.setVisible(false);
-    this.lockCommandMenu();
-
-    // 1. All enemies red flash and alpha fadeout if visible
+    this.isCommandMenuOpen = false;
     this.enemies.forEach((enemy) => {
-      if (enemy.visible) {
-        enemy.playDefeatFade();
-      }
+      if (enemy.visible) enemy.playDefeatFade();
     });
-
-    // 2. All living heroes start continuous looping win celebrations
-    this.turnOrder.forEach((hero) => {
-      if (!hero.isDead) {
-        hero.playVictory();
-      }
-    });
-
-    // 3. Golden top victory banner
-    this.roundBannerText.setText('★  V I C T O R Y  ★');
-    this.roundBannerText.setColor('#d3bc83');
-    this.updateStatus(`Battle ${this.fightNumber} of ${this.totalFights} clear!`);
-
-    // 4. Slide bottom HUD down off-screen
-    this.tweens.add({
-      targets: this.bottomHudContainer,
-      y: 300,
-      duration: 400,
-      ease: 'Cubic.easeIn',
-    });
-
-    // 5. Ca. 1.2s later: present PokeRogue reward selection
-    this.time.delayedCall(1200, () => {
-      this.showPokeRogueRewards();
-    });
+    this.updateStatus('Encounter complete');
+    this.finishRunEncounter(true);
   }
 
-  /**
-   * Presents 3 interactive PokeRogue-style reward cards.
-   */
-  private showPokeRogueRewards(): void {
-    if (this.rewardsContainer) {
-      this.rewardsContainer.destroy();
-    }
-
-    const { width, height } = this.scale;
-    this.rewardsContainer = this.add.container(0, 300);
-    this.rewardsContainer.setDepth(1500);
-
-    const rewards: RewardCardData[] = [
-      {
-        id: 'cloud_buff',
-        category: '✦ ATK BUFF',
-        categoryColor: '#d3bc83',
-        title: 'Courage Buff',
-        target: 'Cloud (Vanguard)',
-        desc: '+15% DMG permanent',
-        icon: '⚔',
-      },
-      {
-        id: 'aerith_buff',
-        category: '✦ MATERIA BUFF',
-        categoryColor: '#cba6b1',
-        title: 'Materia Focus',
-        target: 'Aerith (Healer)',
-        desc: '+25% Magic & Healing',
-        icon: '✦',
-      },
-      {
-        id: 'party_heal',
-        category: '✦ RECOVERY',
-        categoryColor: '#a9c58e',
-        title: 'Field Rest',
-        target: 'Entire Party',
-        desc: 'Restores 40% Max HP & 30% Max MP',
-        icon: '💚',
-      },
-    ];
-
-    const cardW = (width - 64) / 3;
-    const cardH = 230;
-    const cardY = height - 140;
-    const cardXs = [width / 6, width / 2, width * 5 / 6];
-
-    const cardContainers: Phaser.GameObjects.Container[] = [];
-
-    rewards.forEach((reward, idx) => {
-      const cx = cardXs[idx];
-      const card = this.add.container(cx, cardY);
-
-      // Keep reward windows in the same material palette as the command dock.
-      const cardG = this.add.graphics();
-      cardG.fillGradientStyle(0x293632, 0x293632, 0x101919, 0x101919, 0.98);
-      cardG.fillRoundedRect(-cardW / 2, -cardH / 2, cardW, cardH, 6);
-      cardG.lineStyle(1.5, 0xd4af37, 0.85); // Warm gold border
-      cardG.strokeRoundedRect(-cardW / 2, -cardH / 2, cardW, cardH, 6);
-      cardG.lineStyle(1, 0x514f42, 0.5);
-      cardG.strokeRoundedRect(-cardW / 2 + 3, -cardH / 2 + 3, cardW - 6, cardH - 6, 4);
-
-      // Category Tag
-      const catText = this.add.text(-cardW / 2 + 18, -cardH / 2 + 16, reward.category, {
-        fontFamily: 'Arial',
-        fontSize: '15px',
-        color: reward.categoryColor,
-        fontStyle: 'bold',
-      });
-
-      // Icon & Title
-      const titleText = this.add.text(-cardW / 2 + 18, -cardH / 2 + 36, `${reward.icon} ${reward.title}`, {
-        fontFamily: 'Arial',
-        fontSize: '21px',
-        wordWrap: { width: cardW - 36 },
-        color: '#ede8d8',
-        fontStyle: 'bold',
-      });
-
-      // Target unit
-      const targetText = this.add.text(-cardW / 2 + 18, -cardH / 2 + 100, reward.target, {
-        fontFamily: 'Arial',
-        fontSize: '16px',
-        wordWrap: { width: cardW - 36 },
-        color: '#a4afa5',
-      });
-
-      // Description
-      const descText = this.add.text(-cardW / 2 + 18, -cardH / 2 + 152, reward.desc, {
-        fontFamily: 'Arial',
-        fontSize: '17px',
-        wordWrap: { width: cardW - 36 },
-        color: '#d3bc83',
-        fontStyle: 'bold',
-      });
-
-      // Click hit area
-      const hitRect = this.add.rectangle(0, 0, cardW, cardH, 0x000000, 0);
-      hitRect.setInteractive({ useHandCursor: true });
-
-      // Hover-Lift & Golden Glow
-      hitRect.on('pointerover', () => {
-        this.tweens.add({
-          targets: card,
-          y: cardY - 8,
-          scaleX: 1.03,
-          scaleY: 1.03,
-          duration: 150,
-          ease: 'Cubic.easeOut',
-        });
-      });
-
-      hitRect.on('pointerout', () => {
-        this.tweens.add({
-          targets: card,
-          y: cardY,
-          scaleX: 1.0,
-          scaleY: 1.0,
-          duration: 150,
-          ease: 'Cubic.easeOut',
-        });
-      });
-
-      hitRect.on('pointerdown', () => {
-        this.selectReward(reward, card, cardContainers);
-      });
-
-      card.add([cardG, catText, titleText, targetText, descText, hitRect]);
-      cardContainers.push(card);
-      this.rewardsContainer?.add(card);
-    });
-
-    // Smooth slide-in from bottom
-    this.tweens.add({
-      targets: this.rewardsContainer,
-      y: 0,
-      duration: 500,
-      ease: 'Back.easeOut',
-    });
-
-    this.updateStatus('Choose a reward for your run!');
-  }
-
-  /**
-   * Applies the selected reward and shows the Next Battle progression button.
-   */
-  private selectReward(
-    reward: RewardCardData,
-    chosenCard: Phaser.GameObjects.Container,
-    allCards: Phaser.GameObjects.Container[]
-  ): void {
-    if (this.combatState !== 'VICTORY' || this.rewardSelected) return;
-    this.rewardSelected = true;
-
-    // 1. Disable further clicks on all cards
-    allCards.forEach((c) => {
-      c.getAll().forEach((obj) => obj.disableInteractive());
-      if (c !== chosenCard) {
-        this.tweens.add({ targets: c, alpha: 0.25, duration: 250 });
-      }
-    });
-
-    // 2. Highlight chosen card
-    this.tweens.add({
-      targets: chosenCard,
-      scaleX: 1.05,
-      scaleY: 1.05,
-      duration: 200,
-      ease: 'Back.easeOut',
-    });
-
-    // 3. Apply Buff or Healing
-    let confirmMsg = '';
-    if (reward.id === 'cloud_buff') {
-      this.cloudDmgMultiplier *= 1.15;
-      confirmMsg = `Courage Buff acquired! Cloud now deals ${Math.round((this.cloudDmgMultiplier - 1) * 100)}% more damage.`;
-    } else if (reward.id === 'aerith_buff') {
-      this.aerithMagicMultiplier *= 1.25;
-      confirmMsg = `Materia Focus acquired! Aerith now casts ${Math.round((this.aerithMagicMultiplier - 1) * 100)}% stronger magic.`;
-    } else if (reward.id === 'party_heal') {
-      confirmMsg = 'Field Rest! All surviving heroes restored 40% Max HP and 30% Max MP.';
-      this.turnOrder.forEach((hero) => {
-        if (!hero.isDead) {
-          const healAmount = Math.round(hero.maxHp * 0.4);
-          hero.currentHp = Math.min(hero.maxHp, hero.currentHp + healAmount);
-          const mpRestore = Math.round(hero.maxMp * 0.3);
-          hero.restoreMp(mpRestore);
-          this.spawnHealPopup(hero.x, hero.y - 70, `+${healAmount.toLocaleString()} HP`);
-        }
-      });
-      this.updatePartyStatusUi();
-    }
-
-    this.updateStatus(confirmMsg);
-
-    // 4. Show Next Battle Button
-    const { width, height } = this.scale;
-    const btnContainer = this.add.container(width / 2, height - 300);
-    btnContainer.setDepth(2000);
-    btnContainer.setScale(0.8);
-    btnContainer.setAlpha(0);
-
-    const btnW = 320;
-    const btnH = 42;
-
-    const btnBg = this.add.rectangle(0, 0, btnW, btnH, 0x45634d, 0.98);
-    btnBg.setStrokeStyle(2, 0xfbbf24);
-    btnBg.setInteractive({ useHandCursor: true });
-
-    const nextFightNum = this.fightNumber + 1;
-    const btnLabel = nextFightNum > this.totalFights
-      ? '★ COMPLETE RUN ★'
-      : `⚔ NEXT BATTLE (${nextFightNum}/${this.totalFights}) ➔`;
-
-    const btnText = this.add.text(0, 0, btnLabel, {
-      fontFamily: 'Arial',
-      fontSize: '16px',
-      color: '#ede8d8',
-      fontStyle: 'bold',
-    }).setOrigin(0.5);
-
-    btnBg.on('pointerover', () => {
-      btnBg.setScale(1.04);
-      btnBg.setStrokeStyle(2, 0xffffff);
-    });
-    btnBg.on('pointerout', () => {
-      btnBg.setScale(1.0);
-      btnBg.setStrokeStyle(2, 0xfbbf24);
-    });
-    btnBg.on('pointerdown', () => {
-      btnContainer.destroy();
-      this.startNextFight();
-    });
-
-    btnContainer.add([btnBg, btnText]);
-
-    this.tweens.add({
-      targets: btnContainer,
-      scaleX: 1.0,
-      scaleY: 1.0,
-      alpha: 1,
-      duration: 350,
-      ease: 'Back.easeOut',
-    });
-  }
-
-  private spawnHealPopup(x: number, y: number, text: string): void {
-    const healText = this.add.text(x, y, text, {
-      fontFamily: 'Arial, Helvetica, sans-serif',
-      fontSize: '22px',
-      color: '#a9c58e',
-      fontStyle: 'bold',
-      stroke: '#064e3b',
-      strokeThickness: 4,
-    }).setOrigin(0.5).setDepth(2500).setScale(0.7);
-
-    this.tweens.add({
-      targets: healText,
-      scale: 1.1,
-      y: y - 45,
-      alpha: 0,
-      duration: 850,
-      ease: 'Cubic.easeOut',
-      onComplete: () => healText.destroy(),
-    });
-  }
-
-  /**
-   * Advances to the next battle encounter with scaled enemy stats.
-   */
-  private startNextFight(): void {
-    if (this.combatState !== 'VICTORY' || !this.rewardSelected) return;
-    this.rewardSelected = false;
-
-    // 1. Hide reward selection
-    if (this.rewardsContainer) {
-      this.tweens.add({
-        targets: this.rewardsContainer,
-        alpha: 0,
-        y: 180,
-        duration: 350,
-        onComplete: () => {
-          this.rewardsContainer?.destroy();
-          this.rewardsContainer = undefined;
-        },
-      });
-    }
-
-    this.fightNumber++;
-
-    if (this.fightNumber > this.totalFights) {
-      this.roundBannerText.setText('★ GLORIOUS RUN VICTORY! ★');
-      this.updateStatus(`All ${this.totalFights} battles cleared! Congratulations!`);
-      return;
-    }
-
-    // 2. Living heroes return from 'win' back to 'idle'
-    this.turnOrder.forEach((hero) => {
-      if (!hero.isDead) {
-        hero.playRestPose();
-      }
-    });
-
-    // 4. Slide bottom HUD back in
-    this.tweens.add({
-      targets: this.bottomHudContainer,
-      y: 0,
-      duration: 450,
-      ease: 'Cubic.easeOut',
-    });
-
-    // 5. Reset round counter and smoothly materialize the new enemy wave
-    this.currentRound = 1;
-    this.updateStatus(`Battle ${this.fightNumber}/${this.totalFights}: New enemies approaching...`);
-
-    this.spawnEncounter(this.fightNumber, () => {
-      this.startRound();
-    });
-  }
-
-  /**
-   * Defeat handler: shows game over banner.
-   */
   private triggerDefeat(): void {
     this.plannedActions.clear();
     this.combatState = 'DEFEAT';
-    this.roundBannerText.setText('DEFEAT');
-    this.roundBannerText.setColor('#ef4444');
     this.updateStatus('DEFEAT: All heroes have fallen in battle!');
-
-    if (this.defeatBanner) {
-      this.defeatBanner.destroy();
-    }
-
-    const { width, height } = this.scale;
-    const banner = this.add.container(width / 2, height / 2 - 20);
-    banner.setDepth(3000);
-
-    const cardWidth = 440;
-    const cardHeight = 220;
-
-    const backdrop = this.add.rectangle(0, 20, width, height, 0x000000, 0.45);
-    banner.add(backdrop);
-
-    const bg = this.add.rectangle(0, 0, cardWidth, cardHeight, 0x141d1d, 0.98);
-    bg.setStrokeStyle(2, 0xca7768);
-
-    const titleText = this.add.text(0, -60, '☠ DEFEAT ☠', {
-      fontFamily: 'monospace',
-      fontSize: '28px',
-      color: '#ef4444',
-      fontStyle: 'bold',
-    }).setOrigin(0.5);
-
-    const subText = this.add.text(
-      0,
-      -15,
-      `Fallen in Battle ${this.fightNumber}/${this.totalFights} (Round ${this.currentRound})`,
-      {
-        fontFamily: 'monospace',
-        fontSize: '13px',
-        color: '#e2e8f0',
-      }
-    ).setOrigin(0.5);
-
-    const btnBg = this.add.rectangle(0, 50, 200, 42, 0x991b1b, 1);
-    btnBg.setStrokeStyle(1, 0xffffff);
-    btnBg.setInteractive({ useHandCursor: true });
-
-    const btnText = this.add.text(0, 50, 'Retry Battle', {
-      fontFamily: 'monospace',
-      fontSize: '14px',
-      color: '#ede8d8',
-      fontStyle: 'bold',
-    }).setOrigin(0.5);
-
-    btnBg.on('pointerover', () => btnBg.setScale(1.05));
-    btnBg.on('pointerout', () => btnBg.setScale(1.0));
-    btnBg.on('pointerdown', () => this.resetBattle());
-
-    banner.add([bg, titleText, subText, btnBg, btnText]);
-    this.defeatBanner = banner;
-  }
-
-  /**
-   * Resets entire battle back to Fight 1, Round 1.
-   */
-  public resetBattle(): void {
-    // Scene shutdown cancels timers, tweens and sprite listeners before rebuilding.
-    this.combatState = 'SPAWNING';
-    this.lockCommandMenu();
-    this.scene.restart({ manifests: this.manifests });
+    this.finishRunEncounter(false);
   }
 
   private updateStatus(msg: string): void {
-    if (this.statusText) {
-      this.statusText.setText(msg);
-    }
+    this.statusMessage = msg;
+  }
+
+  private announceCombatAction(actorKey:string,actorName:string,abilityId:string,abilityName:string,side:CombatActionNotice['side'],kind:CombatActionNotice['kind'],origin:CombatActionNotice['origin']):void{
+    this.events?.emit('combat-action',{sequence:++this.actionSequence,actorKey,actorName,abilityId,abilityName,side,kind,origin} satisfies CombatActionNotice);
   }
 }

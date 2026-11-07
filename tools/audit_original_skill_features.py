@@ -1,6 +1,7 @@
-"""Audit source features omitted by the research player, without changing plans.
+"""Inventory source features and historical baseline findings without changing plans.
 
-This is a targeted audit, not a complete BMB capability detector. Source values
+Use audit_renderer_coverage.mjs for current capability classification. This is
+a targeted source audit, not a complete BMB capability detector. Source values
 from BMSLN are labeled separately from decoded BMB and original M3R evidence.
 """
 import argparse
@@ -136,7 +137,9 @@ def main():
     if any(not p.is_relative_to(STAGE.resolve()) for p in plans):
         parser.error('Prepared plans must stay inside tools/data')
     skills = [audit(p, args.authoring.resolve()) for p in plans]
-    result = {'schemaVersion': 1, 'playerSha256': digest((ROOT / 'tools/original_effect_player.mjs').read_bytes()),
+    result = {'schemaVersion': 1,
+              'findingDescriptionBasis': 'Historical baseline; use audit_renderer_coverage.mjs for current capability status',
+              'playerSha256': digest((ROOT / 'tools/original_effect_player.mjs').read_bytes()),
               'skills': skills, 'limits': [
                   'Targeted source audit, not exhaustive format support or visual fidelity validation.',
                   'New BMSLN fields are source evidence, not decoded or compared binary offsets.',

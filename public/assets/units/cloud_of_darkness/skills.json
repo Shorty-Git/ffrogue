@@ -1,0 +1,263 @@
+{
+  "unitId": "203000803",
+  "unitName": "C. OF DARKNESS",
+  "game": "FFIII",
+  "skills": [
+    {
+      "id": "armor_break",
+      "ffbeId": 201150,
+      "name": "Armor Break",
+      "rarity": 4,
+      "level": 14,
+      "type": "ABILITY",
+      "mpCost": 7,
+      "scope": "single_enemy",
+      "damageMultiplier": 1.2,
+      "damageType": "physical",
+      "hitCount": 1,
+      "attackFrames": [
+        40
+      ],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Physical damage (1.2x) and physical vulnerability (+15%) for 3 enemy phases.",
+      "requiresSourceScene": true,
+      "scenePresentation": "cod_armor_break",
+      "damageEvents": [
+        {
+          "frame": 113,
+          "weight": 1
+        }
+      ],
+      "supportEvents": [
+        {
+          "frame": 113,
+          "effects": [
+            {
+              "kind": "physical-weakness",
+              "multiplier": 1.15,
+              "phases": 3,
+              "chance": 1
+            }
+          ]
+        }
+      ],
+      "reviewNote": "Original damage/DEF-break processes preserved. Reviewed damage first, then +15% incoming physical damage on surviving locked target for 3 enemy phases; no original DEF formula. Full Motion-1 unit prefix (+73) and F40 source marker => F113. No placeholder or omitted member.",
+      "importStatus": "imported",
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "target",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "accepted-gameplay",
+          "sourceMotionType": 1,
+          "sourceMoveType": 1,
+          "note": "Preserve the eight personally accepted full action sequences; no universal native motion-to-clip mapping is inferred."
+        }
+      },
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 201150,
+        "database": {
+          "path": "assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 201150,
+          "name": "Armor Break",
+          "rarity": 3,
+          "dispOrder": 143,
+          "cost": 7,
+          "6p90IFnC": null,
+          "target": "1@1",
+          "targetRange": "1@1",
+          "oL6zdpD0": 3,
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 1,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 1,
+          "processId": "1@24",
+          "PI18xnkD": "0@0",
+          "processParam": "0,0,0,0,0,0,120,0@0,-15,0,0,3,1",
+          "H4zD2IQ5": 0,
+          "motionType": 1,
+          "effectFrames": "0:5000340:1:1:0",
+          "attackFrames": "40:100:3:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000054,
+          "equipCondition": null,
+          "2QoE3PtB": 0,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": "11",
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Original damage/DEF-break processes preserved. Reviewed damage first, then +15% incoming physical damage on surviving locked target for 3 enemy phases; no original DEF formula. Full Motion-1 unit prefix (+73) and F40 source marker => F113. No placeholder or omitted member.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "aura_ball",
+      "ffbeId": 203280,
+      "name": "Aura Ball",
+      "rarity": 6,
+      "level": 38,
+      "type": "ABILITY",
+      "mpCost": 30,
+      "scope": "all_enemies",
+      "damageMultiplier": 1,
+      "hitCount": 0,
+      "attackFrames": [
+        120
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Lower enemy attack by 20% for 3 enemy phases; 40% chance to silence for 1 phase. No HP damage.",
+      "requiresSourceScene": true,
+      "scenePresentation": "cod_aura_ball",
+      "supportEvents": [
+        {
+          "frame": 120,
+          "effects": [
+            {
+              "kind": "attack-down",
+              "multiplier": 0.8,
+              "phases": 3,
+              "chance": 1
+            },
+            {
+              "kind": "silence",
+              "phases": 1,
+              "chance": 0.4
+            }
+          ]
+        }
+      ],
+      "reviewNote": "Original ATK -30%/3 turns and 40% silence preserved separately. Reviewed outgoing physical attack x0.8 for 3 enemy phases; no original ATK formula. F120 reviewed source marker, not native application timing evidence. Complete original target members, no inferred sound playback.",
+      "importStatus": "imported",
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "accepted-gameplay",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Preserve the eight personally accepted full action sequences; no universal native motion-to-clip mapping is inferred."
+        }
+      },
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 203280,
+        "database": {
+          "path": "assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 203280,
+          "name": "Aura Ball",
+          "rarity": 6,
+          "dispOrder": 382,
+          "cost": 30,
+          "6p90IFnC": null,
+          "target": "1@1",
+          "targetRange": "2@2",
+          "oL6zdpD0": 3,
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 2,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 4,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 4,
+          "processId": "24@6",
+          "PI18xnkD": null,
+          "processParam": "-30,0,0,0,3,1@0,0,0,40,0,0,0,0,1",
+          "H4zD2IQ5": 0,
+          "motionType": 2,
+          "effectFrames": "40:5003100:1:1:0&40:7000810:2:1:0",
+          "attackFrames": "120:100:2:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000039,
+          "equipCondition": null,
+          "2QoE3PtB": 0,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": "11,14",
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Original ATK -30%/3 turns and 40% silence preserved separately. Reviewed outgoing physical attack x0.8 for 3 enemy phases; no original ATK formula. F120 reviewed source marker, not native application timing evidence. Complete original target members, no inferred sound playback.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    }
+  ]
+}

@@ -11,6 +11,14 @@ CASES = [('brave-slash', 'atk_impact_001_pink'),
 
 
 class SharedSkillSources(unittest.TestCase):
+    def test_unknown_family_blocks_before_partially_mutating_supported_nodes(self):
+        nodes = [{'typeId': 0}, {'typeId': 7}]
+        with self.assertRaisesRegex(ValueError, 'unsupported BMB node types: 7'):
+            attach_playback_fields(b'', nodes)
+        self.assertEqual(nodes, [{'typeId': 0}, {'typeId': 7}])
+        with self.assertRaisesRegex(ValueError, 'complete hierarchy'):
+            attach_playback_fields(b'', [{'typeId': 0}])
+
     def test_full_known_source_comparison_preserves_dormant_curves(self):
         dormant_translation = 0
         dormant_uv = 0

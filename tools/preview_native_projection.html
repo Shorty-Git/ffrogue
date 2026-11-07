@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><title>Native projection comparison</title>
+<style>[hidden]{display:none!important}body{margin:20px;background:#182020;color:#eee;font:16px system-ui}h1{font-size:22px}.warning{background:#423b2a;padding:12px}label{margin-right:20px;display:inline-block;margin-bottom:8px}.panels{display:flex;gap:16px;margin-top:16px}.panel{width:48%;min-width:0}.crop{aspect-ratio:1080/1200;overflow:hidden;background:#070a0a}img,canvas{width:100%;height:auto;display:block}pre{white-space:pre-wrap;font-size:13px}.geometry .panels{max-width:1100px}.geometry .panel:first-child{flex:1}.geometry .panel:last-child{width:250px;flex:none}h2{font-size:17px;margin:6px 0}table{border-collapse:collapse;font-size:14px}th,td{padding:9px;border-bottom:1px solid #566}</style>
+<h1 id="title">Native viewport comparison</h1>
+<p class="warning">Research only. Same captured camera, viewport and effect anchor. Effect age is manual; timing, body scale and native shading are not matched.</p>
+<label id="reference-label">Original frame <select id="reference" aria-label="Original reference frame"></select></label>
+<label>Reconstructed effect age <input id="age" aria-label="Reconstructed effect age" type="range" min="0" max="90" value="18"> <output id="tick"></output></label>
+<label><input id="backdrop" type="checkbox" checked> Pre-effect video backdrop (body poses unmatched)</label>
+<label><input id="full" type="checkbox"> Show full captured viewport</label>
+<label><input id="particle" type="checkbox"> Experimental Particle geometry</label>
+<label><input id="locator" type="checkbox"> Experimental Null locator</label>
+<label><input id="isolate" type="checkbox"> Isolate measured source node</label>
+<div class="panels"><section class="panel"><h2 id="reference-title">Original video</h2><div id="geometry"></div><div class="crop" id="video"><img id="original" alt="Original video frame"></div></section><section class="panel"><h2>Reconstruction · effect only</h2><div class="crop" id="render"></div></section></div>
+<pre id="status">Loading comparison…</pre>
+<script src="/three.js"></script><script type="module">
+import {createEffectPlayer} from '/player.mjs';
+try{
+const cfg=await(await fetch('/config.json')).json(),comparison=cfg.nativeComparison,audit=comparison.audit;
+document.querySelector('#title').textContent=cfg.name+' · captured native viewport';
+const select=document.querySelector('#reference'),image=document.querySelector('#original'),age=document.querySelector('#age');
+for(const ref of comparison.references){const option=document.createElement('option');option.value=ref.url;option.textContent=ref.name;select.append(option);}
+select.onchange=()=>{image.src=select.value;};if(comparison.references.length){select.selectedIndex=Math.min(2,comparison.references.length-1);image.src=select.value;}
+else{document.querySelector('#reference-label').hidden=true;document.querySelector('#video').hidden=true;}
+const geometry=comparison.geometry;
+if(geometry){
+ document.body.classList.add('geometry');document.querySelector('#reference-title').textContent='Recorded CPU geometry · age unknown';
+ const sample=geometry.projectedNative[0].bounds,table=document.createElement('table');
+ for(const [name,value] of [['Source node',geometry.effect+':'+geometry.node],['Native world center',geometry.native.center.join(', ')],['Projected X bounds',sample.min[0].toFixed(2)+' … '+sample.max[0].toFixed(2)],['Projected Y bounds',sample.min[1].toFixed(2)+' … '+sample.max[1].toFixed(2)],['Viewport',audit.camera.viewport.join(' × ')],['Pinned candidate residual',geometry.displayCenterResidual.map(v=>v.toFixed(6)).join(', ')]]){
+  const row=table.insertRow();row.insertCell().textContent=name;row.insertCell().textContent=value;
+ }
+ const note=document.createElement('p');note.textContent='Pinned measured bounds extend beyond both sides and the top. The lower boundary is inside the full viewport. This table stays fixed while the slider changes reconstruction age; native timing and final shader pixels are not matched.';
+ document.querySelector('#geometry').append(table,note);document.querySelector('#full').checked=true;age.value=geometry.effectFrame;
+}
+function viewportCrop(){for(const crop of document.querySelectorAll('.crop'))crop.style.aspectRatio=audit.camera.viewport[0]+'/'+(document.querySelector('#full').checked?audit.camera.viewport[1]:1200);}
+document.querySelector('#full').onchange=viewportCrop;viewportCrop();
+const renderer=new THREE.WebGLRenderer({alpha:false,preserveDrawingBuffer:true,premultipliedAlpha:false});
+renderer.setPixelRatio(1);renderer.setSize(...audit.camera.viewport,false);renderer.setClearColor(0x182020,1);document.querySelector('#render').append(renderer.domElement);
+const scene=new THREE.Scene(),camera=new THREE.Camera();camera.projectionMatrix.fromArray(audit.camera.projectionMatrix);
+camera.matrix.fromArray(audit.camera.viewMatrix).invert();camera.matrixAutoUpdate=false;camera.updateMatrixWorld(true);
+const player=await createEffectPlayer(THREE,scene,cfg);
+for(const [id,enabled,method] of [['particle',cfg.particleGeometry,'setParticleGeometry'],['locator',cfg.nullLocator,'setNullLocator']]){
+ const toggle=document.querySelector('#'+id);toggle.disabled=!enabled;toggle.checked=!!enabled;toggle.onchange=()=>{player[method](toggle.checked);draw();};
+}
+const isolate=document.querySelector('#isolate');isolate.disabled=!geometry;isolate.onchange=()=>{player.setDiagnosticOnlyNode(isolate.checked?geometry.effect+':'+geometry.node:null);draw();};
+const issues=player.issues.filter(text=>!text.startsWith('Rectangle placement uses adapted'));
+let backdrop=null;
+if(comparison.background){
+ const map=await new Promise((resolve,reject)=>new THREE.TextureLoader().load(comparison.background.url,resolve,undefined,reject));
+ const [width,height]=audit.logicalExtentFromProjection;
+ backdrop=new THREE.Mesh(new THREE.PlaneBufferGeometry(width,height),new THREE.MeshBasicMaterial({map,depthWrite:false,depthTest:false}));
+ backdrop.position.set(width/2,height/2,-9000);backdrop.renderOrder=-10000;scene.add(backdrop);
+}else{document.querySelector('#backdrop').disabled=true;document.querySelector('#backdrop').closest('label').hidden=true;}
+
+function draw(){const f=Number(age.value);player.update(f,()=>({x:audit.rootWorld[0],y:audit.rootWorld[1],unitsToPixels:1}));renderer.render(scene,camera);document.querySelector('#tick').textContent='F'+f;}
+age.oninput=draw;draw();
+document.querySelector('#backdrop').onchange=event=>{if(backdrop)backdrop.visible=event.target.checked;draw();};
+document.querySelector('#status').textContent='Ready. Native viewport: '+audit.camera.viewport.join(' × ')+'; logical extent: '+audit.logicalExtentFromProjection.map(n=>n.toFixed(2)).join(' × ')+'\nProjected root: '+audit.rootViewportTopLeftPixels.map(n=>n.toFixed(2)).join(', ')+' px; geometry multiplier: '+cfg.rendererReference.globalScale.toFixed(3)+'\nNeutral opaque inspection background. Full captured viewport is available; top-1200 crop is an explicit display option.\n'+comparison.note+'\n'+issues.length+' known rendering limitations. Captured world anchor bypasses adapted rectangle placement.\n'+issues.join('\n');
+await fetch('/review-result',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({approved:false,ready:true,mode:'native-projection',opaqueBackground:true,isolationAvailable:!!geometry,planSha256:comparison.planSha256,auditSha256:comparison.auditSha256,geometryAuditSha256:comparison.geometryAuditSha256??null,timingAligned:false,viewport:audit.camera.viewport,issues})});
+}catch(error){document.querySelector('#status').textContent=String(error);throw error;}
+</script></html>

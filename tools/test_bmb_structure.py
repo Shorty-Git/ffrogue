@@ -18,6 +18,15 @@ def fixture():
 
 
 class BmbStructureTests(unittest.TestCase):
+    def test_header_root_life_is_separate_from_node_zero_life(self):
+        data = fixture()
+        struct.pack_into('<I', data, 80, 17)
+        struct.pack_into('<I', data, 96 + 128, 999)
+        result = read_bmb(data)
+        self.assertEqual(result['rootLifecycle']['lifeFramesRaw'], 17)
+        self.assertEqual(result['rootLifecycle']['fieldOffset'], 80)
+        self.assertEqual(result['nodes'][0]['lifeParameter'], 999)
+
     def test_resource_is_taken_from_table_not_arbitrary_strings(self):
         data = fixture()
         before = bytes(data)

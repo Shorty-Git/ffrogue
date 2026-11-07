@@ -1,0 +1,87 @@
+{
+  "kind": "native-particle-basic-v1",
+  "file": "particle.png",
+  "blend": "NORMAL",
+  "program": {
+    "profile": "native-particle-basic-v1",
+    "clock": "fixed-60hz-neutral-root-v1",
+    "frameBudget": 16,
+    "groupScaleX": 1,
+    "pixelsPerUnit": 25,
+    "alphaKeys": [
+      {
+        "offset": 4276,
+        "typeId": 2,
+        "type": "Spline",
+        "slopeLeft": 1.3346965312957764,
+        "slopeRight": 1.3346965312957764,
+        "value": 0,
+        "frame": 0
+      },
+      {
+        "offset": 4296,
+        "typeId": 2,
+        "type": "Spline",
+        "slopeLeft": -0.13775762915611267,
+        "slopeRight": -0.13775762915611267,
+        "value": 0.48750001192092896,
+        "frame": 0.5
+      },
+      {
+        "offset": 4316,
+        "typeId": 2,
+        "type": "Spline",
+        "slopeLeft": 0,
+        "slopeRight": 0,
+        "value": 0,
+        "frame": 1
+      }
+    ],
+    "simulation": {
+      "profile": "native-particle-lifecycle-v1",
+      "generation": {
+        "profile": "native-constant-activation-v1",
+        "typeId": 3,
+        "childCount": 0,
+        "mode": 0,
+        "enabled": true,
+        "start": 0,
+        "startRange": 0,
+        "count": 1,
+        "duration": 4,
+        "repeatCount": 1,
+        "interval": 0.5
+      },
+      "words": [
+        123456789,
+        362436069,
+        521288629,
+        88675123
+      ],
+      "life": 10,
+      "lifeRange": 0,
+      "capacity": 128,
+      "modules": [
+        {
+          "kind": "VelocityX",
+          "value": 2,
+          "range": 1,
+          "velocity": -0.1,
+          "velocityRange": 0
+        }
+      ]
+    }
+  },
+  "provenance": {
+    "scope": "Controlled assembly of native-verified lifecycle, scalar alpha and original texture; not a whole original BMB effect or skill",
+    "referenceSha256": "0d7a787d5b0321a16966ce5962c734797a714506a007df91d3cf54305a5dbd8d",
+    "control": 0,
+    "alphaPlanSha256": "29ebd406296c22b71842b8acd594f524dad6039b509ee10c1548209fb39d1a1d",
+    "simulationSha256": "5ffffef3e01fdc772ce6d4ba61ea5a5a9bc229ca1392e135865798a1f0e40beb",
+    "compilerSha256": "6787d5ad7d686b60d1ff944e2eabcc02174ed2d7629d16734114a9c3a2ab92c9",
+    "alphaSourceSha256": "8ec831b855f1febdb7701a00fdb8c1c6784256e7cc3abdc98192e3de0903335f",
+    "textureSourceSha256": "32c66c01d93f64f2fb67a5c0580bb62f2622b1a56a1e36e55210594e10b07de9",
+    "textureSha256": "3bdc43ae41ac72aadab669eda9f1de4a9031df0f208f9c64869daa2ac05516ce",
+    "hostAdaptation": "Neutral parent, no translation,25 pixels per source unit; white Basic tint; fixed60Hz source-unit steps"
+  }
+}

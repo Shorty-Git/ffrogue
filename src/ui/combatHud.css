@@ -1,0 +1,40 @@
+.combat-ui{position:fixed;z-index:1800;pointer-events:none;color:var(--rpg-ink);font:400 16px/1.15 var(--rpg-type);overflow:hidden}
+body:has(#run-ui:not([data-phase=battle])) .combat-ui,body:has(.encounter-transition) .combat-ui{visibility:hidden}
+.combat-caption{position:absolute;z-index:2;top:8px;left:12px;display:flex;gap:10px;align-items:baseline;padding:6px 10px;border:1px solid #a6c2da65;border-radius:4px;background:#081a30e8;font-size:14px}
+.combat-caption span,.combat-ui small{color:#b9cde1}
+.combat-dock{position:absolute;z-index:2;bottom:0;left:0;right:0;max-height:33%;padding:7px 10px;overflow:auto;pointer-events:auto;background:linear-gradient(165deg,#142d4a,#081426 67%);border-top:1px solid #aec8e5;box-shadow:0 -8px 22px #03091480}
+.combat-party,.ribbon-commands{display:grid;gap:5px}
+.combat-party{grid-template-columns:repeat(3,minmax(0,1fr))}
+.ribbon-commands{grid-template-columns:repeat(4,minmax(0,1fr));margin-top:5px}
+.combat-ui button{font:inherit;color:inherit;border:1px solid #637f9a;border-radius:4px;padding:4px 7px;background:#102640;cursor:pointer;min-height:32px;text-align:left}
+.combat-ui button:hover:not(:disabled),.combat-ui button[aria-pressed=true]{background:#23476c;border-color:#ddc68e}
+.combat-ui button:focus-visible{outline:2px solid #f4d88e;outline-offset:-2px}
+.combat-ui button:disabled{cursor:default;color:#aab8c8;background:#0d1b2c}
+.combat-ui button strong{font-weight:650;overflow-wrap:anywhere}
+.combat-ui small{font-size:13px}
+.combat-party button{min-width:0;display:flex;align-items:center;gap:6px}
+.combat-party img{width:clamp(22px,4vw,42px);height:auto;image-rendering:pixelated;object-fit:contain}
+.ribbon-member{display:grid;flex:1;min-width:0;gap:1px}
+.ribbon-member>span,.arena-health>span{font-size:13px;font-variant-numeric:tabular-nums}
+.combat-ui meter{width:100%;height:6px;display:block}
+.combat-ui meter::-webkit-meter-bar{height:5px;border:0;background:#061122}
+.combat-ui meter::-webkit-meter-optimum-value{background:#83ceb0}
+.combat-ui meter.mp::-webkit-meter-optimum-value{background:#73c8ff}
+.ribbon-commands button{display:grid;grid-template-columns:auto 1fr;column-gap:5px;align-content:center}
+.ribbon-commands small{grid-column:2}
+.ribbon-commands kbd{font:600 13px var(--rpg-type);color:#ddc68e}
+.ribbon-prompt{display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:14px;min-height:21px}
+.ribbon-prompt button{min-height:26px}
+.arena-actor{position:absolute;min-width:40px;min-height:40px;transform:translate(-50%,-50%)}
+.arena-health{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);display:grid;width:max-content;min-width:115px;max-width:190px;padding:4px 7px;gap:2px;border:1px solid #9fbdd6a0;border-radius:4px;background:#08182aeb;text-align:center;font-size:14px}
+.arena-health.is-boss{min-width:155px;border-color:#d5b579;color:#ffe3a8}
+.arena-health.is-boss meter,.arena-health.is-boss meter::-webkit-meter-bar{height:7px}
+.arena-actor.is-marked .arena-health{border-color:#ffe3a8;box-shadow:0 0 9px #ffe3a888}
+.combat-ui button.arena-hit{position:absolute;inset:0;pointer-events:auto;border:1px solid #ffe3a8b0;background:#f8eac517;border-radius:9px;padding:0}
+.combat-ui button.arena-hit:hover,.combat-ui button.arena-hit:focus-visible{background:#fff2b838;border-color:#fff1c9}
+.run-toolbar.combat-settings{top:var(--battle-toolbar-top,8px);right:var(--battle-toolbar-right,8px);display:block}
+.combat-settings summary.rpg-button{cursor:pointer;padding:5px 8px;font-size:14px;min-height:30px}
+.combat-settings[open]{background:#081a30f5;border:1px solid #7f9cb8;border-radius:4px;padding:4px}
+.combat-settings button{min-height:32px}
+@media(max-height:760px){.combat-dock{padding:4px 7px}.ribbon-member{gap:0}.combat-ui button{padding:3px 5px}}
+.arena-actor.is-marked::after{content:'';position:absolute;inset:0;border:1px solid #ffe3a880;border-radius:9px;pointer-events:none}

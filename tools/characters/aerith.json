@@ -33,7 +33,9 @@
       "moveType": "stationary",
       "motion": "magic_atk",
       "desc": "Restore 1000 (+3.4x, Heal) HP to all allies",
-      "execution": "legacy"
+      "execution": "not-imported",
+      "importStatus": "not-imported",
+      "unavailableReason": "Original visual resources and execution profile are not yet fully supported by the Source pipeline."
     },
     {
       "id": "curaja",
@@ -52,7 +54,9 @@
       "moveType": "stationary",
       "motion": "magic_atk",
       "desc": "Restore 2500 (+18x, Heal) HP to all allies",
-      "execution": "legacy"
+      "execution": "not-imported",
+      "importStatus": "not-imported",
+      "unavailableReason": "Original visual resources and execution profile are not yet fully supported by the Source pipeline."
     },
     {
       "id": "banishga",
@@ -78,7 +82,76 @@
       "moveType": "stationary",
       "motion": "magic_atk",
       "desc": "Magic light damage (20x, SPR) to all enemies",
-      "execution": "legacy"
+      "execution": "not-imported",
+      "importStatus": "not-imported",
+      "unavailableReason": "Original visual resources and execution profile are not yet fully supported by the Source pipeline."
+    },
+    {
+      "id": "seal_evil",
+      "ffbeId": 229751,
+      "name": "Seal Evil",
+      "rarity": 5,
+      "level": 22,
+      "type": "ABILITY",
+      "mpCost": 48,
+      "scope": "all_enemies",
+      "damageMultiplier": 1,
+      "hitCount": 0,
+      "attackFrames": [
+        80
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Weaken magic resistance for 3 enemy phases; 30% chance each to inflict Silence and Stop. No HP damage.",
+      "execution": "prepared-support",
+      "requiresSourceScene": true,
+      "scenePresentation": "aerith_seal_evil",
+      "supportEvents": [
+        {
+          "frame": 80,
+          "effects": [
+            {
+              "kind": "magic-weakness",
+              "phases": 3,
+              "chance": 1,
+              "multiplier": 1.25
+            },
+            {
+              "kind": "silence",
+              "phases": 3,
+              "chance": 0.3
+            },
+            {
+              "kind": "stop",
+              "phases": 1,
+              "chance": 0.3
+            }
+          ]
+        }
+      ],
+      "reviewNote": "Source confirms SPR break, Silence and Stop; original-stat formulas are not copied. Reviewed roguelike adaptation: 1.25x incoming holy/magic damage for 3 enemy phases, 30% Silence for 3 phases, 30% Stop for one phase; refresh strongest, no multiplicative stacks. Silence affects magic actions; current enemies use physical actions. Reviewed F80 source marker is the gameplay event, not a proven native status-application frame.",
+      "importStatus": "imported",
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "accepted-gameplay",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Preserve the eight personally accepted full action sequences; no universal native motion-to-clip mapping is inferred."
+        }
+      }
     }
   ],
   "portraitSource": "unit_icons/unit_icon_207000405.png"

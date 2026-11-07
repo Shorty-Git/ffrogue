@@ -1,0 +1,294 @@
+{
+  "schemaVersion": 1,
+  "key": "delita",
+  "spriteUnitId": "253000205",
+  "game": "FFT",
+  "battle": {
+    "maxHp": 3200,
+    "maxMp": 100,
+    "heroName": "DELITA",
+    "heroRole": "VANGUARD",
+    "attackType": "melee",
+    "targetOffsetX": 90,
+    "attackAnim": "atk",
+    "hitFrameIndex": 2
+  },
+  "scale": 2.5,
+  "reviewNote": "Reviewed physical Motion-1 attack/break profile. Body and gameplay are explicit reviewed adaptations, not native whole-skill fidelity or personal approval.",
+  "skills": [
+    {
+      "id": "shield_break",
+      "ffbeId": 202180,
+      "name": "Shield Break",
+      "rarity": 6,
+      "level": 14,
+      "type": "ABILITY",
+      "mpCost": 12,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.0,
+      "damageType": "physical",
+      "hitCount": 1,
+      "attackFrames": [
+        40
+      ],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Physical damage (2x) and physical vulnerability (+20%) for 3 enemy phases.",
+      "execution": "prepared-source",
+      "requiresSourceScene": true,
+      "scenePresentation": "delita_shield_break",
+      "damageEvents": [
+        {
+          "frame": 80,
+          "weight": 1
+        }
+      ],
+      "supportEvents": [
+        {
+          "frame": 80,
+          "effects": [
+            {
+              "kind": "physical-weakness",
+              "multiplier": 1.2,
+              "phases": 3,
+              "chance": 1
+            }
+          ]
+        }
+      ],
+      "reviewNote": "Complete original attack prefix and armor-break member retained. Reviewed damage/break values are separate from original process parameters. No original damage formula or native whole-action fidelity claim.",
+      "importStatus": "imported",
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "target",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 1,
+          "sourceMoveType": 1,
+          "note": "Explicit review of the physical single-target Motion-1/move-1 damage+DEF-break profile, complete composed unit attack prefix and exported atk body; reuse the accepted Armor Break action profile. Native assembly evidence in native-hit-profiles.md covers effect composition, not a universal body selector. Actual full BattleScene playback remains required. No inference for Motion2."
+        }
+      }
+    },
+    {
+      "id": "chant",
+      "ffbeId": 210550,
+      "name": "Chant",
+      "type": "ABILITY",
+      "mpCost": 12,
+      "scope": "party",
+      "damageMultiplier": 1,
+      "hitCount": 0,
+      "attackFrames": [
+        100
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Spend 100 HP to heal other living allies for 1,000 HP.",
+      "execution": "prepared-friendly",
+      "requiresSourceScene": true,
+      "scenePresentation": "delita_chant",
+      "allyEvents": [
+        {
+          "frame": 100,
+          "effects": [
+            {
+              "kind": "heal",
+              "amount": 1000
+            }
+          ]
+        }
+      ],
+      "importStatus": "imported",
+      "reviewNote": "Original members, source markers and process parameters preserved. Fixed healing, HP cost, non-stacking charge, risk multiplier and round duration are explicitly reviewed roguelike adaptations. Body uses the exported magic clip by explicit review, never by Motion-ID fallback.",
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Explicit stationary support action using checked magic_atk and magic_standby body clips; no attack prefix, dash or standard attack substitution. Source marker controls gameplay, independent of clip completion and decorative tails. Not a measured original whole-action body selection."
+        }
+      },
+      "hpCost": 100,
+      "allyTargeting": "other-living-allies",
+      "friendlyTargetReview": {
+        "sourceTarget": "3@5",
+        "sourceRange": "0@2",
+        "note": "Exact JP ability 210550 action 41 spends own HP; action 2 heals all allies except self. This is not the unrelated GL ability 200930 named Chant. Fixed nonlethal HP cost and fixed healing are reviewed gameplay adaptations."
+      }
+    },
+    {
+      "id": "cunning_hero_sword",
+      "ffbeId": 1323010,
+      "name": "Cunning Hero's Sword",
+      "type": "ABILITY",
+      "rarity": 5,
+      "level": 1,
+      "mpCost": 48,
+      "scope": "all_enemies",
+      "damageMultiplier": 3.0,
+      "damageType": "physical",
+      "hitCount": 9,
+      "attackFrames": [
+        42,
+        48,
+        54,
+        60,
+        66,
+        72,
+        78,
+        84,
+        90
+      ],
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.07
+        },
+        {
+          "frame": 48,
+          "weight": 0.07
+        },
+        {
+          "frame": 54,
+          "weight": 0.07
+        },
+        {
+          "frame": 60,
+          "weight": 0.07
+        },
+        {
+          "frame": 66,
+          "weight": 0.07
+        },
+        {
+          "frame": 72,
+          "weight": 0.07
+        },
+        {
+          "frame": 78,
+          "weight": 0.07
+        },
+        {
+          "frame": 84,
+          "weight": 0.07
+        },
+        {
+          "frame": 90,
+          "weight": 0.44
+        }
+      ],
+      "moveType": "stationary",
+      "motion": "atk",
+      "desc": "Nine slashes dealing 3x total physical damage to all enemies.",
+      "execution": "prepared-source",
+      "requiresSourceScene": true,
+      "scenePresentation": "delita_cunning_hero_sword",
+      "importStatus": "imported",
+      "reviewNote": "Exact all-enemy original slash members and nine timing/weight markers retained. Reviewed roguelike MP48 and total3x replace source MP120 and modifier12000; series brave unlock metadata is retained, not claimed to belong to every original star form.",
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "rest"
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Explicit bounded effect-led stationary adaptation: move4 and zero-prefix Motion2 composition have no unit attack VFX prefix. Keep the actor at rest; do not infer or append atk from the menu pose or Motion2. Nine original VFX-clock markers drive damage independently. No measured original body-selection fidelity claim."
+        }
+      }
+    },
+    {
+      "id": "helm_break",
+      "ffbeId": 202190,
+      "name": "Helm Break",
+      "rarity": 5,
+      "level": 34,
+      "type": "ABILITY",
+      "mpCost": 12,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.0,
+      "damageType": "physical",
+      "hitCount": 1,
+      "attackFrames": [
+        40
+      ],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Physical damage (2x) and magic vulnerability (+20%) for 3 enemy phases.",
+      "execution": "prepared-source",
+      "requiresSourceScene": true,
+      "scenePresentation": "delita_helm_break",
+      "damageEvents": [
+        {
+          "frame": 80,
+          "weight": 1
+        }
+      ],
+      "supportEvents": [
+        {
+          "frame": 80,
+          "effects": [
+            {
+              "kind": "magic-weakness",
+              "multiplier": 1.2,
+              "phases": 3,
+              "chance": 1
+            }
+          ]
+        }
+      ],
+      "reviewNote": "Complete original unit attack prefix and mental-break member retained. Original SPR -60% for five turns remains in originalCommand. Reviewed 2x damage and +20% magic vulnerability for three enemy phases are separate roguelike balance rules; no original formula or native whole-action fidelity claim.",
+      "importStatus": "imported",
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "target",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 1,
+          "sourceMoveType": 1,
+          "note": "Explicit reviewed physical Motion-1/move-1 single-target attack using the checked Delita atk body and complete exact-form attack prefix, as in the accepted Shield Break profile. No Motion-ID fallback: this contract applies only to this reviewed composition. Original marker40 plus prefix offset40 gives event80; native effect composition evidence is documented in native-hit-profiles.md. Full BattleScene playback is required."
+        }
+      }
+    }
+  ],
+  "portraitSource": "unit_icons/unit_icon_253000205.png"
+}

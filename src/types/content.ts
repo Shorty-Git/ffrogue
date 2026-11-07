@@ -4,7 +4,7 @@ export interface ContentRegistry {
   schemaVersion: 1;
   characters: string[];
   monsters: string[];
-  effects: string[];
+  scenePresentations?: string[];
 }
 
 export interface CharacterDefinition {

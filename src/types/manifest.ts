@@ -6,6 +6,7 @@ export interface FrameMeta {
 
 export interface AnimationMeta {
   file: string;
+  bodyLayers?: {normal: string; emission: string};
   frameWidth: number;
   frameHeight: number;
   frameCount: number;
@@ -16,6 +17,8 @@ export interface AnimationMeta {
 }
 
 export interface UnitManifest {
+  /** Prepared texture/animation namespace; independent of character identity. */
+  assetKey?: string;
   unitId: string;
   name: string;
   type?: 'character' | 'monster';

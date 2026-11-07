@@ -1,4 +1,9 @@
 import Phaser from 'phaser';
+import './ui/roguelike.css';
+import './ui/interfaceTheme.css';
+import './ui/combatHud.css';
+import {installRpgTheme} from './ui/designTokens';
+installRpgTheme();
 import { BootScene } from './scenes/BootScene';
 import { PreloadScene } from './scenes/PreloadScene';
 import { BattleScene } from './scenes/BattleScene';
@@ -21,4 +26,4 @@ const config: Phaser.Types.Core.GameConfig = {
   scene: [BootScene, PreloadScene, BattleScene],
 };
 
-new Phaser.Game(config);
+export const game = new Phaser.Game(config);

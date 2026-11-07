@@ -15,9 +15,10 @@ import math
 import struct
 import xml.etree.ElementTree as ET
 from pathlib import Path
-from bmb_channels import CHANNELS, CHANNEL_OFFSETS, KEY_TYPES, compare_vector_curves, read_vector_curve
+from bmb_channels import CHANNELS, CHANNEL_OFFSETS, KEY_TYPES, compare_vector_curves, read_vector_curve, dormant_source_curves, read_node_curves
 from bmb_parameters import compare_parameters, compare_parameter_project, read_bindings, read_parameters
 from bmb_materials import compare_materials, read_materials
+from bmb_source_controls import read_source_controls, compare_source_controls
 
 
 VERSION = bytes.fromhex('01010301')
@@ -102,12 +103,10 @@ def read_bmb(data):
             # These are source parameters, not a computed effect duration.
             node.update(lifeParameter=life, lifeRangeParameter=life_range)
             node['alphaCurve'] = read_scalar_curve(data, parameters, cursor + ALPHA_CURVE_OFFSETS[kind])
-            node['vectorCurves'] = {
-                name: read_vector_curve(data, parameters, cursor + offset, CHANNELS[name][1])
-                for name, offset in CHANNEL_OFFSETS[kind].items()
-            }
+            node['vectorCurves'] = read_node_curves(data, parameters, node)
             read_parameters(data, node)
             read_materials(data, node)
+            read_source_controls(data, node)
         nodes.append(node)
         cursor += size
     hierarchy = read_hierarchy(data, nodes, parameters)
@@ -141,10 +140,14 @@ def read_bmb(data):
         'schemaVersion': 1, 'bytes': len(data), 'sha256': hashlib.sha256(data).hexdigest(),
         'magic': 'IBMB', 'versionBytes': data[4:8].hex(),
         'flagsRaw': struct.unpack_from('<I', data, 8)[0],
+        # RootLife and NodeTree::Initialize use the header, not node0's life.
+        # Preserve the source value; it is not the final effect duration.
+        'rootLifecycle': {'profile': 'native-root-header-v1', 'lifeFramesRaw': struct.unpack_from('<I', data, 80)[0],
+                          'fieldOffset': 80, 'boundary': 'Header RootLife only; child expiration, flags and source emitter ownership are separate'},
         'sections': {'nodes': 96, 'strings': strings, 'parameters': parameters},
         'uninterpretedHeaderCounts': list(struct.unpack_from('<II', data, 24)),
         'nodes': nodes, 'hierarchy': hierarchy, 'resources': resources,
-        'decoded': ['node block boundaries', 'four verified node type IDs',
+        'decoded': ['node block boundaries', 'four verified node type IDs', 'native header RootLife parameter',
                     'life and life-range parameters for verified node types',
                     'preorder hierarchy when all node types are verified',
                     'scalar alpha keyframe data for verified node types',
@@ -183,10 +186,15 @@ def compare_project(result, project):
     keys_checked = 0
     curves_checked = 0
     vector_channel_checks = {}
+    dormant_authoring_curves = []
     parameter_checks = {'staticVectorsChecked': 0, 'motionModesChecked': 0,
                         'bindingSlotsChecked': 0, 'nonemptyBindingsChecked': 0}
     material_checks = {'materialEnumsChecked': 0, 'materialAlphaValuesChecked': 0}
     for node, source in zip(result['nodes'], source_nodes):
+        compare_source_controls(node, source, require_all=False)
+        dormant_authoring_curves.extend({'node': node['index'], 'channel': tag,
+                                         'origin': 'BMSLN Constant texture-color selector; binary curve slot not decoded'}
+                                        for tag in dormant_source_curves(source))
         for field, count in compare_materials(node, source).items():
             material_checks[field] += count
         for field, count in compare_parameters(node, source).items():
@@ -241,7 +249,8 @@ def compare_project(result, project):
             'vectorCurvesChecked': sum(v['curves'] for v in vector_channel_checks.values()),
             'vectorKeysChecked': sum(v['keys'] for v in vector_channel_checks.values()),
             'vectorKeyDataMatches': True, 'vectorChannelChecks': vector_channel_checks,
-            'parameterChecks': parameter_checks, 'materialChecks': material_checks}
+            'parameterChecks': parameter_checks, 'materialChecks': material_checks,
+            'dormantAuthoringCurvesNotDecoded': dormant_authoring_curves}
 
 
 if __name__ == '__main__':

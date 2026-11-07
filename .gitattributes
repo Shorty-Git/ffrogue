@@ -1,0 +1,14 @@
+
+# Keep reviewed effect recipe bytes stable across Windows checkouts.
+tools/effects/*.json text eol=lf
+# Published preview provenance hashes these exact source/runtime bytes.
+src/effects/originalEffectPlayer.mjs -text
+# The priority module also has a raw-byte regression identity.
+src/effects/nativeDrawSubmission.mjs -text
+# Preserve the native fixture's currently pinned CRLF bytes as well.
+src/effects/nativeLifecycle.mjs -text
+tools/original_effect_player.mjs text eol=lf
+tools/presentations/*.json text eol=lf
+tools/characters/cloud.json text eol=lf
+public/assets/presentations/**/manifest.json text eol=lf
+public/vendor/three-preview.js -text

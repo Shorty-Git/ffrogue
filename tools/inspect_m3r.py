@@ -11,6 +11,27 @@ import struct
 from pathlib import Path
 
 
+def native_material_metadata(data, names, material):
+    """Native GetSubmeshInfo/HasUV/GetTextureName for the verified single submesh."""
+    if data[48] != 1:
+        return {'supported': False, 'reason': 'Native submesh count is not one'}
+    slots = []
+    for offset in (20, 24):
+        relative = struct.unpack_from('<I', data, material + offset)[0]
+        if relative == 0xffffffff:
+            slots.append({'pointerPresent': False, 'name': None})
+            continue
+        start = names + relative
+        if not names <= start < material or (relative and data[start - 1] != 0):
+            raise ValueError('Invalid BR3M material texture reference')
+        end = data.find(b'\0', start, material)
+        if end < 0:
+            raise ValueError('Unterminated BR3M material texture reference')
+        slots.append({'pointerPresent': True, 'name': data[start:end].decode('utf-8')})
+    return {'supported': True, 'submeshIndex': 0, 'vertexStride': 36, 'hasUv': True,
+            'textures': slots, 'origin': 'Pinned native single-submesh material accessors'}
+
+
 def read_m3r(data):
     if len(data) < 64 or data[:4] != b'BR3M':
         raise ValueError('Expected a complete BR3M header')
@@ -18,14 +39,20 @@ def read_m3r(data):
     if version not in (34, 35) or materials != 1 or reserved != 0:
         raise ValueError('Unverified BR3M version or material layout')
     names, material, indices, vertices, tail, end, end_copy = struct.unpack_from('<7I', data, 16)
-    if not 64 <= names < material < indices <= vertices <= tail <= end == end_copy == len(data):
+    if not 64 <= names <= material < indices <= vertices <= tail <= end == end_copy == len(data):
         raise ValueError('Invalid BR3M section boundaries')
     if indices - material != 88:
         raise ValueError('Unverified BR3M material record size')
-    name_end = data.find(b'\0', names, material)
-    if name_end < 0:
-        raise ValueError('Unterminated BR3M embedded texture name')
-    texture_name = data[names:name_end].decode('utf-8')
+    material_metadata = native_material_metadata(data, names, material)
+    if names == material:
+        if not material_metadata['supported'] or any(slot['pointerPresent'] for slot in material_metadata['textures']):
+            raise ValueError('Empty BR3M name table requires absent material texture pointers')
+        texture_name = None
+    else:
+        name_end = data.find(b'\0', names, material)
+        if name_end < 0:
+            raise ValueError('Unterminated BR3M embedded texture name')
+        texture_name = data[names:name_end].decode('utf-8')
     stride, vertex_count, base, index_count = struct.unpack_from('<4I', data, material + 32)
     if stride != 36 or base != 0 or not 0 < vertex_count <= 65536 or index_count % 3:
         raise ValueError('Unverified BR3M vertex/index layout')
@@ -49,6 +76,7 @@ def read_m3r(data):
     triangles = [list(raw_indices[i:i + 3]) for i in range(0, index_count, 3)]
     return {'schemaVersion': 1, 'sourceSha256': hashlib.sha256(data).hexdigest(),
             'version': version, 'embeddedTextureName': texture_name,
+            'nativeMaterial': material_metadata,
             'vertexCount': vertex_count, 'triangleCount': len(triangles),
             'vertices': points, 'triangles': triangles,
             'bounds': {axis: [min(v['position'][i] for v in points), max(v['position'][i] for v in points)]

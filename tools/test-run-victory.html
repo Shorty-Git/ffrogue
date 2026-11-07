@@ -1,0 +1,44 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><base href="/"><title>Victory persistence review</title>
+<style>body{margin:0;background:#030d24}#game-container{width:100vw;height:100vh}#qa{position:fixed;z-index:9000;right:8px;top:55px;width:220px;background:#041023ee;border:1px solid #799cbb;color:white;font:11px monospace;padding:10px}button{padding:9px}pre{white-space:pre-wrap;max-height:150px;overflow:auto}</style>
+<div id="game-container"></div><aside id="qa"><button id="review" disabled>Check victory reloads</button><button id="advance" hidden>Continue after screenshot</button><pre id="report">Loading...</pre></aside>
+<script type="module">
+import {game} from '/src/main.ts';
+import {SAVE_KEY} from '/src/run/runState.mjs';
+const KEY='ffrogue.qa.victory',out=document.querySelector('#report'),button=document.querySelector('#review'),advance=document.querySelector('#advance');
+const delay=ms=>new Promise(r=>setTimeout(r,ms)),check=(v,m)=>{if(!v)throw Error(m);};
+async function until(test,label){const end=performance.now()+120000;while(!test()){if(performance.now()>end)throw Error('Timeout: '+label);await delay(25);}}
+const click=action=>{const b=document.querySelector(`[data-action="${action}"]`);check(b&&!b.disabled,'Missing '+action);b.click();};
+await until(()=>game.registry.get('runFlow'),'flow');const flow=game.registry.get('runFlow');
+let qa=JSON.parse(sessionStorage.getItem(KEY)??'null');
+const store=()=>sessionStorage.setItem(KEY,JSON.stringify(qa));
+function restore(){const current=JSON.parse(localStorage.getItem(SAVE_KEY)??'null');if(current?.seed==='qa-victory-persistence'){if(qa.backup===null)localStorage.removeItem(SAVE_KEY);else localStorage.setItem(SAVE_KEY,qa.backup);}sessionStorage.removeItem(KEY);}
+async function run(){button.disabled=true;try{
+ if(!qa){qa={stage:'fight',backup:localStorage.getItem(SAVE_KEY),results:[]};store();document.querySelector('#run-seed').value='qa-victory-persistence';click('play');if(document.querySelector('[data-action="accept"]'))click('accept');click('spin');click('lever-skip');click('confirm');
+  await until(()=>game.scene.isActive('BattleScene')&&game.scene.getScene('BattleScene').isRunCommandWindow(),'first battle');const scene=game.scene.getScene('BattleScene');
+  for(let i=0;flow.state.phase==='battle'&&i<30;i++){
+   await until(()=>scene.isRunCommandWindow()||flow.state.phase!=='battle','command');if(flow.state.phase!=='battle')break;
+   const hero=scene.turnOrder.find(h=>!h.isDead&&!h.hasActed);scene.selectHero(hero);scene.openHeroCommands(hero);scene.cmdAttackBtnBg.emit('pointerdown');scene.cmdExecuteBtnBg.emit('pointerdown');await until(()=>hero.hasActed||flow.state.phase!=='battle','action');
+  }
+  await until(()=>flow.state.phase==='rewards','persisted victory');check(!document.querySelector('.victory-overlay'),'Rewards appeared before celebration');
+  qa.rewardState=structuredClone(flow.state);qa.stage='victory-reload';qa.results.push({kind:'reload-during-victory',stage:scene.runVictoryStage,arenaActive:scene.sys.isActive(),offers:flow.state.offers});store();location.reload();return;
+ }
+ if(qa.stage==='victory-reload'){
+  check(JSON.stringify(flow.state)===JSON.stringify(qa.rewardState),'Victory save changed on reload');click('continue');
+  await until(()=>document.querySelector('.victory-overlay[data-phase=rewards]'),'restored rewards');const scene=game.scene.getScene('BattleScene');
+  check(scene.sys.isActive()&&scene.combatState==='VICTORY'&&scene.turnOrder.filter(h=>!h.isDead).every(h=>h.hasVictoryPose&&['win_before','win'].includes(h.currentAnimKey)),'Restored arena/poses missing');
+  const shell=document.querySelector('.victory-overlay .rpg-shell').getBoundingClientRect(),canvas=game.canvas.getBoundingClientRect();
+  const groupBottom=Math.max(...scene.runPartyBounds().map(b=>canvas.top+b.bottom*canvas.height/scene.scale.height));check(shell.top>=0&&shell.bottom<=innerHeight&&shell.left>=0&&shell.right<=innerWidth,'Reward popup exceeds viewport');
+  check(scene.bottomHudContainer.y===0&&scene.bottomHudContainer.alpha>0,'Battle HUD was removed');
+  const before=scene.runPartySnapshot();scene.executePlannedAction();check(JSON.stringify(before)===JSON.stringify(scene.runPartySnapshot())&&scene.activeSkillActions===0,'Completed battle accepts input');
+  qa.results.push({kind:'restored-reward-overlay',arenaActive:true,heroPoses:scene.turnOrder.map(h=>h.currentAnimKey),popup:{top:shell.top,bottom:shell.bottom,left:shell.left,right:shell.right},groupBottom,hudY:scene.bottomHudContainer.y,transparent:getComputedStyle(document.querySelector('.victory-overlay')).backgroundColor,offersUnchanged:JSON.stringify(flow.state.offers)===JSON.stringify(qa.rewardState.offers)});store();
+  out.textContent='PAUSED: restored rewards over the live arena. Capture, then Continue.';advance.hidden=false;await new Promise(r=>advance.onclick=()=>{advance.hidden=true;r();});
+  let ix=flow.state.offers.findIndex(r=>r.type==='stat');if(ix<0)ix=0;click('reward-'+ix);if(document.querySelector('[data-action=replace-0]'))click('replace-0');qa.nextState=structuredClone(flow.state);check(qa.nextState.encounter===1,'Reward did not advance once');qa.stage='choice-reload';store();location.reload();return;
+ }
+ if(qa.stage==='choice-reload'){
+  check(JSON.stringify(flow.state)===JSON.stringify(qa.nextState),'Chosen reward changed on reload');click('continue');await until(()=>game.scene.isActive('BattleScene')&&game.scene.getScene('BattleScene').isRunCommandWindow(),'next battle');
+  check(flow.state.phase==='battle'&&flow.state.encounter===1&&!document.querySelector('.reward-card'),'Reward was replayed');qa.results.push({kind:'reload-after-choice',encounter:1,upgradesPreserved:true,duplicateReward:false});
+  const origin=new URLSearchParams(location.search).get('captureOrigin');check(/^http:\/\/127\.0\.0\.1:\d+$/.test(origin??''),'Loopback receipt sink required');const response=await fetch(origin+'/product-review',{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({passed:true,kind:'victory-persistence-review',actualPageReloads:2,results:qa.results})});check(response.ok,'Receipt save');restore();flow.menu();out.textContent='PASS: two actual page reloads; victory rewards and chosen upgrade preserved.';
+ }
+ }catch(error){out.textContent='FAIL '+error.stack;if(qa)restore();}finally{button.disabled=false;}}
+button.disabled=false;button.onclick=run;if(qa)await run();else out.textContent='Ready';
+</script></html>

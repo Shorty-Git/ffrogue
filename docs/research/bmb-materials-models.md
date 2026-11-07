@@ -1,5 +1,17 @@
 # Selected material controls and original BR3M geometry
 
+2026-10-26 extension: the verified single-submesh36-byte layout also permits an
+empty texture-name table when both material texture pointers are absent.
+`inspect_m3r.py` preserves`embeddedTextureName:null` and rejects invalid pointers;
+it never invents a texture. Cross Slash's newly staged original circular model
+f39b120eeedcaccbec7c5c0b57c1824e6a63fa64b7e7b971b90ed404dd3c7cb1
+matches the existing converted counterpart on100 vertices/128 triangles,
+positions/normals/RGBA and the previously documented UV/winding reversal. Seven
+model tests pass. This is decoding evidence, not native rendering validation.
+Its prepared geometry reaches the shared experimental product bridge. See the
+current reconstruction map for receipts, scope and retained Legacy presentation.
+The following paragraphs describe their recorded earlier revision.
+
 Checked on 2026-10-22. Offline tools only; no runtime publication, engine switch,
 purchase, SDK installation or full original-effect rendering.
 

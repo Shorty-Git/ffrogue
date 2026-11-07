@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { UnitManifest } from '../types/manifest';
-import { MotionType } from '../types/skills';
+import { MotionType, ActiveHeroBuff } from '../types/skills';
 
 export interface UnitCombatConfig {
   attackType: 'melee' | 'ranged';
@@ -21,6 +21,7 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
   private victoryComplete?: () => void;
   public readonly unitKey: string;
   public readonly manifest: UnitManifest;
+  public get visualKey():string { return this.manifest.assetKey??this.unitKey; }
   public currentAnimKey: string = '';
   public homeSlot: { x: number; y: number };
   public combatConfig: UnitCombatConfig;
@@ -41,6 +42,7 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
     return this.currentHp <= 0;
   }
   public hasActed: boolean = false;
+  public sourceBuffs: ActiveHeroBuff[] = [];
 
   constructor(
     scene: Phaser.Scene,
@@ -51,7 +53,7 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
     config?: UnitActorConfig
   ) {
     // Start with the idle spritesheet frame 0 as initial texture
-    super(scene, x, y, `${unitKey}_idle`, 0);
+    super(scene, x, y, `${manifest.assetKey??unitKey}_idle`, 0);
     this.unitKey = unitKey;
     this.manifest = manifest;
     this.homeSlot = { x, y };
@@ -76,6 +78,26 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
     this.playAnimation('idle');
     this.updateDepth();
     scene.add.existing(this);
+    if (scene.game.renderer.type === Phaser.WEBGL && Object.values(manifest.animations).some(clip => clip.bodyLayers)) {
+      const emission = scene.add.image(x, y, '__DEFAULT').setVisible(false).setBlendMode(Phaser.BlendModes.ADD);
+      const sync = () => {
+        const texture = this.texture.key + '_emission';
+        if (!this.visible || this.alpha === 0 || !scene.textures.exists(texture)) {
+          emission.setVisible(false);
+          return;
+        }
+        emission.setTexture(texture, this.frame.name).setVisible(true)
+          .setPosition(this.x, this.y).setOrigin(this.originX, this.originY)
+          .setFlip(this.flipX, this.flipY).setScale(this.scaleX, this.scaleY)
+          .setRotation(this.rotation).setAlpha(this.alpha).setDepth(this.depth + .001)
+          .setScrollFactor(this.scrollFactorX, this.scrollFactorY);
+      };
+      scene.events.on(Phaser.Scenes.Events.POST_UPDATE, sync);
+      this.once(Phaser.GameObjects.Events.DESTROY, () => {
+        scene.events.off(Phaser.Scenes.Events.POST_UPDATE, sync);
+        if (emission.scene) emission.destroy();
+      });
+    }
   }
 
   /**
@@ -180,6 +202,14 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
     if (!Number.isFinite(cost) || cost < 0) return false;
     if (this.currentMp < cost) return false;
     this.currentMp -= cost;
+    return true;
+  }
+
+  /** A reviewed skill cost cannot K.O. its caster or behave as incoming damage. */
+  public spendHp(cost: number): boolean {
+    if (!Number.isInteger(cost) || cost < 1 || this.isDead || this.currentHp <= cost) return false;
+    this.currentHp -= cost;
+    this.refreshRestPose();
     return true;
   }
 
@@ -289,7 +319,8 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
    */
   public registerAnimations(): void {
     for (const [animName, animMeta] of Object.entries(this.manifest.animations)) {
-      const phaserKey = `${this.unitKey}_${animName}`;
+      const phaserKey = `${this.visualKey}_${animName}`;
+      if(!this.scene.textures.exists(phaserKey))continue;
       if (!this.scene.anims.exists(phaserKey)) {
         this.scene.anims.create({
           key: phaserKey,
@@ -309,6 +340,8 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
    * so that the unit's logical feet stay at the exact same world coordinate.
    */
   public playAnimation(animName: string, ignoreIfPlaying = false): this {
+    if(!this.scene.textures.exists(`${this.visualKey}_${animName}`))throw Error(`Body clip was not admitted before battle: ${this.visualKey}/${animName}`);
+    if(animName!=='win_before'&&animName!=='win')this.victoryPoseReady=false;
     const animMeta = this.manifest.animations[animName];
     if (!animMeta) {
       console.warn(`[UnitActor] Animation '${animName}' not found in manifest for ${this.unitKey}`);
@@ -316,7 +349,7 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
     }
 
     if (this.victoryComplete) {
-      this.off(`animationcomplete-${this.unitKey}_win_before`, this.victoryComplete);
+      this.off(`animationcomplete-${this.visualKey}_win_before`, this.victoryComplete);
       this.victoryComplete = undefined;
     }
     this.currentAnimKey = animName;
@@ -326,7 +359,7 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
     const pivotY = animMeta.pivotY;
     this.setOrigin(pivotX, pivotY);
 
-    const phaserKey = `${this.unitKey}_${animName}`;
+    const phaserKey = `${this.visualKey}_${animName}`;
     this.play(phaserKey, ignoreIfPlaying);
     return this;
   }
@@ -370,7 +403,35 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
       this.victoryComplete = undefined;
       if (!this.isDead && this.currentAnimKey === 'win_before') this.playAnimation('win');
     };
-    this.once(`animationcomplete-${this.unitKey}_win_before`, this.victoryComplete);
+    this.once(`animationcomplete-${this.visualKey}_win_before`, this.victoryComplete);
+  }
+
+  private victoryPoseReady=false;
+  public get hasVictoryPose():boolean{return this.victoryPoseReady;}
+
+  /** Signal the verified terminal pose; complete clips continue behind rewards. */
+  public playVictoryCycle(onReady:()=>void):()=>void {
+    if(this.isDead||!this.manifest.animations.win){onReady();return ()=>{};}
+    const event='animationrepeat',key=`${this.visualKey}_win`,events=this.scene.events;
+    const registry=this.scene.cache?.json?.get('victory_pose_gates');
+    const candidate=registry?.schemaVersion===1?registry.units?.[this.visualKey]:undefined;
+    const gate=candidate&&String(candidate.unitId)===String(this.manifest.unitId)
+      &&['win_before','win'].includes(candidate.clip)&&Number.isInteger(candidate.frame)&&candidate.frame>=0
+      &&candidate.frame<this.manifest.animations[candidate.clip]?.frameCount&&candidate.frameCounts&&typeof candidate.frameCounts==='object'
+      &&Object.entries(candidate.frameCounts).every(([clip,count])=>this.manifest.animations[clip]?.frameCount===count)?candidate:null;
+    let finished=false;
+    const cancel=()=>{this.off(event,ready);this.off('animationstart',pose);this.off('animationupdate',pose);events.off('shutdown',cancel);};
+    const complete=()=>{if(finished)return;finished=true;this.victoryPoseReady=true;cancel();onReady();};
+    const ready=(animation:Phaser.Animations.Animation)=>{if(animation.key===key)complete();};
+    const pose=(animation:Phaser.Animations.Animation,frame:Phaser.Animations.AnimationFrame)=>{
+      if(gate&&animation.key===`${this.visualKey}_${gate.clip}`&&Number(frame.textureFrame)>=gate.frame)complete();
+    };
+    if(gate){this.on('animationstart',pose);this.on('animationupdate',pose);}
+    this.on(event,ready);events.once('shutdown',cancel);
+    this.playVictory();
+    if(gate&&this.currentAnimKey==='win')complete();
+    else if(gate&&this.anims?.currentAnim?.key===`${this.visualKey}_${gate.clip}`&&Number(this.anims.currentFrame?.textureFrame)>=gate.frame)complete();
+    return cancel;
   }
 
   /**
@@ -396,7 +457,7 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
    * 1. The action was stationary (attackType === 'ranged').
    * 2. The finished animation has a measurable foot offset (absolute recoilOffsetX > 3 pixels).
    * 
-   * If BOTH conditions are met (e.g. Barret's Gatling stance):
+   * If BOTH conditions are met (e.g. Barret's Gatling attack):
    * Temporarily offsets the sprite's x position by the recoil amount so the switch
    * to 'idle' has 0 visual jump, then executes a 150ms ease-out tween back to homeSlot.
    * 

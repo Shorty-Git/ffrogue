@@ -27,6 +27,35 @@ def counterpart():
 
 
 class M3rTests(unittest.TestCase):
+    def test_empty_name_table_preserves_geometry_and_absent_texture_pointers(self):
+        data = fixture()
+        del data[64:80]
+        struct.pack_into('<7I', data, 16, 64, 64, 152, 168, 280, 312, 312)
+        data[48] = 1
+        for offset in [20, 24]:
+            struct.pack_into('<I', data, 64 + offset, 0xffffffff)
+        mesh = read_m3r(data)
+        self.assertIsNone(mesh['embeddedTextureName'])
+        self.assertTrue(all(not slot['pointerPresent'] for slot in mesh['nativeMaterial']['textures']))
+        compare_effekseer(mesh, counterpart())
+        struct.pack_into('<I', data, 64 + 20, 0)
+        with self.assertRaises(ValueError):
+            read_m3r(data)
+
+    def test_native_submesh_uv_and_embedded_texture_references(self):
+        data = fixture()
+        data[48] = 1
+        struct.pack_into('<I', data, 80 + 24, 0xffffffff)
+        native = read_m3r(data)['nativeMaterial']
+        self.assertTrue(native['hasUv'])
+        self.assertEqual(native['textures'], [{'pointerPresent': True, 'name': 'tex'},
+                                             {'pointerPresent': False, 'name': None}])
+        struct.pack_into('<I', data, 80 + 20, 16)
+        with self.assertRaisesRegex(ValueError, 'texture reference'):
+            read_m3r(data)
+        data[48] = 2
+        self.assertFalse(read_m3r(data)['nativeMaterial']['supported'])
+
     def test_mesh_attributes_padding_and_input_preservation(self):
         data = fixture()
         before = bytes(data)

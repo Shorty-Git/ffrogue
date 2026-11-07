@@ -1,0 +1,57 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><base href="/"><title>Themed expedition acceptance</title>
+<style>body{margin:0;background:#030d24}#game-container{width:100vw;height:100vh}#qa{position:fixed;z-index:9000;right:8px;top:52px;width:240px;background:#041023ee;color:white;padding:8px;font:11px monospace}button{padding:9px}pre{white-space:pre-wrap}</style>
+<div id="game-container"></div><aside id="qa"><button id="review" disabled>Fight themed expedition</button><button id="advance" hidden>Continue review</button><pre id="report">Loading...</pre></aside>
+<script type="module">
+import {game} from '/src/main.ts';
+import {createRun,rollParty,SAVE_KEY} from '/src/run/runState.mjs';
+import {runEncounter} from '/src/run/runBalance.mjs';
+const out=document.querySelector('#report'),button=document.querySelector('#review'),advance=document.querySelector('#advance');
+const delay=ms=>new Promise(r=>setTimeout(r,ms)),check=(v,m)=>{if(!v)throw Error(m);};
+async function until(test,label){const end=performance.now()+150000;while(!test()){if(performance.now()>end)throw Error('Timeout: '+label);await delay(25);}}
+const click=key=>{const b=document.querySelector(`[data-action="${key}"]`);check(b&&!b.disabled,'Missing '+key);b.click();};
+async function pause(label){out.textContent='PAUSED: '+label;window.reviewCheckpoint=label;advance.hidden=false;await new Promise(r=>advance.onclick=()=>{advance.hidden=true;r();});window.reviewCheckpoint=null;}
+await until(()=>game.registry.get('runFlow'),'flow');const flow=game.registry.get('runFlow');window.themedReviewGame=game;button.disabled=false;out.textContent='Ready';
+button.onclick=async()=>{button.disabled=true;const backup=localStorage.getItem(SAVE_KEY),results=[];let seed;
+ try{
+  const sink=new URLSearchParams(location.search).get('captureOrigin');const freshness=await(await fetch(sink+'/product-freshness')).json();check(freshness.passed&&freshness.results.length===31,'Fresh served logic required');
+  for(let i=0;i<20000;i++){const s='qa-themes-'+i,r=rollParty(createRun(s,flow.catalog,undefined,flow.rules),flow.catalog);if(r.party.every(m=>['aerith','delita','jack'].includes(m.key))&&r.party.find(m=>m.key==='aerith').form==='aerith'&&r.party.find(m=>m.key==='delita').skills[0].id==='chant'){seed=s;break;}}
+  check(seed,'Support party seed');window.themedReviewTrace={seed,results};document.querySelector('#run-seed').value=seed;click('play');if(document.querySelector('[data-action=accept]'))click('accept');click('spin');click('lever-skip');click('confirm');
+  for(let encounter=0;encounter<4;encounter++){
+   let scene;await until(()=>{scene=game.scene.getScene('BattleScene');return scene.sys.isActive()&&scene.isRunCommandWindow()&&scene.runContext.state===flow.state;},'encounter');
+   const profile=runEncounter(flow.state),actions=[],impacts=[],banners=[],victoryTimeline=[],observeAction=e=>actions.push(structuredClone(e)),observeImpact=e=>impacts.push(structuredClone(e)),observeBanner=e=>banners.push({...e,time:scene.time.now});scene.events.on('enemy-action',observeAction);scene.events.on('enemy-impact',observeImpact);scene.events.on('combat-action',observeBanner);
+   let previousVictory='idle';const observeVictory=()=>{if(scene.runVictoryStage!==previousVictory){previousVictory=scene.runVictoryStage;victoryTimeline.push({stage:previousVictory,time:scene.time.now,sourceActive:scene.preparedScenes.snapshot().active,actors:scene.turnOrder.map(h=>({key:h.visualKey,clip:h.currentAnimKey,ready:h.hasVictoryPose}))});}};scene.events.on('postupdate',observeVictory);
+   const enemyState=()=>scene.enemies.filter(e=>e.currentHp>0).map(e=>({key:e.assetKey,unitId:e.manifest.unitId,name:e.nameTag,hp:e.currentHp,maxHp:e.maxHp,texture:e.sprite.texture.key,bounds:e.sprite.getBounds(),cursor:e.actionCursor,base:{x:e.baseX,y:e.baseY}}));
+   check(scene.arenaKey===profile.arena,'Wrong arena');check(scene.enemies.every((e,i)=>e.assetKey===profile.enemies[i].key&&e.manifest.name===e.assetKey),'Wrong original enemy');
+   for(const e of scene.enemies){const b=e.sprite.getBounds();check(b.left>=0&&b.right<=scene.scale.width&&b.top>=48&&b.bottom<800,'Body clipped outside arena');}
+   results.push({kind:'encounter-entry',encounter,profile,enemies:enemyState(),party:structuredClone(flow.state.party)});await pause(profile.stageId+'-'+(profile.boss?'boss':'normal'));
+   let warningSeen=false,phaseSeen=false;
+   window.themedReviewTrace.current={encounter,actions,impacts,banners,choices:[]};
+   for(let count=0;flow.state.phase==='battle'&&count<160;count++){
+    await until(()=>scene.isRunCommandWindow()||flow.state.phase!=='battle','commands');if(flow.state.phase!=='battle')break;
+    if(profile.boss&&!warningSeen&&actions.some(a=>a.action.kind==='prepare')){warningSeen=true;results.push({kind:'boss-warning',encounter,actions:structuredClone(actions),enemies:enemyState()});await pause(profile.stageId+'-warning');}
+    if(profile.boss&&!phaseSeen&&actions.some(a=>a.action.phase)){phaseSeen=true;results.push({kind:'boss-phase',encounter,actions:structuredClone(actions),enemies:enemyState()});await pause(profile.stageId+'-phase');}
+    const actor=scene.turnOrder.find(h=>!h.isDead&&!h.hasActed);check(actor,'No living ready hero');scene.selectHero(actor);scene.openHeroCommands(actor);
+    // Keep genuine support actions long enough to observe the boss; instant-damage
+    // events are attacks, even though they share the support-event clock.
+    const support=profile.boss&&scene.currentRound<=8?scene.unitSkills[actor.unitKey].find(s=>!s.damageEvents?.length&&(s.allyEvents?.length||s.supportEvents?.length&&s.supportEvents.every(e=>e.effects.every(f=>f.kind!=='execute-or-damage')))&&actor.currentMp>=s.mpCost&&(!s.hpCost||actor.currentHp>s.hpCost)):null;
+    const before=actor.currentMp;if(support){const ix=scene.unitSkills[actor.unitKey].indexOf(support);scene.changeSkillPage(Math.floor(ix/3));scene.skillButtons[ix%3].bg.emit('pointerdown');}else scene.cmdAttackBtnBg.emit('pointerdown');
+    window.themedReviewTrace.current.choices.push({round:scene.currentRound,actor:actor.unitKey,skill:support?.id??'attack',enemy:enemyState()});
+    scene.cmdExecuteBtnBg.emit('pointerdown');await until(()=>actor.hasActed||flow.state.phase!=='battle','action');if(support)check(before-actor.currentMp===support.mpCost,'Source MP mismatch');
+   }
+   check(flow.state.phase==='rewards','Run failed to win encounter');await until(()=>document.querySelector('.victory-overlay[data-phase=rewards]'),'victory cards');
+   if(profile.boss){check(warningSeen&&phaseSeen,'Boss warning/HP phase not exercised');check(impacts.some(i=>i.action.scope==='party'&&i.impacts.length>=2),'Actual party burst missing');}
+   check(scene.turnOrder.filter(h=>!h.isDead).every(h=>h.hasVictoryPose&&['win_before','win'].includes(h.currentAnimKey)),'Victory poses interrupted');
+   observeVictory();const start=victoryTimeline.find(t=>t.stage==='celebrating'),end=victoryTimeline.find(t=>t.stage==='rewards');check(start&&end,'Victory timeline incomplete');
+   const expected=Math.max(...scene.turnOrder.filter(h=>!h.isDead).map(h=>scene.cache.json.get('victory_pose_gates').units[h.visualKey].readyMs));check(end.time-start.time<=expected+250&&end.time-start.time>=expected-100,'Victory pose gate clock differs');
+   check(banners.some(b=>b.side==='hero')&&banners.every((b,i)=>!i||b.sequence>banners[i-1].sequence),'Action notice order');if(actions.length)check(banners.some(b=>b.side==='enemy'),'Enemy action notice missing');
+   scene.events.off('enemy-action',observeAction);scene.events.off('enemy-impact',observeImpact);scene.events.off('combat-action',observeBanner);scene.events.off('postupdate',observeVictory);
+   results.push({kind:'encounter-victory',encounter,actions,impacts,banners,victoryTimeline,expectedPoseMs:expected,observedPoseMs:end.time-start.time,offers:structuredClone(flow.state.offers),party:structuredClone(flow.state.party)});await pause(profile.stageId+'-victory');
+   let ix=flow.state.offers.findIndex(o=>o.type==='evolve');if(ix<0)ix=flow.state.offers.findIndex(o=>o.type==='rest');if(ix<0)ix=flow.state.offers.findIndex(o=>o.type==='stat');if(ix<0)ix=0;
+   const offer=structuredClone(flow.state.offers[ix]);click('reward-'+ix);if(document.querySelector('[data-action=replace-0]'))click('replace-0');check(flow.state.encounter===encounter+1,'Reward advanced twice');results.push({kind:'reward-applied',encounter,offer,party:structuredClone(flow.state.party)});
+  }
+  check(flow.state.phase==='won','Run completion missing');check(flow.state.party.some(m=>m.key==='aerith'&&m.form===(flow.rules.awakeningMode==='highest-reviewed'?flow.catalog.aerith.forms.at(-1).form:flow.catalog.aerith.evolution.form)),'Aerith boss awakening missing');
+  const response=await fetch(sink+'/product-review',{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({passed:true,kind:'themed-expedition',seed,freshness,results})});check(response.ok,'Receipt');out.textContent='PASS: four real encounters, both boss patterns/phases, party bursts, awakening and final victory.';
+ }catch(e){out.textContent='FAIL '+e.stack;console.error(e);}
+ finally{if(backup===null)localStorage.removeItem(SAVE_KEY);else localStorage.setItem(SAVE_KEY,backup);button.disabled=false;}
+};
+</script></html>

@@ -1,10 +1,11 @@
-"""Preserve explicit authoring inheritance controls after known-field comparison.
+"""Use verified binary parent controls plus explicit authoring for unresolved fields.
 
-These fields are an authoring supplement, not newly decoded BMB offsets.
+The binary subset never supplies compatibility flags or unknown enum defaults.
 """
 import math
 import xml.etree.ElementTree as ET
 from inspect_bmb import compare_project
+from bmb_source_controls import compare_source_controls
 
 
 def attach_inheritance(result, project):
@@ -19,7 +20,8 @@ def attach_inheritance(result, project):
         return value == 'true'
 
     prepared = []
-    for source in sources:
+    binary_fields = []
+    for node, source in zip(result['nodes'], sources):
         fields = {}
         for name, tag in [('translation', 'Translate'), ('rotation', 'Rotate'),
                           ('scale', 'Scale'), ('matrix', 'Matrix')]:
@@ -41,8 +43,18 @@ def attach_inheritance(result, project):
             'rootV16': boolean(sources[0], 'Basic_Basic_Version1_6'),
             'rootV15': boolean(sources[0], 'Basic_Basic_Version1_5'),
         }
+        compare_source_controls(node, source)
+        decoded = node.get('sourceControls', {}).get('fields', {})
+        used = []
+        for name in fields.keys() & decoded.keys():
+            if decoded[name]['status'] == 'decoded':
+                fields[name] = decoded[name]['value']
+                used.append(name)
+        binary_fields.append({'node': node['index'], 'fields': sorted(used),
+                              'remainingAuthoringFields': sorted(fields.keys() - set(used))})
         prepared.append(fields)
     for node, fields in zip(result['nodes'], prepared):
         node['authoringInheritance'] = fields
     return {**comparison, 'supplementedInheritanceNodes': len(prepared),
-            'origin': 'BMSLN authoring supplement; inheritance fields are not binary-verified'}
+            'binaryControls': binary_fields,
+            'origin': 'Verified binary fields plus explicit matched authoring for unresolved controls; no compatibility defaults'}

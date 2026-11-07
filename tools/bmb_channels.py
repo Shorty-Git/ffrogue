@@ -22,10 +22,39 @@ CHANNEL_OFFSETS = {
     0: {'translationValue': 560, 'translationSpeed': 576, 'rotationValue': 592,
         'rotationSpeed': 608, 'scaleValue': 624, 'scaleSpeed': 640, 'centerColor': 672},
     2: {'translationValue': 1424, 'translationSpeed': 1440, 'scaleValue': 1488, 'vertexTopLeftColor': 1728},
-    3: {'translationSpeed': 1344, 'texture1TranslationSpeed': 1440, 'centerColor': 1632},
+    3: {'translationSpeed': 1344, 'scaleValue': 1392, 'texture1TranslationSpeed': 1440, 'centerColor': 1632},
     6: {'translationValue': 1392, 'translationSpeed': 1408, 'scaleValue': 1456,
-        'texture1TranslationSpeed': 1504, 'texture1ScaleValue': 1552, 'centerColor': 1696},
+        'scaleSpeed': 1472, 'texture1TranslationSpeed': 1504, 'texture1ScaleValue': 1552, 'centerColor': 1696},
 }
+
+
+def dormant_source_curves(source):
+    """Explicit authoring-only exclusions; these binary key slots remain undecoded."""
+    # A saved curve is not selected by a Constant texture-color module.
+    # Other/absent/unknown selectors never authorize ignoring a populated slot.
+    dormant = []
+    for layer in (1, 2):
+        for channel in ('Rgb', 'Alpha'):
+            prefix = f'Texture{layer}_Color_Scale_{channel}'
+            tag = prefix + '_Value_Curve'
+            array = source.find(tag + '/KeyFrameArray')
+            if array is not None and len(array) and source.findtext(prefix + '_MotionType') == 'Constant':
+                dormant.append(tag)
+    return dormant
+
+
+def read_node_curves(data, parameters, node):
+    """Decode verified slots; preserve the historical plan shape for empty new slots."""
+    result = {}
+    for name, offset in CHANNEL_OFFSETS.get(node['typeId'], {}).items():
+        curve = read_vector_curve(data, parameters, node['offset'] + offset, CHANNELS[name][1])
+        # Empty new channels have no executable keys. Keeping them sparse avoids
+        # rewriting every existing accepted Prepared plan for a schema-only change.
+        if (node['typeId'], name) in {(3, 'scaleValue'), (6, 'scaleSpeed')} and not curve['keys']:
+            continue
+        result[name] = curve
+    return result
+
 
 
 def read_vector_curve(data, parameters, field, axes):
@@ -85,7 +114,8 @@ def compare_vector_curves(node, source):
             checked[channel] = len(source_keys)
     # A successful comparison must not overlook an active source curve simply
     # because this node type has no verified offset for that channel yet.
-    supported_tags = {CHANNELS[c][0] for c in node['vectorCurves']} | {'Blend_Basic_Curve'}
+    supported_tags = ({CHANNELS[c][0] for c in node['vectorCurves']}
+                      | {'Blend_Basic_Curve'} | set(dormant_source_curves(source)))
     for element in source:
         array = element.find('KeyFrameArray')
         if array is not None and len(array) and element.tag not in supported_tags:

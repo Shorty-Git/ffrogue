@@ -1,5 +1,255 @@
 # Background import workflow
 
+## Mako Reactor music
+
+FFRogue uses the FFBE archive track `400993` as a thematic selection for
+Mako Reactor. The archived name `la993_bgm_FF7R_GuardScorpion.acb` matches
+the boss in the FFRogue area. It does not establish an original assignment
+to the background. The local master joins `battle_bg 120142` to resource
+`106502`, `battle_bg_2013_02.jpg` and the SSPB animation, with no matching
+`mission`, `mission_phase` or `monster_dictionary` background row. Nearby
+`battle_bg_2013_*` IDs likewise have no mission rows. Targeted name and
+numeric BGM searches in missions, phases, area and dungeon metadata, and
+`scenario_battle` did not identify an inherited music assignment. The
+available archives verify the track identity independently.
+
+The master also lists the classic FFVII banks `400842`
+(`la842_bgm_ff7_tatakaumono.acb`, standard battle), `400843`
+(`la843_bgm_ff7_saranitatakau.acb`, boss battle) and `400844`
+(`la844_bgm_ff7_makouro.acb`, reactor). The local archive and dump file
+inventory did not locate those bank payloads. No named BGM column in the
+local master references any of those three IDs. Their registry entries
+establish the classic FFVII track identities, with stage usage still open.
+
+| Master resource | Memorial assetpack 5 bank | Use |
+| --- | --- | --- |
+| 400993 | la993_bgm_FF7R_GuardScorpion.acb | FFRogue thematic selection |
+| 4000711 | la00711_bgm_FF7R_Kikaitou_no_Kessen.acb | Comparison excerpt |
+| 4001005 | la01005_bgm_ccff7_Ayatsurareshi_Tetsu_no_Kemono.acb | Comparison excerpt |
+
+Guard Scorpion bank SHA-256 is
+`2782902b61ca236162727b318f996e3f74acf70bd851fea9f2a4b4e54a558ee5`.
+Use vgmstream r2168, stream 1, with `-i` to decode one pass. Encode with
+`ffmpeg -i input.wav -c:a libvorbis -q:a 7 la993_guard_scorpion.ogg`.
+The result hashes to
+`9d49e26f320eec62431317c8646f97988b0c6c0b4c42e03830dfa27f8dc353f5`
+and decodes to 16,655,536 stereo sample frames at 44.1 kHz, matching the
+HCA stream length. The authored loop uses samples 13,261,697–16,655,233.
+The audio manager primes the buffer during the area entrance and requests
+playback at reveal. Subsequent fights share the same area scope.
+
+## Whisperwood battle music
+
+The original master joins background 100031 to five mission rows and background
+101631 to one row, all with `battleBgmResourceId=400005`. These are Latius Woods,
+Provisions and Bright Forest entries. `resource_map` resolves 400005 to
+`sound/bgm/la005_battle1.acb`. FFRogue uses that source music in both Whisperwood
+encounters. The boss assignment is a local presentation choice.
+
+The preserved bank is under
+`tools/data/memorial-audit/trace-clone-backup/assetpacks/on_demand_asset3/199/199/assets/`.
+Its SHA-256 is `a404058782637cfd7cfca1d58b062990be10ea4e28817beb4a0c07d3498c42cd`.
+With the official vgmstream r2168 Windows CLI, run
+`vgmstream-cli.exe -m -s 1 <bank>` for evidence and
+`vgmstream-cli.exe -i -s 1 -o <output.wav> <bank>` for the PCM export.
+The published WAV SHA-256 is
+`b164118954d82a9a7197680663a8331578c90429d349446c851b79fb2ac23d98`.
+The bank reports CRI HCA, stereo 44,100 Hz, stream `la005_battle1`, and the
+loop interval 370898–3816914 samples. The existing similarly named legacy WAV
+has a different sample count. The runtime uses the new bank-verified export.
+
+`stageContent.mjs` selects the resource ID and GameFlow requests it from
+the shared audio manager. The decoded buffer and active loop survive a
+BattleScene restart, Victory, rewards, and boss entry in the same area.
+Changes to a different track crossfade over 240 ms after decode. An unmapped
+area or expedition result fades to silence. The raw decoder and archives
+stay outside the browser. Mako background 120142 has no matching mission or
+phase music join in the available master.
+The combat-audio follow-up also checked `monster_dictionary`, the
+Sweeper and Guard Scorpion battle groups 744010404/744010505, their
+lottery pools and scenario links. Those joins did not establish a
+track for background 120142.
+
+## FFBE normal Home music
+
+The original master `resource_map` row 400003 resolves to
+`sound/bgm/la003_mypage_normal1.acb`. The Memorial ARM64 library
+(SHA-256 `6c7e501c98939581528df3d712ff1f58afcfd392160f1e71ef1f903d49926b77`)
+references that exact NUL-terminated bank name at the ADRP/ADD pair starting
+at `0x1458a4c` inside the exported `HomeUtil::playHomeNormalBgm()`. ADB
+also reached the actual Home party view. The assignment is based on the
+native code reference and master row. Android logcat did not emit a numeric cue.
+The distinct main theme bank maps to resource 400002.
+
+Both preserved Memorial assetpack copies (3 and 5) of the Home bank hash to
+`180a0faa8640c5486a0302c385f67832207b494f1ad370372c2aa43df2439a96`.
+Use the same vgmstream r2168 commands above with the Home bank, stream 1.
+It is CRI HCA at 44,100 Hz stereo, 3,390,762 decoded samples, loop samples
+215038–3390206. The PCM export SHA-256 is
+`2f1310abeb7d5d05382061562a7f93bb9f925ad34c39e0c226f93b7e742f1328`.
+FFRogue shares this track across the title and Slot Machine. The original
+FFBE login track is a separate context.
+
+## Reviewed soft-cell sampling and future mainline intake (2026-11-02)
+
+The original240 frames/30FPS,7,451 packets, cells, UV flips, transforms, opacities,
+blend modes/order and exact reactor atlas remain unchanged. Only a declared
+FFRogue display policy changes sampling for reviewed fog/fog2/add_grad cells.
+The two fog cells are80x40 with26/14 alpha levels, magnified up to about14 source
+pixels per texel. add_grad is20x32 and reaches50x magnification. Nearest sampling
+therefore exposes large steps in the original low-resolution gradients.
+
+prepare_stage_sampling.py copies exact RGBA cell pixels into three separate tiny
+textures, with2-pixel edge extrusion. The shared StageAnimation applies LINEAR
+only to these declared cells. The original atlas stays NEAREST; all hard scenery,
+heroes/enemies/Source textures are untouched. Cropping/gutters prevent adjacent
+atlas bleed; no blur, rescale, recolor or alpha-curve rewrite occurs. Additional
+PNGs total4,386 bytes /33,024 estimated RGBA8 bytes. Original native GPU filtering
+was not measured: this is a reviewed FFRogue adaptation, not reconstructed FFBE
+sampler semantics. Existing source quantization is preserved, not painted away.
+
+CURRENT reproduction requires BOTH steps (the earlier plain export is unsampled):
+
+```powershell
+& $env:FFROGUE_PYTHON tools/prepare_stage_animation.py --source ffbe_asset_dump-main/battle_bg/battle_bg_2013_02.ssbp --output public/assets/stages/reactor --offset 0 216 --canvas 960 1024
+& $env:FFROGUE_PYTHON tools/prepare_stage_sampling.py --root public/assets/stages/reactor --recipe tools/stages/reactor-sampling.json
+node tools/review_stage_sampling.mjs --playwright INSTALLED_PLAYWRIGHT_PATH
+```
+
+Browser before/after frames30/90/150 use the same paused actual BattleScene,
+camera/actors and exact packets, changing only the declared sampler overrides.
+Receipts/screenshots: tools/data/awakening-polish-20261102/sampling/.
+All240 frames/loop/reload/cache, full Source/boss/Victory/rewards also tested.
+
+Mainline inventory is separate from publication. inventory_stage_candidates.py
+checks all1,286 master background rows:1,262 have their exact local JPG and1,181
+their referenced animation binary. Disk contains1,351 JPGs/1,266 SSBPs; these are
+not counts of unique, supported mainline stages. Twelve selected animations were
+decoded and fully checked against the current packet exporter:8 supported back
+profiles,4 blocked. All selected actual atlases exist. Only1/12 has deformation
+(2013_06); three other roots need independent clocks. Whisperwood deformation is
+therefore not the next prerequisite for the strongest current candidates.
+
+| Proposed future area | Original battleBgId / resource | Available animation | Matching original body candidates | Remaining admission |
+| --- | --- | --- | --- | --- |
+| FFVIII Dollet street |120173 /2016_03|600 frames30FPS,3 nested light/neon instances; supported|G-Soldier2058610, Elite Soldier2058710; Elvoret2041910 or Galbadia X-ATM0925060020|Arena framing/floor review; assemble/validate bodies; reviewed boss gameplay/skills|
+| FFVII Shinra Mansion / Nibelheim candidate |120144 /2013_04|600 frames30FPS,6 nested instances; supported back; master selects back only|Ghirofelgo2058210, Yin & Yang2058310; Lost Number3011510|Confirm location/framing, validate prepared bodies and encounter design|
+| FFVII Reactor05 |120141 /2013_01|240 frames30FPS; same supported shared-atlas family as productive reactor|Existing Sweeper/Guard Scorpion; Air Buster4060910 raw body files present|Review framing/art, assemble Air Buster if selected; no new original attack claim|
+
+The proposals are explicitly reviewed visual/theme identifications, NOT a
+gameTitleId foreign-key join in battle_bg or authenticated original encounter
+lists. Dollet's Nautilus storefront is visible in the original image and checked
+against an independent [Dollet location description](https://ffonline.com/ff8/world/Dollet).
+Original enemy descriptions independently mention Dollet/Galbadia, Nibelheim manor
+and Shinra reactors. The raw DB IDs/files/hashes remain separate from proposals
+in tools/stages/mainline-candidates.json. In particular X-ATM0925060010 is the
+Zoldaad version and must NOT be substituted for Galbadia5060020.
+Candidate PNG/CGG/idle/atk files all exist; unassembled bodies are not published
+enemies and unsupported original attacks remain blocked. No authenticated music
+join was found for these candidates; audio IDs/files are not guessed from names.
+FFI–XVI title records exist, but complete stage availability for every title is
+unproven.2006_01 machinery has unconfirmed origin/independent clocks and is deferred.
+
+Recommendation: prepare Dollet as a future Whisperwood replacement to introduce
+a distinct mainline world with supported animation. Keep the current forest and
+four-fight expedition unchanged until complete area/body validation. No new area
+is enabled in this block; no forest decoder research was started.
+
+## Productive SSPB-v1 reactor layer (2026-11-02)
+
+This supersedes inventory-only claims below: Mako Reactor now overlays its original
+back/anime animation on the unchanged JPG. Whisperwood stays static. The common
+StageAnimation component consumes clean prepared quads through Phaser's existing
+Rope pipeline, same arena cover/crop, clipped behind actors. No new camera or
+skill renderer, procedural fog or invented glow curve was added.
+
+Source battle_bg_2013_02.ssbp SHA256:
+6a7f9dd42f9025499ea883918cff98a29ad4980ec07a8ee9df10507b860982e1.
+The exact shared atlas battle_bg_2013_01.png SHA256:
+b0ced167581f14b651d4efefc5dd95a2d75fa27118d158dc8d4ab334a8ae12e0.
+tools/ssbp_v1.py uses the ACTUAL version1 structures and stream documented in the
+[historical official player](https://github.com/SpriteStudio/ssbpLib/tree/2a80bf76d9077275f301b89d604624eac420d168/Players/ssbpLib),
+SS5PlayerData.h and Player::setFrame, rather than today's version4 layout.
+Both independent originals decode completely: reactor14 cells/5 packs, forest28
+cells/3 packs. Every part occurs once/frame; stream ends match the next aligned
+offset, with zero padding only. SDK snapshots/hashes are retained in the receipt.
+
+Admitted export: parent2-D SRT, signed positions/10, negative scales, cell/anchor,
+explicit size flags, integer-truncated inherited opacity, UV flips, frame-record
+draw order, normal/add blends and nested instance clocks. Reactor has240 frames
+at30FPS,7,451 visible prepared quads across8 seconds. Key/start/end/speed, finite
+hold/infinite loop are source-derived; reverse/pingpong also have clock controls.
+Independent instance clocks, unknown types,3-D/Z, animated UV, deformation, color
+shaders and other blends fail closed. Forest has active deformation and therefore
+is NOT partly published. Runtime does not parse raw SSBP or load source atlases
+by guessed same-stem filenames.
+
+Master120142 references back/anime,0,216. Reviewed mapping uses the existing
+960x1024 canvas center plus that placement, origin(480,728). Eight independent
+atlas/JPG samples confirm static alignment, including floor1(324,387) and floor2
+(0,475)/(632,475); JPEG differences are retained in static-layer-alignment.json.
+Viewport cover/crop, continuous repeat, phase reset on scene entry and placement
+behind actors are explicit FFRogue presentation policy. This is source-authored
+motion interpreted with the historical SDK, NOT newly certified FFBE camera/GPU
+filtering/nested visibility or native pixel parity. No new native capture.
+
+Reproduce with configured Python/Pillow:
+
+```powershell
+& $env:FFROGUE_PYTHON tools/prepare_stage_animation.py --source ffbe_asset_dump-main/battle_bg/battle_bg_2013_02.ssbp --output public/assets/stages/reactor --offset 0 216 --canvas 960 1024
+& $env:FFROGUE_PYTHON -m unittest tools/test_stage_animation.py
+node tools/review_stage_runtime.mjs --playwright INSTALLED_PLAYWRIGHT_PATH
+```
+
+Metadata687KB loads at title; atlas111KB loads before reactor combat and is reused
+by its boss. Scene pause stops its clock; shutdown destroys quad/mask objects and
+detaches the listener, retaining shared textures. Audio remains separate/empty.
+Actual browser coverage includes all240 frames, loop wrap, changing light pixels,
+both bosses/Source effects/Victory/rewards, encounter reload and texture reuse.
+Receipts: tools/data/stage-loading-20261102/{animated-browser,stage-runtime,rewards}.
+
+## Animation resource intake (2026-11-02)
+
+Run python tools/inspect_stage_animation.py. Both selected .ssbp files have literal
+SSPB signature/version1 and Ss5Converter v1.0.0 provenance. They are binary
+SpriteStudio resources, not GIFs. All three readable image references exist:
+
+| Selected binary | Actual atlas references |
+| --- | --- |
+| battle_bg_0003_01.ssbp | battle_bg_0003_01_1.png and battle_bg_0003_01_2.png (1024x1024 each) |
+| battle_bg_2013_02.ssbp | battle_bg_2013_01.png (514x974) |
+
+The same-stem2013_02.png is fully transparent and is NOT the atlas referenced by
+this animation. Earlier same-stem inspection did not rule out the shared atlas.
+The forest has separate front/back names; the reactor has nested mako/light/fog
+instance references. Literal names do not prove their transforms, timing or
+parallax. Master back/anime,0,216 remains raw;216 was not guessed as a frame count.
+
+Original atlas data is available. The current implementation gap is a verified
+SSPB-v1 cell-map/part/frame/instance decoder with hierarchy, UV transforms,
+opacity/blend and native draw order. There is NO supported stage-animation player
+or decoded original timing yet, so zero animated stages are productively admitted.
+No procedural scrolling/glow was presented as original animation. Both accepted
+static arenas remain unchanged under the same camera/effects/Victory overlay.
+
+Official reference consulted: [SpriteStudio player data model](https://github.com/SpriteStudio/ssbpLib/blob/master/Players/ssbpLib/SS5PlayerData.h).
+Its current layout must not be applied blindly to these older version1 files.
+Hashes/master rows/strings/atlas dimensions are retained in
+tools/data/battle-polish-20261102/stage-animation-intake.json. The probe does not
+claim that string scanning has decoded cell maps or all nested dependencies.
+
+## Current themed use (2026-11-02)
+
+The same two static, byte-identical arenas below now host Whisperwood's original
+Microchu/Ochu and Mako Reactor's Sweeper/Guard Scorpion. Master battle_bg IDs:
+100031/101631 -> battle_bg_0003_01.jpg;120142 -> battle_bg_2013_02.jpg. Exact master
+rows/SSBP strings and companion hashes are retained by inventory_battle_content.py.
+Theme/formation composition is reviewed FFRogue content, not a reconstructed
+native stage. Background SSBP layers and original stage/music joins remain unknown.
+No new image conversion, invented animated layer or global rescale was introduced.
+Run selection now resolves stageContent.mjs; explicit debug arena queries retain
+the old forest/reactor behavior described below. See enemy-import-workflow.md.
+
 This is the current static-arena workflow. Start with the
 [asset pipeline handbook](asset-pipeline-handbook.md) and
 [asset structure guide](asset_structure.md). Character and effect processing are
@@ -212,3 +462,49 @@ transforms, blending and loop behavior. Implement and review that conversion
 offline under `tools/`, then publish ordinary frame sheets and clean metadata
 with an explicit runtime playback contract. Until then, describe the current
 arenas as static selections and report unavailable animation/layers explicitly.
+
+## Reviewed Mainline batch and gallery
+
+Run `python tools/prepare_reviewed_arenas.py` with Pillow and the local Memorial data mounted at the existing repository paths. The importer joins the stage master to the original background and animation selector, validates the soundtrack bank against the local archive inventory, records the background SHA-256, and sends each SSPB through the existing strict packet exporter. The checked-in recipe records the reviewed title, floor and encounter compatibility. The generated local catalog records every stage row, game-title row, BGM bank, direct mission/phase/dictionary association and local file availability. Unreviewed stage ownership is unresolved. An available bank alone is not a playable export.
+
+| Stage | Profile | FFRogue music | Usage |
+| --- | --- | --- | --- |
+| 120141 | FFVII Mako Reactor 05, 240 frames at 30 FPS | 400993, thematic | Gallery and opt-in seeded reactor variant |
+| 120144 | FFVII Shinra Mansion candidate, 600 frames at 30 FPS | 4000711, thematic FFVII Remake machine battle | Gallery training battle |
+| 120173 | FFVIII Dollet street, 600 frames at 30 FPS | 4001101, thematic Dead End | Gallery training battle |
+
+The three music pairings are thematic. Master associations are retained separately in the local catalog. Classic FFVII banks 400842, 400843 and 400844 remain known registry entries without local ACB payloads in the surveyed roots. New Ogg assets were decoded using the existing vgmstream tooling and encoded at 44.1 kHz. Loop samples are 30046–11216606 for 4000711 and 9523–3117363 for 4001101. The common audio manager owns both preview and run playback.
+
+Open `/?gallery=arenas` to select the source game, arena and soundtrack and exercise the production battle renderer against training targets. Open `/?arenaVariants=1&seed=combat-audio-20` to use the seeded variant rule for a new expedition. The choice is persisted independently of gameplay RNG. The default route and the four-fight structure are unchanged.
+
+The local catalog contains 1,286 stage rows, 1,262 available JPGs and 1,181 available animation selectors. It also contains 701 registered BGM entries, with local bank filename matches for 247. The master title list covers FFI–FFXVI, FFT and spin-offs such as CCFFVIIR, Type-0 and X-2. These counts do not establish the title of individual arenas. The reviewed batch establishes usable profiles for FFVII and FFVIII only.
+
+## Battle music roles
+
+The playback catalog in `src/audio/musicProfiles.mjs` describes series, edition,
+musical function, and local playback availability. Normal encounters select a
+playable normal track in their series, then FFBE Battle 1 as a labeled fallback.
+Boss tracks require an explicit encounter binding. Event and exploration tracks
+are never automatic normal-battle fallbacks. The gallery exposes role, source
+title, availability and manual audition. These are FFRogue music pairings.
+
+The FFBEWW export contains `Ver1_la00713_bgm_FF7R_TatakauMonotati_MotoSoldier.acb`
+with CRI HCA stream `bgm_FF7R_TatakauMonotati_MotoSoldier`. The published local
+profile key is 4000713, derived from the bank basename. The surveyed master
+registry has no corresponding row. SHA-256 of the bank is
+`602a5f268ecac1b614a7c50cf868486920287177c762733554e82eda0f98726a`.
+Decode with `vgmstream-cli -i -o public/assets/audio/la00713_ex_soldier.wav <bank>`.
+The WAV SHA-256 is `ca41345e45f8566129a436ebff61eedc1f74c14784dbf3c1f047ce1c4bb2a39`.
+Its native 44,100 Hz loop is [1239453, 2619933). Square Enix's
+[official track list](https://www.jp.square-enix.com/music/sem/page/FF7R/ost/en/SQEX_10768_75/)
+identifies the arrangement as Let the Battles Begin! – Ex-SOLDIER.
+Both Reactor backgrounds use it for normal combat. Guard Scorpion is reserved
+for its boss encounter, and the boss track remains active through the reward.
+
+FFVIII's Don't Be Afraid (400867, `la867_bgm_ff8_Dont_be_Afraid.acb`) and Force
+Your Way (400868) are registry-only in the surveyed files. The three classic
+FFVII entries (400842–400844) and the alternate Remake banks 400989 and 401038
+also lack payloads in the local search. Dollet uses FFBE Battle 1 as an explicit
+cross-series fallback. Dead End and Kikaitou no Kessen remain manual audition
+choices and are excluded from normal recommendations. Earlier table entries
+describe the previous gallery defaults.

@@ -20,7 +20,75 @@
       ],
       "moveType": "stationary",
       "motion": "magic_atk",
-      "desc": "Restore 1000 (+3.4x, Heal) HP to all allies"
+      "desc": "Restore 1000 (+3.4x, Heal) HP to all allies",
+      "importStatus": "not-imported",
+      "unavailableReason": "Original visual resources and execution profile are not yet fully supported by the Source pipeline.",
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 229750,
+        "database": {
+          "path": "assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 229750,
+          "name": "Healing Wind",
+          "rarity": 8,
+          "dispOrder": 4842,
+          "cost": 26,
+          "6p90IFnC": null,
+          "target": "2@2",
+          "targetRange": "2@2",
+          "oL6zdpD0": 3,
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 4,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 3,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 4,
+          "processId": "2@5",
+          "PI18xnkD": "0@0",
+          "processParam": "0,0,1000,340,100@1,2,3,4,5,6,7,8",
+          "H4zD2IQ5": 0,
+          "motionType": 2,
+          "effectFrames": "40:5016610:1:2:0",
+          "attackFrames": "180:100:2:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000004,
+          "equipCondition": null,
+          "2QoE3PtB": 0,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": null,
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
     },
     {
       "id": "curaja",
@@ -38,7 +106,72 @@
       ],
       "moveType": "stationary",
       "motion": "magic_atk",
-      "desc": "Restore 2500 (+18x, Heal) HP to all allies"
+      "desc": "Restore 2500 (+18x, Heal) HP to all allies",
+      "importStatus": "not-imported",
+      "unavailableReason": "Original visual resources and execution profile are not yet fully supported by the Source pipeline.",
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "MAGIC",
+        "id": 10290,
+        "database": {
+          "path": "assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "magicId": 10290,
+          "name": "Curaja",
+          "rarity": 7,
+          "dispOrder": 31,
+          "cost": 30,
+          "target": "6",
+          "targetRange": "2",
+          "oL6zdpD0": 1,
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 2,
+          "J35nicFV": 0,
+          "magicType": 1,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 3,
+          "aR5i4ewA": 0,
+          "KosY4a18": 2,
+          "Af2Pc0Jz": 0,
+          "processId": "2",
+          "PI18xnkD": "0",
+          "processParam": "0,0,2500,1800,100",
+          "H4zD2IQ5": 1,
+          "effectFrames": "40:3000750:1:2:0&40:3000760:2:2:0",
+          "attackFrames": "120:100:2:2",
+          "7irj9hAb": "1,1,1,0",
+          "iconId": 700000004,
+          "equipCondition": null,
+          "AegvG91P": "1,1",
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": null,
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
     },
     {
       "id": "banishga",
@@ -63,7 +196,204 @@
       ],
       "moveType": "stationary",
       "motion": "magic_atk",
-      "desc": "Magic light damage (20x, SPR) to all enemies"
+      "desc": "Magic light damage (20x, SPR) to all enemies",
+      "importStatus": "not-imported",
+      "unavailableReason": "Original visual resources and execution profile are not yet fully supported by the Source pipeline.",
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "MAGIC",
+        "id": 10170,
+        "database": {
+          "path": "assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "magicId": 10170,
+          "name": "Banishga",
+          "rarity": 6,
+          "dispOrder": 19,
+          "cost": 30,
+          "target": "1",
+          "targetRange": "2",
+          "oL6zdpD0": 1,
+          "element": "0,0,0,0,0,0,1,0",
+          "Isb1GDe2": 2,
+          "J35nicFV": 0,
+          "magicType": 1,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "KosY4a18": 2,
+          "Af2Pc0Jz": 0,
+          "processId": "103",
+          "PI18xnkD": "0",
+          "processParam": "100,99999,2000",
+          "H4zD2IQ5": 3,
+          "effectFrames": "76:99999999:1:4:0&40:5041363:2:2:0&40:5041362:1:2:0&40:5041361:2:1:0&40:5041360:1:1:0",
+          "attackFrames": "42:8:2:2-62:8:2:2-82:8:2:2-102:8:2:2-122:8:2:2-142:8:2:2-162:8:2:2-182:44:2:2",
+          "7irj9hAb": "1,1,1,0",
+          "iconId": 700000005,
+          "equipCondition": null,
+          "AegvG91P": "1,0",
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": "8",
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "seal_evil",
+      "ffbeId": 229751,
+      "name": "Seal Evil",
+      "rarity": 5,
+      "level": 22,
+      "type": "ABILITY",
+      "mpCost": 48,
+      "scope": "all_enemies",
+      "damageMultiplier": 1,
+      "hitCount": 0,
+      "attackFrames": [
+        80
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Weaken magic resistance for 3 enemy phases; 30% chance each to inflict Silence and Stop. No HP damage.",
+      "requiresSourceScene": true,
+      "scenePresentation": "aerith_seal_evil",
+      "supportEvents": [
+        {
+          "frame": 80,
+          "effects": [
+            {
+              "kind": "magic-weakness",
+              "phases": 3,
+              "chance": 1,
+              "multiplier": 1.25
+            },
+            {
+              "kind": "silence",
+              "phases": 3,
+              "chance": 0.3
+            },
+            {
+              "kind": "stop",
+              "phases": 1,
+              "chance": 0.3
+            }
+          ]
+        }
+      ],
+      "reviewNote": "Source confirms SPR break, Silence and Stop; original-stat formulas are not copied. Reviewed roguelike adaptation: 1.25x incoming holy/magic damage for 3 enemy phases, 30% Silence for 3 phases, 30% Stop for one phase; refresh strongest, no multiplicative stacks. Silence affects magic actions; current enemies use physical actions. Reviewed F80 source marker is the gameplay event, not a proven native status-application frame.",
+      "importStatus": "imported",
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "accepted-gameplay",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Preserve the eight personally accepted full action sequences; no universal native motion-to-clip mapping is inferred."
+        }
+      },
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 229751,
+        "database": {
+          "path": "assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 229751,
+          "name": "Seal Evil",
+          "rarity": 6,
+          "dispOrder": 4843,
+          "cost": 48,
+          "6p90IFnC": null,
+          "target": "1@1@1",
+          "targetRange": "2@2@2",
+          "oL6zdpD0": 3,
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 4,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 4,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 4,
+          "processId": "24@6@88",
+          "PI18xnkD": "0@0@0",
+          "processParam": "0,0,0,-60,3,1@0,0,0,30,0,0,0,0,1@30,1",
+          "H4zD2IQ5": 0,
+          "motionType": 2,
+          "effectFrames": "40:5013710:2:2:0&60:5002090:1:4:0&80:5002090:1:4:0&60:7000990:1:4:0&80:7000990:1:4:0",
+          "attackFrames": "80:100:2:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000039,
+          "equipCondition": null,
+          "2QoE3PtB": 0,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": "11,14",
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Source confirms SPR break, Silence and Stop; original-stat formulas are not copied. Reviewed roguelike adaptation: 1.25x incoming holy/magic damage for 3 enemy phases, 30% Silence for 3 phases, 30% Stop for one phase; refresh strongest, no multiplicative stacks. Silence affects magic actions; current enemies use physical actions. Reviewed F80 source marker is the gameplay event, not a proven native status-application frame.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
     }
   ]
 }

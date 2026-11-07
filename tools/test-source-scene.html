@@ -1,0 +1,352 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><base href="/"><title>Source-only battle review</title>
+<style>body{margin:0;background:#101724;color:#e7eef9;font:14px system-ui}#game-container{width:620px;height:682px;display:inline-block;vertical-align:top}aside{display:inline-block;vertical-align:top;width:600px;padding:18px}pre{white-space:pre-wrap;max-height:350px;overflow:auto}button{padding:8px;margin:4px}img{width:280px;margin:5px}</style>
+<div id="game-container"></div><aside><h1>Source-only battle review</h1>
+<p>The actual production battle; no alternate skill renderer. Native fidelity is separate from accepted preview quality.</p>
+<button id="run" disabled>Check Source party skills</button><button id="baseline" disabled>Check frozen Cloud baseline</button>
+<button id="guards" disabled>Check unavailable skills and combat cleanup</button><button id="reserve" disabled>Check imported reserve lifecycle</button><button id="friendly" disabled>Check friendly healing lifecycle</button><button id="multi" disabled>Check reserve area multihit</button><button id="instant" disabled>Check enemy instant event lifecycle</button><button id="placement" disabled>Capture placement reference frames</button><pre id="report">Loading...</pre><div id="proof"></div></aside>
+<script type="module">
+import Phaser from 'phaser';
+import {game} from '/src/main.ts';
+import {createEffectPlayer,presentationMembers,createSceneSnapshot,composeSceneLayer} from '/src/effects/originalEffectPlayer.mjs';
+import {scenePresentationAnchor} from '/src/effects/PreparedSceneBridge.mjs';
+import {createTrainingRun} from '/src/run/trainingRun.ts';
+const report=document.querySelector('#report'),proof=document.querySelector('#proof');
+const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+const check=(v,message)=>{if(!v)throw Error(message);};
+async function until(predicate,label,timeout=30000){const end=performance.now()+timeout;while(!predicate()){if(performance.now()>end)throw Error('Timeout: '+label);await delay(30);}}
+const capture=()=>new Promise(resolve=>game.events.once('postrender',()=>resolve(game.canvas.toDataURL('image/png'))));
+async function referenceFrame(manifest,host,frame,background){
+ const THREE=window.THREE,canvas=document.createElement('canvas');canvas.width=host.width;canvas.height=host.height;
+ const paint=canvas.getContext('2d',{willReadFrequently:true}),image=new Image();image.src=background;await image.decode();paint.drawImage(image,0,0);
+ const gpu=document.createElement('canvas'),renderer=new THREE.WebGLRenderer({canvas:gpu,alpha:true,premultipliedAlpha:false,preserveDrawingBuffer:true});renderer.setSize(host.width,host.height,false);
+ const scene3d=new THREE.Scene(),camera=new THREE.OrthographicCamera(-host.width/2,host.width/2,host.height/2,-host.height/2,.1,5000);camera.position.z=1000;
+ const snapshot=createSceneSnapshot(THREE,scene3d,canvas),members=presentationMembers(manifest.plan.members,Object.keys(host.targets),manifest.plan.presentation.scope);
+ // Comparison frames require no visible back member: this background already contains actors.
+ const player=await createEffectPlayer(THREE,scene3d,{...manifest.plan,members:members.filter(m=>m.layer==='front')});
+ const layer={renderer,gpu,scene:scene3d,camera,...snapshot,nativeBlend:!!manifest.plan.nativeBlend,nativeBlendThree:THREE};
+ try{
+  player.update(frame,m=>scenePresentationAnchor(m,host,manifest.plan),{x:host.arena.x-host.width/2,y:host.height/2-host.arena.y-host.arena.height,width:host.arena.width,height:host.arena.height});
+  composeSceneLayer(layer,paint,true);return canvas.toDataURL('image/png');
+ }finally{
+  scene3d.traverse(object=>{object.geometry?.dispose();object.material?.map?.dispose();object.material?.dispose();});player.dispose();snapshot.snapshot.dispose();
+  layer.nativePresentation?.target.dispose();renderer.dispose();renderer.forceContextLoss();
+ }
+}
+async function pixelDifference(actual,expected,arena,overlays){
+ const images=await Promise.all([actual,expected].map(async src=>{const image=new Image();image.src=src;await image.decode();return image;}));
+ const arrays=images.map(image=>{const canvas=document.createElement('canvas');canvas.width=image.width;canvas.height=image.height;const paint=canvas.getContext('2d',{willReadFrequently:true});paint.drawImage(image,0,0);return paint.getImageData(0,0,canvas.width,canvas.height).data;});
+ let changed=0,above2=0,maximum=0,sum=0,pixels=0;
+ // The stand-alone preview has no game overlays. Exclude only their measured bounds.
+ for(let y=arena.y;y<arena.y+arena.height;y++)for(let x=arena.x;x<arena.x+arena.width;x++){
+  if(overlays.some(rect=>x>=rect.x&&x<rect.x+rect.width&&y>=rect.y&&y<rect.y+rect.height))continue;
+  const at=(y*images[0].width+x)*4;let error=0;for(let channel=0;channel<3;channel++)error=Math.max(error,Math.abs(arrays[0][at+channel]-arrays[1][at+channel]));
+  changed+=error>0;above2+=error>2;maximum=Math.max(maximum,error);sum+=error;pixels++;
+ }
+ return {pixels,changed,above2,maximum,meanMaximumChannel:sum/pixels,excludedGameOverlays:overlays,scope:'Same prepared player/plan, matched product host/frame; preview parity only, not native fidelity'};
+}
+let scene,results=[],pairs=[];
+function showImage(label,png){const image=document.createElement('img');image.alt=label;image.src=png;proof.append(image);}
+function resetActors(){scene.combatState='PLAYER_TURN';for(const hero of scene.turnOrder){hero.sourceBuffs=[];hero.hasActed=false;hero.currentMp=hero.maxMp;hero.currentHp=hero.maxHp;}for(const enemy of scene.enemies){enemy.currentHp=100000;enemy.maxHp=100000;enemy.statusEffects=[];}}
+let verifiedBuild=null;
+async function save(){
+ const receipt={passed:true,freshness:verifiedBuild,kind:'source-only-review',scope:'Production Source-only execution and accepted preview baseline; no new native pixel reference',results,pairs};
+ const origin=new URLSearchParams(location.search).get('captureOrigin');
+ if(origin){check(/^http:\/\/127\.0\.0\.1:\d+$/.test(origin),'Loopback receipt sink required');const response=await fetch(origin+'/product-review',{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(receipt)});check(response.ok,'Receipt save failed');}
+ report.textContent='PASS '+JSON.stringify({results:results.map(({capture,frames,...r})=>({...r,recordedFrames:frames?.length})),pairs:pairs.map(({legacy,source,reference,...p})=>p)},null,2);
+}
+async function matched(skillKey,frame,frozenBodies=false){
+ check(!scene.preparedScenes.snapshot().active,'Finish the current action before frame review');
+ resetActors();const hero=scene.cloud,skill=scene.unitSkills.cloud.find(s=>s.id===skillKey),targets=skill.scope==='all_enemies'?scene.enemies:[scene.enemies[0]];
+ scene.selectHero(hero);
+ scene.tweens.pauseAll();
+ for(const actor of [...scene.turnOrder,...scene.enemies]){
+  const sprite=actor.sprite??actor;sprite.anims.pause();sprite.setFrame(0);
+ }
+ if(skill.moveType==='dash')hero.setPosition(targets[0].x+hero.combatConfig.targetOffsetX*.8,targets[0].y);
+ hero.playAnimation(skill.motion);hero.anims.pause();
+ const motion=hero.anims.currentAnim,elapsed=frame*1000/60;let sum=0,index=0;
+ for(const f of hero.manifest.animations[skill.motion].frames){sum+=f.durationMs;if(sum>elapsed)break;index++;}
+ hero.setFrame(Math.min(index,motion.frames.length-1));
+ const restored=[];
+ if(frozenBodies){
+  // Freeze only the body presentation. The Source player and effect inputs remain live.
+  for(const actor of scene.turnOrder){
+   const clip=actor.manifest.animations[actor.currentAnimKey];
+   if(!clip?.bodyLayers)continue;
+   const texture=actor.texture.key,frame=actor.frame.name,alias='frozen_'+texture;
+   if(!scene.textures.exists(alias)){
+    scene.load.spritesheet(alias,`assets/units/${actor.unitKey}/${clip.file}`,{frameWidth:clip.frameWidth,frameHeight:clip.frameHeight});
+    await new Promise(resolve=>{scene.load.once('complete',resolve);scene.load.start();});
+   }
+   restored.push(()=>actor.setTexture(texture,frame));
+   actor.setTexture(alias,frame);
+  }
+ }
+ const background=await capture();scene.playPreparedScene(skill.scenePresentation,hero,targets);scene.preparedScenes.seek(frame);
+ const source=await capture(),state=scene.preparedScenes.snapshot();check(state.errors.length===0,'Scene bridge error');
+ check(state.layers.back.every(node=>!node.visible),'Reference requires actor-separated back composition');
+ const reference=await referenceFrame(scene.cache.json.get('scene_'+skill.scenePresentation+'_manifest'),state.host,frame,background);
+ const overlays=[scene.enemyTargetPanel?.container,scene.targetMarkerContainer].filter(o=>o?.visible).map(object=>{const r=object.getBounds();return {x:Math.floor(r.x)-2,y:Math.floor(r.y)-2,width:Math.ceil(r.width)+4,height:Math.ceil(r.height)+4};});
+ const previewDifference=await pixelDifference(source,reference,state.host.arena,overlays);
+ check(previewDifference.above2===0,'Product framebuffer differs from the matched preview outside declared game overlays: '+JSON.stringify(previewDifference));
+ const pair={skill:skillKey,frame,host:state.host,quality:state.quality,source,reference,previewDifference,
+  layers:Object.fromEntries(Object.entries(state.layers).map(([name,nodes])=>[name,{instances:nodes.length,visible:nodes.filter(n=>n.visible).length}]))};
+ pairs.push(pair);showImage(skillKey+' Source F'+frame,source);
+ scene.preparedScenes.stop();restored.forEach(restore=>restore());scene.tweens.resumeAll();hero.setPosition(hero.homeSlot.x,hero.homeSlot.y);hero.playRestPose();
+ return pair;
+}
+// The production BattleScene runs with a fixed training run (src/run/trainingRun.ts).
+let fixture;
+async function start(encounter=1,options={}){
+ await until(()=>game.registry.get('reviewManifests'),'review manifests');const old=scene?.preparedScenes;
+ // Nearest body sampling reproduces the conditions of the frozen reference frames.
+ fixture=createTrainingRun(game.cache,{reserve:new URLSearchParams(location.search).get('reserve'),encounter,bodyTextureFilter:'nearest',...options});
+ game.scene.start('BattleScene',{manifests:game.registry.get('reviewManifests'),runContext:fixture.context});
+ await until(()=>{scene=game.scene.getScene('BattleScene');return scene?.sys.isActive()&&scene.preparedScenes&&scene.preparedScenes!==old&&scene.combatState==='PLAYER_TURN';},'battle');
+ await scene.preparedScenes.ready;}
+async function fresh(encounter=1,options){await start(encounter,options);resetActors();}
+// Victory settles the fixture run; the next wave starts a new encounter with the settled HP/MP.
+async function nextWave(){await until(()=>fixture.settled.some(s=>s.won),'wave settlement');await start(2,{carry:fixture.settled.find(s=>s.won).party});}
+const member=hero=>scene.turnOrder.find(h=>h.unitKey===hero.unitKey);
+async function run(button,work){button.disabled=true;results=[];pairs=[];proof.replaceChildren();try{
+ const origin=new URLSearchParams(location.search).get('captureOrigin');
+ check(/^http:\/\/127\.0\.0\.1:\d+$/.test(origin??''),'Start a current loopback receipt server and pass captureOrigin before running review');
+ const response=await fetch(origin+'/product-freshness',{cache:'no-store'});
+ check(response.ok,'Current receipt server freshness endpoint required');verifiedBuild=await response.json();
+ check(verifiedBuild.passed&&verifiedBuild.origin===location.origin,'Stale development modules or wrong game origin; review stopped before combat');
+ check(['src/entities/TargetDummy.ts','src/run/stageContent.mjs','src/run/trainingRun.ts','src/ui/ActionBanner.ts'].every(file=>verifiedBuild.results.some(r=>r.file===file&&r.matched)),'Restart the receipt server: current enemy/stage/training modules are missing from its freshness gate');
+ await work();await save();}catch(error){report.textContent='FAIL '+error.stack;console.error(error);}finally{button.disabled=false;}}
+await start();
+for(const b of document.querySelectorAll('button'))b.disabled=false;report.textContent='Ready: Source only.';
+document.querySelector('#run').onclick=function(){return run(this,async()=>{
+ const reviewUnit=new URLSearchParams(location.search).get('reviewUnit');
+ const cases=scene.turnOrder.filter(hero=>!reviewUnit||hero.unitKey===reviewUnit).flatMap(hero=>scene.unitSkills[hero.unitKey].filter(skill=>skill.scenePresentation)
+  .map(skill=>[hero.unitKey,skill.id,Math.max(...[...(skill.damageEvents??[]),...(skill.supportEvents??[]),...(skill.allyEvents??[])].map(e=>e.frame))+15]));
+ check(cases.length>0,'No imported Source commands in this party');
+ for(const [unit,key,frame]of cases){
+  const source=scene.unitSkills[unit].find(s=>s.id===key);await fresh(source.scope==='all_enemies'?2:1,{focus:{unit,skill:key}});
+  const hero=scene.turnOrder.find(h=>h.unitKey===unit),skill=scene.unitSkills[unit].find(s=>s.id===key);scene.selectHero(hero);
+  check(scene.unitSkills[unit][0]===skill,'Run command slot missing skill');
+  const targets=[...scene.enemies],originals=targets.map(t=>t.applyDamage),damage=[],shots=[];
+  const play=scene.playPreparedScene,finish=scene.concludeHeroSkill,use=hero.useMp,random=scene.enemyEventRandom,notices=[],noticeShots=[];let start=0,ended=0,done=false,calls=0,charges=0;
+  const observeNotice=notice=>{notices.push(notice);noticeShots.push(new Promise(resolve=>scene.time.delayedCall(150,()=>capture().then(capture=>resolve({kind:'action-banner-frame',notice,label:scene.actionBanner.label.text,capture})))));};scene.events.on('combat-action',observeNotice);
+  const instant=skill.supportEvents?.filter(e=>e.effects.some(f=>f.kind==='execute-or-damage'))??[];
+  if(instant.length)scene.enemyEventRandom=()=>.99;
+  targets.forEach((t,i)=>t.applyDamage=function(amount,...args){damage.push({target:i,amount,time:scene.time.now-start});return originals[i].call(this,amount,...args);});
+  hero.useMp=function(amount){charges++;return use.call(this,amount);};
+  scene.playPreparedScene=function(...args){calls++;start=scene.time.now;scene.time.delayedCall(frame*1000/60,()=>shots.push(capture().then(capture=>({requestedFrame:frame,capture}))));return play.apply(this,args);};
+  scene.concludeHeroSkill=function(actor){if(actor===hero){done=true;ended=scene.time.now-start;}return finish.call(this,actor);};
+  try{scene.chooseRibbonAbility(1);
+   if(scene.ribbonPlan()){check(scene.plannedActions.get(hero)?.skill===skill&&hero.currentMp===hero.maxMp&&charges===0,'Planning charged MP or wrong command');
+    scene.confirmRibbonTarget(skill.scope==='single_ally'?scene.enemies.length+1:0);}
+   await until(()=>done,'full '+key+' action');
+   check(charges===1&&hero.maxMp-hero.currentMp===skill.mpCost&&calls===1,'MP/Source count differs');
+   check(notices.length===1&&notices[0].abilityId===skill.id&&notices[0].actorKey===hero.unitKey&&notices[0].origin==='source','Committed Source action notice missing/doubled');
+   check(damage.length===((skill.damageEvents?.length??0)+instant.length)*(skill.scope==='all_enemies'?targets.length:1),'Damage event lost/doubled');
+   check(Math.hypot(hero.x-hero.homeSlot.x,hero.y-hero.homeSlot.y)<.01&&scene.activeSkillActions===0,'Actor not home or gameplay held');
+   for(const event of damage){const marker=(skill.damageEvents??instant)[damage.filter(d=>d.target===event.target).indexOf(event)].frame;check(Math.abs(event.time-marker*1000/60)<140,'Damage clock drift');}
+   if(skill.allyEvents?.some(e=>e.effects.some(f=>f.kind==='physical-boost')))check(hero.sourceBuffs.length===1,'Self buff missing');
+   if(skill.supportEvents&&!instant.length)check(targets.every(t=>t.statusEffects.length>0),'Enemy status missing');
+   results.push({kind:'source-only-full-action',unit,skill:key,mpSpent:skill.mpCost,charges,sourceCalls:calls,damage,gameplayMs:ended,decorativeTail:scene.preparedScenes.snapshot().active,statuses:targets.map(t=>structuredClone(t.statusEffects)),buffs:structuredClone(hero.sourceBuffs)});
+   await until(()=>!scene.preparedScenes.snapshot().active,'complete '+key+' effect');check(scene.preparedScenes.snapshot().errors.length===0,'Renderer error');
+   for(const shot of await Promise.all(shots)){showImage(key+' F'+frame,shot.capture);results.push({kind:'source-only-frame',skill:key,...shot});}
+   for(const shot of await Promise.all(noticeShots)){check(shot.label.includes(skill.name),'Action banner text differs');results.push(shot);}
+  }finally{scene.events.off('combat-action',observeNotice);scene.enemyEventRandom=random;targets.forEach((t,i)=>t.applyDamage=originals[i]);hero.useMp=use;scene.playPreparedScene=play;scene.concludeHeroSkill=finish;}
+ }
+});};
+document.querySelector('#friendly').onclick=function(){return run(this,async()=>{
+ const key=scene.turnOrder.find(h=>scene.unitSkills[h.unitKey].some(s=>s.allyEvents&&s.scope==='party'))?.unitKey;
+ check(key,'This review requires an imported party support command');
+ for(const mode of ['normal','capped','ko','last-ally','insufficient-hp','insufficient-mp','restart']){
+  await fresh(2);const hero=scene.turnOrder.find(h=>h.unitKey===key),skill=scene.unitSkills[key].find(s=>s.scope==='party'&&s.allyEvents);
+  scene.selectHero(hero);const others=scene.turnOrder.filter(h=>h!==hero);others.forEach(h=>h.currentHp=mode==='capped'?h.maxHp-10:100);
+  if(mode==='ko')others[0].currentHp=0;if(mode==='last-ally')others.forEach(h=>h.currentHp=0);
+  if(mode==='insufficient-hp')hero.currentHp=skill.hpCost;if(mode==='insufficient-mp')hero.currentMp=skill.mpCost-1;
+  const before=scene.turnOrder.map(h=>({hp:h.currentHp,mp:h.currentMp})),damage=scene.enemies.map(e=>e.currentHp);
+  let done=false,calls=0,targets=[],start=0,ended=0;const finish=scene.concludeHeroSkill,play=scene.playPreparedScene;const shots=[];
+  scene.playPreparedScene=function(...args){calls++;targets=args[2].map(h=>h.unitKey);start=scene.time.now;scene.time.delayedCall(1000,()=>shots.push(capture()));return play.apply(this,args);};
+  scene.concludeHeroSkill=function(h){if(h===hero){done=true;ended=scene.time.now-start;}return finish.call(this,h);};
+  try{
+   scene.executeSkillChoice(skill);
+   if(['last-ally','insufficient-hp','insufficient-mp'].includes(mode)){
+    check(!calls&&scene.combatState==='PLAYER_TURN','Invalid friendly action admitted');check(JSON.stringify(before)===JSON.stringify(scene.turnOrder.map(h=>({hp:h.currentHp,mp:h.currentMp}))),'Rejected action spent resources');
+   }else if(mode==='restart'){
+    scene.scene.restart();await until(()=>game.scene.getScene('BattleScene')!==scene||scene.combatState==='PLAYER_TURN','restart');await delay(500);
+    scene=game.scene.getScene('BattleScene');await scene.preparedScenes.ready;check(scene.activeSkillActions===0&&!scene.preparedScenes.snapshot().active,'Restart left a live Source action');
+   }else{
+    await until(()=>done,'friendly action');check(calls===1&&hero.currentMp===before[scene.turnOrder.indexOf(hero)].mp-skill.mpCost,'Friendly MP/Source count');
+    check(hero.currentHp===before[scene.turnOrder.indexOf(hero)].hp-skill.hpCost,'Caster HP cost or caster healing differs');
+    for(const ally of others)check(ally.currentHp===(mode==='ko'&&ally===others[0]?0:Math.min(ally.maxHp,(mode==='capped'?ally.maxHp-10:100)+skill.allyEvents[0].effects[0].amount)),'Healing target/amount differs');
+    check(scene.enemies.every((e,i)=>e.currentHp===damage[i]),'Healing damaged an enemy');
+    check(Math.hypot(hero.x-hero.homeSlot.x,hero.y-hero.homeSlot.y)<.01&&scene.activeSkillActions===0,'Friendly action did not return');
+    results.push({kind:'friendly-gameplay',mode,skill:skill.id,targets,before,after:scene.turnOrder.map(h=>({hp:h.currentHp,mp:h.currentMp})),gameplayMs:ended});
+    await until(()=>!scene.preparedScenes.snapshot().active,'friendly tail');check(scene.preparedScenes.snapshot().errors.length===0,'Friendly renderer error');
+    for(const png of await Promise.all(shots)){showImage(skill.id+' '+mode,png);results.push({kind:'friendly-frame',mode,capture:png});}
+   }
+   results.push({kind:'friendly-case',mode,passed:true});
+  }finally{scene.concludeHeroSkill=finish;scene.playPreparedScene=play;}
+ }
+});};
+
+document.querySelector('#instant').onclick=function(){return run(this,async()=>{
+ for(const mode of ['fallback','execute-wave','boss','dead-target','restart']){
+  await fresh(2);const hero=scene.turnOrder[2],skill=scene.unitSkills[hero.unitKey].find(s=>s.supportEvents?.some(e=>e.effects.some(f=>f.kind==='execute-or-damage')));
+  check(skill?.scope==='all_enemies','This review requires an imported all-enemy instant event');scene.selectHero(hero);
+  hero.currentMp=skill.mpCost-1;scene.planHeroSkill(skill);scene.executePlannedAction();check(hero.currentMp===skill.mpCost-1&&scene.activeSkillActions===0,'Insufficient MP was not rejected');hero.currentMp=hero.maxMp;
+  const targets=[...scene.enemies],originals=targets.map(t=>t.applyDamage),hits=targets.map(()=>[]),poses=[],captures=[];
+  const animate=hero.playAnimation,use=hero.useMp,play=scene.playPreparedScene,finish=scene.concludeHeroSkill,random=scene.enemyEventRandom;
+  let start=0,ended=0,done=false,calls=0,charges=0;
+  scene.enemyEventRandom=()=>mode==='execute-wave'||mode==='boss'?0:.99;
+  targets.forEach((t,i)=>{t.isBoss=mode==='boss'&&i===0;t.statusEffects=[{kind:'physical-weakness',multiplier:3,phases:2},{kind:'magic-weakness',multiplier:3,phases:2}];
+   t.applyDamage=function(amount,...args){hits[i].push({amount,type:args[1],time:scene.time.now-start});return originals[i].call(this,amount,...args);};});
+  if(mode==='dead-target')targets[0].currentHp=0;
+  hero.playAnimation=function(clip,...args){poses.push({clip,x:this.x,y:this.y});return animate.call(this,clip,...args);};
+  hero.useMp=function(amount){charges++;return use.call(this,amount);};
+  scene.playPreparedScene=function(...args){calls++;start=scene.time.now;if(mode==='fallback')for(const frame of [45,65])scene.time.delayedCall(frame*1000/60,()=>captures.push(capture().then(png=>({frame,png}))));return play.apply(this,args);};
+  scene.concludeHeroSkill=function(h){if(h===hero){done=true;ended=scene.time.now-start;}return finish.call(this,h);};
+  try{
+   check(scene.unitSkills[hero.unitKey].includes(skill),'Instant event missing from run commands');scene.planHeroSkill(skill);scene.executePlannedAction();
+   if(mode==='restart'){await until(()=>scene.preparedScenes.snapshot().active,'instant start');const old=scene.preparedScenes;await fresh();await delay(1500);check(old.snapshot().variants===0&&scene.activeSkillActions===0&&hits.every(h=>!h.length),'Instant restart leaked a pending event');}
+   else{
+    await until(()=>done,'instant completion');check(charges===1&&calls===1&&hero.currentMp===hero.maxMp-skill.mpCost,'Instant MP/source count');
+    check(hits.every((h,i)=>h.length===(mode==='dead-target'&&i===0?0:1)),'Instant target count or duplicate event');
+    const rule=skill.supportEvents[0].effects[0];
+    for(const [i,list]of hits.entries())for(const hit of list){check(hit.type==='unmitigated','Fallback damage entered a vulnerability lane');check(Math.abs(hit.time-skill.supportEvents[0].frame*1000/60)<140,'Instant event clock drift');
+     const executed=mode==='execute-wave'||mode==='boss'&&i===1;check(hit.amount===(executed?100000:rule.fallbackDamage),'Incorrect execution/fallback damage');}
+    check(!poses.some(p=>p.clip==='atk'||Math.hypot(p.x-hero.homeSlot.x,p.y-hero.homeSlot.y)>.01),'Unreviewed body attack or movement');
+    check(poses.some(p=>p.clip==='magic_atk')&&scene.activeSkillActions===0,'Body missing or action held');
+    if(mode==='execute-wave'){check(scene.combatState==='VICTORY','Execution did not trigger victory');const mp=hero.currentMp;await nextWave();check(member(hero).currentMp===mp&&!scene.preparedScenes.snapshot().active,'Instant wave resource/tail leak');}
+    else{check(scene.combatState==='PLAYER_TURN','Nonlethal instant event ended the encounter');await until(()=>!scene.preparedScenes.snapshot().active,'instant tail');for(const image of await Promise.all(captures)){showImage(skill.name+' F'+image.frame,image.png);results.push({kind:'instant-frame',frame:image.frame,capture:image.png});}}
+    check(scene.preparedScenes.snapshot().errors.length===0,'Instant renderer error');
+   }
+   results.push({kind:'instant-event-lifecycle',skill:skill.id,mode,passed:true,hits,poses,charges,gameplayMs:ended});
+  }finally{scene.enemyEventRandom=random;targets.forEach((t,i)=>t.applyDamage=originals[i]);hero.playAnimation=animate;hero.useMp=use;scene.playPreparedScene=play;scene.concludeHeroSkill=finish;}
+ }
+});};
+
+document.querySelector('#multi').onclick=function(){return run(this,async()=>{
+ for(const mode of ['full','first-target-ko','victory-wave','restart']){
+  await fresh(2);const hero=scene.turnOrder[2],skill=scene.unitSkills[hero.unitKey].find(s=>s.scope==='all_enemies'&&s.damageEvents?.length>1);
+  check(skill,'This review requires an imported reserve area multihit');scene.selectHero(hero);
+  if(mode==='first-target-ko')scene.enemies[0].currentHp=1;if(mode==='victory-wave')scene.enemies.forEach(e=>e.currentHp=1);
+  const targets=[...scene.enemies],originals=targets.map(t=>t.applyDamage),hits=[[],[]],poses=[];
+  const animate=hero.playAnimation,finish=scene.concludeHeroSkill,play=scene.playPreparedScene;let done=false,start=0,ended=0,calls=0;const captures=[];
+  targets.forEach((t,i)=>t.applyDamage=function(amount,...args){hits[i].push({amount,time:scene.time.now-start});return originals[i].call(this,amount,...args);});
+  hero.playAnimation=function(clip,...args){poses.push(clip);return animate.call(this,clip,...args);};
+  scene.playPreparedScene=function(...args){calls++;start=scene.time.now;scene.time.delayedCall(900,()=>captures.push(capture()));return play.apply(this,args);};
+  scene.concludeHeroSkill=function(h){if(h===hero){done=true;ended=scene.time.now-start;}return finish.call(this,h);};
+  try{
+   check(scene.unitSkills[hero.unitKey].includes(skill),'Area skill missing from run commands');scene.planHeroSkill(skill);scene.executePlannedAction();
+   if(mode==='restart'){await until(()=>scene.preparedScenes.snapshot().active,'area start');const old=scene.preparedScenes;await fresh();await delay(1800);check(old.snapshot().variants===0&&scene.activeSkillActions===0,'Area restart leak');}
+   else{
+    await until(()=>done,'area completion');check(calls===1&&hero.currentMp===hero.maxMp-skill.mpCost,'Area MP/Source count');
+    check(hits[0].length===(mode==='full'?skill.damageEvents.length:1)&&hits[1].length===(mode==='victory-wave'?1:skill.damageEvents.length),'Area multihit count/KO routing');
+    if(skill.actionChoreography.body.mode==='rest')check(!poses.some(p=>p==='atk'||p==='magic_atk'),'Effect-led action inserted body attack');
+    if(mode==='victory-wave'){await until(()=>scene.combatState==='VICTORY','area victory');const mp=hero.currentMp;await nextWave();check(member(hero).currentMp===mp&&!scene.preparedScenes.snapshot().active,'Area wave resource/tail leak');}
+    else{await until(()=>!scene.preparedScenes.snapshot().active,'area tail');for(const png of await Promise.all(captures)){showImage(skill.id+' '+mode,png);results.push({kind:'reserve-area-frame',mode,capture:png});}}
+    check(scene.preparedScenes.snapshot().errors.length===0,'Area renderer error');
+   }
+   results.push({kind:'reserve-area-case',mode,skill:skill.id,passed:true,hits,poses,gameplayMs:ended});
+  }finally{targets.forEach((t,i)=>t.applyDamage=originals[i]);hero.playAnimation=animate;scene.concludeHeroSkill=finish;scene.playPreparedScene=play;}
+ }
+});};
+
+document.querySelector('#placement').onclick=function(){return run(this,async()=>{
+ for(const [id,encounter,frames]of [[210550,1,[60,85,110]],[1323010,1,[42,54,90]],[1323010,2,[54]]]){
+  await fresh(encounter);const hero=scene.turnOrder.find(h=>scene.unitSkills[h.unitKey].some(s=>s.ffbeId===id));
+  check(hero,'Placement fixture needs its registered reserve');const skill=scene.unitSkills[hero.unitKey].find(s=>s.ffbeId===id);
+  scene.selectHero(hero);scene.tweens.pauseAll();
+  for(const actor of [...scene.turnOrder,...scene.enemies]){const sprite=actor.sprite??actor;sprite.anims.pause();sprite.setFrame(0);}
+  const targets=skill.scope==='party'?scene.friendlySkillTargets(hero,skill):scene.enemies;
+  const manifest=scene.cache.json.get('scene_'+skill.scenePresentation+'_manifest');
+  const current=await (await fetch('/assets/presentations/'+skill.scenePresentation+'/manifest.json',{cache:'no-store'})).json();
+  check(JSON.stringify(manifest)===JSON.stringify(current),'Cached scene manifest is stale; reload the whole test page');
+  try{
+   scene.playPreparedScene(skill.scenePresentation,hero,targets);
+   for(const frame of frames){
+    scene.preparedScenes.seek(frame);const png=await capture(),snapshot=scene.preparedScenes.snapshot();check(!snapshot.errors.length,'Placement renderer error');
+    const anchors=manifest.plan.members.map(m=>scenePresentationAnchor(m,snapshot.host,manifest.plan));
+    if(manifest.plan.memberRandomness)check(snapshot.layers.front.some(n=>n.sampling),'Current member-sampling player was not loaded');
+    results.push({kind:'placement-reference',skill:skill.id,sourceId:id,encounter,frame,host:snapshot.host,anchors,
+      coordinates:manifest.plan.rectanglePlacement.coordinateSystem??'historical-preview-y-up',randomness:manifest.plan.memberRandomness??'historical-repeated-seed',
+      sampling:snapshot.layers.front.filter(n=>n.node===1).map(n=>n.sampling??null),playerSha256:manifest.provenance.playerSha256,capture:png});showImage(skill.id+' '+encounter+' F'+frame,png);
+   }
+  }finally{scene.preparedScenes.stop();scene.tweens.resumeAll();}
+ }
+});};
+
+document.querySelector('#baseline').onclick=function(){return run(this,async()=>{
+ check(scene.turnOrder.map(h=>h.unitKey).join(',')==='cloud,aerith,barret','Frozen baseline requires the default party; open this page without reserve');
+ await fresh();const response=await fetch('/tools/data/choreography/frozen-visual-baseline.json');check(response.ok,'Frozen reference missing');const baseline=await response.json();
+ for(const expected of baseline.pairs){
+  const production=await matched(expected.skill,expected.frame);
+  const actual=await matched(expected.skill,expected.frame,true);check(JSON.stringify(actual.host)===JSON.stringify(expected.host),'Frozen host differs');
+  const priorOverlays=[...actual.previewDifference.excludedGameOverlays,...expected.previewDifference.excludedGameOverlays];
+  const unmaskedDifference=await pixelDifference(actual.source,expected.source,actual.host.arena,priorOverlays);
+  // The baseline was captured with the redesigned Phaser header (one-pixel outer frame at the arena
+  // boundary). Keep original images and strict metrics; exclude only those recorded header bounds.
+  const header={x:-1,y:-1,width:1002,height:50};
+  const difference=await pixelDifference(actual.source,expected.source,actual.host.arena,[...priorOverlays,header]);
+  check(difference.changed===0,'Frozen effect pixels changed outside measured HUD: '+JSON.stringify(difference));results.push({kind:'frozen-source-only',skill:expected.skill,difference,unmaskedDifference,productionPreviewDifference:production.previewDifference,bodyFixture:'original baked sheets',approvedUiDifference:{kind:'redesigned-header-frame',bounds:header,originalImagesUnchanged:true}});}
+});};
+document.querySelector('#reserve').onclick=function(){return run(this,async()=>{
+ const unit=scene.turnOrder[2].unitKey,skills=scene.unitSkills[unit].filter(s=>s.scenePresentation&&s.scope==='single_enemy'&&s.damageEvents?.length).map(s=>s.id);
+ check(skills.length>0,'This bounded check needs an imported single-target reserve action');
+ for(const id of skills){
+  // Run skills are per-battle clones: resolve the command again after every restart.
+  const current=()=>scene.unitSkills[unit].find(s=>s.id===id);
+  await fresh(2);let hero=scene.turnOrder[2],skill=current();scene.selectHero(hero);hero.currentMp=skill.mpCost-1;
+  scene.planHeroSkill(skill);scene.executeSkillChoice(skill);check(hero.currentMp===skill.mpCost-1&&!scene.plannedActions.has(hero)&&scene.combatState==='PLAYER_TURN','Insufficient MP admitted');
+  hero.currentMp=hero.maxMp;const selected=scene.enemies[1],other=scene.enemies[0];
+  const unresolved=structuredClone(skill);delete unresolved.actionChoreography;scene.executeSkillChoice(unresolved);
+  check(hero.currentMp===hero.maxMp&&scene.combatState==='PLAYER_TURN','Unresolved choreography spent MP');
+  let done=false,hits=0,start=0,ended=0;const finish=scene.concludeHeroSkill,apply=selected.applyDamage;
+  const poseCalls=[],animate=hero.playAnimation;
+  hero.playAnimation=function(clip,...args){poseCalls.push({clip,time:scene.time.now,x:hero.x,y:hero.y});return animate.call(this,clip,...args);};
+  selected.applyDamage=function(...args){hits++;return apply.apply(this,args);};scene.concludeHeroSkill=function(h){if(h===hero)done=true;return finish.call(this,h);};
+  const captures=[],play=scene.playPreparedScene;scene.playPreparedScene=function(...args){start=scene.time.now;for(const frame of [6,21,45,80,120])scene.time.delayedCall(frame*1000/60,()=>captures.push(capture().then(capture=>({frame,capture}))));return play.apply(this,args);};
+  try{scene.planHeroSkill(skill);selected.emit('pointerdown');check(scene.currentTarget===selected,'Target click failed');await until(()=>done,'reserve target action');
+   ended=scene.time.now-start;
+   check(hits===skill.damageEvents.length&&other.currentHp===other.maxHp&&hero.currentMp===hero.maxMp-skill.mpCost,'Target/MP/hit mismatch');
+   for(const event of skill.supportEvents??[])for(const effect of event.effects)
+    check(selected.statusEffects.some(s=>s.kind===effect.kind&&s.phases===effect.phases&&s.multiplier===effect.multiplier),'Selected target status missing');
+   check(other.statusEffects.length===0,'Status spilled into an unselected enemy');
+   await until(()=>!scene.preparedScenes.snapshot().active,'reserve decoration cleanup');
+   const c=skill.actionChoreography,bodyClips=poseCalls.filter(p=>['atk','magic_atk'].includes(p.clip)).map(p=>p.clip);
+   check(JSON.stringify(bodyClips)===JSON.stringify(c.body.mode==='clips'?c.body.phases.map(p=>p.clip):[]),'Body phases differ from reviewed choreography');
+   if(c.commandPose)check(poseCalls[0]?.clip===(c.commandPose==='standby'?'standby':'magic_standby'),'Prepared command pose inferred from executed body');
+   if(c.movement==='stationary')check(poseCalls.every(p=>Math.hypot(p.x-hero.homeSlot.x,p.y-hero.homeSlot.y)<.01),'Stationary source action moved its caster');
+   if(skill.actionChoreography.body.mode==='rest')check(!poseCalls.some(p=>p.clip==='atk'||p.clip==='magic_atk'),'Implicit attack clip injected');
+   results.push({kind:'reserve-choreography',unit,skill:skill.id,gameplayMs:ended,poses:poseCalls,unresolvedRejectedBeforeMp:true});
+   for(const frame of await Promise.all(captures)){showImage(skill.name+' F'+frame.frame,frame.capture);results.push({kind:'reserve-animation-frame',unit,skill:skill.id,...frame});}
+  }finally{scene.playPreparedScene=play;scene.concludeHeroSkill=finish;selected.applyDamage=apply;hero.playAnimation=animate;}
+  await fresh(2);hero=scene.turnOrder[2];skill=current();scene.selectHero(hero);const victim=scene.enemies[1],survivor=scene.enemies[0];victim.currentHp=1;
+  scene.planHeroSkill(skill);victim.emit('pointerdown');await until(()=>hero.hasActed&&scene.activeSkillActions===0,'reserve target death');
+  check(victim.currentHp===0&&victim.statusEffects.length===0&&survivor.currentHp===survivor.maxHp&&scene.combatState==='PLAYER_TURN','Lethal hit leaked or locked turn');
+  await fresh();hero=scene.turnOrder[2];skill=current();scene.selectHero(hero);scene.enemies[0].currentHp=1;scene.planHeroSkill(skill);scene.executePlannedAction();
+  await until(()=>scene.combatState==='VICTORY'&&scene.activeSkillActions===0,'reserve victory');const mp=hero.currentMp;await nextWave();
+  check(member(hero).currentMp===mp&&!scene.preparedScenes.snapshot().active,'Reserve wave MP/tail leak');
+  await fresh();hero=scene.turnOrder[2];skill=current();scene.selectHero(hero);scene.planHeroSkill(skill);scene.executePlannedAction();await until(()=>scene.preparedScenes.snapshot().active,'reserve pending action');const old=scene.preparedScenes;
+  await fresh();await delay(2400);check(old.snapshot().variants===0&&scene.turnOrder[2].currentMp===scene.turnOrder[2].maxMp&&scene.activeSkillActions===0,'Reserve restart leaked');
+  results.push({kind:'reserve-lifecycle',unit,skill:skill.id,insufficientMpRejected:true,clickedSecondTarget:true,lethalNoSpillover:true,victoryWaveMp:mp,restartClean:true});
+ }
+});};
+document.querySelector('#guards').onclick=function(){return run(this,async()=>{
+ await fresh();check(scene.setSkillVisualMode===undefined&&scene.playSkillEffectAt===undefined,'Alternate renderer still exposed');
+ let unavailable=0;for(const hero of scene.turnOrder){scene.selectHero(hero);for(const skill of scene.unitSkills[hero.unitKey].filter(s=>!s.scenePresentation)){
+  const mp=hero.currentMp;scene.planHeroSkill(skill);scene.executeSkillChoice(skill);check(!scene.plannedActions.has(hero)&&hero.currentMp===mp&&scene.combatState==='PLAYER_TURN','Unavailable skill executed');unavailable++;}}
+ const reserve=scene.turnOrder[2];scene.selectHero(reserve);let bullets=0,hits=0;const fire=scene.fireBulletProjectile,target=scene.enemies[0],apply=target.applyDamage;
+ scene.fireBulletProjectile=function(...args){bullets++;return fire.apply(this,args);};target.applyDamage=function(...args){hits++;return apply.apply(this,args);};
+ try{scene.planHeroAttack();scene.executePlannedAction();await until(()=>reserve.hasActed&&scene.combatState==='PLAYER_TURN','normal attack');
+  check(reserve.currentMp===reserve.maxMp&&hits===(reserve.unitKey==='barret'?4:1),'Normal attack regression');
+ }finally{scene.fireBulletProjectile=fire;target.applyDamage=apply;}
+ results.push({kind:'source-only-unavailable-basic',unavailable,unit:reserve.unitKey,hits,bullets});
+ await fresh();scene.enemies[0].currentHp=1;const hero=scene.cloud,skill=scene.unitSkills.cloud.find(s=>s.id==='cross_slash');scene.selectHero(hero);scene.planHeroSkill(skill);scene.executePlannedAction();
+ await until(()=>scene.combatState==='VICTORY'&&scene.activeSkillActions===0,'lethal multi-hit');const mp=hero.currentMp;check(mp===80,'MP duplicated');await nextWave();
+ check(member(hero).currentMp===mp&&!scene.preparedScenes.snapshot().active,'Wave resources/effect leak');
+ await fresh();scene.selectHero(scene.cloud);scene.planHeroSkill(scene.unitSkills.cloud.find(s=>s.id==='cross_slash'));scene.executePlannedAction();await until(()=>scene.preparedScenes.snapshot().active,'pending action');const old=scene.preparedScenes;
+ await fresh();await delay(2400);check(old.snapshot().variants===0&&scene.cloud.currentMp===100&&scene.activeSkillActions===0,'Shutdown leaked');
+ scene.events.emit('prepared-scene-error','controlled test');const before=scene.cloud.currentMp;scene.executeSkillChoice(scene.unitSkills.cloud[0]);check(before===scene.cloud.currentMp&&scene.combatState==='PLAYER_TURN','Renderer error caused fallback/charge');
+ results.push({kind:'source-only-victory-wave-shutdown',mpPreserved:mp,errorFailsClosed:true,oldVariants:0});
+});};
+</script></html>

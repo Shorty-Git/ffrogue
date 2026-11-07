@@ -1,0 +1,7 @@
+import type {RunCharacter,RunForm,RunMember,RunState} from './runState.mjs';
+export function reviewedForms(character:RunCharacter):RunForm[];
+export function formAt(character:RunCharacter,key:string):RunForm|undefined;
+export function awakeningPath(character:RunCharacter,from:RunForm):RunForm[];
+export function rankValue(form:Pick<RunForm,'rarity'|'rank'>):number;
+export function rankLabel(form:Pick<RunForm,'rarity'|'rank'>):string;
+export function nextAwakening(run:RunState,character:RunCharacter,member:RunMember):RunForm|undefined;

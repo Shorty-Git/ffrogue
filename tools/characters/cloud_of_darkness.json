@@ -1,0 +1,147 @@
+{
+  "schemaVersion": 1,
+  "key": "cloud_of_darkness",
+  "spriteUnitId": "203000803",
+  "game": "FFIII",
+  "battle": {
+    "maxHp": 3000,
+    "maxMp": 100,
+    "heroName": "C. OF DARKNESS",
+    "heroRole": "REAPER",
+    "attackType": "melee",
+    "targetOffsetX": 90,
+    "attackAnim": "atk",
+    "hitFrameIndex": 2
+  },
+  "scale": 2.5,
+  "reviewNote": "Reviewed FFIII reserve character; source visuals use the shared experimental-preview profile, not native whole-skill fidelity.",
+  "skills": [
+    {
+      "id": "armor_break",
+      "ffbeId": 201150,
+      "name": "Armor Break",
+      "rarity": 4,
+      "level": 14,
+      "type": "ABILITY",
+      "mpCost": 7,
+      "scope": "single_enemy",
+      "damageMultiplier": 1.2,
+      "damageType": "physical",
+      "hitCount": 1,
+      "attackFrames": [
+        40
+      ],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Physical damage (1.2x) and physical vulnerability (+15%) for 3 enemy phases.",
+      "execution": "prepared-source",
+      "requiresSourceScene": true,
+      "scenePresentation": "cod_armor_break",
+      "damageEvents": [
+        {
+          "frame": 113,
+          "weight": 1
+        }
+      ],
+      "supportEvents": [
+        {
+          "frame": 113,
+          "effects": [
+            {
+              "kind": "physical-weakness",
+              "multiplier": 1.15,
+              "phases": 3,
+              "chance": 1
+            }
+          ]
+        }
+      ],
+      "reviewNote": "Original damage/DEF-break processes preserved. Reviewed damage first, then +15% incoming physical damage on surviving locked target for 3 enemy phases; no original DEF formula. Full Motion-1 unit prefix (+73) and F40 source marker => F113. No placeholder or omitted member.",
+      "importStatus": "imported",
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "target",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "accepted-gameplay",
+          "sourceMotionType": 1,
+          "sourceMoveType": 1,
+          "note": "Preserve the eight personally accepted full action sequences; no universal native motion-to-clip mapping is inferred."
+        }
+      }
+    },
+    {
+      "id": "aura_ball",
+      "ffbeId": 203280,
+      "name": "Aura Ball",
+      "rarity": 6,
+      "level": 38,
+      "type": "ABILITY",
+      "mpCost": 30,
+      "scope": "all_enemies",
+      "damageMultiplier": 1,
+      "hitCount": 0,
+      "attackFrames": [
+        120
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Lower enemy attack by 20% for 3 enemy phases; 40% chance to silence for 1 phase. No HP damage.",
+      "execution": "prepared-support",
+      "requiresSourceScene": true,
+      "scenePresentation": "cod_aura_ball",
+      "supportEvents": [
+        {
+          "frame": 120,
+          "effects": [
+            {
+              "kind": "attack-down",
+              "multiplier": 0.8,
+              "phases": 3,
+              "chance": 1
+            },
+            {
+              "kind": "silence",
+              "phases": 1,
+              "chance": 0.4
+            }
+          ]
+        }
+      ],
+      "reviewNote": "Original ATK -30%/3 turns and 40% silence preserved separately. Reviewed outgoing physical attack x0.8 for 3 enemy phases; no original ATK formula. F120 reviewed source marker, not native application timing evidence. Complete original target members, no inferred sound playback.",
+      "importStatus": "imported",
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "accepted-gameplay",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Preserve the eight personally accepted full action sequences; no universal native motion-to-clip mapping is inferred."
+        }
+      }
+    }
+  ],
+  "portraitSource": "unit_icons/unit_icon_203000803.png"
+}

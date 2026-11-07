@@ -1,0 +1,32 @@
+@font-face{font-family:Cinzel;src:url('/assets/fonts/cinzel-latin-600-normal.woff2') format('woff2');font-weight:600;font-display:swap}
+@font-face{font-family:"Source Sans 3";src:url('/assets/fonts/source-sans-3-latin-wght-normal.woff2') format('woff2');font-weight:200 900;font-display:swap}
+:root{--rpg-type:"Source Sans 3","Segoe UI",sans-serif;--rpg-display:Cinzel,Georgia,serif;--type-caption:.8125rem;--type-body:1rem;--type-heading:1.25rem;--type-title:clamp(1.75rem,4.5vmin,3rem);--space-1:.5rem;--space-2:.875rem;--space-3:1.25rem}
+.run-overlay{font:400 var(--type-body)/1.45 var(--rpg-type);background:radial-gradient(ellipse at 50% 18%,#18395c,#091b34 46%,#030812 90%)}
+#run-ui h1,.arena-gallery h1{font:600 var(--type-title)/1.17 var(--rpg-display);letter-spacing:.07em;text-wrap:balance}
+#run-ui h1 em{letter-spacing:.14em}
+.eyebrow{font:650 var(--type-caption)/1.25 var(--rpg-type);letter-spacing:.16em}
+.lead{font-size:var(--type-body);margin-bottom:var(--space-3)}
+.rpg-panel{border-color:#a8bdd1b8;box-shadow:inset 0 0 0 3px #d6e9ff0e,inset 0 1px 0 #ecf6ff42,0 10px 28px #02081362}
+.rpg-button{font:650 var(--type-body)/1.2 var(--rpg-type);letter-spacing:.018em;border-color:#a5bdd5;background:linear-gradient(#22476e,#132e50 58%,#0b203a);box-shadow:inset 0 1px #eefaff38,0 2px 0 #020b1b;padding:.65rem 1.2rem}
+.rpg-button:hover,.reward-card:hover{filter:brightness(1.13)}
+.rpg-button:focus-visible,.reward-card:focus-visible,select:focus-visible{outline:2px solid #f0d28e;outline-offset:3px}
+.seed-label,.seed-chip,.machine-base,.slot-number,.stars,.muted,footer{font-family:var(--rpg-type);font-variant-numeric:tabular-nums}
+.reel{font-family:var(--rpg-type)}
+.reel b{font-size:clamp(.75rem,2.1vmin,1rem);line-height:1.15;overflow-wrap:anywhere}
+.reel-detail,.reward-card p,.skill-copy p,.member-card>p{font-size:var(--type-caption);line-height:1.35}
+.reward-card{gap:var(--space-2);padding:var(--space-3);min-height:275px}
+.reward-card h2{font:600 var(--type-heading)/1.23 var(--rpg-display);overflow-wrap:anywhere}
+.reward-card .eyebrow,.card-choose{font-size:var(--type-caption);letter-spacing:.08em}
+.run-toolbar{top:var(--battle-toolbar-top,52px);right:var(--battle-toolbar-right,8px)}
+.run-toolbar button,.audio-controls{font:600 var(--type-caption)/1.35 var(--rpg-type)}
+.arena-gallery{position:fixed;z-index:3000;top:1rem;left:1rem;width:min(17rem,calc(100vw - 2rem));max-height:calc(100vh - 2rem);overflow:auto;display:grid;gap:var(--space-1);color:var(--rpg-ink);font:var(--type-body)/1.4 var(--rpg-type)}
+.arena-gallery h1{font-size:1.35rem;margin:0}
+.arena-gallery label{display:grid;gap:.2rem}
+.arena-gallery select{width:100%;font:inherit;padding:.4rem;color:inherit;background:#0b1d35;border:1px solid #718ca8;border-radius:4px}
+.arena-gallery p{margin:.3rem 0;color:var(--rpg-muted)}
+.arena-gallery a{color:var(--rpg-line)}
+@media(max-width:520px),(max-height:780px){.run-overlay{padding:.75rem}.reward-card{padding:var(--space-2);gap:var(--space-1);min-height:0}.run-toolbar button{padding:.3rem .45rem;min-height:30px}}
+.run-toolbar{align-items:flex-start;flex-wrap:wrap;justify-content:flex-end;max-width:calc(100vw - 16px)}
+.victory-overlay .rpg-shell>.eyebrow{font-family:var(--rpg-display)}
+.victory-overlay .reward-card h2{font-size:clamp(.95rem,2vmin,1.2rem)}
+.victory-overlay .reward-card .eyebrow{font-size:.75rem}

@@ -18,6 +18,78 @@ def source():
 
 
 class BmbChannelTests(unittest.TestCase):
+    def test_dormant_texture_alpha_does_not_activate_unknown_curve(self):
+        xml = ET.fromstring('''<ResIdeNode>
+        <Texture1_Color_Scale_Alpha_MotionType>Constant</Texture1_Color_Scale_Alpha_MotionType>
+        <Texture1_Color_Scale_Alpha_Value_Curve><KeyFrameArray><KeyframeFloat />
+        </KeyFrameArray></Texture1_Color_Scale_Alpha_Value_Curve></ResIdeNode>''')
+        self.assertEqual(compare_vector_curves({'vectorCurves': {}}, xml), {})
+        xml.find('Texture1_Color_Scale_Alpha_MotionType').text = 'CurveValue'
+        with self.assertRaises(ValueError):
+            compare_vector_curves({'vectorCurves': {}}, xml)
+        xml.remove(xml.find('Texture1_Color_Scale_Alpha_MotionType'))
+        with self.assertRaises(ValueError):
+            compare_vector_curves({'vectorCurves': {}}, xml)
+
+    def test_dormant_rgb_is_not_an_active_curve_and_unknown_selectors_stay_blocked(self):
+        for layer in (1, 2):
+            for channel in ('Rgb', 'Alpha'):
+                prefix = f'Texture{layer}_Color_Scale_{channel}'
+                xml = ET.fromstring(f'<ResIdeNode><{prefix}_MotionType>Constant</{prefix}_MotionType>'
+                    f'<{prefix}_Value_Curve><KeyFrameArray><KeyframeColorRgb /></KeyFrameArray>'
+                    f'</{prefix}_Value_Curve></ResIdeNode>')
+                self.assertEqual(compare_vector_curves({'vectorCurves': {}}, xml), {})
+                for selector in ['CurveValue', 'CurveSpeed', 'NewtonDynamics', 'Unknown', '']:
+                    xml.find(prefix + '_MotionType').text = selector
+                    with self.assertRaisesRegex(ValueError, 'Unverified active source curve'):
+                        compare_vector_curves({'vectorCurves': {}}, xml)
+
+    def test_selected_main_party_pairs_and_all_new_key_data_are_compared(self):
+        import hashlib
+        import json
+        from pathlib import Path
+        from inspect_bmb import read_bmb, compare_project
+        cases = [
+            ('tools/data/skill-expansion-20261028/candidates/barret-227875/originals/eff_explosion_normal.bmb',
+             'cbc743c243892eea420668bfa1173db3b0c2d0f9793a1491068fb9152f1fb6f9'),
+            ('tools/data/import-decision-20261028/candidates/barret-227871/originals/atk_blow4_blue.bmb',
+             '2e451e7f9facd21303e17dd72a970c271476d0936395425c02d423e85dbb8016'),
+            ('tools/data/skill-expansion-20261028/support-candidates/aerith-229752/originals/eff_shockwave1_blue_S.bmb',
+             '7f1618488805446abb586a48bd8a692b737b2dc744275aa04fd60a4e84a8b2ea'),
+            ('tools/data/skill-expansion-20261028/support-candidates/aerith-229752/originals/wm_1012_regen_front.bmb',
+             '12f79b1bcb0c1d7fb947c38f2a6b4990c3f47b141ac01ca7d0956be78e5218fe'),
+            ('tools/data/import-decision-20261028/candidates/aerith-229758/originals/wm_1023_reraise.bmb',
+             '4251251b4c64f0a9b1f46ee9e065e1f66932cd5e7cb2bb626f14e7c26ef50e89')]
+        if not all(Path(p).exists() for p, _ in cases):
+            self.skipTest('Optional archived main-party originals missing; restore the preservation archives')
+        curves = keys = 0
+        for file, sha in cases:
+            raw = Path(file).read_bytes()
+            self.assertEqual(hashlib.sha256(raw).hexdigest(), sha)
+            project = Path('assets/battle_effect', Path(file).stem + '.bmsln').read_bytes()
+            data = read_bmb(raw)
+            compare_project(data, project)
+            xml = ET.fromstring(project)
+            sources = xml.findall('.//ResIdeNode')[1:]
+            for node, source_node in zip(data['nodes'], sources):
+                for channel in ('scaleValue', 'scaleSpeed'):
+                    if (node['typeId'], channel) not in [(3, 'scaleValue'), (6, 'scaleSpeed')]:
+                        continue
+                    curve = node.get('vectorCurves', {}).get(channel)
+                    if not curve:
+                        continue
+                    curves += 1; keys += len(curve['keys'])
+                    # Mutating a tangent must fail, even for dormant transform keys.
+                    tag = 'Scale_Value_Curve' if channel == 'scaleValue' else 'Scale_Speed_Curve'
+                    key = source_node.find(tag + '/KeyFrameArray')[0]
+                    original = key.attrib['ElementSlopeR']
+                    values = original.split(); values[0] = str(float(values[0]) + 1)
+                    key.attrib['ElementSlopeR'] = ' '.join(values)
+                    with self.assertRaisesRegex(ValueError, 'vector key data differs'):
+                        compare_project(data, ET.tostring(xml))
+                    key.attrib['ElementSlopeR'] = original
+        self.assertEqual((curves, keys), (7, 26))
+
     def test_axis_order_tangents_and_input_preservation(self):
         data = fixture()
         before = bytes(data)

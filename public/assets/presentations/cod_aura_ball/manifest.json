@@ -1,0 +1,5858 @@
+{
+  "schemaVersion": 1,
+  "profile": "bmb-preview-scene-v1",
+  "key": "cod_aura_ball",
+  "sourceId": 203280,
+  "quality": "experimental-preview",
+  "originalFidelityVerified": false,
+  "durationFrames": 222,
+  "provenance": {
+    "planFile": "tools/data/skill-seven-eight-20261028/aura-source/plan.json",
+    "planSha256": "e716a8bb6a31d39d59b0af920b5d65d12debeeb67cf508ece4d8d3437c3f35e5",
+    "playerSha256": "e4e4f09f03c649f80c0f5f3bfa4a383a4033680d33d473799cc2e4d7472a834e",
+    "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
+    "recipeSha256": "cc76447f4e8ad59c1900dffb5259d8606ce3cce5ae2c0eebb376d562f0ad199e"
+  },
+  "limitations": [
+    "Source-admitted constant generators use the native symmetric/exclusive delay window and enabled byte. Birth traversal, lifetime, parameter sampling and the integer-seeded LCG remain experimental; the separate four-word activation oracle does not establish whole-tree RNG ownership.",
+    "Optional native Particle scalar alpha requires pinned source-selected InitCurve/UpdateCurve wrappers and unchanged key evidence. Only eligible local Particle curves use native tangents/clamping; vector, model/quad alpha and parent combination rules keep their existing paths.",
+    "Host scene dimensions are explicit: legacy cropped study, actual game viewport, or rounded captured logical proportions. Host anchors and diagnostic foreground dock remain adaptations; foreground compositing never changes source effect geometry or recovers native UI/scissor state.",
+    "Optional deterministic native Particle X display uses source-selected OneX/ConstX and replicates Joint X across axes. It requires matched constant Null ancestry and active inheritance/native locator switches; random scales, VelocityX timing and broader simulation remain unsupported.",
+    "Optional source-dispatched ZScreen locator ignores local X/Y rotation, keeps sampled constant Z roll and applies positive constant inherited scales after facing. Identity view/unrotated Standard ancestors only; random distribution, source timing and other locator variants remain unverified.",
+    "Optional native blending uses pinned FUNC_ADD and identical RGB/alpha factors from the native table. Scene composition preserves framebuffer alpha internally and presents opaque RGB; animation colorScale 1 is constructor-verified, while caller overrides remain unverified.",
+    "Optional native Basic material uses exact initial shader identity and matched constant, non-random texture tint. Model selection covers only verified UV single-submesh BR3M. Missing authoring, random tint and other layouts retain labeled legacy comparison.",
+    "Optional pinned-shader Add candidate preserves base alpha and adds secondary RGB times secondary alpha after vertex color. Native-selection plans require an exact initial Quad/Particle fragment match; other variants retain labeled legacy comparison. Runtime overrides and global colorScale remain unverified.",
+    "Optional Null/Billboard locator neutralizes constant XY tilt only for the matched zero-roll, unit-scale, identity-view subset. Standard nodes keep TRS; unsupported variants retain labeled legacy comparison. No general camera/roll/compatibility support is claimed.",
+    "Constant generation interpreted as duration/interval batches; endless/repeated generator modes not reconstructed.",
+    "Curve Frame interpreted as normalized particle lifetime; standard Hermite interpolation is experimental.",
+    "Optional authoring inheritance evaluates rate-zero alpha and birth-time parent translation. Nonzero alpha rates, rotation/scale exclusions, fields and expiration rules retain explicit legacy assumptions; source-less effects are unchanged.",
+    "Seeded centered ranges and discrete Newton integration are preview policies.",
+    "Legacy plans use Three.js additive/normal presets. Native-blend plans use recovered factors for RGB and alpha instead; other native depth/cull behavior remains outside this preview.",
+    "Distortion is enabled only for plans carrying decoded experimental fields. Midpoint subtraction, color strength and UV order are shader hypotheses; native fidelity remains unverified.",
+    "Optional model vertex RGBA multiplies interpolated source bytes into material RGBA. This is an explicit shader experiment; native combination/control semantics remain unverified.",
+    "Quad and baseline Particle geometry use inherited unit XY planes. Optional Particle geometry evaluates only the declared zero-roll, constant-scale subset as view-aligned radius-one planes; unsupported nodes retain explicitly labeled legacy comparison geometry. Native locator, roll and other primitive variants remain unresolved.",
+    "Optional source appearance selects Constant or Curve explicitly. Dormant keys stay inactive. Unresolved color selectors retain the labeled legacy preview; RGB random ranges and parent tint remain unsupported.",
+    "Optional Basic single-texture UV playback uses the same inverse texture TRS/pivot matrix as layered materials. Source values/modes are checked; the native matrix convention remains experimental. Unsupported mapping retains the labeled legacy path.",
+    "Body approach/return is an explicit preview adaptation; damage is a source-tick marker, not game execution.",
+    "Supplemented Add nodes sample two independent UV transforms and constant layer colors. Clamped RGBA addition and inverse pivot transforms are experimental shader policies.",
+    "Native-selection Distortion candidates weight displacement and output alpha by the sampled secondary alpha. Source per-layer alpha controls remain unresolved. The quad texture-2 speed curve slot lacks a nonempty matching authoring example.",
+    "Optional screen fitting is an explicit arena-composition adaptation for static screen-anchored effects, not a decoded original-game coordinate mapping.",
+    "Supported distortion quads can evaluate constant source RGBA per corner. Animated/randomized corner colors remain unsupported by this experiment.",
+    "Emission shapes are checked when matching authoring metadata is supplied. Known non-point shapes are withheld; unsupplemented source shapes remain unverified."
+  ],
+  "plan": {
+    "approved": false,
+    "name": "Aura Ball",
+    "sourceId": 203280,
+    "unit": "cloud_of_darkness",
+    "sourceSha256": "9763b41ac829629e2d5bd00eed318c0aef47f3a05ae231a2c897bde7bc25582f",
+    "composition": {
+      "schemaVersion": 1,
+      "unit": {
+        "unitId": 203000803,
+        "unitName": "Cloud of Darkness",
+        "effectFrames": "73:1000770:1"
+      },
+      "skill": {
+        "abilityId": 203280,
+        "name": "Aura Ball",
+        "motionType": 2,
+        "effectFrames": "40:5003100:1:1:0&40:7000810:2:1:0"
+      },
+      "effectFrames": "40:5003100:1:1:0&40:7000810:2:1:0",
+      "skillFrameOffset": 0,
+      "rule": "Source-only: native motion gate does not select attack composition",
+      "approved": false,
+      "traceVerified": false,
+      "source": {
+        "path": "assets/static_data/ffbe-data.db",
+        "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+      },
+      "limits": [
+        "Research metadata only; no extraction or runtime publication",
+        "Ordinary single-branch abilities only; no equipment or skin overrides",
+        "Visual timing only; damage, camera and particle fidelity are separate"
+      ],
+      "compositionSha256": "00d643b6878db7ff06e410f95ef631d9b4367997a1d7a80c8726e259da9152c0",
+      "inspectionSha256": "d3fae13c05be65e8c395458c6185ed6265a21807a3e48433da94225e7ab9ac91",
+      "origin": "Explicit composed research inspection; raw ability retained"
+    },
+    "seed": 1,
+    "effectHorizon": 180,
+    "endFrame": 210,
+    "approachFrames": 18,
+    "presentation": {
+      "movement": "stationary",
+      "scope": "all_enemies",
+      "approachFrames": 0,
+      "returnFrames": 12,
+      "targetOffsetX": 90,
+      "recipeSha256": "c8293617cd499d3edacde7990a7a8285c1798e6d55740c145b3732dbac549180",
+      "origin": "Reviewed game recipe; preview timing and offsets are adaptations"
+    },
+    "fitScreenToArena": false,
+    "sceneComposite": true,
+    "withholdUntexturedParticles": true,
+    "sourceInheritance": true,
+    "sourceAppearance": true,
+    "basicTextureUv": true,
+    "modelVertexRgba": true,
+    "particleGeometry": true,
+    "nativeParticleX": true,
+    "nullLocator": true,
+    "nativeMaterialSelection": {
+      "schemaVersion": 1,
+      "nativeSha256": "6c7e501c98939581528df3d712ff1f58afcfd392160f1e71ef1f903d49926b77",
+      "packages": {
+        "bmshaderpack.bin": "2f36d1839cad4ede93764b4237a05d4cbe4085392a9a2b6f93c5833e14d7dd0b"
+      },
+      "scope": "Static initial selection; runtime overrides and global uniforms unverified",
+      "distortionReference": {
+        "slot": 184,
+        "offset": 413264,
+        "bytesWithNul": 820,
+        "sha256": "f4cef6ffc96d8f8fc66d33fec28619c18390ce445dd06bb2b01d204bbbbea990",
+        "source": "precision highp float;uniform vec4 alphaTestParam;uniform vec4 colorScale;uniform vec4 fogColor;uniform vec4 fogArea;uniform mat4 invProjMat;uniform vec4 specular;uniform vec4 softParam;uniform vec4 distDMapMid;uniform vec4 screenParam;uniform sampler2D baseTex;uniform sampler2D subTex;varying vec2 ipo_uv1;varying vec4 ipo_tcs1;varying vec2 ipo_uv2;varying vec4 ipo_tcs2;varying vec4 ipo_color;void main(){vec4 output_color;vec2 uv1;vec2 uv2;output_color = ipo_color;uv1 = ipo_uv1;uv2 = ipo_uv2;vec4 offset_uv = texture2D(subTex,uv2);offset_uv.rgb -= distDMapMid.rgb;offset_uv *= ipo_tcs2;offset_uv.rgb *= offset_uv.a;uv1 += offset_uv.xy;output_color *= texture2D(baseTex,uv1);output_color *= ipo_tcs1;output_color.a *= offset_uv.a;output_color = clamp((output_color*colorScale),0.0,1.0);gl_FragColor = output_color;}"
+      },
+      "basicReference": {
+        "slot": 224,
+        "offset": 469328,
+        "bytesWithNul": 556,
+        "sha256": "8ae381afc9f95ab42caafc2c03266ddc08500489623d2e16d39d89737b7d1fb4",
+        "source": "precision highp float;uniform vec4 alphaTestParam;uniform vec4 colorScale;uniform vec4 fogColor;uniform vec4 fogArea;uniform mat4 invProjMat;uniform vec4 specular;uniform vec4 softParam;uniform vec4 distDMapMid;uniform vec4 screenParam;uniform sampler2D baseTex;varying vec2 ipo_uv1;varying vec4 ipo_tcs1;varying vec4 ipo_color;void main(){vec4 output_color;vec2 uv1;output_color = ipo_color;uv1 = ipo_uv1;output_color *= texture2D(baseTex,uv1);output_color *= ipo_tcs1;output_color = clamp((output_color*colorScale),0.0,1.0);gl_FragColor = output_color;}",
+        "vertexSource": "precision highp float;uniform mat4 viewMat;uniform mat4 projMat;uniform mat4 worldMat;uniform vec4 offset;uniform vec4 texOffset;uniform vec4 tex1Rotate;uniform vec4 tex2Rotate;uniform vec4 tex1ColorScale;uniform vec4 tex2ColorScale;uniform vec4 diffuseColor;uniform vec4 lightDir;uniform vec4 lightColor;uniform vec4 ambientLightColor;uniform vec4 emissionColor;uniform vec4 falloffParam;uniform vec4 falloffColor1;uniform vec4 falloffColor2;attribute vec3 in_pos;attribute vec4 in_color;attribute vec2 in_tex0;varying vec2 ipo_uv1;varying vec4 ipo_tcs1;varying vec4 ipo_color;void main(){vec4 ipo_pos;vec4 pos = vec4(in_pos,1.0);vec4 pw = (pos*worldMat);pw.xyz += offset.xyz;vec4 pwv = (pw*viewMat);vec4 pwvp = (pwv*projMat);ipo_pos = pwvp;ipo_color = in_color*diffuseColor;ipo_uv1 = vec2(dot(in_tex0,tex1Rotate.xy),dot(in_tex0,tex1Rotate.zw));ipo_uv1 += texOffset.xy;ipo_tcs1 = tex1ColorScale;gl_Position = ipo_pos;}",
+        "vertexSha256": "f41d379d2ee21af1a2de4ae30eaaec079eb99d77d85779b7782958814eba389f"
+      }
+    },
+    "nativeBasicMaterial": true,
+    "nativeBlend": {
+      "nativeSha256": "6c7e501c98939581528df3d712ff1f58afcfd392160f1e71ef1f903d49926b77",
+      "tableAddress": "0x255ab8c",
+      "tableSha256": "1c0282c137455fdc03d413a9ba966e1da51cd170b1f5ffa34beb6b8201dbf072",
+      "blendRows": [
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          1,
+          770,
+          771
+        ],
+        [
+          1,
+          770,
+          1
+        ],
+        [
+          1,
+          0,
+          771
+        ],
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          1,
+          0,
+          769
+        ],
+        [
+          1,
+          775,
+          769
+        ]
+      ],
+      "equation": 32774,
+      "equationOrigin": "RenderContext::Begin at 0x15c6914",
+      "defaultColorScale": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "colorScaleOrigin": "Animation constructor +0x44; copied to pixel constants +0x10 by Draw",
+      "colorScaleBoundary": "Constructor default only; caller writes remain unverified"
+    },
+    "nativeNullLocator": {
+      "nativeSha256": "6c7e501c98939581528df3d712ff1f58afcfd392160f1e71ef1f903d49926b77",
+      "parameterOffset": 692,
+      "typeId": 0,
+      "moduleIndex": 3,
+      "moduleAddress": "0x1fc04b0",
+      "functionSha256": "8788174e86964bd11e97f55521d4606fe86af3798cd8f5ac9e920b5802f8f20d",
+      "scope": "ZScreen kind 0, identity view, sampled constant roll and positive constant scales"
+    },
+    "rendererReference": {
+      "schemaVersion": 1,
+      "nativeSha256": "6c7e501c98939581528df3d712ff1f58afcfd392160f1e71ef1f903d49926b77",
+      "sourceLogSha256": "6f3f750a30b9e0b401bfe2b8d8d35d876ecf399d4d70df0105efc8eac206f0b6",
+      "type": "renderer-reference",
+      "seq": 3,
+      "ms": 910,
+      "action": 0,
+      "globalScale": 1.774999976158142,
+      "screenWidth": 640,
+      "screenHeight": 1100,
+      "formulaScale": 1.775,
+      "formulaMatches": true,
+      "note": "Global geometry multiplier; distinct from member scale, layer scale and placement coordinates"
+    },
+    "rectanglePlacement": {
+      "unitsPerPixel": 1,
+      "scatter": [
+        0,
+        0
+      ],
+      "policy": "Preview adaptation: left half of arena for target-side; prepared frame box for target-unit; full arena for screen; one source unit per preview pixel; zero scatter. Not native rectangle geometry."
+    },
+    "sourceHits": [
+      {
+        "frame": 120,
+        "weight": 100
+      }
+    ],
+    "effects": [
+      {
+        "name": "battle_generic_barrier_ball1_purple.bmb",
+        "sha256": "fbabb715abf0644e65363880120be684212b84f8074734740af0f77038a38c57",
+        "rootLifecycle": {
+          "profile": "native-root-header-v1",
+          "lifeFramesRaw": 0,
+          "fieldOffset": 80,
+          "boundary": "Header RootLife only; child expiration, flags and source emitter ownership are separate"
+        },
+        "nodes": [
+          {
+            "index": 0,
+            "offset": 96,
+            "bytes": 704,
+            "typeId": 0,
+            "type": "ControlNull",
+            "lifeParameter": 0,
+            "lifeRangeParameter": 0,
+            "alphaCurve": {
+              "fieldOffset": 376,
+              "keys": []
+            },
+            "vectorCurves": {
+              "translationValue": {
+                "fieldOffset": 656,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "translationSpeed": {
+                "fieldOffset": 672,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "rotationValue": {
+                "fieldOffset": 688,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "rotationSpeed": {
+                "fieldOffset": 704,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "scaleValue": {
+                "fieldOffset": 720,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "scaleSpeed": {
+                "fieldOffset": 736,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "centerColor": {
+                "fieldOffset": 768,
+                "axes": [
+                  "R",
+                  "G",
+                  "B"
+                ],
+                "keys": []
+              }
+            },
+            "staticVectors": {
+              "transform": {
+                "translation": {
+                  "valueInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "rotation": {
+                  "valueInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "scale": {
+                  "valueInitial": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                }
+              }
+            },
+            "texturePivots": {},
+            "motionModes": {
+              "translation": {
+                "id": 1,
+                "name": "NewtonDynamics",
+                "fieldOffset": 652
+              },
+              "rotation": {
+                "id": 1,
+                "name": "NewtonDynamics",
+                "fieldOffset": 752
+              },
+              "scale": {
+                "id": 1,
+                "name": "NewtonDynamics",
+                "fieldOffset": 756
+              }
+            },
+            "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 760
+              },
+              "alphaMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 784
+              }
+            },
+            "materialAlpha": {
+              "value": 1,
+              "fieldOffset": 340
+            },
+            "sourceControls": {
+              "profile": "ibmb-parent-controls-v1",
+              "fields": {
+                "rotation": {
+                  "raw": 0,
+                  "value": "On",
+                  "fieldOffset": 232,
+                  "status": "decoded"
+                },
+                "alphaRate": {
+                  "raw": 0,
+                  "value": 0,
+                  "fieldOffset": 308,
+                  "status": "decoded"
+                },
+                "nullType": {
+                  "raw": 1,
+                  "value": "Standard",
+                  "fieldOffset": 788,
+                  "status": "decoded"
+                }
+              },
+              "missingInheritance": [
+                "translation",
+                "scale",
+                "matrix",
+                "alphaMode",
+                "colorRate"
+              ],
+              "compatibility": "unresolved-authoring-to-runtime-mapping",
+              "boundary": "Binary parameters only; no inheritance equation or complete profile admission"
+            },
+            "nativeInitialization": {
+              "profile": "native-null-init-inputs-v1",
+              "status": "supported-inputs",
+              "parameters": {
+                "locator_index": 1,
+                "field_c8": 0,
+                "field_cc": 1
+              },
+              "fieldOffsets": {
+                "locator_index": 788,
+                "field_c8": 296,
+                "field_cc": 300
+              },
+              "requiredContext": [
+                "parent_flags",
+                "child_flags"
+              ],
+              "boundary": "Input extraction only; child execution supplies flags, never default zero"
+            },
+            "parentIndex": null,
+            "children": [
+              1
+            ],
+            "childCount": 1,
+            "resourceBindings": {},
+            "generation": {
+              "start": 0,
+              "startRange": 0,
+              "count": 1,
+              "duration": 1,
+              "repeatCount": 1,
+              "interval": 1
+            },
+            "uniformScale": true,
+            "nativeGeneration": {
+              "start": 0,
+              "startRange": 0,
+              "count": 1,
+              "duration": 1,
+              "repeatCount": 1,
+              "interval": 1,
+              "profile": "native-constant-activation-v1",
+              "typeId": 0,
+              "childCount": 1,
+              "mode": 0,
+              "enabled": true,
+              "nullLifetimeMode": 0,
+              "rawControlBytes": {
+                "offset": "0x69",
+                "values": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              "boundary": "Activation only; Null enabled means an explicitly invoked caller, not decoded source visibility"
+            },
+            "initialColor": [
+              1,
+              1,
+              1
+            ],
+            "nativeModuleInputs": {
+              "color1": {
+                "value": [
+                  1,
+                  1,
+                  1
+                ],
+                "range": [
+                  0,
+                  0,
+                  0
+                ],
+                "valueOffset": 424,
+                "rangeOffset": 440
+              }
+            },
+            "authoringEmissionShape": "Point",
+            "authoringInheritance": {
+              "translation": "On",
+              "rotation": "On",
+              "scale": "On",
+              "matrix": "On",
+              "alphaMode": "Multiply",
+              "alphaRate": 0,
+              "colorRate": 0,
+              "compatibility": {
+                "nodeV16": false,
+                "nodeV15": false,
+                "rootV16": false,
+                "rootV15": false
+              }
+            },
+            "particleGeometrySource": {
+              "rotationMode": "NewtonDynamics",
+              "scaleMode": "NewtonDynamics",
+              "origin": "Explicit matching BMSLN; these selectors are not newly decoded binary fields",
+              "projectSha256": "4507e07976b0a501c285ed0787c004f38548796b33d11546d345aa922c939541"
+            },
+            "nullLocatorSource": {
+              "type": "Standard",
+              "rotationMode": "NewtonDynamics",
+              "scaleMode": "NewtonDynamics",
+              "projectSha256": "4507e07976b0a501c285ed0787c004f38548796b33d11546d345aa922c939541",
+              "origin": "IBMB Null type; rotation/scale still require explicit matching BMSLN"
+            },
+            "appearance": {
+              "alpha": {
+                "mode": "Constant",
+                "origin": "IBMB",
+                "value": 1
+              },
+              "color": {
+                "mode": "Constant",
+                "origin": "IBMB",
+                "domain": "center",
+                "supported": true,
+                "value": [
+                  1,
+                  1,
+                  1
+                ]
+              },
+              "limitations": []
+            },
+            "nativeNullLocator": {
+              "typeId": 1,
+              "fieldOffset": 788,
+              "moduleAddress": null,
+              "nativeSha256": "6c7e501c98939581528df3d712ff1f58afcfd392160f1e71ef1f903d49926b77",
+              "functionSha256": null
+            }
+          },
+          {
+            "index": 1,
+            "offset": 800,
+            "bytes": 704,
+            "typeId": 0,
+            "type": "ControlNull",
+            "lifeParameter": 80,
+            "lifeRangeParameter": 0,
+            "alphaCurve": {
+              "fieldOffset": 1080,
+              "keys": []
+            },
+            "vectorCurves": {
+              "translationValue": {
+                "fieldOffset": 1360,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "translationSpeed": {
+                "fieldOffset": 1376,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "rotationValue": {
+                "fieldOffset": 1392,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "rotationSpeed": {
+                "fieldOffset": 1408,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "scaleValue": {
+                "fieldOffset": 1424,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "scaleSpeed": {
+                "fieldOffset": 1440,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "centerColor": {
+                "fieldOffset": 1472,
+                "axes": [
+                  "R",
+                  "G",
+                  "B"
+                ],
+                "keys": []
+              }
+            },
+            "staticVectors": {
+              "transform": {
+                "translation": {
+                  "valueInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "rotation": {
+                  "valueInitial": [
+                    25,
+                    0,
+                    0
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "scale": {
+                  "valueInitial": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                }
+              }
+            },
+            "texturePivots": {},
+            "motionModes": {
+              "translation": {
+                "id": 1,
+                "name": "NewtonDynamics",
+                "fieldOffset": 1356
+              },
+              "rotation": {
+                "id": 1,
+                "name": "NewtonDynamics",
+                "fieldOffset": 1456
+              },
+              "scale": {
+                "id": 1,
+                "name": "NewtonDynamics",
+                "fieldOffset": 1460
+              }
+            },
+            "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 1464
+              },
+              "alphaMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 1488
+              }
+            },
+            "materialAlpha": {
+              "value": 1,
+              "fieldOffset": 1044
+            },
+            "sourceControls": {
+              "profile": "ibmb-parent-controls-v1",
+              "fields": {
+                "rotation": {
+                  "raw": 0,
+                  "value": "On",
+                  "fieldOffset": 936,
+                  "status": "decoded"
+                },
+                "alphaRate": {
+                  "raw": 0,
+                  "value": 0,
+                  "fieldOffset": 1012,
+                  "status": "decoded"
+                },
+                "nullType": {
+                  "raw": 0,
+                  "value": "Billboard",
+                  "fieldOffset": 1492,
+                  "status": "decoded"
+                }
+              },
+              "missingInheritance": [
+                "translation",
+                "scale",
+                "matrix",
+                "alphaMode",
+                "colorRate"
+              ],
+              "compatibility": "unresolved-authoring-to-runtime-mapping",
+              "boundary": "Binary parameters only; no inheritance equation or complete profile admission"
+            },
+            "nativeInitialization": {
+              "profile": "native-null-init-inputs-v1",
+              "status": "supported-inputs",
+              "parameters": {
+                "locator_index": 0,
+                "field_c8": 0,
+                "field_cc": 1
+              },
+              "fieldOffsets": {
+                "locator_index": 1492,
+                "field_c8": 1000,
+                "field_cc": 1004
+              },
+              "requiredContext": [
+                "parent_flags",
+                "child_flags"
+              ],
+              "boundary": "Input extraction only; child execution supplies flags, never default zero"
+            },
+            "parentIndex": 0,
+            "children": [
+              2
+            ],
+            "childCount": 1,
+            "resourceBindings": {},
+            "generation": {
+              "start": 0,
+              "startRange": 0,
+              "count": 1,
+              "duration": 1,
+              "repeatCount": 1,
+              "interval": 1
+            },
+            "uniformScale": true,
+            "nativeGeneration": {
+              "start": 0,
+              "startRange": 0,
+              "count": 1,
+              "duration": 1,
+              "repeatCount": 1,
+              "interval": 1,
+              "profile": "native-constant-activation-v1",
+              "typeId": 0,
+              "childCount": 1,
+              "mode": 0,
+              "enabled": true,
+              "nullLifetimeMode": 0,
+              "rawControlBytes": {
+                "offset": "0x69",
+                "values": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              "boundary": "Activation only; Null enabled means an explicitly invoked caller, not decoded source visibility"
+            },
+            "initialColor": [
+              1,
+              1,
+              1
+            ],
+            "nativeModuleInputs": {
+              "color1": {
+                "value": [
+                  1,
+                  1,
+                  1
+                ],
+                "range": [
+                  0,
+                  0,
+                  0
+                ],
+                "valueOffset": 1128,
+                "rangeOffset": 1144
+              }
+            },
+            "authoringEmissionShape": "Point",
+            "authoringInheritance": {
+              "translation": "On",
+              "rotation": "On",
+              "scale": "On",
+              "matrix": "On",
+              "alphaMode": "Multiply",
+              "alphaRate": 0,
+              "colorRate": 0,
+              "compatibility": {
+                "nodeV16": true,
+                "nodeV15": false,
+                "rootV16": false,
+                "rootV15": false
+              }
+            },
+            "particleGeometrySource": {
+              "rotationMode": "NewtonDynamics",
+              "scaleMode": "NewtonDynamics",
+              "origin": "Explicit matching BMSLN; these selectors are not newly decoded binary fields",
+              "projectSha256": "4507e07976b0a501c285ed0787c004f38548796b33d11546d345aa922c939541"
+            },
+            "nullLocatorSource": {
+              "type": "Billboard",
+              "rotationMode": "NewtonDynamics",
+              "scaleMode": "NewtonDynamics",
+              "projectSha256": "4507e07976b0a501c285ed0787c004f38548796b33d11546d345aa922c939541",
+              "origin": "IBMB Null type; rotation/scale still require explicit matching BMSLN"
+            },
+            "appearance": {
+              "alpha": {
+                "mode": "Constant",
+                "origin": "IBMB",
+                "value": 1
+              },
+              "color": {
+                "mode": "Constant",
+                "origin": "IBMB",
+                "domain": "center",
+                "supported": true,
+                "value": [
+                  1,
+                  1,
+                  1
+                ]
+              },
+              "limitations": []
+            },
+            "nativeNullLocator": {
+              "typeId": 0,
+              "fieldOffset": 1492,
+              "moduleAddress": "0x1fc04b0",
+              "nativeSha256": "6c7e501c98939581528df3d712ff1f58afcfd392160f1e71ef1f903d49926b77",
+              "functionSha256": "8788174e86964bd11e97f55521d4606fe86af3798cd8f5ac9e920b5802f8f20d"
+            }
+          },
+          {
+            "index": 2,
+            "offset": 1504,
+            "bytes": 704,
+            "typeId": 0,
+            "type": "ControlNull",
+            "lifeParameter": 80,
+            "lifeRangeParameter": 0,
+            "alphaCurve": {
+              "fieldOffset": 1784,
+              "keys": []
+            },
+            "vectorCurves": {
+              "translationValue": {
+                "fieldOffset": 2064,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "translationSpeed": {
+                "fieldOffset": 2080,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "rotationValue": {
+                "fieldOffset": 2096,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "rotationSpeed": {
+                "fieldOffset": 2112,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "scaleValue": {
+                "fieldOffset": 2128,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": [
+                  {
+                    "offset": 6160,
+                    "typeIds": [
+                      2,
+                      1,
+                      1
+                    ],
+                    "types": [
+                      "Spline",
+                      "Linear",
+                      "Linear"
+                    ],
+                    "slopeLeft": [
+                      157.78363037109375,
+                      0,
+                      0
+                    ],
+                    "slopeRight": [
+                      157.78363037109375,
+                      0,
+                      0
+                    ],
+                    "value": [
+                      0,
+                      0,
+                      0
+                    ],
+                    "frame": 0
+                  },
+                  {
+                    "offset": 6212,
+                    "typeIds": [
+                      2,
+                      1,
+                      1
+                    ],
+                    "types": [
+                      "Spline",
+                      "Linear",
+                      "Linear"
+                    ],
+                    "slopeLeft": [
+                      0,
+                      0,
+                      0
+                    ],
+                    "slopeRight": [
+                      0,
+                      0,
+                      0
+                    ],
+                    "value": [
+                      83.04048156738281,
+                      0,
+                      0
+                    ],
+                    "frame": 0.30892857909202576
+                  },
+                  {
+                    "offset": 6264,
+                    "typeIds": [
+                      2,
+                      1,
+                      1
+                    ],
+                    "types": [
+                      "Spline",
+                      "Linear",
+                      "Linear"
+                    ],
+                    "slopeLeft": [
+                      -0.000005938378308201209,
+                      0,
+                      0
+                    ],
+                    "slopeRight": [
+                      -0.000005938378308201209,
+                      0,
+                      0
+                    ],
+                    "value": [
+                      88.50762176513672,
+                      0,
+                      0
+                    ],
+                    "frame": 1
+                  }
+                ],
+                "dataOffset": 6160
+              },
+              "scaleSpeed": {
+                "fieldOffset": 2144,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "centerColor": {
+                "fieldOffset": 2176,
+                "axes": [
+                  "R",
+                  "G",
+                  "B"
+                ],
+                "keys": []
+              }
+            },
+            "staticVectors": {
+              "transform": {
+                "translation": {
+                  "valueInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "rotation": {
+                  "valueInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "scale": {
+                  "valueInitial": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                }
+              }
+            },
+            "texturePivots": {},
+            "motionModes": {
+              "translation": {
+                "id": 1,
+                "name": "NewtonDynamics",
+                "fieldOffset": 2060
+              },
+              "rotation": {
+                "id": 1,
+                "name": "NewtonDynamics",
+                "fieldOffset": 2160
+              },
+              "scale": {
+                "id": 2,
+                "name": "CurveValue",
+                "fieldOffset": 2164
+              }
+            },
+            "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 2168
+              },
+              "alphaMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 2192
+              }
+            },
+            "materialAlpha": {
+              "value": 1,
+              "fieldOffset": 1748
+            },
+            "sourceControls": {
+              "profile": "ibmb-parent-controls-v1",
+              "fields": {
+                "rotation": {
+                  "raw": 0,
+                  "value": "On",
+                  "fieldOffset": 1640,
+                  "status": "decoded"
+                },
+                "alphaRate": {
+                  "raw": 0,
+                  "value": 0,
+                  "fieldOffset": 1716,
+                  "status": "decoded"
+                },
+                "nullType": {
+                  "raw": 1,
+                  "value": "Standard",
+                  "fieldOffset": 2196,
+                  "status": "decoded"
+                }
+              },
+              "missingInheritance": [
+                "translation",
+                "scale",
+                "matrix",
+                "alphaMode",
+                "colorRate"
+              ],
+              "compatibility": "unresolved-authoring-to-runtime-mapping",
+              "boundary": "Binary parameters only; no inheritance equation or complete profile admission"
+            },
+            "nativeInitialization": {
+              "profile": "native-null-init-inputs-v1",
+              "status": "supported-inputs",
+              "parameters": {
+                "locator_index": 1,
+                "field_c8": 0,
+                "field_cc": 1
+              },
+              "fieldOffsets": {
+                "locator_index": 2196,
+                "field_c8": 1704,
+                "field_cc": 1708
+              },
+              "requiredContext": [
+                "parent_flags",
+                "child_flags"
+              ],
+              "boundary": "Input extraction only; child execution supplies flags, never default zero"
+            },
+            "parentIndex": 1,
+            "children": [
+              3,
+              4
+            ],
+            "childCount": 2,
+            "resourceBindings": {},
+            "generation": {
+              "start": 0,
+              "startRange": 0,
+              "count": 1,
+              "duration": 1,
+              "repeatCount": 1,
+              "interval": 1
+            },
+            "uniformScale": true,
+            "nativeGeneration": {
+              "start": 0,
+              "startRange": 0,
+              "count": 1,
+              "duration": 1,
+              "repeatCount": 1,
+              "interval": 1,
+              "profile": "native-constant-activation-v1",
+              "typeId": 0,
+              "childCount": 2,
+              "mode": 0,
+              "enabled": true,
+              "nullLifetimeMode": 0,
+              "rawControlBytes": {
+                "offset": "0x69",
+                "values": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              "boundary": "Activation only; Null enabled means an explicitly invoked caller, not decoded source visibility"
+            },
+            "initialColor": [
+              1,
+              1,
+              1
+            ],
+            "nativeModuleInputs": {
+              "color1": {
+                "value": [
+                  1,
+                  1,
+                  1
+                ],
+                "range": [
+                  0,
+                  0,
+                  0
+                ],
+                "valueOffset": 1832,
+                "rangeOffset": 1848
+              }
+            },
+            "authoringEmissionShape": "Point",
+            "authoringInheritance": {
+              "translation": "On",
+              "rotation": "On",
+              "scale": "On",
+              "matrix": "On",
+              "alphaMode": "Multiply",
+              "alphaRate": 0,
+              "colorRate": 0,
+              "compatibility": {
+                "nodeV16": true,
+                "nodeV15": false,
+                "rootV16": false,
+                "rootV15": false
+              }
+            },
+            "particleGeometrySource": {
+              "rotationMode": "NewtonDynamics",
+              "scaleMode": "CurveValue",
+              "origin": "Explicit matching BMSLN; these selectors are not newly decoded binary fields",
+              "projectSha256": "4507e07976b0a501c285ed0787c004f38548796b33d11546d345aa922c939541"
+            },
+            "nullLocatorSource": {
+              "type": "Standard",
+              "rotationMode": "NewtonDynamics",
+              "scaleMode": "CurveValue",
+              "projectSha256": "4507e07976b0a501c285ed0787c004f38548796b33d11546d345aa922c939541",
+              "origin": "IBMB Null type; rotation/scale still require explicit matching BMSLN"
+            },
+            "appearance": {
+              "alpha": {
+                "mode": "Constant",
+                "origin": "IBMB",
+                "value": 1
+              },
+              "color": {
+                "mode": "Constant",
+                "origin": "IBMB",
+                "domain": "center",
+                "supported": true,
+                "value": [
+                  1,
+                  1,
+                  1
+                ]
+              },
+              "limitations": []
+            },
+            "nativeNullLocator": {
+              "typeId": 1,
+              "fieldOffset": 2196,
+              "moduleAddress": null,
+              "nativeSha256": "6c7e501c98939581528df3d712ff1f58afcfd392160f1e71ef1f903d49926b77",
+              "functionSha256": null
+            }
+          },
+          {
+            "index": 3,
+            "offset": 2208,
+            "bytes": 1904,
+            "typeId": 6,
+            "type": "EmitterModel",
+            "lifeParameter": 80,
+            "lifeRangeParameter": 0,
+            "alphaCurve": {
+              "fieldOffset": 2816,
+              "dataOffset": 6316,
+              "keys": [
+                {
+                  "offset": 6316,
+                  "typeId": 2,
+                  "type": "Spline",
+                  "slopeLeft": 1.6599839925765991,
+                  "slopeRight": 1.6599839925765991,
+                  "value": 0,
+                  "frame": 0
+                },
+                {
+                  "offset": 6336,
+                  "typeId": 2,
+                  "type": "Spline",
+                  "slopeLeft": 0,
+                  "slopeRight": 0,
+                  "value": 1,
+                  "frame": 0.24821427464485168
+                },
+                {
+                  "offset": 6356,
+                  "typeId": 2,
+                  "type": "Spline",
+                  "slopeLeft": -2.058189868927002,
+                  "slopeRight": -2.058189868927002,
+                  "value": 0,
+                  "frame": 1
+                }
+              ]
+            },
+            "vectorCurves": {
+              "translationValue": {
+                "fieldOffset": 3600,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "translationSpeed": {
+                "fieldOffset": 3616,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "scaleValue": {
+                "fieldOffset": 3664,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "texture1TranslationSpeed": {
+                "fieldOffset": 3712,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "texture1ScaleValue": {
+                "fieldOffset": 3760,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "centerColor": {
+                "fieldOffset": 3904,
+                "axes": [
+                  "R",
+                  "G",
+                  "B"
+                ],
+                "keys": []
+              }
+            },
+            "staticVectors": {
+              "transform": {
+                "translation": {
+                  "valueInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "rotation": {
+                  "valueInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "scale": {
+                  "valueInitial": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                }
+              },
+              "texture1": {
+                "translation": {
+                  "valueInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "valueRange": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "speedInitial": [
+                    0,
+                    0.009999999776482582,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "rotation": {
+                  "valueInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "scale": {
+                  "valueInitial": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                }
+              },
+              "texture2": {
+                "translation": {
+                  "valueInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "rotation": {
+                  "valueInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "scale": {
+                  "valueInitial": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                }
+              }
+            },
+            "texturePivots": {
+              "texture1": [
+                0.5,
+                0.5,
+                0.5
+              ],
+              "texture2": [
+                0.5,
+                0.5,
+                0.5
+              ]
+            },
+            "motionModes": {
+              "translation": {
+                "id": 1,
+                "name": "NewtonDynamics",
+                "fieldOffset": 3592
+              },
+              "scale": {
+                "id": 1,
+                "name": "NewtonDynamics",
+                "fieldOffset": 3892
+              },
+              "texture1Translation": {
+                "id": 1,
+                "name": "NewtonDynamics",
+                "fieldOffset": 4072
+              },
+              "texture1Scale": {
+                "id": 1,
+                "name": "NewtonDynamics",
+                "fieldOffset": 4080
+              }
+            },
+            "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 3896
+              },
+              "blend": {
+                "id": 2,
+                "name": "SemiAdd",
+                "fieldOffset": 3952
+              },
+              "alphaMode": {
+                "id": 1,
+                "name": "Curve",
+                "fieldOffset": 3956
+              },
+              "alphaTest": {
+                "id": 2,
+                "name": "Greater",
+                "fieldOffset": 3960
+              },
+              "texture1Address": {
+                "id": 1,
+                "name": "Repeat",
+                "fieldOffset": 3972
+              }
+            },
+            "materialAlpha": {
+              "value": 1,
+              "fieldOffset": 2704
+            },
+            "sourceControls": {
+              "profile": "ibmb-parent-controls-v1",
+              "fields": {
+                "alphaMode": {
+                  "raw": 0,
+                  "value": "Lerp",
+                  "fieldOffset": 2788,
+                  "status": "decoded"
+                },
+                "alphaRate": {
+                  "raw": 0,
+                  "value": 0,
+                  "fieldOffset": 2672,
+                  "status": "decoded"
+                },
+                "colorRate": {
+                  "raw": 0,
+                  "value": 0,
+                  "fieldOffset": 2676,
+                  "status": "decoded"
+                }
+              },
+              "missingInheritance": [
+                "translation",
+                "rotation",
+                "scale",
+                "matrix"
+              ],
+              "compatibility": "unresolved-authoring-to-runtime-mapping",
+              "boundary": "Binary parameters only; no inheritance equation or complete profile admission"
+            },
+            "parentIndex": 2,
+            "children": [],
+            "childCount": 0,
+            "resourceBindings": {
+              "model": {
+                "kind": "model",
+                "name": "model_circle092_128pl_in_out_alpha_shrink_uv3",
+                "resourceIndex": 0,
+                "fieldOffset": 2272,
+                "stringOffset": 6020
+              },
+              "texture1": {
+                "kind": "texture",
+                "name": "lapis_eff_material_026_uv5_0025_rainbow_smoke_alpha3",
+                "resourceIndex": 0,
+                "fieldOffset": 2288,
+                "stringOffset": 6066
+              },
+              "texture2": null
+            },
+            "generation": {
+              "start": 0,
+              "startRange": 0,
+              "count": 2,
+              "duration": 1,
+              "repeatCount": 1,
+              "interval": 1
+            },
+            "uniformScale": true,
+            "initialColor": [
+              0.6286779642105103,
+              0.5346714854240417,
+              1
+            ],
+            "authoringEmissionShape": "Point",
+            "authoringInheritance": {
+              "translation": "On",
+              "rotation": "On",
+              "scale": "On",
+              "matrix": "On",
+              "alphaMode": "Lerp",
+              "alphaRate": 0,
+              "colorRate": 0,
+              "compatibility": {
+                "nodeV16": true,
+                "nodeV15": true,
+                "rootV16": false,
+                "rootV15": false
+              }
+            },
+            "particleGeometrySource": {
+              "rotationMode": "NewtonDynamics",
+              "scaleMode": "NewtonDynamics",
+              "origin": "Explicit matching BMSLN; these selectors are not newly decoded binary fields",
+              "projectSha256": "4507e07976b0a501c285ed0787c004f38548796b33d11546d345aa922c939541"
+            },
+            "appearance": {
+              "alpha": {
+                "mode": "Curve",
+                "origin": "IBMB",
+                "value": 1
+              },
+              "color": {
+                "mode": "Constant",
+                "origin": "IBMB",
+                "domain": "center",
+                "supported": true,
+                "value": [
+                  0.6286779642105103,
+                  0.5346714854240417,
+                  1
+                ]
+              },
+              "limitations": []
+            },
+            "basicTextureMapping": {
+              "supported": true,
+              "motionModes": {
+                "translation": "NewtonDynamics",
+                "rotation": "NewtonDynamics",
+                "scale": "NewtonDynamics"
+              },
+              "origin": "Explicit BMSLN after known-field comparison",
+              "limitations": []
+            },
+            "nativeMaterialSelection": {
+              "scope": "Initial UV single-submesh Model constructor; no runtime override",
+              "resourceType": 4,
+              "specialFlag": 0,
+              "operation": 0,
+              "textured": true,
+              "textureSelection": "Explicit BMB names",
+              "modelSha256": "ac1801f6a38d929fa5e1cfb468b3f848d700bb233e06629cc54d7f00bd700399",
+              "submeshIndex": 0,
+              "mask": 0,
+              "rawInputs": {
+                "0x111": 0,
+                "0x118": 0,
+                "0x114": 0,
+                "0x117": 0,
+                "0x1fc": 0,
+                "0x6e0": 0,
+                "0x6f4": 0
+              },
+              "supported": true,
+              "descriptorIndex": 1344,
+              "descriptor": [
+                44,
+                224,
+                0,
+                8
+              ],
+              "vertexSlot": 44,
+              "fragmentSlot": 224,
+              "vertexSha256": "f41d379d2ee21af1a2de4ae30eaaec079eb99d77d85779b7782958814eba389f",
+              "fragmentSha256": "8ae381afc9f95ab42caafc2c03266ddc08500489623d2e16d39d89737b7d1fb4",
+              "fragmentOffset": 469328,
+              "addCandidateCompatible": false,
+              "distortionCandidateCompatible": false,
+              "basicCandidateCompatible": true
+            },
+            "nativeBasicTint": {
+              "supported": true,
+              "rgba": [
+                1,
+                1,
+                1,
+                1
+              ],
+              "limitations": [],
+              "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
+              "projectSha256": "4507e07976b0a501c285ed0787c004f38548796b33d11546d345aa922c939541"
+            }
+          },
+          {
+            "index": 4,
+            "offset": 4112,
+            "bytes": 1904,
+            "typeId": 6,
+            "type": "EmitterModel",
+            "lifeParameter": 80,
+            "lifeRangeParameter": 0,
+            "alphaCurve": {
+              "fieldOffset": 4720,
+              "dataOffset": 6376,
+              "keys": [
+                {
+                  "offset": 6376,
+                  "typeId": 2,
+                  "type": "Spline",
+                  "slopeLeft": 1.6599839925765991,
+                  "slopeRight": 1.6599839925765991,
+                  "value": 0,
+                  "frame": 0
+                },
+                {
+                  "offset": 6396,
+                  "typeId": 2,
+                  "type": "Spline",
+                  "slopeLeft": 0,
+                  "slopeRight": 0,
+                  "value": 0.40728992223739624,
+                  "frame": 0.24821427464485168
+                },
+                {
+                  "offset": 6416,
+                  "typeId": 2,
+                  "type": "Spline",
+                  "slopeLeft": -1.0041799545288086,
+                  "slopeRight": -1.0041799545288086,
+                  "value": 0,
+                  "frame": 1
+                }
+              ]
+            },
+            "vectorCurves": {
+              "translationValue": {
+                "fieldOffset": 5504,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "translationSpeed": {
+                "fieldOffset": 5520,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "scaleValue": {
+                "fieldOffset": 5568,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "texture1TranslationSpeed": {
+                "fieldOffset": 5616,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "texture1ScaleValue": {
+                "fieldOffset": 5664,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "centerColor": {
+                "fieldOffset": 5808,
+                "axes": [
+                  "R",
+                  "G",
+                  "B"
+                ],
+                "keys": []
+              }
+            },
+            "staticVectors": {
+              "transform": {
+                "translation": {
+                  "valueInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "rotation": {
+                  "valueInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "scale": {
+                  "valueInitial": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                }
+              },
+              "texture1": {
+                "translation": {
+                  "valueInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "valueRange": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "speedInitial": [
+                    0,
+                    0.009999999776482582,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "rotation": {
+                  "valueInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "scale": {
+                  "valueInitial": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                }
+              },
+              "texture2": {
+                "translation": {
+                  "valueInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "rotation": {
+                  "valueInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "scale": {
+                  "valueInitial": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                }
+              }
+            },
+            "texturePivots": {
+              "texture1": [
+                0.5,
+                0.5,
+                0.5
+              ],
+              "texture2": [
+                0.5,
+                0.5,
+                0.5
+              ]
+            },
+            "motionModes": {
+              "translation": {
+                "id": 1,
+                "name": "NewtonDynamics",
+                "fieldOffset": 5496
+              },
+              "scale": {
+                "id": 1,
+                "name": "NewtonDynamics",
+                "fieldOffset": 5796
+              },
+              "texture1Translation": {
+                "id": 1,
+                "name": "NewtonDynamics",
+                "fieldOffset": 5976
+              },
+              "texture1Scale": {
+                "id": 1,
+                "name": "NewtonDynamics",
+                "fieldOffset": 5984
+              }
+            },
+            "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 5800
+              },
+              "blend": {
+                "id": 1,
+                "name": "Semitrans",
+                "fieldOffset": 5856
+              },
+              "alphaMode": {
+                "id": 1,
+                "name": "Curve",
+                "fieldOffset": 5860
+              },
+              "alphaTest": {
+                "id": 2,
+                "name": "Greater",
+                "fieldOffset": 5864
+              },
+              "texture1Address": {
+                "id": 1,
+                "name": "Repeat",
+                "fieldOffset": 5876
+              }
+            },
+            "materialAlpha": {
+              "value": 1,
+              "fieldOffset": 4608
+            },
+            "sourceControls": {
+              "profile": "ibmb-parent-controls-v1",
+              "fields": {
+                "alphaMode": {
+                  "raw": 0,
+                  "value": "Lerp",
+                  "fieldOffset": 4692,
+                  "status": "decoded"
+                },
+                "alphaRate": {
+                  "raw": 0,
+                  "value": 0,
+                  "fieldOffset": 4576,
+                  "status": "decoded"
+                },
+                "colorRate": {
+                  "raw": 0,
+                  "value": 0,
+                  "fieldOffset": 4580,
+                  "status": "decoded"
+                }
+              },
+              "missingInheritance": [
+                "translation",
+                "rotation",
+                "scale",
+                "matrix"
+              ],
+              "compatibility": "unresolved-authoring-to-runtime-mapping",
+              "boundary": "Binary parameters only; no inheritance equation or complete profile admission"
+            },
+            "parentIndex": 2,
+            "children": [],
+            "childCount": 0,
+            "resourceBindings": {
+              "model": {
+                "kind": "model",
+                "name": "model_circle092_128pl_in_out_alpha_shrink_uv3",
+                "resourceIndex": 0,
+                "fieldOffset": 4176,
+                "stringOffset": 6020
+              },
+              "texture1": {
+                "kind": "texture",
+                "name": "lapis_eff_material_026_uv5_0025_rainbow_smoke_alpha3",
+                "resourceIndex": 0,
+                "fieldOffset": 4192,
+                "stringOffset": 6066
+              },
+              "texture2": null
+            },
+            "generation": {
+              "start": 0,
+              "startRange": 0,
+              "count": 1,
+              "duration": 1,
+              "repeatCount": 1,
+              "interval": 1
+            },
+            "uniformScale": true,
+            "initialColor": [
+              0.6286779642105103,
+              0.5346714854240417,
+              1
+            ],
+            "authoringEmissionShape": "Point",
+            "authoringInheritance": {
+              "translation": "On",
+              "rotation": "On",
+              "scale": "On",
+              "matrix": "On",
+              "alphaMode": "Lerp",
+              "alphaRate": 0,
+              "colorRate": 0,
+              "compatibility": {
+                "nodeV16": true,
+                "nodeV15": true,
+                "rootV16": false,
+                "rootV15": false
+              }
+            },
+            "particleGeometrySource": {
+              "rotationMode": "NewtonDynamics",
+              "scaleMode": "NewtonDynamics",
+              "origin": "Explicit matching BMSLN; these selectors are not newly decoded binary fields",
+              "projectSha256": "4507e07976b0a501c285ed0787c004f38548796b33d11546d345aa922c939541"
+            },
+            "appearance": {
+              "alpha": {
+                "mode": "Curve",
+                "origin": "IBMB",
+                "value": 1
+              },
+              "color": {
+                "mode": "Constant",
+                "origin": "IBMB",
+                "domain": "center",
+                "supported": true,
+                "value": [
+                  0.6286779642105103,
+                  0.5346714854240417,
+                  1
+                ]
+              },
+              "limitations": []
+            },
+            "basicTextureMapping": {
+              "supported": true,
+              "motionModes": {
+                "translation": "NewtonDynamics",
+                "rotation": "NewtonDynamics",
+                "scale": "NewtonDynamics"
+              },
+              "origin": "Explicit BMSLN after known-field comparison",
+              "limitations": []
+            },
+            "nativeMaterialSelection": {
+              "scope": "Initial UV single-submesh Model constructor; no runtime override",
+              "resourceType": 4,
+              "specialFlag": 0,
+              "operation": 0,
+              "textured": true,
+              "textureSelection": "Explicit BMB names",
+              "modelSha256": "ac1801f6a38d929fa5e1cfb468b3f848d700bb233e06629cc54d7f00bd700399",
+              "submeshIndex": 0,
+              "mask": 0,
+              "rawInputs": {
+                "0x111": 0,
+                "0x118": 0,
+                "0x114": 0,
+                "0x117": 0,
+                "0x1fc": 0,
+                "0x6e0": 0,
+                "0x6f4": 0
+              },
+              "supported": true,
+              "descriptorIndex": 1344,
+              "descriptor": [
+                44,
+                224,
+                0,
+                8
+              ],
+              "vertexSlot": 44,
+              "fragmentSlot": 224,
+              "vertexSha256": "f41d379d2ee21af1a2de4ae30eaaec079eb99d77d85779b7782958814eba389f",
+              "fragmentSha256": "8ae381afc9f95ab42caafc2c03266ddc08500489623d2e16d39d89737b7d1fb4",
+              "fragmentOffset": 469328,
+              "addCandidateCompatible": false,
+              "distortionCandidateCompatible": false,
+              "basicCandidateCompatible": true
+            },
+            "nativeBasicTint": {
+              "supported": true,
+              "rgba": [
+                1,
+                1,
+                1,
+                1
+              ],
+              "limitations": [],
+              "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
+              "projectSha256": "4507e07976b0a501c285ed0787c004f38548796b33d11546d345aa922c939541"
+            }
+          }
+        ],
+        "textures": {
+          "lapis_eff_material_026_uv5_0025_rainbow_smoke_alpha3": "/assets/presentations/resources/85ee3786ee7b91c24b060d699df6eb22931000dda46fb3b99f794861e37e5328.png"
+        },
+        "meshes": {
+          "model_circle092_128pl_in_out_alpha_shrink_uv3": {
+            "schemaVersion": 1,
+            "sourceSha256": "ac1801f6a38d929fa5e1cfb468b3f848d700bb233e06629cc54d7f00bd700399",
+            "version": 35,
+            "embeddedTextureName": "lapis_eff_material_019_common_0015_fire_wall1.png.001",
+            "nativeMaterial": {
+              "supported": true,
+              "submeshIndex": 0,
+              "vertexStride": 36,
+              "hasUv": true,
+              "textures": [
+                {
+                  "pointerPresent": true,
+                  "name": "lapis_eff_material_019_common_0015_fire_wall1.png.001"
+                },
+                {
+                  "pointerPresent": false,
+                  "name": null
+                }
+              ],
+              "origin": "Pinned native single-submesh material accessors"
+            },
+            "vertexCount": 99,
+            "triangleCount": 128,
+            "vertices": [
+              {
+                "position": [
+                  0,
+                  0.8697037100791931,
+                  3.801596548669295e-8
+                ],
+                "colorBytes": [
+                  255,
+                  255,
+                  255,
+                  255
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.7499703168869019,
+                  0.9847337007522583
+                ]
+              },
+              {
+                "position": [
+                  0,
+                  1,
+                  4.3711398944878965e-8
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.7499697804450989,
+                  0.9999417066574097
+                ]
+              },
+              {
+                "position": [
+                  0.19509030878543854,
+                  0.9807853102684021,
+                  4.287149835136006e-8
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.7812163233757019,
+                  0.999941885471344
+                ]
+              },
+              {
+                "position": [
+                  0.16967080533504486,
+                  0.8529925346374512,
+                  3.7285495579908456e-8
+                ],
+                "colorBytes": [
+                  255,
+                  255,
+                  255,
+                  255
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.7812166810035706,
+                  0.9847338795661926
+                ]
+              },
+              {
+                "position": [
+                  0.38268351554870605,
+                  0.9238795042037964,
+                  4.038406586914789e-8
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.8124626278877258,
+                  0.9999420642852783
+                ]
+              },
+              {
+                "position": [
+                  0.33282119035720825,
+                  0.8035014271736145,
+                  3.51221700611859e-8
+                ],
+                "colorBytes": [
+                  255,
+                  255,
+                  255,
+                  255
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.812463104724884,
+                  0.984734058380127
+                ]
+              },
+              {
+                "position": [
+                  0.5555703043937683,
+                  0.8314695954322815,
+                  3.634469791791162e-8
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.8437089920043945,
+                  0.9999423027038574
+                ]
+              },
+              {
+                "position": [
+                  0.7071068286895752,
+                  0.7071068286895752,
+                  3.090863032184643e-8
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.874955415725708,
+                  0.9999425411224365
+                ]
+              },
+              {
+                "position": [
+                  0.6149734258651733,
+                  0.6149734258651733,
+                  2.6881348702545438e-8
+                ],
+                "colorBytes": [
+                  255,
+                  255,
+                  255,
+                  255
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.8749560117721558,
+                  0.9847345352172852
+                ]
+              },
+              {
+                "position": [
+                  0.831469714641571,
+                  0.5555701851844788,
+                  2.4284750210767925e-8
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.9062018394470215,
+                  0.9999427795410156
+                ]
+              },
+              {
+                "position": [
+                  0.7231321930885315,
+                  0.4831814169883728,
+                  2.1120536430885295e-8
+                ],
+                "colorBytes": [
+                  255,
+                  255,
+                  255,
+                  255
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.9062024354934692,
+                  0.9847347736358643
+                ]
+              },
+              {
+                "position": [
+                  0.9238795042037964,
+                  0.3826833963394165,
+                  1.672762728333055e-8
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.9374482035636902,
+                  0.9999430179595947
+                ]
+              },
+              {
+                "position": [
+                  0.8035014271736145,
+                  0.33282119035720825,
+                  1.4548080073950587e-8
+                ],
+                "colorBytes": [
+                  255,
+                  255,
+                  255,
+                  255
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.9374487400054932,
+                  0.9847349524497986
+                ]
+              },
+              {
+                "position": [
+                  0.9807853102684021,
+                  0.19509030878543854,
+                  8.527670125602071e-9
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.9686946272850037,
+                  0.9999432563781738
+                ]
+              },
+              {
+                "position": [
+                  0.8529925346374512,
+                  0.16967080533504486,
+                  7.4165482644161784e-9
+                ],
+                "colorBytes": [
+                  255,
+                  255,
+                  255,
+                  255
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.9686952233314514,
+                  0.9847351908683777
+                ]
+              },
+              {
+                "position": [
+                  1,
+                  0,
+                  0
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.9999409914016724,
+                  0.9999435544013977
+                ]
+              },
+              {
+                "position": [
+                  0.8697037100791931,
+                  0,
+                  0
+                ],
+                "colorBytes": [
+                  255,
+                  255,
+                  255,
+                  255
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.9999417066574097,
+                  0.9847354888916016
+                ]
+              },
+              {
+                "position": [
+                  1,
+                  0,
+                  0
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.000057590495998738334,
+                  0.9999403357505798
+                ]
+              },
+              {
+                "position": [
+                  0.9807853102684021,
+                  -0.19509020447731018,
+                  -8.527665684709973e-9
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.031303878873586655,
+                  0.9999402165412903
+                ]
+              },
+              {
+                "position": [
+                  0.8529925346374512,
+                  -0.16967059671878815,
+                  -7.4165389385427716e-9
+                ],
+                "colorBytes": [
+                  255,
+                  255,
+                  255,
+                  255
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.03130364045500755,
+                  0.9847323894500732
+                ]
+              },
+              {
+                "position": [
+                  0.9238796234130859,
+                  -0.38268330693244934,
+                  -1.672762195426003e-8
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.06255017966032028,
+                  0.9999401569366455
+                ]
+              },
+              {
+                "position": [
+                  0.8035014271736145,
+                  -0.3328210115432739,
+                  -1.454807208034481e-8
+                ],
+                "colorBytes": [
+                  255,
+                  255,
+                  255,
+                  255
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.06254994124174118,
+                  0.9847323298454285
+                ]
+              },
+              {
+                "position": [
+                  0.831469714641571,
+                  -0.5555701851844788,
+                  -2.4284750210767925e-8
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.0937964916229248,
+                  0.9999400973320007
+                ]
+              },
+              {
+                "position": [
+                  0.723132312297821,
+                  -0.4831814169883728,
+                  -2.1120536430885295e-8
+                ],
+                "colorBytes": [
+                  255,
+                  255,
+                  255,
+                  255
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.09379631280899048,
+                  0.9847322702407837
+                ]
+              },
+              {
+                "position": [
+                  0.7071068286895752,
+                  -0.7071068286895752,
+                  -3.090863032184643e-8
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.12504279613494873,
+                  0.9999400973320007
+                ]
+              },
+              {
+                "position": [
+                  0.6149734258651733,
+                  -0.6149733066558838,
+                  -2.688134337347492e-8
+                ],
+                "colorBytes": [
+                  255,
+                  255,
+                  255,
+                  255
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.12504270672798157,
+                  0.9847322106361389
+                ]
+              },
+              {
+                "position": [
+                  0.5555701851844788,
+                  -0.831469714641571,
+                  -3.6344705023338975e-8
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.156289204955101,
+                  0.999940037727356
+                ]
+              },
+              {
+                "position": [
+                  0.4831814169883728,
+                  -0.7231321334838867,
+                  -3.1609118877895526e-8
+                ],
+                "colorBytes": [
+                  255,
+                  255,
+                  255,
+                  255
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.15628910064697266,
+                  0.9847322106361389
+                ]
+              },
+              {
+                "position": [
+                  0.38268330693244934,
+                  -0.9238796234130859,
+                  -4.038406942186157e-8
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.18753550946712494,
+                  0.999940037727356
+                ]
+              },
+              {
+                "position": [
+                  0.3328211009502411,
+                  -0.8035014867782593,
+                  -3.5122173613899577e-8
+                ],
+                "colorBytes": [
+                  255,
+                  255,
+                  255,
+                  255
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.18753540515899658,
+                  0.9847321510314941
+                ]
+              },
+              {
+                "position": [
+                  0.19509010016918182,
+                  -0.9807853102684021,
+                  -4.287149835136006e-8
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.21878179907798767,
+                  0.999940037727356
+                ]
+              },
+              {
+                "position": [
+                  -3.258410004036705e-7,
+                  -1,
+                  -4.3711398944878965e-8
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.2500283122062683,
+                  0.999940037727356
+                ]
+              },
+              {
+                "position": [
+                  -2.659050153397402e-7,
+                  -0.8697037100791931,
+                  -3.801596548669295e-8
+                ],
+                "colorBytes": [
+                  255,
+                  255,
+                  255,
+                  255
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.25002819299697876,
+                  0.9847321510314941
+                ]
+              },
+              {
+                "position": [
+                  -0.19509069621562958,
+                  -0.9807851910591125,
+                  -4.28714912459327e-8
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.28127461671829224,
+                  0.999940037727356
+                ]
+              },
+              {
+                "position": [
+                  -0.16967110335826874,
+                  -0.8529925346374512,
+                  -3.7285495579908456e-8
+                ],
+                "colorBytes": [
+                  255,
+                  255,
+                  255,
+                  255
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.28127461671829224,
+                  0.9847321510314941
+                ]
+              },
+              {
+                "position": [
+                  -0.3826839029788971,
+                  -0.9238793253898621,
+                  -4.038405876372053e-8
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.3125210106372833,
+                  0.9999400973320007
+                ]
+              },
+              {
+                "position": [
+                  -0.3328216075897217,
+                  -0.803501307964325,
+                  -3.512216650847222e-8
+                ],
+                "colorBytes": [
+                  255,
+                  255,
+                  255,
+                  255
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.3125210106372833,
+                  0.9847322106361389
+                ]
+              },
+              {
+                "position": [
+                  -0.5555707216262817,
+                  -0.8314692974090576,
+                  -3.634468725977058e-8
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.34376731514930725,
+                  0.9999401569366455
+                ]
+              },
+              {
+                "position": [
+                  -0.483181893825531,
+                  -0.7231318950653076,
+                  -3.160910821975449e-8
+                ],
+                "colorBytes": [
+                  255,
+                  255,
+                  255,
+                  255
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.3437674045562744,
+                  0.9847322106361389
+                ]
+              },
+              {
+                "position": [
+                  -0.7071073055267334,
+                  -0.7071064114570618,
+                  -3.090860900556436e-8
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.37501370906829834,
+                  0.9999402165412903
+                ]
+              },
+              {
+                "position": [
+                  -0.614973783493042,
+                  -0.6149730086326599,
+                  -2.6881330938977044e-8
+                ],
+                "colorBytes": [
+                  255,
+                  255,
+                  255,
+                  255
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.37501370906829834,
+                  0.9847322702407837
+                ]
+              },
+              {
+                "position": [
+                  -0.8314699530601501,
+                  -0.5555697083473206,
+                  -2.4284728894485852e-8
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.4062599837779999,
+                  0.9999402761459351
+                ]
+              },
+              {
+                "position": [
+                  -0.7231324911117554,
+                  -0.4831809103488922,
+                  -2.1120513338246383e-8
+                ],
+                "colorBytes": [
+                  255,
+                  255,
+                  255,
+                  255
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.40626010298728943,
+                  0.9847323298454285
+                ]
+              },
+              {
+                "position": [
+                  -0.9238799214363098,
+                  -0.3826827108860016,
+                  -1.672759708526428e-8
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.43750640749931335,
+                  0.9999403357505798
+                ]
+              },
+              {
+                "position": [
+                  -0.8035017251968384,
+                  -0.33282050490379333,
+                  -1.4548049875884317e-8
+                ],
+                "colorBytes": [
+                  255,
+                  255,
+                  255,
+                  255
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.4375064969062805,
+                  0.9847323894500732
+                ]
+              },
+              {
+                "position": [
+                  -0.9807854294776917,
+                  -0.1950893998146057,
+                  -8.527630157573185e-9
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.46875280141830444,
+                  0.9999403953552246
+                ]
+              },
+              {
+                "position": [
+                  -0.8529927134513855,
+                  -0.16966989636421204,
+                  -7.416508740476502e-9
+                ],
+                "colorBytes": [
+                  255,
+                  255,
+                  255,
+                  255
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.4687528908252716,
+                  0.9847325086593628
+                ]
+              },
+              {
+                "position": [
+                  -1,
+                  9.655989288148703e-7,
+                  4.22076788667361e-14
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.49999910593032837,
+                  0.9999405145645142
+                ]
+              },
+              {
+                "position": [
+                  -0.8697037100791931,
+                  8.783530347500346e-7,
+                  3.8394038382599804e-14
+                ],
+                "colorBytes": [
+                  255,
+                  255,
+                  255,
+                  255
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.4999993145465851,
+                  0.9847325682640076
+                ]
+              },
+              {
+                "position": [
+                  -0.9807851314544678,
+                  0.19509130716323853,
+                  8.527713646344637e-9
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.5312455296516418,
+                  0.9999406337738037
+                ]
+              },
+              {
+                "position": [
+                  -0.8529924154281616,
+                  0.1696716994047165,
+                  7.416587344266645e-9
+                ],
+                "colorBytes": [
+                  255,
+                  255,
+                  255,
+                  255
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.5312457084655762,
+                  0.9847326874732971
+                ]
+              },
+              {
+                "position": [
+                  -0.923879086971283,
+                  0.38268449902534485,
+                  1.6727675244965212e-8
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.5624918341636658,
+                  0.9999407529830933
+                ]
+              },
+              {
+                "position": [
+                  -0.8035010099411011,
+                  0.33282211422920227,
+                  1.4548120041979473e-8
+                ],
+                "colorBytes": [
+                  255,
+                  255,
+                  255,
+                  255
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.5624921321868896,
+                  0.9847328066825867
+                ]
+              },
+              {
+                "position": [
+                  -0.8314688801765442,
+                  0.5555713176727295,
+                  2.4284799948759428e-8
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.593738317489624,
+                  0.9999408721923828
+                ]
+              },
+              {
+                "position": [
+                  -0.723131537437439,
+                  0.4831824004650116,
+                  2.112057906344944e-8
+                ],
+                "colorBytes": [
+                  255,
+                  255,
+                  255,
+                  255
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.5937386155128479,
+                  0.9847329258918762
+                ]
+              },
+              {
+                "position": [
+                  -0.7071059346199036,
+                  0.7071077227592468,
+                  3.09086694016969e-8
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.624984622001648,
+                  0.9999410510063171
+                ]
+              },
+              {
+                "position": [
+                  -0.6149725317955017,
+                  0.6149742007255554,
+                  2.6881382453325386e-8
+                ],
+                "colorBytes": [
+                  255,
+                  255,
+                  255,
+                  255
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.6249849200248718,
+                  0.9847330451011658
+                ]
+              },
+              {
+                "position": [
+                  -0.5555691123008728,
+                  0.8314704298973083,
+                  3.6344736997762084e-8
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.6562309861183167,
+                  0.9999411702156067
+                ]
+              },
+              {
+                "position": [
+                  -0.4831804931163788,
+                  0.7231329083442688,
+                  3.1609150852318635e-8
+                ],
+                "colorBytes": [
+                  255,
+                  255,
+                  255,
+                  255
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.6562312841415405,
+                  0.9847332239151001
+                ]
+              },
+              {
+                "position": [
+                  -0.38268211483955383,
+                  0.9238801002502441,
+                  4.038409073814364e-8
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.6874774098396301,
+                  0.999941349029541
+                ]
+              },
+              {
+                "position": [
+                  -0.3328199088573456,
+                  0.8035019040107727,
+                  3.512219137746797e-8
+                ],
+                "colorBytes": [
+                  255,
+                  255,
+                  255,
+                  255
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.687477707862854,
+                  0.9847334027290344
+                ]
+              },
+              {
+                "position": [
+                  -0.19508880376815796,
+                  0.980785608291626,
+                  4.2871512562214775e-8
+                ],
+                "colorBytes": [
+                  13,
+                  13,
+                  13,
+                  13
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.718723714351654,
+                  0.9999415278434753
+                ]
+              },
+              {
+                "position": [
+                  -0.05361646041274071,
+                  0.2695620059967041,
+                  1.178293196346658e-8
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.7187244892120361,
+                  0.9720058441162109
+                ]
+              },
+              {
+                "position": [
+                  -0.16966940462589264,
+                  0.852992832660675,
+                  3.728550979076317e-8
+                ],
+                "colorBytes": [
+                  255,
+                  255,
+                  255,
+                  255
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.7187241315841675,
+                  0.9847335815429688
+                ]
+              },
+              {
+                "position": [
+                  -0.10517469793558121,
+                  0.25392261147499084,
+                  1.109931258014285e-8
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.6874781250953674,
+                  0.9596041440963745
+                ]
+              },
+              {
+                "position": [
+                  -0.1526913046836853,
+                  0.2285251021385193,
+                  9.989151728007073e-9
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.656231701374054,
+                  0.9720055460929871
+                ]
+              },
+              {
+                "position": [
+                  -0.19434009492397308,
+                  0.19434580206871033,
+                  8.495127268304259e-9
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.6249852180480957,
+                  0.9596038460731506
+                ]
+              },
+              {
+                "position": [
+                  -0.22852079570293427,
+                  0.15269780158996582,
+                  6.67463462278306e-9
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.5937387943267822,
+                  0.9720052480697632
+                ]
+              },
+              {
+                "position": [
+                  -0.25391969084739685,
+                  0.1051815003156662,
+                  4.597630720581947e-9
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.5624924302101135,
+                  0.9596035480499268
+                ]
+              },
+              {
+                "position": [
+                  -0.2695606052875519,
+                  0.053623080253601074,
+                  2.343939931037653e-9
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.5312460064888,
+                  0.9720050096511841
+                ]
+              },
+              {
+                "position": [
+                  -0.27484259009361267,
+                  0.000003785090029850835,
+                  1.6545158255595882e-13
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.4999994933605194,
+                  0.9596033692359924
+                ]
+              },
+              {
+                "position": [
+                  -0.26956209540367126,
+                  -0.053615741431713104,
+                  -2.3436190765835363e-9
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.4687530994415283,
+                  0.9720048308372498
+                ]
+              },
+              {
+                "position": [
+                  -0.2539224922657013,
+                  -0.10517500340938568,
+                  -4.597346503487643e-9
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.43750670552253723,
+                  0.9596031904220581
+                ]
+              },
+              {
+                "position": [
+                  -0.22852429747581482,
+                  -0.15269240736961365,
+                  -6.6743988114126296e-9
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.40626031160354614,
+                  0.9720047116279602
+                ]
+              },
+              {
+                "position": [
+                  -0.19434410333633423,
+                  -0.1943420022726059,
+                  -8.494961178939775e-9
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.3750137984752655,
+                  0.9596031308174133
+                ]
+              },
+              {
+                "position": [
+                  -0.15269489586353302,
+                  -0.22852280735969543,
+                  -9.989051363845647e-9
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.3437674045562744,
+                  0.9720045924186707
+                ]
+              },
+              {
+                "position": [
+                  -0.10517760366201401,
+                  -0.25392138957977295,
+                  -1.1099259289437668e-8
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.3125211000442505,
+                  0.9596030116081238
+                ]
+              },
+              {
+                "position": [
+                  -0.053618308156728745,
+                  -0.2695614993572235,
+                  -1.1782910647184508e-8
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.28127461671829224,
+                  0.9720045924186707
+                ]
+              },
+              {
+                "position": [
+                  0.16967050731182098,
+                  -0.8529925346374512,
+                  -3.7285495579908456e-8
+                ],
+                "colorBytes": [
+                  255,
+                  255,
+                  255,
+                  255
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.21878179907798767,
+                  0.9847321510314941
+                ]
+              },
+              {
+                "position": [
+                  0.0000015275900295819156,
+                  -0.2748425006866455,
+                  -1.201374999482141e-8
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.25002819299697876,
+                  0.9596030116081238
+                ]
+              },
+              {
+                "position": [
+                  0.05362122878432274,
+                  -0.26956111192703247,
+                  -1.1782892883616114e-8
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.2187817096710205,
+                  0.9720045924186707
+                ]
+              },
+              {
+                "position": [
+                  0.1051803007721901,
+                  -0.253920316696167,
+                  -1.1099212215981424e-8
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.18753530085086823,
+                  0.9596030116081238
+                ]
+              },
+              {
+                "position": [
+                  0.15269720554351807,
+                  -0.22852130234241486,
+                  -9.988985638642589e-9
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.15628890693187714,
+                  0.9720045924186707
+                ]
+              },
+              {
+                "position": [
+                  0.19434550404548645,
+                  -0.19434040784835815,
+                  -8.494891012844619e-9
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.12504249811172485,
+                  0.9596030712127686
+                ]
+              },
+              {
+                "position": [
+                  0.2285252958536148,
+                  -0.15269100666046143,
+                  -6.67433752710167e-9
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.09379612654447556,
+                  0.9720047116279602
+                ]
+              },
+              {
+                "position": [
+                  0.253922700881958,
+                  -0.10517410188913345,
+                  -4.597306979547966e-9
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.06254976242780685,
+                  0.9596031904220581
+                ]
+              },
+              {
+                "position": [
+                  0.8697037100791931,
+                  0,
+                  0
+                ],
+                "colorBytes": [
+                  255,
+                  255,
+                  255,
+                  255
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.00005730739940190688,
+                  0.9847325086593628
+                ]
+              },
+              {
+                "position": [
+                  0.2695622146129608,
+                  -0.053615327924489975,
+                  -2.3436010909705374e-9
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.03130340203642845,
+                  0.9720048308372498
+                ]
+              },
+              {
+                "position": [
+                  0.2748425006866455,
+                  0.0000035404700611252338,
+                  1.547588961278365e-13
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.9999423027038574,
+                  0.9596061706542969
+                ]
+              },
+              {
+                "position": [
+                  0.2695608139038086,
+                  0.053622178733348846,
+                  2.3439004070979763e-9
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.9686958193778992,
+                  0.9720074534416199
+                ]
+              },
+              {
+                "position": [
+                  0.253920316696167,
+                  0.10517999529838562,
+                  4.597564551289679e-9
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.9374493360519409,
+                  0.9596056938171387
+                ]
+              },
+              {
+                "position": [
+                  0.22852210700511932,
+                  0.15269599854946136,
+                  6.674555574903707e-9
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.9062029123306274,
+                  0.9720070362091064
+                ]
+              },
+              {
+                "position": [
+                  0.4831814169883728,
+                  0.7231321334838867,
+                  3.1609118877895526e-8
+                ],
+                "colorBytes": [
+                  255,
+                  255,
+                  255,
+                  255
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.8437095284461975,
+                  0.984734296798706
+                ]
+              },
+              {
+                "position": [
+                  0.1943420022726059,
+                  0.19434380531311035,
+                  8.495039338640709e-9
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.874956488609314,
+                  0.9596052169799805
+                ]
+              },
+              {
+                "position": [
+                  0.15269380807876587,
+                  0.22852350771427155,
+                  9.989082450090336e-9
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.8437100052833557,
+                  0.9720065593719482
+                ]
+              },
+              {
+                "position": [
+                  0.05361992120742798,
+                  0.26956120133399963,
+                  1.1782897324508212e-8
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.781217098236084,
+                  0.9720062017440796
+                ]
+              },
+              {
+                "position": [
+                  0.0000016171599099834566,
+                  0.2748425006866455,
+                  1.201374999482141e-8
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.7499707341194153,
+                  0.9596044421195984
+                ]
+              },
+              {
+                "position": [
+                  0.2748425006866455,
+                  0.0000035404700611252338,
+                  1.547588961278365e-13
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.00005702429552911781,
+                  0.9596033692359924
+                ]
+              },
+              {
+                "position": [
+                  0.10517780482769012,
+                  0.2539212107658386,
+                  1.1099251295831891e-8
+                ],
+                "colorBytes": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "normal": [
+                  0,
+                  4.3711398944878965e-8,
+                  -1
+                ],
+                "uv": [
+                  0.8124635219573975,
+                  0.959604799747467
+                ]
+              }
+            ],
+            "triangles": [
+              [
+                0,
+                1,
+                2
+              ],
+              [
+                3,
+                2,
+                4
+              ],
+              [
+                5,
+                4,
+                6
+              ],
+              [
+                6,
+                7,
+                8
+              ],
+              [
+                7,
+                9,
+                10
+              ],
+              [
+                9,
+                11,
+                12
+              ],
+              [
+                11,
+                13,
+                14
+              ],
+              [
+                13,
+                15,
+                16
+              ],
+              [
+                17,
+                18,
+                19
+              ],
+              [
+                18,
+                20,
+                21
+              ],
+              [
+                20,
+                22,
+                23
+              ],
+              [
+                22,
+                24,
+                25
+              ],
+              [
+                24,
+                26,
+                27
+              ],
+              [
+                26,
+                28,
+                29
+              ],
+              [
+                29,
+                28,
+                30
+              ],
+              [
+                30,
+                31,
+                32
+              ],
+              [
+                31,
+                33,
+                34
+              ],
+              [
+                33,
+                35,
+                36
+              ],
+              [
+                35,
+                37,
+                38
+              ],
+              [
+                37,
+                39,
+                40
+              ],
+              [
+                40,
+                39,
+                41
+              ],
+              [
+                42,
+                41,
+                43
+              ],
+              [
+                44,
+                43,
+                45
+              ],
+              [
+                46,
+                45,
+                47
+              ],
+              [
+                48,
+                47,
+                49
+              ],
+              [
+                50,
+                49,
+                51
+              ],
+              [
+                52,
+                51,
+                53
+              ],
+              [
+                54,
+                53,
+                55
+              ],
+              [
+                56,
+                55,
+                57
+              ],
+              [
+                58,
+                57,
+                59
+              ],
+              [
+                60,
+                59,
+                61
+              ],
+              [
+                61,
+                1,
+                0
+              ],
+              [
+                62,
+                63,
+                0
+              ],
+              [
+                64,
+                60,
+                63
+              ],
+              [
+                65,
+                58,
+                60
+              ],
+              [
+                66,
+                56,
+                58
+              ],
+              [
+                67,
+                54,
+                56
+              ],
+              [
+                68,
+                52,
+                54
+              ],
+              [
+                69,
+                50,
+                52
+              ],
+              [
+                70,
+                48,
+                50
+              ],
+              [
+                71,
+                46,
+                48
+              ],
+              [
+                72,
+                44,
+                46
+              ],
+              [
+                73,
+                42,
+                44
+              ],
+              [
+                74,
+                40,
+                42
+              ],
+              [
+                75,
+                38,
+                40
+              ],
+              [
+                36,
+                38,
+                75
+              ],
+              [
+                34,
+                36,
+                76
+              ],
+              [
+                32,
+                34,
+                77
+              ],
+              [
+                78,
+                32,
+                79
+              ],
+              [
+                29,
+                78,
+                80
+              ],
+              [
+                27,
+                29,
+                81
+              ],
+              [
+                25,
+                27,
+                82
+              ],
+              [
+                23,
+                25,
+                83
+              ],
+              [
+                21,
+                23,
+                84
+              ],
+              [
+                19,
+                21,
+                85
+              ],
+              [
+                86,
+                19,
+                87
+              ],
+              [
+                14,
+                16,
+                88
+              ],
+              [
+                12,
+                14,
+                89
+              ],
+              [
+                10,
+                12,
+                90
+              ],
+              [
+                8,
+                10,
+                91
+              ],
+              [
+                92,
+                8,
+                93
+              ],
+              [
+                5,
+                92,
+                94
+              ],
+              [
+                95,
+                3,
+                5
+              ],
+              [
+                96,
+                0,
+                3
+              ],
+              [
+                3,
+                0,
+                2
+              ],
+              [
+                5,
+                3,
+                4
+              ],
+              [
+                92,
+                5,
+                6
+              ],
+              [
+                92,
+                6,
+                8
+              ],
+              [
+                8,
+                7,
+                10
+              ],
+              [
+                10,
+                9,
+                12
+              ],
+              [
+                12,
+                11,
+                14
+              ],
+              [
+                14,
+                13,
+                16
+              ],
+              [
+                86,
+                17,
+                19
+              ],
+              [
+                19,
+                18,
+                21
+              ],
+              [
+                21,
+                20,
+                23
+              ],
+              [
+                23,
+                22,
+                25
+              ],
+              [
+                25,
+                24,
+                27
+              ],
+              [
+                27,
+                26,
+                29
+              ],
+              [
+                78,
+                29,
+                30
+              ],
+              [
+                78,
+                30,
+                32
+              ],
+              [
+                32,
+                31,
+                34
+              ],
+              [
+                34,
+                33,
+                36
+              ],
+              [
+                36,
+                35,
+                38
+              ],
+              [
+                38,
+                37,
+                40
+              ],
+              [
+                42,
+                40,
+                41
+              ],
+              [
+                44,
+                42,
+                43
+              ],
+              [
+                46,
+                44,
+                45
+              ],
+              [
+                48,
+                46,
+                47
+              ],
+              [
+                50,
+                48,
+                49
+              ],
+              [
+                52,
+                50,
+                51
+              ],
+              [
+                54,
+                52,
+                53
+              ],
+              [
+                56,
+                54,
+                55
+              ],
+              [
+                58,
+                56,
+                57
+              ],
+              [
+                60,
+                58,
+                59
+              ],
+              [
+                63,
+                60,
+                61
+              ],
+              [
+                63,
+                61,
+                0
+              ],
+              [
+                96,
+                62,
+                0
+              ],
+              [
+                62,
+                64,
+                63
+              ],
+              [
+                64,
+                65,
+                60
+              ],
+              [
+                65,
+                66,
+                58
+              ],
+              [
+                66,
+                67,
+                56
+              ],
+              [
+                67,
+                68,
+                54
+              ],
+              [
+                68,
+                69,
+                52
+              ],
+              [
+                69,
+                70,
+                50
+              ],
+              [
+                70,
+                71,
+                48
+              ],
+              [
+                71,
+                72,
+                46
+              ],
+              [
+                72,
+                73,
+                44
+              ],
+              [
+                73,
+                74,
+                42
+              ],
+              [
+                74,
+                75,
+                40
+              ],
+              [
+                76,
+                36,
+                75
+              ],
+              [
+                77,
+                34,
+                76
+              ],
+              [
+                79,
+                32,
+                77
+              ],
+              [
+                80,
+                78,
+                79
+              ],
+              [
+                81,
+                29,
+                80
+              ],
+              [
+                82,
+                27,
+                81
+              ],
+              [
+                83,
+                25,
+                82
+              ],
+              [
+                84,
+                23,
+                83
+              ],
+              [
+                85,
+                21,
+                84
+              ],
+              [
+                87,
+                19,
+                85
+              ],
+              [
+                97,
+                86,
+                87
+              ],
+              [
+                89,
+                14,
+                88
+              ],
+              [
+                90,
+                12,
+                89
+              ],
+              [
+                91,
+                10,
+                90
+              ],
+              [
+                93,
+                8,
+                91
+              ],
+              [
+                94,
+                92,
+                93
+              ],
+              [
+                98,
+                5,
+                94
+              ],
+              [
+                98,
+                95,
+                5
+              ],
+              [
+                95,
+                96,
+                3
+              ]
+            ],
+            "bounds": {
+              "X": [
+                -1,
+                1
+              ],
+              "Y": [
+                -1,
+                1
+              ],
+              "Z": [
+                -4.3711398944878965e-8,
+                4.3711398944878965e-8
+              ]
+            },
+            "notDecoded": [
+              "material record behavior",
+              "trailing metadata",
+              "other BR3M layouts"
+            ],
+            "rendered": false
+          }
+        },
+        "authoringSupplement": {
+          "projectSha256": "4507e07976b0a501c285ed0787c004f38548796b33d11546d345aa922c939541",
+          "nodesChecked": 5,
+          "nodeOrderAndTypesMatch": true,
+          "lifeParametersMatch": true,
+          "typedResourceSetsMatch": true,
+          "hierarchyMatches": true,
+          "alphaCurvesChecked": 2,
+          "alphaKeysChecked": 6,
+          "alphaKeyDataMatches": true,
+          "vectorCurvesChecked": 1,
+          "vectorKeysChecked": 3,
+          "vectorKeyDataMatches": true,
+          "vectorChannelChecks": {
+            "scaleValue": {
+              "curves": 1,
+              "keys": 3
+            }
+          },
+          "parameterChecks": {
+            "staticVectorsChecked": 166,
+            "motionModesChecked": 17,
+            "bindingSlotsChecked": 6,
+            "nonemptyBindingsChecked": 4
+          },
+          "materialChecks": {
+            "materialEnumsChecked": 16,
+            "materialAlphaValuesChecked": 5
+          },
+          "dormantAuthoringCurvesNotDecoded": [],
+          "supplementedAddNodes": 0,
+          "origin": "BMSLN authoring supplement; not decoded binary fields"
+        },
+        "inheritanceSupplement": {
+          "projectSha256": "4507e07976b0a501c285ed0787c004f38548796b33d11546d345aa922c939541",
+          "nodesChecked": 5,
+          "nodeOrderAndTypesMatch": true,
+          "lifeParametersMatch": true,
+          "typedResourceSetsMatch": true,
+          "hierarchyMatches": true,
+          "alphaCurvesChecked": 2,
+          "alphaKeysChecked": 6,
+          "alphaKeyDataMatches": true,
+          "vectorCurvesChecked": 1,
+          "vectorKeysChecked": 3,
+          "vectorKeyDataMatches": true,
+          "vectorChannelChecks": {
+            "scaleValue": {
+              "curves": 1,
+              "keys": 3
+            }
+          },
+          "parameterChecks": {
+            "staticVectorsChecked": 166,
+            "motionModesChecked": 17,
+            "bindingSlotsChecked": 6,
+            "nonemptyBindingsChecked": 4
+          },
+          "materialChecks": {
+            "materialEnumsChecked": 16,
+            "materialAlphaValuesChecked": 5
+          },
+          "dormantAuthoringCurvesNotDecoded": [],
+          "supplementedInheritanceNodes": 5,
+          "binaryControls": [
+            {
+              "node": 0,
+              "fields": [
+                "alphaRate",
+                "rotation"
+              ],
+              "remainingAuthoringFields": [
+                "alphaMode",
+                "colorRate",
+                "compatibility",
+                "matrix",
+                "scale",
+                "translation"
+              ]
+            },
+            {
+              "node": 1,
+              "fields": [
+                "alphaRate",
+                "rotation"
+              ],
+              "remainingAuthoringFields": [
+                "alphaMode",
+                "colorRate",
+                "compatibility",
+                "matrix",
+                "scale",
+                "translation"
+              ]
+            },
+            {
+              "node": 2,
+              "fields": [
+                "alphaRate",
+                "rotation"
+              ],
+              "remainingAuthoringFields": [
+                "alphaMode",
+                "colorRate",
+                "compatibility",
+                "matrix",
+                "scale",
+                "translation"
+              ]
+            },
+            {
+              "node": 3,
+              "fields": [
+                "alphaMode",
+                "alphaRate",
+                "colorRate"
+              ],
+              "remainingAuthoringFields": [
+                "compatibility",
+                "matrix",
+                "rotation",
+                "scale",
+                "translation"
+              ]
+            },
+            {
+              "node": 4,
+              "fields": [
+                "alphaMode",
+                "alphaRate",
+                "colorRate"
+              ],
+              "remainingAuthoringFields": [
+                "compatibility",
+                "matrix",
+                "rotation",
+                "scale",
+                "translation"
+              ]
+            }
+          ],
+          "origin": "Verified binary fields plus explicit matched authoring for unresolved controls; no compatibility defaults"
+        },
+        "appearanceReport": {
+          "nodes": 5,
+          "dormantAlphaCurves": [],
+          "dormantColorCurves": [],
+          "limitations": [],
+          "authoringComparison": {
+            "projectSha256": "4507e07976b0a501c285ed0787c004f38548796b33d11546d345aa922c939541",
+            "nodesChecked": 5,
+            "nodeOrderAndTypesMatch": true,
+            "lifeParametersMatch": true,
+            "typedResourceSetsMatch": true,
+            "hierarchyMatches": true,
+            "alphaCurvesChecked": 2,
+            "alphaKeysChecked": 6,
+            "alphaKeyDataMatches": true,
+            "vectorCurvesChecked": 1,
+            "vectorKeysChecked": 3,
+            "vectorKeyDataMatches": true,
+            "vectorChannelChecks": {
+              "scaleValue": {
+                "curves": 1,
+                "keys": 3
+              }
+            },
+            "parameterChecks": {
+              "staticVectorsChecked": 166,
+              "motionModesChecked": 17,
+              "bindingSlotsChecked": 6,
+              "nonemptyBindingsChecked": 4
+            },
+            "materialChecks": {
+              "materialEnumsChecked": 16,
+              "materialAlphaValuesChecked": 5
+            },
+            "dormantAuthoringCurvesNotDecoded": []
+          },
+          "particleColorModeOrigin": "Explicit matching BMSLN; binary selector unresolved"
+        },
+        "basicUvReport": {
+          "authoringComparison": {
+            "projectSha256": "4507e07976b0a501c285ed0787c004f38548796b33d11546d345aa922c939541",
+            "nodesChecked": 5,
+            "nodeOrderAndTypesMatch": true,
+            "lifeParametersMatch": true,
+            "typedResourceSetsMatch": true,
+            "hierarchyMatches": true,
+            "alphaCurvesChecked": 2,
+            "alphaKeysChecked": 6,
+            "alphaKeyDataMatches": true,
+            "vectorCurvesChecked": 1,
+            "vectorKeysChecked": 3,
+            "vectorKeyDataMatches": true,
+            "vectorChannelChecks": {
+              "scaleValue": {
+                "curves": 1,
+                "keys": 3
+              }
+            },
+            "parameterChecks": {
+              "staticVectorsChecked": 166,
+              "motionModesChecked": 17,
+              "bindingSlotsChecked": 6,
+              "nonemptyBindingsChecked": 4
+            },
+            "materialChecks": {
+              "materialEnumsChecked": 16,
+              "materialAlphaValuesChecked": 5
+            },
+            "dormantAuthoringCurvesNotDecoded": []
+          },
+          "supportedNodes": [
+            3,
+            4
+          ],
+          "unsupportedNodes": []
+        }
+      }
+    ],
+    "members": [
+      {
+        "effect": 0,
+        "startFrame": 41,
+        "anchor": "target",
+        "layer": "front",
+        "scalePercent": 100,
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "rawGroupFields": [
+          "99999999",
+          "1",
+          "2",
+          "2",
+          "0",
+          "0"
+        ],
+        "compositionOrigin": "skill",
+        "placement": {
+          "rectangle": "target-unit",
+          "axisModes": [
+            2,
+            2
+          ],
+          "offset": [
+            0,
+            0
+          ]
+        }
+      }
+    ],
+    "audioGroupCoverage": "all-resolved-effect-groups-only"
+  },
+  "audioSource": {
+    "schema": "ffbe-audio-source-v1",
+    "playbackSupported": true,
+    "bus": "skill-sfx",
+    "frameRate": 60,
+    "coverage": "all-resolved-effect-groups-only",
+    "timingBasis": "Reviewed composed effect-group offsets; native common-bank dispatch",
+    "events": [
+      {
+        "frame": 41,
+        "sourceGroupId": 7000810,
+        "sourceSoundId": 82,
+        "rawParameters": [
+          "1"
+        ],
+        "resource": {
+          "key": "SE:82",
+          "uri": "/assets/audio/combat/status-down.wav",
+          "sha256": "190f1dc9211e1574498906f6d30eda5b43d67033ca01d2020e6ac2c31b3f4dea",
+          "format": "wav"
+        }
+      }
+    ],
+    "issues": [],
+    "sourceGroups": [
+      {
+        "group": 7000810,
+        "frame": 40,
+        "soundsRaw": "1:82:1"
+      }
+    ]
+  }
+}

@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { EventEmitter } from 'node:events';
 import fs from 'node:fs';
+import path from 'node:path';
 import vm from 'node:vm';
 import ts from 'typescript';
 
@@ -18,6 +19,8 @@ const phaser = {
 };
 const modules = new Map();
 function loadModule(file) {
+  file = path.resolve(file);
+  if (file.endsWith('.json')) return { default: JSON.parse(fs.readFileSync(file, 'utf8')) };
   if (modules.has(file)) return modules.get(file);
   const output = ts.transpileModule(fs.readFileSync(file, 'utf8'), {
     compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
@@ -27,37 +30,116 @@ function loadModule(file) {
     exports,
     require: (name) => name === 'phaser'
       ? { default: phaser }
-      : loadModule(`src/${name.replace('../', '')}.ts`),
+      : loadModule(path.resolve(path.dirname(file), /\.(mjs|ts|json)$/.test(name) ? name : name+'.ts')),
     console,
+    window:{matchMedia:()=>({matches:false})},
   }, { filename: file });
   modules.set(file, exports);
   return exports;
 }
 const { BattleScene } = loadModule('src/scenes/BattleScene.ts');
 const { UnitActor } = loadModule('src/entities/UnitActor.ts');
-const { TargetDummy } = loadModule('src/entities/TargetDummy.ts');
+const { TargetDummy,fitPreparedEnemyScale,ENEMY_SPAWN_MAX_SCALE } = loadModule('src/entities/TargetDummy.ts');
 let passed = 0;
 function test(name, run) {
   run();
   passed++;
   console.log(`PASS ${name}`);
 }
+
+test('run victory persists once, waits for VFX and defeat fade, then every actual celebration cycle',()=>{
+ const scene=new BattleScene(),calls=[],ready=[];let active=true;
+ scene.turnOrder=[{isDead:false,playVictoryCycle(cb){calls.push('clip-a');ready.push(cb);}},{isDead:false,playVictoryCycle(cb){calls.push('clip-b');ready.push(cb);}}];
+ scene.activeSkillActions=1;scene.pendingImpacts=0;scene.enemies=[{visible:true}];
+ scene.preparedScenes={snapshot:()=>({active}),stop(){throw Error('VFX must finish naturally');}};
+ scene.runContext={settle(actors,won){assert.equal(actors,scene.turnOrder);assert.equal(won,true);calls.push('persist');},rewardsReady(){calls.push('overlay');}};
+ scene.finishRunEncounter(true);scene.advanceRunVictory();assert.deepEqual(calls,[]);
+ scene.activeSkillActions=0;scene.pendingImpacts=1;scene.advanceRunVictory();assert.deepEqual(calls,[]);
+ scene.pendingImpacts=0;scene.advanceRunVictory();scene.advanceRunVictory();assert.deepEqual(calls,['persist']);
+ active=false;scene.advanceRunVictory();assert.deepEqual(calls,['persist']);scene.enemies[0].visible=false;scene.advanceRunVictory();assert.deepEqual(calls,['persist','clip-a','clip-b']);
+ ready[0]();assert.ok(!calls.includes('overlay'));ready[1]();scene.advanceRunVictory();assert.deepEqual(calls,['persist','clip-a','clip-b','overlay']);
+});
+
+test('restored saved rewards replay celebration without generating or charging rewards again',()=>{
+ const scene=new BattleScene();scene.runSettled=true;scene.runContext={settle(){throw Error('Duplicate settlement');},rewardsReady(){calls++;}};
+ let calls=0;scene.turnOrder=[{isDead:false,playVictoryCycle(cb){cb();}}];scene.enemies=[];scene.activeSkillActions=0;scene.pendingImpacts=0;
+ scene.finishRunEncounter(true);scene.advanceRunVictory();scene.advanceRunVictory();assert.equal(calls,1);
+});
+
+test('run victory locks commands once without tweening the battle UI away',()=>{
+ const scene=battle();scene.turnOrder=[];scene.enemies=[];scene.plannedActions=new Map();scene.skillActors=new Set();scene.isCommandMenuOpen=true;
+ scene.tweens={add(){throw Error('Run HUD must not slide away');}};
+ scene.triggerVictory();scene.triggerVictory();assert.equal(scene.combatState,'VICTORY');assert.equal(scene.isCommandMenuOpen,false);assert.equal(scene.runVictoryStage,'finishing');
+});
+
+test('victory cycle is driven by animation completion/repeat and detaches on scene shutdown',()=>{
+ const unit=Object.create(UnitActor.prototype),clips=[],events=new EventEmitter();
+ Object.assign(unit,{unitKey:'cloud',currentHp:100,manifest:{assetKey:'cloud_form6',animations:{win_before:{},win:{}}},scene:{events},playAnimation(clip){this.currentAnimKey=clip;clips.push(clip);}});
+ let ready=0;unit.playVictoryCycle(()=>ready++);assert.deepEqual(clips,['win_before']);assert.equal(ready,0);
+ unit.emit('animationcomplete-cloud_form6_win_before');assert.deepEqual(clips,['win_before','win']);assert.equal(ready,0);
+ unit.emit('animationrepeat',{key:'cloud_form6_win_before'});assert.equal(ready,0);
+ unit.emit('animationrepeat',{key:'cloud_form6_win'});unit.emit('animationrepeat',{key:'cloud_form6_win'});assert.equal(ready,1);
+ unit.playVictoryCycle(()=>ready++);events.emit('shutdown');unit.emit('animationrepeat',{key:'cloud_form6_win'});assert.equal(ready,1);
+ assert.equal(unit.listenerCount('animationrepeat'),0);
+});
+
+test('stale reward clicks cannot apply twice, stop the next encounter or reopen an error screen',()=>{
+ const {GameFlow}=loadModule('src/run/GameFlow.ts'),rules=loadModule('src/run/runState.mjs'),callbacks={};
+ const catalog=Object.fromEntries(['a','b','c'].map(key=>[key,{key,identity:key,canonicalIdentity:key,unitId:key,rarity:5,form:key,maxHp:100,maxMp:50,skills:[{id:key+'-skill',damageMultiplier:1}]}]));
+ const run=rules.confirmParty(rules.rollParty(rules.createRun('duplicate-reward',catalog),catalog));
+ const flow=Object.create(GameFlow.prototype);flow.catalog=catalog;flow.state=rules.completeBattle(run,catalog,run.party.map(m=>({key:m.key,hp:m.hp,mp:m.mp})),true);
+ flow.state.offers[0]={type:'stat',member:run.party[0].key,stat:'attack'};let commits=0,stops=0,starts=0;
+ flow.ui={rewards(){},overBattle(){},on(action,callback){callbacks[action]=callback;}};flow.rewardBounds=()=>({});
+ flow.commit=n=>{commits++;flow.state=n;};flow.scene={scene:{stop(){stops++;}}};
+ flow.battle=entry=>{assert.equal(entry,'cut');starts++;};
+ flow.rewards();callbacks['reward-0']();callbacks['reward-0']();assert.equal(commits,1);assert.equal(stops,0);assert.equal(starts,1);assert.equal(flow.state.encounter,1);
+});
+
+test('evolved form animation namespace keeps base identity and does not overwrite base texture animations',()=>{
+ const actor=Object.create(UnitActor.prototype),created=[],played=[];
+ actor.unitKey='cloud';actor.manifest={assetKey:'cloud_form6',animations:{idle:{frameWidth:10,frameHeight:20,pivotX:.5,pivotY:1,frames:[{index:0,durationMs:40}]}}};
+ actor.scene={textures:{exists:()=>true},anims:{exists:()=>false,create:config=>created.push(config.key)}};actor.setOrigin=()=>{};actor.play=key=>played.push(key);
+ actor.registerAnimations();actor.playAnimation('idle');assert.equal(actor.unitKey,'cloud');assert.equal(actor.visualKey,'cloud_form6');
+ assert.deepEqual(created,['cloud_form6_idle']);assert.deepEqual(played,['cloud_form6_idle']);
+});
+test('natural party defeat settles the run as a loss without opening a dialog',()=>{
+ const scene=battle(),timers=[],outcomes=[];scene.turnOrder=[hero(0),hero(0),hero(0)];scene.plannedActions=new Map();
+ scene.activeSkillActions=0;scene.pendingImpacts=0;scene.preparedScenes={stop(){outcomes.push('cleanup');}};
+ scene.runContext={settle(actors,won){assert.ok(actors.every(a=>a.currentHp===0));outcomes.push(won?'win':'loss');}};
+ scene.time={delayedCall(_ms,callback){timers.push(callback);}};scene.add={container(){throw Error('Debug dialog must stay out of a run');}};
+ scene.triggerDefeat();assert.equal(scene.combatState,'DEFEAT');timers.shift()();assert.deepEqual(outcomes,['cleanup','loss']);
+});
 function battle() {
   const scene = new BattleScene();
-  scene.updateCommandMenu = () => {};
-  scene.updatePartyStatusUi = () => {};
+  // BattleScene always runs inside a run context (normal run or training fixture).
+  scene.runContext = { state: { party: [] } };
+  // Matches the stubbed Phaser.Math.Between: every roll takes the minimum.
+  scene.randomValue = () => 0;
   scene.updateStatus = () => {};
-  scene.lockCommandMenu = () => {};
   scene.targetMarkerContainer = { setVisible() {} };
-  scene.roundBannerText = { setText() {}, setColor() {} };
   scene.time = { delayedCall() {} };
+  scene.preparedScenes={canPlay:()=>true};
+  scene.cache={json:{get:()=>JSON.parse(fs.readFileSync('public/assets/presentations/cloud_brave_slash/manifest.json','utf8'))}};
   return scene;
 }
 function hero(hp) {
   const unit = Object.create(UnitActor.prototype);
   unit.currentHp = hp;
   unit.hasActed = false;
+  unit.manifest={animations:{atk:{frames:[{durationMs:100}]},magic_atk:{frames:[{durationMs:100}]}}};
   return unit;
+}
+
+test('explicit ordinary command pose survives a magical body clip without changing old preparation choices',()=>{
+ const s=battle(),h=hero(100),poses=[];h.playCommandPose=magic=>poses.push(magic);
+ s.plannedActions=new Map([[h,{kind:'skill',skill:{motion:'magic_atk',actionChoreography:{commandPose:'standby'}}}]]);
+ s.refreshPlannedPose(h);assert.deepEqual(poses,[false]);
+ delete s.plannedActions.get(h).skill.actionChoreography.commandPose;s.refreshPlannedPose(h);
+ assert.deepEqual(poses,[false,true]);
+});
+function choreography(movement='stationary',clip='atk') {
+ return {schema:'source-action-v1',movement,travelTiming:'prepared',readiness:'none',body:{mode:'clips',phases:[{frame:0,clip}]},
+  review:{basis:'accepted-gameplay',sourceMotionType:1,sourceMoveType:1,note:'Explicit test fixture, not an original reference'}};
 }
 
 test('HP is the sole source of truth for hero K.O.', () => {
@@ -128,13 +210,15 @@ test('ranged turn completion waits for every outstanding impact', () => {
   assert.equal(completed, 1);
   assert.equal(scene.afterImpacts, undefined);
 });
-test('late magic impact skips dead targets and still completes the action', () => {
+test('late bullet impact skips dead targets and still completes the action', () => {
   const scene = battle();
   let impact;
   let completed = 0;
-  scene.time.delayedCall = (_delay, callback) => { impact = callback; };
+  const projectile={setRotation(){},setDepth(){},destroy(){}};
+  scene.add={ellipse:()=>projectile};
+  scene.tweens={add:config=>{impact=config.onComplete;}};
   scene.combatState = 'HERO_ATTACKING';
-  scene.fireMagicProjectile({ currentHp: 0, applyDamage() { throw Error('Ghost hit'); } });
+  scene.fireBulletProjectile(0,0,20,20,100,false,{ currentHp: 0, applyDamage() { throw Error('Ghost hit'); } });
   scene.finishAfterImpacts(() => completed++);
   impact();
   assert.equal(completed, 1);
@@ -156,61 +240,14 @@ test('invalid MP costs cannot create MP or corrupt the pool', () => {
   assert.equal(unit.useMp(20), true);
   assert.equal(unit.currentMp, 0);
 });
-test('repeated reward and next-wave callbacks are ignored', () => {
-  const scene = battle();
-  scene.combatState = 'VICTORY';
-  scene.rewardSelected = true;
-  scene.selectReward({}, null, null);
-  scene.rewardSelected = false;
-  scene.startNextFight();
-  assert.equal(scene.fightNumber, 1);
-});
-test('reset locks input and delegates cancellation to scene restart', () => {
-  const scene = battle();
-  scene.manifests = { example: {} };
-  let restarted = false;
-  scene.scene = { restart(data) {
-    assert.equal(scene.combatState, 'SPAWNING');
-    assert.equal(data.manifests, scene.manifests);
-    restarted = true;
-  } };
-  scene.resetBattle();
-  assert.equal(restarted, true);
-});
-test('Brave Slash schedules source effect and damage frames and skips a defeated target', () => {
-  const scene = battle();
-  const callbacks = [];
-  const tweens = [];
-  scene.time = { delayedCall(delay, callback) { callbacks.push({ delay, callback }); } };
-  scene.tweens = { add(config) { tweens.push(config); } };
-  scene.currentTarget = { currentHp: 100, x: 220, y: 360, nameTag: 'Test' };
-  scene.combatState = 'HERO_ATTACKING';
-  const unit = { homeSlot: { x: 880, y: 360 }, combatConfig: { targetOffsetX: 90 },
-    manifest: { animations: { atk: { frames: [{ durationMs: 100 }, { durationMs: 200 }] } } },
-    setDepthBoost() {}, playAnimation() {}, heroName: 'Cloud' };
-  const skill = { name: 'Brave Slash', moveType: 'dash', motion: 'atk', scope: 'single_enemy',
-    attackFrames: [6], visualEffect: { key: 'brave_slash', startFrame: 4 } };
-  scene.executeGenericSkill(unit, skill, () => {});
-  tweens[0].onComplete();
-  assert.equal(callbacks[0].delay, 4 * 1000 / 60);
-  assert.equal(callbacks[1].delay, 100);
-  assert.equal(callbacks[2].delay, 380);
-  let played = 0;
-  scene.playSkillEffect = () => played++;
-  callbacks[0].callback();
-  assert.equal(played, 1);
-  scene.currentTarget.currentHp = 0;
-  callbacks[0].callback();
-  assert.equal(played, 1);
-});
-
 function animatedHero() {
   const unit = hero(100);
   EventEmitter.call(unit);
   unit.unitKey = 'test';
+  unit.scene={textures:{exists:()=>true}};
   unit.maxHp = 100;
   unit.manifest = { animations: Object.fromEntries(
-    ['idle', 'dying', 'dead', 'win_before', 'win', 'atk', 'standby', 'magic_standby'].map(name => [name, { pivotX: 0.5, pivotY: 1 }])) };
+    ['idle', 'dying', 'dead', 'win_before', 'win', 'atk', 'standby', 'magic_standby'].map(name => [name, { pivotX: 0.5, pivotY: 1,frames:[{durationMs:100}] }])) };
   unit.setOrigin = () => unit;
   unit.play = () => unit;
   unit.playRestPose();
@@ -268,7 +305,6 @@ test('free selection switches command poses without spending an action or allowi
   scene.turnOrder = [first, last];
   scene.activeHeroIndex = 0;
   scene.combatState = 'PLAYER_TURN';
-  scene.isSkillMenuOpen = true;
   first.playCommandPose();
   scene.selectHero(last);
   assert.equal(scene.activeHeroIndex, 1);
@@ -306,22 +342,21 @@ test('acting with the last slot first wraps back and enemy phase waits for all a
   scene.advanceToNextHero();
   assert.equal(scene.combatState, 'ENEMY_TURN');
 });
-test('closing commands restores low HP while submenu navigation keeps standby and busy actions intact', () => {
+test('closing commands restores low HP while busy actions stay intact', () => {
   const scene = battle();
   const unit = animatedHero();
   unit.currentHp = 20;
   scene.turnOrder = [unit];
   scene.activeHeroIndex = 0;
   scene.combatState = 'PLAYER_TURN';
-  scene.openSkillSubMenu();
+  scene.openHeroCommands(unit);
   assert.equal(unit.currentAnimKey, 'standby');
-  scene.closeSkillSubMenu();
-  assert.equal(unit.currentAnimKey, 'standby');
-  scene.closeHeroCommands();
+  scene.selectHero(unit);
   assert.equal(unit.currentAnimKey, 'dying');
   scene.combatState = 'HERO_ATTACKING';
   unit.playAnimation('atk');
-  scene.closeSkillSubMenu();
+  scene.openHeroCommands(unit);
+  scene.selectHero(unit);
   assert.equal(unit.currentAnimKey, 'atk');
 });
 test('magic preparation uses the exported cycle and rejects stale completion after battle end', () => {
@@ -351,7 +386,7 @@ test('per-hero plans preserve physical/magic readiness and spend neither MP nor 
   const second = animatedHero(); second.unitKey = 'second'; second.currentMp = 100;
   first.combatConfig = { attackAnim: 'atk', attackType: 'melee' };
   second.combatConfig = { attackAnim: 'atk', attackType: 'melee' };
-  const spell = { id: 'spell', name: 'Spell', motion: 'magic_atk', mpCost: 20 };
+  const spell = { ...JSON.parse(fs.readFileSync('public/assets/units/cloud/skills.json')).skills[0], id: 'spell', name: 'Spell', motion: 'magic_atk', mpCost: 20 };
   scene.unitSkills = { second: [spell] };
   scene.turnOrder = [first, second]; scene.activeHeroIndex = 0;
   scene.combatState = 'PLAYER_TURN'; scene.currentTarget = null;
@@ -363,7 +398,7 @@ test('per-hero plans preserve physical/magic readiness and spend neither MP nor 
   assert.equal(second.currentMp, 100);
   assert.equal(second.hasActed, false);
   assert.equal(scene.plannedActions.size, 2);
-  scene.openSkillSubMenu(); scene.closeSkillSubMenu();
+  scene.openHeroCommands(second);
   assert.equal(second.currentAnimKey, 'magic_standby');
   scene.selectHero(first);
   assert.equal(second.currentAnimKey, 'magic_standby');
@@ -373,7 +408,7 @@ test('explicit commit charges one command, locks concurrent execution and preser
   const scene = battle();
   const first = animatedHero(); first.unitKey = 'first'; first.currentMp = 100;
   const second = animatedHero(); second.unitKey = 'second'; second.currentMp = 100;
-  const skill = { id: 'strike', name: 'Strike', motion: 'atk', mpCost: 18 };
+  const skill = { ...JSON.parse(fs.readFileSync('public/assets/units/cloud/skills.json')).skills[0], id: 'strike', name: 'Strike', motion: 'atk', mpCost: 18 };
   scene.unitSkills = { first: [skill], second: [skill] };
   scene.turnOrder = [first, second]; scene.activeHeroIndex = 0;
   scene.combatState = 'PLAYER_TURN'; scene.currentTarget = null;
@@ -397,7 +432,7 @@ test('explicit commit charges one command, locks concurrent execution and preser
 });
 test('commit rechecks MP and retains an unaffordable plan for editing', () => {
   const scene = battle(); const unit = animatedHero(); unit.currentMp = 100;
-  const skill = { id: 'strike', name: 'Strike', motion: 'atk', mpCost: 18 };
+  const skill = { ...JSON.parse(fs.readFileSync('public/assets/units/cloud/skills.json')).skills[0], id: 'strike', name: 'Strike', motion: 'atk', mpCost: 18 };
   scene.turnOrder = [unit]; scene.activeHeroIndex = 0; scene.unitSkills = { test: [skill] };
   scene.combatState = 'PLAYER_TURN'; scene.currentTarget = null;
   scene.planHeroSkill(skill); unit.currentMp = 5;
@@ -425,7 +460,7 @@ test('party selection preserves a prepared action and only explicit execution co
   unit.combatConfig = { attackAnim: 'atk', attackType: 'melee' };
   scene.turnOrder = [unit]; scene.activeHeroIndex = 0; scene.combatState = 'PLAYER_TURN';
   scene.currentTarget = null;
-  scene.handleHeroPanelInput(unit);
+  scene.pickRibbonHero(unit);
   assert.equal(scene.isCommandMenuOpen, true);
   assert.equal(scene.plannedActions.size, 0);
   assert.equal(unit.currentAnimKey, 'standby');
@@ -433,28 +468,25 @@ test('party selection preserves a prepared action and only explicit execution co
   assert.equal(scene.isCommandMenuOpen, false);
   let commits = 0;
   scene.executeActiveHeroAttack = () => { commits++; scene.combatState = 'HERO_ATTACKING'; };
-  scene.handleHeroPanelInput(unit, true);
+  scene.pickRibbonHero(unit);
   assert.equal(commits, 0);
   assert.equal(scene.isCommandMenuOpen, true);
-  scene.closeHeroCommands();
-  scene.handleHeroPanelInput(unit);
+  assert.equal(scene.plannedActions.size, 1);
+  scene.pickRibbonHero(unit);
   assert.equal(commits, 0);
-  scene.handleHeroPanelInput(unit);
-  assert.equal(commits, 0);
-  assert.equal(scene.isCommandMenuOpen, true);
   scene.executePlannedAction();
   assert.equal(commits, 1);
 });
 
-test('panel input rejects dead, acted and foreign heroes and terminal combat states', () => {
+test('party ribbon input rejects dead, acted and foreign heroes and terminal combat states', () => {
   const scene = battle(); const unit = animatedHero();
   scene.turnOrder = [unit]; scene.combatState = 'PLAYER_TURN';
-  scene.selectHero = () => { throw Error('Invalid panel selected'); };
-  unit.hasActed = true; scene.handleHeroPanelInput(unit);
-  unit.hasActed = false; unit.currentHp = 0; scene.handleHeroPanelInput(unit);
-  unit.currentHp = 100; scene.handleHeroPanelInput(animatedHero());
+  scene.selectHero = () => { throw Error('Invalid party card selected'); };
+  unit.hasActed = true; scene.pickRibbonHero(unit);
+  unit.hasActed = false; unit.currentHp = 0; scene.pickRibbonHero(unit);
+  unit.currentHp = 100; scene.pickRibbonHero(animatedHero());
   for (const state of ['SPAWNING', 'HERO_ATTACKING', 'ENEMY_TURN', 'VICTORY', 'DEFEAT']) {
-    scene.combatState = state; scene.handleHeroPanelInput(unit); scene.openHeroCommands(unit);
+    scene.combatState = state; scene.pickRibbonHero(unit); scene.openHeroCommands(unit);
   }
 });
 test('melee attacks approach the selected row and return home in both arenas', () => {
@@ -494,69 +526,6 @@ test('melee attacks approach the selected row and return home in both arenas', (
   }
 });
 
-test('shared enemy HP panel updates damage, switches targets without carrying chip damage, and hides on defeat', () => {
-  const { EnemyTargetPanel } = loadModule('src/ui/EnemyTargetPanel.ts');
-  const object = () => ({
-    width: 256,
-    setDepth() { return this; }, setVisible(visible) { this.visible = visible; return this; },
-    setAlpha() { return this; }, setDisplaySize() { return this; }, setOrigin() { return this; },
-    add() { return this; }, setText(text) { this.text = text; return this; },
-  });
-  const transitions = [];
-  const scene = {
-    add: { container: object, image: object, text: object, rectangle: object },
-    tweens: { add: (config) => { transitions.push(config); return { stop() {} }; } },
-  };
-  const panel = new EnemyTargetPanel(scene);
-  const first = { nameTag: 'RAT A', currentHp: 1000, maxHp: 1000 };
-  const second = { nameTag: 'BOSS', currentHp: 9000, maxHp: 9000 };
-  panel.update(first);
-  first.currentHp = 250;
-  panel.update(first);
-  assert.equal(panel.bar.width, 64);
-  assert.equal(transitions.length, 1);
-  panel.update(second);
-  assert.equal(panel.bar.width, 256);
-  assert.equal(panel.chip.width, 256);
-  assert.equal(panel.name.text, 'TARGET · BOSS');
-  assert.equal(transitions.length, 1);
-  second.currentHp = 0;
-  panel.update(second);
-  assert.equal(panel.container.visible, false);
-  panel.update(first);
-  assert.equal(panel.container.visible, true);
-  assert.equal(panel.bar.width, 64);
-  panel.update(null);
-  assert.equal(panel.container.visible, false);
-});
-
-test('area presentation applies one total hit to each captured target without impact motion', () => {
-  const scene = battle(), timers = [], effects = [], hits = [];
-  scene.time = { delayedCall(ms, run) { timers.push({ ms, run }); } };
-  scene.combatState = 'HERO_ATTACKING';
-  scene.cloudDmgMultiplier = 1;
-  scene.cloud = { manifest: { animations: { atk: { frames: [{ durationMs: 950 }] } } },
-    playAnimation() {}, returnToIdle(done) { done(); }, heroName: 'CLOUD' };
-  scene.enemies = [190, 320, 320].map((x, i) => ({ x, y: 500 + i * 80, currentHp: 2000,
-    applyDamage(damage, critical, type, quiet) { hits.push({ damage, critical, type, quiet }); this.currentHp -= damage; } }));
-  scene.handleTargetDamaged = () => {};
-  scene.playSkillEffectAt = (...args) => effects.push(args);
-  let completed = 0;
-  const skill = JSON.parse(fs.readFileSync('tools/characters/cloud.json', 'utf8')).skills.find(s => s.id === 'blade_beam');
-  scene.executeGenericSkill(scene.cloud, skill, () => completed++);
-  assert.equal(hits.length, 0);
-  for (const timer of timers.sort((a, b) => a.ms - b.ms)) {
-    if (timer.ms < 500) assert.equal(hits.length, 0);
-    timer.run();
-  }
-  assert.equal(hits.length, 3);
-  assert.ok(hits.every(h => h.damage === 900 && h.quiet && !h.critical && h.type === 'physical'));
-  assert.ok(scene.enemies.every(e => e.currentHp === 1100));
-  assert.equal(effects.length, 4);
-  assert.equal(effects.filter(e => e[0] === 'blade_beam_wave').length, 1);
-  assert.equal(completed, 1);
-});
-
 test('quiet enemy damage changes HP and displays its number without tint or shake', () => {
   const target = Object.create(TargetDummy.prototype);
   target.currentHp = 1000;
@@ -569,63 +538,244 @@ test('quiet enemy damage changes HP and displays its number without tint or shak
   assert.equal(popups, 1);
 });
 
-test('screen-back area presentation spawns its fade once and its per-target effects for all enemies', () => {
-  const scene = battle(), timers = [], effects = [], hits = [];
-  scene.scale = { width: 1000, height: 1100 };
-  scene.arenaKey = 'reactor';
-  scene.time = { delayedCall(ms, run) { timers.push({ ms, run }); } };
-  scene.combatState = 'HERO_ATTACKING';
-  const actor = { heroName: 'BARRET', manifest: { animations: { atk: { frames: [{ durationMs: 2133.32 }] } } },
-    playAnimation() {}, returnToIdle(done) { done(); } };
-  scene.enemies = [190, 320, 320].map((x, i) => ({ x, y: 500 + i * 80, currentHp: 2000,
-    applyDamage(damage, critical, type, quiet) { hits.push({ damage, quiet }); this.currentHp -= damage; } }));
-  scene.handleTargetDamaged = () => {};
-  scene.playSkillEffectAt = (...args) => effects.push(args);
-  let completed = 0;
-  const skill = JSON.parse(fs.readFileSync('tools/characters/barret.json', 'utf8')).skills.find(s => s.id === 'satellite_beam');
-  scene.executeGenericSkill(actor, skill, () => completed++);
-  for (const timer of timers.sort((a, b) => a.ms - b.ms)) {
-    if (timer.ms < 2750) assert.equal(hits.length, 0);
-    timer.run();
-  }
-  assert.equal(effects.length, 7);
-  assert.deepEqual(effects.find(e => e[0] === 'satellite_fade'), ['satellite_fade', 500, 400, 'back', true]);
-  assert.equal(hits.length, 3);
-  assert.ok(hits.every(h => h.damage === 720 && h.quiet));
-  assert.equal(completed, 1);
-  assert.equal(Math.max(...timers.map(t => t.ms)), 4000);
+test('prepared actions recover on body completion while effects keep their own lifetime',()=>{
+  const scene=battle(),timers=[],tweens=[],poses=[];
+  scene.events=new EventEmitter();scene.combatState='HERO_ATTACKING';
+  scene.time={delayedCall(ms,run){timers.push({ms,run});}};
+  scene.tweens={add(config){tweens.push(config);}};
+  scene.preparedScenes={choreography:()=>({movement:'dash',approachFrames:18,returnFrames:12})};
+  let effectFinished,completed=0,hits=0;
+  scene.playPreparedScene=(_key,_hero,_targets,done)=>effectFinished=done;
+  const unit=new EventEmitter();Object.assign(unit,{unitKey:'independent',heroName:'Independent',
+    manifest:hero(100).manifest,
+    homeSlot:{x:800,y:500},combatConfig:{targetOffsetX:90},
+    playAnimation:pose=>poses.push(pose),setDepthBoost(){},setFacingLeft(){},playRestPose(){poses.push('idle');}});
+  scene.executePreparedSkill(unit,{actionChoreography:choreography('target'),motion:'atk',moveType:'dash',scope:'single_enemy',requiresSourceScene:true,scenePresentation:'generic',damageEvents:[{frame:6,weight:1}]},'generic',
+    [{x:190,y:500}],()=>hits++,()=>completed++);
+  assert.equal(tweens[0].duration,300);tweens[0].onComplete();
+  assert.deepEqual(poses,['move','atk']);assert.equal(unit.listenerCount('animationcomplete-independent_atk'),1);
+  timers[0].run();assert.equal(hits,1);
+  unit.emit('animationcomplete-independent_atk');assert.equal(tweens[1].duration,200);
+  tweens[1].onComplete();assert.equal(poses.at(-1),'idle');assert.equal(completed,1,'Decorative effects must not hold gameplay');
+  assert.equal(effectFinished,undefined);timers[0].run();unit.emit('animationcomplete-independent_atk');
+  assert.equal(completed,1);assert.equal(hits,1);assert.equal(scene.events.listenerCount('shutdown'),0);
+  assert.equal(unit.listenerCount('animationcomplete-independent_atk'),0);
 });
 
-test('prepared alpha effects render below actors and additive effects keep their foreground blend', () => {
-  const scene = battle(), calls = [], clips = [], destruction = [], sprites = [];
-  let cleaned = 0;
-  scene.scale = { width: 1000, height: 1100 };
-  scene.arenaKey = 'reactor';
-  scene.make = { graphics() { return { fillStyle() { return this; },
-    fillRect(...args) { clips.push(args); return this; }, createGeometryMask() { return { destroy() { cleaned++; } }; },
-    destroy() { cleaned++; } }; } };
-  phaser.BlendModes = { ADD: 'ADD', NORMAL: 'NORMAL' };
-  let blend = 'NORMAL';
-  scene.cache = { json: { get() { return { frameCount: 150, frameRate: 60, frameWidth: 256, frameHeight: 256,
-    originX: .5, originY: .5, scale: 10, blend, contentBounds: { x: 76, y: 69, width: 104, height: 76 } }; } } };
-  scene.textures = { exists() { return true; } };
-  scene.anims = { exists() { return true; } };
-  scene.add = { sprite() { const sprite = { setOrigin() { return this; }, setScale(x, y = x) { this.sx = x; this.sy = y; return this; },
-    setPosition(x, y) { this.x = x; this.y = y; return this; },
-    setDepth(v) { calls.push(['depth', v]); return this; }, setBlendMode(v) { calls.push(['blend', v]); return this; },
-    setMask() { return this; }, clearMask() {}, once(event, run) { if (event === 'destroy') destruction.push(run); }, play() {} };
-    sprites.push(sprite); return sprite; } };
-  scene.playSkillEffectAt('fade', 500, 400, 'back', true);
-  blend = 'ADD';
-  scene.playSkillEffectAt('beam', 190, 450);
-  assert.deepEqual(calls, [['depth', -50], ['blend', 'NORMAL'], ['depth', 1100], ['blend', 'ADD']]);
-  assert.deepEqual(clips, [[0, 48, 1000, 752], [0, 48, 1000, 752]]);
-  assert.ok(Math.abs(sprites[0].x + (76 - 128) * sprites[0].sx) < 1e-9);
-  assert.ok(Math.abs(sprites[0].y + (69 - 128) * sprites[0].sy - 48) < 1e-9);
-  assert.ok(Math.abs(sprites[0].sx * 104 - 1000) < 1e-9);
-  assert.ok(Math.abs(sprites[0].sy * 76 - 752) < 1e-9);
-  destruction.forEach(run => run());
-  assert.equal(cleaned, 4);
+test('prepared action barrier includes late damage and cancels body listeners on shutdown',()=>{
+  for(const cancel of [false,true]){
+    const scene=battle(),timers=[];scene.events=new EventEmitter();
+    scene.time={delayedCall(ms,run){timers.push(run);}};
+    scene.preparedScenes={choreography:()=>({movement:'stationary'})};
+    let effectFinished,completed=0,hits=0;
+    scene.playPreparedScene=(_key,_hero,_targets,done)=>effectFinished=done;
+    const unit=new EventEmitter();Object.assign(unit,{unitKey:'independent',playAnimation(){},
+      manifest:hero(100).manifest,
+      returnToIdle:done=>done(),setFacingLeft(){},setDepthBoost(){},playRestPose(){}});
+    scene.executePreparedSkill(unit,{actionChoreography:choreography('stationary','magic_atk'),moveType:'stationary',motion:'magic_atk',scope:'single_enemy',requiresSourceScene:true,scenePresentation:'generic',damageEvents:[{frame:300,weight:1}]},'generic',[{}],()=>hits++,()=>completed++);
+    if(cancel)scene.events.emit('shutdown');
+    unit.emit('animationcomplete-independent_magic_atk');assert.equal(effectFinished,undefined);
+    assert.equal(completed,0);timers[0]();
+    assert.equal(completed,cancel?0:1);assert.equal(hits,cancel?0:1);
+    assert.equal(unit.listenerCount('animationcomplete-independent_magic_atk'),0);
+    assert.equal(scene.events.listenerCount('shutdown'),0);
+  }
+});
+
+test('incompatible prepared action scope/movement is rejected before MP or state changes',()=>{
+  const scene=battle(),unit=hero(100);let charged=0;
+  unit.useMp=()=>{charged++;return true;};scene.turnOrder=[unit];scene.activeHeroIndex=0;
+  scene.combatState='PLAYER_TURN';scene.skillVisualMode='source';scene.enemies=[{currentHp:100}];
+  scene.preparedScenes={canPlay:()=>true};
+  scene.cache={json:{get:()=>JSON.parse(fs.readFileSync('public/assets/presentations/cloud_brave_slash/manifest.json','utf8'))}};
+  for(const changes of [{scope:'all_enemies',moveType:'dash'},{scope:'single_enemy',moveType:'stationary'}]){
+    scene.executeSkillChoice({scenePresentation:'generic',mpCost:18,...changes});
+    assert.equal(charged,0);assert.equal(scene.combatState,'PLAYER_TURN');
+  }
+});
+
+
+test('weighted events complete only after the last relevant hit; duplicates, early death and shutdown are safe',()=>{
+ for(const mode of ['normal','target-death','shutdown']){
+  const scene=battle(),timers=[],hits=[];scene.events=new EventEmitter();scene.combatState='HERO_ATTACKING';
+  scene.time={delayedCall(ms,run){const t={ms,run,removed:false,remove(){this.removed=true;}};timers.push(t);return t;}};
+  scene.preparedScenes={choreography:()=>({movement:'stationary'})};scene.playPreparedScene=()=>{};
+  const unit=new EventEmitter();Object.assign(unit,{unitKey:'fixture',playAnimation(){},returnToIdle:done=>done(),
+   manifest:hero(100).manifest,
+   setFacingLeft(){},setDepthBoost(){},playRestPose(){},playVictory(){}});
+  const skill={actionChoreography:choreography(),moveType:'stationary',motion:'atk',scope:'single_enemy',requiresSourceScene:true,scenePresentation:'fixture',damageEvents:[
+   {frame:2,weight:.2},{frame:40,weight:.3},{frame:100,weight:.5}]};
+  const target={currentHp:100};let complete=0;
+  scene.executePreparedSkill(unit,skill,'fixture',[target],weight=>{hits.push(weight);if(mode==='target-death')target.currentHp=0;},()=>complete++);
+  unit.emit('animationcomplete-fixture_atk');assert.equal(complete,0);
+  if(mode==='shutdown')scene.events.emit('shutdown');
+  for(const timer of timers){timer.run();timer.run();if(mode==='normal'&&timer!==timers.at(-1))assert.equal(complete,0);}
+  assert.deepEqual(hits,mode==='normal'?[.2,.3,.5]:mode==='target-death'?[.2]:[]);
+  assert.equal(complete,mode==='shutdown'?0:1);assert.ok(timers.every(t=>t.removed));
+  assert.equal(unit.listenerCount('animationcomplete-fixture_atk'),0);assert.equal(scene.events.listenerCount('shutdown'),0);
+ }
+});
+
+test('instant enemy events use the shared clock once, skip dead targets and respect body/shutdown barriers',()=>{
+ for(const mode of ['fallback','execute','shutdown']){
+  const scene=battle(),timers=[],hits=[];scene.events=new EventEmitter();scene.combatState='HERO_ATTACKING';
+  scene.time={delayedCall(ms,run){const t={ms,run,remove(){}};timers.push(t);return t;}};
+  scene.preparedScenes={choreography:()=>({movement:'stationary'})};scene.playPreparedScene=()=>{};
+  scene.handleTargetDamaged=()=>{};
+  const unit=new EventEmitter();Object.assign(unit,{unitKey:'fixture',manifest:hero(100).manifest,playAnimation(){},returnToIdle:done=>done(),setFacingLeft(){},setDepthBoost(){},playRestPose(){}});
+  const targets=[1000,0].map(currentHp=>Object.assign(Object.create(TargetDummy.prototype),{currentHp,isBoss:false,applyDamage(amount,_critical,type){hits.push({amount,type});this.currentHp-=amount;}}));
+  const skill={actionChoreography:choreography(),moveType:'stationary',motion:'atk',scope:'all_enemies',requiresSourceScene:true,scenePresentation:'fixture',
+   supportEvents:[{frame:45,effects:[{kind:'execute-or-damage',chance:mode==='execute'?1:0,fallbackDamage:700,bossImmune:true}]}]};
+  let completed=0;scene.executePreparedSkill(unit,skill,'fixture',targets,()=>assert.fail('Instant event entered physical damage callback'),()=>completed++);
+  if(mode==='shutdown')scene.events.emit('shutdown');
+  for(const timer of timers){timer.run();timer.run();}
+  assert.equal(completed,0);unit.emit('animationcomplete-fixture_atk');
+  assert.deepEqual(hits,mode==='shutdown'?[]:[{amount:mode==='execute'?1000:700,type:'unmitigated'}]);assert.equal(completed,mode==='shutdown'?0:1);
+ }
+});
+
+test('multi-hit area damage weights the action total and skips defeated captured targets',()=>{
+ const scene=battle(),hits=[[],[]];scene.combatState='HERO_ATTACKING';
+ const unit={};scene.cloud=unit;
+ const targets=hits.map((list,i)=>({currentHp:1000,applyDamage(value){list.push(value);if(i===0)this.currentHp=0;}}));
+ scene.enemies=targets;scene.sourceSceneKey=()=> 'fixture';scene.handleTargetDamaged=()=>{};
+ scene.executePreparedSkill=(_hero,_skill,_key,_targets,impact,done)=>{impact(.25);impact(.75);done();};
+ let complete=0;scene.executeSourceAreaSkill(unit,{damageMultiplier:2,scope:'all_enemies',motion:'atk'},()=>complete++);
+ assert.deepEqual(hits,[[150],[150,450]]);assert.equal(complete,1);
+});
+
+test('Source-only commands reject missing players and malformed timelines before MP or action mutation',()=>{
+ const scene=battle(),unit=hero(100);scene.turnOrder=[unit];scene.activeHeroIndex=0;
+ scene.enemies=[{currentHp:100}];scene.combatState='PLAYER_TURN';scene.preparedScenes=undefined;let charged=0;
+ unit.useMp=()=>{charged++;return true;};const skill={scope:'single_enemy',requiresSourceScene:true,scenePresentation:'fixture',mpCost:20};
+ scene.executeSkillChoice(skill);assert.equal(charged,0);assert.equal(scene.combatState,'PLAYER_TURN');
+ scene.skillVisualMode='source';scene.preparedScenes={canPlay:()=>true};
+ scene.executeSkillChoice({...skill,damageEvents:[{frame:2,weight:.3}]});assert.equal(charged,0);
+});
+
+test('committed Source support retains its reviewed event path during readiness notifications',()=>{
+ const scene=battle(),unit=hero(100);unit.unitKey='fixture';unit.currentMp=100;
+ scene.turnOrder=[unit];scene.activeHeroIndex=0;scene.enemies=[{currentHp:100}];scene.combatState='PLAYER_TURN';scene.skillVisualMode='source';
+ const skill=JSON.parse(fs.readFileSync('public/assets/units/aerith/skills.json')).skills.find(s=>s.id==='seal_evil');
+ scene.preparedScenes={canPlay:()=>true};scene.cache={json:{get:()=>JSON.parse(fs.readFileSync('public/assets/presentations/aerith_seal_evil/manifest.json'))}};
+ let charges=0,prepared=0,done=0;unit.useMp=()=>{charges++;return true;};scene.concludeHeroSkill=()=>done++;
+ scene.startHeroAction=(_hero,_motion,action)=>{scene.sourceVisualError='controlled readiness notification';action();};
+ scene.executePreparedSkill=(_hero,_skill,key,targets,_impact,complete)=>{assert.equal(key,'aerith_seal_evil');assert.equal(targets.length,1);prepared++;complete();};
+ scene.executeSkillChoice(skill);assert.equal(charges,1);assert.equal(prepared,1);assert.equal(done,1);assert.equal(scene.activeSkillActions,0);
+});
+
+test('reviewed short steps have no attack clip and close after gameplay and source-cycle return',()=>{
+ const scene=battle(),timers=[],tweens=[],poses=[];scene.events=new EventEmitter();scene.combatState='HERO_ATTACKING';
+ scene.time={delayedCall(ms,run){const timer={ms,run,remove(){}};timers.push(timer);return timer;}};
+ scene.tweens={add(config){tweens.push(config);}};
+ scene.preparedScenes={choreography:()=>({approachFrames:18,returnFrames:12})};
+ scene.playPreparedScene=()=>poses.push('vfx');
+ const unit=new EventEmitter();Object.assign(unit,{unitKey:'step_fixture',scaleY:2,isDead:false,homeSlot:{x:800,y:500},
+  manifest:{animations:{idle:{frameHeight:72},move:{frames:[{durationMs:66.67}]}}},
+  playAnimation:clip=>poses.push(clip),playRestPose:()=>poses.push('idle'),setDepthBoost(){},setFacingLeft(){}});
+ const skill=JSON.parse(fs.readFileSync('public/assets/units/cloud_ac/skills.json')).skills[0];
+ let hits=0,done=0;scene.executePreparedSkill(unit,skill,'fixture',[{currentHp:100}],()=>hits++,()=>done++);
+ assert.equal(tweens[0].x,728);assert.equal(tweens[0].y,500);assert.equal(tweens[0].duration,66.67);
+ tweens[0].onComplete();assert.deepEqual(poses,['move','idle','vfx']);
+ timers[0].run();assert.equal(hits,1);assert.equal(tweens.length,1,'Same-frame support must finish before return');
+ timers[1].run();assert.equal(tweens.length,2);assert.equal(done,0);assert.equal(tweens[1].duration,66.67);
+ tweens[1].onComplete();assert.equal(done,1);assert.ok(!poses.some(p=>p==='atk'||p==='magic_atk'));
+ timers.forEach(t=>t.run());assert.equal(hits,1);assert.equal(done,1);assert.equal(scene.events.listenerCount('shutdown'),0);
+});
+
+test('independent body phases survive early gameplay completion and are cancelled on shutdown',()=>{
+ for(const shutdown of [false,true]){
+  const scene=battle(),timers=[],poses=[];scene.events=new EventEmitter();scene.combatState='HERO_ATTACKING';
+  scene.time={delayedCall(ms,run){const t={ms,run,remove(){}};timers.push(t);return t;}};
+  scene.preparedScenes={choreography:()=>({approachFrames:0,returnFrames:12})};scene.playPreparedScene=()=>{};
+  const unit=new EventEmitter();Object.assign(unit,{unitKey:'phases',manifest:hero(100).manifest,playAnimation:p=>poses.push(p),
+   returnToIdle:done=>done(),playRestPose(){},setFacingLeft(){},setDepthBoost(){}});
+  const c=choreography();c.body.phases.push({frame:12,clip:'magic_atk'});
+  const skill={actionChoreography:c,moveType:'stationary',motion:'atk',requiresSourceScene:true,scenePresentation:'fixture',scope:'single_enemy',damageEvents:[{frame:6,weight:1}]};
+  let complete=0,hits=0;scene.executePreparedSkill(unit,skill,'fixture',[{currentHp:100}],()=>hits++,()=>complete++);
+  timers.find(t=>t.ms===100).run();assert.equal(hits,1);assert.equal(complete,0);
+  if(shutdown)scene.events.emit('shutdown');timers.find(t=>t.ms===200).run();
+  unit.emit('animationcomplete-phases_magic_atk');assert.equal(complete,shutdown?0:1);
+  assert.deepEqual(poses,shutdown?['atk']:['atk','magic_atk']);assert.equal(scene.events.listenerCount('shutdown'),0);
+ }
+});
+
+test('stationary effect-only actions add neither body clip nor recoil recovery',()=>{
+ const scene=battle(),timers=[];scene.events=new EventEmitter();scene.combatState='HERO_ATTACKING';
+ scene.time={delayedCall(ms,run){const t={run,remove(){}};timers.push(t);return t;}};
+ scene.preparedScenes={choreography:()=>({approachFrames:0,returnFrames:12})};scene.playPreparedScene=()=>{};
+ const unit=new EventEmitter();Object.assign(unit,{manifest:hero(100).manifest,playAnimation(){throw Error('Implicit clip');},
+  returnToIdle(){throw Error('Unnecessary recoil');},playRestPose(){},setFacingLeft(){},setDepthBoost(){}});
+ const c=choreography();c.body={mode:'rest'};
+ const skill={actionChoreography:c,moveType:'stationary',requiresSourceScene:true,scenePresentation:'fixture',scope:'single_enemy',damageEvents:[{frame:6,weight:1}]};
+ let complete=0;scene.executePreparedSkill(unit,skill,'fixture',[{currentHp:100}],()=>{},()=>complete++);
+ assert.equal(complete,0);timers[0].run();assert.equal(complete,1);
+});
+
+test('friendly recipient sets exclude caster and K.O.; costs fail before spending MP',()=>{
+ const scene=battle(),caster=hero(300),a=hero(100),b=hero(0);scene.turnOrder=[caster,a,b];scene.activeHeroIndex=0;
+ scene.combatState='PLAYER_TURN';scene.enemies=[{currentHp:100}];caster.currentMp=100;caster.maxMp=100;caster.refreshRestPose=()=>{};
+ const skill=JSON.parse(fs.readFileSync('public/assets/units/delita/skills.json')).skills.find(s=>s.id==='chant');
+ scene.cache={json:{get:()=>JSON.parse(fs.readFileSync('public/assets/presentations/delita_chant/manifest.json'))}};
+ assert.deepEqual(scene.friendlySkillTargets(caster,skill),[a]);
+ caster.currentHp=skill.hpCost;scene.executeSkillChoice(skill);assert.equal(caster.currentMp,100);assert.equal(scene.combatState,'PLAYER_TURN');
+ caster.currentHp=300;scene.startHeroAction=(_hero,_clip,action)=>action();scene.concludeHeroSkill=()=>{};
+ scene.executePreparedSkill=(_hero,_skill,_key,targets)=>assert.deepEqual(targets,[a]);
+ scene.executeSkillChoice(skill);assert.equal(caster.currentHp,200);assert.equal(caster.currentMp,88);
+ assert.equal(caster.spendHp(200),false);assert.equal(caster.currentHp,200);assert.equal(caster.spendHp(199),true);assert.equal(caster.currentHp,1);
+});
+
+test('prepared boss charge deals no damage, burst hits each living hero once with defense and phase power',()=>{
+ const s=battle(),timers=[],messages=[];s.events=new EventEmitter();s.updateStatus=m=>messages.push(m);
+ const actors=[1000,1000,0].map((hp,i)=>({unitKey:'unit'+i,currentHp:hp,get isDead(){return this.currentHp<=0;},applyDamage(n){this.currentHp=Math.max(0,this.currentHp-n);}}));
+ s.turnOrder=actors;s.cloud=actors[0];s.startRound=()=>{};s.time.delayedCall=(_ms,cb)=>{timers.push(cb);};
+ s.runContext={state:{areas:[{arena:'reactor',name:'Mako Reactor',normals:1}],encounter:1,party:[{key:'unit0',stats:{defense:1}},{key:'unit1',stats:{defense:2}}]}};
+ let attacks=0;const e={assetKey:'guard_scorpion',nameTag:'Guard Scorpion',isBoss:true,maxHp:1000,currentHp:500,actionCursor:1,statusEffects:[],executeAttack(_x,_y,impact,done){attacks++;impact();done();}};s.enemies=[e];
+ s.combatState='ENEMY_TURN';s.executeEnemyTurn();while(timers.length)timers.shift()();
+ assert.equal(e.actionCursor,2);assert.equal(attacks,0);assert.deepEqual(actors.map(a=>a.currentHp),[1000,1000,0]);assert.ok(messages.some(m=>m.includes('hits the party next!')));
+ e.statusEffects=[{kind:'stop',phases:1,chance:1}];s.combatState='ENEMY_TURN';s.executeEnemyTurn();while(timers.length)timers.shift()();assert.equal(e.actionCursor,2);assert.equal(attacks,0);
+ s.combatState='ENEMY_TURN';s.executeEnemyTurn();while(timers.length)timers.shift()();
+ assert.equal(e.actionCursor,3);assert.equal(attacks,1);assert.deepEqual(actors.map(a=>a.currentHp),[732,866,0]);
+});
+
+test('prepared stationary enemy uses its own origin and full clip durations with one impact before cleanup',()=>{
+ const body=Object.create(TargetDummy.prototype),timers=[],calls=[];
+ body.currentHp=100;body.assetKey='fixture';body.attackProfile={clip:'atk',impactFrame:1,movement:'stationary'};
+ body.manifest={animations:{idle:{pivotX:.5,pivotY:.8},atk:{pivotX:.4,pivotY:.7,frames:[{durationMs:80},{durationMs:160}]}}};
+ body.sprite={setOrigin(x,y){calls.push(['pivot',x,y]);},play(k){calls.push(k);}};body.scene={time:{delayedCall(ms,cb){timers.push({ms,cb});}}};body.setDepthBoost=v=>calls.push(['depth',v]);
+ body.executeAttack(99,99,()=>calls.push('impact'),()=>calls.push('complete'));
+ assert.deepEqual(timers.map(t=>t.ms),[80,240]);timers.sort((a,b)=>a.ms-b.ms).forEach(t=>t.cb());
+ assert.equal(calls.filter(c=>c==='impact').length,1);assert.ok(calls.indexOf('impact')<calls.indexOf('complete'));
+ assert.ok(calls.includes('fixture_atk')&&calls.includes('fixture_idle'));assert.deepEqual(calls.find(c=>Array.isArray(c)&&c[0]==='pivot'),['pivot',.4,.7]);
+});
+
+test('large original body clips fit the shared formation anchor without changing pivots or stretching',()=>{
+ const bounds={left:8,right:992,top:56,bottom:792};
+ for(const key of ['microchu','ochu','sweeper','guard_scorpion']){
+  const m=JSON.parse(fs.readFileSync(`public/assets/monsters/${key}/manifest.json`,'utf8'));
+  const before=JSON.stringify(m),scale=fitPreparedEnemyScale(m,2,190,600,bounds);
+  for(const a of Object.values(m.animations)){const bounce=scale*ENEMY_SPAWN_MAX_SCALE;assert.ok(190-a.pivotX*a.frameWidth*bounce>=bounds.left-1e-8);assert.ok(190+(1-a.pivotX)*a.frameWidth*bounce<=bounds.right);assert.ok(600-a.pivotY*a.frameHeight*bounce>=bounds.top);assert.ok(600+(1-a.pivotY)*a.frameHeight*bounce<=bounds.bottom);}
+  assert.equal(JSON.stringify(m),before);assert.ok(scale>0&&scale<=2);
+ }
+});
+
+test('verified resting victory pose releases rewards without stopping the original entrance clip',()=>{
+ const unit=Object.create(UnitActor.prototype),clips=[],events=new EventEmitter();let ready=0;
+ const meta={schemaVersion:1,units:{fixture:{unitId:'42',clip:'win_before',frame:2,frameCounts:{win_before:4,win:2}}}};
+ Object.assign(unit,{unitKey:'fixture',currentHp:100,manifest:{unitId:'42',assetKey:'fixture',animations:{win_before:{frameCount:4},win:{frameCount:2}}},scene:{events,cache:{json:{get:()=>meta}}},playAnimation(clip){this.currentAnimKey=clip;clips.push(clip);}});
+ unit.playVictoryCycle(()=>ready++);unit.emit('animationupdate',{key:'fixture_win_before'},{textureFrame:1});assert.equal(ready,0);
+ unit.emit('animationupdate',{key:'fixture_win_before'},{textureFrame:2});assert.equal(ready,1);assert.equal(unit.hasVictoryPose,true);assert.deepEqual(clips,['win_before']);
+ unit.emit('animationcomplete-fixture_win_before');assert.deepEqual(clips,['win_before','win']);assert.equal(ready,1);assert.equal(unit.listenerCount('animationupdate'),0);
+});
+
+test('action banner preserves shared hero/enemy FIFO, ignores repeated notices and never delays gameplay',()=>{
+ const {ActionBanner}=loadModule('src/ui/ActionBanner.ts'),banner=Object.create(ActionBanner.prototype),texts=[],timers=[];
+ Object.assign(banner,{queue:[],active:false,generation:0,lastSequence:0,scene:{tweens:{add(config){timers.push(config.onComplete);return{stop(){}};}}},
+  root:{setVisible(){return this;},setAlpha(){return this;}},label:{width:400,setText(s){texts.push(s);return this;},setScale(){}},provenance:{setText(){}}});
+ const first={sequence:1,actorName:'Cloud',abilityName:'Blade Beam',kind:'skill',origin:'source'};
+ banner.enqueue(first);banner.enqueue(first);banner.enqueue({sequence:2,actorName:'Ochu',abilityName:'Bramble Surge',kind:'prepare',origin:'ffrogue'});
+ assert.deepEqual(texts,['Cloud uses Blade Beam']);assert.equal(banner.queue.length,1);timers.shift()();timers.shift()();assert.deepEqual(texts,['Cloud uses Blade Beam','Ochu prepares Bramble Surge']);
+ banner.clear();const count=texts.length;while(timers.length)timers.shift()();assert.equal(texts.length,count);assert.equal(banner.queue.length,0);
 });
 
 console.log(`${passed} combat regression checks passed.`);

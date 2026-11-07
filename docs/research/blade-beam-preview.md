@@ -1,5 +1,32 @@
 # Blade Beam offline choreography review
 
+Body/effect checkpoint: the stationary body now rests around954ms after effect
+start while the186-frame scene continues. Source geometry/materials/member timing
+remain byte-identical to the user-confirmed baseline. Damage stays one per target
+and30MP; framewise product evidence is in the central map's current checkpoint.
+
+Current live-scene migration (2026-10-26): the preserved native-null BMB plan now
+runs in actual combat via the shared player/bridge, retaining moving models and
+source placement. No converted90-degree artwork correction is stacked onto it.
+At source F24 the product matches the standalone compositor outside declared game
+overlays pixel-for-pixel. By F30 the source crescent is already mostly out of view;
+this also occurs in the retained preview and is not a new missing texture.
+Single/two-target casts pass with30MP and one reviewed damage event per target.
+Legacy remains selectable. Native full-graph/timing/pixel fidelity remains open.
+
+Visual recovery (2026-10-26): earlier renderer-reference and later native-null
+plans/resources/screenshots are frozen; isolated replay renders game-host F30.
+The actual product wave now uses explicit linear sampling plus extruded gutters,
+with all90 original frame interiors retained. Its reviewed90-degree artwork
+rotation and choreography remain adaptations. UV2/model/parent/material improvements
+in the own BMB player are preserved references, not a fully published source skill.
+See the map's visual checkpoint for frames, hashes, A/B and original-reference limits.
+
+2026-10-26 regression checkpoint: existing area/sheet mapping passes the actual
+product WebGL check and combat suite after common phase/Particle runtime work.
+No Blade mapping or artwork changed; new bounded Particle program is not a
+complete-source replacement. See SKILL_RECONSTRUCTION_MAP.md autonomous checkpoint.
+
 Current orientation update: the developer requested a clockwise correction after
 the original presentation import. The wave now uses +90-degree artwork rotation
 around its tracked bright body at the original size, with unchanged movement,

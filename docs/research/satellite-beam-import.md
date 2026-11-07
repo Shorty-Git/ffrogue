@@ -1,5 +1,16 @@
 # Satellite Beam import
 
+Reference scope correction (2026-10-26): this skill was **not checked in
+BlueStacks**. This document records a reviewed product adaptation and gameplay
+regressions, not native evidence for common FFBE renderer rules. The native skill
+corpus is Cloud's Brave Slash, Blade Beam and Climhazzard only.
+
+2026-10-26 regression checkpoint: screen/back/front sheets, blend and action
+cleanup pass the actual product WebGL check and combat suite after common
+phase/Particle runtime integration. No Satellite assets or mapping changed.
+The new bounded program does not establish this skill's original BMB lifecycle.
+See SKILL_RECONSTRUCTION_MAP.md autonomous checkpoint.
+
 Current orientation update: a reviewed +45-degree clockwise artwork correction
 makes the beam horizontal while retaining source Z45 separately. See
 [the orientation review](effect-orientation.md) for current frame checks and game

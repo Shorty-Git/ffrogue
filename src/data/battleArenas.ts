@@ -1,3 +1,5 @@
+import reviewed from '../../public/assets/stages/reviewed.json';
+
 /** Reviewed floor bounds in normalized coordinates of each prepared source image. */
 export const BATTLE_ARENAS = {
   forest: {
@@ -8,7 +10,14 @@ export const BATTLE_ARENAS = {
     texture: 'arena_reactor', file: 'reactor_01.jpg',
     width: 960, height: 1024, floorTop: 0.54, floorBottom: 0.76,
   },
+  ...reviewed,
 } as const;
 
 export type BattleArenaKey = keyof typeof BATTLE_ARENAS;
 export type BattleArena = typeof BATTLE_ARENAS[BattleArenaKey];
+
+
+
+export function battleArenaKey(value: string | null): BattleArenaKey {
+  return value && Object.hasOwn(BATTLE_ARENAS,value) ? value as BattleArenaKey : 'forest';
+}

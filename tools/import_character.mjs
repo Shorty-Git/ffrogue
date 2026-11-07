@@ -2,11 +2,12 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { inspectCharacter, readJson, writeJson, sha256 } from './lib/character-pipeline.mjs';
+import { sourceCommandMetadata } from './lib/source-command-metadata.mjs';
 
 const args = process.argv.slice(2);
 const value = flag => { const i = args.indexOf(flag); if (i < 0) return undefined; if (!args[i + 1] || args[i + 1].startsWith('--')) throw Error(`Missing value for ${flag}`); return args[i + 1]; };
 if (args.includes('--help') || !value('--recipe')) {
-  console.log('Usage: node tools/import_character.mjs --recipe tools/characters/cloud.json [--publish] [--python <python.exe>] [--assets assets] [--dump ffbe_asset_dump-main]');
+  console.log('Usage: node tools/import_character.mjs --recipe tools/characters/cloud.json [--publish | --publish-skills-only | --prepare-body-only] [--python <python.exe>] [--assets assets] [--dump ffbe_asset_dump-main]');
   console.log('Default: local read-only inspection, reports in tools/data/characters/<key>/. --publish stages all sprites and validates selected skills/effects before copying prepared content and registering it.');
   process.exit(args.includes('--help') ? 0 : 1);
 }
@@ -15,6 +16,10 @@ if (recipe.schemaVersion !== 1) throw Error('Unsupported character recipe versio
 const assets = value('--assets') ?? 'assets';
 const dump = value('--dump') ?? 'ffbe_asset_dump-main';
 const report = inspectCharacter(recipe, { assets, dump });
+const skills = recipe.skills.map(({ execution, sourcePresentation, ...skill }) => {
+  const source = report.catalog.find(entry => entry.id === skill.ffbeId && entry.kind === skill.type);
+  return { ...skill, ...sourceCommandMetadata(skill, source, report.source) };
+});
 const work = `tools/data/characters/${recipe.key}`;
 writeJson(`${work}/report.json`, report);
 const lines = ['# Character import report', '', `${recipe.key}: sprite ${report.unit.spriteUnitId}, series ${report.unit.seriesId}`, '',
@@ -26,14 +31,32 @@ const lines = ['# Character import report', '', `${recipe.key}: sprite ${report.
 fs.writeFileSync(`${work}/report.md`, lines.join('\n') + '\n');
 console.log(`${recipe.key}: ${report.tracks.length} animations, ${report.catalog.length} learned entries; report: ${work}/report.md`);
 for (const selected of report.selected) console.log(`  ${selected.id}: ${selected.issues.join(', ') || selected.execution}; ${selected.visualStatus}`);
-if (!args.includes('--publish')) process.exit(0);
-if (!report.publishable) throw Error('Import blocked. Resolve report issues before publishing. No game files were changed.');
+if (!args.includes('--publish') && !args.includes('--publish-skills-only') && !args.includes('--prepare-body-only')) process.exit(0);
+if(args.includes('--prepare-body-only') && (args.includes('--publish')||args.includes('--publish-skills-only')))
+  throw Error('Offline body preparation cannot publish assets');
+if(args.includes('--prepare-body-only') ? report.missingStates.length || report.files.some(f=>!f.exists) : !report.publishable)
+  throw Error('Import blocked. Resolve report issues before publishing. No game files were changed.');
 const run = (command, parameters) => {
   const result = spawnSync(command, parameters, { stdio: 'inherit', shell: false });
   if (result.error) throw result.error;
   if (result.status !== 0) throw Error(`${command} failed (${result.status})`);
 };
 // Use fresh staging folders; stale tracks must never enter a new import.
+if (args.includes('--publish-skills-only')) {
+  const destination=`public/assets/units/${recipe.key}`,character=readJson(`${destination}/character.json`);
+  const body=readJson(`${destination}/manifest.json`);
+  if(String(character.provenance?.spriteUnitId ?? body.unitId)!==recipe.spriteUnitId
+    || String(body.unitId)!==recipe.spriteUnitId || body.name!==recipe.key)throw Error('Existing body identity mismatch');
+  character.provenance ??= {spriteUnitId:recipe.spriteUnitId,seriesId:report.unit.seriesId,adoptedExistingBody:true};
+  const old=readJson(`${destination}/skills.json`);
+  if(old.skills.some(s=>!skills.some(next=>next.id===s.id&&next.ffbeId===s.ffbeId)))throw Error('Metadata import must preserve existing commands');
+  run(value('--python') ?? process.env.FFROGUE_PYTHON ?? 'python',['tools/validate_character.py',destination]);
+  writeJson(`${destination}/skills.json`,{...old,skills});
+  character.provenance.recipeSha256=sha256(value('--recipe'));
+  writeJson(`${destination}/character.json`,character);
+  console.log(`Published ${skills.length} checked commands; existing body/effect assets preserved.`);
+  process.exit(0);
+}
 const stage = fs.mkdtempSync(path.join(path.resolve(work), 'stage-'));
 const input = path.join(stage, 'raw');
 const assembled = path.join(stage, 'assembled');
@@ -44,35 +67,25 @@ run(path.resolve('tools/bin/ffbetool.exe'), [recipe.spriteUnitId, '-i', input, '
 const python = value('--python') ?? process.env.FFROGUE_PYTHON ?? 'python';
 run(python, ['tools/export_unit.py', '--id', recipe.spriteUnitId, '--name', recipe.key, '--input', assembled, '--output', prepared]);
 const output = path.join(prepared, recipe.key);
+run(python, ['tools/prepare_cgg_body_layers.py', '--raw', input, '--prepared', output, '--output', output]);
 const manifest = readJson(path.join(output, 'manifest.json'));
 if (JSON.stringify(Object.keys(manifest.animations).sort()) !== JSON.stringify(report.tracks)) throw Error('Sprite export omitted raw tracks');
 if (recipe.battle.hitFrameIndex >= manifest.animations[recipe.battle.attackAnim]?.frameCount) throw Error('Basic attack hit frame outside body animation');
-const effects = [...new Set(recipe.skills.flatMap(s => [
-  ...(s.visualEffect ? [s.visualEffect.key] : []), ...(s.presentation?.effects.map(e => e.key) ?? []),
-]))];
-for (const key of effects) {
-  const definition = readJson(`tools/effects/${key}.json`);
-  const baked = readJson(`public/assets/effects/${key}/manifest.json`);
-  if (baked.recipeSha256 !== sha256(`tools/effects/${key}.json`)) throw Error(`Changed effect recipe: ${key}; bake again`);
-  if (baked.sourceSha256 !== sha256(path.join(assets, definition.source))) throw Error(`Stale effect bake: ${key}`);
-  if (!Array.isArray(baked.resources) || baked.resources.some(r => !fs.existsSync(r.file) || r.sha256 !== sha256(r.file))) throw Error(`Changed effect resources: ${key}`);
-  if (baked.sheetSha256 !== sha256(`public/assets/effects/${key}/${baked.file}`)) throw Error(`Changed effect sheet: ${key}`);
-  const values = ['frameWidth', 'frameHeight', 'frameCount', 'frameRate', 'originX', 'originY', 'scale', 'blend', 'contentBounds'];
-  if (values.some(k => JSON.stringify(baked[k]) !== JSON.stringify(definition[k]))) throw Error(`Effect bake settings differ: ${key}`);
-  if ((baked.artworkRotationDegrees ?? 0) !== (definition.artworkRotationDegrees ?? 0)
-    || (baked.artworkPivot ?? 'origin') !== (definition.artworkPivot ?? 'origin')) throw Error(`Effect artwork settings differ: ${key}`);
-  const png = fs.readFileSync(`public/assets/effects/${key}/${baked.file}`);
-  const width = definition.frameWidth * definition.columns;
-  const height = definition.frameHeight * Math.ceil(definition.frameCount / definition.columns);
-  if (png.toString('hex', 0, 8) !== '89504e470d0a1a0a' || png.readUInt32BE(16) !== width || png.readUInt32BE(20) !== height) throw Error(`Invalid effect sheet: ${key}`);
+if(args.includes('--prepare-body-only')){
+  run(python,['tools/validate_character.py',output]);
+  writeJson(`${work}/body-preparation.json`,{schemaVersion:1,unitId:recipe.spriteUnitId,key:recipe.key,
+    directory:output,manifestSha256:sha256(path.join(output,'manifest.json')),published:false,
+    files:fs.readdirSync(output).sort().map(file=>({file,sha256:sha256(path.join(output,file))}))});
+  console.log(`Prepared checked offline body: ${output}. Use --unit-assets with prepare_original_preview.py; nothing published.`);
+  process.exit(0);
 }
-const skills = recipe.skills.map(({ execution, ...skill }) => skill);
 if (report.portrait) fs.copyFileSync(report.portrait.file, path.join(output, 'portrait.png'));
 writeJson(path.join(output, 'skills.json'), { unitId: String(report.unit.seriesId), unitName: recipe.battle.heroName,
   game: recipe.game, skills });
 writeJson(path.join(output, 'character.json'), { schemaVersion: 1, key: recipe.key, battle: recipe.battle, scale: recipe.scale,
   ...(report.portrait ? { portrait: 'portrait.png' } : {}),
-  provenance: { spriteUnitId: recipe.spriteUnitId, seriesId: report.unit.seriesId, recipeSha256: sha256(value('--recipe')) } });
+  provenance: { spriteUnitId: recipe.spriteUnitId, seriesId: report.unit.seriesId, recipeSha256: sha256(value('--recipe')),
+    executionProfile: 'source-only' } });
 // Pillow validates the full sprite geometry before publication, not just PNG headers.
 run(python, ['tools/validate_character.py', output]);
 const destination = `public/assets/units/${recipe.key}`;
@@ -80,10 +93,9 @@ fs.mkdirSync(destination, { recursive: true });
 for (const file of fs.readdirSync(output)) fs.copyFileSync(path.join(output, file), path.join(destination, file));
 const registry = readJson('public/assets/content.json');
 registry.characters = [...new Set([...registry.characters, recipe.key])];
-registry.effects = [...new Set([...registry.effects, ...effects])];
 writeJson('public/assets/content.json', registry);
-report.publication = { output: destination, exportedAnimations: Object.keys(manifest.animations), effects,
+report.publication = { output: destination, exportedAnimations: Object.keys(manifest.animations),
   files: fs.readdirSync(output).sort().map(file => ({ file, sha256: sha256(path.join(destination, file)) })) };
 writeJson(`${work}/report.json`, report);
-fs.appendFileSync(`${work}/report.md`, `\nPublished: ${destination}. Validated ${report.publication.exportedAnimations.length} animations and ${effects.length} baked effects.\n`);
+fs.appendFileSync(`${work}/report.md`, `\nPublished: ${destination}. Validated ${report.publication.exportedAnimations.length} animations and Source-only command metadata.\n`);
 console.log(`Published ${recipe.key} and registered its prepared assets. Party composition remains configured in BattleScene.`);

@@ -7,6 +7,11 @@ import { assertKey, inspectCharacter, inspectEffect, readJson, sha256, writeJson
 
 // Research only: never publishes raw effects or inferred choreography to the game.
 const args = process.argv.slice(2), value = name => args[args.indexOf(name) + 1];
+if (args.includes('--prepared-plan')) {
+  if (!args.includes('--output')) throw Error('Prepared replay requires a separate --output directory');
+  const { serveConvertedReplay } = await import('./lib/prepared-preview-replay.mjs');
+  serveConvertedReplay(value('--prepared-plan'), value('--output'), args.includes('--port') ? Number(value('--port')) : 3106);
+} else {
 if (!args.includes('--recipe') || !args.includes('--skill')) throw Error('Usage: node tools/preview_skill.mjs --recipe tools/characters/barret.json --skill satellite_beam [--source-id 214790 --kind ABILITY --scope single_enemy --motion atk] [--port 3106]');
 const recipe = readJson(value('--recipe')), skillKey = value('--skill');
 assertKey(skillKey);
@@ -115,3 +120,4 @@ http.createServer(async (req, res) => {
   res.setHeader('Content-Type', ({ '.js': 'text/javascript', '.wasm': 'application/wasm', '.png': 'image/png', '.jpg': 'image/jpeg' })[path.extname(file)] ?? 'application/octet-stream');
   fs.createReadStream(file).pipe(res);
 }).listen(port, '127.0.0.1', () => console.log(`${selected.name} research preview: http://127.0.0.1:${port}/`));
+}

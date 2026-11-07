@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "quality": "experimental-preview",
+  "reviewNote": "Complete original cure2 and slash members. Shared target placement and stationary bodies are reviewed host adaptations. Sword opts into source-verified ConstFlat RGB with separate alpha and declared host color streams; no native whole-skill fidelity claim.",
+  "bindings": [
+    {
+      "key": "delita_chant",
+      "standalone": true,
+      "sourceId": 210550,
+      "plan": "tools/data/roster-expansion-20261101/support-intake/delita-210550/plan.json",
+      "placementCoordinates": "ffbe-screen-api",
+      "placementReview": "Native ability210550 measured on 2026-11-01: right side Rect320,0,320,666; positive source Y240 is API screen-down before Bishamon engine-height conversion. Host side bounds and zero scatter remain explicit FFRogue adaptations. Source geometry/resources/timing unchanged."
+    },
+    {
+      "key": "delita_cunning_hero_sword",
+      "standalone": true,
+      "sourceId": 1323010,
+      "plan": "tools/data/sword-color-20261101/plan.json",
+      "placementCoordinates": "ffbe-screen-api",
+      "placementReview": "Native ability1323010 resolves target-unit effect rectangles, with nine objects around their centers. Original offsets remain0,0; runtime sprite footprints remain a reviewed host adaptation, not native touch bounds.",
+      "memberRandomness": "reviewed-member-streams-v1",
+      "randomnessReview": "Matched original hierarchy rotates a 50-unit child translation by a random full turn. Nine native effect objects are separate executions. Do not replay identical preview samples nine times. Stable distinct member/target stream keys are an explicit FFRogue replay policy; FFBE seed construction and internal RNG values are NOT recovered."
+    }
+  ]
+}

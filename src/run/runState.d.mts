@@ -1,0 +1,28 @@
+import type {SkillConfig} from '../types/skills';
+export interface RunForm{form:string;unitId:string;rarity:number;rank?:'NV';identity:string;awakensFrom?:string;}
+export interface RunCharacter extends RunForm{canonicalIdentity:string;key:string;name:string;variantLabel?:string;maxHp:number;maxMp:number;skills:SkillConfig[];portrait:string;evolution?:RunForm;forms?:RunForm[];magicAvailable?:boolean;}
+export type RunCatalog=Record<string,RunCharacter>;
+export interface RunMember extends RunForm{canonicalIdentity:string;key:string;skills:{id:string;level:number}[];stats:{attack:number;magic:number;defense:number;hp:number;mp?:number};hp:number;mp:number;}
+export interface AreaConfig{stageId?:string;name:string;arena:'forest'|'reactor'|'reactor_05';normals:number;}
+export interface Reward{type:'learn'|'skill'|'stat'|'evolve'|'rest';member?:string;skill?:string;stat?:'attack'|'magic'|'defense'|'hp';form?:string;}
+export interface AwakeningNotice{id:string;member:string;encounter:number;from:{form:string;unitId:string;rarity:number};to:{form:string;unitId:string;rarity:number};}
+export interface FormPolicy{weights:Record<string,number>;pathWeights?:Record<string,number[]>;hpPerRank:number;mpPerRank:number;powerPerRank:number;defensePerRank:number;}
+export interface RunRules{awakeningMode:'sequential'|'highest-reviewed';originalForms?:FormPolicy;}
+export interface RunState{version:number;seed:string;phase:'setup'|'battle'|'rewards'|'won'|'lost';party:RunMember[];rerolls:number;encounter:number;offers:Reward[];history:unknown[];areas:AreaConfig[];rng:Record<string,number>;pendingAwakening?:AwakeningNotice;rules?:RunRules;}
+export const RUN_VERSION:number;export const SAVE_KEY:string;export const PROTOTYPE_AREAS:AreaConfig[];export const FULL_AREAS:AreaConfig[];
+export function variantAreas(seed:string):AreaConfig[];
+export function seedHash(value:unknown):number;
+export function nextRandom(run:RunState,stream:string):number;
+export function encounters(areas:AreaConfig[]):{area:number;name:string;arena:'forest'|'reactor'|'reactor_05';boss:boolean;wave:number}[];
+export function createRun(seed:string,catalog:RunCatalog,areas?:AreaConfig[],rules?:RunRules):RunState;
+export function migrateRun(run:unknown,catalog:RunCatalog):RunState;
+export function rollParty(run:RunState,catalog:RunCatalog):RunState;
+export function memberMaxMp(character:RunCharacter,member:RunMember):number;
+export function confirmParty(run:RunState):RunState;
+export function skillForRun(source:SkillConfig,member:RunMember):SkillConfig;
+export function rewardPool(run:RunState,catalog:RunCatalog):Reward[];
+export function completeBattle(run:RunState,catalog:RunCatalog,snapshot:{key:string;hp:number;mp:number}[],won:boolean):RunState;
+export function chooseReward(run:RunState,index:number,catalog:RunCatalog,replace?:string):RunState;
+export function acknowledgeAwakening(run:RunState,id:string):RunState;
+export function validateRun(run:unknown,catalog:RunCatalog):RunState;
+export class RunStore{constructor(storage:Pick<Storage,'getItem'|'setItem'|'removeItem'>,catalog:RunCatalog);load():RunState|null;save(run:RunState):RunState;clear():void;}

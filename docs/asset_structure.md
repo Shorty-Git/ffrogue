@@ -1,5 +1,185 @@
 # FFBE Asset Dump Atlas & Structure Guide
 
+## Reviewed higher same-unit forms (2026-11-02)
+
+Original `unit`/`unit_class_up` rows confirm Cloud207000105->106->107 and
+Aerith207000405->406->407 (5/6/7-star). Complete original atlas/CGG/CGS resources
+for107/407 are prepared by reviewed tools/characters/*_form7.json recipes into
+public/assets/forms/{cloud,aerith}_form7 (12/13 tracks). run-content.json records
+published manifest SHA; no change to base units, source art, aura or15 Source plans.
+Cloud207000117 retains raw rarity 7 but is marked NV in the master DB.
+The current form graph also includes Delita253000227. See the character workflow.
+No variant swap or fabricated star tier. The previous6-star forms remain available.
+
+`inspect_form_appearance.py` now compares all four admitted forms to their5-star
+base, aligned at original foot pivots over black/white. Differences remain subtle,
+particularly Aerith. Browser same-position pairs and source receipts are in
+ tools/data/crystal-forms-lever-20261102/. Raw7-star source atlas hashes are in
+character-import-workflow.md; staging/publication manifests have different SHAs
+because runtime assetKey is added during review. Do not confuse them.
+
+Stage sampling resources,240-frame reactor packets, existing mainline inventory,
+original archives and all research remain preserved. No new area/skill inventory
+or native capture is needed for this block. New lever/crystal polish is CSS/markup,
+not an imported graphic asset. Explicit UTF-8 prevents the previous glyph corruption.
+
+## Form and future-stage evidence (2026-11-02)
+
+inspect_form_appearance.py verifies both prepared same-unit5->6 forms against
+original unitSeries/rare records and aligned visible pixels. Aerith's sprites are
+similar, not identical; source atlases/sheets remain unchanged. Actual6-star texture
+names and reloads are verified by review_awakening.mjs, not inferred from rarity.
+
+inventory_stage_candidates.py now records1,286 original battle_bg rows, exact local
+JPG availability1,262 rows and animation availability1,181 rows. The disk has1,351
+JPGs/1,266 SSBPs. These are NOT mainline/publication counts. Original world ownership
+joins are absent; reviewed proposals remain separate in tools/stages/mainline-candidates.json.
+Twelve full profile probes found8 supported backs; only2013_06 has deformation.
+Dollet120173, manor120144 and reactor05 /120141 are the current future shortlist;
+see background-import-workflow.md for evidence boundaries/body candidates/music gaps.
+No current arena replaced; no assets/research purged. The new three small reactor
+soft-cell textures are generated exact crops with gutters, not new original data.
+
+## Runtime loading and reactor preparation (2026-11-02)
+
+Existing447-file audit remains historical; current bounded audit has449 selected
+hashes/37 identical groups and64 source modules. No assets/tools/archives deleted.
+The extra exact atlas copy in public/assets/stages/reactor is a required productive
+reference, not an unreferenced cache. Disk/build inventory is distinct from browser
+residency. Unused large limit sheets remain on disk but no longer preload.
+Receipts: tools/data/stage-loading-20261102/architecture/architecture-assets.json.
+Runtime measurements and memory caveats are in roguelike-foundation.md.
+
+Reactor back/anime now has a bounded SSPB-v1 decoder/prepared quad exporter and
+productive Phaser playback. Forest streams also decode, but active deformation
+blocks publication in this profile. Exact shared atlas sources are unchanged;
+read background-import-workflow.md for hashes, SDK revision and support limits.
+
+## Current bounded discoveries (2026-11-02)
+
+Original monster-skill ownership: exact monster_skill_set joins yield11 records
+across Ochu/Guard Scorpion/Microchu/Sweeper. Existing CPK stager now accepts the
+MONSTER_SKILL catalog type. Tail Laser's1 and Ochu Dance's2 original BMBs plus
+dependencies were actually staged/hash-checked; zero original enemy skills are
+admitted. See enemy-import-workflow.md for exact IDs and independent blockers.
+
+Stage binaries are SSPB v1. Their image references are NOT necessarily same-stem:
+forest0003_01 uses0003_01_1/0003_01_2.png, reactor2013_02 uses2013_01.png. Those
+three atlases exist and have visible alpha data. The empty2013_02.png is not the
+selected binary's atlas. No decoded original frame timing or animated stage is
+claimed; see background-import-workflow.md and inspect_stage_animation.py.
+
+Current bounded dependency/hash audit command:
+python tools/audit_game_foundation.py --output tools/data/battle-polish-20261102/architecture
+447 selected files hashed;36 identical-byte groups retained with their paths and
+provenance.249 public files total41,170,989 disk bytes. All prepared PNG headers
+sum to820.3MiB RGBA8 texels; this is not actual live VRAM or a loading benchmark.
+Large unused limit sheets (one39342px wide) remain original prepared evidence;
+the current eager body loader is a concrete next optimization, not a deletion
+authorization. Source/research/raw/caches are classified separately in the receipt.
+
+## Bounded battle-content addition (2026-11-02)
+
+Selected and prepared original monster bodies: Microchu1110310, Ochu3110010,
+Sweeper2061310, Guard Scorpion4060810; each has a local atlas, CGG, idle CGS and
+atk CGS. All exported clips were validated/visually reviewed. Master identities,
+original skill references and source hashes are in
+tools/data/themed-stages-20261102/inventory.json and prepared monster source.json.
+Reproduce: python tools/inventory_battle_content.py. Snapshot master counts:
+16,937 monster rows,2,947 dictionary rows,6 worlds,769 dungeons,1,286 background
+rows. These are metadata counts, NOT numbers of usable/published enemies/stages.
+Only four bodies/two previously verified static arenas were admitted in this block.
+Original dictionary fileName=test1 and default background/BGM values do not resolve
+sprite identity or thematic music. Explicit reviewed recipes bind the local IDs.
+See [enemy-import-workflow.md](enemy-import-workflow.md) for current support limits.
+SSBP companion files are inventoried, not animated runtime content.
+
+## Bounded audio source inventory (2026-10-28)
+
+### Reviewed combat and Source cues
+
+`tools/read_acb_cues.py <bank> --contains <name>` reads the ACB CueTable
+and CueNameTable. Cue IDs are separate from decoder stream ordinals.
+The assetpack 3 archives are SHA-256
+`22d3f4bd8cae9c2a4ae7485f47b583d662563bb84489bd5db100f4668867565f` (SE)
+and `d743912a1151a4e6f929f3f2e443bab32ad78485aa441facbda51c4db0818818` (System).
+For the checked PCM exports use vgmstream r2168
+`vgmstream-cli.exe -i -s <stream> -o <file> <bank>`.
+
+| Bank | Cue ID | Stream | Cue name | Runtime file |
+| --- | ---: | ---: | --- | --- |
+| SE | 1 | 181 | se_attack_sword_slash_1 | sword.wav |
+| SE | 7 | 24 | se_attack_hammer_strike_1 | strike.wav |
+| SE | 12 | 859 | se_attack_gun_shot_1 | gun.wav |
+| SE | 100 | 823 | se_special_flash_1 | flash.wav |
+| SE | 600 | 234 | se_bg_vortex_90f_1 | vortex.wav |
+| System | 47 | 9 | se_battle_extinct_1 | dissolve.wav |
+| System | 48 | 17 | se_battle_special_extinct_1 | special-dissolve.wav |
+| System | 69 | 4 | se_battle_critical | critical.wav |
+
+The sword cue has multiple enumerated waves. FFRogue uses one checked
+variant without touching gameplay RNG. Stream 24 has a second cue name
+alias on the same wave. The decoded cue plays on the impact that FFRogue
+actually executes, preserving its gameplay timeline and target rules.
+
+The pinned Memorial ARM64 binary proves the event routing:
+`GameUtils::playSEWithGroupID` at 0x14918a0 reads offset and Cue ID, then
+uses the common bank if field 3 equals 1 (or is absent). Other third
+values take the system-bank path. The respective bank loaders resolve
+`SE.acb` and `System.acb`. `BattleUnit::setDamage` calls System 69 in
+its critical branch (0x13358dc). `MonsterUnit::deadFadeOut` dispatches
+47 after the normal fade call (0x1308cb8) and 48 on the special branch
+(0x1308ce0). The jump table at 0x253ce83 maps original
+`battle_group.deadEffect` 0 to 47 and 1 to 48. All ten Microchu rows use
+0. The rows for Sweeper, Ochu and Guard Scorpion use 1. The runtime
+therefore uses 48 for Sweeper as well as the two current bosses.
+
+Published basic profiles require a single common cue across all original
+attack groups for the form. Composite original attacks such as Cloud AC
+and Delita NV need a separate mapping to the condensed FFRogue attack.
+The alternative Aerith ranged action and FFRogue enemy attacks have no
+approved standard cue. No independent universal hit or hero K.O. sample
+was verified. See `tools/data/combat-sfx/` for disassembly and receipts.
+
+UI review update. The Memorial `System.acb` under the preserved assetpack 3
+archive has SHA-256
+`d743912a1151a4e6f929f3f2e443bab32ad78485aa441facbda51c4db0818818`.
+vgmstream r2168 lists 118 CRI HCA streams. The following named FFBE system
+streams were exported to PCM using `vgmstream-cli.exe -i -s <index> -o <wav> <bank>`.
+These are one-based stream indices. FFRogue owns the input-to-sound bindings.
+
+| Index | Archived name | Published WAV |
+| --- | --- | --- |
+| 1 | `se_system_common_bump_1` | `system-bump.wav` |
+| 107 | `se_system_common_no_1` | `system-back.wav` |
+| 108 | `se_system_common_ok_1` | `system-confirm.wav` |
+| 110 | `se_system_cursor_1` | `system-cursor.wav` |
+
+An archived `se_system_select_abirity` stream also exists at index 116.
+The shorter cursor cue is used for FFRogue skill and target selections.
+The two historical system WAVs were not used as source. This supplies
+FFBE UI audio. No Final Fantasy VII UI asset or original skill cue was
+assigned. The slot mechanisms and reward chimes are FFRogue-authored.
+
+Update 2026-11-03. The archived `la005_battle1.acb` decodes as CRI HCA and
+its original forest background association is verified through resource
+400005. The bounded Whisperwood playback path is in background-import-workflow.md.
+The archived SE.acb also enumerates 876 streams through vgmstream. The first
+stream is named `se_attack_kh_cloud`. This identifies an archive stream, not a
+published hero or skill mapping. Skill and enemy tuples still need a native
+dispatch-to-cue join and timing confirmation.
+
+`assets/audio/` currently has8 WAVs (6 background tracks and2 system SFX), not
+skill mappings. Preserved Memorial assetpacks under
+`tools/data/memorial-audit/trace-clone-backup/assetpacks/` include252 .acb paths:
+250 @UTF-header bank candidates and2 XML-header unvalidated files.126 adjacent
+.dat files are UNCLASSIFIED, not confirmed audio streams. SE.acb under
+on_demand_asset3/199/199/assets is32,641,440bytes and matches the running Trace
+external-storage hash. Unreviewed cue/sample joins remain open. Inventory command:
+`python tools/audit_audio_inventory.py --output tools/data/audio-review/inventory.json`.
+Sound IDs/times come from resolved effect-group records, never basename guesses.
+The initial audit predates the verified Whisperwood playback path described above.
+
 This document is the source-location and naming reference for the local
 `ffbe_asset_dump-main/` inventory and additional raw packages. Counts and naming
 examples describe the cataloged snapshot; they are not current availability or

@@ -1,0 +1,55 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><base href="/"><title>Original form awakening review</title>
+<style>body{margin:0;background:#030d24}#game-container{width:100vw;height:100vh}#qa{position:fixed;z-index:9000;top:50px;right:8px;width:210px;background:#041023ed;border:1px solid #799cbb;color:white;padding:10px;font:11px monospace}button{padding:10px}pre{white-space:pre-wrap;max-height:160px;overflow:auto}</style>
+<div id="game-container"></div><aside id="qa"><button id="review" disabled>Review original awakening</button><pre id="report">Loading...</pre></aside>
+<script type="module">
+import {game}from '/src/main.ts';
+import {createRun,rollParty,confirmParty,completeBattle,chooseReward,SAVE_KEY}from '/src/run/runState.mjs';
+import {nextAwakening}from '/src/run/unitForms.mjs';
+const query=new URLSearchParams(location.search),unit=query.get('unit'),form=query.get('form'),out=document.querySelector('#report'),button=document.querySelector('#review');
+const delay=ms=>new Promise(r=>setTimeout(r,ms)),check=(v,m)=>{if(!v)throw Error(m);};
+async function until(test,label){const end=performance.now()+120000;while(!test()){if(performance.now()>end)throw Error('Timeout: '+label);await delay(25);}}
+const click=key=>{const b=document.querySelector(`[data-action="${key}"]`);check(b&&!b.disabled,'Missing '+key);b.click();};
+await until(()=>game.registry.get('runFlow'),'catalog');const flow=game.registry.get('runFlow');window.awakeningReviewGame=game;if(query.get('policy'))flow.rules.awakeningMode=query.get('policy');button.disabled=false;out.textContent='Ready';
+button.onclick=async()=>{button.disabled=true;const backup=localStorage.getItem(SAVE_KEY),results=[];let seed;
+ try{
+  const targetForm=flow.catalog[unit]?.forms?.find(f=>f.form===form);check(targetForm,'Reviewed same-unit form required');
+  const startLevel=Number(query.get('startLevel')??1);
+  const initialForm=startLevel===1?unit:flow.catalog[unit].forms.find(f=>f.rarity===startLevel+4)?.form;
+  for(let i=0;i<2000;i++){
+   const s='qa-awakening-'+i,r=rollParty(createRun(s,flow.catalog,undefined,flow.rules),flow.catalog);
+   const member=r.party.find(m=>m.key===unit);
+   if(member?.form!==initialForm||nextAwakening(r,flow.catalog[unit],member)?.form!==form)continue;
+   const normal=completeBattle(confirmParty(r),flow.catalog,r.party,true);
+   const next=chooseReward(normal,Math.max(0,normal.offers.findIndex(o=>o.type==='stat')),flow.catalog);
+   const boss=completeBattle(next,flow.catalog,next.party,true);
+   if(boss.offers.some(o=>o.type==='evolve'&&o.member===unit&&o.form===form)){seed=s;break;}
+  }check(seed,'Seed with the requested original awakening offer');
+  document.querySelector('#run-seed').value=seed;click('play');if(document.querySelector('[data-action=accept]'))click('accept');click('spin');click('lever-skip');click('confirm');
+  for(let encounter=0;encounter<2;encounter++){
+   let scene;await until(()=>{scene=game.scene.getScene('BattleScene');return scene.sys.isActive()&&scene.isRunCommandWindow()&&scene.runContext.state===flow.state;},'battle');
+   for(let i=0;flow.state.phase==='battle'&&i<100;i++){
+    await until(()=>scene.isRunCommandWindow()||flow.state.phase!=='battle','turn');if(flow.state.phase!=='battle')break;
+    const actor=scene.turnOrder.find(h=>!h.isDead&&!h.hasActed);scene.selectHero(actor);scene.openHeroCommands(actor);scene.cmdAttackBtnBg.emit('pointerdown');scene.cmdExecuteBtnBg.emit('pointerdown');await until(()=>actor.hasActed||flow.state.phase!=='battle','attack');
+   }
+   await until(()=>document.querySelector('.victory-overlay[data-phase=rewards]'),'won rewards');check(flow.state.phase==='rewards','Review lost');
+   let at=encounter===1?flow.state.offers.findIndex(r=>r.type==='evolve'&&r.member===unit):flow.state.offers.findIndex(r=>r.type==='stat');if(at<0&&encounter===0)at=0;check(at>=0,'Awakening offer missing');
+   if(encounter===1){results.push({kind:'real-boss-awakening-offer',offers:structuredClone(flow.state.offers)});await new Promise(r=>game.events.once('postrender',r));}
+   click('reward-'+at);if(document.querySelector('[data-action=replace-0]'))click('replace-0');
+  }
+  let scene;await until(()=>{scene=game.scene.getScene('BattleScene');return scene.sys.isActive()&&scene.isRunCommandWindow()&&scene.runContext.state===flow.state;},'awakened encounter');await scene.preparedScenes.ready;
+  const member=flow.state.party.find(m=>m.key===unit),actor=scene.turnOrder.find(h=>h.unitKey===unit),c=flow.catalog[unit];
+  check(actor.visualKey===form&&String(actor.manifest.unitId)===flow.catalog[unit].forms.find(f=>f.form===form).unitId&&member.identity===c.identity&&member.canonicalIdentity===c.canonicalIdentity,'Original identity/form mismatch');
+  const skill=scene.unitSkills[unit][0],before=actor.currentMp;let done=false,calls=0;const finish=scene.concludeHeroSkill,play=scene.playPreparedScene;
+  scene.concludeHeroSkill=function(h){if(h===actor)done=true;return finish.call(this,h);};scene.playPreparedScene=function(...args){calls++;return play.apply(this,args);};
+  scene.selectHero(actor);scene.openHeroCommands(actor);scene.skillButtons[0].bg.emit('pointerdown');
+  const affected=skill.scope==='all_enemies'?scene.enemies.filter(e=>e.currentHp>0):[scene.currentTarget??scene.enemies[0]];
+  scene.cmdExecuteBtnBg.emit('pointerdown');await until(()=>done,'awakened Source action');
+  check(calls===1&&before-actor.currentMp===skill.mpCost&&Math.hypot(actor.x-actor.homeSlot.x,actor.y-actor.homeSlot.y)<.01,'Source timing/MP/return mismatch');
+  if(skill.supportEvents)check(affected.filter(e=>e.currentHp>0).every(e=>e.statusEffects.length),'Support events missing on intended targets');
+  const capture=await new Promise(r=>game.events.once('postrender',()=>r(game.canvas.toDataURL('image/png'))));await until(()=>!scene.preparedScenes.snapshot().active,'Source tail');check(scene.preparedScenes.snapshot().errors.length===0,'Renderer errors');
+  results.push({kind:'awakened-source-action',unit,form,unitId:actor.manifest.unitId,identity:member.identity,canonicalIdentity:member.canonicalIdentity,skill:skill.id,mpSpent:before-actor.currentMp,maxHp:actor.maxHp,bodyTexture:actor.texture.key,statuses:scene.enemies.map(e=>e.statusEffects),capture});
+  const origin=query.get('captureOrigin');check(/^http:\/\/127\.0\.0\.1:\d+$/.test(origin??''),'Loopback sink required');const response=await fetch(origin+'/product-review',{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({passed:true,scope:'Two real encounters, chosen original awakening and Source skill in next battle',results})});check(response.ok,'Save receipt');out.textContent='PASS '+JSON.stringify({unit,form,skill:skill.id,mpSpent:before-actor.currentMp});
+ }catch(error){out.textContent='FAIL '+error.stack;console.error(error);}
+ finally{game.scene.stop('BattleScene');const current=JSON.parse(localStorage.getItem(SAVE_KEY)??'null');if(current?.seed===seed){if(backup===null)localStorage.removeItem(SAVE_KEY);else localStorage.setItem(SAVE_KEY,backup);}flow.menu();button.disabled=false;}
+};
+</script></html>

@@ -1,0 +1,45 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Connected native effect export</title>
+<style>body{background:#15201e;color:#eee;font:15px system-ui;margin:20px}canvas{display:block;height:70vh;max-width:100%;object-fit:contain}p,pre{max-width:1100px}button,input{margin:8px}pre{white-space:pre-wrap}</style>
+<h1>Connected effect export · native vertex stream</h1>
+<p>Playback reads exported positions and packed RGBA only. It does not run the experimental particle evaluator. Host placement and the constant parent-chain adapter are explicit; this is not arbitrary FFBE skill support.</p>
+<p><button id="play" disabled>Play</button><input id="frame" aria-label="Export frame" type="range" min="0" value="8"><output id="tick"></output></p>
+<canvas id="view"></canvas><pre id="status">Loading…</pre>
+<script src="/three.js"></script><script type="module">
+import {createSceneSnapshot,composeSceneLayer,applyNativeBlend,verifyEffectHostCompositor} from '/player.mjs';
+try{
+ const data=await(await fetch('/connected-effect.json')).json(),canvas=document.querySelector('#view'),paint=canvas.getContext('2d');
+ if(data.approved!==false||data.frames.length<2)throw Error('Unpublished connected stream required');
+ canvas.width=data.host.framebuffer.width;canvas.height=data.host.framebuffer.height;
+ const gpu=document.createElement('canvas');gpu.width=canvas.width;gpu.height=canvas.height;
+ const renderer=new THREE.WebGLRenderer({canvas:gpu,alpha:true,premultipliedAlpha:false,preserveDrawingBuffer:true});renderer.setClearColor(0,0);
+ const assets=Object.values(data.textures);if(assets.length!==1)throw Error('One explicit verified source texture required');
+ const texture=await new Promise((resolve,reject)=>new THREE.TextureLoader().load(assets[0].url,resolve,undefined,reject));
+ texture.flipY=false;texture.wrapS=texture.wrapT=THREE.RepeatWrapping;texture.needsUpdate=true;
+ if(data.material.texture1Address.id!==1)throw Error('Connected viewer requires declared Repeat sampling');
+ const scene=new THREE.Scene(),geometry=new THREE.BufferGeometry();
+ const material=new THREE.ShaderMaterial({transparent:true,depthWrite:false,depthTest:false,side:THREE.DoubleSide,uniforms:{sourceTexture:{value:texture}},
+ vertexShader:'attribute vec4 packedColor; attribute vec4 sourceTint; varying vec4 rgba; varying vec4 tint; varying vec2 sourceUv; void main(){rgba=packedColor;tint=sourceTint;sourceUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}',
+ fragmentShader:'uniform sampler2D sourceTexture; varying vec4 rgba; varying vec4 tint; varying vec2 sourceUv; void main(){gl_FragColor=clamp(texture2D(sourceTexture,sourceUv)*rgba*tint,0.0,1.0);}'});
+ applyNativeBlend(THREE,material,data.blend);const mesh=new THREE.Mesh(geometry,material);mesh.frustumCulled=false;scene.add(mesh);
+ const snapshot=createSceneSnapshot(THREE,scene,canvas),layer={gpu,renderer,scene,...snapshot,hostContext:data.host,nativeBlendThree:THREE};
+ const checks=verifyEffectHostCompositor(THREE,data.host),slider=document.querySelector('#frame');slider.max=data.frames.length-1;
+ let frame=8,playing=false,last=0;
+ function draw(index){frame=index;const sample=data.frames[index],vertices=sample.vertices;mesh.visible=vertices.length>0;
+  geometry.setAttribute('position',new THREE.BufferAttribute(new Float32Array(vertices.flatMap(v=>v.position)),3));
+  geometry.setAttribute('packedColor',new THREE.BufferAttribute(new Float32Array(vertices.flatMap(v=>v.rgba.map(c=>c/255))),4));
+  geometry.setAttribute('uv',new THREE.BufferAttribute(new Float32Array(vertices.flatMap(v=>v.uv)),2));
+  geometry.setAttribute('sourceTint',new THREE.BufferAttribute(new Float32Array(vertices.flatMap(v=>v.textureTint)),4));
+  paint.fillStyle='#15201e';paint.fillRect(0,0,canvas.width,canvas.height);
+  for(let y=0;y<canvas.height;y+=80)for(let x=0;x<canvas.width;x+=80){paint.fillStyle=(x/80+y/80)%2?'#22332e':'#182923';paint.fillRect(x,y,80,80);}
+  composeSceneLayer(layer,paint,true);slider.value=index;document.querySelector('#tick').textContent='F'+index+' · '+vertices.length+' native vertices · alpha '+(vertices[0]?.rgba[3]??0)+'/255';
+ }
+ slider.oninput=()=>{playing=false;document.querySelector('#play').textContent='Play';draw(Number(slider.value));};
+ const play=document.querySelector('#play');play.disabled=false;play.onclick=()=>{playing=!playing;play.textContent=playing?'Pause':'Play';last=0;};
+ function animate(now){if(playing&&(!last||now-last>=1000/60)){last=now;draw((frame+1)%data.frames.length);}requestAnimationFrame(animate);}requestAnimationFrame(animate);
+ draw(Math.max(0,Math.min(data.frames.length-1,Number(new URLSearchParams(location.search).get('frame')??8))));
+ document.querySelector('#status').textContent=data.sourceName+' · '+data.nodeCount+' source nodes · '+data.frames.length+' exported states · '+checks.length+' GPU checks passed.\n'+
+  'Source → native emission/lifetime → selected init/update/make → source-selected writer → vertex JSON → display.\n'+
+  data.parentAdapter+'\nVerified source texture, native UVs/packed RGBA and Basic tint are sampled directly. Native blend factors are retained; sampler fidelity remains experimental.\n'+
+  '60 fps is a preview clock. Full NodeTree traversal, arbitrary resources/materials and skill publication remain outside this admitted subset.';
+}catch(error){document.querySelector('#status').textContent=String(error);throw error;}
+</script></html>

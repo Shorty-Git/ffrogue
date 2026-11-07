@@ -1,0 +1,47 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Responsive run UI review</title>
+<style>body{margin:15px;background:#030d24;color:white;font:14px system-ui;display:flex;gap:25px}iframe{border:1px solid #7193b5;flex:none;width:375px;height:812px}button{padding:12px}pre{white-space:pre-wrap;max-width:550px}</style>
+<iframe id="game" src="/"></iframe><aside><h1>Shared run UI at 375 × 812</h1><p>Actual product in a fixed-size frame. Presentation fixtures never write the run save.</p><button id="review" disabled>Check menu, reels and reward cards</button><button id="advance" hidden>Finish UI review</button><pre id="report">Loading...</pre></aside>
+<script type="module">
+import {createRun,rollParty,confirmParty,completeBattle}from '/src/run/runState.mjs';
+const frame=document.querySelector('iframe'),out=document.querySelector('#report'),button=document.querySelector('#review');
+const delay=ms=>new Promise(r=>setTimeout(r,ms));
+async function until(test){const end=performance.now()+30000;while(!test()){if(performance.now()>end)throw Error('Run UI load timeout');await delay(30);}}
+await until(()=>frame.contentDocument?.querySelector('[data-action="play"]'));button.disabled=false;out.textContent='Ready';
+button.onclick=async()=>{button.disabled=true;let flow;try{
+ const entry=[...frame.contentDocument.querySelectorAll('script[src]')].find(s=>new URL(s.src).pathname==='/src/main.ts').src;
+ const module=await frame.contentWindow.eval('import('+JSON.stringify(entry)+')');await until(()=>module.game.registry.get('runFlow'));flow=module.game.registry.get('runFlow');
+ const doc=frame.contentDocument,storage=frame.contentWindow.localStorage,key='ffrogue.run.v1',before=storage.getItem(key),results=[];
+ function check(label){const root=doc.querySelector('#run-ui'),bounds=root.getBoundingClientRect(),buttons=[...root.querySelectorAll('button')].map(b=>b.getBoundingClientRect());
+  if(frame.contentWindow.innerWidth!==375||doc.documentElement.scrollWidth>375||buttons.some(b=>b.left<0||b.right>375))throw Error(label+' overflows');
+  results.push({label,width:375,height:812,horizontalOverflow:false,buttons:buttons.length,contentHeight:bounds.height,scrollHeight:root.scrollHeight});}
+ flow.menu();check('menu');
+ const Ui=flow.ui.constructor,small=Object.fromEntries(['cloud','aerith','jack'].map(k=>[k,flow.catalog[k]]));
+ const preview=new Ui(small,flow.manifests),smallRun=rollParty(createRun('small-pool',small),small);preview.slots(smallRun,false);
+ if(doc.querySelector('[data-action=spin]').disabled||doc.querySelector('button.reel'))throw Error('Expected only the team lever for a three-family pool');check('three-family-pool');
+ const tooSmall=new Ui({cloud:flow.catalog.cloud,cloud_ac:flow.catalog.cloud_ac,aerith:flow.catalog.aerith},flow.manifests);tooSmall.menu(false,null);
+ if(!doc.querySelector('[data-action=play]').disabled)throw Error('Two-family pool admitted');check('insufficient-canonical-pool');
+ // Restore the same shared presentation component; no run state or storage was changed.
+ const ui=new Ui(flow.catalog,flow.manifests);
+ const run=rollParty(createRun('responsive-review',flow.catalog),flow.catalog);ui.slots(run,false);check('reels');
+ const battle=confirmParty(run),rewards=completeBattle(battle,flow.catalog,battle.party.map(m=>({key:m.key,hp:m.hp,mp:m.mp})),true);
+ ui.rewards(rewards);check('reward-cards');
+ if(doc.querySelectorAll('.reward-card').length!==3||storage.getItem(key)!==before)throw Error('Card count or save changed');
+ // Real production BattleScene at this width, with an unsaved presentation fixture.
+ doc.querySelector('#run-ui').remove();doc.body.append(flow.ui.root);
+ let fixture;for(let i=0;i<1000;i++){const r=rollParty(createRun('hud-'+i,flow.catalog),flow.catalog);if(r.party.some(m=>m.key==='cloud')&&r.party.some(m=>m.key==='delita')){fixture=confirmParty(r);break;}}
+ if(!fixture)throw Error('HUD fixture missing');for(const m of fixture.party)m.skills=flow.catalog[m.key].skills.slice(0,3).map(s=>({id:s.id,level:1}));
+ flow.state=fixture;flow.route();let scene;await until(()=>{scene=module.game.scene.getScene('BattleScene');return scene?.sys.isActive()&&scene.isRunCommandWindow();});await scene.preparedScenes.ready;
+ for(const hero of scene.turnOrder){const row=scene.partyRows.get(hero.unitKey),zone=row.container.list.at(-1);zone.emit('pointerup');
+  const owned=fixture.party.find(m=>m.key===hero.unitKey).skills;if(scene.getActiveHero()!==hero||scene.skillButtons.filter(b=>b.skill).length!==owned.length)throw Error('HUD selection/loadout differs');
+  const beforeMp=hero.currentMp;scene.skillButtons[0].bg.emit('pointerdown');if(!scene.plannedActions.has(hero)||hero.currentMp!==beforeMp)throw Error('HUD planning charged MP');scene.cmdSkillBtnBg.emit('pointerdown');if(scene.plannedActions.has(hero))throw Error('Clear failed');}
+ const hud=await new Promise(r=>module.game.events.once('postrender',()=>r(module.game.canvas.toDataURL('image/png'))));
+ results.push({label:'actual-battle-HUD',width:375,loadouts:fixture.party.map(m=>({key:m.key,skills:m.skills.length})),selectionPlanningClear:true,capture:hud});
+ const previewRewards=completeBattle(fixture,flow.catalog,fixture.party.map(m=>({key:m.key,hp:m.hp,mp:m.mp})),true);scene.scene.pause();flow.ui.rewards(previewRewards);flow.ui.overBattle(flow.rewardBounds());check('overlay-at-375');
+ const shell=doc.querySelector('.rpg-shell').getBoundingClientRect();if(shell.bottom>812)throw Error('Reward dock exceeds frame');
+ out.textContent='PAUSED: responsive cards over the real arena (presentation fixture). Inspect, then Finish UI review.';const advance=document.querySelector('#advance');advance.hidden=false;await new Promise(r=>advance.onclick=()=>{advance.hidden=true;r();});
+ if(storage.getItem(key)!==before)throw Error('Presentation fixture changed save');flow.scene.scene.stop('BattleScene');flow.menu();
+ const receipt={passed:true,scope:'Shared UI and actual BattleScene HUD at375x812; unsaved presentation fixtures, no damage or save mutation',results};
+ const origin=new URLSearchParams(location.search).get('captureOrigin');if(!/^http:\/\/127\.0\.0\.1:\d+$/.test(origin??''))throw Error('Loopback receipt sink required');
+ const response=await fetch(origin+'/product-review',{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(receipt)});if(!response.ok)throw Error('Receipt save');out.textContent='PASS '+JSON.stringify({...receipt,results:results.map(({capture,...r})=>r)},null,2);
+ }catch(error){out.textContent='FAIL '+error.stack;if(flow){flow.scene.scene.stop('BattleScene');flow.menu();}}finally{button.disabled=false;}};
+</script></html>

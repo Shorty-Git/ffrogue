@@ -1,0 +1,36 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><base href="/"><title>Native effect pixel comparison</title>
+<style>body{background:#121725;color:#e8edf4;font:16px system-ui;margin:24px}button{padding:12px}pre{white-space:pre-wrap}img{width:270px;margin:12px}</style>
+<h1>Native effect pixel comparison</h1><p>Existing shared FFRogue player against actual original GPU output. Measured host and initial RNG are explicit inputs.</p>
+<button id="run">Compare native sequence</button><button id="linear">Compare measured linear sampling</button><button id="upload">Test premultiplied upload hypothesis</button><button id="order">Test stable blend buckets hypothesis</button><button id="prepared">Compare prepared Cocos upload</button><button id="priority">Compare original source priority</button><button id="sampler">Test shared source sampler</button><pre id="status">Ready</pre><div id="frames"></div>
+<script src="/vendor/three-preview.js"></script>
+<button id="world">Test native world packet placement</button>
+<script type="module">
+import {reviewNativePixelSequence} from '/tools/lib/native-pixel-review.mjs';
+const status=document.querySelector('#status'),button=document.querySelector('#run');
+async function run(variant){for(const b of document.querySelectorAll('button'))b.disabled=true;try{
+ const fixture=await (await fetch('/tools/data/memorial-audit/diagnostic-v35-render-context/pixel-fixture-j.json')).json();
+ if(variant!=='preserved-default'){if(!fixture.measuredSampling)throw Error('Missing native sampler evidence');fixture.plan.nativeQuadBranches.textureSampling=fixture.measuredSampling;}
+ if(variant==='upload-hypothesis'||variant==='order-hypothesis')fixture.testPremultipliedUpload=true;
+ if(['prepared-cocos','source-priority','source-sampler-hypothesis','world-packet-hypothesis'].includes(variant))fixture.plan.nativeTextureUploads=fixture.preparedUploads;
+ if(['source-priority','source-sampler-hypothesis','world-packet-hypothesis'].includes(variant))fixture.plan.nativeQuadBranches.drawSubmission=(await (await fetch('/tools/data/memorial-audit/diagnostic-v35-render-context/program-j-ordered.json')).json()).drawSubmission;
+ if(variant==='source-sampler-hypothesis')fixture.testSourceSamplerAlias=true;
+ if(variant==='world-packet-hypothesis')fixture.testNativeWorldPackets=true;
+ if(variant==='order-hypothesis'){
+  const branches=[...fixture.plan.nativeQuadBranches.branches,...fixture.plan.nativeQuadBranches.particleBranches];
+  branches.sort((a,b)=>a.blend.id-b.blend.id||a.order-b.order).forEach((b,i)=>b.order=i);
+ }
+ const receipt=await reviewNativePixelSequence(window.THREE,fixture,row=>{status.textContent='Compared F'+row.frame+'\n'+JSON.stringify(row.comparisons,null,2);});
+ receipt.variant=variant;receipt.experimentalHypothesis=variant.endsWith('hypothesis');
+ const sink=new URLSearchParams(location.search).get('captureOrigin')??'http://127.0.0.1:3152';
+ const response=await fetch(sink+'/product-review',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(receipt)});
+ if(!response.ok)throw Error('Receipt save failed');status.textContent='COMPLETE\n'+JSON.stringify(receipt.results.map(r=>({frame:r.frame,...r.comparisons.black})),null,2);
+ for(const row of receipt.results){const img=new Image();img.src=row.png;img.alt='Shared renderer F'+row.frame;document.querySelector('#frames').append(img);}
+}catch(error){status.textContent='FAIL '+error.stack;}finally{for(const b of document.querySelectorAll('button'))b.disabled=false;}}
+button.onclick=()=>run('preserved-default');document.querySelector('#linear').onclick=()=>run('measured-linear');
+document.querySelector('#upload').onclick=()=>run('upload-hypothesis');document.querySelector('#order').onclick=()=>run('order-hypothesis');
+document.querySelector('#prepared').onclick=()=>run('prepared-cocos');
+document.querySelector('#priority').onclick=()=>run('source-priority');
+document.querySelector('#sampler').onclick=()=>run('source-sampler-hypothesis');
+document.querySelector('#world').onclick=()=>run('world-packet-hypothesis');
+</script></html>
+

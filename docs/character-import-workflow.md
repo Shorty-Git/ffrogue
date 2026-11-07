@@ -1,5 +1,655 @@
 # Character and skill import standard
 
+## Original class-up admission
+
+Use the master DB `unit_class_up` edge and matching `unit.unitSeries` for every
+published `awakensFrom` edge. The runtime accepts only a connected chain with
+matching prepared manifest IDs and the required combat and Source clips.
+`tools/inspect_original_forms.py --output tools/data/original-awakening/verified-graph.json`
+cross-checks the published graph against the local DB and inventories raw assets.
+The reviewed body-only recipes retain the original atlas, CGG parts and CGS timing.
+
+| Unit and canonical identity | Original class-up IDs in order |
+| --- | --- |
+| Classic Cloud, ff7:cloud-strife | 5★ 207000105 → 6★ 207000106 → 7★ 207000107 → NV 207000117 |
+| Aerith, ff7:aerith-gainsborough | 5★ 207000405 → 6★ 207000406 → 7★ 207000407 |
+| Barret, ff7:barret-wallace | 4★ 207000204 → 5★ 207000205 → 6★ 207000206 |
+| Cloud of Darkness, ff3:cloud-of-darkness | 3★ 203000803 → 4★ 203000804 → 5★ 203000805 → 6★ 203000806 |
+| Cloud AC, ff7:cloud-strife | 5★ 207001605 → 6★ 207001606 → 7★ 207001607 |
+| Delita, fft:delita-heiral | 5★ 253000205 → 6★ 253000206 → 7★ 253000207 → NV 253000227 |
+| Jack, type0:jack | 3★ 254000603 → 4★ 254000604 → 5★ 254000605 |
+
+Barret's current body remains 207000205. His series is inventoried and excluded
+from the run catalog because it lacks an admitted Source skill. All listed
+ordinary and NV base bodies have local atlases and tracks. Cloud 207000127 and
+Delita 253000237 are separately linked Brave Shift bodies with local assets.
+Their battle switch and form-specific skills remain unverified. The master
+data has EX-dependent skill rows. EX progression, shared-body EX states and
+NV+ need separate reviewed contracts before publication.
+
+NV Cloud and NV Delita still have raw rarity 7. The NV flag is independent.
+Their aura parts use original CGG records and atlas pixels. A controlled
+ffbetool probe with source RGBA (32,140,200,128) produced (16,70,100,124)
+for a standalone mode-1 part. The flattened texture applies alpha again
+and cannot add to the actual stage behind the actor. A two-part overlap
+probe established that the first record draws on top in this exporter.
+
+The shared body import now calls
+`tools/prepare_cgg_body_layers.py --raw <raw> --prepared <body> --output <staging>`
+uses the same ffbetool and NumPy/Pillow to assemble neutral isolated
+parts. The source-over pass keeps normal coverage. The light pass sums
+mode-1 RGB weighted by source alpha and CGG opacity, attenuating emission
+where subsequent normal parts cover it. It encodes the resulting RGB for
+Phaser's premultiplied upload and an additive pass over the opaque stage.
+Clip rectangles, frame order, source tick durations and pivots are checked
+against the admitted export. Unsupported record layouts, atlas pages and
+blend values fail the preparation. A clip whose parts exceed the existing
+frame rectangle retains its baked sheet and records a `bodyLayerIssues`
+entry. Fully transparent emission strips are omitted. Content-hashed
+layer names make each revised export independently cacheable. The original
+PNG files remain available for Canvas or CSS implementations without the
+required compositing support.
+
+WebGL battle, stopped reels, member details, result/party cards and both
+Awakening forms use the same prepared strips. The DOM uses CSS
+`plus-lighter` for the emission layer at the same size and crop as its
+coverage layer. Fading groups, browser compositing and the background can
+change apparent intensity. Spinning reels and reward thumbnails retain
+their existing portrait icons. Body clips are still requested by encounter.
+
+The additive CGG rule is a reviewed FFRogue representation of the observed
+turquoise and violet/orange glow. Trace Home confirms the visible pattern,
+with a different camera and idle phase. The source pixels, opacity, coverage
+and order are retained. Exact native blend factors and intermediate GPU
+clamping are unverified. See tools/data/aura-review/comparison.png for
+the reference and matched dark/light before/after crops.
+
+### Published roster aura audit
+
+Run `tools/audit_character_auras.py --output tools/data/aura-roster/receipt.json`
+with the same Python environment as the body layer preparer. The report
+reads the production character and form registries and records original
+atlas and CGG SHA-256 hashes, per-clip nonzero mode-1 coverage, source
+timing checks and the published layer status.
+
+The 22 bodies cover 282 clips, of which 169 reference visible mode-1
+parts and 14 bodies use them in idle. In addition to the two reviewed NV
+bodies, idle candidates are Cloud 6★/7★, Aerith 6★/7★, Barret 5★, Cloud
+of Darkness 6★, Cloud AC 6★/7★, Delita 6★/7★ and Jack 4★/5★. The eight
+remaining bodies have mode-1 parts in clips outside idle. A part with
+light in its source texture is an audit candidate. It can be covered by
+other parts, and attack flashes should be reviewed separately from idle.
+
+The first offline audit completed for 21 bodies. Cloud 6★ has an isolated
+part outside the admitted rectangle at `limit_atk/116`. The current
+preparer records that clip as an explicit fallback and publishes the
+other valid clips. In total 168 layered clips are admitted. Audit artifacts include
+`tools/data/aura-roster/idle-comparison.png` and `action-comparison.png`.
+The strongest non-NV idle differences include Cloud, Cloud AC, Jack and
+Delita 7★. These are offline FFRogue comparisons, with no matching native
+reference for those forms in that audit. The same mode-0/1 profile is now
+used across the roster as a FFRogue rendering rule. Separate native blend
+state validation would be needed to claim exact original parity.
+
+New runs follow one class-up edge at each boss. Existing saved prototype
+rules retain their original behavior. Form keys and original IDs remain
+authoritative, and saved stats are retained as stored. Central rarity weights
+3★/4★/5★/6★/7★/NV are 180/125/80/17/3/0.3, normalized over the admitted
+forms after the unit is drawn. A dedicated seeded stream separates rarity
+from roster and skill draws. New saves use the exact-path override
+`5/6/7/NV` = 65/23/9/3. Every other supported path uses its own normalized
+rank weights, and existing saves retain their snapshotted policy.
+New balancing adds 5% HP, 3% MP and 3.5% attack,
+magic and defense rating per original rank step relative to the base. Awakening
+adds the difference and keeps earned bonuses. This is FFRogue tuning.
+
+`bodyTextureFilter` in `public/assets/run-rules.json` controls run hero body
+sheets. Linear sampling stays inside the edge texel centers of each frame
+to prevent neighboring-frame bleed. Original PNGs, materials, Phaser alpha
+processing, enemy sheets and Source VFX use their existing paths.
+
+## Reviewed 7-star forms and configurable prototype progression (2026-11-02)
+
+Original DB `unit` AND `unit_class_up` confirm same-unit chains:
+Cloud207000105 (5-star) ->207000106 (6-star) ->207000107 (7-star),
+Aerith207000405 ->207000406 ->207000407 with the same rarities. Aerith DOES have
+this7-star form; do not infer its absence from subtle5/6-star visual differences.
+The NV extension to Cloud207000117 is documented in the current admission section.
+No Cloud AC/Remake or other Aerith unit is substituted. Original7-star atlas SHA256:
+Cloud df7b07767609908473c51ec6f50d6cc77946580e3cdd322d29d2822b88484a1f;
+Aerith ff562a5828c4178d3f3f2b6d440998d16f267b409b46d2fbb2994c6ff5fdc5d6.
+
+Reproduce with configured Python/Pillow (explicit UTF-8):
+`node tools/import_character.mjs --recipe tools/characters/cloud_form7.json --prepare-body-only --python <python>`
+and the equivalent aerith_form7 recipe. Inspect staging body-preparation.json and
+all sheets BEFORE copying into the distinct public/assets/forms/<key> namespace.
+The staging manifest lacks its runtime assetKey: add that key, then record the
+FINAL manifest SHA in run-content.json. Do not use the staging SHA as publication
+identity. No sheet pixels/timings are edited; no limit skill is enabled by a sheet.
+Cloud12 and Aerith13 original tracks were prepared; unreferenced large limit sheets
+remain demand-unloaded. Regenerate prepared pose metadata using
+`python tools/prepare_victory_poses.py --output public/assets/victory-poses.json`.
+The9 pre-existing pose gates must remain equal; two new form gates are added.
+
+`runCatalog` admits each same-identity form only with all required common and
+published Source choreography clips. `forms` holds admitted original forms;
+`evolution` remains the first normal step. Policy belongs to run-rules.json, NOT
+to original form metadata: highest-reviewed is the short-run test policy;
+sequential remains5->6->7. Old saves without policy remain sequential; saved
+form IDs and pending notices validate against the complete admitted catalog.
+
+All5 Cloud and1 Aerith actual Source actions were exercised with7-star bodies;
+real two-battle boss paths independently verify both5->7 rewards and next-battle
+textures. Fixtures separately verify skip, reload during/after and reduced motion
+for7-star and retained6-star paths. Original first-idle5/7 aligned differences are
+Cloud1,838 and Aerith444 visible pixels over black/white (5/6:1,411/325). These
+counts do not imply a redesigned costume. Review same-position browser pairs and
+original-form-appearance.png. Source/VFX plans and original aura remain unmodified.
+
+## Awakening appearance and saved presentation (2026-11-02)
+
+Original identities remain Cloud207000105->207000106 and Aerith207000405->207000406,
+same-series5->6 stars. inspect_form_appearance.py compares actual prepared pixels
+around their foot pivots and verifies original unitSeries/rarity from the DB.
+Both idle forms differ visibly, but Aerith's pose/costume remains very similar;
+the6-star differences are subtle details/aura, not a new costume. No cache error
+was reproduced: actual post-boss Source casts and reload fixtures use
+aerith_form6_idle/207000406 and cloud_form6_idle/207000106. Original art, sheets,
+body timelines,15 Source skills and both form manifests are unchanged.
+
+An evolve reward now saves the new form/HP gain and a validated optional
+pendingAwakening notice in the SAME RunStore write. The short reusable UI uses
+only the two prepared original idle sprites, aligned to their pivots; blue/gold
+light and particles are FFRogue presentation. It never mutates combat RNG or
+applies gameplay. Natural animation end/Skip acknowledges the notice once.
+Reload/Continue resumes AFTER the saved upgrade without replaying/reapplying it.
+Unknown/forged notice/form combinations fail validation. Identical future original
+art can use the same presentation without claiming a changed costume. Read
+roguelike-foundation.md for the lifecycle and current browser receipts.
+
+Reproduce: python tools/inspect_form_appearance.py (configured Python/Pillow).
+
+## Runtime body requirements (2026-11-02)
+
+Prepared sheets/manifests remain intact. Title loads hero idles; BattleScene's
+preload barrier admits current party/form and enemy clips before actors exist.
+Shared idle/move/dying/dead/basic attack are required. Existing optional standby,
+magic and victory states plus EVERY published actionChoreography.body phase are
+admitted explicitly. Requirements use prepared assetKey, never canonical family.
+Awakening loads its separate form namespace before the next battle. Missing sheets
+block actor construction/commands; UnitActor registers loaded clips only and rejects
+unadmitted playback. Unreferenced limit sheets are preserved, not eagerly loaded.
+Future body phase kinds must enter this requirement path, not assume all manifest
+clips are resident. The15 accepted skill definitions/plans/timings are unchanged.
+Measured before/after commands and limits: roguelike-foundation.md/current handoff.
+
+## Prepared victory presentation gates (2026-11-02)
+
+tools/prepare_victory_poses.py reads only already prepared body sheets/manifests.
+It compares exact RGBA poses aligned by their original integer pivot and derives
+the trailing intro suffix already present in win. That suffix can continue behind
+the reward cards. Where no exact suffix exists, the full intro finishes before
+the first win pose releases rewards. No original frames/delays are rewritten.
+The resulting public/assets/victory-poses.json binds9 unit/form entries to original
+unit IDs, manifest/sheet hashes and frame counts. Runtime listens to real frame/
+start events; missing/mismatched gates keep the older conservative full-cycle
+behavior. This is an explicit FFRogue presentation policy, not measured native
+victory timing. New/changed bodies require regenerated/reviewed gate evidence.
+Body/VFX/gameplay choreography admission and15 published Source skills are unchanged.
+
+## Canonical starter identity is separate from original unit identity (2026-11-02)
+
+Maintain explicit canonicalCharacters / units[*].canonicalIdentity in the reviewed
+run-content registry. Different FFBE versions of one figure share this key;
+original unitId, unit-series identity and prepared star forms stay distinct.
+No name/substring/role inference. Unknown grouping blocks starter admission until
+reviewed. No party role quota. Future forms must preserve BOTH canonical figure
+and original unit series; an awakening must not switch to another version.
+No source data or15 published skill definitions changed in this UI milestone.
+
+## Run eligibility and prepared visual forms (2026-11-02)
+
+Starter reels admit published skills with valid Source/choreography/placement
+contracts. Characters without a Source command are preserved but excluded from
+draws (Barret). Runs select three original identities and one own supported skill
+each. Classic Cloud and Cloud AC remain separate original series.
+
+Cloud207000105->207000106 and Aerith207000405->207000406 are prepared run
+awakenings. Use the existing body-only importer with the matching reviewed
+tools/characters/{cloud,aerith}_form6.json recipe; validate all clips,
+publish under public/assets/forms/{cloud,aerith}_form6, record reviewed identity/rarity/
+assetPath and manifest hash in run-content.json. UnitActor.assetKey separates
+visual animation names while unitKey, Source skills and original identity stay
+unchanged. Additional raw star atlases do not authorize form publication.
+
+Aerith6-star has13 validated clips, including limit_move. Its source master rows
+confirm one original series207000405 at rarities5/6. Manifest SHA256:
+3f44b979136ef215aafc6a13bcadb79c6157c2586901047cc253de434c14f945.
+It preserves the dress/identity, with the original golden foot glow; it does not
+add skills or promise a costume change. Real normal/boss fights, awakening reward
+and subsequent Seal Evil were checked. Reproduction/evidence: current handoff and
+tools/data/aerith-awakening-20261102. Personal visual acceptance is still pending.
+
+Run ranks/stats are reviewed roguelike state, not edits to original skill JSON.
+Research expansion is paused; see docs/roguelike-foundation.md and current handoff.
+
+## Current form versus series acquisition (2026-11-01)
+
+Iai Strike personally accepted;15 commands retained. New skills0 in this block.
+Use --current-form with plan_source_imports.mjs when expanding an existing form:
+published body must match recipe; ordinary acquisition must fit original master
+rarity/maxLv. Missing/NV/conditional paths remain unconfirmed; no account/equipment/
+quest eligibility is inferred. Series-only shortlisting cannot grant this check.
+Existing reviewed FFRogue cross-rarity skills are not retroactively disabled.
+
+Example --select barret:* --current-form yields227870/227871/227872/227873 for
+classic5-star207000205, excluding6-star227876/227874/227875. Remake236220 is
+rejected as another series. Inventory retains all series entries plus separate
+formLearning status/evidence. Skill recipe rarity/level remains host balance.
+Unknown spatial dispatch is independently blocked: Mindblow mode6 is not resolved
+by fixing missing authoring. No target/caster substitution or incomplete release.
+
+See current ROSTER_SKILL_COVERAGE.md for full paths and source identities. Existing
+15 definitions/plans/resources/body contracts are unchanged. This does not solve
+Hardshot, node4/7, mixed anchors or Billboard geometry.11 targeted tool tests pass.
+
+---
+
+Earlier revision notes (historical; current status above takes precedence):
+
+## Current: measured body phases and one complete existing-roster import (2026-11-01)
+
+Parent ff9fdb066dc2b05e947c544f93272e13b514f1c7. **15 technically playable
+Source commands**; the previous14 definitions and published plans are unchanged.
+New Jack Iai Strike200300 uses the same Source player. Personal visual acceptance
+of the new skill is pending. Sword colors/Delita anchors and their pending latest
+personal recheck remain intact. No legacy path, new character or pixel research.
+
+The bounded native body observer now measures actual CGS/frame/counter/end/local
+position, separate from animation requests, with identity filtering and dedup.
+Big Shot227870 native form207000206: standby11 -> atk3 indices0..27 at constant
+local[449,571] -> idle1 at+2166ms relative to command getter. Hardshot factory waits
+88/128 and source hitF130 are joined evidence, NOT a measured damage-commit time.
+No global Motion8 fallback was enabled. Hardshot's incomplete38-node controls
+remain multiple independent release gates; Big Shot is deliberately unpublished.
+Independent Store200210 confirms standby11 -> magic5 -> idle1, about682ms to idle,
+without movement. Static original virtual dispatch/CGS names corroborate Motion2.
+
+General integration: optional reviewed commandPose separates prepared UI pose,
+readiness cycle and executed body phases; old contracts preserve old behavior.
+The shared event clock supports explicit per-target execute-or-damage with bounded
+chance, unmitigated fallback and declared boss immunity. Gameplay RNG is injectable without changing Phaser IDs or visual streams;
+it defaults to Math.random, not a reconstructed independent FFBE RNG stream.
+A new original target/range scope gate prevents publishing a reviewed all-enemy
+source as a single-target command. No attack clip is inferred from missing data.
+
+Iai Strike's complete3-node original, exact matching project, Model/UV/material
+and memberF41/scale250/target-side/+80 source data use the existing accepted
+experimental profile. Source eventF45 triggers all-enemy events. Original current
+process112/1400,70,100,0 is preserved. Original description explicitly says instant
+KO OR partial unmitigated damage to all enemies. Reviewed30% chance,700 fallback
+and boss immunity are FFRogue balance, NOT the decoded native formula. Known
+model appearance/random-color/global-scale experimental limits remain declared;
+no native full-action pixel equivalence or personal visual approval is claimed.
+
+Evidence: tools/data/full-import-path-20261101/{bigshot-body-r2-events.json,
+bigshot-motion-decision.json,store-body-actual-events.json,iai-gameplay-source.json,
+iai-coverage.json,instant-browser.json,party-release-browser.json,
+baseline-release-browser.json,preservation-check.json,coverage/inventory.json}.
+See current handoff for exact commands, tests, rollback and next decision.
+
+New imports must separately review source target/range AND process semantics.
+A body/effect/timing pass cannot establish damage or targeting correctness.
+The opt-in prepared-events profile requires sourceScopeReview. Keep original
+process values and descriptions/version evidence; store balance in the recipe.
+Existing14 accepted commands were not retroactively rewritten. Unknown motion,
+unknown profile or missing authoring still blocks; never add a default body clip.
+
+---
+
+Earlier revision notes (historical; current resume above takes precedence):
+
+## Flat RGB preparation hint (2026-11-01)
+
+14 Source commands remain playable. Current Delita body/position feedback is
+accepted; Sword color correction is implemented and awaits personal recheck.
+No skill or body is added in this block. Existing command definitions are intact.
+
+The shared intake emits colorPreparation for Quad RGB: Constant/flat nonwhite or
+random inputs require the opt-in --flat-quad-rgb preparation capability. This
+checks exact binary/project data and keeps independent alpha. Active color
+curves/non-flat colors cannot use this capability. Missing controls/unknown
+mechanics remain blocked; do not replace color with a white default or skill tint.
+The Source profile and choreography/position/gameplay reviews remain mandatory.
+See the current handbook and skill workflow for evidence/commands and seed limits.
+
+
+## Current main-party intake boundary (2026-11-01)
+
+13 published Source skills/11 personally accepted remain unchanged. The current
+handbook/skill workflow documents two new scale-curve slots, explicit dormant
+texture-color selectors and hash-checked --control-audit reuse. These do not grant
+choreography, gameplay or visual approval. Reraise is source-prepared only; no
+revival/MAGIC fallback is published. New imports retain explicit position and
+body/VFX/gameplay contracts. Browser QA uses game3001/sink3154 with mandatory
+current-source preflight; old long-running receipt sinks lack that endpoint.
+
+## Existing-roster support and area import wave (2026-11-01)
+
+All eleven older Source commands are now personally accepted. Delita gains Chant
+210550 and Cunning Hero's Sword1323010: thirteen technically battle-tested Source
+skills, eleven personally accepted, no new character. Default party and reserve
+selection are unchanged. See [roster coverage](research/ROSTER_SKILL_COVERAGE.md)
+and the latest handoff for every original acquisition, resource count and blocker.
+
+Use `node tools/inventory_roster_skills.mjs` for the read-only registered-roster
+view. It reuses the hashed global census and candidate receipts; it does not
+certify unpublished actions, original per-form eligibility or nested dispatches.
+Its `tools/data/roster-expansion-20261101/coverage/inventory.json` preserves raw
+rows and learning requirements. The tracked coverage table is its coverage.md.
+
+New explicit `prepared-friendly` profile: stationary `party`, reviewed
+`allyTargeting` (living-allies or other-living-allies), finite heal events and
+optional positive nonlethal hpCost. A friendlyTargetReview must preserve and
+explain the exact original target/range strings. Motion2 zero-prefix source
+markers are still checked. There is no blanket MAGIC import or target decoder.
+Unknown body semantics never produce an implicit attack. Costs/healing are
+reviewed balance; original process rows remain immutable evidence.
+
+The bridge admits 1/2/3 friendly recipients through the existing player. Its
+target-side host rectangle uses the party half of the arena. Models, native
+offsets, textures, UVs and materials are unchanged. Party scope is not a new
+renderer, all-screen rescale, revive contract or arbitrary friendly selector.
+
+Complete source preparation/coverage examples and original receipts:
+`tools/data/roster-expansion-20261101/support-intake/delita-210550/` and
+`tools/data/roster-expansion-20261101/follow-up/delita-1323010/`.
+Use the existing prepare_original_preview.py --profile source-preview-v1 with
+the final tools/characters/delita.json, exact checked body receipt, matched
+authoring and existing shader/reference inputs. Current recipe provenance will
+change its hash, not authorize changed VFX. Keep prior plans archived.
+
+Publish only reviewed complete plans with publish_scene_presentations.mjs,
+then `node tools/import_character.mjs --recipe tools/characters/delita.json
+--publish-skills-only --python <working-python.exe>`. Do not reexport or overwrite
+accepted bodies. Binding recipes preserve exact source IDs and plan paths.
+
+Run Node test_friendly_skills plus the existing import/choreography/combat/scene
+regressions. Python source preparation/composition/staging tests remain required.
+In `/tools/test-source-scene.html?reserve=delita&captureOrigin=http://127.0.0.1:3152`
+use friendly healing lifecycle and reserve area multihit checks. Run the frozen
+baseline and unavailable/combat cleanup checks with the DEFAULT Barret party.
+The sink is the existing preview_original_skill.mjs server, not a new exporter.
+New visual samples prove actual product playback, not native pixel fidelity.
+
+## Current: eleven technical Source skills; nine personally accepted (2026-11-01)
+
+Daniel accepts corrected Braver in full; all9 prior skills are personally accepted.
+New Delita253000205 Shield Break202180 and Jack254000603 Piercing Gleam203050 use
+the common Source engine with complete composed unit prefixes and checked12-track
+bodies.11 technically playable,9 accepted; new2 await personal visual review.
+Play /?reserve=delita or /?reserve=jack. Default party/previous9 remain unchanged.
+
+Mandatory actionChoreography remains; reviewed-adaptation is an explicit developer
+review of coherent gameplay/body presentation, not native body-semantics evidence
+or personal acceptance. No implicit atk, unknown-motion substitute or VFX-only
+whole-skill approval. Source raw processes remain separate from reviewed balance.
+
+Prefer --compose-unit-effects during batch planning so source-unit attack effects
+cannot disappear from the dependency audit. Composition failures remain blocked
+per item before staging; other candidates continue. No skills are published by
+selection/staging. Fencer fails missing unit-prefix authoring; Warrior of Light's
+idle duration0 fails body validation. No guessed normalization or partial import.
+See skill workflow/handoff and tools/data/import-wave-20261101/validation.json.
+
+## Current: Braver body correction and mandatory choreography review (2026-11-01)
+
+Daniel confirms Braver's BLUE VFX matches Memorial. He rejects the earlier full
+character action: the original has a small forward movement and one hit/break,
+without the normal attack clip. This supersedes prior whole-action optimism.
+Nine published Source commands remain; the prior8 are personally accepted;
+Braver's corrected whole action still awaits Daniel's own review.
+
+ROOT CAUSE: the recipe manually selected atk/dash without native body evidence.
+executePreparedSkill unconditionally played skill.motion, waiting for the1.68s
+Cloud AC atk clip despite the independentF6 impact. It was a misplaced normal
+attack, not a second extra damage event. sourceDamageEvents only emits timing;
+that adapter remains unchanged. Native reserveSpecialAction's motion==1 check
+(native-hit-profiles.md,0x13c4174) proves effect-list composition, NOT a universal
+motion-ID-to-body mapping. Motion2 does not authorize atk, magic_atk or no clip
+automatically. Its complete original body semantics remain unresolved.
+
+P26/P28: mandatory actionChoreography separates body phases, travel, readiness,
+VFX lifetime and gameplay events. Explicit clips preserve all8 accepted sequences.
+Rest-body mode permits a short step or effect-only stationary action, without
+inserting an attack. Ordered nonoverlapping clips support multiple body phases;
+existing VFX member start frames remain independent. Body timers survive the last
+early hit and cancel on shutdown. Completion waits for reviewed gameplay AND
+body/recovery, never the decorative tail. Missing/unknown choreography fails before
+MP and publication; original motion/move identities and actual body tracks are
+checked. No missing body clip becomes an automatic atk fallback.
+
+Braver uses reviewed step/rest. Move-cycle travel is66.67ms each way from its
+exported move clip; distance is half scaled idle height (72px here). These are
+explicit gameplay presentation adaptations, NOT newly measured native dimensions
+or duration. The qualitative no-attack sequence comes from Daniel's original
+observation. SourceF6 hit,MP36 and reviewed break remain unchanged. All9 VFX
+manifests/textures (46 identities) and original shared renderer are untouched.
+
+Actually checked:50 Node tests including41 combat assertions,9 Python tests,
+build33 modules with existing chunk advisory. Actual Braver requests only
+standby/move/idle/move/idle across the FULL decorative duration; measured gameplay
+release~218ms after VFX start, versus prior~1965ms example (not a native timing
+benchmark). MP/target2/debuff/lethal/wave64/restart and unresolved-contract rejection
+pass. All8 old actions pass; three frozen default-party Cloud frames remain
+0 changed pixels. Evidence: tools/data/braver-choreography-20261101/validation.json.
+
+P26 remains TEILWEISE: automatic original body/choreography extraction is not
+solved by a rendered BMB effect. The old Braver preview's dash/atk body is now an
+obsolete WHOLE-ACTION reference; retain it for VFX evidence only. Larger import
+wave PAUSED. Next: Daniel reviews corrected action, then use explicit choreography
+reviews for future imports. If exact native travel is required, measure original
+body clip IDs/transitions and movement endpoints/times on the same action clock;
+do not infer them from motionType or from effectFrames alone.
+
+
+### Current choreography import contract
+
+Every imported Source recipe must supply actionChoreography with explicit review
+basis, exact sourceMotionType/sourceMoveType, readiness, movement/travel timing and
+body mode. `body: {mode:"rest"}` means NO attack clip; `body: {mode:"clips",
+phases:[{frame:0,clip:"atk"}]}` explicitly requests it. Multiple ordered phases
+must not overlap their actual exported clip durations. Unknown modes are rejected.
+Effects continue using their existing scene manifest/member timeline. Damage and
+support retain separate reviewed frame tracks. An effect rendering successfully
+does not prove actor choreography or whole-skill acceptance.
+
+For new profiles, record original body evidence or an explicit reviewed gameplay
+adaptation; do not default from motionType/name. Check actual clip requests, target
+movement, damage/status clocks, MP, recovery, victory/wave and cancellation in the
+production BattleScene before calling the complete skill accepted. Braver's review
+is based on Daniel's direct Memorial comparison; its quantitative step extent/time
+remain declared adaptations. Eight older whole-action baselines remain preserved.
+
+Reproduce checks:
+
+```powershell
+node --test tools/test_action_choreography.mjs tools/test_combat_regressions.mjs tools/test_scene_migration.mjs
+node tools/import_character.mjs --recipe tools/characters/cloud_ac.json --publish-skills-only --python $py
+```
+
+Metadata-only publication preserves the accepted scene manifests/textures/body
+sheets. Do not re-prepare/re-publish Braver's old full atk preview to fix body
+choreography. Test tools may normalize the changed recipe provenance hash when
+comparing old VFX plans, but must independently verify that hash and compare every
+remaining field. This never authorizes geometry/material/VFX changes.
+
+## Current: Braver and shared Source import profile (2026-11-01)
+
+Nine technically playable Source skills, eight personally accepted. New Cloud AC
+207001605 Braver233930 is available at /?reserve=cloud_ac, using the same registry,
+roster binding/player/event clock. Its original command is separate from reviewed
+MP36/4.5x physical/F6 hit/+20% vulnerability3 enemy phases. No hero-specific loader.
+All8 prior visual manifests remain unchanged. Personal approval of Braver pending.
+
+Use prepare_original_preview.py --profile source-preview-v1 with an explicit
+--authoring-directory plus recipe/body/native evidence to reuse accepted common
+preparation settings. Exact missing or mismatched projects remain blockers. This
+profile is experimental, not native certification or automatic publication.
+See the skill runbook for commands and tools/data/braver-20261101/validation.json
+for9-skill functional evidence/unchanged frozen Cloud images. The existing census
+can be shortlisted with plan_source_imports --shortlist-catalog;51 names overlap,
+but no additional uninspected command is thereby playable or fully importable.
+
+## Current: Source-only productive skill engine; eight accepted skills (2026-10-28)
+
+Daniel accepts all8 published Source skills, including Armor Break/Aura Ball.
+The old game mode switch, baked skill adapters, cast/melee/area fallback and effect
+loading are removed. Source-only admission fails closed before MP. Six remaining
+Aerith/Barret commands are visible NOT IMPORTED data; normal attacks/other shared
+combat mechanics remain. Cold archived assets and original resources are retained.
+Internal comparison policies of the unchanged shared Source player are not a
+second productive skill engine. All8 visual manifests retain accepted identities.
+
+Explicit reviewed impact events preserve early CloudF6/F30/F4. Source receipts are
+hash-checked for older non-composed accepted plans; original commands stay separate
+from reviewed gameplay. Imported commands sort first; no silent substitute.
+45 Node tests including38 combat assertions pass; actual browser68 all8 actions,
+69 frozen3Cloud0 changed pixels,70 unavailable/normal attack/victory/wave/shutdown
+pass. Build passes32 modules. See renderer-session-handoff.md for exact scope.
+
+Read-only global census:3311 forms/1573 series;10052 unique learned active ability/
+magic IDs,3141 LB IDs separately. NOT automatic import counts.13193 unique commands,
+21008 ownership pairs;8 playable,0 confirmed fully importable unpublished. Nine
+other-owner pairs partly prepared,10345 known blocked,10646 not reliably assessed.
+Only49 prior bounded BMB intakes underpin specific support/blocker conclusions.
+Inventory command: python tools/inventory_source_catalog.py --output tools/data/source-only-20261028/catalog.
+Original dependencies/versions not decoded globally. Detailed limits in summary.json.
+
+Quota-conservation stop: Braver233930 has staged originals/offline14-track body
+but NO Prepared plan, publication or battle test. Next is complete preparation,
+then a checked general non-Motion1 zero-prefix event compiler if needed. No such
+compiler change exists yet. No additional playable skill is claimed. Historical
+recipes/raw data/audio references are retained. Latest exact checkpoint and next
+steps are in the handoff and tools/data/source-only-20261028/checkpoint.json.
+
+## Current: eight playable Source skills and new-character bootstrap (2026-10-28)
+
+Daniel personally accepts all six prior Source skills, including Seal Evil and
+Trigger Smash. Two new commands, Cloud of Darkness203000803 Armor Break201150
+and Aura Ball203280, use the same prepared player in actual combat.8 technically
+playable;6 personally accepted,2 ready for personal review. No new native whole-
+skill fidelity or unsupported BMB profile is claimed.
+
+Shared Source events now combine damage and enemy statuses, damage first at an
+equal frame, with locked targets/cancellation. Physical vulnerability and attack
+reduction refresh strongest and expire by enemy phases. Exact original parameters
+remain separate from recipe-owned balance. Character:* intake enumerates all owned
+active commands (11 here), without publication approval;9 still retain blockers.
+
+New-character bootstrap: --prepare-body-only stages/validates sprites without
+publishing. prepare_original_preview.py --unit-assets consumes that checked body
+and verifies its identity before the usual reviewed presentation/character publish.
+Registered reserves are playable via ?reserve=cloud_of_darkness in the third slot;
+default Cloud/Aerith/Barret stays intact. No per-character loader, new renderer,
+curve guess or missing visual replacement. See current map/handoff for evidence,
+known preview approximations and exact reproduction commands.
+
+## Current: Source self buffs and measured import decision (2026-10-28)
+
+Trigger Smash227151 is the sixth functionally/visually inspected Source command,
+using the shared original player; personal approval pending for it and Seal Evil.
+Review-owned allyEvents currently admit stationary SELF only, not arbitrary party
+skills. Actor host bindings and the existing event/cancellation clock are reused;
+MP55 once/no HP damage/x1.5 physical through3 future rounds. Original cooldown,
+linked ability/stat/break parameters are preserved separately. Optional damageType
+separates gameplay lanes from body pose; legacy defaults remain unchanged.
+No missing effect, replacement primitive or skill-specific renderer correction.
+
+The common importer also exports existing native Null init input words with
+mandatory parent/child context.11 source records/two originals and160 block cases
+agree; no compatibility defaults, authoring-free profile or skill unlock from this
+alone. The13-slot/1102-value regression remains exact.
+
+Meteor is explicitly deferred (resources present, multiple independent semantic/
+selected-renderer gaps).28 candidates audited;26 remain blocked after Seal/Trigger.
+Authoring inputs affect24,type7 eleven,active curves9; affected counts are NOT
+predicted complete imports. Lifestream additionally needs process-indexed timeline
+support and party/reraise/barrier gameplay, not merely its curve. Unknown types,
+curves, versions and branches still block. Audio metadata retained; no new sound,
+music/background or original recording work. See the map's latest entry/evidence.
+
+## Current: bounded original control decoder and provenance separation (2026-10-28)
+
+The common BMB reader/preparer now decodes13 verified parent/Null control slots
+without XML.22 matching pairs/343nodes/1102 values agree. Remaining authoring fields
+are explicit; no authoring-free profile is admitted. Meteor's original/resources
+exist and109 controls decode, but unresolved parent/context/compatibility, emission
+and texture/geometry selection still block it. New fully playable skills:0; total5.
+The batch audit now reports exact per-node raw fields and missing inputs instead of
+using missing authoring as the only explanation. Unknown curves/types/versions
+remain blockers. See the reconstruction map and skill workflow for reproduction.
+
+Source metadata publication preserves originalCommand (verbatim source row+DB hash)
+separately from gameplayReview/recipe balance. Seal was metadata-only republished;
+all five visual manifests and prior gameplay/Legacy data are unchanged. Audio
+references retained; no new playback/music/background work or pixel optimization.
+
+## Current: fifth Source skill and bounded sound preparation (2026-10-28)
+
+Four Cloud commands are personally accepted; Seal Evil229751 is the fifth Source
+command, checked in the actual game, pending Daniel's own visual approval. Generic
+reviewed non-damage support events, finite enemy statuses and Source-only admission
+reuse the existing Source clock/player. Metadata-only publication preserves Aerith's
+existing body/three Legacy skills. No new original rendering-fidelity claim.
+
+Original archive aliases resolve automatically only when every candidate payload
+hash agrees; differing versions remain blocked. Meteor's38-node original and all
+12dependencies are present, but authoring-independent binary interpretation is
+incomplete. No neutral fallback or partial import. Additional candidates retain
+explicit curve/type4/7/authoring gates. See the latest reconstruction map.
+
+Audio preparation is METADATA ONLY: serialized group sound IDs/times preserved
+with raw fields, unresolved resources and playbackSupported:false.8 local WAVs,
+250 UTF bank candidates,2 XML-header unclassified .acb and126 unclassified .dat
+were inventoried; SE.acb matches live external ADB bytes. No proven cue/codec join.
+Sound-only groups are retained; unexplained non-file visual commands reject. No
+new audio playback, music, background system or timeline rewrite. Reproduction:
+[skill workflow](skill-reconstruction-workflow.md), latest section.
+
+## Playable Source command and metadata-only import update (2026-10-28)
+
+Cross Slash is the fourth functionally checked Source command (the other three
+retain Daniel's accepted baseline). It reuses the preserved original-BMB preview;
+no converted EFKE UV repair is stacked onto source UVs. Generic reviewed damage
+fractions/frames, Source-only admission, locked-target cancellation and paged
+commands now execute in BattleScene. Metadata-only character publication is
+available with --publish-skills-only: existing sprites/commands are validated and
+preserved. Motion-1 weights/times derive through source-damage-events.mjs; balance,
+target policy and visual review remain recipe decisions. No original chain or
+full native-fidelity claim. Existing scene publishing admits explicitly reviewed,
+hash-checked flat uniform unit-XY Model backdrop roles through arenaSurfaces;
+this is a viewport adaptation, not a native flag or an automatic fit of all models.
+See the current reconstruction map for commands, receipts and next blockers.
+Eight playable Source skills remain unachieved. Meteor Rain's exact authoring
+supplement and Trigger Smash's process semantics are explicit gates, not silent
+fallbacks. Barret remains a Legacy/data control, not an original capture reference.
+
+## Current bounded transfer and import automation (2026-10-28)
+
+Capsule's static Default-parent / OneX / neutral Basic profile now executes in the
+same Live-Player and actual BattleScene technical control.123 reference states,
+2178 exact position values and cleanup are checked; no native Capsule pixels or
+whole-engine traversal claim. Explicit host/seed and matched authoring remain
+inputs. See the current reconstruction map and connected-second-effect report.
+Accepted playable Source skill count remains3; Capsule/Cross Slash controls do
+not increase it. Batch owned-skill selection and hash-checked dependency staging
+now produce explicit per-candidate blockers through plan_source_imports.mjs and
+stage_source_imports.py. They never publish by availability alone. Five additional
+Legacy candidates expose types4/7, model/active-curve or missing-authoring gates;
+Cross Slash is the nearest existing composed preview to review for real play.
+Next is a general multi-event gameplay schedule/menu capacity, not RGB polishing.
+
 This is the canonical **character publication** workflow for contributors and
 coding agents. Start with the [asset pipeline handbook](asset-pipeline-handbook.md)
 and [asset structure guide](asset_structure.md). This document covers local
@@ -16,11 +666,89 @@ sheet baker described here. Its latest preview improvements have not replaced
 the game's published skill sheets. Do not publish a research plan as a character
 recipe or stack an old artwork correction on a newly corrected source renderer.
 
+Current user-authorized exception to historical preview-only publication: reviewed
+experimental plans can be compiled with`tools/publish_scene_presentations.mjs`.
+The generic `scenePresentation` binding is additive: retain every Legacy effect,
+operation and recipe. Explicit`bmb-preview-scene-v1`/`experimental-preview` status
+is mandatory, never native-fidelity approval. The game and research server share
+`src/effects/originalEffectPlayer.mjs`. The publisher hash-checks resources,
+rewrites texture URLs, retains model/curve/material/member data, records the
+shared player/Three hashes and computes duration from instance ends. Import
+inspection checks binding identity and rejects stale player hashes. Normal game
+defaults to Source preview; the header or`?skillVisuals=legacy` restores Legacy.
+Scope, damage events, MP and reward eligibility remain separate reviewed data.
+Current Cloud publication, comparisons and restrictions are in the map.
+
+The shared scene-action admission additionally requires the command's reviewed
+scope/moveType to match the prepared presentation scope/movement. Publisher,
+import inspection and runtime pre-MP validation use this same contract. Prepared
+approachFrames/returnFrames drive the source action movement durations; they are
+reviewed adaptations. Body recovery begins on the imported clip's completion,
+while effect end and reviewed damage independently gate action completion. Do not
+extend body hold to an effect lifetime or bypass unsupported-profile diagnostics.
+
+Standalone checks use the same publisher with an explicit`standalone:true`
+binding. They register a prepared resource, never a character command or reward.
+Cross Slash's staged inputs/composed inspection/test recipe are retained under
+`tools/data/scene-migration/cross-slash/` and in the migration archive. Reproduce
+from those preserved inputs without fitting any source node:
+
+```powershell
+$scenePython = $env:FFROGUE_PYTHON
+node tools/resolve_composed_skill.mjs --composition tools/data/scene-migration/cross-slash/composition.json --report tools/data/characters/cloud/report.json --output tools/data/scene-migration/cross-slash/composed-report.json
+& $scenePython tools/stage_original_skill.py --report tools/data/scene-migration/cross-slash/composed-report.json --skill-id 214790 --output tools/data/scene-migration/cross-slash
+& $scenePython tools/prepare_original_preview.py --source tools/data/scene-migration/cross-slash/skill-source.json --unit cloud --recipe tools/data/scene-migration/cross-slash/recipe.json --authoring assets/battle_effect/sp_20157_kyogiri_back.bmsln --authoring assets/battle_effect/sp_20157_kyogiri_front.bmsln --authoring assets/battle_effect/atk_slash1_white.bmsln --scene-composite --withhold-untextured --inheritance --source-appearance --basic-uv --model-vertex-rgba --particle-geometry --null-locator --rectangle-placement --renderer-reference tools/data/memorial-audit/diagnostic-v7/renderer-reference.json --output tools/data/scene-migration/cross-slash/plan.json
+node tools/publish_scene_presentations.mjs --recipe tools/presentations/cross-slash-import-test.json
+```
+
+Raw re-extraction requires the ignored database/CPK/authoring inputs; ordinary
+gameplay and already prepared replay do not. The test uses original member
+timings with reviewed neutral gameplay damage. It does not adopt the historical
+converted Cross Slash atlas repair. Finishing Touch is a separate, untouched
+negative import test: unknown node family7 blocks the complete source rather
+than guessing child counts. The seven model and two shared-source tests cover
+the newly admitted empty-name-table layout and preflight rejection, respectively.
+
 The [skill pipeline foundation](research/skill-pipeline-foundation.md) records the
 import/progression target and visible-reference gate. We reuse skill identity and
 animation, **not FFBE's chaining system**. Damage, MP costs, reward availability
 and wave progression are roguelike balance decisions. Source hit metadata is
 provenance; retaining it does not require reproducing the original combat rules.
+
+## Bounded dynamic Particle programs
+
+Visual references must survive renderer changes. Follow the current visual
+preservation entry in the reconstruction map; `tools/preserve_skill_previews.py`
+archives prepared dependencies plus current player/SDK/code identities before
+integration. Native reconstruction references are the three Cloud skills, not
+Satellite Beam. `preview_skill.mjs --prepared-plan ... --output ...` can replay
+old converted configs without re-inspecting SQLite; never overwrite their source
+receipt directory. New BMB preview captures retain frame/control/renderer identity.
+
+Reviewed sheet recipes can declare `sampling: {filter: "linear", gutter: 1}` with
+`review.samplingAdaptation`. The default remains nearest without gutters. Linear
+requires extruded borders; `pack_effect_sheet.py` preserves every frame pixel and
+duplicates edge texels. Baker, cache validation, character publication and Preload
+share this metadata. Source body pivots/timing/scale remain unchanged. Do not apply
+a native BMB geometry multiplier to converted artwork that was already baked.
+Use `node tools/repack_effect_sampling.mjs --recipe ... --python ...` only for an
+otherwise unchanged, hash-verified published sheet; the source is backed up in
+ignored `tools/data/effect-sampling/`. It is not a way to reapprove other edits.
+Fresh `export_effect.mjs` bakes use the same packer (`--python` or FFROGUE_PYTHON).
+Future Windows checkouts pin effect recipe JSON to LF to preserve byte hashes.
+
+The shared runtime also accepts the explicit `native-particle-basic-v1` manifest
+profile. Compile it with `tools/prepare_particle_program.mjs` using pinned native
+controls, supported scalar-alpha keys and a verified original PNG. This is not
+automatic BMB/character publication. The current `native_particle_control` is a
+controlled assembly, not a character skill or reward. Fixed60Hz, neutral parent,
+finite no-overwrite single-cycle generation, one ConstX/VelocityX module and
+quarter-grid intervals are required; unknown fields fail rather than fall back.
+Native phases, RNG, births and live geometry run in the product's shared scene
+path; no sheet baking is used for this profile. Existing sheets and Motion-1
+remain supported. Full source/parent/material/pixel admission is still required
+before binding an original skill to this profile. Current evidence and commands:
+[reconstruction map](research/SKILL_RECONSTRUCTION_MAP.md#current-autonomous-checkpoint-original-clock-and-bounded-particle-program-integrated).
 
 ## Source of truth and file ownership
 
@@ -125,7 +853,7 @@ offline-only `execution` field:
 
 | Execution | Current meaning |
 | --- | --- |
-| `timeline-single-hit` | Reviewed single-target melee dash, one damage frame, one target-centered baked effect. Source attack frames and effect association are checked. |
+| `timeline-single-hit` | Reviewed single-target melee dash, one damage frame; either a legacy single effect or strict source-composed visual tracks. Source attack frames and effect associations are checked. |
 | `timeline-area` | Reviewed stationary area presentation: prepared effects at target/group anchors and one combined total-damage event. Source hit metadata remains separate; a review note must explain the adaptation. |
 | `legacy` | Explicitly retain an existing MVP command with the previous gameplay executor. It does not claim complete original mechanics, multi-hit timing or VFX. |
 
@@ -334,10 +1062,47 @@ it. Native member placement, some transform conventions and unsupported emitters
 still need work; a successful original-source preview does not make a complete
 replacement publication pipeline available.
 
-Reviewed single-hit skills reference `visualEffect: { key, startFrame }`. The
-importer verifies the original effect ID, file and target anchor. On publication
+Existing single-hit recipes may reference `visualEffect: { key, startFrame }`.
+For admitted ordinary motion-1 abilities, prefer the offline source-derived form:
+
+```json
+"sourcePresentation": {
+  "composition": "unit-attack",
+  "effectKeys": ["attack_slash_white", "brave_slash"],
+  "impactFrame": 6
+}
+```
+
+This example belongs to Cloud's reviewed recipe; other forms bind their own exact
+unit effects, never Cloud's by default. The compiler combines `unit.effectFrames`
+with skill groups shifted by the latest unit-group start, then adds each member's
+delay. It derives start/anchor/layer from source and duration from the reviewed
+60Hz sheet budgets. `impactFrame` remains a reviewed roguelike damage event.
+Complete exact effectId/masterFile bindings are required. Ordinary unambiguous
+groups with known anchors/layers, zero extra flags and member tail
+`99999999:1:2:2:0:0` are the current admitted profile. Other motions, branches,
+transforms, missing dependencies/bindings or malformed times block publication.
+No original graph completeness or pixel fidelity follows from this profile.
+
+`sourcePresentation` and `execution` are stripped from runtime skill data. The
+existing `presentation` field carries compiled visual tracks; `character.json`
+records raw timelines, offset and rule under `provenance.visualCompositions`.
+Do not also supply `visualEffect` or a manual `presentation`. A `reviewNote` and
+`timeline-single-hit` execution are required. Product melee and area use the same
+visual scheduler; single-target anchors include parent-container world transforms.
+The action holds through the longest visual track before its return movement.
+This does not change the existing reviewed area recipes or gameplay balancing.
+
+The importer verifies original effect IDs, files and anchors. On publication
 it verifies source, resource, recipe and sheet hashes and sheet dimensions. Changes
 to any input require rebaking; they must not silently reuse an old sheet.
+
+Regression commands: `node --test tools/test_character_pipeline.mjs
+tools/test_combat_regressions.mjs` (one command), then `npm run build`. With the
+normal Vite server running, open `/tools/test-source-presentation.html` and click
+Run integration check for actual product Boot/Preload/BattleScene playback,
+old/new Brave comparison and Blade/Satellite controls. Download its receipt and
+proof images; no original pixel comparison is performed by this product test.
 
 ## 5. Publish prepared content
 

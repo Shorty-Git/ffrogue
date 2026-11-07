@@ -124,3 +124,13 @@ comparisons. The probe checks the audit's player and plan hashes. Both output fi
 are ignored research receipts. Repeating both commands produced identical bytes.
 No renderer change, browser A/B, original-video comparison or game build was
 performed for this audit; those are not implied by the successful source checks.
+
+
+## Successor: current coverage classification
+
+The [2026-10-24 coverage inventory](renderer-coverage-priorities.md) supersedes this
+note's original implementation ordering and historical omission descriptions.
+It executes current runtime predicates, preserves implemented rate-zero/birth
+subsets, and distinguishes missing inputs from withheld or unknown behavior.
+The verified model-byte observations above remain evidence; they are not proof
+that the renderer is still missing every feature described by this older note.

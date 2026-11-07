@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "key": "cloud_ac",
+  "spriteUnitId": "207001605",
+  "game": "FFVII",
+  "battle": {
+    "maxHp": 3200,
+    "maxMp": 100,
+    "heroName": "CLOUD AC",
+    "heroRole": "SWORDMASTER",
+    "attackType": "melee",
+    "targetOffsetX": 90,
+    "attackAnim": "atk",
+    "hitFrameIndex": 2
+  },
+  "scale": 2.5,
+  "reviewNote": "Reviewed FFVII AC reserve; complete original visuals through the shared experimental Source profile. Original command and reviewed roguelike balance remain separate.",
+  "skills": [
+    {
+      "id": "braver",
+      "ffbeId": 233930,
+      "name": "Braver (FFVII: AC)",
+      "rarity": 5,
+      "level": 13,
+      "type": "ABILITY",
+      "mpCost": 36,
+      "scope": "single_enemy",
+      "damageMultiplier": 4.5,
+      "damageType": "physical",
+      "hitCount": 1,
+      "attackFrames": [
+        6
+      ],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Physical damage (4.5x) and physical vulnerability (+20%) for 3 enemy phases.",
+      "execution": "prepared-source",
+      "requiresSourceScene": true,
+      "scenePresentation": "cloud_ac_braver",
+      "damageEvents": [
+        {
+          "frame": 6,
+          "weight": 1
+        }
+      ],
+      "supportEvents": [
+        {
+          "frame": 6,
+          "effects": [
+            {
+              "kind": "physical-weakness",
+              "multiplier": 1.2,
+              "phases": 3,
+              "chance": 1
+            }
+          ]
+        }
+      ],
+      "reviewNote": "Original damage and DEF-break records retained. Reviewed 4.5x physical hit followed by +20% incoming physical damage for 3 enemy phases, not the original DEF formula. Motion 2 has no unit-effect prefix; original F6 hit retained. Complete two visual members and all sound-only groups.",
+      "importStatus": "imported",
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "step",
+        "travelTiming": "move-cycle",
+        "readiness": "none",
+        "body": {
+          "mode": "rest"
+        },
+        "review": {
+          "basis": "user-original-observation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 1,
+          "note": "Daniel compared Memorial Edition directly: short forward movement, blue target effect, one hit and break, no standard attack clip. Distance is a reviewed half-idle-height adaptation; travel uses the actual move cycle, not measured native duration. Exact native step extent/timing unmeasured."
+        },
+        "stepDistance": "half-idle-height"
+      }
+    }
+  ],
+  "portraitSource": "unit_icons/unit_icon_207001605.png"
+}

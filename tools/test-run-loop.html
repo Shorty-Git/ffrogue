@@ -1,0 +1,63 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><base href="/"><title>Run foundation battle review</title>
+<style>body{margin:0;background:#030d24}#game-container{width:100vw;height:100vh}#qa{position:fixed;z-index:9000;right:8px;bottom:8px;width:210px;background:#041023ed;border:1px solid #799cbb;color:white;font:11px monospace;padding:10px}#qa button{padding:8px;margin:3px}#qa-report{white-space:pre-wrap;max-height:150px;overflow:auto}</style>
+<div id="game-container"></div><aside id="qa"><button id="review" disabled>Review complete prototype</button><button id="advance" hidden>Continue review</button><pre id="qa-report">Loading...</pre></aside>
+<script type="module">
+import {game}from '/src/main.ts';
+import {createRun,rollParty,SAVE_KEY,RunStore}from '/src/run/runState.mjs';
+const out=document.querySelector('#qa-report'),button=document.querySelector('#review'),advance=document.querySelector('#advance');
+const delay=ms=>new Promise(r=>setTimeout(r,ms)),check=(x,m)=>{if(!x)throw Error(m);};
+async function until(test,label,timeout=120000){const end=performance.now()+timeout;while(!test()){if(performance.now()>end)throw Error('Timeout: '+label);await delay(30);}}
+await until(()=>game.registry.get('runFlow'),'run catalog');out.textContent='Ready: actual production UI and BattleScene.';button.disabled=false;
+const click=action=>{const b=document.querySelector(`#run-ui [data-action="${action}"]`);check(b&&!b.disabled,'Missing enabled action '+action);b.click();};
+const capture=()=>new Promise(r=>game.events.once('postrender',()=>r(game.canvas.toDataURL('image/png'))));
+button.onclick=async()=>{button.disabled=true;const backup=localStorage.getItem(SAVE_KEY),results=[];let flow=game.registry.get('runFlow');
+ try{
+  const origin=new URLSearchParams(location.search).get('captureOrigin');check(/^http:\/\/127\.0\.0\.1:\d+$/.test(origin??''),'Loopback receipt sink required');
+  const freshness=await(await fetch(origin+'/product-freshness',{cache:'no-store'})).json();check(freshness.passed&&freshness.results.length===31&&freshness.origin===location.origin,'Stale game server');
+  let seed;for(let i=0;i<200;i++){const candidate='qa-expedition-'+i;let r=createRun(candidate,flow.catalog,undefined,flow.rules);for(let draw=0;draw<4;draw++)r=rollParty(r,flow.catalog);if(r.party.findIndex(m=>m.key==='cloud'&&m.rarity<7)>0){seed=candidate;break;}}check(seed,'Cloud evolution fixture seed');
+  flow.menu();document.querySelector('#run-seed').value=seed;click('play');if(document.querySelector('[data-action="accept"]'))click('accept');click('spin');click('lever-skip');
+  const initial=structuredClone(flow.state.party);check(initial.length===3&&flow.state.rerolls===3&&new Set(initial.map(m=>m.canonicalIdentity)).size===3,'Initial canonical reel result');
+  for(let i=0;i<3;i++){click('spin');click('lever-skip');check(flow.state.rerolls===2-i,'Team reroll count');check(new Set(flow.state.party.map(m=>m.canonicalIdentity)).size===3,'Duplicate team identity');}
+  check(document.querySelector('[data-action=spin]').disabled,'Exhausted lever still enabled');
+  const reloaded=new RunStore(localStorage,flow.catalog).load();check(reloaded.rerolls===0&&JSON.stringify(reloaded.party)===JSON.stringify(flow.state.party),'Reload reset results');
+  results.push({kind:'slot-state',seed,party:structuredClone(flow.state.party),remaining:0,teamRerolls:3,reconstructedStoreMatches:true});
+  click('confirm');const identities=flow.state.party.map(m=>m.identity);let sourceActions=0,charged=0,evolutionSeen=false;
+  for(let encounter=0;encounter<4;encounter++){
+   const scene=game.scene.getScene('BattleScene');await until(()=>game.scene.isActive('BattleScene')&&scene.isRunCommandWindow()&&scene.runContext?.state===flow.state,'new encounter');await scene.preparedScenes.ready;
+   check(JSON.stringify(scene.turnOrder.map(h=>flow.catalog[h.unitKey].identity))===JSON.stringify(identities),'Fixed party changed');
+   for(const h of scene.turnOrder){const m=flow.state.party.find(m=>m.key===h.unitKey);check(scene.unitSkills[h.unitKey].length===m.skills.length&&m.skills.length<=3,'Active skill loadout mismatch');if(m.key==='cloud'&&m.form!==flow.catalog.cloud.form){check(h.visualKey===m.form&&h.manifest.unitId===m.unitId,'Evolved sprite was not used');evolutionSeen=true;}}
+   const actions=[],play=scene.playPreparedScene,update=scene.updateStatus;scene.playPreparedScene=function(...args){sourceActions++;return play.apply(this,args);};scene.updateStatus=function(message){if(message.includes('hits the party next!'))charged++;return update.call(this,message);};
+   const victoryStates=[];let previousStage='idle';const trace=()=>{const stage=scene.runVictoryStage;if(stage!==previousStage){previousStage=stage;victoryStates.push({stage,time:scene.time.now,sourceActive:scene.preparedScenes.snapshot().active,body:scene.turnOrder.map(h=>({key:h.unitKey,clip:h.currentAnimKey})),savedPhase:flow.state.phase});}};scene.events.on('postupdate',trace);
+   const entry=structuredClone(flow.state.party);const frame=await capture();results.push({kind:'run-battle-entry',encounter,party:entry,capture:frame});
+   for(let count=0;flow.state.phase==='battle'&&count<100;count++){
+    await until(()=>scene.combatState==='PLAYER_TURN'||flow.state.phase!=='battle','player control');if(flow.state.phase!=='battle')break;
+    const hero=scene.turnOrder.find(h=>!h.isDead&&!h.hasActed);check(hero,'No ready hero');scene.selectHero(hero);scene.openHeroCommands(hero);
+    const source=encounter%2===0?scene.unitSkills[hero.unitKey].find(s=>(s.damageEvents||s.supportEvents?.some(e=>e.effects.some(f=>f.kind==='execute-or-damage')))&&hero.currentMp>=s.mpCost):null;
+    const before=hero.currentMp;if(source){const ix=scene.unitSkills[hero.unitKey].indexOf(source);scene.changeSkillPage(Math.floor(ix/3));scene.skillButtons[ix%3].bg.emit('pointerdown');}else scene.cmdAttackBtnBg.emit('pointerdown');
+    scene.cmdExecuteBtnBg.emit('pointerdown');await until(()=>hero.hasActed||flow.state.phase!=='battle','committed action');
+    if(source)check(before-hero.currentMp===source.mpCost,'Incorrect Source MP cost');actions.push({unit:hero.unitKey,skill:source?.id??'basic-attack',beforeMp:before,afterMp:hero.currentMp});
+   }
+   await until(()=>flow.state.phase!=='battle','victory settlement');check(flow.state.phase==='rewards','Prototype lost or failed settlement');await until(()=>document.querySelector('#run-ui.victory-overlay[data-phase=rewards]'),'visible victory overlay');check(scene.sys.isActive()&&scene.turnOrder.filter(h=>!h.isDead).every(h=>h.hasVictoryPose&&['win_before','win'].includes(h.currentAnimKey)),'Live victory scene was replaced');check(document.querySelectorAll('.reward-card').length===3,'Three reward cards missing');
+   results.push({kind:'run-battle-complete',encounter,actions,victoryStates,arenaRemainsActive:scene.sys.isActive(),overlay:'centered-live-arena',party:structuredClone(flow.state.party),offers:structuredClone(flow.state.offers)});
+   if(encounter===0||new URLSearchParams(location.search).get('inspect')==='all'){out.textContent=`PAUSED: encounter ${encounter+1}, ${encounter%2?'boss':'normal'} victory and three reward cards. Capture UI, then Continue review.`;advance.hidden=false;await new Promise(r=>advance.onclick=()=>{advance.hidden=true;r();});}
+   scene.events.off('postupdate',trace);
+   const offers=flow.state.offers;let ix=encounter===1?offers.findIndex(o=>o.type==='evolve'):-1;
+   if(ix<0)ix=offers.findIndex(o=>o.type==='stat'&&o.stat==='attack');if(ix<0)ix=offers.findIndex(o=>o.type==='skill');if(ix<0)ix=0;
+   const reward=structuredClone(offers[ix]),before=structuredClone(flow.state.party);click('reward-'+ix);
+   if(document.querySelector('[data-action="replace-0"]'))click('replace-0');
+   check(JSON.stringify(before)!==JSON.stringify(flow.state.party),'Reward did not change the party');
+   check(flow.state.encounter===encounter+1,'Reward did not advance once');results.push({kind:'run-reward-applied',encounter,reward,before,after:structuredClone(flow.state.party)});
+  }
+  check(flow.state.phase==='won','Run did not finish');check(sourceActions>0&&evolutionSeen,'Missing Source/evolution coverage; boss patterns have a separate targeted review');
+  await until(()=>document.querySelector('[data-action="new"]'),'finished result after final awakening');
+  results.push({kind:'prototype-victory',sourceActions,chargedBossMessages:charged,evolutionSeen,state:structuredClone(flow.state)});
+  // Test clean restart and the real retreat confirmation path, not a simulated natural wipe.
+  click('new');check(flow.state===null,'New run retained previous upgrades');document.querySelector('#run-seed').value='qa-retreat';click('play');click('spin');click('lever-skip');click('confirm');
+  const battle=game.scene.getScene('BattleScene');await until(()=>battle.isRunCommandWindow()&&battle.runContext?.state===flow.state,'retreat battle');click('retreat');click('cancel');check(flow.state.phase==='battle','Cancelled retreat ended run');click('retreat');click('accept');check(flow.state.phase==='lost','Retreat did not end run');
+  results.push({kind:'prototype-defeat',route:'Confirmed retreat; not a natural full-party wipe',state:structuredClone(flow.state)});
+  const response=await fetch(origin+'/product-review',{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({passed:true,kind:'roguelike-prototype-review',freshness,results})});check(response.ok,'Receipt save');
+  out.textContent='PASS '+JSON.stringify({seed,sourceActions,evolutionSeen,chargedBossMessages:charged,encounters:4,defeat:'retreat',results:results.length},null,2);
+ }catch(error){out.textContent='FAIL '+error.stack;console.error(error);}
+ finally{if(backup===null)localStorage.removeItem(SAVE_KEY);else localStorage.setItem(SAVE_KEY,backup);button.disabled=false;}
+};
+</script></html>

@@ -1,0 +1,32 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><base href="/"><title>Source victory presentation review</title>
+<style>body{margin:0;background:#030d24}#game-container{width:100vw;height:100vh}#qa{position:fixed;z-index:9000;right:8px;top:52px;background:#041023ee;color:white;padding:8px;font:11px monospace}button{padding:9px}pre{white-space:pre-wrap;max-width:300px}</style>
+<div id="game-container"></div><aside id="qa"><button id="review" disabled>Review early Source K.O. and victory</button><pre id="report">Loading...</pre></aside>
+<script type="module">
+import {game} from '/src/main.ts';
+import {createRun,rollParty,SAVE_KEY} from '/src/run/runState.mjs';
+const report=document.querySelector('#report'),button=document.querySelector('#review'),delay=ms=>new Promise(r=>setTimeout(r,ms));
+const check=(v,m)=>{if(!v)throw Error(m);};async function until(test,label){const end=performance.now()+90000;while(!test()){if(performance.now()>end)throw Error('Timeout '+label);await delay(20);}}
+const click=action=>{const b=document.querySelector(`[data-action="${action}"]`);check(b&&!b.disabled,'Missing '+action);b.click();};
+await until(()=>game.registry.get('runFlow'),'flow');const flow=game.registry.get('runFlow');button.disabled=false;
+button.onclick=async()=>{button.disabled=true;const backup=localStorage.getItem(SAVE_KEY);try{
+ let seed;for(let i=0;i<2000;i++){const s='source-victory-'+i,r=rollParty(createRun(s,flow.catalog),flow.catalog);if(r.party.some(m=>m.key==='cloud'&&m.skills[0].id==='blade_beam')){seed=s;break;}}check(seed,'Source seed');
+ document.querySelector('#run-seed').value=seed;click('play');if(document.querySelector('[data-action=accept]'))click('accept');click('spin');click('lever-skip');click('confirm');
+ let scene;await until(()=>{scene=game.scene.getScene('BattleScene');return scene.isRunCommandWindow();},'battle');await scene.preparedScenes.ready;
+ const hero=scene.turnOrder.find(h=>h.unitKey==='cloud'),target=scene.enemies[0],skill=scene.unitSkills.cloud.find(s=>s.id==='blade_beam');
+ target.currentHp=1;const stages=[],notices=[],noticeFrames=[];let last='',hitTime=0,sourceAtHit=false;
+ const apply=target.applyDamage;target.applyDamage=function(...args){hitTime=scene.time.now;sourceAtHit=!!scene.preparedScenes.snapshot().active;return apply.apply(this,args);};
+ const observe=()=>{if(scene.runVictoryStage===last)return;last=scene.runVictoryStage;stages.push({stage:last,time:scene.time.now,sourceActive:scene.preparedScenes.snapshot().active,poses:scene.turnOrder.map(h=>({key:h.visualKey,clip:h.currentAnimKey,ready:h.hasVictoryPose}))});};
+ scene.events.on('postupdate',observe);scene.events.on('combat-action',n=>{notices.push(n);noticeFrames.push(new Promise(resolve=>scene.time.delayedCall(150,()=>game.events.once('postrender',()=>resolve(game.canvas.toDataURL('image/png'))))));});
+ scene.selectHero(hero);scene.openHeroCommands(hero);const ix=scene.unitSkills.cloud.indexOf(skill);scene.changeSkillPage(Math.floor(ix/3));scene.skillButtons[ix%3].bg.emit('pointerdown');const mp=hero.currentMp;scene.cmdExecuteBtnBg.emit('pointerdown');
+ await until(()=>document.querySelector('.victory-overlay[data-phase=rewards]'),'rewards');observe();scene.events.off('postupdate',observe);
+ const start=stages.find(s=>s.stage==='celebrating'),end=stages.find(s=>s.stage==='rewards'),gates=scene.cache.json.get('victory_pose_gates');
+ check(sourceAtHit&&hitTime&&start&&end,'Missing real Source hit/tail/victory stages');check(!start.sourceActive&&!end.sourceActive,'Victory cut Source effects');
+ check(hero.currentMp===mp-skill.mpCost&&notices.length===1&&notices[0].abilityId==='blade_beam','MP/action notice mismatch');
+ const expected=Math.max(...scene.turnOrder.filter(h=>!h.isDead).map(h=>gates.units[h.visualKey].readyMs));check(end.time-start.time<=expected+250&&end.time-start.time>=expected-100,'Premature or extra victory wait');
+ check(scene.turnOrder.filter(h=>!h.isDead).every(h=>h.hasVictoryPose),'Premature pose release');
+ const capture=await new Promise(r=>game.events.once('postrender',()=>r(game.canvas.toDataURL('image/png'))));
+ const result={passed:true,kind:'early-source-ko-victory',conditions:'Real Blade Beam; one enemy HP set to1 before action solely to force early K.O.; normal source/actor/victory execution',seed,hitTime,sourceActiveAtHit:sourceAtHit,stages,poseWaitMs:end.time-start.time,expectedPoseMs:expected,notices,actionCapture:(await Promise.all(noticeFrames))[0],capture};
+ const sink=new URLSearchParams(location.search).get('captureOrigin');const response=await fetch(sink+'/product-review',{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({passed:true,results:[result]})});check(response.ok,'Receipt');report.textContent='PASS early Source K.O., complete VFX, exact pose gate and one action notice.';
+ }catch(e){report.textContent='FAIL '+e.stack;console.error(e);}finally{if(backup===null)localStorage.removeItem(SAVE_KEY);else localStorage.setItem(SAVE_KEY,backup);button.disabled=false;}
+};
+</script></html>

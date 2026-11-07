@@ -41,7 +41,7 @@ def attach_appearance(result, project=None):
             raise ValueError('Unknown color mode at node ' + str(i))
         if node['typeId'] == 2:
             color['domain'] = 'corners'
-            color['supported'] = bool(node.get('quadColors'))
+            color['supported'] = bool(node.get('quadColors') or node.get('flatQuadColor'))
             if not color['supported']:
                 issues.append('quad corner color evaluation unavailable; legacy preview tint retained')
         else:

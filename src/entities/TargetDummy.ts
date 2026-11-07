@@ -1,13 +1,36 @@
+import type { EnemyStatusEffect } from '../types/skills';
+import { statusDamageMultiplier } from '../effects/enemyStatus.mjs';
 import Phaser from 'phaser';
 import { UnitManifest } from '../types/manifest';
 import { BATTLE_ART_SCALE } from '../ui/battleLayout';
+import type {EnemyDefinition} from '../run/stageContent.mjs';
 
 const SPRITE_SCALE = 2.5 * BATTLE_ART_SCALE;
+const SPAWN_SCALE={start:.8,target:1.06,backOvershoot:1.70158};
+// Phaser Back.Out's derivative reaches its maximum at -2s/(3(s+1)).
+// Include its actual overshoot above the tween target, not an arbitrary safety scale.
+const s=SPAWN_SCALE.backOvershoot;
+export const ENEMY_SPAWN_MAX_SCALE=SPAWN_SCALE.start+(SPAWN_SCALE.target-SPAWN_SCALE.start)*(1+4*s*s*s/(27*(s+1)*(s+1)));
+
+/** Preserve the formation anchor/pivots; fit every supported body clip inside the arena. */
+export function fitPreparedEnemyScale(manifest:UnitManifest,desired:number,x:number,y:number,bounds:{left:number;right:number;top:number;bottom:number}):number {
+  const clips=Object.values(manifest.animations);
+  const extents=[Math.max(...clips.map(a=>a.pivotX*a.frameWidth)),Math.max(...clips.map(a=>(1-a.pivotX)*a.frameWidth)),
+    Math.max(...clips.map(a=>a.pivotY*a.frameHeight)),Math.max(...clips.map(a=>(1-a.pivotY)*a.frameHeight))];
+  const available=[x-bounds.left,bounds.right-x,y-bounds.top,bounds.bottom-y];
+  if(desired<=0||!Number.isFinite(desired)||available.some(v=>v<=0))throw Error('Invalid enemy placement');
+  // Include the existing materialization bounce, not only the settled body.
+  return Math.min(desired,...extents.map((e,i)=>e>0?available[i]/(e*ENEMY_SPAWN_MAX_SCALE):desired));
+}
 
 export interface TargetDummyConfig {
   maxHp?: number;
   nameTag?: string;
   isBoss?: boolean;
+  assetKey?: string;
+  scale?: number;
+  attack?: EnemyDefinition['attack'];
+  bounds?: {left:number;right:number;top:number;bottom:number};
 }
 
 export class TargetDummy extends Phaser.GameObjects.Container {
@@ -20,9 +43,14 @@ export class TargetDummy extends Phaser.GameObjects.Container {
   public get homeY(): number {
     return this.baseY;
   }
+  public statusEffects: EnemyStatusEffect[] = [];
   public nameTag: string;
   public isBoss: boolean;
   public readonly manifest: UnitManifest;
+  public readonly assetKey: string;
+  public actionCursor = 0;
+  private readonly resourceScale: number;
+  private readonly attackProfile?: EnemyDefinition['attack'];
 
   public sprite!: Phaser.GameObjects.Sprite;
   private defeatStarted = false;
@@ -39,6 +67,9 @@ export class TargetDummy extends Phaser.GameObjects.Container {
     this.baseX = x;
     this.baseY = y;
     this.manifest = manifest;
+    this.assetKey = config?.assetKey ?? 'training_dummy';
+    this.resourceScale = config?.bounds?fitPreparedEnemyScale(manifest,config.scale??SPRITE_SCALE,x,y,config.bounds):config?.scale??SPRITE_SCALE;
+    this.attackProfile = config?.attack;
     this.maxHp = config?.maxHp ?? 5000;
     this.currentHp = this.maxHp;
     this.nameTag = config?.nameTag ?? 'DIRE RAT';
@@ -110,7 +141,8 @@ export class TargetDummy extends Phaser.GameObjects.Container {
     if (!this.manifest || !this.manifest.animations) return;
 
     for (const [animName, animMeta] of Object.entries(this.manifest.animations)) {
-      const phaserKey = `training_dummy_${animName}`;
+      const phaserKey = `${this.assetKey}_${animName}`;
+      if(!this.scene.textures.exists(phaserKey))continue;
       if (!this.scene.anims.exists(phaserKey)) {
         this.scene.anims.create({
           key: phaserKey,
@@ -128,8 +160,8 @@ export class TargetDummy extends Phaser.GameObjects.Container {
   private createDummySprite(): void {
     // Real authentic FFBE Training Dummy Sprite
     const idleMeta = this.manifest.animations['idle'];
-    this.sprite = this.scene.add.sprite(0, 0, 'training_dummy_idle', 0);
-    this.sprite.setScale(SPRITE_SCALE);
+    this.sprite = this.scene.add.sprite(0, 0, `${this.assetKey}_idle`, 0);
+    this.sprite.setScale(this.resourceScale);
 
     if (idleMeta) {
       this.sprite.setOrigin(idleMeta.pivotX, idleMeta.pivotY);
@@ -137,8 +169,8 @@ export class TargetDummy extends Phaser.GameObjects.Container {
       this.sprite.setOrigin(0.5, 0.76);
     }
 
-    if (this.scene.anims.exists('training_dummy_idle')) {
-      this.sprite.play('training_dummy_idle');
+    if (this.scene.anims.exists(`${this.assetKey}_idle`)) {
+      this.sprite.play(`${this.assetKey}_idle`);
     }
 
     this.add(this.sprite);
@@ -173,9 +205,10 @@ export class TargetDummy extends Phaser.GameObjects.Container {
   /**
    * Applies damage and displays its number; quiet presentations omit impact motion and tint.
    */
-  public applyDamage(damage: number, isCritical = false, damageType: 'physical' | 'holy' = 'physical', quiet = false): void {
+  public applyDamage(damage: number, isCritical = false, damageType: 'physical' | 'holy' | 'unmitigated' = 'physical', quiet = false): void {
     if (this.currentHp <= 0) return;
 
+    damage = Math.round(damage * statusDamageMultiplier(this.statusEffects, damageType));
     this.currentHp = Math.max(0, this.currentHp - damage);
 
     if (!quiet) {
@@ -201,7 +234,7 @@ export class TargetDummy extends Phaser.GameObjects.Container {
 
   }
 
-  private spawnDamagePopup(damage: number, isCritical: boolean, damageType: 'physical' | 'holy'): void {
+  private spawnDamagePopup(damage: number, isCritical: boolean, damageType: 'physical' | 'holy' | 'unmitigated'): void {
     const startX = this.x + Phaser.Math.Between(-14, 14);
     const startY = this.y - 70;
 
@@ -278,6 +311,11 @@ export class TargetDummy extends Phaser.GameObjects.Container {
       return;
     }
 
+    if (this.attackProfile) {
+      this.executePreparedAttack(targetX, targetY, onImpact, onComplete);
+      return;
+    }
+
     this.setDepthBoost(true);
     const attackX = targetX - 85 * BATTLE_ART_SCALE;
     const attackY = targetY;
@@ -331,6 +369,27 @@ export class TargetDummy extends Phaser.GameObjects.Container {
     });
   }
 
+  /** Reviewed FFRogue attack timing over a real prepared body, not original AI/VFX. */
+  private executePreparedAttack(targetX:number,targetY:number,onImpact:()=>void,onComplete:()=>void):void {
+    const profile=this.attackProfile!,meta=this.manifest.animations[profile.clip];
+    if(!meta||!meta.frames[profile.impactFrame])throw Error('Unsupported prepared enemy attack');
+    const play=(clip:string)=>{const a=this.manifest.animations[clip];this.sprite.setOrigin(a.pivotX,a.pivotY);this.sprite.play(`${this.assetKey}_${clip}`);};
+    const finish=()=>{if(this.currentHp>0)play('idle');this.setDepthBoost(false);onComplete();};
+    const strike=()=>{
+      play(profile.clip);
+      const impact=meta.frames.slice(0,profile.impactFrame).reduce((n,f)=>n+f.durationMs,0);
+      const duration=meta.frames.reduce((n,f)=>n+f.durationMs,0);
+      this.scene.time.delayedCall(impact,()=>{if(this.currentHp>0)onImpact();});
+      this.scene.time.delayedCall(duration,()=>{
+        if(profile.movement==='stationary'){finish();return;}
+        this.scene.tweens.add({targets:this,x:this.baseX,y:this.baseY,duration:360,ease:'Cubic.easeInOut',onComplete:finish});
+      });
+    };
+    this.setDepthBoost(true);
+    if(profile.movement==='stationary'){strike();return;}
+    this.scene.tweens.add({targets:this,x:targetX-85*BATTLE_ART_SCALE,y:targetY,duration:320,ease:'Cubic.easeInOut',onComplete:strike});
+  }
+
   /**
    * Smooth defeat staging: red flash and alpha fadeout of monster sprite.
    */
@@ -351,6 +410,7 @@ export class TargetDummy extends Phaser.GameObjects.Container {
       this.sprite.setTint(0xf87171);
 
       // 2. Alpha fadeout over 650ms
+      this.scene.events.emit('enemy-dissolve',this);
       this.scene.tweens.add({
         targets: this.sprite,
         alpha: 0,
@@ -378,6 +438,8 @@ export class TargetDummy extends Phaser.GameObjects.Container {
       this.setNameTag(nameTag);
     }
     this.defeatStarted = false;
+    this.actionCursor = 0;
+    this.statusEffects = [];
     this.currentHp = this.maxHp;
 
     // Reset base properties & re-enable 150x205 hitbox
@@ -387,11 +449,12 @@ export class TargetDummy extends Phaser.GameObjects.Container {
 
     // Initial state: transparent and scaled down
     this.sprite.setAlpha(0);
-    this.sprite.setScale(SPRITE_SCALE * 0.8);
+    this.sprite.setScale(this.resourceScale * SPAWN_SCALE.start);
     this.sprite.clearTint();
 
-    if (this.scene.anims.exists('training_dummy_idle')) {
-      this.sprite.play('training_dummy_idle');
+    if (this.scene.anims.exists(`${this.assetKey}_idle`)) {
+      const idle=this.manifest.animations.idle;this.sprite.setOrigin(idle.pivotX,idle.pivotY);
+      this.sprite.play(`${this.assetKey}_idle`);
     }
 
     // 1. Alpha fade-in (300ms)
@@ -405,16 +468,17 @@ export class TargetDummy extends Phaser.GameObjects.Container {
     // 2. Scale bounce relative to the viewport's sprite scale.
     this.scene.tweens.add({
       targets: this.sprite,
-      scaleX: SPRITE_SCALE * 1.06,
-      scaleY: SPRITE_SCALE * 1.06,
+      scaleX: this.resourceScale * SPAWN_SCALE.target,
+      scaleY: this.resourceScale * SPAWN_SCALE.target,
       duration: 320,
       ease: 'Back.easeOut',
+      easeParams: [SPAWN_SCALE.backOvershoot],
       onComplete: () => {
         // Settle at the shared art scale.
         this.scene.tweens.add({
           targets: this.sprite,
-          scaleX: SPRITE_SCALE,
-          scaleY: SPRITE_SCALE,
+          scaleX: this.resourceScale,
+          scaleY: this.resourceScale,
           duration: 120,
           ease: 'Cubic.easeInOut',
         });
@@ -442,16 +506,19 @@ export class TargetDummy extends Phaser.GameObjects.Container {
       this.setNameTag(nameTag);
     }
     this.defeatStarted = false;
+    this.actionCursor = 0;
+    this.statusEffects = [];
     this.currentHp = this.maxHp;
     this.setVisible(true);
     this.setupInteractivity();
     this.sprite.setAlpha(1);
     this.sprite.clearTint();
-    this.sprite.setScale(SPRITE_SCALE);
+    this.sprite.setScale(this.resourceScale);
     this.setPosition(this.baseX, this.baseY);
 
-    if (this.scene.anims.exists('training_dummy_idle')) {
-      this.sprite.play('training_dummy_idle');
+    if (this.scene.anims.exists(`${this.assetKey}_idle`)) {
+      const idle=this.manifest.animations.idle;this.sprite.setOrigin(idle.pivotX,idle.pivotY);
+      this.sprite.play(`${this.assetKey}_idle`);
     }
   }
 
@@ -460,6 +527,7 @@ export class TargetDummy extends Phaser.GameObjects.Container {
    */
   public healFull(): void {
     this.defeatStarted = false;
+    this.statusEffects = [];
     this.currentHp = this.maxHp;
     // Green healing text popup
     const healText = this.scene.add.text(this.baseX, this.baseY - 75, '+5,000 HEAL', {

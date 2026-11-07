@@ -1,0 +1,11 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Effect host compositor checks</title>
+<style>body{background:#15201e;color:#eee;font:16px system-ui;padding:24px}canvas{width:256px;height:256px;image-rendering:pixelated;border:1px solid #aaa}pre{white-space:pre-wrap}</style>
+<h1>Effect host compositor — GPU validation</h1>
+<p>Coordinate and clipping fixtures. This does not replay an original battle.</p>
+<pre id="result">Running…</pre>
+<script src="/three.js"></script><script type="module">
+import {verifyEffectHostCompositor} from '/player.mjs';
+try{const cfg=await(await fetch('/config.json')).json();const checks=verifyEffectHostCompositor(THREE,cfg.effectHostContext);document.querySelector('#result').textContent=JSON.stringify({passed:true,checks},null,2);
+await fetch('/host-review-result',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({passed:true,checks})});
+}catch(error){document.querySelector('#result').textContent=String(error);await fetch('/host-review-result',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({passed:false,error:String(error)})});throw error;}
+</script></html>

@@ -1,0 +1,131 @@
+{
+  "unitId": "207001605",
+  "unitName": "CLOUD AC",
+  "game": "FFVII",
+  "skills": [
+    {
+      "id": "braver",
+      "ffbeId": 233930,
+      "name": "Braver (FFVII: AC)",
+      "rarity": 5,
+      "level": 13,
+      "type": "ABILITY",
+      "mpCost": 36,
+      "scope": "single_enemy",
+      "damageMultiplier": 4.5,
+      "damageType": "physical",
+      "hitCount": 1,
+      "attackFrames": [
+        6
+      ],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Physical damage (4.5x) and physical vulnerability (+20%) for 3 enemy phases.",
+      "requiresSourceScene": true,
+      "scenePresentation": "cloud_ac_braver",
+      "damageEvents": [
+        {
+          "frame": 6,
+          "weight": 1
+        }
+      ],
+      "supportEvents": [
+        {
+          "frame": 6,
+          "effects": [
+            {
+              "kind": "physical-weakness",
+              "multiplier": 1.2,
+              "phases": 3,
+              "chance": 1
+            }
+          ]
+        }
+      ],
+      "reviewNote": "Original damage and DEF-break records retained. Reviewed 4.5x physical hit followed by +20% incoming physical damage for 3 enemy phases, not the original DEF formula. Motion 2 has no unit-effect prefix; original F6 hit retained. Complete two visual members and all sound-only groups.",
+      "importStatus": "imported",
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "step",
+        "travelTiming": "move-cycle",
+        "readiness": "none",
+        "body": {
+          "mode": "rest"
+        },
+        "review": {
+          "basis": "user-original-observation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 1,
+          "note": "Daniel compared Memorial Edition directly: short forward movement, blue target effect, one hit and break, no standard attack clip. Distance is a reviewed half-idle-height adaptation; travel uses the actual move cycle, not measured native duration. Exact native step extent/timing unmeasured."
+        },
+        "stepDistance": "half-idle-height"
+      },
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 233930,
+        "database": {
+          "path": "assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 233930,
+          "name": "Braver (FFVII: AC)",
+          "rarity": 7,
+          "dispOrder": 7983,
+          "cost": 36,
+          "6p90IFnC": null,
+          "target": "1@1",
+          "targetRange": "1@1",
+          "oL6zdpD0": 3,
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 1,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 1,
+          "processId": "1@24",
+          "PI18xnkD": "0@0",
+          "processParam": "0,0,0,0,0,0,450,0@0,-60,0,0,5,1",
+          "H4zD2IQ5": 0,
+          "motionType": 2,
+          "effectFrames": "4:5008010:1:1:0&4:7000970:1:1:0&4:5000340:1:1:0",
+          "attackFrames": "6:100:2:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000039,
+          "equipCondition": null,
+          "2QoE3PtB": 0,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": "11",
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Original damage and DEF-break records retained. Reviewed 4.5x physical hit followed by +20% incoming physical damage for 3 enemy phases, not the original DEF formula. Motion 2 has no unit-effect prefix; original F6 hit retained. Complete two visual members and all sound-only groups.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    }
+  ]
+}

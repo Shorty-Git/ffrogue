@@ -3,13 +3,29 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
-import { inspectCharacter, inspectEffect, resolveEffects, assertKey, sha256 } from './lib/character-pipeline.mjs';
+import { inspectCharacter, inspectEffect, resolveEffects, assertKey, sha256, composeEffectFrames, refineAuthoringBlockers, loadControlAudit } from './lib/character-pipeline.mjs';
 import { artworkTransform } from './lib/effect-artwork.mjs';
 import { isEffectBakeCurrent, planSkillBatch } from './lib/skill-batch.mjs';
+import { sheetSampling } from './lib/sheetSampling.ts';
+import { convertedReplay } from './lib/prepared-preview-replay.mjs';
 
 const base = path.resolve('tools/data');
 fs.mkdirSync(base, { recursive: true });
 const root = fs.mkdtempSync(path.join(base, 'pipeline-tests-'));
+
+test('sheet sampling stays nearest by default and rejects linear atlases without safe gutters', () => {
+  assert.deepEqual(sheetSampling(), { filter: 'nearest', gutter: 0 });
+  assert.deepEqual(sheetSampling({filter:'linear',gutter:1}), {filter:'linear',gutter:1});
+  for (const sampling of [{filter:'linear',gutter:0},{filter:'other',gutter:1},{filter:'linear',gutter:1.5},
+    {filter:'nearest',gutter:5},{filter:'linear',gutter:1,unknown:true}]) assert.throws(()=>sheetSampling(sampling));
+});
+
+test('preserved converted preview replays exact local resources without master data discovery', () => {
+  const replay=convertedReplay('tools/data/skill-previews/barret/satellite_beam/plan.json');
+  assert.equal(replay.config.sourceId,227874);assert.equal(replay.config.approved,false);
+  assert.ok(replay.allowed.has('/sdk/effekseer.wasm'));assert.ok(replay.identity.planSha256);
+  assert.throws(()=>convertedReplay('public/assets/content.json'),/inside/);
+});
 test.after(() => {
   db.close();
   const resolved = path.resolve(root);
@@ -36,13 +52,29 @@ INSERT INTO magic VALUES(8,'Magic',5,NULL,NULL);
 INSERT INTO effect_group VALUES(10,'Impact','0:11:1:1:2:2:0:0',NULL,NULL);
 INSERT INTO effect VALUES(10,'wrong.bmb',100),(11,'impact.bmb',100);`);
 const tracks = ['idle', 'atk', 'move', 'dead', 'dying', 'win', 'win_before'];
+test('three-field effects use the native target anchor default without rewriting raw input', () => {
+  const group = resolveEffects(db, assets, '2:10:1')[0].groups[0];
+  assert.equal(group.raw, '2:10:1');
+  assert.equal(group.anchor, 'target');
+  assert.equal(resolveEffects(db, assets, '2:10:1:99')[0].groups[0].anchor, 'unknown');
+  assert.equal(resolveEffects(db, assets, '2:10')[0].groups[0].anchor, 'unknown');
+});
 for (const track of tracks) fs.writeFileSync(path.join(dump, 'unit_animated_csv', `unit_${track}_cgs_123.csv`), 'test');
 fs.writeFileSync(path.join(dump, 'unit_animated_csv', 'unit_cgg_123.csv'), 'test');
 fs.writeFileSync(path.join(dump, 'unit_animated', 'unit_anime_123.png'), 'test');
 const recipe = { key: 'test', spriteUnitId: '123', scale: 2.5,
   battle: { heroName: 'TEST', heroRole: 'HERO', attackType: 'melee', attackAnim: 'atk', targetOffsetX: 90, hitFrameIndex: 2, maxHp: 100, maxMp: 20 },
   skills: [{ id: 'strike', ffbeId: 7, type: 'ABILITY', name: 'Strike', desc: 'Test strike', motion: 'atk', mpCost: 18,
-    scope: 'single_enemy', moveType: 'dash', damageMultiplier: 2, hitCount: 1, attackFrames: [6], execution: 'legacy' }] };
+    scope: 'single_enemy', moveType: 'dash', damageMultiplier: 2, hitCount: 1, attackFrames: [6], execution:'not-imported',importStatus:'not-imported',unavailableReason:'Pending Source import' }] };
+
+test('experimental scene bindings reject a different skill identity and invalid publication keys',()=>{
+  const changed=structuredClone(recipe);changed.skills[0].scenePresentation='cloud_brave_slash';
+  let report=inspectCharacter(changed,{assets,dump});
+  assert.equal(report.publishable,false);
+  assert.ok(report.selected[0].issues.some(issue=>issue.includes('scene-presentation-blocked')));
+  changed.skills[0].scenePresentation='../unreviewed';report=inspectCharacter(changed,{assets,dump});
+  assert.ok(report.selected[0].issues.some(issue=>issue.includes('Invalid content key')));
+});
 
 function effectBuffer(reference) {
   const text = Buffer.from(reference + '\0', 'utf16le');
@@ -109,8 +141,8 @@ test('form resolves to series, duplicate unlocks remain and magic is cataloged',
   assert.equal(report.catalog.length, 2);
   assert.equal(report.catalog[0].learned.length, 2);
   assert.equal(report.catalog[1].kind, 'MAGIC');
-  assert.equal(report.selected[0].visualStatus, 'no-runtime-vfx');
-  assert.equal(report.publishable, true); // Explicit legacy opt-in is preserved, not called complete.
+  assert.equal(report.selected[0].visualStatus, 'not-imported');
+  assert.equal(report.publishable, true); // Unavailable metadata is preserved; execution remains blocked.
 });
 
 test('batch never promotes preserved legacy commands to reviewed exports', () => {
@@ -129,7 +161,7 @@ test('unlearned skills and unsupported timeline mechanics block publication', ()
   changed.skills[0].execution = 'timeline-single-hit';
   changed.skills[0].hitCount = 5;
   const report = inspectCharacter(changed, { assets, dump });
-  assert.ok(report.selected[0].issues.includes('unsupported-timeline-execution'));
+  assert.ok(report.selected[0].issues.includes('unavailable-command-must-not-have-an-execution-binding'));
   assert.equal(report.publishable, false);
 });
 test('duplicate keys and missing state animations cannot silently enter an import', () => {
@@ -158,52 +190,6 @@ test('unsupported effect formats remain visible in the catalog without losing sk
   } finally { fs.writeFileSync(effectFile, original); }
 });
 
-test('area presentation validates complete source mapping and preserves multi-hit provenance', () => {
-  const key = `pipeline_area_fixture_${process.pid}`, file = `tools/effects/${key}.json`;
-  const resource = path.join(assets, 'effect_resource/glow.png');
-  fs.writeFileSync(resource, 'test');
-  fs.writeFileSync(file, JSON.stringify({ effectId: 11, masterFile: 'impact.bmb', emitterScale: 1,
-    frameCount: 90, review: { approved: true, reason: 'Synthetic test fixture' } }));
-  db.prepare('UPDATE ability SET attackFrames = ? WHERE abilityId = 7').run('4:50:2:2-8:50:2:2');
-  try {
-    const changed = structuredClone(recipe), skill = changed.skills[0];
-    Object.assign(skill, { execution: 'timeline-area', scope: 'all_enemies', moveType: 'stationary',
-      attackFrames: [4, 8], hitCount: 2, reviewNote: 'Combine source hits for the adapted presentation',
-      presentation: { impactFrame: 30, durationFrames: 96, effects: [{ key, startFrame: 4, anchor: 'target' }] } });
-    assert.equal(inspectCharacter(changed, { assets, dump }).publishable, true);
-    db.prepare('UPDATE ability SET motionType = 8 WHERE abilityId = 7').run();
-    assert.ok(inspectCharacter(changed, { assets, dump }).selected[0].issues.includes('source-motion-needs-review'));
-    skill.motionReview = { sourceCode: 8, prepared: 'atk', reason: 'Explicit adapted test motion' };
-    assert.equal(inspectCharacter(changed, { assets, dump }).publishable, true);
-    skill.presentation.effects[0].startFrame = 5;
-    assert.ok(inspectCharacter(changed, { assets, dump }).selected[0].issues.includes('effect-mapping-mismatch'));
-    skill.presentation.effects[0].startFrame = 4;
-    skill.presentation.durationFrames = 93;
-    assert.ok(inspectCharacter(changed, { assets, dump }).selected[0].issues.includes('invalid-effect-timeline'));
-    skill.presentation.durationFrames = 96;
-    skill.presentation.effects[0].layer = 'back';
-    assert.ok(inspectCharacter(changed, { assets, dump }).selected[0].issues.includes('unsupported-effect-transform'));
-    delete skill.presentation.effects[0].layer;
-    const effectRecipe = JSON.parse(fs.readFileSync(file));
-    effectRecipe.artworkRotationDegrees = 90;
-    fs.writeFileSync(file, JSON.stringify(effectRecipe));
-    assert.ok(inspectCharacter(changed, { assets, dump }).selected[0].issues.includes('effect-artwork-adaptation-needs-review'));
-    effectRecipe.review.presentationAdaptation = 'Clockwise artwork presentation without changing source rotation';
-    fs.writeFileSync(file, JSON.stringify(effectRecipe));
-    assert.equal(inspectCharacter(changed, { assets, dump }).publishable, true);
-    effectRecipe.emitterRotation = [0, 0, 45];
-    fs.writeFileSync(file, JSON.stringify(effectRecipe));
-    assert.ok(inspectCharacter(changed, { assets, dump }).selected[0].issues.includes('unsupported-effect-transform'));
-    skill.presentation.effects = [];
-    assert.equal(inspectCharacter(changed, { assets, dump }).publishable, false);
-  } finally {
-    db.prepare('UPDATE ability SET attackFrames = ? WHERE abilityId = 7').run('6:100:2:2');
-    db.prepare('UPDATE ability SET motionType = 1 WHERE abilityId = 7').run();
-    fs.rmSync(file);
-    fs.rmSync(resource);
-  }
-});
-
 test('clockwise crescent rotation preserves horizontal travel instead of rotating its path', () => {
   const positions = [];
   for (const left of [4, 20]) {
@@ -229,4 +215,27 @@ test('clockwise beam rotation turns a down-left ray left while retaining the tar
   assert.deepEqual([p.x, p.y], [16, 16]);
   assert.throws(() => artworkTransform([], 32, 32, NaN, 'origin'), /Invalid artwork/);
   assert.throws(() => artworkTransform([], 32, 32, 90, 'guessed-pivot'), /Invalid artwork/);
+});
+
+test('shared composition agrees with the captured command and uses the latest unit-group start', () => {
+  assert.equal(composeEffectFrames('2:1000520:1', '4:5008050:1:1:0', 1).effectFrames,
+    '2:1000520:1&6:5008050:1:1:0');
+  assert.deepEqual(composeEffectFrames('2:10:1&9:20:2', '4:30:1', 1),
+    { effectFrames: '2:10:1&9:20:2&13:30:1', skillFrameOffset: 9 });
+  assert.deepEqual(composeEffectFrames(null, '4:30:1', 2), { effectFrames: '4:30:1', skillFrameOffset: 0 });
+  for (const raw of ['4:30', '4:30:1@7:40:1', 'bad', '99999999999999999:30:1'])
+    assert.throws(() => composeEffectFrames('2:10:1', raw, 1));
+});
+
+test('current exact-source comparisons retire stale parser errors without erasing other import gates',()=>{
+ const error='effect.bmb:authoring-comparison:Unverified active source curve channel: Scale_Value_Curve';
+ const others=['effect.bmb:missing-matched-authoring','effect.bmb:unsupported-node-type:7','command:unresolved-process-indexed-effects'];
+ const effects=[{name:'effect.bmb',sha256:'one'}],rows=[{binary:'tools/data/effect.bmb',sha256:'one',projectComparison:{hierarchyMatches:true}}];
+ assert.deepEqual(refineAuthoringBlockers([error,...others],effects,rows),{blockers:others,superseded:[error]});
+ for(const inputs of [[],[{...effects[0],sha256:'different'}],[...effects,{...effects[0],sha256:'two'}]])
+  assert.deepEqual(refineAuthoringBlockers([error,...others],inputs,rows).blockers,[error,...others]);
+ assert.deepEqual(refineAuthoringBlockers([error],effects,[{...rows[0],projectComparison:{}}]).blockers,[error]);
+ const invalid=path.join(root,'stale-controls.json');fs.mkdirSync(root,{recursive:true});
+ fs.writeFileSync(invalid,JSON.stringify({schema:'bmb-source-control-comparison-v1',results:[],differences:[],parserInputs:{}}));
+ assert.throws(()=>loadControlAudit(invalid),/parser evidence is stale/);
 });

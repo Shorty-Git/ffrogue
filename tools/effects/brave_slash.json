@@ -16,6 +16,11 @@
   "blend": "ADD",
   "review": {
     "approved": true,
-    "reason": "The supplied flashcut variant removes the white rectangle emitter. In-game appearance approved by Daniel; original-game pixel fidelity has not been independently verified."
+    "reason": "The supplied flashcut variant removes the white rectangle emitter. In-game appearance approved by Daniel; original-game pixel fidelity has not been independently verified.",
+    "samplingAdaptation": "Use linear display sampling for soft effect artwork, as in the smooth research previews; one extruded texel protects every atlas frame. Frame pixels, geometry, timing and artwork rotation stay unchanged. This is a reviewed FFRogue display adaptation, not verified original FFBE sampler behavior."
+  },
+  "sampling": {
+    "filter": "linear",
+    "gutter": 1
   }
 }

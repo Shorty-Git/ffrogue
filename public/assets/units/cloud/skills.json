@@ -5,10 +5,6 @@
   "skills": [
     {
       "id": "brave_slash",
-      "visualEffect": {
-        "key": "brave_slash",
-        "startFrame": 4
-      },
       "ffbeId": 214800,
       "name": "Brave Slash",
       "rarity": 5,
@@ -23,7 +19,108 @@
       ],
       "moveType": "dash",
       "motion": "atk",
-      "desc": "Physical damage (2x, ATK) to one enemy"
+      "desc": "Physical damage (2x, ATK) to one enemy",
+      "reviewNote": "Native motion-1 visual composition: exact-form unit attack groups precede shifted skill groups. The importer derives member starts, layers and anchors from source data. Damage remains one reviewed F6 event; existing converted sheets remain adaptations, not certified native pixels.",
+      "scenePresentation": "cloud_brave_slash",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "damageEvents": [
+        {
+          "frame": 6,
+          "weight": 1
+        }
+      ],
+      "damageTimingReview": {
+        "basis": "accepted-gameplay",
+        "reason": "Preserve personally accepted single-event timing and total damage; original hit markers remain separate metadata."
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "target",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "accepted-gameplay",
+          "sourceMotionType": 1,
+          "sourceMoveType": 1,
+          "note": "Preserve the eight personally accepted full action sequences; no universal native motion-to-clip mapping is inferred."
+        }
+      },
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 214800,
+        "database": {
+          "path": "assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 214800,
+          "name": "Brave Slash",
+          "rarity": 5,
+          "dispOrder": 1539,
+          "cost": 18,
+          "6p90IFnC": null,
+          "target": "1",
+          "targetRange": "1",
+          "oL6zdpD0": 3,
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 1,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 1,
+          "processId": "1",
+          "PI18xnkD": "0",
+          "processParam": "0,0,0,0,0,0,200,0",
+          "H4zD2IQ5": 0,
+          "motionType": 1,
+          "effectFrames": "4:5008050:1:1:0",
+          "attackFrames": "6:100:2:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000054,
+          "equipCondition": null,
+          "2QoE3PtB": 0,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": null,
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Native motion-1 visual composition: exact-form unit attack groups precede shifted skill groups. The importer derives member starts, layers and anchors from source data. Damage remains one reviewed F6 event; existing converted sheets remain adaptations, not certified native pixels.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
     },
     {
       "id": "blade_beam",
@@ -35,7 +132,7 @@
       "mpCost": 30,
       "scope": "all_enemies",
       "damageMultiplier": 3,
-      "hitCount": 2,
+      "hitCount": 1,
       "attackFrames": [
         4,
         8
@@ -43,23 +140,111 @@
       "moveType": "stationary",
       "motion": "atk",
       "desc": "Physical damage (3x, ATK) to all enemies",
-      "presentation": {
-        "impactFrame": 30,
-        "durationFrames": 96,
-        "effects": [
-          {
-            "key": "blade_beam_wave",
-            "startFrame": 0,
-            "anchor": "target-group"
-          },
-          {
-            "key": "blade_beam_hit",
-            "startFrame": 5,
-            "anchor": "target"
-          }
-        ]
+      "reviewNote": "Personally accepted preserved original-data preview; explicit reviewed single-event damage clock, not a claim of original multi-hit formulas or complete motion composition.",
+      "scenePresentation": "cloud_blade_beam",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "damageEvents": [
+        {
+          "frame": 30,
+          "weight": 1
+        }
+      ],
+      "damageTimingReview": {
+        "basis": "accepted-gameplay",
+        "reason": "Preserve personally accepted single-event timing and total damage; original hit markers remain separate metadata."
       },
-      "reviewNote": "Adapted roguelike presentation: one smooth pass, combined total 3x damage to all enemies at F30, numbers only. Source F4/F8 two-hit metadata is retained for provenance; source multi-hit distribution is intentionally merged. Clockwise 90-degree artwork correction around the tracked bright crescent body; the horizontal travel, effect scale and damage timing stay unchanged."
+      "preparedSourceReceipt": {
+        "file": "tools/data/shared-skill-review/blade-beam/skill-source.json",
+        "sha256": "99afd319d2521fe0bbc4734b2198f54dfdacc58d02fa7718363a09cfbf847ac0"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "accepted-gameplay",
+          "sourceMotionType": 1,
+          "sourceMoveType": 4,
+          "note": "Preserve the eight personally accepted full action sequences; no universal native motion-to-clip mapping is inferred."
+        }
+      },
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 214810,
+        "database": {
+          "path": "assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 214810,
+          "name": "Blade Beam",
+          "rarity": 6,
+          "dispOrder": 1540,
+          "cost": 30,
+          "6p90IFnC": null,
+          "target": "1",
+          "targetRange": "2",
+          "oL6zdpD0": 3,
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 1,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 4,
+          "processId": "1",
+          "PI18xnkD": "0",
+          "processParam": "0,0,0,0,0,0,300,0",
+          "H4zD2IQ5": 0,
+          "motionType": 1,
+          "effectFrames": "0:5003901:1:2:0&4:1000660:1:1:0",
+          "attackFrames": "4:50:2:2-8:50:2:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000054,
+          "equipCondition": null,
+          "2QoE3PtB": 0,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": null,
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Personally accepted preserved original-data preview; explicit reviewed single-event damage clock, not a claim of original multi-hit formulas or complete motion composition.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
     },
     {
       "id": "climhazzard",
@@ -77,7 +262,416 @@
       ],
       "moveType": "dash",
       "motion": "atk",
-      "desc": "Physical damage (2.75x * 2 = 5.5x, ATK) to one enemy (ignore cover)"
+      "desc": "Physical damage (2.75x * 2 = 5.5x, ATK) to one enemy (ignore cover)",
+      "scenePresentation": "cloud_climhazzard",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "damageEvents": [
+        {
+          "frame": 4,
+          "weight": 1
+        }
+      ],
+      "damageTimingReview": {
+        "basis": "accepted-gameplay",
+        "reason": "Preserve personally accepted single-event timing and total damage; original hit markers remain separate metadata."
+      },
+      "preparedSourceReceipt": {
+        "file": "tools/data/shared-skill-review/climhazzard/skill-source.json",
+        "sha256": "7cc348ee676270d445fe6697be4f465fbb57afa67d8a2113f833f25f1a7fd426"
+      },
+      "reviewNote": "Personally accepted preserved original-data preview; explicit reviewed single-event damage clock, not a claim of original multi-hit formulas or complete motion composition.",
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "target",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "accepted-gameplay",
+          "sourceMotionType": 1,
+          "sourceMoveType": 1,
+          "note": "Preserve the eight personally accepted full action sequences; no universal native motion-to-clip mapping is inferred."
+        }
+      },
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 214820,
+        "database": {
+          "path": "assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 214820,
+          "name": "Climhazzard",
+          "rarity": 7,
+          "dispOrder": 1541,
+          "cost": 52,
+          "6p90IFnC": null,
+          "target": "1",
+          "targetRange": "1",
+          "oL6zdpD0": 3,
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 1,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 1,
+          "processId": "21",
+          "PI18xnkD": "0",
+          "processParam": "0,0,275,-50",
+          "H4zD2IQ5": 0,
+          "motionType": 1,
+          "effectFrames": "0:5014250:1:1:0&20:5007070:1:1:0&20:7000970:1:1:0&0:5002080:2:4:0",
+          "attackFrames": "4:100:2:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000054,
+          "equipCondition": null,
+          "2QoE3PtB": 0,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": null,
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Personally accepted preserved original-data preview; explicit reviewed single-event damage clock, not a claim of original multi-hit formulas or complete motion composition.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "cross_slash",
+      "ffbeId": 214790,
+      "name": "Cross Slash",
+      "rarity": 5,
+      "level": 16,
+      "type": "ABILITY",
+      "mpCost": 20,
+      "scope": "single_enemy",
+      "damageMultiplier": 3,
+      "hitCount": 5,
+      "attackFrames": [
+        4,
+        30,
+        60,
+        90,
+        120
+      ],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Five physical hits (3x total) to one enemy.",
+      "requiresSourceScene": true,
+      "scenePresentation": "cross_slash_import_test",
+      "damageEvents": [
+        {
+          "frame": 6,
+          "weight": 0.1
+        },
+        {
+          "frame": 32,
+          "weight": 0.1
+        },
+        {
+          "frame": 62,
+          "weight": 0.1
+        },
+        {
+          "frame": 92,
+          "weight": 0.1
+        },
+        {
+          "frame": 122,
+          "weight": 0.6
+        }
+      ],
+      "reviewNote": "Reviewed roguelike 3x total with source 10/10/10/10/60 distribution and Motion-1 +2 offset. Locked target: no spillover after death. Source-only; existing prepared geometry/UV/material path, no converted EFKE repair or inferred original-fidelity approval.",
+      "importStatus": "imported",
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "target",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "accepted-gameplay",
+          "sourceMotionType": 1,
+          "sourceMoveType": 1,
+          "note": "Preserve the eight personally accepted full action sequences; no universal native motion-to-clip mapping is inferred."
+        }
+      },
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 214790,
+        "database": {
+          "path": "assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 214790,
+          "name": "Cross Slash",
+          "rarity": 6,
+          "dispOrder": 1538,
+          "cost": 20,
+          "6p90IFnC": null,
+          "target": "1@1",
+          "targetRange": "1@1",
+          "oL6zdpD0": 3,
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 1,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 1,
+          "processId": "1@6",
+          "PI18xnkD": "0@0",
+          "processParam": "0,0,0,0,0,0,300,0@0,0,0,0,80,0,0,0,1",
+          "H4zD2IQ5": 0,
+          "motionType": 1,
+          "effectFrames": "4:8003730:2:1:0&4:8003731:1:1:0",
+          "attackFrames": "4:10:2:2-30:10:2:2-60:10:2:2-90:10:2:2-120:60:2:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000054,
+          "equipCondition": null,
+          "2QoE3PtB": 0,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": "14",
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Reviewed roguelike 3x total with source 10/10/10/10/60 distribution and Motion-1 +2 offset. Locked target: no spillover after death. Source-only; existing prepared geometry/UV/material path, no converted EFKE repair or inferred original-fidelity approval.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "trigger_smash",
+      "ffbeId": 227151,
+      "name": "Trigger Smash",
+      "rarity": 7,
+      "level": 110,
+      "type": "ABILITY",
+      "mpCost": 55,
+      "scope": "self",
+      "damageMultiplier": 1,
+      "hitCount": 0,
+      "attackFrames": [
+        120
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Boost physical damage by 50% through the next 3 rounds. No HP damage.",
+      "requiresSourceScene": true,
+      "scenePresentation": "cloud_trigger_smash",
+      "allyEvents": [
+        {
+          "frame": 120,
+          "effects": [
+            {
+              "kind": "physical-boost",
+              "multiplier": 1.5,
+              "turns": 3
+            }
+          ]
+        }
+      ],
+      "reviewNote": "Original self-buff cooldown wrapper and referenced ability are preserved separately. Reviewed roguelike adaptation: MP55 once, no HP damage, x1.5 physical damage through the next three rounds; refresh strongest, no multiplicative stacking, clear on wave/restart. Original cooldown, ATK-debuff removal/break resistance/stat formula are not implemented; those systems do not exist in current combat. F120 is the reviewed source marker, not native status-application evidence. Uses complete original light-up members via the common player; no converted UV repair.",
+      "importStatus": "imported",
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "accepted-gameplay",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Preserve the eight personally accepted full action sequences; no universal native motion-to-clip mapping is inferred."
+        }
+      },
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 227151,
+        "database": {
+          "path": "assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 227151,
+          "name": "Trigger Smash",
+          "rarity": 9,
+          "dispOrder": 3054,
+          "cost": 55,
+          "6p90IFnC": null,
+          "target": "3",
+          "targetRange": "0",
+          "oL6zdpD0": 3,
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 4,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 3,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 4,
+          "processId": "130",
+          "PI18xnkD": "0",
+          "processParam": "507650,1,4:4",
+          "H4zD2IQ5": 0,
+          "motionType": 2,
+          "effectFrames": "40:5014560:1:1:0&70:5025792:2:1:0",
+          "attackFrames": "120:100:2:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000105,
+          "equipCondition": null,
+          "2QoE3PtB": 1,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": "10",
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0,
+          "U45hAmrX": 0
+        },
+        "references": [
+          {
+            "role": "referenced-ability",
+            "id": 507650,
+            "dispatchRaw": "507650,1,4:4",
+            "raw": {
+              "abilityId": 507650,
+              "name": "Trigger Smash",
+              "rarity": 9,
+              "dispOrder": 3050,
+              "cost": 55,
+              "6p90IFnC": null,
+              "target": "3@3@3",
+              "targetRange": "0@0@0",
+              "oL6zdpD0": 3,
+              "element": "0,0,0,0,0,0,0,0",
+              "Isb1GDe2": 4,
+              "J35nicFV": 0,
+              "z1q8AIXD": 1,
+              "yjY4GK3X": 3,
+              "aR5i4ewA": 0,
+              "abilityType": 2,
+              "moveType": 4,
+              "processId": "111@3@89",
+              "PI18xnkD": "0@0@0",
+              "processParam": "1,0,0,0,0,0@250,0,0,0,4,1@100,0,0,0,0,0,4,1",
+              "H4zD2IQ5": 0,
+              "motionType": 2,
+              "effectFrames": "40:5014560:1:1:0&70:5025791:2:1:0",
+              "attackFrames": "120:100:2:2",
+              "7irj9hAb": "0,0,1,0",
+              "iconId": 700000105,
+              "equipCondition": null,
+              "2QoE3PtB": 1,
+              "DQ87jGPz": 0,
+              "fwChg17k": 0,
+              "iUIxB65H": 0,
+              "58bfqWsR": 1,
+              "LNjKzg51": 0,
+              "alternateCost": null,
+              "6ZEyK95f": null,
+              "n1eAG69i": null,
+              "juA0Z4m7": null,
+              "5c3dU9nP": 0,
+              "U45hAmrX": 0
+            }
+          }
+        ]
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Original self-buff cooldown wrapper and referenced ability are preserved separately. Reviewed roguelike adaptation: MP55 once, no HP damage, x1.5 physical damage through the next three rounds; refresh strongest, no multiplicative stacking, clear on wave/restart. Original cooldown, ATK-debuff removal/break resistance/stat formula are not implemented; those systems do not exist in current combat. F120 is the reviewed source marker, not native status-application evidence. Uses complete original light-up members via the common player; no converted UV repair.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
     }
   ]
 }

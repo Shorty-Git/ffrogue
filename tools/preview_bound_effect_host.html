@@ -1,0 +1,48 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Bound effect host preview</title>
+<style>body{background:#15201e;color:#eee;font:15px system-ui;margin:20px}canvas{display:block;max-width:100%;height:70vh;object-fit:contain;background:#14201d}p{max-width:1000px}button,input{margin:8px}pre{white-space:pre-wrap}a{color:#bddbea}</style>
+<h1>Skill effects · measured host, declared scene bindings</h1>
+<p>This uses the measured camera and GPU viewport/scissor. Rectangles and scatter are explicit scene inputs. Source simulation remains experimental; no original actor or HUD layout is replayed.</p>
+<p><button id="play" disabled>Play</button><input id="frame" aria-label="Skill frame" type="range" min="0" value="0"><output id="tick">F0</output>
+<label><input id="white" type="checkbox"> Show unverified untextured primitives (comparison)</label> <a id="legacy" href="/">Ordinary comparison view</a></p>
+<p><label><input id="native-alpha" type="checkbox" disabled> Native Particle scalar alpha (source-gated comparison)</label><span id="alpha-status"></span></p>
+<canvas id="view"></canvas><pre id="status">Loading…</pre><details><summary>Source rendering limitations</summary><pre id="limitations"></pre></details>
+<script src="/three.js"></script><script type="module">
+import {createEffectPlayer,createSceneSnapshot,composeSceneLayer,effectHostMemberAnchor,verifyEffectHostCompositor,nativeScalarAlphaEligibility,localAlpha} from '/player.mjs';
+const status=document.querySelector('#status');
+try{
+ const query=new URLSearchParams(location.search),cfg=await(await fetch('/config.json?'+query)).json(),context=cfg.effectHostContext,bindings=cfg.effectHostBindings;
+ if(!context||!bindings)throw Error('This view requires --host-reference and --host-bindings');
+ const checks=verifyEffectHostCompositor(THREE,context),canvas=document.querySelector('#view'),paint=canvas.getContext('2d');
+ canvas.width=context.framebuffer.width;canvas.height=context.framebuffer.height;
+ const layers=[];for(const key of ['back','front']){
+  const gpu=document.createElement('canvas');gpu.width=canvas.width;gpu.height=canvas.height;
+  const renderer=new THREE.WebGLRenderer({canvas:gpu,alpha:true,premultipliedAlpha:false,preserveDrawingBuffer:true});renderer.setClearColor(0,0);
+  const scene=new THREE.Scene(),snapshot=createSceneSnapshot(THREE,scene,canvas);
+  const player=await createEffectPlayer(THREE,scene,{...cfg,fitScreenToArena:false,members:cfg.members.filter(m=>m.layer===key)});
+  layers.push({gpu,renderer,scene,player,...snapshot,hostContext:context,nativeBlendThree:THREE});
+ }
+ const frame=document.querySelector('#frame'),white=document.querySelector('#white');frame.max=cfg.endFrame;
+ const nativeAlpha=document.querySelector('#native-alpha');nativeAlpha.disabled=!cfg.nativeScalarAlpha;
+ nativeAlpha.checked=!!cfg.nativeScalarAlpha&&query.get('native-alpha')!=='off';
+ const alphaReview=cfg.effects.flatMap(effect=>effect.nodes.filter(node=>node.typeId===3).map(node=>({effect:effect.name,node:node.index,...nativeScalarAlphaEligibility(effect,node)})));
+ const alphaSamples=cfg.effects.flatMap(effect=>effect.nodes.filter(node=>nativeScalarAlphaEligibility(effect,node).supported).flatMap(node=>[.25,.5,.75].map(time=>({effect:effect.name,node:node.index,time,old:localAlpha(node,time,true),native:localAlpha(node,time,true,true)}))));
+ document.querySelector('#alpha-status').textContent=alphaReview.filter(r=>r.supported).length+'/'+alphaReview.length+' eligible Particle curves; maximum sampled local alpha difference '+Math.max(0,...alphaSamples.map(s=>Math.abs(s.old-s.native))).toFixed(6)+'. Other nodes retain their existing path.';
+ white.checked=query.get('white')==='on';document.querySelector('#legacy').href='/?skill='+cfg.sourceId;
+ let current=0,playing=false,last=0,carry=0;
+ const anchors=cfg.members.map(m=>effectHostMemberAnchor(context,m,bindings));
+ document.querySelector('#limitations').textContent=[...new Set(layers.flatMap(l=>l.player.issues))].join('\n');
+ function draw(f){current=f;paint.fillStyle='#14201d';paint.fillRect(0,0,canvas.width,canvas.height);
+  for(const layer of layers){layer.player.setNativeScalarAlpha(nativeAlpha.checked);layer.player.setLegacyWhitePlanes(white.checked);layer.player.update(f,m=>effectHostMemberAnchor(context,m,bindings));composeSceneLayer(layer,paint,true);}
+  frame.value=f;document.querySelector('#tick').textContent='F'+f;
+ }
+ async function save(){await fetch('/bound-host-review-result?'+query,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({approved:false,ready:true,sourceId:cfg.sourceId,frame:current,nativeAlphaEnabled:nativeAlpha.checked,alphaReview,alphaSamples,untexturedComparison:white.checked,checks,anchors,bindings,hostEvidence:context.evidence,issues:[...new Set(layers.flatMap(l=>l.player.issues))]})});}
+ frame.oninput=()=>{playing=false;document.querySelector('#play').textContent='Play';draw(Number(frame.value));};frame.onchange=()=>void save();
+ white.onchange=()=>{draw(current);void save();};document.querySelector('#play').onclick=()=>{playing=!playing;document.querySelector('#play').textContent=playing?'Pause':'Play';last=0;};
+ nativeAlpha.onchange=()=>{draw(current);void save();};
+ function animate(now){if(playing){if(last)carry+=(now-last)*60/1000;const n=Math.floor(carry);if(n){carry-=n;draw((current+n)%(cfg.endFrame+1));}last=now;}requestAnimationFrame(animate);}requestAnimationFrame(animate);
+ draw(Math.max(0,Math.min(cfg.endFrame,Number(query.get('frame')??12))));document.querySelector('#play').disabled=false;
+ status.textContent=cfg.name+' · '+checks.length+' GPU checks passed. '+anchors.length+' explicit native-world member anchors. '+
+  'No screen fitting, inferred rectangles or native RNG scheduling. Untextured primitives retain their independent comparison gate.\n'+JSON.stringify(bindings,null,2);
+ await save();
+}catch(error){status.textContent=String(error);throw error;}
+</script></html>

@@ -1,0 +1,150 @@
+{
+  "schemaVersion": 1,
+  "key": "jack",
+  "spriteUnitId": "254000603",
+  "game": "FFTYPE0",
+  "battle": {
+    "maxHp": 3200,
+    "maxMp": 100,
+    "heroName": "JACK",
+    "heroRole": "VANGUARD",
+    "attackType": "melee",
+    "targetOffsetX": 90,
+    "attackAnim": "atk",
+    "hitFrameIndex": 2
+  },
+  "scale": 2.5,
+  "reviewNote": "Reviewed physical Motion-1 attack/break profile. Body and gameplay are explicit reviewed adaptations, not native whole-skill fidelity or personal approval.",
+  "skills": [
+    {
+      "id": "piercing_gleam",
+      "ffbeId": 203050,
+      "name": "Piercing Gleam",
+      "rarity": 5,
+      "level": 80,
+      "type": "ABILITY",
+      "mpCost": 11,
+      "scope": "single_enemy",
+      "damageMultiplier": 1.4,
+      "damageType": "physical",
+      "hitCount": 1,
+      "attackFrames": [
+        40
+      ],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Physical damage (1.4x) and physical vulnerability (+15%) for 3 enemy phases.",
+      "execution": "prepared-source",
+      "requiresSourceScene": true,
+      "scenePresentation": "jack_piercing_gleam",
+      "damageEvents": [
+        {
+          "frame": 91,
+          "weight": 1
+        }
+      ],
+      "supportEvents": [
+        {
+          "frame": 91,
+          "effects": [
+            {
+              "kind": "physical-weakness",
+              "multiplier": 1.15,
+              "phases": 3,
+              "chance": 1
+            }
+          ]
+        }
+      ],
+      "reviewNote": "Complete original attack prefix and armor-break member retained. Reviewed damage/break values are separate from original process parameters. No original damage formula or native whole-action fidelity claim.",
+      "importStatus": "imported",
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "target",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 1,
+          "sourceMoveType": 1,
+          "note": "Explicit review of the physical single-target Motion-1/move-1 damage+DEF-break profile, complete composed unit attack prefix and exported atk body; reuse the accepted Armor Break action profile. Native assembly evidence in native-hit-profiles.md covers effect composition, not a universal body selector. Actual full BattleScene playback remains required. No inference for Motion2."
+        }
+      }
+    },
+    {
+      "id": "iai_strike",
+      "ffbeId": 200300,
+      "name": "Iai Strike",
+      "type": "ABILITY",
+      "rarity": 3,
+      "level": 4,
+      "mpCost": 12,
+      "scope": "all_enemies",
+      "damageMultiplier": 0,
+      "damageType": "physical",
+      "hitCount": 1,
+      "attackFrames": [
+        45
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "30% chance to KO each non-boss enemy; otherwise deal 700 unmitigated damage.",
+      "execution": "prepared-events",
+      "requiresSourceScene": true,
+      "scenePresentation": "jack_iai_strike",
+      "importStatus": "imported",
+      "reviewNote": "Current original ability200300 target1/range2 and process112 parameters1400,70,100,0 preserved in originalCommand; original explainShort states chance of instant KO OR partial unmitigated damage to ALL enemies. Historical GL/JP effect35 descriptions independently confirm all-enemy instant KO but differ by version. Reviewed roguelike30% per-target KO chance, fixed700 unmitigated fallback and boss immunity are explicit balance choices, NOT a decoded current native process formula. Complete original three-node VFX retained with the accepted Source profile, including declared model-color sampling limits.",
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Explicit stationary zero-prefix Motion2/move4 action: native virtual motion getter routes to CGS5, native getAnimeActionName names that magic_atk. Independent live Store200210 confirms standbyCGS11 then bodyCGS5 with no movement and early body return independent of its F130 effect track. This contract uses Jacks exact exported body clock, not Delitas timing. Body starts at prepared F0; command pose remains ordinary standby and no extra magic readiness cycle is inserted. No standard-attack fallback or unmeasured universal motion mapping."
+        },
+        "commandPose": "standby"
+      },
+      "supportEvents": [
+        {
+          "frame": 45,
+          "effects": [
+            {
+              "kind": "execute-or-damage",
+              "chance": 0.3,
+              "fallbackDamage": 700,
+              "bossImmune": true
+            }
+          ]
+        }
+      ],
+      "sourceScopeReview": {
+        "target": "1",
+        "targetRange": "2",
+        "scope": "all_enemies",
+        "note": "Current ability_explain200300 and both historical GL/JP ability200300 entries explicitly describe all-enemy instant-KO. Current DB adds partial unmitigated fallback. Do not interpret process112 as ordinary single-target physical damage."
+      }
+    }
+  ],
+  "portraitSource": "unit_icons/unit_icon_254000603.png"
+}
