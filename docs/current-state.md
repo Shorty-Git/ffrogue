@@ -79,6 +79,14 @@ Generic rules added 2026-11-07 (no per-skill exceptions):
   Colour/alpha curves stay source data. Accepted particle flashes keep the arena clip.
   Second form: an opaque constant-colour uniform Quad (width ≥ 200) on screen for ≥ 80 % of
   the effect's longest node life is a background replacement (`unit-quad`, e.g. Cloud AC).
+- Original draw order (approximation imports): `tools/bmb_draw_priority.py` reads the header
+  priority-sort flag (0x4d) and emitter SortPriority (Quad +508, Particle +408, Model +460;
+  verified on 92 matched pairs) into `plan.drawOrder`; `PreparedSceneBridge.applyOriginalDrawOrder`
+  sets `renderOrder` (priority, then node index) instead of three.js depth sorting. Done in the
+  bridge because `originalEffectPlayer.mjs` is a frozen baseline identity (test_scene_migration):
+  never edit the player casually — republishing all presentations then rewrites accepted
+  manifests. Meteor Rain's glow was hidden under its smoke until this.
+- Texture tint (Texture1 colour scale) is decoded from IBMB (`tools/bmb_texture_tint.py`).
 - Limit clips stay on screen: `tools/annotate_clip_extents.py` (also run by export_unit.py)
   stores `extentX` [left, right] (frame px from pivot, 2nd/98th percentile) on every
   `limit_*` clip; `BattleScene.approachX` first aligns the strike, then clamps the caster so
@@ -97,6 +105,15 @@ Generic rules added 2026-11-07 (no per-skill exceptions):
   `missing-matched-authoring`; that is information, not a stop, in approximation mode.
 
 ## Environment and tools
+
+- Original reference (developer's BlueStacks "FFBE Trace" Memorial instance): adb via
+  `C:/Program Files/BlueStacks_nxt/HD-Adb.exe connect 127.0.0.1:5575` (instance port from
+  `C:/ProgramData/BlueStacks_nxt/bluestacks.conf`), screen 1080x1920. Battles: Memories → left
+  season arrow → "JP Memories" event list → e.g. Chamber of Crystals BGN → Depart. Swipe right on
+  a unit card for abilities; tap the card to act. Record with `shell screenrecord` (set
+  `MSYS_NO_PATHCONV=1` in Git Bash), pull, extract frames with
+  `tools/extract_video_frames.mjs <video> <outDir> [step] [from] [to]` (needs a blank.html next to the video) (Chrome element screenshots, no ffmpeg).
+  Party there: Cloud (NV), Delita, Barret, Jack. Compare before claiming colours/placement.
 
 - Python: plain `python`/`py` are not installed. Use
   `C:/Users/Daniel/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe`.

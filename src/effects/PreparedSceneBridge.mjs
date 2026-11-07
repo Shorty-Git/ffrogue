@@ -63,6 +63,31 @@ export function scenePresentationMembers(plan, keys) {
   return presentationMembers(plan.members,keys,plan.presentation.scope==='self'?'single_enemy':plan.presentation.scope==='party'?'all_enemies':plan.presentation.scope);
 }
 
+/**
+ * Original non-full-Z draw order for plans that carry it (approximation imports): emitters by
+ * source SortPriority when the effect enables priority sorting, ties by node index, members in
+ * plan order. Applied from outside the frozen player: its roots/groups follow traceSnapshot order.
+ */
+export function applyOriginalDrawOrder(layerScene, player, plan, members) {
+  if(!plan.drawOrder)return;
+  if(plan.drawOrder.profile!=='native-priority-order-v1')throw Error('Unsupported original draw order');
+  const items=player.traceSnapshot(),roots=layerScene.children;
+  if(roots.length!==members.length)throw Error('Draw order requires one player root per member');
+  let k=0;
+  roots.forEach((root,memberIndex)=>{
+    const effect=plan.effects[members[memberIndex].effect];
+    if(effect.drawOrder?.fullZSort)throw Error('Full-Z original sorting is not supported');
+    const prioritized=!!effect.drawOrder?.prioritySort;
+    const nodes=root.children.map(()=>items[k++]?.node);
+    const ranked=[...new Set(nodes)].sort((x,y)=>{
+      const px=prioritized?effect.nodes[x]?.sortPriority??0:0,py=prioritized?effect.nodes[y]?.sortPriority??0:0;
+      return Math.abs(px-py)>1e-6?px-py:x-y;});
+    const rank=new Map(ranked.map((node,i)=>[node,i]));
+    root.children.forEach((group,i)=>group.traverse(object=>{if(object.isMesh)object.renderOrder=memberIndex*1000+rank.get(nodes[i]);}));
+  });
+  if(k!==items.length)throw Error('Draw order lost the player item mapping');
+}
+
 /** Same prepared player as the research view, drawn directly into Phaser's framebuffer. */
 export function createPreparedSceneBridge(scene, manifests) {
   const THREE = globalThis.THREE, phaser = scene.game.renderer;
@@ -159,7 +184,9 @@ export function createPreparedSceneBridge(scene, manifests) {
         const variant = {manifest,layers:{}};
         for (const name of ['back','front']) {
           const layerScene = new THREE.Scene();
-          const player = await createEffectPlayer(THREE,layerScene,{...manifest.plan,members:members.filter(m=>m.layer===name)});
+          const layerMembers = members.filter(m=>m.layer===name);
+          const player = await createEffectPlayer(THREE,layerScene,{...manifest.plan,members:layerMembers});
+          applyOriginalDrawOrder(layerScene,player,manifest.plan,layerMembers);
           variant.layers[name] = {scene:layerScene,player};
         }
         if(disposed){disposeVariant(variant);return;}

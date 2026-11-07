@@ -206,6 +206,9 @@ if __name__ == '__main__':
             raise ValueError('Original hash changed')
         data = read_bmb(raw)
         attach_playback_fields(raw, data['nodes'])
+        if a.approximate_unverified:
+            from bmb_draw_priority import attach_draw_priorities
+            attach_draw_priorities(raw, data)
         if a.quad_colors:
             if not a.distortion:raise ValueError('Quad-color experiment requires the supported distortion plan')
             attach_quad_colors(raw,data)
@@ -289,6 +292,7 @@ if __name__ == '__main__':
         by_name[original['member']] = len(effects)
         effects.append({'name': original['member'], 'sha256': data['sha256'],
                         'rootLifecycle': data['rootLifecycle'],
+                        **({'drawOrder': data['drawOrder']} if 'drawOrder' in data else {}),
                         'nodes': data['nodes'], 'textures': textures, 'meshes': meshes,
                         'authoringSupplement': supplement,
                         'inheritanceSupplement': inheritance_supplement,
@@ -401,6 +405,9 @@ if __name__ == '__main__':
             randomness='reviewed-color-streams-v1',
             boundary='Original ConstFlat RGB semantics; deterministic per-instance host seeds, not measured FFBE RNG ownership')
     if a.approximate_unverified:
+        # Original emitter order (priority sort / node index) instead of three.js depth sorting.
+        plan['drawOrder'] = dict(profile='native-priority-order-v1',
+            boundary='Per member: emitter packets ordered by source SortPriority (if enabled) then node index; members in plan order. Full-Z sorting is not evaluated.')
         plan['approximations'] = dict(profile='held-constant-unverified-curves-v1', curves=bmb_channels.APPROXIMATED_CURVES,
             boundary='Visual approximation: these source curves are not evaluated; the effect is not a native-fidelity reconstruction.')
     a.output.write_text(json.dumps(plan, indent=2), encoding='utf-8')

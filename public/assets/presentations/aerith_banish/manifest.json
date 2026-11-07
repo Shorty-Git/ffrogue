@@ -8,7 +8,7 @@
   "durationFrames": 222,
   "provenance": {
     "planFile": "tools/data/authoring-free-20261107/intake/aerith-10060/plan.json",
-    "planSha256": "f3b74dd3eccb8ad692f85432ccb6dbe8c0523d4b72977b475e02131e05c895f9",
+    "planSha256": "e70bd14906cb773f6f6876dd251afbf12c2ca556e64939776aaa12b48c823b4c",
     "playerSha256": "e4e4f09f03c649f80c0f5f3bfa4a383a4033680d33d473799cc2e4d7472a834e",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "d32c3ef6a06732584e5b440a8323bfc5f864e5c5c010d3c64db7cef19907ec88"
@@ -195,6 +195,10 @@
           "lifeFramesRaw": 0,
           "fieldOffset": 80,
           "boundary": "Header RootLife only; child expiration, flags and source emitter ownership are separate"
+        },
+        "drawOrder": {
+          "fullZSort": false,
+          "prioritySort": true
         },
         "nodes": [
           {
@@ -2249,6 +2253,7 @@
               0.7890303134918213,
               1
             ],
+            "sortPriority": 0.30000001192092896,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -2337,13 +2342,16 @@
               "basicCandidateCompatible": true
             },
             "nativeBasicTint": {
-              "supported": false,
-              "rgba": null,
-              "limitations": [
-                "texture tint requires matching authoring"
+              "supported": true,
+              "rgba": [
+                1,
+                1,
+                1,
+                1
               ],
-              "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
-              "projectSha256": null
+              "limitations": [],
+              "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
+              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
           },
           {
@@ -3257,6 +3265,7 @@
               0.8051798939704895,
               1
             ],
+            "sortPriority": 0.30000001192092896,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -3345,13 +3354,16 @@
               "basicCandidateCompatible": true
             },
             "nativeBasicTint": {
-              "supported": false,
-              "rgba": null,
-              "limitations": [
-                "texture tint requires matching authoring"
+              "supported": true,
+              "rgba": [
+                1,
+                1,
+                1,
+                1
               ],
-              "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
-              "projectSha256": null
+              "limitations": [],
+              "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
+              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
           },
           {
@@ -4265,6 +4277,7 @@
               0.19725757837295532,
               0.25
             ],
+            "sortPriority": 0.20000000298023224,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -4353,13 +4366,16 @@
               "basicCandidateCompatible": true
             },
             "nativeBasicTint": {
-              "supported": false,
-              "rgba": null,
-              "limitations": [
-                "texture tint requires matching authoring"
+              "supported": true,
+              "rgba": [
+                1,
+                1,
+                1,
+                1
               ],
-              "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
-              "projectSha256": null
+              "limitations": [],
+              "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
+              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
           },
           {
@@ -5556,6 +5572,7 @@
                 "rangeOffset": 10856
               }
             },
+            "sortPriority": 0.20000000298023224,
             "flatQuadColor": {
               "profile": "native-flat-quad-rgb-v1",
               "mode": "Constant",
@@ -5649,8 +5666,8 @@
               "limitations": [
                 "initial native fragment is not the pinned Basic family"
               ],
-              "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
-              "projectSha256": null
+              "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
+              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
           },
           {
@@ -6564,6 +6581,7 @@
               0.17630907893180847,
               0.25
             ],
+            "sortPriority": 0.20000000298023224,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -6652,13 +6670,16 @@
               "basicCandidateCompatible": true
             },
             "nativeBasicTint": {
-              "supported": false,
-              "rgba": null,
-              "limitations": [
-                "texture tint requires matching authoring"
+              "supported": true,
+              "rgba": [
+                1,
+                1,
+                1,
+                1
               ],
-              "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
-              "projectSha256": null
+              "limitations": [],
+              "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
+              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
           }
         ],
@@ -12428,6 +12449,10 @@
           "fieldOffset": 80,
           "boundary": "Header RootLife only; child expiration, flags and source emitter ownership are separate"
         },
+        "drawOrder": {
+          "fullZSort": false,
+          "prioritySort": true
+        },
         "nodes": [
           {
             "index": 0,
@@ -14791,18 +14816,19 @@
                 "rangeOffset": 4172
               }
             },
+            "sortPriority": 0.5,
             "authoringEmissionShape": "Point",
             "authoringTextureLayers": {
               "texture1": {
                 "rgbInitial": [
-                  1,
-                  1,
-                  1
+                  0.256095826625824,
+                  0.549630343914032,
+                  0.75
                 ],
                 "rgbRange": [
-                  0,
-                  0,
-                  0
+                  0.11014050245285034,
+                  0.1142951026558876,
+                  0.15000000596046448
                 ],
                 "alphaInitial": 1,
                 "alphaRange": 0,
@@ -14950,8 +14976,8 @@
               "limitations": [
                 "initial native fragment is not the pinned Basic family"
               ],
-              "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
-              "projectSha256": null
+              "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
+              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
           },
           {
@@ -16148,6 +16174,7 @@
                 "rangeOffset": 5576
               }
             },
+            "sortPriority": 0.5,
             "flatQuadColor": {
               "profile": "native-flat-quad-rgb-v1",
               "mode": "Constant",
@@ -16241,8 +16268,8 @@
               "limitations": [
                 "initial native fragment is not the pinned Basic family"
               ],
-              "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
-              "projectSha256": null
+              "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
+              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
           },
           {
@@ -17245,6 +17272,7 @@
               0.8322796821594238,
               1
             ],
+            "sortPriority": 0.5,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -17333,13 +17361,16 @@
               "basicCandidateCompatible": true
             },
             "nativeBasicTint": {
-              "supported": false,
-              "rgba": null,
-              "limitations": [
-                "texture tint requires matching authoring"
+              "supported": true,
+              "rgba": [
+                1,
+                1,
+                1,
+                1
               ],
-              "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
-              "projectSha256": null
+              "limitations": [],
+              "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
+              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
           },
           {
@@ -18530,6 +18561,7 @@
                 "rangeOffset": 11016
               }
             },
+            "sortPriority": 0.5,
             "flatQuadColor": {
               "profile": "native-flat-quad-rgb-v1",
               "mode": "Constant",
@@ -18626,13 +18658,16 @@
               "basicCandidateCompatible": true
             },
             "nativeBasicTint": {
-              "supported": false,
-              "rgba": null,
-              "limitations": [
-                "texture tint requires matching authoring"
+              "supported": true,
+              "rgba": [
+                1,
+                1,
+                1,
+                1
               ],
-              "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
-              "projectSha256": null
+              "limitations": [],
+              "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
+              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
           },
           {
@@ -19537,6 +19572,7 @@
               0.7015316486358643,
               1
             ],
+            "sortPriority": 0.5,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -19625,13 +19661,16 @@
               "basicCandidateCompatible": true
             },
             "nativeBasicTint": {
-              "supported": false,
-              "rgba": null,
-              "limitations": [
-                "texture tint requires matching authoring"
+              "supported": true,
+              "rgba": [
+                1,
+                1,
+                1,
+                1
               ],
-              "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
-              "projectSha256": null
+              "limitations": [],
+              "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
+              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
           },
           {
@@ -20977,6 +21016,7 @@
               1,
               1
             ],
+            "sortPriority": 0.5,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -21065,13 +21105,16 @@
               "basicCandidateCompatible": true
             },
             "nativeBasicTint": {
-              "supported": false,
-              "rgba": null,
-              "limitations": [
-                "texture tint requires matching authoring"
+              "supported": true,
+              "rgba": [
+                1,
+                1,
+                1,
+                1
               ],
-              "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
-              "projectSha256": null
+              "limitations": [],
+              "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
+              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
           },
           {
@@ -22173,6 +22216,7 @@
                 "rangeOffset": 19768
               }
             },
+            "sortPriority": 0.5,
             "flatQuadColor": {
               "profile": "native-flat-quad-rgb-v1",
               "mode": "Constant",
@@ -22270,12 +22314,17 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
-              "limitations": [
-                "texture tint requires matching authoring"
+              "rgba": [
+                0.4781678020954132,
+                0.7722979784011841,
+                0.9439252018928528,
+                1
               ],
-              "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
-              "projectSha256": null
+              "limitations": [
+                "random texture tint is outside the constant subset"
+              ],
+              "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
+              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
           },
           {
@@ -23299,6 +23348,7 @@
               0.6904377341270447,
               1
             ],
+            "sortPriority": 0.5,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -23387,13 +23437,16 @@
               "basicCandidateCompatible": true
             },
             "nativeBasicTint": {
-              "supported": false,
-              "rgba": null,
-              "limitations": [
-                "texture tint requires matching authoring"
+              "supported": true,
+              "rgba": [
+                1,
+                1,
+                1,
+                1
               ],
-              "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
-              "projectSha256": null
+              "limitations": [],
+              "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
+              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
           },
           {
@@ -24008,6 +24061,7 @@
               1,
               1
             ],
+            "sortPriority": 0.5,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -24096,13 +24150,16 @@
               "basicCandidateCompatible": true
             },
             "nativeBasicTint": {
-              "supported": false,
-              "rgba": null,
-              "limitations": [
-                "texture tint requires matching authoring"
+              "supported": true,
+              "rgba": [
+                1,
+                1,
+                1,
+                1
               ],
-              "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
-              "projectSha256": null
+              "limitations": [],
+              "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
+              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
           },
           {
@@ -25067,6 +25124,7 @@
               1,
               1
             ],
+            "sortPriority": 0.5,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -25155,13 +25213,16 @@
               "basicCandidateCompatible": true
             },
             "nativeBasicTint": {
-              "supported": false,
-              "rgba": null,
-              "limitations": [
-                "texture tint requires matching authoring"
+              "supported": true,
+              "rgba": [
+                1,
+                1,
+                1,
+                1
               ],
-              "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
-              "projectSha256": null
+              "limitations": [],
+              "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
+              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
           },
           {
@@ -26075,6 +26136,7 @@
               0.874329686164856,
               1
             ],
+            "sortPriority": 0.30000001192092896,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -26163,13 +26225,16 @@
               "basicCandidateCompatible": true
             },
             "nativeBasicTint": {
-              "supported": false,
-              "rgba": null,
-              "limitations": [
-                "texture tint requires matching authoring"
+              "supported": true,
+              "rgba": [
+                1,
+                1,
+                1,
+                1
               ],
-              "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
-              "projectSha256": null
+              "limitations": [],
+              "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
+              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
           },
           {
@@ -27083,6 +27148,7 @@
               0.7767914533615112,
               1
             ],
+            "sortPriority": 0.5,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -27171,13 +27237,16 @@
               "basicCandidateCompatible": true
             },
             "nativeBasicTint": {
-              "supported": false,
-              "rgba": null,
-              "limitations": [
-                "texture tint requires matching authoring"
+              "supported": true,
+              "rgba": [
+                1,
+                1,
+                1,
+                1
               ],
-              "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
-              "projectSha256": null
+              "limitations": [],
+              "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
+              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
           }
         ],
@@ -29739,6 +29808,10 @@
       "randomness": "reviewed-color-streams-v1",
       "boundary": "Original ConstFlat RGB semantics; deterministic per-instance host seeds, not measured FFBE RNG ownership"
     },
+    "drawOrder": {
+      "profile": "native-priority-order-v1",
+      "boundary": "Per member: emitter packets ordered by source SortPriority (if enabled) then node index; members in plan order. Full-Z sorting is not evaluated."
+    },
     "approximations": {
       "profile": "held-constant-unverified-curves-v1",
       "curves": [
@@ -30737,6 +30810,166 @@
           "treatment": "authoring-free-corpus-default"
         },
         {
+          "member": "wm_1006_banish_back.bmb",
+          "node": 4,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.9979,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_back.bmb",
+          "node": 4,
+          "field": "Texture1_Color_Scale_Rgb_MotionType",
+          "value": "Constant",
+          "corpusShare": 0.9997,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_back.bmb",
+          "node": 4,
+          "field": "Texture1_Color_Scale_Alpha_MotionType",
+          "value": "Constant",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_back.bmb",
+          "node": 4,
+          "field": "Texture1_Color_Scale_Alpha_Value_Initial",
+          "value": "1",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_back.bmb",
+          "node": 4,
+          "field": "Texture1_Color_Scale_Alpha_Value_Range",
+          "value": "0",
+          "corpusShare": 0.9998,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_back.bmb",
+          "node": 6,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.9979,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_back.bmb",
+          "node": 6,
+          "field": "Texture1_Color_Scale_Rgb_MotionType",
+          "value": "Constant",
+          "corpusShare": 0.9997,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_back.bmb",
+          "node": 6,
+          "field": "Texture1_Color_Scale_Alpha_MotionType",
+          "value": "Constant",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_back.bmb",
+          "node": 6,
+          "field": "Texture1_Color_Scale_Alpha_Value_Initial",
+          "value": "1",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_back.bmb",
+          "node": 6,
+          "field": "Texture1_Color_Scale_Alpha_Value_Range",
+          "value": "0",
+          "corpusShare": 0.9998,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_back.bmb",
+          "node": 8,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.9979,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_back.bmb",
+          "node": 8,
+          "field": "Texture1_Color_Scale_Rgb_MotionType",
+          "value": "Constant",
+          "corpusShare": 0.9997,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_back.bmb",
+          "node": 8,
+          "field": "Texture1_Color_Scale_Alpha_MotionType",
+          "value": "Constant",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_back.bmb",
+          "node": 8,
+          "field": "Texture1_Color_Scale_Alpha_Value_Initial",
+          "value": "1",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_back.bmb",
+          "node": 8,
+          "field": "Texture1_Color_Scale_Alpha_Value_Range",
+          "value": "0",
+          "corpusShare": 0.9998,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_back.bmb",
+          "node": 12,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.9979,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_back.bmb",
+          "node": 12,
+          "field": "Texture1_Color_Scale_Rgb_MotionType",
+          "value": "Constant",
+          "corpusShare": 0.9997,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_back.bmb",
+          "node": 12,
+          "field": "Texture1_Color_Scale_Alpha_MotionType",
+          "value": "Constant",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_back.bmb",
+          "node": 12,
+          "field": "Texture1_Color_Scale_Alpha_Value_Initial",
+          "value": "1",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_back.bmb",
+          "node": 12,
+          "field": "Texture1_Color_Scale_Alpha_Value_Range",
+          "value": "0",
+          "corpusShare": 0.9998,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
           "node": 6,
           "quadColors": "Constant-corners",
           "rgb": [
@@ -30876,32 +31109,6 @@
           "field": "Texture1_Color_Scale_Alpha_Value_Range",
           "value": "0",
           "corpusShare": 0.9993,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "wm_1006_banish_front.bmb",
-          "node": 4,
-          "field": "Texture1_Color_Scale_Rgb_Value_Initial",
-          "value": {
-            "A": "1",
-            "B": "1",
-            "G": "1",
-            "R": "1"
-          },
-          "corpusShare": 0.7904,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "wm_1006_banish_front.bmb",
-          "node": 4,
-          "field": "Texture1_Color_Scale_Rgb_Value_Range",
-          "value": {
-            "A": "0",
-            "B": "0",
-            "G": "0",
-            "R": "0"
-          },
-          "corpusShare": 0.757,
           "treatment": "authoring-free-corpus-default"
         },
         {
@@ -32984,6 +33191,406 @@
           "field": "Scale_Basic_ScaleType",
           "value": "NewtonDynamics",
           "corpusShare": 0.8502,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 8,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.9979,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 8,
+          "field": "Texture1_Color_Scale_Rgb_MotionType",
+          "value": "Constant",
+          "corpusShare": 0.9997,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 8,
+          "field": "Texture1_Color_Scale_Alpha_MotionType",
+          "value": "Constant",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 8,
+          "field": "Texture1_Color_Scale_Alpha_Value_Initial",
+          "value": "1",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 8,
+          "field": "Texture1_Color_Scale_Alpha_Value_Range",
+          "value": "0",
+          "corpusShare": 0.9998,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 10,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.7134,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 10,
+          "field": "Texture1_Color_Scale_Rgb_MotionType",
+          "value": "Constant",
+          "corpusShare": 0.9474,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 10,
+          "field": "Texture1_Color_Scale_Alpha_MotionType",
+          "value": "Constant",
+          "corpusShare": 0.9997,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 10,
+          "field": "Texture1_Color_Scale_Alpha_Value_Initial",
+          "value": "1",
+          "corpusShare": 0.9989,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 10,
+          "field": "Texture1_Color_Scale_Alpha_Value_Range",
+          "value": "0",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 12,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.9979,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 12,
+          "field": "Texture1_Color_Scale_Rgb_MotionType",
+          "value": "Constant",
+          "corpusShare": 0.9997,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 12,
+          "field": "Texture1_Color_Scale_Alpha_MotionType",
+          "value": "Constant",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 12,
+          "field": "Texture1_Color_Scale_Alpha_Value_Initial",
+          "value": "1",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 12,
+          "field": "Texture1_Color_Scale_Alpha_Value_Range",
+          "value": "0",
+          "corpusShare": 0.9998,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 15,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.9979,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 15,
+          "field": "Texture1_Color_Scale_Rgb_MotionType",
+          "value": "Constant",
+          "corpusShare": 0.9997,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 15,
+          "field": "Texture1_Color_Scale_Alpha_MotionType",
+          "value": "Constant",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 15,
+          "field": "Texture1_Color_Scale_Alpha_Value_Initial",
+          "value": "1",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 15,
+          "field": "Texture1_Color_Scale_Alpha_Value_Range",
+          "value": "0",
+          "corpusShare": 0.9998,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 17,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.7134,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 17,
+          "field": "Texture1_Color_Scale_Rgb_MotionType",
+          "value": "Constant",
+          "corpusShare": 0.9474,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 17,
+          "field": "Texture1_Color_Scale_Alpha_MotionType",
+          "value": "Constant",
+          "corpusShare": 0.9997,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 17,
+          "field": "Texture1_Color_Scale_Alpha_Value_Initial",
+          "value": "1",
+          "corpusShare": 0.9989,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 17,
+          "field": "Texture1_Color_Scale_Alpha_Value_Range",
+          "value": "0",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 19,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.9979,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 19,
+          "field": "Texture1_Color_Scale_Rgb_MotionType",
+          "value": "Constant",
+          "corpusShare": 0.9997,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 19,
+          "field": "Texture1_Color_Scale_Alpha_MotionType",
+          "value": "Constant",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 19,
+          "field": "Texture1_Color_Scale_Alpha_Value_Initial",
+          "value": "1",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 19,
+          "field": "Texture1_Color_Scale_Alpha_Value_Range",
+          "value": "0",
+          "corpusShare": 0.9998,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 20,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.9979,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 20,
+          "field": "Texture1_Color_Scale_Rgb_MotionType",
+          "value": "Constant",
+          "corpusShare": 0.9997,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 20,
+          "field": "Texture1_Color_Scale_Alpha_MotionType",
+          "value": "Constant",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 20,
+          "field": "Texture1_Color_Scale_Alpha_Value_Initial",
+          "value": "1",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 20,
+          "field": "Texture1_Color_Scale_Alpha_Value_Range",
+          "value": "0",
+          "corpusShare": 0.9998,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 22,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.9979,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 22,
+          "field": "Texture1_Color_Scale_Rgb_MotionType",
+          "value": "Constant",
+          "corpusShare": 0.9997,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 22,
+          "field": "Texture1_Color_Scale_Alpha_MotionType",
+          "value": "Constant",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 22,
+          "field": "Texture1_Color_Scale_Alpha_Value_Initial",
+          "value": "1",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 22,
+          "field": "Texture1_Color_Scale_Alpha_Value_Range",
+          "value": "0",
+          "corpusShare": 0.9998,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 24,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.9979,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 24,
+          "field": "Texture1_Color_Scale_Rgb_MotionType",
+          "value": "Constant",
+          "corpusShare": 0.9997,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 24,
+          "field": "Texture1_Color_Scale_Alpha_MotionType",
+          "value": "Constant",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 24,
+          "field": "Texture1_Color_Scale_Alpha_Value_Initial",
+          "value": "1",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 24,
+          "field": "Texture1_Color_Scale_Alpha_Value_Range",
+          "value": "0",
+          "corpusShare": 0.9998,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 26,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.9979,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 26,
+          "field": "Texture1_Color_Scale_Rgb_MotionType",
+          "value": "Constant",
+          "corpusShare": 0.9997,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 26,
+          "field": "Texture1_Color_Scale_Alpha_MotionType",
+          "value": "Constant",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 26,
+          "field": "Texture1_Color_Scale_Alpha_Value_Initial",
+          "value": "1",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 26,
+          "field": "Texture1_Color_Scale_Alpha_Value_Range",
+          "value": "0",
+          "corpusShare": 0.9998,
           "treatment": "authoring-free-corpus-default"
         }
       ],
