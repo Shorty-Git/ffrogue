@@ -1,5 +1,12 @@
 # Renderer session handoff
 
+## Current: FFBE-styled battle HUD (2026-11-07)
+
+UI milestone 2: the DOM CombatHud now uses original FFBE parts (window frame,
+party-unit base, HP/MP gauges, enemy HP gauge, command icons) exported with
+provenance by tools/export_battle_ui.py. Details, measured gauge tracks and open
+items (per-skill icons, animated HP drain): docs/battle-layout.md.
+
 ## Current: target-first battle ribbon (2026-11-07)
 
 UI milestone 1 from docs/vision.md: enemies are clickable at any time during

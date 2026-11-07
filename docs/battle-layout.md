@@ -1,6 +1,6 @@
 # Desktop battle UI
 
-Status 2026-11-07 (UI milestone 1, target-first). Direction and acceptance goals
+Status 2026-11-07 (UI milestones 1 target-first and 2 FFBE visual design). Direction and acceptance goals
 live in `docs/vision.md` section 6.
 
 The target is desktop only: one 1000 x 1100 internal Phaser viewport scaled with
@@ -55,12 +55,35 @@ spans -282 to -116. Their approach translations of +72 and +160 px place the vis
 attack across the target. Approach Y comes from the selected enemy; heroes return to
 their exact home slot.
 
-## Original UI art (currently unused)
+## Visual design (UI milestone 2)
 
-`py tools/export_battle_ui.py` exports five reviewed FFBE battle UI regions (command
-plate, party plate, attack, magic, ability icons) with provenance to
-`public/assets/ui/battle/`. The previous Phaser HUD used them; the DOM HUD does not
-load them. They remain available for the visual redesign.
+The HUD combines original FFBE battle UI parts with FFRogue layout and typography
+(Cinzel for names, Source Sans 3 for values):
+
+- Dock and encounter caption: the FFBE window frame (silver border, filigree
+  corners, navy fill) as a CSS `border-image`.
+- Party cards: original party-unit base and portrait frame; original HP and MP
+  gauges ("HP"/"MP" labels) with their bars. HP bars switch green → yellow → red
+  above 50 % / above 25 % / below, as in FFBE. Card states: active (silver glow,
+  gold status), ready, acted (dimmed), K.O. (grey), ally target (pulsing).
+- Commands: original attack, magic and ability icons on a deep-blue plate
+  (`magic` for `magic_atk` skills, `ability` otherwise), name, cost, key hint.
+- Enemy plates: name and HP over a dark fading band, original gold-ornamented
+  enemy HP gauge with green/yellow/red bars; bosses get a wider gauge.
+
+`tools/export_battle_ui.py` (project Python with Pillow) extracts these parts from
+the offline Godot atlas resources in `assets/ui/battle/*.tres` and composes the
+window frame from `assets/ui/window/window_*`. Output and provenance (source,
+atlas region, SHA-256): `public/assets/ui/battle/provenance.json`. Gauge bars sit in
+measured tracks: unit gauges 186x26 with the 180x4 bar at (3,19); enemy gauge
+416x40 with the 374x16 bar at (21,8).
+
+Not yet done: per-skill original icons (the dump has 480 under `abilities/`; a
+skill→icon mapping is needed), animated HP drain (the HUD re-renders its markup, so
+bars jump), and a dedicated Limit/LB gauge.
+
+Checked at 1920x1080, 1440x900, 1100x760 and 900x720: the dock fits without
+scrolling.
 
 ## Development hooks
 

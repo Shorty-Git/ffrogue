@@ -1,46 +1,107 @@
-.combat-ui{position:fixed;z-index:1800;pointer-events:none;color:var(--rpg-ink);font:400 16px/1.15 var(--rpg-type);overflow:hidden}
+/* Battle HUD (DOM layer over the Phaser canvas). Original FFBE parts come from
+   /assets/ui/battle/ (tools/export_battle_ui.py); layout and typography are FFRogue's. */
+.combat-ui{position:fixed;z-index:1800;pointer-events:none;color:var(--rpg-ink);font:400 16px/1.15 var(--rpg-type);overflow:hidden;container-type:size}
 body:has(#run-ui:not([data-phase=battle])) .combat-ui,body:has(.encounter-transition) .combat-ui{visibility:hidden}
-.combat-caption{position:absolute;z-index:2;top:8px;left:12px;display:flex;gap:10px;align-items:baseline;padding:6px 10px;border:1px solid #a6c2da65;border-radius:4px;background:#081a30e8;font-size:14px}
-.combat-caption span,.combat-ui small{color:#b9cde1}
-.combat-dock{position:absolute;z-index:2;bottom:0;left:0;right:0;max-height:33%;padding:7px 10px;overflow:auto;pointer-events:auto;background:linear-gradient(165deg,#142d4a,#081426 67%);border-top:1px solid #aec8e5;box-shadow:0 -8px 22px #03091480}
-.combat-party,.ribbon-commands{display:grid;gap:5px}
-.combat-party{grid-template-columns:repeat(3,minmax(0,1fr))}
-.ribbon-commands{grid-template-columns:repeat(4,minmax(0,1fr));margin-top:5px}
-.combat-ui button{font:inherit;color:inherit;border:1px solid #637f9a;border-radius:4px;padding:4px 7px;background:#102640;cursor:pointer;min-height:32px;text-align:left}
-.combat-ui button:hover:not(:disabled),.combat-ui button[aria-pressed=true]{background:#23476c;border-color:#ddc68e}
-.combat-ui button:focus-visible{outline:2px solid #f4d88e;outline-offset:-2px}
-.combat-ui button:disabled{cursor:default;color:#aab8c8;background:#0d1b2c}
-.combat-ui button strong{font-weight:650;overflow-wrap:anywhere}
-.combat-ui small{font-size:13px}
-.combat-party button{min-width:0;display:flex;align-items:center;gap:6px}
-.combat-party img{width:clamp(22px,4vw,42px);height:auto;image-rendering:pixelated;object-fit:contain}
-.ribbon-member{display:grid;flex:1;min-width:0;gap:1px}
-.ribbon-member>span,.arena-health>span{font-size:13px;font-variant-numeric:tabular-nums}
-.combat-ui meter{width:100%;height:6px;display:block}
-.combat-ui meter::-webkit-meter-bar{height:5px;border:0;background:#061122}
-.combat-ui meter::-webkit-meter-optimum-value{background:#83ceb0}
-.combat-ui meter.mp::-webkit-meter-optimum-value{background:#73c8ff}
-.ribbon-commands button{display:grid;grid-template-columns:auto 1fr;column-gap:5px;align-content:center}
-.ribbon-commands small{grid-column:2}
-.ribbon-commands kbd{font:600 13px var(--rpg-type);color:#ddc68e}
-.ribbon-prompt{display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:14px;min-height:21px}
-.ribbon-prompt button{min-height:26px}
+.combat-ui button{font:inherit;color:inherit;text-align:left;cursor:pointer;margin:0}
+.combat-ui button:focus-visible{outline:2px solid #f4d88e;outline-offset:1px}
+.combat-ui kbd{font:600 .72em var(--rpg-type);color:#cfe0f0b0}
+
+/* Encounter caption: small FFBE window, top left. */
+.combat-caption{position:absolute;z-index:2;top:8px;left:10px;display:flex;gap:.7em;align-items:baseline;padding:.15em .55em;font-size:clamp(11px,1.5cqw,15px);
+  border:7px solid transparent;border-image:url(/assets/ui/battle/window_frame.png) 56 fill / 14px / 0 stretch}
+.combat-caption strong{font:600 1em/1.2 var(--rpg-display);letter-spacing:.06em;text-shadow:0 1px 2px #000}
+.combat-caption span{color:#b9cde1;text-transform:uppercase;font-size:.78em;letter-spacing:.14em}
+
+/* Dock: the FFBE window frame around party and commands. */
+.combat-dock{position:absolute;z-index:2;bottom:0;left:0;right:0;max-height:36%;overflow:auto;pointer-events:auto;display:grid;gap:.4em;
+  font-size:clamp(11px,1.6cqw,16px);padding:.55em .8em .4em;border:6px solid transparent;
+  border-image:url(/assets/ui/battle/window_frame.png) 56 fill / 22px / 0 stretch}
+.combat-party{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.45em}
+.ribbon-commands{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.45em}
+
+/* Party cards. */
+.party-card{position:relative;display:flex;align-items:center;gap:.5em;min-width:0;padding:.3em .5em .3em .3em;border:1px solid #8fb0d055;border-radius:3px;
+  background:url(/assets/ui/battle/party_unit_base.png) center/100% 100% no-repeat,#0b1d3a;box-shadow:inset 0 0 0 1px #00000066,0 2px 4px #0007;transition:filter .15s,box-shadow .15s}
+.party-card:hover:not(:disabled){filter:brightness(1.12)}
+.party-card:disabled{cursor:default}
+.party-card.is-active{border-color:#e8f2ff;box-shadow:0 0 0 1px #e8f2ff66,0 0 14px #8fd0ff88,inset 0 0 16px #9fd8ff2e}
+.party-card.is-acted{filter:saturate(.5) brightness(.72)}
+.party-card.is-ko{filter:grayscale(1) brightness(.55)}
+.party-card.is-target{border-color:#bfe2ff;animation:ally-target 1s ease-in-out infinite alternate}
+@keyframes ally-target{from{box-shadow:0 0 4px #9fd0ff55}to{box-shadow:0 0 16px #9fd0ffcc}}
+.portrait-frame{flex:none;width:3em;aspect-ratio:1;display:grid;place-items:center;overflow:hidden;border:1px solid #c9dcefcc;border-radius:3px;
+  background:url(/assets/ui/battle/unit_icon_frame.png) center/100% 100%;box-shadow:inset 0 0 6px #000a,0 0 0 1px #0009}
+.portrait-frame img{width:100%;height:100%;object-fit:contain;image-rendering:pixelated}
+.party-info{flex:1;min-width:0;display:grid;gap:.05em}
+.party-head{display:flex;justify-content:space-between;align-items:baseline;gap:.4em;min-width:0}
+.party-head strong{font:600 1em/1.15 var(--rpg-display);letter-spacing:.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 2px #000}
+.party-head small{flex:none;font-size:.72em;letter-spacing:.1em;text-transform:uppercase;color:#b9cde1}
+.party-card.is-active .party-head small{color:#f0d28e}
+.party-card.is-ko .party-head small{color:#f19691}
+.gauge-row{position:relative;display:block}
+.gauge-value{position:absolute;z-index:1;right:.15em;top:-.1em;font-size:.8em;font-variant-numeric:tabular-nums;color:#c9d9ea;text-shadow:0 1px 2px #000,0 0 3px #000}
+.gauge-value b{font-weight:700;color:#fff}
+
+/* Original gauges: frame image with the bar inside the measured track. */
+.gauge{position:relative;display:block;width:100%;background:center/100% 100% no-repeat}
+.gauge-fill{position:absolute;display:block;background:center/100% 100% no-repeat}
+.gauge-hp{aspect-ratio:186/26;background-image:url(/assets/ui/battle/hp_gauge.png)}
+.gauge-mp{aspect-ratio:186/26;background-image:url(/assets/ui/battle/mp_gauge.png)}
+.gauge-hp .gauge-fill,.gauge-mp .gauge-fill{left:1.613%;top:73.08%;height:15.38%;width:calc(96.77% * var(--fill))}
+.gauge-hp [data-level=high]{background-image:url(/assets/ui/battle/hp_bar_high.png)}
+.gauge-hp [data-level=mid]{background-image:url(/assets/ui/battle/hp_bar_mid.png)}
+.gauge-hp [data-level=low]{background-image:url(/assets/ui/battle/hp_bar_low.png)}
+.gauge-mp .gauge-fill{background-image:url(/assets/ui/battle/mp_bar.png)}
+.gauge-enemy{aspect-ratio:416/40;background-image:url(/assets/ui/battle/enemy_hp_gauge.png)}
+.gauge-enemy .gauge-fill{left:5.05%;top:20%;height:40%;width:calc(89.9% * var(--fill))}
+.gauge-enemy [data-level=high]{background-image:url(/assets/ui/battle/enemy_hp_bar_high.png)}
+.gauge-enemy [data-level=mid]{background-image:url(/assets/ui/battle/enemy_hp_bar_mid.png)}
+.gauge-enemy [data-level=low]{background-image:url(/assets/ui/battle/enemy_hp_bar_low.png)}
+
+/* Commands: original icons on a deep blue plate. */
+.command{position:relative;display:flex;align-items:center;gap:.45em;min-width:0;min-height:3em;padding:.2em .5em .2em .25em;border:1px solid #8fb0d088;border-radius:4px;
+  background:linear-gradient(180deg,#2b5c9c,#173a70 47%,#0d2654 53%,#0a1c3f);box-shadow:inset 0 1px 0 #ffffff3a,inset 0 -1px 0 #0009,0 2px 4px #0008;transition:filter .12s}
+.command:hover:not(:disabled){filter:brightness(1.18);border-color:#e8f2ff}
+.command[aria-pressed=true]{border-color:#f0d28e;box-shadow:0 0 0 1px #f0d28e88,0 0 12px #f0d28e66}
+.command:disabled{cursor:default;filter:grayscale(.8) brightness(.62)}
+.command-icon{flex:none;width:2.6em;height:2.6em}
+.command-text{display:grid;min-width:0}
+.command-text strong{font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 2px #000}
+.command-text small{font-size:.78em;color:#9fd5ff;font-variant-numeric:tabular-nums}
+.command kbd{position:absolute;top:.15em;right:.35em}
+.command.is-empty{border:1px dashed #6f8cab40;background:#08162c80;box-shadow:none}
+
+/* Prompt line. */
+.ribbon-prompt{display:flex;justify-content:center;align-items:center;gap:.8em;min-height:1.5em;font-size:.88em;color:#c6d8ea;letter-spacing:.02em;text-shadow:0 1px 2px #000}
+.ribbon-prompt [role=status]::before,.ribbon-prompt [role=status]::after{content:'◆';color:#8fc8ff;font-size:.62em;margin:0 .7em;vertical-align:.15em}
+.prompt-cancel{padding:.15em .6em;border:1px solid #8fb0d088;border-radius:3px;background:#102a50;font-size:.92em}
+.prompt-cancel:hover{filter:brightness(1.2)}
+
+/* Arena: enemy HP plates, click areas, target cursor. */
 .arena-actor{position:absolute;min-width:40px;min-height:40px;transform:translate(-50%,-50%)}
-.arena-health{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);display:grid;width:max-content;min-width:115px;max-width:190px;padding:4px 7px;gap:2px;border:1px solid #9fbdd6a0;border-radius:4px;background:#08182aeb;text-align:center;font-size:14px}
-.arena-health.is-boss{min-width:155px;border-color:#d5b579;color:#ffe3a8}
-.arena-health.is-boss meter,.arena-health.is-boss meter::-webkit-meter-bar{height:7px}
-.arena-actor.is-marked .arena-health,.arena-actor.is-targeted .arena-health{border-color:#e8f2ff;box-shadow:0 0 10px #9fd0ff77}
+.arena-health{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);display:grid;width:clamp(120px,19cqw,190px);margin-bottom:.15em;
+  font-size:clamp(10px,1.45cqw,14px);pointer-events:none;padding:.15em 0 .1em;
+  background:url(/assets/ui/battle/enemy_status_glow.png) center bottom/100% 1.6em no-repeat,linear-gradient(90deg,#06122600,#061226d9 14%,#061226d9 86%,#06122600)}
+.arena-health.is-boss{width:clamp(150px,25cqw,250px)}
+.enemy-head{display:flex;justify-content:space-between;align-items:baseline;gap:.5em;padding:0 .55em;text-shadow:0 1px 2px #000,0 0 4px #000,0 0 8px #000}
+.enemy-head strong{font:600 1em/1.25 var(--rpg-display);letter-spacing:.05em;white-space:nowrap}
+.enemy-head span{font-size:.85em;color:#dfeaf6;font-variant-numeric:tabular-nums}
+.arena-health.is-boss .enemy-head strong{color:#ffe3a8}
+.arena-actor.is-targeted .enemy-head strong{color:#fff;text-shadow:0 0 6px #9fd0ff,0 1px 2px #000}
+.arena-health small{padding:0 .55em;font-size:.8em;color:#ffd99a;text-shadow:0 1px 2px #000,0 0 4px #000}
 /* Whole enemy body is the click area; no visible box, only a soft glow on hover. */
-.combat-ui button.arena-hit{position:absolute;inset:0;pointer-events:auto;border:0;background:none;border-radius:50%;padding:0;cursor:pointer}
+.combat-ui button.arena-hit{position:absolute;inset:0;pointer-events:auto;border:0;background:none;border-radius:50%;padding:0}
 .combat-ui button.arena-hit:hover:not(:disabled){background:radial-gradient(closest-side,#bfe2ff2e,#bfe2ff00)}
 .combat-ui button.arena-hit:focus-visible{outline:2px dashed #e8f2ffb0;outline-offset:2px}
-.target-cursor{position:absolute;left:100%;top:50%;width:clamp(26px,3.4vw,40px);margin-left:2px;transform:translateY(-50%);pointer-events:none;filter:drop-shadow(0 0 4px #9fd0ffaa) drop-shadow(0 2px 2px #000a);animation:target-cursor-bob .9s ease-in-out infinite alternate}
+.target-cursor{position:absolute;left:100%;top:50%;width:clamp(26px,3.4cqw,40px);margin-left:2px;transform:translateY(-50%);pointer-events:none;
+  filter:drop-shadow(0 0 4px #9fd0ffaa) drop-shadow(0 2px 2px #000a);animation:target-cursor-bob .9s ease-in-out infinite alternate}
 @keyframes target-cursor-bob{from{translate:0 0}to{translate:-6px 0}}
-@media(prefers-reduced-motion:reduce){.target-cursor{animation:none}}
+/* Actors hit by the running command: crystal glow at their feet. */
+.arena-actor.is-marked::after{content:'';position:absolute;left:10%;right:10%;bottom:-4%;height:16%;border-radius:50%;background:radial-gradient(closest-side,#bfe2ff66,#bfe2ff00);pointer-events:none}
+@media(prefers-reduced-motion:reduce){.target-cursor,.party-card.is-target{animation:none}}
+
+/* Settings toolbar (GameFlow) beside the battle. */
 .run-toolbar.combat-settings{top:var(--battle-toolbar-top,8px);right:var(--battle-toolbar-right,8px);display:block}
 .combat-settings summary.rpg-button{cursor:pointer;padding:5px 8px;font-size:14px;min-height:30px}
 .combat-settings[open]{background:#081a30f5;border:1px solid #7f9cb8;border-radius:4px;padding:4px}
 .combat-settings button{min-height:32px}
-@media(max-height:760px){.combat-dock{padding:4px 7px}.ribbon-member{gap:0}.combat-ui button{padding:3px 5px}}
-/* Actors hit by the running command: crystal glow at their feet. */
-.arena-actor.is-marked::after{content:'';position:absolute;left:10%;right:10%;bottom:-4%;height:16%;border-radius:50%;background:radial-gradient(closest-side,#bfe2ff66,#bfe2ff00);pointer-events:none}

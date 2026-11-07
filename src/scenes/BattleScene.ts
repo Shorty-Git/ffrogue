@@ -402,17 +402,18 @@ export class BattleScene extends Phaser.Scene {
       })],
       party:this.turnOrder.map((member,i)=>{
         const boost=heroPhysicalMultiplier(member.sourceBuffs,this.currentRound);
-        const status=member.isDead?'K.O.':member.hasActed?'Acted':member===hero&&available?'Active':'Ready';
+        const state=member.isDead?'ko':member.hasActed?'acted':member===hero&&available?'active':'ready';
+        const status={ko:'K.O.',acted:'Acted',active:'Active',ready:'Ready'}[state];
         const target=plan&&scope==='single_ally'&&!member.isDead&&member.currentHp>0?this.enemies.length+i:undefined;
         const definition=this.cache.json.get(`character_${member.unitKey}`) as CharacterDefinition;
         return {name:member.heroName,portrait:definition.portrait?`/assets/units/${member.unitKey}/${definition.portrait}`:undefined,status:status+(boost>1?` · ATK +${Math.round((boost-1)*100)}%`:''),
           active:member===hero&&available,disabled:target===undefined&&(this.combatState!=='PLAYER_TURN'||member.isDead||member.hasActed||scope==='single_ally'),
-          target,hp:member.currentHp,maxHp:member.maxHp,mp:member.currentMp,maxMp:member.maxMp};
+          state,target,hp:member.currentHp,maxHp:member.maxHp,mp:member.currentMp,maxMp:member.maxMp};
       }),
-      commands:[{name:'Attack',cost:'0 MP',description:'Normal attack',disabled:!available,selected:plan?.kind==='attack'},
+      commands:[{name:'Attack',icon:'attack',cost:'0 MP',description:'Normal attack',disabled:!available,selected:plan?.kind==='attack'},
         ...[0,1,2].map(i=>{
           const action=skills[i];if(!action)return null;
-          return {name:action.name,cost:`${action.mpCost} MP${action.hpCost?' · '+action.hpCost+' HP':''}`,description:skillDescription(action),
+          return {name:action.name,icon:(action.motion==='magic_atk'?'magic':'ability') as 'magic'|'ability',cost:`${action.mpCost} MP${action.hpCost?' · '+action.hpCost+' HP':''}`,description:skillDescription(action),
             disabled:!available||!hero||hero.currentMp<action.mpCost||!!action.hpCost&&hero.currentHp<=action.hpCost||!this.canUseSourceSkill(action),selected:skill===action};
         })],
     });

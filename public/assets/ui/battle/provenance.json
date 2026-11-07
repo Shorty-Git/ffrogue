@@ -1,19 +1,14 @@
 {
-  "command_plate": {
-    "source": "assets/ui/battle/battle_com_bg.tres",
-    "region": [
-      0,
-      1138,
-      640,
-      82
-    ],
-    "sha256": "33d6bc1cd9e66bb6baa95a86c9a4e660890345ab7911e42d0e3f06bec45c2661"
-  },
   "attack": {
     "source": "assets/ui/battle/battle_com_icon_attack.tres",
+    "atlas": "assets/ui/battle/battle.png",
     "region": [
       0,
       2197,
+      120,
+      120
+    ],
+    "size": [
       120,
       120
     ],
@@ -21,9 +16,14 @@
   },
   "magic": {
     "source": "assets/ui/battle/battle_com_icon_magic.tres",
+    "atlas": "assets/ui/battle/battle.png",
     "region": [
       480,
       2197,
+      120,
+      120
+    ],
+    "size": [
       120,
       120
     ],
@@ -31,22 +31,247 @@
   },
   "ability": {
     "source": "assets/ui/battle/battle_com_icon_special.tres",
+    "atlas": "assets/ui/battle/battle.png",
     "region": [
       600,
       2197,
       120,
       120
     ],
+    "size": [
+      120,
+      120
+    ],
     "sha256": "14e310502098a4d87dd027300f2608058b41a1bc5eed69e083acd13f442e1387"
   },
-  "party_plate": {
-    "source": "assets/ui/battle/battle_listchara.tres",
+  "party_unit_base": {
+    "source": "assets/ui/battle/battle_base_partyunit.tres",
+    "atlas": "assets/ui/battle/battle.png",
     "region": [
-      280,
-      208,
-      232,
-      34
+      256,
+      361,
+      276,
+      48
     ],
-    "sha256": "8763c8e85e7100804e69ec221c57c706f198b47f3557a0a691d6cc6399047902"
+    "size": [
+      276,
+      48
+    ],
+    "sha256": "12af5b62654802de2d4527ad05d62ece51f954903aceae337429b1395f0ebc05"
+  },
+  "unit_icon_frame": {
+    "source": "assets/ui/battle/battle_bg_unit_icon.tres",
+    "atlas": "assets/ui/battle/battle.png",
+    "region": [
+      534,
+      280,
+      40,
+      40
+    ],
+    "size": [
+      40,
+      40
+    ],
+    "sha256": "25fbd0335c7fb25a11663ef76bf8547aad60e46a8f9a31efc79f4b09a6efcff0"
+  },
+  "hp_gauge": {
+    "source": "assets/ui/battle/battle_unit_hp_gauge.tres",
+    "atlas": "assets/ui/battle/battle.png",
+    "region": [
+      180,
+      144,
+      186,
+      26
+    ],
+    "size": [
+      186,
+      26
+    ],
+    "sha256": "f04e7d13baa334daf674477de68f8ccb77026a672858e5d3349188dd0e12b8a0"
+  },
+  "hp_bar_high": {
+    "source": "assets/ui/battle/battle_unit_hp_bar1.tres",
+    "atlas": "assets/ui/battle/battle.png",
+    "region": [
+      445,
+      4,
+      180,
+      4
+    ],
+    "size": [
+      180,
+      4
+    ],
+    "sha256": "a712e6050524ca8a980c2d86b593f64498f9870c0aff44d70ea86d10ca5dd7ca"
+  },
+  "hp_bar_mid": {
+    "source": "assets/ui/battle/battle_unit_hp_bar2.tres",
+    "atlas": "assets/ui/battle/battle.png",
+    "region": [
+      625,
+      4,
+      180,
+      4
+    ],
+    "size": [
+      180,
+      4
+    ],
+    "sha256": "ba15d2c4e046ef23364d9ca7722925a9a6885f2484fb99cc607bfc59f5821e9f"
+  },
+  "hp_bar_low": {
+    "source": "assets/ui/battle/battle_unit_hp_bar3.tres",
+    "atlas": "assets/ui/battle/battle.png",
+    "region": [
+      0,
+      8,
+      180,
+      4
+    ],
+    "size": [
+      180,
+      4
+    ],
+    "sha256": "f3041e41846aadc189202a9a2f6e129a3824523171feb8aa0d063ccd16706394"
+  },
+  "mp_gauge": {
+    "source": "assets/ui/battle/battle_unit_mp_long_gauge.tres",
+    "atlas": "assets/ui/battle/battle.png",
+    "region": [
+      456,
+      144,
+      186,
+      26
+    ],
+    "size": [
+      186,
+      26
+    ],
+    "sha256": "2444a76c86b27ab9bb3002987fa824dd3ce98f9b0081c0df4dfa26a1bac5c6c1"
+  },
+  "mp_bar": {
+    "source": "assets/ui/battle/battle_unit_mp_long_bar.tres",
+    "atlas": "assets/ui/battle/battle.png",
+    "region": [
+      804,
+      8,
+      180,
+      4
+    ],
+    "size": [
+      180,
+      4
+    ],
+    "sha256": "6413a30aac47cb1ff7fd7fdb060d655ebd8e9d022de21d199835bdb9365266f2"
+  },
+  "enemy_hp_gauge": {
+    "source": "assets/ui/battle/battle_enemy_hp_gauge.tres",
+    "atlas": "assets/ui/battle/battle.png",
+    "region": [
+      574,
+      280,
+      416,
+      40
+    ],
+    "size": [
+      416,
+      40
+    ],
+    "sha256": "2f9b58e1cec6cc239d76f1ddedce39f865aa7db26334b2d04cf3798fea2a6a6c"
+  },
+  "enemy_hp_bar_high": {
+    "source": "assets/ui/battle/battle_enemy_hp_bar1.tres",
+    "atlas": "assets/ui/battle/battle.png",
+    "region": [
+      374,
+      48,
+      374,
+      16
+    ],
+    "size": [
+      374,
+      16
+    ],
+    "sha256": "1066707cf15e754e0a837cf610555dcaeff2bb5ff7711fba904dae6f9264e1d1"
+  },
+  "enemy_hp_bar_mid": {
+    "source": "assets/ui/battle/battle_enemy_hp_bar2.tres",
+    "atlas": "assets/ui/battle/battle.png",
+    "region": [
+      0,
+      64,
+      374,
+      16
+    ],
+    "size": [
+      374,
+      16
+    ],
+    "sha256": "452a44783276ed990e86da193305587720d14d3518ebec49119e20b44b4a888a"
+  },
+  "enemy_hp_bar_low": {
+    "source": "assets/ui/battle/battle_enemy_hp_bar3.tres",
+    "atlas": "assets/ui/battle/battle.png",
+    "region": [
+      374,
+      64,
+      374,
+      16
+    ],
+    "size": [
+      374,
+      16
+    ],
+    "sha256": "47da829eb6d78bb56e841d8ddfc964b392ceb1a963be0ab3f5e8072fe6ffbc5d"
+  },
+  "enemy_hp_damage": {
+    "source": "assets/ui/battle/battle_enemy_hp_bar_damage.tres",
+    "atlas": "assets/ui/battle/battle.png",
+    "region": [
+      0,
+      0,
+      164,
+      4
+    ],
+    "size": [
+      164,
+      4
+    ],
+    "sha256": "e60c649a8679c662cec9c6b5f4a7649a55af23c43b288c1f8543d8a0ba5df9e1"
+  },
+  "enemy_status_glow": {
+    "source": "assets/ui/battle/battle_header_enemystatus.tres",
+    "atlas": "assets/ui/battle/battle.png",
+    "region": [
+      784,
+      409,
+      232,
+      48
+    ],
+    "size": [
+      232,
+      48
+    ],
+    "sha256": "e550320b64bef528a418874d3310f2f8601a49dc6dcf4756c11b594831d0b242"
+  },
+  "window_frame": {
+    "source": [
+      "assets/ui/window/window_corner_lt.png",
+      "assets/ui/window/window_corner_rt.png",
+      "assets/ui/window/window_corner_lb.png",
+      "assets/ui/window/window_corner_rb.png",
+      "assets/ui/window/window_line_top.png",
+      "assets/ui/window/window_line_bottom.png",
+      "assets/ui/window/window_line_left.png",
+      "assets/ui/window/window_line_right.png",
+      "assets/ui/window/window_base.png"
+    ],
+    "slice": 56,
+    "note": "Edges and base resampled to one cell for CSS border-image.",
+    "size": [
+      168,
+      168
+    ],
+    "sha256": "ff7d0810af0c268057e02e16968f9605f90f74a2e3c95b97dd7757ab146dc4e0"
   }
 }
