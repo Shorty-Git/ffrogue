@@ -207,7 +207,10 @@ export class BattleScene extends Phaser.Scene {
       const actor=this.createHeroActor(member.key,slots[i],manifest,
         {...def.battle,maxHp:Math.round(this.runContext.catalog[member.key].maxHp*member.stats.hp),
          maxMp:memberMaxMp(this.runContext.catalog[member.key],member)},def.scale);
-      actor.currentHp=member.hp;actor.currentMp=member.mp;return actor;
+      actor.currentHp=member.hp;actor.currentMp=member.mp;
+      // A member still K.O. from an earlier battle enters lying down, not in the idle pose.
+      if(actor.isDead)actor.playRestPose();
+      return actor;
     });
     this.frontlineHero=this.turnOrder[0];
 

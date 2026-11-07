@@ -10,6 +10,10 @@ Last consolidated: 2026-11-07.
   expedition (2 areas, 4 encounters, Ochu and Guard Scorpion bosses) → rewards / awakening →
   result. Saves locally. Roster: Cloud, Aerith, Barret, Cloud of Darkness, Cloud AC, Delita,
   Jack (+ awakened forms up to 7★ / NV).
+- Rewards (`src/run/runState.mjs`): learn skill, skill rank, stat, awakening (boss), Field Rest
+  and Phoenix Down (`revive`, 2026-11-08). K.O. persists between battles; while a member is
+  K.O., one revival offer (50% base HP, `REVIVE_HP_SHARE`) is guaranteed among the three, next
+  to the guaranteed boss awakening. A K.O. member enters the next battle in its dead pose.
 - 24 Source skills (original FFBE effect data rendered in real time; authoring-free imports
   2026-11-07/08: Cloud's Meteor Rain, Aerith's Banish, Holy and Fury Brand, Delita's
   Northswain's Strike and Northern Sky Apprentice, Barret's Big Shot and Ungarmax, Jack's Cheer)
