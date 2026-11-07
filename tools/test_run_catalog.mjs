@@ -15,9 +15,9 @@ function fixture(){
  for(const f of content.forms)manifests[f.key]=read(`public/${f.assetPath}/manifest.json`);
  return {scene:{cache:{json:{get:k=>values[k]}}},values,manifests};
 }
-test('production run pool admits the 17 published Source contracts across six identities',()=>{
+test('production run pool admits the 19 published Source contracts across six identities',()=>{
  const f=fixture(),catalog=runCatalog(f.scene,f.manifests);
- assert.equal(Object.keys(catalog).length,6);assert.equal(Object.values(catalog).flatMap(c=>c.skills).length,17);
+ assert.equal(Object.keys(catalog).length,6);assert.equal(Object.values(catalog).flatMap(c=>c.skills).length,19);
  assert.ok(!catalog.barret);assert.notEqual(catalog.cloud.identity,catalog.cloud_ac.identity);
  for(const c of Object.values(catalog))for(const s of c.skills){const copy=skillDescription(s);assert.ok(copy.includes(`${s.mpCost} MP`));assert.ok(copy.length>12);}
 });

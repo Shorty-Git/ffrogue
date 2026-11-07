@@ -410,5 +410,13 @@ if __name__ == '__main__':
             boundary='Per member: emitter packets ordered by source SortPriority (if enabled) then node index; members in plan order. Full-Z sorting is not evaluated.')
         plan['approximations'] = dict(profile='held-constant-unverified-curves-v1', curves=bmb_channels.APPROXIMATED_CURVES,
             boundary='Visual approximation: these source curves are not evaluated; the effect is not a native-fidelity reconstruction.')
+    if a.approximate_unverified and plan['sourceHits'] and members:
+        # Emitters must keep spawning until the last original hit (Holy hits at frame 450); the
+        # fixed 180-frame horizon cut late elements. Accepted strict plans keep 180.
+        last_hit = max(h['frame'] for h in plan['sourceHits']) + plan.get('composition', {}).get('skillFrameOffset', 0)
+        horizon = max(180, last_hit - min(m['startFrame'] for m in members) + 60)
+        if horizon != plan['effectHorizon']:
+            bmb_channels.APPROXIMATED_CURVES.append({'effectHorizon': horizon, 'treatment': 'spawn-horizon-to-last-hit'})
+            plan['effectHorizon'] = horizon
     a.output.write_text(json.dumps(plan, indent=2), encoding='utf-8')
     print('Prepared original-data experiment:', a.output)

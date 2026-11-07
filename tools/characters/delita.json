@@ -25,7 +25,7 @@
       "type": "ABILITY",
       "mpCost": 12,
       "scope": "single_enemy",
-      "damageMultiplier": 2.0,
+      "damageMultiplier": 2,
       "damageType": "physical",
       "hitCount": 1,
       "attackFrames": [
@@ -149,7 +149,7 @@
       "level": 1,
       "mpCost": 48,
       "scope": "all_enemies",
-      "damageMultiplier": 3.0,
+      "damageMultiplier": 3,
       "damageType": "physical",
       "hitCount": 9,
       "attackFrames": [
@@ -234,7 +234,7 @@
       "type": "ABILITY",
       "mpCost": 12,
       "scope": "single_enemy",
-      "damageMultiplier": 2.0,
+      "damageMultiplier": 2,
       "damageType": "physical",
       "hitCount": 1,
       "attackFrames": [
@@ -286,6 +286,60 @@
           "sourceMotionType": 1,
           "sourceMoveType": 1,
           "note": "Explicit reviewed physical Motion-1/move-1 single-target attack using the checked Delita atk body and complete exact-form attack prefix, as in the accepted Shield Break profile. No Motion-ID fallback: this contract applies only to this reviewed composition. Original marker40 plus prefix offset40 gives event80; native effect composition evidence is documented in native-hit-profiles.md. Full BattleScene playback is required."
+        }
+      }
+    },
+    {
+      "id": "northswain_strike",
+      "ffbeId": 202250,
+      "name": "Northswain's Strike",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 20,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.2,
+      "hitCount": 1,
+      "attackFrames": [
+        40
+      ],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Physical damage (2.2x, ATK) to one enemy",
+      "execution": "prepared-source",
+      "damageEvents": [
+        {
+          "frame": 80,
+          "weight": 1
+        }
+      ],
+      "reviewNote": "Authoring-free import 2026-11-07 (wave 2): shared Source preview profile with --approximate-unverified and original draw order; visual acceptance bar per docs/vision.md.",
+      "scenePresentation": "delita_northswain_strike",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/wave2-20261107/northswain/source/skill-source.json",
+        "sha256": "12ec7f513bf73146e6e958cd7e2318258ac187ac412c1c2110f6287f2046bbce"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "target",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 1,
+          "sourceMoveType": 1,
+          "note": "Original motionType 1 / moveType 1: dash to the target and the atk body, unit attack prefix composed at offset 40."
         }
       }
     }

@@ -84,7 +84,9 @@ def _unit_xy_uniform(effect, node, plan):
 
 def _static_identity(node):
     """No animated or randomized transform: the node's frame is fixed relative to its parent."""
-    if any(curve.get('keys') for curve in node.get('vectorCurves', {}).values()):
+    # Only transform curves move a plane; colour/alpha curves stay source data on the coverage.
+    if any(curve.get('keys') for name, curve in node.get('vectorCurves', {}).items()
+           if name.startswith(('translation', 'rotation', 'scale'))):
         return False
     transform = node.get('staticVectors', {}).get('transform', {})
     for channel in transform.values():
@@ -128,6 +130,29 @@ def _opaque_backdrop_quad(effect, node, plan, nodes, longest):
                        f'life {node.get("lifeParameter")} of {longest} frames; fitted to the visible battlefield')
 
 
+def _backdrop_particle(effect, node, plan, longest):
+    """A uniform Basic Particle held on a screen-anchored effect for most of its life is a
+    full-screen dim/tint plane (e.g. Holy's black fade); its colour/alpha stay source data."""
+    binding = node.get('resourceBindings', {})
+    if node['typeId'] != 3 or not binding.get('texture1') or binding.get('texture2') or binding.get('model'):
+        return None
+    if node.get('materialControls', {}).get('textureCombination', {}).get('name') != 'Basic':
+        return None
+    if not _static_identity(node) or node.get('lifeParameter', 0) < 0.8 * longest:
+        return None
+    source = plan['files'][effect['textures'][binding['texture1']['name']]]
+    path = Path(source['path'])
+    if hashlib.sha256(path.read_bytes()).hexdigest() != source['sha256']:
+        raise ValueError('Backdrop texture identity changed')
+    with Image.open(path) as image:
+        extrema = image.convert('RGBA').getextrema()
+    if any(low != high for low, high in extrema) or extrema[3] != (255, 255):
+        return None
+    return dict(region='arena', primitive='screen-particle', textureSha256=source['sha256'],
+                origin=f'Automatic screen backdrop: uniform Basic Particle on a screen-anchored effect, '
+                       f'life {node.get("lifeParameter")} of {longest} frames; fitted to the visible battlefield')
+
+
 def annotate_screen_backdrops(plan):
     """Generic rule: a static uniform unit-XY Model in a screen-anchored effect whose authored
     width covers the whole FFBE logical screen (640) is a full-screen backdrop (dimming/tint).
@@ -143,7 +168,7 @@ def annotate_screen_backdrops(plan):
         for node in nodes:
             if node.get('presentationCoverage'):
                 continue
-            quad = _opaque_backdrop_quad(effect, node, plan, nodes, longest)
+            quad = _opaque_backdrop_quad(effect, node, plan, nodes, longest) or _backdrop_particle(effect, node, plan, longest)
             if quad:
                 node['presentationCoverage'] = quad
                 count += 1

@@ -537,6 +537,125 @@
         ],
         "boundary": "Original process parameters and source markers do not execute as game balance rules"
       }
+    },
+    {
+      "id": "northswain_strike",
+      "ffbeId": 202250,
+      "name": "Northswain's Strike",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 20,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.2,
+      "hitCount": 1,
+      "attackFrames": [
+        40
+      ],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Physical damage (2.2x, ATK) to one enemy",
+      "damageEvents": [
+        {
+          "frame": 80,
+          "weight": 1
+        }
+      ],
+      "reviewNote": "Authoring-free import 2026-11-07 (wave 2): shared Source preview profile with --approximate-unverified and original draw order; visual acceptance bar per docs/vision.md.",
+      "scenePresentation": "delita_northswain_strike",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/wave2-20261107/northswain/source/skill-source.json",
+        "sha256": "12ec7f513bf73146e6e958cd7e2318258ac187ac412c1c2110f6287f2046bbce"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "target",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 1,
+          "sourceMoveType": 1,
+          "note": "Original motionType 1 / moveType 1: dash to the target and the atk body, unit attack prefix composed at offset 40."
+        }
+      },
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 202250,
+        "database": {
+          "path": "assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 202250,
+          "name": "Northswain's Strike",
+          "rarity": 2,
+          "dispOrder": 272,
+          "cost": 3,
+          "6p90IFnC": null,
+          "target": "1",
+          "targetRange": "1",
+          "oL6zdpD0": 3,
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 1,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 1,
+          "processId": "112",
+          "PI18xnkD": "0",
+          "processParam": "3500,95,100,-50",
+          "H4zD2IQ5": 0,
+          "motionType": 1,
+          "effectFrames": "0:3000070:1:1:0&0:3000071:2:1:0",
+          "attackFrames": "40:100:2:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000054,
+          "equipCondition": null,
+          "2QoE3PtB": 0,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": "1,99",
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Authoring-free import 2026-11-07 (wave 2): shared Source preview profile with --approximate-unverified and original draw order; visual acceptance bar per docs/vision.md.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
     }
   ]
 }

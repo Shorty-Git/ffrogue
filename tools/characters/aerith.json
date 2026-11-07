@@ -206,6 +206,60 @@
           "note": "Magic rows carry no motionType/moveType; stationary magic_atk cast is a reviewed adaptation."
         }
       }
+    },
+    {
+      "id": "holy",
+      "ffbeId": 10210,
+      "name": "Holy",
+      "rarity": 5,
+      "level": 1,
+      "type": "MAGIC",
+      "mpCost": 40,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 1,
+      "attackFrames": [
+        450
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Holy magic damage (2.5x, MAG) to one enemy",
+      "execution": "prepared-source",
+      "damageEvents": [
+        {
+          "frame": 450,
+          "weight": 1
+        }
+      ],
+      "reviewNote": "Authoring-free import 2026-11-07 (wave 2): shared Source preview profile with --approximate-unverified and original draw order; visual acceptance bar per docs/vision.md.",
+      "scenePresentation": "aerith_holy",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/wave2-20261107/intake/aerith-10210/skill-source.json",
+        "sha256": "f4e9980864adcfad670ca9b0cf258c4ff1dc37e2a9648e4e8e60e61634b99683"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Magic rows carry no motionType/moveType; stationary magic_atk cast is a reviewed adaptation."
+        }
+      }
     }
   ],
   "portraitSource": "unit_icons/unit_icon_207000405.png"
