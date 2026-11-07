@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import {scenePresentationAnchor,scenePresentationMembers} from '../src/effects/PreparedSceneBridge.mjs';
+import {scenePresentationAnchor,scenePresentationMembers,casterStrikeOffset} from '../src/effects/PreparedSceneBridge.mjs';
 import {sourceRectanglePoint,instances} from '../src/effects/originalEffectPlayer.mjs';
 import {memberSamplingSeed} from '../src/effects/previewRandomStreams.mjs';
 import {validateImportPlacement} from './lib/character-pipeline.mjs';
@@ -61,4 +61,21 @@ test('new import placement admission is independent of VFX/choreography success'
  assert.doesNotThrow(()=>validateImportPlacement(skill,historical,[published]));
  for(const change of [{id:'different'},{ffbeId:124},{type:'MAGIC'},{scenePresentation:'other'},{importStatus:'not-imported'}])
   assert.throws(()=>validateImportPlacement(skill,historical,[{...published,...change}]),/placement coordinate contract/);
+});
+
+test('caster-unit placement follows the caster and aligns its strike with the target',()=>{
+ const casterUnit={frameWidth:100,frameHeight:120,pivotX:.5,pivotY:1,scale:2};
+ const placement={rectangle:'caster-unit',axisModes:[2,2],offset:[-280,40]};
+ const plan={rectanglePlacement:{coordinateSystem:'ffbe-screen-api',unitsPerPixel:1,scatter:[0,0]},presentation:{scope:'single_enemy'},
+  members:[{placement:{rectangle:'screen',axisModes:[2,2],offset:[0,100]}},...Array.from({length:3},()=>({placement}))]};
+ // Rectangle centre of the caster (0,-120) plus the source offset.
+ assert.deepEqual(casterStrikeOffset(plan,casterUnit),{x:-280,y:-80});
+ const host={width:1000,height:1100,arena:{x:0,y:0,width:1000,height:700},caster:{x:600,y:500},casterUnit,
+  targets:{target0:{x:200,y:500}},units:{target0:{frameWidth:80,frameHeight:80,pivotX:.5,pivotY:1,scale:2}}};
+ const anchor=scenePresentationAnchor({placement},host,plan);
+ assert.equal(anchor.x+host.width/2,600-280,'Placed from the caster, not from the target');
+ assert.throws(()=>scenePresentationAnchor({placement},{...host,casterUnit:undefined},plan),/caster footprint/);
+ // Published presentations without caster-unit members keep the reviewed approach offset.
+ for(const key of read('public/assets/content.json').scenePresentations.filter(k=>k!=='cloud_omnislash'))
+  assert.equal(casterStrikeOffset(read('public/assets/presentations/'+key+'/manifest.json').plan,casterUnit),null,key);
 });

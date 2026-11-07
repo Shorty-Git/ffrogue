@@ -14,12 +14,19 @@ Pipeline changes (all explicit, none silent):
   `limitburst.attackFrames` (no unit-attack prefix); the choreography identity check skips
   LIMIT rows, which carry no motionType/moveType; `limit_atk` is an admitted body phase.
 - `prepare_original_preview.py --approximate-unverified`: active source curves on channels
-  without a verified binary offset, animated two-texture colors/curves and anchor mode 3
-  (read as the command target) are held constant / mapped; unknown parent-control enum
+  without a verified binary offset and animated two-texture colors/curves are held
+  constant; anchor mode 3 is the caster's unit rectangle (`caster-unit`; self commands keep
+  their proven `target-unit`); unknown parent-control enum
   values take the matching authoring project's named value for that node only. Every case
   is listed in `plan.approximations`. Without the flag everything stays strict, and the
   stable enum tables in `bmb_source_controls.py` are unchanged (the sparse scale-0 evidence
   noted in test_bmb_source_controls.py still does not broaden the stable profile).
+- Caster-anchored strikes (2026-11-07 follow-up): for plans with `caster-unit` members the
+  host moves the caster so the most frequent caster-unit placement point (the hit members)
+  lands on the target's centre (`casterStrikeOffset`, PreparedSceneBridge.mjs). FFBE's fixed
+  party/enemy distances are translated to the FFRogue arena instead of a fixed recipe offset;
+  presentations without caster-unit members keep the reviewed approach offset. First read of
+  mode 3 as the target placed every Omnislash hit 280 px left of the enemy.
 - Scene manifests may run up to 900 frames (`MAX_SCENE_FRAMES`, was 600).
 - Body sheets wider than 16384 px (WebGL limit) wrap into a row-major grid
   (`tools/sheet_grid.py`, used by export_unit.py, prepare_cgg_body_layers.py and
@@ -38,7 +45,7 @@ node tools/import_character.mjs --recipe tools/characters/cloud.json --publish-s
 Staging still reports the strict audit blockers (unverified curves); they are expected
 and covered by the approximation list. Approximations in this plan: 35x
 Texture1_Color_Scale_Rgb curve, 14x Rotate curve, 7x Texture1_Translate curve, 2x animated
-texture color, 17x anchor mode 3, 8x Null rotation raw 6 = On and 8x type-2 scale raw 0 =
+texture color, 17x anchor mode 3 (caster-unit), 8x Null rotation raw 6 = On and 8x type-2 scale raw 0 =
 Off taken from the authoring projects. Visual check: headless Chrome frames of the full action.
 
 

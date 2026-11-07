@@ -33,9 +33,11 @@ def rectangle_for_group(anchor_mode, scope):
     if anchor_mode == 3 and scope == 'self':
         return 'target-unit'
     if anchor_mode == 3 and bmb_channels.APPROXIMATED_CURVES is not None:
-        # Approximation mode: read mode 3 as the command's target unit (proven only for self).
-        bmb_channels.APPROXIMATED_CURVES.append({'placement': 'anchor-mode-3', 'scope': scope, 'treatment': 'target-unit'})
-        return 'target-unit'
+        # Approximation mode: mode 3 is the caster's unit rectangle. Self commands cannot tell
+        # caster and target apart; Omnislash's members (-280 px toward the enemies from the
+        # caster) show the caster reading. The host aligns the caster so the strike lands.
+        bmb_channels.APPROXIMATED_CURVES.append({'placement': 'anchor-mode-3', 'scope': scope, 'treatment': 'caster-unit'})
+        return 'caster-unit'
     if anchor_mode not in (1, 2, 4):
         raise ValueError('Unsupported source effect rectangle mode: ' + str(anchor_mode))
     return {1: 'target-unit', 2: 'target-side', 4: 'screen'}[anchor_mode]

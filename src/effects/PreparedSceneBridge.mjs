@@ -1,6 +1,29 @@
 import {createEffectPlayer, presentationMembers, presentationAnchor, sourceRectanglePoint} from './originalEffectPlayer.mjs';
 import {validateSceneManifest} from './sceneProfile.mjs';
 
+const unitRectangle=(point,unit)=>({x:point.x-unit.pivotX*unit.frameWidth*unit.scale,y:point.y-unit.pivotY*unit.frameHeight*unit.scale,
+  width:unit.frameWidth*unit.scale,height:unit.frameHeight*unit.scale});
+
+/**
+ * Source strike point relative to the caster's position for plans whose members are placed in
+ * the caster's unit rectangle (FFBE anchor mode 3), or null. The most frequent placement wins
+ * (the hit members). Hosts move the caster so this point lands on the target instead of using
+ * a fixed approach offset: the original layout's distances are translated, not hard-coded.
+ */
+export function casterStrikeOffset(plan, casterUnit) {
+  if(plan.rectanglePlacement?.coordinateSystem!=='ffbe-screen-api'||!casterUnit)return null;
+  const counts=new Map();
+  for(const member of plan.members)if(member.placement?.rectangle==='caster-unit'){
+    const key=JSON.stringify([member.placement.axisModes,member.placement.offset]);
+    counts.set(key,{placement:member.placement,count:(counts.get(key)?.count??0)+1});
+  }
+  if(!counts.size)return null;
+  const {placement}=[...counts.values()].sort((a,b)=>b.count-a.count)[0];
+  const u=plan.rectanglePlacement.unitsPerPixel,rect=unitRectangle({x:0,y:0},casterUnit);
+  const point=sourceRectanglePoint(placement,{x:rect.x*u,y:rect.y*u,width:rect.width*u,height:rect.height*u},plan.rectanglePlacement.scatter);
+  return {x:point.x/u,y:point.y/u};
+}
+
 export function scenePresentationAnchor(member, host, plan) {
   const selected = member.targetKey ?? Object.keys(host.targets)[0];
   const unit = host.units[selected];
@@ -14,8 +37,10 @@ export function scenePresentationAnchor(member, host, plan) {
     else if(placement.rectangle==='target-unit') {
       const point=host.targets[selected];
       if(!point||!unit)throw Error('Explicit target footprint required');
-      rect={x:point.x-unit.pivotX*unit.frameWidth*unit.scale,y:point.y-unit.pivotY*unit.frameHeight*unit.scale,
-        width:unit.frameWidth*unit.scale,height:unit.frameHeight*unit.scale};
+      rect=unitRectangle(point,unit);
+    } else if(placement.rectangle==='caster-unit') {
+      if(!host.casterUnit)throw Error('Explicit caster footprint required');
+      rect=unitRectangle(host.caster,host.casterUnit);
     } else throw Error('Unsupported source API rectangle');
     // Original rectangle axes and offsets are API screen coordinates (Y down).
     // Only the final placement result crosses into the player's Y-up world.

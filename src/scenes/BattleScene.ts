@@ -9,7 +9,7 @@ import { SkillConfig, UnitSkillsData } from '../types/skills';
 import { CharacterDefinition, ContentRegistry } from '../types/content';
 import { BATTLE_ART_SCALE, getBattleLayout } from '../ui/battleLayout';
 import { BATTLE_ARENAS, BattleArenaKey } from '../data/battleArenas';
-import { createPreparedSceneBridge, type PreparedSceneBridge, type PreparedSceneHost } from '../effects/PreparedSceneBridge.mjs';
+import { createPreparedSceneBridge, type PreparedSceneBridge, type PreparedSceneHost ,casterStrikeOffset} from '../effects/PreparedSceneBridge.mjs';
 import { validateSceneManifest, validateSceneAction } from '../effects/sceneProfile.mjs';
 import { reviewedSkillEvents,skillDamageType } from '../effects/skillDamageTimeline.mjs';
 import { applyEnemyStatuses, isEnemyActionBlocked, ageEnemyStatuses, enemyAttackMultiplier } from '../effects/enemyStatus.mjs';
@@ -882,10 +882,34 @@ export class BattleScene extends Phaser.Scene {
       ? skill.scenePresentation : undefined;
   }
 
+  /** Stable unit rectangle of a hero (idle frame), independent of the clip currently playing. */
+  private casterFootprint(hero: UnitActor){
+    const idle=hero.manifest?.animations?.idle;
+    if(!idle)return undefined;
+    return {frameWidth:idle.frameWidth,frameHeight:idle.frameHeight,pivotX:idle.pivotX,pivotY:idle.pivotY,scale:Math.abs(hero.scaleX)};
+  }
+
+  /**
+   * Approach point: a source strike defined in the caster's unit rectangle lands on the target's
+   * centre; otherwise the hero's reviewed foot offset applies.
+   */
+  private approachX(hero: UnitActor, target: TargetDummy | UnitActor, key: string): number {
+    const manifest=this.cache.json.get('scene_'+key+'_manifest') as PreparedSceneManifest|undefined;
+    const strike=manifest&&casterStrikeOffset(manifest.plan,this.casterFootprint(hero));
+    if(!strike)return target.x + hero.combatConfig.targetOffsetX * BATTLE_ART_SCALE;
+    const sprite=target instanceof UnitActor ? target : target.sprite;
+    const width=sprite.frame.width*Math.abs(sprite.scaleX*(target instanceof UnitActor?1:target.scaleX));
+    const centerX=target.x-sprite.originX*width+width/2;
+    return centerX-strike.x;
+  }
+
   private playPreparedScene(key: string, hero: UnitActor, targets: (TargetDummy | UnitActor)[], onComplete?: () => void): void {
     const host: PreparedSceneHost = {width:this.scale.width,height:this.scale.height,
       arena:getBattleLayout(this.scale.width,this.scale.height,BATTLE_ARENAS[this.arenaKey]).arena,
       caster:{x:hero.x,y:hero.y},targets:{},units:{}};
+    // Only plans with caster-unit members need the caster footprint; other hosts stay unchanged.
+    const plan=(this.cache.json.get('scene_'+key+'_manifest') as PreparedSceneManifest|undefined)?.plan;
+    if((plan?.members as {placement?:{rectangle?:string}}[]|undefined)?.some(member=>member.placement?.rectangle==='caster-unit'))host.casterUnit=this.casterFootprint(hero);
     targets.forEach((target,index) => {
       const sprite = target instanceof UnitActor ? target : target.sprite, name = 'target'+index;
       host.targets[name] = {x:target.x,y:target.y};
@@ -1036,7 +1060,7 @@ export class BattleScene extends Phaser.Scene {
       hero.playAnimation('move');
       // Preserve the game's reviewed foot placement; source camera placement is separate.
       this.tweens.add({targets:hero,
-        x:choreography.movement==='step'?hero.homeSlot.x-travel.stepDistance!:target.x + hero.combatConfig.targetOffsetX * BATTLE_ART_SCALE,
+        x:choreography.movement==='step'?hero.homeSlot.x-travel.stepDistance!:this.approachX(hero,target,key),
         y:choreography.movement==='step'?hero.homeSlot.y:target.y,
         duration:travel.approachMs,ease:'Cubic.easeInOut',onComplete:start});
     } else start();
