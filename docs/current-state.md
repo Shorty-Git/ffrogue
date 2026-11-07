@@ -72,6 +72,13 @@ Generic rules added 2026-11-07 (no per-skill exceptions):
   Colour/alpha curves stay source data. Accepted particle flashes keep the arena clip.
   Second form: an opaque constant-colour uniform Quad (width ≥ 200) on screen for ≥ 80 % of
   the effect's longest node life is a background replacement (`unit-quad`, e.g. Cloud AC).
+- Limit clips stay on screen: `tools/annotate_clip_extents.py` (also run by export_unit.py)
+  stores `extentX` [left, right] (frame px from pivot, 2nd/98th percentile) on every
+  `limit_*` clip; `BattleScene.approachX` first aligns the strike, then clamps the caster so
+  the whole clip fits the canvas. Cloud's Omnislash keeps x 494; Cloud AC moves from 206 to
+  694. Trade-off: FFBE clips are authored for a narrower screen, so caster-attached effects of
+  a clamped LB land between caster and target (damage/flash on the target stay in sync).
+  After manifest changes rerun `<python> tools/prepare_victory_poses.py --output public/assets/victory-poses.json`.
 - Authoring-free import (approximation mode only): most effects in the dump have no matched
   `.bmsln` (the dominant roster blocker). `prepare_original_preview.py` then uses
   `tools/authoring_sources.py`: decoded IBMB controls first, otherwise the BMSLN corpus mode per

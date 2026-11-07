@@ -131,6 +131,14 @@ def export_unit(unit_id, unit_name, input_dir="tools/test_output", output_base="
             if meta["recoilOffsetX"] != 0.0:
                 print(f"      recoilOffsetX for '{anim_name}': {meta['recoilOffsetX']} px (last frame {last_idx})")
 
+    # Limit Burst bodies travel far inside their clip; the host keeps the whole clip on screen.
+    from annotate_clip_extents import clip_extent
+    for anim_name, meta in manifest["animations"].items():
+        if anim_name.startswith("limit_"):
+            extent = clip_extent(os.path.join(target_dir, meta["file"]), meta)
+            if extent:
+                meta["extentX"] = extent
+
     manifest_path = os.path.join(target_dir, "manifest.json")
     with open(manifest_path, "w", encoding="utf-8") as f:
         json.dump(manifest, f, indent=2)

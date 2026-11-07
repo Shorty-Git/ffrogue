@@ -13,6 +13,8 @@ export interface AnimationMeta {
   pivotX: number;
   pivotY: number;
   recoilOffsetX?: number;
+  /** Horizontal body extent [left, right] in frame pixels relative to the pivot (Limit clips). */
+  extentX?: [number, number];
   frames: FrameMeta[];
 }
 

@@ -891,16 +891,25 @@ export class BattleScene extends Phaser.Scene {
 
   /**
    * Approach point: a source strike defined in the caster's unit rectangle lands on the target's
-   * centre; otherwise the hero's reviewed foot offset applies.
+   * centre; otherwise the hero's reviewed foot offset applies. Clips with a published horizontal
+   * extent (Limit Burst bodies travel far inside their clip) are then kept fully on screen.
    */
-  private approachX(hero: UnitActor, target: TargetDummy | UnitActor, key: string): number {
+  private approachX(hero: UnitActor, target: TargetDummy | UnitActor, key: string, clips: string[] = []): number {
     const manifest=this.cache.json.get('scene_'+key+'_manifest') as PreparedSceneManifest|undefined;
     const strike=manifest&&casterStrikeOffset(manifest.plan,this.casterFootprint(hero));
-    if(!strike)return target.x + hero.combatConfig.targetOffsetX * BATTLE_ART_SCALE;
-    const sprite=target instanceof UnitActor ? target : target.sprite;
-    const width=sprite.frame.width*Math.abs(sprite.scaleX*(target instanceof UnitActor?1:target.scaleX));
-    const centerX=target.x-sprite.originX*width+width/2;
-    return centerX-strike.x;
+    let x:number;
+    if(!strike)x=target.x + hero.combatConfig.targetOffsetX * BATTLE_ART_SCALE;
+    else {
+      const sprite=target instanceof UnitActor ? target : target.sprite;
+      const width=sprite.frame.width*Math.abs(sprite.scaleX*(target instanceof UnitActor?1:target.scaleX));
+      x=target.x-sprite.originX*width+width/2-strike.x;
+    }
+    const extents=clips.map(clip=>hero.manifest?.animations?.[clip]?.extentX).filter((e):e is [number,number]=>!!e);
+    if(!extents.length)return x;
+    const scale=Math.abs(hero.scaleX),margin=16;
+    const left=Math.min(...extents.map(e=>e[0]))*scale,right=Math.max(...extents.map(e=>e[1]))*scale;
+    const min=margin-left,max=this.scale.width-margin-right;
+    return min<=max?Math.min(max,Math.max(min,x)):(min+max)/2;
   }
 
   private playPreparedScene(key: string, hero: UnitActor, targets: (TargetDummy | UnitActor)[], onComplete?: () => void): void {
@@ -1065,7 +1074,8 @@ export class BattleScene extends Phaser.Scene {
       hero.playAnimation('move');
       // Preserve the game's reviewed foot placement; source camera placement is separate.
       this.tweens.add({targets:hero,
-        x:choreography.movement==='step'?hero.homeSlot.x-travel.stepDistance!:this.approachX(hero,target,key),
+        x:choreography.movement==='step'?hero.homeSlot.x-travel.stepDistance!:this.approachX(hero,target,key,
+          choreography.body.mode==='clips'?choreography.body.phases.map(p=>p.clip):[]),
         y:choreography.movement==='step'?hero.homeSlot.y:target.y,
         duration:travel.approachMs,ease:'Cubic.easeInOut',onComplete:start});
     } else start();
