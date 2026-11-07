@@ -78,6 +78,16 @@ atlas region, SHA-256): `public/assets/ui/battle/provenance.json`. Gauge bars si
 measured tracks: unit gauges 186x26 with the 180x4 bar at (3,19); enemy gauge
 416x40 with the 374x16 bar at (21,8).
 
+The same style covers every DOM menu (title, team draw, party, rewards,
+replacement, awakening, results, dialogs, arena gallery) through
+`src/ui/ffbeTheme.css`, loaded last: `.rpg-panel` uses the FFBE window frame,
+`.rpg-button` the blue command plate, titles get silver lettering with a crystal
+ornament, and member cards show the same portrait frame and HP/MP gauges
+(`src/ui/ffbeGauge.ts`) as the battle dock. Reviewed animations (title crystal,
+slot lever and reels, awakening) are unchanged. The locked battle HUD stays visible
+under the reward, replacement and awakening popups instead of leaving an empty strip.
+Menus were checked at 1440x900 and 375x812 (no horizontal overflow).
+
 Not yet done: per-skill original icons (the dump has 480 under `abilities/`; a
 skill→icon mapping is needed), animated HP drain (the HUD re-renders its markup, so
 bars jump), and a dedicated Limit/LB gauge.

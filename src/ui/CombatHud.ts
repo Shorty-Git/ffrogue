@@ -1,3 +1,5 @@
+import {UI_PARTS as UI,gauge,gaugeRow,formatValue as number} from './ffbeGauge';
+
 type HeroState = 'active' | 'ready' | 'acted' | 'ko';
 type PartyEntry = {name:string; portrait?:string; hp:number; maxHp:number; mp:number; maxMp:number; status:string; state:HeroState;
   active:boolean; disabled:boolean; target?:number};
@@ -9,23 +11,10 @@ export type CombatHudState = {
   area:string; phase:string; message:string; pending:boolean; party:PartyEntry[]; commands:(Command|null)[]; actors:ArenaActor[];
 };
 
-/** Original FFBE battle UI parts exported by tools/export_battle_ui.py. */
-const UI='/assets/ui/battle/';
-
 // Crystal arrow pointing at the target from the party side (party stands right of the enemies).
 const TARGET_CURSOR=`<svg class="target-cursor" viewBox="0 0 40 28" aria-hidden="true"><defs><linearGradient id="cursor-fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".45" stop-color="#cfe6ff"/><stop offset="1" stop-color="#6f9cc9"/></linearGradient></defs><path d="M2 14 L22 2 L19 10 L38 10 L38 18 L19 18 L22 26 Z" fill="url(#cursor-fill)" stroke="#0b1a2e" stroke-width="2" stroke-linejoin="round"/><path d="M8 14 L20 6.5 L18.5 12 L34 12" fill="none" stroke="#ffffff" stroke-width="1.4" stroke-linecap="round" opacity=".85"/></svg>`;
 
 const escapeHtml=(value:string)=>value.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
-const ratio=(value:number,max:number)=>Math.max(0,Math.min(1,value/Math.max(1,max)));
-/** FFBE colors HP bars green above half, yellow above a quarter, red below. */
-const level=(value:number,max:number)=>{const r=ratio(value,max);return r>.5?'high':r>.25?'mid':'low';};
-const number=(value:number)=>Math.max(0,Math.ceil(value)).toLocaleString('en-US');
-
-/** Original gauge frame with its bar placed in the measured track. */
-const gauge=(kind:'hp'|'mp'|'enemy',value:number,max:number,label:string)=>
-  `<span class="gauge gauge-${kind}" role="meter" aria-label="${label}" aria-valuemin="0" aria-valuemax="${Math.max(1,max)}" aria-valuenow="${Math.max(0,value)}">`+
-  `<span class="gauge-fill" data-level="${kind==='mp'?'mp':level(value,max)}" style="--fill:${ratio(value,max).toFixed(4)}"></span></span>`;
-
 export class CombatHud {
   private readonly root=document.createElement('section');
   private previous='';
@@ -74,8 +63,8 @@ export class CombatHud {
       <span class="portrait-frame">${hero.portrait?`<img src="${escapeHtml(hero.portrait)}" alt="" draggable="false">`:''}</span>
       <span class="party-info">
         <span class="party-head"><strong>${escapeHtml(hero.name)}</strong><small>${escapeHtml(hero.status)}</small></span>
-        <span class="gauge-row"><span class="gauge-value"><b>${number(hero.hp)}</b>/${number(hero.maxHp)}</span>${gauge('hp',hero.hp,hero.maxHp,'HP')}</span>
-        <span class="gauge-row"><span class="gauge-value"><b>${number(hero.mp)}</b>/${number(hero.maxMp)}</span>${gauge('mp',hero.mp,hero.maxMp,'MP')}</span>
+        ${gaugeRow('hp',hero.hp,hero.maxHp)}
+        ${gaugeRow('mp',hero.mp,hero.maxMp)}
       </span></button>`).join('');
 
     const commands=state.commands.map((command,i)=>command?`<button type="button" class="command" ${attrs('ability',i)} ${command.disabled?'disabled':''}

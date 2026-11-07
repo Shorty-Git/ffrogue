@@ -1,0 +1,70 @@
+/* FFBE window style for every DOM menu: title, team draw, party, rewards, results, dialogs.
+   Loaded after roguelike.css and interfaceTheme.css; it only restyles the shared primitives
+   (.rpg-panel, .rpg-button, titles) and leaves the reviewed animations untouched.
+   Frame and gauges are original FFBE parts from tools/export_battle_ui.py. */
+:root{--ffbe-frame:url(/assets/ui/battle/window_frame.png)}
+
+/* Backdrop: deep navy with soft crystal light and a faint FFBE frame around the screen. */
+.run-overlay{background:radial-gradient(ellipse at 50% 10%,#1f5a9a 0,#0b2a5a 32%,#041029 68%,#01050f 100%)}
+.run-overlay:not(.victory-overlay):not(.awakening-overlay)::before{inset:10px;border:1px solid transparent;border-image:var(--ffbe-frame) 56 / 18px / 0 stretch;box-shadow:none;opacity:.5}
+
+/* Panels: the FFBE window (silver border, filigree corners, navy fill). */
+.rpg-panel{border:12px solid transparent;border-image:var(--ffbe-frame) 56 fill / 24px / 0 stretch;border-radius:0;background:none;box-shadow:0 14px 30px #00000080;padding:18px}
+.audio-controls.rpg-panel,.run-toolbar .rpg-panel{border-width:6px;border-image-width:14px;padding:6px 10px}
+
+/* Buttons: deep blue plate with a silver edge, like the battle commands. */
+.rpg-button{font:650 var(--type-body)/1.2 var(--rpg-type);letter-spacing:.04em;color:#fff;text-shadow:0 1px 2px #000;border:1px solid #9fc0e0;border-radius:4px;
+  background:linear-gradient(180deg,#3069ae,#1a437e 47%,#0e2b5c 53%,#0b2148);box-shadow:inset 0 1px 0 #ffffff4d,inset 0 -1px 0 #0009,0 0 0 1px #040d1e,0 3px 6px #0009;padding:.7rem 1.5rem}
+.rpg-button:hover:not(:disabled){filter:brightness(1.15);border-color:#e8f2ff}
+.rpg-button.secondary{background:linear-gradient(180deg,#1b3254,#10223e 50%,#0a172b);border-color:#6f8cab;color:#d4e2f0}
+.actions .rpg-button,.menu-panel .rpg-button,.rpg-shell>.rpg-button{min-width:12rem}
+.rpg-shell>.rpg-button{margin-top:1.1rem}
+/* PC first: give menus more room than the original 660 px column. */
+.run-overlay:not(.victory-overlay):not(.awakening-overlay) .rpg-shell{width:min(100%,820px)}
+
+/* Titles: silver lettering with a crystal ornament below. */
+#run-ui h1{font:600 var(--type-title)/1.15 var(--rpg-display);letter-spacing:.08em;margin:0 0 .4rem;
+  background:linear-gradient(180deg,#ffffff 0%,#e3eef9 46%,#98b9d9 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 2px 2px #000b) drop-shadow(0 0 14px #4fa7ff3d)}
+#run-ui h1 em{-webkit-text-fill-color:#a9dcff}
+.rpg-shell>h1::after{content:'';display:block;width:min(340px,72%);height:14px;margin:.55rem auto .15rem;-webkit-text-fill-color:initial;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 340 14'%3E%3Cdefs%3E%3ClinearGradient id='l' x1='0' x2='1'%3E%3Cstop offset='0' stop-color='%23a9d4ff' stop-opacity='0'/%3E%3Cstop offset='1' stop-color='%23d8ecff'/%3E%3C/linearGradient%3E%3ClinearGradient id='r' x1='1' x2='0'%3E%3Cstop offset='0' stop-color='%23a9d4ff' stop-opacity='0'/%3E%3Cstop offset='1' stop-color='%23d8ecff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='0' y='6.5' width='152' height='1' fill='url(%23l)'/%3E%3Crect x='188' y='6.5' width='152' height='1' fill='url(%23r)'/%3E%3Cpath d='M170 1 L176 7 L170 13 L164 7 Z' fill='%23dff1ff' stroke='%236fb6ff' stroke-width='1'/%3E%3Cpath d='M158 7 L161 4 L164 7 L161 10 Z M176 7 L179 4 L182 7 L179 10 Z' fill='%238cc8ff'/%3E%3C/svg%3E") center/contain no-repeat}
+.victory-overlay h1::after,.awakening-overlay h1::after{display:none}
+/* Over the bright arena the silver titles need a firmer shadow. */
+#run-ui.victory-overlay h1{filter:drop-shadow(0 1px 0 #000) drop-shadow(0 0 3px #000) drop-shadow(0 0 8px #000d)}
+.victory-overlay .rpg-shell>.eyebrow{text-shadow:0 2px 3px #000,0 0 10px #000,0 0 18px #e5cd8c66}
+.eyebrow{font-family:var(--rpg-display);letter-spacing:.22em;color:#e9d293;text-shadow:0 1px 2px #000}
+.lead{color:#b9cde2}
+.muted,footer{color:#90a9c4}
+#run-ui input{border:1px solid #6f8cab;background:#050f22;box-shadow:inset 0 1px 5px #000c;border-radius:3px;color:#fff}
+#run-ui summary{color:#d6e8fa}
+
+/* Character portraits share the battle portrait frame. */
+.member-head{display:flex;align-items:center;gap:.65rem;text-align:left;margin-bottom:.2rem}
+.member-head .portrait-frame{width:44px;font-size:14px}
+.member-title{display:grid;min-width:0}
+.member-title strong{font:600 1rem/1.2 var(--rpg-display);letter-spacing:.06em;text-shadow:0 1px 2px #000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.member-card .stars{text-align:left}
+.member-gauges{display:grid;gap:2px;margin:.35rem 0 .1rem;font-size:13px;text-align:left}
+.skill-copy{border-top:0;background:linear-gradient(90deg,#9fc8ef66,#9fc8ef00) top/100% 1px no-repeat}
+.skill-copy b{font-weight:650;color:#eef6ff}
+
+/* Reward and replacement cards. */
+.reward-card:hover{filter:brightness(1.12)}
+.reward-card h2{font-family:var(--rpg-display);letter-spacing:.03em;text-shadow:0 1px 2px #000}
+.victory-overlay .reward-card{background:none}
+.reward-portrait{box-sizing:border-box;padding:2px;border:1px solid #c9dcefcc;border-radius:3px;background:url(/assets/ui/battle/unit_icon_frame.png) center/100% 100%;box-shadow:inset 0 0 6px #000a}
+.reward-portrait.crystal-icon{background:none;border:0;box-shadow:none}
+.card-choose{font-family:var(--rpg-display);color:#f0d28e;letter-spacing:.12em}
+.victory-overlay .rpg-shell>.eyebrow{font-family:var(--rpg-display)}
+
+/* Team draw machine: FFBE frame around the reels; the base strip stays inside it. */
+#run-ui .slot-machine{border-width:12px;padding:4px 8px 0;box-shadow:0 14px 30px #00000080}
+#run-ui .slot-machine .machine-base{margin:0 -8px}
+.reel b{font-family:var(--rpg-display);letter-spacing:.05em}
+
+/* Awakening keeps its gold accent as a glow around the FFBE window. */
+.awakening-sequence{box-shadow:0 0 0 1px #d7bd7d55,0 0 50px #5dbdff55}
+
+/* Replacement cards have no portrait column; keep their title full width on narrow screens. */
+@media(max-width:520px){.replacement-grid .reward-card{display:flex;flex-direction:column;align-items:stretch}}

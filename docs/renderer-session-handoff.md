@@ -1,5 +1,12 @@
 # Renderer session handoff
 
+## Current: FFBE style across all menus (2026-11-07)
+
+src/ui/ffbeTheme.css brings the battle HUD's FFBE window frame, button plate,
+silver titles and gauges to title, team draw, party, rewards, results, dialogs
+and awakening; reviewed animations are untouched. The locked battle HUD now stays
+under reward/replacement/awakening popups. See docs/battle-layout.md.
+
 ## Current: FFBE-styled battle HUD (2026-11-07)
 
 UI milestone 2: the DOM CombatHud now uses original FFBE parts (window frame,

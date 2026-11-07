@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import './ui/roguelike.css';
 import './ui/interfaceTheme.css';
 import './ui/combatHud.css';
+import './ui/ffbeTheme.css';
 import {installRpgTheme} from './ui/designTokens';
 installRpgTheme();
 import { BootScene } from './scenes/BootScene';
