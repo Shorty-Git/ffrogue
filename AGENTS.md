@@ -2,6 +2,7 @@
 
 ## 1. Projektziel & Kern-Vision
 Final Fantasy Rogue (FFRogue): ein privates, nicht-kommerzielles Final-Fantasy-Crossover-Roguelike auf Basis der Originalressourcen von *Final Fantasy Brave Exvius (FFBE)*.
+- **Aktueller Stand zuerst lesen:** `docs/current-state.md` (Produktstand, Entscheidungen, Pipelines, Werkzeuge, Prüfroutine, offene Punkte). Bei jedem Meilenstein aktuell halten.
 - **Vollständige Vision:** `docs/vision.md` (Zielbild, Pipelines, UI-Richtung, verbindliche Entwicklungsprinzipien, Präzisierungen des Entwicklers). Sie ist maßgeblich; diese Kurzfassung fasst nur zusammen.
 - **Spielkern:** Eine Slot Machine zieht eine zufällige 3er-Party aus dem Roster (eine Charakterfamilie höchstens einmal, Rerolls möglich). Eine Expedition führt durch Gebiete mit Kämpfen und Bossen; nach Kämpfen gibt es Belohnungen (neue Skills, Verbesserungen, Erwachen in echte FFBE-Formen). Jeder Charakter hat bis zu drei aktive Skills. Wiederspielwert entsteht aus Party, Skills, Gegnern und Welten.
 - **Vorbilder:** Optik, Sprites, Skill-Animationen und Aufstellung (Party rechts, Gegner links, "Move-to-Target"-Angriffe) wie in FFBE; Run-Struktur wie in *PokeRogue*. Das FFBE-Kampfsystem (Chains, Formeln) wird nicht nachgebaut.
