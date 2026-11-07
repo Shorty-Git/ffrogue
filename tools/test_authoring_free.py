@@ -34,5 +34,19 @@ class AuthoringFreeTests(unittest.TestCase):
             source.findtext('Not_A_Real_Field')
 
 
+    def test_binary_texture_tint_feeds_the_stand_in(self):
+        import struct
+        from bmb_texture_tint import read_texture_tint
+        raw = bytearray(400)
+        struct.pack_into('<3f', raw, 100 + 168, 1.0, 0.5, 0.25)
+        struct.pack_into('<3f', raw, 100 + 184, 0.1, 0.0, 0.0)
+        node = {'index': 0, 'type': 'EmitterModel', 'typeId': 6, 'offset': 100}
+        self.assertEqual(read_texture_tint(bytes(raw), node), ([1.0, 0.5, 0.25], [0.10000000149011612, 0.0, 0.0]))
+        self.assertIsNone(read_texture_tint(bytes(raw), {**node, 'typeId': 0}))
+        bmb_channels.APPROXIMATED_CURVES = []
+        source = ApproximateProject('fx.bmb', bytes(raw)).sources({'nodes': [node]})[0]
+        self.assertEqual(source.find('Texture1_Color_Scale_Rgb_Value_Initial').attrib, {'R': '1.0', 'G': '0.5', 'B': '0.25'})
+        self.assertEqual(bmb_channels.APPROXIMATED_CURVES, [])
+
 if __name__ == '__main__':
     unittest.main()

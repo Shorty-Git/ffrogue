@@ -12,6 +12,7 @@ from pathlib import Path
 import xml.etree.ElementTree as ET
 import bmb_channels
 from bmb_source_controls import TAGS
+from bmb_texture_tint import read_texture_tint
 from inspect_bmb import compare_project
 
 DEFAULTS = Path(__file__).with_name('effects') / 'authoring-defaults.json'
@@ -30,6 +31,11 @@ class ApproximateNode:
         decoded = node.get('sourceControls', {}).get('fields', {})
         self.binary = {TAGS[name]: field['value'] for name, field in decoded.items()
                        if field.get('status') == 'decoded' and name in TAGS}
+        self.vectors = {}
+        tint = read_texture_tint(project.raw, node) if project.raw is not None else None
+        if tint:
+            for tag, values in zip(['Texture1_Color_Scale_Rgb_Value_Initial', 'Texture1_Color_Scale_Rgb_Value_Range'], tint):
+                self.vectors[tag] = {axis: repr(v) for axis, v in zip('RGB', values)}
 
     def _default(self, tag):
         entry = self.project.defaults.get(self.kind, {}).get(tag)
@@ -49,6 +55,8 @@ class ApproximateNode:
         return self._default(tag)['text']
 
     def find(self, tag):
+        if tag in self.vectors:
+            return _Value('', self.vectors[tag])
         if tag in self.binary:
             return _Value(str(self.binary[tag]), {})
         entry = self._default(tag)
@@ -58,13 +66,13 @@ class ApproximateNode:
 class ApproximateProject:
     """Authoring-free stand-in for one BMB member (approximation mode only)."""
 
-    def __init__(self, member):
+    def __init__(self, member, raw=None):
         global _defaults
         if bmb_channels.APPROXIMATED_CURVES is None:
             raise ValueError('Missing authoring requires the explicit approximation mode')
         if _defaults is None:
             _defaults = json.loads(DEFAULTS.read_text(encoding='utf-8'))
-        self.member, self.defaults, self.logged = member, _defaults['defaults'], set()
+        self.member, self.defaults, self.logged, self.raw = member, _defaults['defaults'], set(), raw
         self.corpus = _defaults['corpus']
 
     def sources(self, result):

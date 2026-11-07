@@ -240,7 +240,7 @@ if __name__ == '__main__':
             attach_flat_quad_color(raw, data, project.read_bytes() if project else None)
         inheritance_supplement = None
         project = (authoring[original['member']].read_bytes() if original['member'] in authoring
-                   else ApproximateProject(original['member']) if original['member'] in approximate_members else None)
+                   else ApproximateProject(original['member'], raw) if original['member'] in approximate_members else None)
         if project is not None:
             supplement = attach_texture_layers(data, project)
             if a.inheritance:
@@ -285,7 +285,7 @@ if __name__ == '__main__':
                            for kind, field in [('scale', 0x12c), ('scaleInit', 0x12c), ('rotation', 0x128), ('parentCoord', 0x100)]}}
         if a.native_basic_material:
             from original_basic_material import attach_basic_material
-            attach_basic_material(data, authoring[original['member']].read_bytes() if original['member'] in authoring else None)
+            attach_basic_material(data, project)
         by_name[original['member']] = len(effects)
         effects.append({'name': original['member'], 'sha256': data['sha256'],
                         'rootLifecycle': data['rootLifecycle'],

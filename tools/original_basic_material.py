@@ -1,13 +1,10 @@
 """Matched-authoring constant Basic texture tints for the native shader candidate."""
-import hashlib
 import math
-import xml.etree.ElementTree as ET
-from inspect_bmb import compare_project
+from authoring_sources import ApproximateProject, project_sources, project_identity
 
 
 def attach_basic_material(result, project=None):
-    comparison = compare_project(result, project) if project is not None else None
-    sources = ET.fromstring(project).findall('.//ResIdeNode')[1:] if project is not None else None
+    comparison, sources = project_sources(result, project) if project is not None else (None, None)
     for index, node in enumerate(result['nodes']):
         if node['typeId'] == 0:
             continue
@@ -37,6 +34,8 @@ def attach_basic_material(result, project=None):
                 if any(ranges):
                     issues.append('random texture tint is outside the constant subset')
         node['nativeBasicTint'] = {'supported': not issues, 'rgba': rgba, 'limitations': issues,
-                                   'origin': 'Explicit matching BMSLN constant texture color; not decoded BMB tint',
-                                   'projectSha256': hashlib.sha256(project).hexdigest() if project is not None else None}
+                                   'origin': 'Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation'
+                                             if isinstance(project, ApproximateProject)
+                                             else 'Explicit matching BMSLN constant texture color; not decoded BMB tint',
+                                   'projectSha256': project_identity(project) if project is not None else None}
     return comparison
