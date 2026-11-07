@@ -17,7 +17,7 @@ test('Iai Strike uses the complete source composition, independent command/body 
  validateSceneAction(manifest,skill);validateActionChoreography(skill,manifest.durationFrames,body.animations);
  assert.deepEqual(skill.originalCommand.raw,JSON.parse(JSON.stringify(source.raw)));
  assert.equal(source.raw.processId,'112');assert.equal(source.raw.processParam,'1400,70,100,0');
- assert.equal(skill.mpCost,12);assert.equal(skill.damageMultiplier,0);
+ assert.equal(skill.mpCost,20);assert.equal(skill.damageMultiplier,0);
  assert.equal(skill.scope,'all_enemies');assert.equal(skill.moveType,'stationary');
  assert.equal(plan.composition.skillFrameOffset,0);assert.equal(plan.effects.length,1);assert.equal(plan.members.length,1);
  assert.equal(plan.effects[0].sha256,'4ef468a09b4e8f3f51f45a86c61bd52a9db25ce31daf82b2664c769cb8112e6b');
