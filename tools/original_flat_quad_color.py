@@ -22,9 +22,12 @@ def quad_color_preparation_hints(raw, result):
 
 
 def attach_flat_quad_color(raw, result, project):
-    if project is None:
+    import bmb_channels
+    approximate = project is None and bmb_channels.APPROXIMATED_CURVES is not None
+    if project is None and not approximate:
         raise ValueError('Flat Quad RGB requires exact matching authoring')
-    sources = ET.fromstring(project).findall('.//ResIdeNode')[1:]
+    # Authoring-free approximation: the binary ConstFlat RGB is used without the BMSLN cross-check.
+    sources = [None] * len(result['nodes']) if approximate else ET.fromstring(project).findall('.//ResIdeNode')[1:]
     if len(sources) != len(result['nodes']):
         raise ValueError('Flat Quad RGB source hierarchy differs')
     # Do not add the older RGBA shader metadata: it multiplies corner alpha,
@@ -34,9 +37,25 @@ def attach_flat_quad_color(raw, result, project):
     for node, colors, xml in zip(result['nodes'], decoded['nodes'], sources):
         if node['typeId'] != 2:
             continue
-        compare_quad_colors(colors, xml)
+        if xml is not None:
+            compare_quad_colors(colors, xml)
         q = colors['quadColors']
+        corners = list(q['corners'].values())
+        if (approximate and q['mode'] == 'Constant' and not q['flat']
+                and not any(any(c['range']) for c in corners) and all(c['value'][3] == 1 for c in corners)):
+            # Constant opaque corner gradient: approximate with the mean corner RGB and record it.
+            mean = [sum(c['value'][k] for c in corners) / 4 for k in range(3)]
+            bmb_channels.APPROXIMATED_CURVES.append({'node': node['index'], 'quadColors': 'Constant-corners',
+                'rgb': [round(v, 4) for v in mean], 'treatment': 'corner-mean-rgb'})
+            node['flatQuadColor'] = dict(profile='native-flat-quad-rgb-v1', mode='Constant', flat=True,
+                value=mean, range=[0, 0, 0], valueOffset=corners[0]['fieldOffset'], rangeOffset=corners[0]['fieldOffset'] + 16,
+                projectSha256=None, boundary='Approximation: mean of constant opaque corner RGB; native corner gradient not evaluated')
+            continue
         if q['mode'] != 'Constant' or not q['flat']:
+            if approximate:
+                bmb_channels.APPROXIMATED_CURVES.append({'node': node['index'], 'quadColors': q['mode'],
+                    'flat': q['flat'], 'treatment': 'legacy-preview-tint'})
+                continue
             raise ValueError('Flat Quad RGB profile rejects curves/non-flat colors')
         left = q['corners']['leftTop']
         if any(not 0 <= v <= 1 for k in ['value', 'range'] for v in left[k][:3]):
@@ -44,5 +63,5 @@ def attach_flat_quad_color(raw, result, project):
         node['flatQuadColor'] = dict(profile='native-flat-quad-rgb-v1',
             mode='Constant', flat=True, value=left['value'][:3], range=left['range'][:3],
             valueOffset=left['fieldOffset'], rangeOffset=left['fieldOffset']+16,
-            projectSha256=hashlib.sha256(project).hexdigest(),
+            projectSha256=hashlib.sha256(project).hexdigest() if project is not None else None,
             boundary='Source RGB inputs; independent alpha; seed ownership remains host policy')

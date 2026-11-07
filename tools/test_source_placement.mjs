@@ -75,7 +75,11 @@ test('caster-unit placement follows the caster and aligns its strike with the ta
  const anchor=scenePresentationAnchor({placement},host,plan);
  assert.equal(anchor.x+host.width/2,600-280,'Placed from the caster, not from the target');
  assert.throws(()=>scenePresentationAnchor({placement},{...host,casterUnit:undefined},plan),/caster footprint/);
- // Published presentations without caster-unit members keep the reviewed approach offset.
- for(const key of read('public/assets/content.json').scenePresentations.filter(k=>k!=='cloud_omnislash'))
-  assert.equal(casterStrikeOffset(read('public/assets/presentations/'+key+'/manifest.json').plan,casterUnit),null,key);
+ // Published presentations without caster-unit members keep the reviewed approach offset; those with
+ // caster-unit members (Limit Bursts) get a strike offset.
+ for(const key of read('public/assets/content.json').scenePresentations){
+  const plan=read('public/assets/presentations/'+key+'/manifest.json').plan;
+  const casterPlaced=plan.members.some(m=>m.placement?.rectangle==='caster-unit');
+  assert.equal(casterStrikeOffset(plan,casterUnit)===null,!casterPlaced,key);
+ }
 });

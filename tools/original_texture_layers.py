@@ -5,7 +5,7 @@ of the supported binary/project categories before attaching any supplement.
 """
 import math
 import xml.etree.ElementTree as ET
-from inspect_bmb import compare_project
+from authoring_sources import project_sources
 import bmb_channels
 
 
@@ -17,8 +17,7 @@ def unsupported(message, detail):
 
 
 def attach_texture_layers(result, project):
-    comparison = compare_project(result, project)
-    sources = ET.fromstring(project).findall('.//ResIdeNode')[1:]
+    comparison, sources = project_sources(result, project)
     count = 0
     for node, source in zip(result['nodes'], sources):
         node['authoringEmissionShape'] = source.findtext('GenerateShape_Basic_GenerateShapeType')

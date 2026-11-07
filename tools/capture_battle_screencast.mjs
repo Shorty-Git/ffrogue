@@ -1,14 +1,16 @@
 // Captures a Limit Burst in real time via the CDP screencast (no ffmpeg needed); writes JPEG frames,
 // timestamps and the canvas rectangle. Turn them into a GIF with tools/screencast_to_gif.py.
-//   node tools/capture_battle_screencast.mjs tools/data/<run>/frames
+//   node tools/capture_battle_screencast.mjs tools/data/<run>/frames [--reserve cloud_ac] [--hero 2]
 import fs from 'node:fs';
 import {createRequire} from 'node:module';
 const [dir] = process.argv.slice(2);
+const arg = name => { const i = process.argv.indexOf(name); return i > 0 ? process.argv[i + 1] : undefined; };
+const reserve = arg('--reserve'), hero = Number(arg('--hero') ?? 0);
 const {chromium} = createRequire(import.meta.url)('C:/Users/Daniel/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
 const browser = await chromium.launch({channel: 'chrome', headless: true});
 try {
   const page = await browser.newPage({viewport: {width: 820, height: 940}});
-  await page.goto('http://127.0.0.1:3001/tools/test-source-limit-burst.html');
+  await page.goto('http://127.0.0.1:3001/tools/test-source-limit-burst.html' + (reserve ? '?reserve=' + reserve : ''));
   await page.waitForFunction(() => /Limit Bursts in this party/.test(document.getElementById('status').textContent), {}, {timeout: 120000});
   await page.evaluate(() => { document.querySelector('aside').remove(); const c = document.getElementById('game-container'); c.style.width = '100vw'; c.style.height = '100vh'; window.dispatchEvent(new Event('resize')); });
   await page.waitForTimeout(1500);
@@ -17,9 +19,11 @@ try {
     frames.push({t: metadata.timestamp, data}); await cdp.send('Page.screencastFrameAck', {sessionId}).catch(() => {});
   });
   await cdp.send('Page.startScreencast', {format: 'jpeg', quality: 70, everyNthFrame: 1});
+  await page.evaluate(i => { const s = window.__ffrogueGame.scene.getScene('BattleScene'); s.selectHero(s.turnOrder[i]); }, hero);
   await page.waitForTimeout(500);
   await page.keyboard.press('Digit5');
-  await page.waitForFunction(() => window.__ffrogueGame.scene.getScene('BattleScene').combatState === 'PLAYER_TURN', {}, {timeout: 60000});
+  // A Limit Burst may end the battle (VICTORY) instead of returning to the next turn.
+  await page.waitForFunction(() => ['PLAYER_TURN', 'VICTORY'].includes(window.__ffrogueGame.scene.getScene('BattleScene').combatState) && !window.__ffrogueGame.scene.getScene('BattleScene').preparedScenes.snapshot().active, {}, {timeout: 60000});
   await page.waitForTimeout(1000);
   await cdp.send('Page.stopScreencast');
   fs.mkdirSync(dir, {recursive: true});

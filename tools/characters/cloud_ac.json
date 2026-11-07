@@ -74,6 +74,80 @@
         },
         "stepDistance": "half-idle-height"
       }
+    },
+    {
+      "id": "omnislash_v5",
+      "ffbeId": 207001605,
+      "name": "Omnislash Version 5",
+      "rarity": 5,
+      "level": 1,
+      "type": "LIMIT",
+      "mpCost": 0,
+      "scope": "single_enemy",
+      "damageMultiplier": 15.2,
+      "hitCount": 5,
+      "attackFrames": [
+        121,
+        137,
+        151,
+        166,
+        175
+      ],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Limit Burst: 5 strikes on one enemy (15.2x ATK in total, original LB level 1 power)",
+      "execution": "prepared-source",
+      "damageEvents": [
+        {
+          "frame": 121,
+          "weight": 0.05
+        },
+        {
+          "frame": 137,
+          "weight": 0.05
+        },
+        {
+          "frame": 151,
+          "weight": 0.05
+        },
+        {
+          "frame": 166,
+          "weight": 0.05
+        },
+        {
+          "frame": 175,
+          "weight": 0.8
+        }
+      ],
+      "reviewNote": "Limit Burst import 2026-11-07: original effect groups 8007680/81/82 through the shared Source preview profile with authoring-free approximation (no matched BMSLN in the dump); acceptance bar is visual (looks right, hits, impact on target), not native pixel parity.",
+      "scenePresentation": "cloud_ac_omnislash_v5",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/omnislash-ac-20261107/intake/cloud_ac-207001605/skill-source.json",
+        "sha256": "ea48498093fa25bb4d9f68594c1fb239c5c5c260b9e0fe2c10e73b6fa595c2e2"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "target",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "limit_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 1,
+          "sourceMoveType": 1,
+          "note": "Limit Burst: dash to the target, then the published limit_atk clip under the original effect timeline. LB rows carry no motionType; 1 (physical) is a reviewed adaptation matching its single-target melee form."
+        }
+      }
     }
   ],
   "portraitSource": "unit_icons/unit_icon_207001605.png"

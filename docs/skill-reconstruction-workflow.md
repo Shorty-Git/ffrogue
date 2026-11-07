@@ -1,5 +1,21 @@
 # Skill reconstruction and export runbook
 
+## Current: authoring-free approximation (2026-11-07)
+
+Missing matched BMSLN is the dominant roster blocker (see ROSTER_SKILL_COVERAGE.md).
+Under `--approximate-unverified` the shared profile no longer stops: tools/authoring_sources.py
+gives the authoring-dependent attachers (texture layers, inheritance, particle geometry,
+Null locator) a stand-in that answers decoded IBMB controls first and otherwise the BMSLN
+corpus mode (tools/effects/authoring-defaults.json; tools/build_authoring_defaults.py over all
+3957 local projects; corpus hash recorded). Approximation mode also evaluates binary ConstFlat
+Quad RGB without the BMSLN cross-check, uses the mean RGB of constant opaque corner gradients
+and reads single-shot generation modes other than 0 as mode 0. Every substitution is listed
+in plan.approximations (Cloud AC Omnislash Version 5: 2883 corpus defaults, 5 other entries).
+Strict mode is unchanged and still refuses missing authoring. First result: Cloud AC
+Omnislash Version 5 (207001605) published as cloud_ac_omnislash_v5; LB sync 5 hits, drift 0;
+Source review 19/19 applicable; tests test_authoring_free.py and test_scene_flashes.py.
+Visual acceptance by the developer is pending (GIF sent).
+
 ## Current: automatic screen backdrops (2026-11-07)
 
 FFBE authors full-screen dimming as a uniform unit-XY Model sized to its 640-wide

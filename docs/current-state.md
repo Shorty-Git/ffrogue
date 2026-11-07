@@ -10,8 +10,8 @@ Last consolidated: 2026-11-07.
   expedition (2 areas, 4 encounters, Ochu and Guard Scorpion bosses) → rewards / awakening →
   result. Saves locally. Roster: Cloud, Aerith, Barret, Cloud of Darkness, Cloud AC, Delita,
   Jack (+ awakened forms up to 7★ / NV).
-- 15 Source skills (original FFBE effect data rendered in real time) + 1 Limit Burst
-  (Cloud's Omnislash, 2026-11-07).
+- 15 Source skills (original FFBE effect data rendered in real time) + 2 Limit Bursts
+  (Cloud's Omnislash; Cloud AC's Omnislash Version 5, the first authoring-free import, 2026-11-07).
 - Battle UI (DOM `CombatHud` over Phaser): target-first (enemies clickable any time, crystal
   cursor), Attack + up to 3 skills + Limit Burst as one-click commands, original FFBE UI parts
   (window frame, HP/MP/LIMIT gauges, enemy gauge, skill icons), animated HP drain with damage
@@ -70,6 +70,17 @@ Generic rules added 2026-11-07 (no per-skill exceptions):
   `prepare_scene_flashes.py --screen-backdrops` and is stretched over the whole canvas
   (`host.view`); FFBE's field is smaller than ours, so source size left undimmed strips.
   Colour/alpha curves stay source data. Accepted particle flashes keep the arena clip.
+  Second form: an opaque constant-colour uniform Quad (width ≥ 200) on screen for ≥ 80 % of
+  the effect's longest node life is a background replacement (`unit-quad`, e.g. Cloud AC).
+- Authoring-free import (approximation mode only): most effects in the dump have no matched
+  `.bmsln` (the dominant roster blocker). `prepare_original_preview.py` then uses
+  `tools/authoring_sources.py`: decoded IBMB controls first, otherwise the BMSLN corpus mode per
+  node type/field from `tools/effects/authoring-defaults.json` (rebuild with
+  `<python> tools/build_authoring_defaults.py`, 3957 projects). Also in approximation mode:
+  binary ConstFlat Quad RGB is evaluated (`--flat-quad-rgb` on), constant opaque corner
+  gradients use their mean RGB, single-shot generation modes ≠ 0 read as mode 0. Each
+  substitution is listed in `plan.approximations`. Staging still reports
+  `missing-matched-authoring`; that is information, not a stop, in approximation mode.
 
 ## Environment and tools
 
@@ -104,7 +115,10 @@ Generic rules added 2026-11-07 (no per-skill exceptions):
 
 ## Open items
 
-- More Limit Bursts (limit_atk bodies exist for Cloud AC, Barret, Aerith, Jack, CoD).
+- More Limit Bursts (limit_atk bodies exist for Barret, Aerith, Jack, CoD) and the many
+  abilities blocked only by missing authoring (Meteor Rain, Banish, ...): retry them with
+  the authoring-free path; remaining gates are unknown node types 4/7/15 and curves.
+- Cloud AC LB (15.2x, original LB level 1) kills most training enemies; balance is open.
 - LB gauge does not carry between battles; all Cloud forms use the 5★ Omnislash.
 - Cinzel name font: developer mildly unsure, kept for now.
 - Brave Slash manifest hash alarm decision.

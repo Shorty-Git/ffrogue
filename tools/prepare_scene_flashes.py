@@ -94,6 +94,40 @@ def _static_identity(node):
     return not any(transform.get(name, {}).get('valueInitial', [0, 0, 0]) != [0, 0, 0] for name in ['translation', 'rotation'])
 
 
+def _opaque_backdrop_quad(effect, node, plan, nodes, longest):
+    """An opaque, constant-colour, uniformly textured Quad held at the screen centre for most
+    of the effect replaces the background (e.g. Cloud AC's dark Omnislash backdrop)."""
+    binding = node.get('resourceBindings', {})
+    if node['typeId'] != 2 or not binding.get('texture1') or binding.get('texture2') or binding.get('model'):
+        return None
+    alpha = node.get('appearance', {}).get('alpha', {})
+    if alpha.get('mode') != 'Constant' or alpha.get('value') != 1 or node.get('materialAlpha', {}).get('value') != 1:
+        return None
+    if not node.get('flatQuadColor') or not _static_identity(node) or node.get('lifeParameter', 0) < 0.8 * longest:
+        return None
+    width = node['staticVectors']['transform']['scale']['valueInitial'][0]
+    if width < 200:
+        return None
+    parent = node.get('parentIndex')
+    while parent is not None:
+        ancestor = nodes[parent]
+        # Ancestor translation curves (shake/drift) are replaced by the coverage placement.
+        if ancestor['typeId'] != 0 or ancestor['staticVectors']['transform']['scale']['valueInitial'] != [1, 1, 1]:
+            return None
+        parent = ancestor.get('parentIndex')
+    source = plan['files'][effect['textures'][binding['texture1']['name']]]
+    path = Path(source['path'])
+    if hashlib.sha256(path.read_bytes()).hexdigest() != source['sha256']:
+        raise ValueError('Backdrop texture identity changed')
+    with Image.open(path) as image:
+        extrema = image.convert('RGBA').getextrema()
+    if any(low != high for low, high in extrema) or extrema[3] != (255, 255):
+        return None
+    return dict(region='arena', primitive='unit-quad', textureSha256=source['sha256'],
+                origin=f'Automatic screen backdrop: opaque constant-colour uniform Quad (width {width:g}), screen-anchored, '
+                       f'life {node.get("lifeParameter")} of {longest} frames; fitted to the visible battlefield')
+
+
 def annotate_screen_backdrops(plan):
     """Generic rule: a static uniform unit-XY Model in a screen-anchored effect whose authored
     width covers the whole FFBE logical screen (640) is a full-screen backdrop (dimming/tint).
@@ -105,8 +139,14 @@ def annotate_screen_backdrops(plan):
         if not members or any(m.get('anchor') != 'screen' or m.get('placement', {}).get('rectangle', 'screen') != 'screen' for m in members):
             continue
         nodes = effect['nodes']
+        longest = max((n.get('lifeParameter', 0) for n in nodes), default=0)
         for node in nodes:
             if node.get('presentationCoverage'):
+                continue
+            quad = _opaque_backdrop_quad(effect, node, plan, nodes, longest)
+            if quad:
+                node['presentationCoverage'] = quad
+                count += 1
                 continue
             coverage = _unit_xy_uniform(effect, node, plan)
             # Static frame; only the (constant) authored scale may differ from identity.

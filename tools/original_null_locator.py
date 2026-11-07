@@ -1,19 +1,19 @@
 """Use binary Null type and matched authoring for unresolved locator selectors."""
 import hashlib
 import xml.etree.ElementTree as ET
-from inspect_bmb import compare_project
+from authoring_sources import project_sources, project_identity
 
 
 def attach_null_locators(result, project):
-    comparison = compare_project(result, project)
-    for node, source in zip(result['nodes'], ET.fromstring(project).findall('.//ResIdeNode')[1:]):
+    comparison, sources = project_sources(result, project)
+    for node, source in zip(result['nodes'], sources):
         if node['typeId'] != 0:
             continue
         node['nullLocatorSource'] = {
             'type': node['sourceControls']['fields']['nullType']['value'],
             'rotationMode': source.findtext('Rotate_Basic_RotateType'),
             'scaleMode': source.findtext('Scale_Basic_ScaleType'),
-            'projectSha256': hashlib.sha256(project).hexdigest(),
+            'projectSha256': project_identity(project),
             'origin': 'IBMB Null type; rotation/scale still require explicit matching BMSLN',
         }
     return comparison

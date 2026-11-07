@@ -39,6 +39,15 @@ def attach_playback_fields(data, nodes):
                     values=list(data[start + (0x69 if node['typeId'] == 0 else 0x13a if node['typeId'] == 2 else 0xd8):
                                      start + (0x6c if node['typeId'] == 0 else 0x13d if node['typeId'] == 2 else 0xdb)])),
                 boundary='Activation only; Null enabled means an explicitly invoked caller, not decoded source visibility')
+            generation = node['nativeGeneration']
+            if generation['mode'] != 0 and generation['count'] == 1 and generation['duration'] <= 1:
+                import bmb_channels
+                # A single one-shot activation; only mode 0 is decoded. Approximation mode reads
+                # other modes as that single activation and records it.
+                if bmb_channels.APPROXIMATED_CURVES is not None:
+                    bmb_channels.APPROXIMATED_CURVES.append({'node': node['index'], 'generationMode': generation['mode'],
+                                                             'treatment': 'single-activation-as-mode-0'})
+                    generation['mode'] = 0
         # Color fields are checked separately against the known source projects.
         color_offset = {0: 328, 2: 720, 3: 104, 6: 120}[node['typeId']]
         node['initialColor'] = list(struct.unpack_from('<3f', data, start + color_offset))

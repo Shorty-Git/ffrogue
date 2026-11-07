@@ -29,7 +29,9 @@ try {
       const gl = game.renderer.gl, box = 90, px = new Uint8Array(box * box * 4), log = window.__sync = {expected: starts, frames: new Map(), damage: []};
       const apply = rat.applyDamage.bind(rat);
       rat.applyDamage = (...a) => { log.damage.push(s.preparedScenes.snapshot().frame); return apply(...a); };
-      game.events.on('postrender', () => {
+      // One hook per run; the game outlives scene restarts, so drop the previous run's hook.
+      if (window.__syncHook) game.events.off('postrender', window.__syncHook);
+      game.events.on('postrender', window.__syncHook = () => {
         const snap = s.preparedScenes.snapshot(); if (!snap.active) return;
         const b = rat.sprite.getBounds();
         gl.readPixels(Math.round(b.centerX - box / 2), Math.round(game.canvas.height - b.centerY - box / 2), box, box, gl.RGBA, gl.UNSIGNED_BYTE, px);
@@ -39,7 +41,8 @@ try {
       return hero.heroName + ' ' + s.limitBursts[hero.unitKey].name;
     }, index);
     await page.keyboard.press('Digit5');
-    await page.waitForFunction(() => window.__ffrogueGame.scene.getScene('BattleScene').combatState === 'PLAYER_TURN', {}, {timeout: 60000});
+    // A Limit Burst may end the battle (VICTORY) instead of returning to the next turn.
+    await page.waitForFunction(() => ['PLAYER_TURN', 'VICTORY'].includes(window.__ffrogueGame.scene.getScene('BattleScene').combatState) && !window.__ffrogueGame.scene.getScene('BattleScene').preparedScenes.snapshot().active, {}, {timeout: 60000});
     const result = await page.evaluate(() => {
       const {expected, frames, damage} = window.__sync;
       const index = f => { let i = 0; while (i + 1 < expected.length && expected[i + 1] <= f) i++; return i + 1; };

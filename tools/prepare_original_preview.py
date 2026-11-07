@@ -11,6 +11,7 @@ import struct
 from pathlib import Path
 from inspect_bmb import read_bmb
 import bmb_channels
+from authoring_sources import ApproximateProject
 from inspect_m3r import read_m3r
 from bmb_playback_fields import attach_playback_fields
 from original_texture_layers import attach_texture_layers
@@ -89,6 +90,9 @@ if __name__ == '__main__':
                      'native_basic_material', 'native_blend', 'native_null_locator',
                      'native_particle_x', 'rectangle_placement']:
             setattr(a, flag, True)
+        if a.approximate_unverified:
+            # Binary ConstFlat Quad RGB (e.g. dark backdrop quads) instead of the white legacy tint.
+            a.flat_quad_rgb = True
     elif a.authoring_directory:
         p.error('Authoring directory resolution requires an explicit shared profile')
     if a.native_particle_x and not (a.native_shaders_apk and a.particle_geometry and a.native_null_locator):
@@ -145,6 +149,7 @@ if __name__ == '__main__':
     if not a.source.resolve().is_relative_to(stage) or not a.output.resolve().is_relative_to(stage):
         raise ValueError('Research source and output must stay inside tools/data')
     receipt = json.loads(a.source.read_text(encoding='utf-8'))
+    approximate_members = set()
     if a.profile:
         directory = a.authoring_directory.resolve()
         if not directory.is_relative_to(root):
@@ -152,7 +157,11 @@ if __name__ == '__main__':
         for original in receipt['originals']:
             project = directory / Path(original['member']).with_suffix('.bmsln').name
             if not project.is_file():
-                raise ValueError('Missing exact member authoring: ' + str(project))
+                if not a.approximate_unverified:
+                    raise ValueError('Missing exact member authoring: ' + str(project))
+                # Authoring-free visual approximation: binary controls + BMSLN corpus defaults.
+                approximate_members.add(original['member'])
+                continue
             a.authoring.append(project)
     source = receipt['skill']
     presentation = None
@@ -186,7 +195,7 @@ if __name__ == '__main__':
     authoring = {path.stem + '.bmb': path for path in a.authoring}
     if len(authoring) != len(a.authoring):
         raise ValueError('Duplicate authoring supplement')
-    if a.inheritance and not authoring:
+    if a.inheritance and not authoring and not approximate_members:
         raise ValueError('Inheritance experiment requires explicit authoring sources')
     if set(authoring) - {item['member'] for item in receipt['originals']}:
         raise ValueError('Authoring supplement does not match a skill source member')
@@ -230,16 +239,18 @@ if __name__ == '__main__':
             project = authoring.get(original['member'])
             attach_flat_quad_color(raw, data, project.read_bytes() if project else None)
         inheritance_supplement = None
-        if original['member'] in authoring:
-            supplement = attach_texture_layers(data, authoring[original['member']].read_bytes())
+        project = (authoring[original['member']].read_bytes() if original['member'] in authoring
+                   else ApproximateProject(original['member']) if original['member'] in approximate_members else None)
+        if project is not None:
+            supplement = attach_texture_layers(data, project)
             if a.inheritance:
-                inheritance_supplement = attach_inheritance(data, authoring[original['member']].read_bytes())
+                inheritance_supplement = attach_inheritance(data, project)
             if a.particle_geometry:
                 from original_particle_geometry import attach_particle_geometry
-                attach_particle_geometry(data, authoring[original['member']].read_bytes())
+                attach_particle_geometry(data, project)
             if a.null_locator:
                 from original_null_locator import attach_null_locators
-                attach_null_locators(data, authoring[original['member']].read_bytes())
+                attach_null_locators(data, project)
         appearance_report = attach_appearance(data, authoring[original['member']].read_bytes() if original['member'] in authoring else None) if a.source_appearance else None
         basic_uv_report = attach_basic_texture_mapping(data, authoring[original['member']].read_bytes() if original['member'] in authoring else None) if a.basic_uv else None
         resource_receipt = json.loads((a.source.parent / 'effects' / path.stem / 'resources.json').read_text())

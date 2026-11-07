@@ -67,6 +67,12 @@ export function validateSceneManifest(manifest) {
       throw Error('Prepared model geometry required; no plane substitution');
     for(const node of effect.nodes)if(node.presentationCoverage){
       const coverage=node.presentationCoverage,binding=node.resourceBindings;
+      if(coverage.primitive==='unit-quad'){
+        if(coverage.region!=='arena'||!coverage.origin||node.typeId!==2||!binding?.texture1||binding.texture2||binding.model
+          ||effect.textures[binding.texture1.name]!==`/assets/presentations/resources/${coverage.textureSha256}.png`)
+          throw Error('Reviewed uniform Quad backdrop coverage required');
+        continue;
+      }
       if(coverage.primitive==='unit-xy-model'){
         const mesh=effect.meshes[binding?.model?.name];
         const positions=mesh?.vertices.map(v=>v.position).sort();

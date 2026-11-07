@@ -4,13 +4,12 @@ The binary subset never supplies compatibility flags or unknown enum defaults.
 """
 import math
 import xml.etree.ElementTree as ET
-from inspect_bmb import compare_project
+from authoring_sources import project_sources
 from bmb_source_controls import compare_source_controls
 
 
 def attach_inheritance(result, project):
-    comparison = compare_project(result, project)
-    sources = ET.fromstring(project).findall('.//ResIdeNode')[1:]
+    comparison, sources = project_sources(result, project)
     prefix = 'Basic_ParentNodeInfluence_'
 
     def boolean(source, tag):

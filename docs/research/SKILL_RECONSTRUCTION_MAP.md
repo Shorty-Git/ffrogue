@@ -1,5 +1,22 @@
 # FFRogue - Skill Reconstruction Map
 
+## Product update: authoring-free approximation unlocks Cloud AC's Limit Burst (2026-11-07)
+
+Critical-path change for P07/P10/P30 under the developer's visual bar (docs/vision.md): the
+"exact authoring-free profile" is NOT claimed; instead approximation mode now proceeds without
+matched BMSLN. Decoded IBMB controls stay authoritative; every other authoring field comes from
+the local BMSLN corpus mode per node type (tools/effects/authoring-defaults.json, reproducible
+via tools/build_authoring_defaults.py, corpus hash recorded) and is listed per node in
+plan.approximations. Strict preparation and all stable enum tables are unchanged.
+Supporting generic rules: binary ConstFlat Quad RGB in approximation mode, mean RGB for constant
+opaque corner gradients, single-shot generation modes as mode 0, screen backdrops for Model
+(width >= 640) and opaque long-lived Quads (fitted to the canvas via host.view).
+Evidence: Cloud AC Omnislash Version 5 (207001605, effect groups 8007680/81/82, three BMBs, no
+BMSLN) published; LB sync 5/5 hits drift 0; Source review 19/19 applicable, 0 regressions;
+88/89 tests (known Brave Slash alarm). Remaining universal gates: unknown node types 4/7/15,
+ambiguous resource versions, conditional/non-file groups. Next: re-run the authoring-only
+blocked roster abilities (ROSTER_SKILL_COVERAGE.md) through this path and review visually.
+
 ## Product update: first Limit Burst (Cloud, Omnislash) and visual approximation mode (2026-11-07)
 
 Acceptance bar per docs/vision.md: looks right, hits the target, impact on the enemy;
