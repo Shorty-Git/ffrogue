@@ -23,9 +23,13 @@ test('confirmed Cloud visual data identities require an explicit baseline review
   // Connected Particle packets: all three frozen GPU frames retain zero changed pixels.
   // Receipt: diagnostic-v35-render-context/browser-review-37.json; OneX admission preserves the Cloud frames.
   'src/effects/nativeLifecycle.mjs':'a72df9ee85e0c11e4cecc2d12208b462fcd5cd310ff83433dfe2a796fe0e00e2',
-  'public/assets/presentations/cloud_brave_slash/manifest.json':'fca350c6a27a52f3b9dd7915ff980c3ea546975defe0d662628fc38a0c620a0d',
-  'public/assets/presentations/cloud_blade_beam/manifest.json':'0ddb6e9e3df1ca6df68b758ce7f47fda451b46de8024fa4d6d0357e83a3302a1',
-  'public/assets/presentations/cloud_climhazzard/manifest.json':'f5e9658352df6d3e812b506cc386ff3e3631dd8548ff6376b3ab1bb93382e191',
+  // 2026-11-08: manifests are pinned as LF bytes (.gitattributes eol=lf). Blade Beam and Climhazzard
+  // keep their content: their CRLF renderings still hash to the earlier pins 0ddb6e9e.../f5e96583....
+  // Brave Slash: the published composed/native-null variant (planSha256 6287ff9e...) was approved by
+  // the developer on 2026-11-08, replacing the older frozen identity fca350c6....
+  'public/assets/presentations/cloud_brave_slash/manifest.json':'624bce8174201cb642a11a19307b288f6ba184e83bf6e78c3512fbce91027b30',
+  'public/assets/presentations/cloud_blade_beam/manifest.json':'6d9a8dcac9dbbdbfdcb3c469b92ff93ebddc78c0dbcc1c83078f32c9ee395645',
+  'public/assets/presentations/cloud_climhazzard/manifest.json':'5c62ca9220e946bb1d22f0fcc591e08e3caf498dba72ff88071a6119d708544c',
  };
  for(const [file,expected]of Object.entries(baseline))assert.equal(hash(file),expected,
   'Visual baseline changed: review the frozen GPU comparison and document approval before updating identities: '+file);

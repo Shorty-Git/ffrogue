@@ -182,8 +182,9 @@ Generic rules added 2026-11-07 (no per-skill exceptions):
 
 1. `npx tsc --noEmit`, `npm run build`.
 2. All `tools/test_*.mjs` (node) and `tools/test_*.py` (project Python, run from repo root).
-   Known pre-existing failure: `test_scene_migration.mjs` Brave Slash manifest hash alarm
-   (awaiting developer decision).
+   All tests are expected to pass (since 2026-11-08). `test_scene_migration.mjs` freezes the
+   accepted Cloud manifests as LF bytes and the effect player as raw bytes; a change there
+   needs the developer's visual approval, recorded next to the new pin.
 3. Source review: Vite 3001 + receipt 3163, then
    `node tools/data/cleanup-20261107/review_all.mjs <out.json>`; compare with
    `tools/data/cleanup-20261107/baseline.json` (FAILs saying "requires", "needs an imported",
@@ -228,4 +229,3 @@ Generic rules added 2026-11-07 (no per-skill exceptions):
   without any content change (verified for test_body_assets: every mismatch matches after CRLF
   conversion).
 - Cinzel name font: developer mildly unsure, kept for now.
-- Brave Slash manifest hash alarm decision.
