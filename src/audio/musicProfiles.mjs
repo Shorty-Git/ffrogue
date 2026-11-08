@@ -1,4 +1,6 @@
+import {importedProfiles} from './importedMusic.mjs';
 export const musicProfiles = [
+  ...importedProfiles,
   {id:400005,title:'Battle 1',game:'FFBE',series:'FFBE',role:'normal',available:true},
   {id:400842,title:'Let the Battles Begin!',game:'FFVII',series:'FFVII',role:'normal',available:true},
   {id:4000713,title:'Let the Battles Begin! – Ex-SOLDIER',game:'FFVII Remake',series:'FFVII',role:'normal',available:true},

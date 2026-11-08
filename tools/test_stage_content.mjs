@@ -63,19 +63,22 @@ test('boss warning and party burst stay ordered across stopped phases; low HP ch
  assert.equal(enemyAction(ENEMY_CONTENT.sweeper,99,.1).phase,'');
 });
 
-test('reviewed reactor variants are seeded and preserve the four-fight route',()=>{
- const variants=new Set();
+test('each seed picks two stages, ordered by difficulty, with seeded reactor variants',()=>{
+ const variants=new Set(),stages=new Set();
  for(let i=0;i<64;i++){
   const seed='arena-'+i;
   const areas=variantAreas(seed);
   assert.deepEqual(areas,variantAreas(seed));
+  assert.equal(new Set(areas.map(a=>a.stageId)).size,2);
+  const difficulty=areas.map(a=>STAGE_CONTENT[a.stageId].difficulty);
+  assert.ok(difficulty[0]<=difficulty[1]);
   const fights=encounters(areas);
   assert.equal(fights.length,4);
   assert.deepEqual(fights.map(fight=>fight.boss),[false,true,false,true]);
-  assert.equal(fights[0].arena,'forest');
-  assert.equal(fights[2].arena,fights[3].arena);
-  variants.add(fights[2].arena);
+  areas.forEach(a=>stages.add(a.stageId));
+  for(const a of areas)if(a.stageId==='mako_reactor')variants.add(a.arena);
  }
+ assert.deepEqual(stages,new Set(Object.keys(STAGE_CONTENT)));
  assert.deepEqual(variants,new Set(['reactor','reactor_05']));
 });
 
@@ -83,8 +86,9 @@ test('music recommendations separate normal, boss and special roles',()=>{
  assert.equal(recommendMusic('FFVII','normal'),400842);
  assert.equal(recommendMusic('FFVII','boss',400993),400993);
  assert.equal(recommendMusic('FFVII','boss',4000711),400842);
- assert.equal(recommendMusic('FFVIII','normal'),400005);
- assert.equal(recommendMusic('FFVIII','boss'),400005);
+ assert.equal(recommendMusic('FFVIII','normal'),400867);
+ assert.equal(recommendMusic('FFVIII','boss'),400867);
+ assert.equal(recommendMusic('FFVIII','boss',400868),400868);
  assert.equal(recommendMusic('FFVIII','event'),4001101);
  assert.equal(recommendMusic('FFVII','area'),null);
 });

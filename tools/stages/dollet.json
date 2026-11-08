@@ -1,0 +1,93 @@
+{
+  "schema": "stage-recipe-v1",
+  "key": "dollet",
+  "name": "Dollet",
+  "theme": "FINAL FANTASY VIII",
+  "series": "FFVIII",
+  "arena": {
+    "key": "dollet",
+    "battleBgId": 120173,
+    "title": "FFVIII",
+    "label": "Dollet street",
+    "floor": [
+      0.54,
+      0.77
+    ],
+    "worldIdentity": "Reviewed Dollet street (Nautilus shop); original stage-to-world join not established (tools/stages/mainline-candidates.json)"
+  },
+  "music": {
+    "normal": {
+      "resourceId": 400867,
+      "title": "Don't Be Afraid",
+      "game": "FFVIII"
+    },
+    "boss": {
+      "resourceId": 400868,
+      "title": "Force Your Way",
+      "game": "FFVIII"
+    }
+  },
+  "enemies": [
+    {
+      "key": "g_soldier",
+      "dictionaryId": 2058610,
+      "name": "G-Soldier",
+      "scale": 2,
+      "movement": "approach",
+      "monsterId": "205861000"
+    },
+    {
+      "key": "elite_soldier",
+      "dictionaryId": 2058710,
+      "name": "Elite Soldier",
+      "scale": 2,
+      "movement": "approach",
+      "monsterId": "205871000"
+    }
+  ],
+  "boss": {
+    "key": "x_atm092",
+    "dictionaryId": 5060020,
+    "name": "X-ATM092",
+    "scale": 1.5,
+    "movement": "stationary",
+    "note": "Galbadia variant 5060020, not the Zoldaad 5060010 lookalike (mainline-candidates.json).",
+    "behavior": {
+      "phaseAt": 0.5,
+      "phaseName": "Pursuit Mode",
+      "phaseMultiplier": 1.25,
+      "pattern": [
+        {
+          "kind": "attack",
+          "name": "Arm Hook",
+          "multiplier": 1,
+          "scope": "single"
+        },
+        {
+          "kind": "prepare",
+          "name": "Targeting the party",
+          "next": "Ray-Bomb"
+        },
+        {
+          "kind": "attack",
+          "name": "Ray-Bomb",
+          "multiplier": 1.3,
+          "scope": "party"
+        }
+      ]
+    },
+    "monsterId": "506002000"
+  },
+  "formations": [
+    [
+      "top",
+      "bottom"
+    ],
+    [
+      "center"
+    ]
+  ],
+  "difficulty": 1.3,
+  "normalFights": 1,
+  "rewardCategory": "dollet-relic"
+}

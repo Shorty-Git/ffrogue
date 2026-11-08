@@ -24,7 +24,7 @@ with sqlite3.connect('file:rawdata/assets/static_data/ffbe-data.db?mode=ro', uri
     rows = {r['battleBgId']: dict(r) for r in db.execute('select * from battle_bg')}
     registry = {r['resourceId']: r['fileName'] for r in db.execute('select * from resource_map where resourceType=400')}
     banks = {}
-    for root in (Path('tools/data/memorial-audit/trace-clone-backup'), Path('rawdata/android-global')):
+    for root in (Path('rawdata/memorial-packs'), Path('rawdata/memorial-downloads'), Path('rawdata/android-global')):
         for file in sorted(root.rglob('*.acb')):
             key = file.name.lower()
             banks.setdefault(key, []).append(file.as_posix())

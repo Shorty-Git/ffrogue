@@ -9,8 +9,16 @@ export const REVIVE_HP_SHARE=.5;
 export const PROTOTYPE_AREAS=Object.values(STAGE_CONTENT).map(s=>({stageId:s.id,name:s.name,arena:s.arena,normals:s.normalFights}));
 export const FULL_AREAS=[{name:'Whisperwood',arena:'forest',normals:5},{name:'Mako Outskirts',arena:'reactor',normals:5},{name:'Final Rift',arena:'forest',normals:5}];
 export function seedHash(value){let h=2166136261;for(const c of String(value)){h^=c.charCodeAt(0);h=Math.imul(h,16777619);}return h>>>0;}
+/** Areas per run; the seed picks which stages and the route climbs in difficulty. */
+export const COURSE_LENGTH=2;
+export function courseAreas(seed){
+ const pool=Object.values(STAGE_CONTENT);
+ const picked=[...pool].sort((a,b)=>seedHash(seed+':course:'+a.id)-seedHash(seed+':course:'+b.id)).slice(0,COURSE_LENGTH);
+ return picked.sort((a,b)=>a.difficulty-b.difficulty||a.id.localeCompare(b.id))
+  .map(s=>({stageId:s.id,name:s.name,arena:s.arena,normals:s.normalFights}));
+}
 export function variantAreas(seed){
- return PROTOTYPE_AREAS.map(area=>{
+ return courseAreas(seed).map(area=>{
   const variants=[area.arena,...(STAGE_CONTENT[area.stageId].variants??[])];
   return {...area,arena:variants[seedHash(seed+':arena:'+area.stageId)%variants.length]};
  });
@@ -27,7 +35,7 @@ function validFormPolicy(policy){
   &&['hpPerRank','mpPerRank','powerPerRank','defensePerRank'].every(key=>Number.isFinite(policy[key])&&policy[key]>=0&&policy[key]<=.2);
 }
 export function encounters(areas){return areas.flatMap((area,index)=>Array.from({length:area.normals+1},(_,wave)=>({area:index,name:area.name,arena:area.arena,boss:wave===area.normals,wave})));}
-export function createRun(seed,catalog,areas=PROTOTYPE_AREAS,rules){
+export function createRun(seed,catalog,areas=courseAreas(seed),rules){
  areas.forEach(stageForArea);
  if(new Set(Object.values(catalog).filter(c=>c.canonicalIdentity&&c.skills.length).map(c=>c.canonicalIdentity)).size<3)throw Error('Three reviewed canonical character identities required');
  if(!String(seed).trim()||String(seed).length>64)throw Error('Seed must contain 1–64 characters');

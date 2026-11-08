@@ -1,4 +1,5 @@
 // Reviewed FFRogue encounters; source identity is not a claim of original FFBE AI.
+import {IMPORTED_ENEMIES,IMPORTED_STAGES} from './importedStages.mjs';
 export const ENEMY_CONTENT = {
   microchu: {key:'microchu',name:'Microchu',spriteId:'1110310',monsterId:'111031000',dictionaryId:1110310,
     scale:2,attack:{clip:'atk',impactFrame:1,movement:'approach'},audio:[]},
@@ -16,6 +17,8 @@ export const ENEMY_CONTENT = {
       {kind:'attack',name:'Arm Cannon',multiplier:1,scope:'single'},
       {kind:'prepare',name:'Power banks charging',next:'Suppressive Burst'},
       {kind:'attack',name:'Suppressive Burst',multiplier:1.3,scope:'party'}]}},
+  // Stages imported with tools/import_stage.mjs (enemy bodies, arena, music).
+  ...IMPORTED_ENEMIES,
 };
 
 export const STAGE_CONTENT = {
@@ -28,6 +31,7 @@ export const STAGE_CONTENT = {
     source:{battleBgId:120142,file:'battle_bg_2013_02.jpg',worldIdentity:'Reviewed FFVII reactor theme; original stage-to-world join not established'},
     enemyPool:['sweeper'],formations:[['top','bottom']],bossId:'guard_scorpion',difficulty:1.45,rewardCategory:'reactor-relic',normalFights:1,
     audio:{musicResourceId:400842,musicSeries:'FFVII',bossMusicResourceId:400993,musicAssignment:'Original FFVII battle theme (Memorial client download)',soundCues:[]}},
+  ...IMPORTED_STAGES,
 };
 
 export function stageForArea(area){

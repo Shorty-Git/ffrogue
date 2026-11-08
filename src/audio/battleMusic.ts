@@ -2,7 +2,9 @@ import Phaser from 'phaser';
 import {renderUiSound,type UiSound as AuthoredUiSound,type UiPreview} from './uiSoundDesign';
 import {combatCues,type CombatCue} from './combatCues';
 
-const tracks = new Map([
+import {importedTracks} from './importedMusic.mjs';
+const tracks = new Map<number,{url:string;loopStart:number;loopEnd:number}>([
+  ...importedTracks,
   [400003, { url: 'assets/audio/la003_mypage_normal1.wav', loopStart: 215038 / 44100, loopEnd: 3390206 / 44100 }],
   [400005, { url: 'assets/audio/la005_battle1.wav', loopStart: 370898 / 44100, loopEnd: 3816914 / 44100 }],
   [400842, { url: 'assets/audio/la842_let_the_battles_begin.wav', loopStart: 143152 / 44100, loopEnd: 3230640 / 44100 }],
