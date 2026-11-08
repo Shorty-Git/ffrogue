@@ -596,6 +596,60 @@
           "weight": 0.73
         }
       ]
+    },
+    {
+      "id": "warring_slash",
+      "ffbeId": 800606,
+      "name": "Warring Slash",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 45,
+      "scope": "single_enemy",
+      "damageMultiplier": 3.5,
+      "hitCount": 1,
+      "attackFrames": [
+        40
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (3.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "delita_warring_slash",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/wave6-20261108/warring_slash/source/skill-source.json",
+        "sha256": "2644a1bad01d5d5e96b721cdddda6c4ba3c56531550d70c89dc44857ed78ce1b"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 40,
+          "weight": 1
+        }
+      ]
     }
   ],
   "portraitSource": "unit_icons/unit_icon_253000205.png"
