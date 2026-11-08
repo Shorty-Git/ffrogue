@@ -30,7 +30,7 @@ Last consolidated: 2026-11-07.
 - Battle UI (DOM `CombatHud` over Phaser): target-first (enemies clickable any time, crystal
   cursor), Attack + up to 3 skills + Limit Burst as one-click commands, original FFBE UI parts
   (window frame, HP/MP/LIMIT gauges, enemy gauge, skill icons), animated HP drain with damage
-  trail. All menus use the same FFBE window style (`src/ui/ffbeTheme.css`).
+  trail, buff/debuff status badges with remaining rounds. All menus use the same FFBE window style (`src/ui/ffbeTheme.css`).
   Details: `docs/battle-layout.md`.
 - Limit Burst gauge: `src/run/limitGauge.mjs` (+25 per action, damage taken fills, LB empties
   it). Only heroes with a published `type: LIMIT` skill have one. Since 2026-11-08 the gauge

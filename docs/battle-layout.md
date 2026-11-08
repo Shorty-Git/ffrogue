@@ -115,6 +115,17 @@ how its gauge fills. The native `title` tooltip was replaced by `aria-descriptio
 shows run progress ("Battle 1 / 4", "Boss 2 / 4") and a small key legend sits under the prompt.
 Checked in headless Chromium at 1440x900 and 1100x760 (no page overflow).
 
+## Status badges (2026-11-08)
+
+Party cards and enemy plates show active buffs/debuffs as original FFBE status icons with the
+remaining rounds in a small badge (`statusRow` in `src/ui/CombatHud.ts`, mapping in
+`src/ui/statusIcons.ts`). Icons are exported by `<python> tools/export_status_icons.py` from
+`assets/ui/battle/state_icon_up.png` (32 px grid, 9 columns: ATK up = 0, Reraise = 24) and
+`assets/icons/ailments/*.png` into `public/assets/ui/status/<kind>.png`. Hero buffs count rounds
+until `expiresAfterRound`; enemy statuses count enemy phases. Supported kinds: physical-boost,
+auto-revive, attack-down, physical-weakness, magic-weakness, silence, stop. A new status kind
+needs an icon entry in both files. The text status line now carries only the boss intent.
+
 ## Development hooks
 
 In development builds `window.__ffrogueGame` exposes the running Phaser game for

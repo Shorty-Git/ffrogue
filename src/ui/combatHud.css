@@ -133,3 +133,11 @@ body:has(#run-ui:not([data-phase=battle]):not([data-phase=rewards]):not([data-ph
 .ribbon-prompt [role=status].is-hint::before,.ribbon-prompt [role=status].is-hint::after{color:#e8c46a}
 .ribbon-keys{margin:0;text-align:center;font-size:.7em;color:#9db4cc;letter-spacing:.03em;opacity:.8}
 .ribbon-keys kbd{display:inline-block;min-width:1.3em;padding:0 .25em;margin:0 .1em;border:1px solid #8fb0d066;border-radius:3px;background:#0b1d3a;color:#d6e6f5}
+
+/* Active buffs/debuffs: original FFBE status icons with remaining rounds (src/ui/statusIcons.ts). */
+.status-row { display: flex; gap: 3px; flex-wrap: wrap; margin: 1px 0 2px; pointer-events: none; }
+.status-badge { position: relative; width: 22px; height: 22px; flex: none; }
+.status-badge img { width: 100%; height: 100%; display: block; image-rendering: auto; }
+.status-badge b { position: absolute; right: -3px; bottom: -3px; min-width: 11px; padding: 0 2px; font: 700 10px/11px var(--hud-number-font, sans-serif);
+  color: #fff; background: rgba(8, 14, 34, .88); border: 1px solid rgba(190, 210, 255, .55); border-radius: 6px; text-align: center; }
+.arena-health .status-row { justify-content: flex-start; margin-top: 3px; }

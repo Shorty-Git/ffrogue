@@ -1,4 +1,5 @@
 import {skillIconUrl} from '../ui/skillIcons';
+import {heroStatusBadges,enemyStatusBadges} from '../ui/statusIcons';
 import {LB_MAX,LB_PER_ACTION,gainFromAction,gainFromDamage,gainFromSupport,isFull} from '../run/limitGauge.mjs';
 import {enemyTargetIndex} from '../run/enemyTargeting.mjs';
 import {CombatHud} from '../ui/CombatHud';
@@ -411,9 +412,11 @@ export class BattleScene extends Phaser.Scene {
       if(enemy.currentHp<=0)return [];
       const definition=ENEMY_CONTENT[enemy.assetKey];
       const intent=enemy.isBoss&&definition?.behavior?enemyAction(definition,enemy.actionCursor,enemy.currentHp/enemy.maxHp):undefined;
-      const status=[intent&&[intent.name,intent.next,intent.phase].filter(Boolean).join(' · '),...enemy.statusEffects.map(effect=>effect.kind.replaceAll('-',' '))].filter(Boolean).join(' · ');
+      // Statuses show as icon badges; the text line keeps the boss intent only.
+      const status=intent?[intent.name,intent.next,intent.phase].filter(Boolean).join(' · '):'';
       const selectable=this.combatState==='PLAYER_TURN'&&scope!=='single_ally';
       return [{id,name:enemy.nameTag,hp:enemy.currentHp,maxHp:enemy.maxHp,boss:enemy.isBoss,status,selectable,
+        statuses:enemyStatusBadges(enemy.statusEffects),
         targeted:selectable&&enemy===this.currentTarget,marked:this.ribbonMarks.includes(enemy),...placement(enemy.sprite)}];
     });
     const skills=hero?(this.unitSkills[hero.unitKey]??[]).slice(0,3):[];
@@ -426,14 +429,14 @@ export class BattleScene extends Phaser.Scene {
         return selectable||this.ribbonMarks.includes(ally)?[{id:this.enemies.length+i,name:ally.heroName,selectable,targeted:false,marked:true,...placement(ally)}]:[];
       })],
       party:this.turnOrder.map((member,i)=>{
-        const boost=heroPhysicalMultiplier(member.sourceBuffs,this.currentRound);
         const state=member.isDead?'ko':member.hasActed?'acted':member===hero&&available?'active':'ready';
         const status={ko:'K.O.',acted:'Acted',active:'Active',ready:'Ready'}[state];
         const target=plan&&scope==='single_ally'&&!member.isDead&&member.currentHp>0?this.enemies.length+i:undefined;
         const definition=this.cache.json.get(`character_${member.unitKey}`) as CharacterDefinition;
-        return {name:member.heroName,portrait:definition.portrait?`/assets/units/${member.unitKey}/${definition.portrait}`:undefined,status:status+(boost>1?` · ATK +${Math.round((boost-1)*100)}%`:''),
+        return {name:member.heroName,portrait:definition.portrait?`/assets/units/${member.unitKey}/${definition.portrait}`:undefined,status,
           active:member===hero&&available,disabled:target===undefined&&(this.combatState!=='PLAYER_TURN'||member.isDead||member.hasActed||scope==='single_ally'),
           state,target,hp:member.currentHp,maxHp:member.maxHp,mp:member.currentMp,maxMp:member.maxMp,
+          statuses:member.isDead?[]:heroStatusBadges(member.sourceBuffs,this.currentRound),
           ...(this.limitBursts[member.unitKey]?{limit:{value:member.limitGauge,max:LB_MAX}}:{})};
       }),
       commands:[{name:'Attack',icon:'attack',cost:'0 MP',description:'Physical damage to the target · 15% critical chance · no cost',disabled:!available,selected:plan?.kind==='attack'},

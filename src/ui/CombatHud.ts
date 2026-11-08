@@ -1,11 +1,15 @@
 import {UI_PARTS as UI,gauge,gaugeRow,limitRow,formatValue as number,captureGauges,animateGauges} from './ffbeGauge';
 
 type HeroState = 'active' | 'ready' | 'acted' | 'ko';
+/** Active buff/debuff: original FFBE status icon and remaining rounds (src/ui/statusIcons.ts). */
+export type StatusBadge = {icon:string; label:string; turns:number};
+const statusRow=(statuses?:StatusBadge[])=>statuses?.length?`<span class="status-row">${statuses.map(s=>
+  `<span class="status-badge" title="${escapeHtml(s.label)} · ${s.turns} round${s.turns===1?'':'s'}"><img src="${escapeHtml(s.icon)}" alt="${escapeHtml(s.label)}" draggable="false"><b>${s.turns}</b></span>`).join('')}</span>`:'';
 type PartyEntry = {name:string; portrait?:string; hp:number; maxHp:number; mp:number; maxMp:number; status:string; state:HeroState;
-  active:boolean; disabled:boolean; target?:number; limit?:{value:number;max:number}};
+  active:boolean; disabled:boolean; target?:number; limit?:{value:number;max:number}; statuses?:StatusBadge[]};
 type Command = {name:string; icon:'attack'|'magic'|'ability'|'limit'; iconUrl?:string; cost:string; description:string; disabled:boolean; selected:boolean;
   /** The hero's Limit Burst; `ready` once the LB gauge is full. */ limit?:boolean; ready?:boolean};
-type ArenaActor = {id:number; name:string; hp?:number; maxHp?:number; status?:string; boss?:boolean; marked:boolean; selectable:boolean;
+type ArenaActor = {id:number; name:string; hp?:number; maxHp?:number; status?:string; statuses?:StatusBadge[]; boss?:boolean; marked:boolean; selectable:boolean;
   /** Current enemy target: drawn with the crystal target cursor. */ targeted:boolean;
   x:number; y:number; width:number; height:number};
 export type CombatHudState = {
@@ -88,6 +92,7 @@ export class CombatHud {
       <span class="portrait-frame">${hero.portrait?`<img src="${escapeHtml(hero.portrait)}" alt="" draggable="false">`:''}</span>
       <span class="party-info">
         <span class="party-head"><strong>${escapeHtml(hero.name)}</strong><small>${escapeHtml(hero.status)}</small></span>
+        ${statusRow(hero.statuses)}
         ${gaugeRow('hp',hero.hp,hero.maxHp,`hero-${i}-hp`)}
         ${gaugeRow('mp',hero.mp,hero.maxMp,`hero-${i}-mp`)}
         ${hero.limit?limitRow(hero.limit.value,hero.limit.max,`hero-${i}-lb`):''}
@@ -103,7 +108,7 @@ export class CombatHud {
       const position=`left:${actor.x}%;top:${actor.y}%;width:${actor.width}%;height:${actor.height}%`;
       const plate=actor.hp===undefined?'':`<span class="arena-health ${actor.boss?'is-boss':''}">
         <span class="enemy-head"><strong>${escapeHtml(actor.name)}</strong><span>${number(actor.hp)} / ${number(actor.maxHp!)}</span></span>
-        ${gauge('enemy',actor.hp,actor.maxHp!,'HP',`enemy-${actor.id}`)}${actor.status?`<small>${escapeHtml(actor.status)}</small>`:''}</span>`;
+        ${gauge('enemy',actor.hp,actor.maxHp!,'HP',`enemy-${actor.id}`)}${statusRow(actor.statuses)}${actor.status?`<small>${escapeHtml(actor.status)}</small>`:''}</span>`;
       return `<div class="arena-actor ${actor.marked?'is-marked':''} ${actor.targeted?'is-targeted':''}" style="${position}">${plate}${actor.targeted?TARGET_CURSOR:''}
         ${actor.selectable?`<button type="button" class="arena-hit" ${attrs('target',actor.id)} aria-label="Target ${escapeHtml(actor.name)}" aria-pressed="${actor.targeted}"></button>`:''}</div>`;
     }).join('');
