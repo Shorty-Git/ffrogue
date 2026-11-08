@@ -193,6 +193,57 @@ def annotate_screen_backdrops(plan):
     return count
 
 
+def _white_flash_quad(effect, node, plan, nodes):
+    """A short, large Quad of plain opaque white (FFBE texture 'white') with a rising-and-falling alpha
+    curve is an impact flash. Kept at source size it shows as a hard-edged white box on our wider
+    battlefield (Cloud AC's Omnislash V5 node 62, 280 x 280 units), so it covers the visible
+    battlefield instead; its alpha curve, blend and timing stay source data."""
+    binding = node.get('resourceBindings', {})
+    if node['typeId'] != 2 or not binding.get('texture1') or binding.get('texture2') or binding.get('model'):
+        return None
+    if not node.get('uniformScale') or node.get('lifeParameter', 0) > 30:
+        return None
+    flat = node.get('flatQuadColor') or {}
+    if flat.get('mode') != 'Constant' or any(channel < 0.95 for channel in flat.get('value', [0])):
+        return None
+    keys = [key['value'] for key in (node.get('alphaCurve') or {}).get('keys', [])]
+    if len(keys) < 3 or keys[0] > 0.05 or keys[-1] > 0.05 or max(keys) < 0.8:
+        return None
+    width = node['staticVectors']['transform']['scale']['valueInitial'][0]
+    parent = node.get('parentIndex')
+    while parent is not None:
+        ancestor = next((n for n in nodes if n.get('index') == parent), nodes[parent])
+        width *= ancestor['staticVectors']['transform']['scale']['valueInitial'][0]
+        parent = ancestor.get('parentIndex')
+    if width < 200:
+        return None
+    source = plan['files'][effect['textures'][binding['texture1']['name']]]
+    path = Path(source['path'])
+    if hashlib.sha256(path.read_bytes()).hexdigest() != source['sha256']:
+        raise ValueError('Flash texture identity changed')
+    with Image.open(path) as image:
+        extrema = image.convert('RGBA').getextrema()
+    if any(extreme != (255, 255) for extreme in extrema):
+        return None
+    return dict(region='arena', primitive='unit-quad', textureSha256=source['sha256'],
+                origin=f'Automatic impact flash: plain white Quad (effective width {width:g}), life {node.get("lifeParameter")} frames, '
+                       'alpha rises and falls; fitted to the visible battlefield instead of a hard-edged box')
+
+
+def annotate_white_flashes(plan):
+    """Generic rule for every effect, whatever its anchor (see _white_flash_quad)."""
+    count = 0
+    for effect in plan['effects']:
+        for node in effect['nodes']:
+            if node.get('presentationCoverage'):
+                continue
+            flash = _white_flash_quad(effect, node, plan, effect['nodes'])
+            if flash:
+                node['presentationCoverage'] = flash
+                count += 1
+    return count
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--plan', type=Path, required=True)
@@ -203,5 +254,5 @@ if __name__ == '__main__':
     plan = json.loads(args.plan.read_text(encoding='utf-8'))
     count = (0 if args.skip_particles else annotate(plan))+annotate_arena_surfaces(plan,args.arena_surfaces)
     if args.screen_backdrops:
-        count += annotate_screen_backdrops(plan)
+        count += annotate_screen_backdrops(plan) + annotate_white_flashes(plan)
     print(json.dumps(dict(plan=plan, flashPlanes=count)))

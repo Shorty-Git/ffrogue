@@ -127,6 +127,11 @@ Generic rules added 2026-11-07 (no per-skill exceptions):
   Colour/alpha curves stay source data. Accepted particle flashes keep the arena clip.
   Second form: an opaque constant-colour uniform Quad (width ≥ 200) on screen for ≥ 80 % of
   the effect's longest node life is a background replacement (`unit-quad`, e.g. Cloud AC).
+- Impact flashes (prepare_scene_flashes.py `annotate_white_flashes`, applied with the screen
+  backdrops): a short (<= 30 frames), uniform-scale Quad of plain opaque white with constant white
+  colour, an alpha curve that rises from 0 to at least 0.8 and back, and an effective width >= 200
+  units covers the visible battlefield (`unit-quad`) instead of showing as a hard-edged white box.
+  Alpha, blend and timing stay source data. Matches only Cloud AC's Omnislash V5 node 62 today.
 - Original draw order (approximation imports): `tools/bmb_draw_priority.py` reads the header
   priority-sort flag (0x4d) and emitter SortPriority (Quad +508, Particle +408, Model +460;
   verified on 92 matched pairs) into `plan.drawOrder`; `PreparedSceneBridge.applyOriginalDrawOrder`
