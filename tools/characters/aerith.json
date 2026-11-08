@@ -610,6 +610,71 @@
         "sourceRange": "1",
         "note": "Original target 2 / range 1 (process 27); adapted to auto-revive at 0.5 HP for 3 rounds on all living allies."
       }
+    },
+    {
+      "id": "pulse_of_life",
+      "ffbeId": 229755,
+      "name": "Pulse of Life",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 60,
+      "scope": "party",
+      "damageMultiplier": 1,
+      "hitCount": 0,
+      "attackFrames": [
+        90
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Restore 1000 HP to all living allies (no revival).",
+      "execution": "prepared-friendly",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "aerith_pulse_of_life",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/wave6-20261108/pulse_of_life/source/skill-source.json",
+        "sha256": "3b9bc7e21d9fd626c06d02900d4145698551c0e33ee2ea1c08edaa4a9ab7be54"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "allyTargeting": "living-allies",
+      "allyEvents": [
+        {
+          "frame": 90,
+          "effects": [
+            {
+              "kind": "heal",
+              "amount": 1000
+            }
+          ]
+        }
+      ],
+      "friendlyTargetReview": {
+        "sourceTarget": "2",
+        "sourceRange": "2",
+        "note": "Original target 2 / range 2 (process 4); adapted to a fixed 1000 HP heal on all living allies."
+      }
     }
   ],
   "portraitSource": "unit_icons/unit_icon_207000405.png"

@@ -15,11 +15,14 @@ Last consolidated: 2026-11-07.
   K.O., one revival offer (50% base HP, `REVIVE_HP_SHARE`) is guaranteed among the three, next
   to the guaranteed boss awakening. A K.O. member enters the next battle in its dead pose; a
   revived member starts with an empty Limit gauge (a K.O. empties it).
-- 39 Source skills (original FFBE effect data rendered in real time). Authoring-free imports
+- 46 Source skills (original FFBE effect data rendered in real time). Authoring-free imports
   2026-11-07/08 include Meteor Rain, Banish, Holy, Fury Brand, Healing Wind, Curaja, Earthly
   Healing, Prayer of the Cetra, Northswain's Strike, Northern Sky Apprentice, Meditate, Big Shot,
   Ungarmax, Grenade Bomb, Satellite Beam, Cheer, Call of the Void, Fusion Sword 1st/3rd, Spin Drive,
-  Reraise (auto-revive), Thundaga Blade (first type 7 lightning), Thundara, Thundaga.
+  Reraise (auto-revive), Thundaga Blade (first type 7 lightning), Thundara, Thundaga, Sonic Impact, Buster End,
+  Finishing Touch (both Clouds), Fusion Sword 2nd/4th, Pulse of Life. Approximation mode plays
+  repeated generation cycles once and falls back to the authoring-free stand-in when matched
+  authoring disagrees with the binary (both listed in plan.approximations).
   Approximation mode also treats empty selected alpha curves as constant and skips engine-only
   effect groups without files (e.g. 99999999), each listed in plan.approximations. Members starting before frame 0 are clamped to 0 in approximation mode.
   + 2 Limit Bursts

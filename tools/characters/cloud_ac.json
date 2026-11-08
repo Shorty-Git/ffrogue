@@ -445,6 +445,273 @@
           "weight": 0.5
         }
       ]
+    },
+    {
+      "id": "finishing_touch_ac",
+      "ffbeId": 233935,
+      "name": "Finishing Touch (FFVII: AC)",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 56,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.8,
+      "hitCount": 8,
+      "attackFrames": [
+        42,
+        52,
+        62,
+        72,
+        82,
+        92,
+        102,
+        112
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (1.8x) to all enemies",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "cloud_ac_finishing_touch",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/wave6-20261108/finishing_touch_ac/source/skill-source.json",
+        "sha256": "a97844f33098e4eb4fd623bccf020cfa46f552dcdee63265e121c8458677f2c3"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.07
+        },
+        {
+          "frame": 52,
+          "weight": 0.07
+        },
+        {
+          "frame": 62,
+          "weight": 0.07
+        },
+        {
+          "frame": 72,
+          "weight": 0.07
+        },
+        {
+          "frame": 82,
+          "weight": 0.07
+        },
+        {
+          "frame": 92,
+          "weight": 0.07
+        },
+        {
+          "frame": 102,
+          "weight": 0.08
+        },
+        {
+          "frame": 112,
+          "weight": 0.5
+        }
+      ]
+    },
+    {
+      "id": "fusion_sword_2",
+      "ffbeId": 233941,
+      "name": "-2nd- Fusion Sword",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 20,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 8,
+      "attackFrames": [
+        42,
+        52,
+        62,
+        72,
+        82,
+        92,
+        102,
+        112
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "cloud_ac_fusion_sword_2",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/wave6-20261108/fusion_sword_2/source/skill-source.json",
+        "sha256": "ed7de0b06c437a1c26d105443e89e7d5ea18fdf793e17dfc43ceed697c60fdd0"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.06
+        },
+        {
+          "frame": 52,
+          "weight": 0.06
+        },
+        {
+          "frame": 62,
+          "weight": 0.06
+        },
+        {
+          "frame": 72,
+          "weight": 0.06
+        },
+        {
+          "frame": 82,
+          "weight": 0.06
+        },
+        {
+          "frame": 92,
+          "weight": 0.06
+        },
+        {
+          "frame": 102,
+          "weight": 0.06
+        },
+        {
+          "frame": 112,
+          "weight": 0.58
+        }
+      ]
+    },
+    {
+      "id": "fusion_sword_4",
+      "ffbeId": 233943,
+      "name": "-4th- Fusion Sword",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 20,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 8,
+      "attackFrames": [
+        42,
+        52,
+        62,
+        72,
+        82,
+        92,
+        102,
+        112
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "cloud_ac_fusion_sword_4",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/wave6-20261108/fusion_sword_4/source/skill-source.json",
+        "sha256": "a1bb466ae93cb9330490003b3ddeb473f232a6d9585c15d34852dc36b70e53f3"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.06
+        },
+        {
+          "frame": 52,
+          "weight": 0.06
+        },
+        {
+          "frame": 62,
+          "weight": 0.06
+        },
+        {
+          "frame": 72,
+          "weight": 0.06
+        },
+        {
+          "frame": 82,
+          "weight": 0.06
+        },
+        {
+          "frame": 92,
+          "weight": 0.06
+        },
+        {
+          "frame": 102,
+          "weight": 0.06
+        },
+        {
+          "frame": 112,
+          "weight": 0.58
+        }
+      ]
     }
   ],
   "portraitSource": "unit_icons/unit_icon_207001605.png"

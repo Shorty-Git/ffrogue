@@ -525,6 +525,248 @@
           "note": "Original motionType 2 / moveType 4: stationary cast with the magic_atk body."
         }
       }
+    },
+    {
+      "id": "sonic_impact",
+      "ffbeId": 236480,
+      "name": "Sonic Impact",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 60,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 10,
+      "attackFrames": [
+        110,
+        120,
+        130,
+        140,
+        150,
+        160,
+        170,
+        180,
+        190,
+        200
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "cloud_sonic_impact",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/wave6-20261108/sonic_impact/source/skill-source.json",
+        "sha256": "38f59b22150e2f10fa37c88346689a40e2260e8e97102f9f1d14c5a3d1342965"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 110,
+          "weight": 0.03
+        },
+        {
+          "frame": 120,
+          "weight": 0.03
+        },
+        {
+          "frame": 130,
+          "weight": 0.03
+        },
+        {
+          "frame": 140,
+          "weight": 0.03
+        },
+        {
+          "frame": 150,
+          "weight": 0.03
+        },
+        {
+          "frame": 160,
+          "weight": 0.03
+        },
+        {
+          "frame": 170,
+          "weight": 0.03
+        },
+        {
+          "frame": 180,
+          "weight": 0.03
+        },
+        {
+          "frame": 190,
+          "weight": 0.03
+        },
+        {
+          "frame": 200,
+          "weight": 0.73
+        }
+      ]
+    },
+    {
+      "id": "buster_end",
+      "ffbeId": 236488,
+      "name": "Buster End",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 60,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 8,
+      "attackFrames": [
+        42,
+        52,
+        62,
+        72,
+        82,
+        92,
+        102,
+        112
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "cloud_buster_end",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/wave6-20261108/buster_end/source/skill-source.json",
+        "sha256": "468a345c8bdfd8b1ef5d0ca7ff271a0365c4ef9d5f69da3d75831a86ac23a331"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.06
+        },
+        {
+          "frame": 52,
+          "weight": 0.06
+        },
+        {
+          "frame": 62,
+          "weight": 0.06
+        },
+        {
+          "frame": 72,
+          "weight": 0.06
+        },
+        {
+          "frame": 82,
+          "weight": 0.06
+        },
+        {
+          "frame": 92,
+          "weight": 0.06
+        },
+        {
+          "frame": 102,
+          "weight": 0.06
+        },
+        {
+          "frame": 112,
+          "weight": 0.58
+        }
+      ]
+    },
+    {
+      "id": "finishing_touch",
+      "ffbeId": 214840,
+      "name": "Finishing Touch",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 45,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.8,
+      "hitCount": 1,
+      "attackFrames": [
+        75
+      ],
+      "moveType": "stationary",
+      "motion": "atk",
+      "desc": "Physical damage (1.8x) to all enemies",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "cloud_finishing_touch",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/wave6-20261108/finishing_touch/source/skill-source.json",
+        "sha256": "a2c0d2b3d445164e70bbd357532ebb16a1e360dd8343eb4f7910391f877f1106"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 1,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 1 / move 4: stationary atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 77,
+          "weight": 1
+        }
+      ]
     }
   ],
   "portraitSource": "unit_icons/unit_icon_207000105.png"

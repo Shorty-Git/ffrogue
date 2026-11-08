@@ -210,6 +210,15 @@ if __name__ == '__main__':
             prune_unknown_subtrees(raw, data, bmb_channels.APPROXIMATED_CURVES)
         attach_playback_fields(raw, data['nodes'])
         if a.approximate_unverified:
+            # The frozen player evaluates one generation cycle; repeated cycles play once (listed).
+            for node in data['nodes']:
+                repeat = node.get('generation', {}).get('repeatCount', 1)
+                if repeat != 1:
+                    bmb_channels.APPROXIMATED_CURVES.append({'node': node['index'], 'repeatCount': repeat, 'treatment': 'repeated-generation-played-once'})
+                    node['generation']['repeatCount'] = 1
+                    if node.get('nativeGeneration'):
+                        node['nativeGeneration']['repeatCount'] = 1
+        if a.approximate_unverified:
             from bmb_draw_priority import attach_draw_priorities
             attach_draw_priorities(raw, data)
         if a.quad_colors:
@@ -243,10 +252,24 @@ if __name__ == '__main__':
                 raise ValueError('Flat Quad RGB requires source appearance and rejects the older corner RGBA path')
             from original_flat_quad_color import attach_flat_quad_color
             project = authoring.get(original['member'])
-            attach_flat_quad_color(raw, data, project.read_bytes() if project else None)
+            try:
+                attach_flat_quad_color(raw, data, project.read_bytes() if project else None)
+            except ValueError:
+                if not a.approximate_unverified or project is None:
+                    raise
+                attach_flat_quad_color(raw, data, None)
         inheritance_supplement = None
         project = (authoring[original['member']].read_bytes() if original['member'] in authoring
                    else ApproximateProject(original['member'], raw) if original['member'] in approximate_members else None)
+        if a.approximate_unverified and isinstance(project, bytes):
+            from inspect_bmb import compare_project
+            try:
+                compare_project(data, project)
+            except ValueError as error:
+                # Matched authoring that disagrees with the binary: use the authoring-free stand-in.
+                bmb_channels.APPROXIMATED_CURVES.append({'member': original['member'], 'authoringMismatch': str(error),
+                                                         'treatment': 'authoring-free-fallback'})
+                project = ApproximateProject(original['member'], raw)
         if project is not None:
             supplement = attach_texture_layers(data, project)
             if a.inheritance:
@@ -257,8 +280,8 @@ if __name__ == '__main__':
             if a.null_locator:
                 from original_null_locator import attach_null_locators
                 attach_null_locators(data, project)
-        appearance_report = attach_appearance(data, authoring[original['member']].read_bytes() if original['member'] in authoring else None) if a.source_appearance else None
-        basic_uv_report = attach_basic_texture_mapping(data, authoring[original['member']].read_bytes() if original['member'] in authoring else None) if a.basic_uv else None
+        appearance_report = attach_appearance(data, project if isinstance(project, bytes) else None) if a.source_appearance else None
+        basic_uv_report = attach_basic_texture_mapping(data, project if isinstance(project, bytes) else None) if a.basic_uv else None
         resource_receipt = json.loads((a.source.parent / 'effects' / path.stem / 'resources.json').read_text())
         resources = resource_receipt['resources']
         textures, meshes = {}, {}
