@@ -378,3 +378,23 @@ Aus dem Gespräch mit dem Entwickler (Stand nach Abschluss des Debug-Pfad-Cleanu
 - **Arbeitsweise:** Die Entwicklungs-KI arbeitet selbstständig in kleinen,
   geprüften Schritten (Code bereinigen, UI verbessern, Doku aktuell halten) und
   berichtet im Nachgang. Rückfragen nur bei echten Produktentscheidungen.
+
+
+## Präzisierungen 2026-11-08 (Richtung nach dem ersten Playtest)
+
+- **Vollständiger Charakter-Importer:** Ein Charakter wird ausgewählt und kommt komplett ins Spiel:
+  Sprites und alle Posen, alle Skills mit Animationen und Original-Sounds, Limit Burst, Formen.
+- **Vollständiger Stage-Importer:** Genauso für Stages: eine Stage wird ausgewählt und kommt mit
+  ihren hinterlegten Animationen (z. B. Nebel im Mako-Reaktor) und ihrer Original-Musik
+  (z. B. FFVII "Let the Battles Begin!") ins Spiel.
+- **Gegner gehören zur Stage:** Der Stage-Import bringt die Gegner und Bosse der jeweiligen Welt mit
+  (FFVII-Stage → FFVII-Gegner usw., aus den Originaldaten), inklusive ihrer Skills, Skill-Animationen
+  und Sounds. Bosse der einzelnen Areale gehören dazu.
+- **Inhaltlicher Rahmen:** Nur Stages (und Musik) mit Bezug zu den Mainline-Spielen Final Fantasy I–XVI
+  sowie Final Fantasy Tactics.
+- **Übergänge:** Der bisherige Codex-Übergang (Play → Spiel, Menü → Kampf) ist nur ein Platzhalter.
+  Ziel ist ein immersiver, eigener Übergang; Musik-Wechsel weich.
+- **Danach Run-Twists:** Systeme, die Runs frisch, fordernd und abwechslungsreich halten (auch Ideen
+  aus anderen Roguelikes); Runs dürfen weder zu leicht noch langweilig sein.
+- **Reihenfolge:** Polishing (Gegner-Treffer-Feedback, Aktions-Banner, einheitliche Weichzeichnung,
+  Musik) → Charakter-Importer komplett → Stage-/Musik-Importer → Run-Twists.

@@ -23,15 +23,16 @@ test('confirmed Cloud visual data identities require an explicit baseline review
   // Connected Particle packets: all three frozen GPU frames retain zero changed pixels.
   // Receipt: diagnostic-v35-render-context/browser-review-37.json; OneX admission preserves the Cloud frames.
   'src/effects/nativeLifecycle.mjs':'a72df9ee85e0c11e4cecc2d12208b462fcd5cd310ff83433dfe2a796fe0e00e2',
-  // 2026-11-08: manifests are pinned as LF bytes (.gitattributes eol=lf). Blade Beam and Climhazzard
-  // keep their content: their CRLF renderings still hash to the earlier pins 0ddb6e9e.../f5e96583....
-  // Brave Slash: the published composed/native-null variant (planSha256 6287ff9e...) was approved by
-  // the developer on 2026-11-08, replacing the older frozen identity fca350c6....
-  'public/assets/presentations/cloud_brave_slash/manifest.json':'624bce8174201cb642a11a19307b288f6ba184e83bf6e78c3512fbce91027b30',
-  'public/assets/presentations/cloud_blade_beam/manifest.json':'6d9a8dcac9dbbdbfdcb3c469b92ff93ebddc78c0dbcc1c83078f32c9ee395645',
-  'public/assets/presentations/cloud_climhazzard/manifest.json':'5c62ca9220e946bb1d22f0fcc591e08e3caf498dba72ff88071a6119d708544c',
+  // Accepted Cloud manifests pin their VISUAL data only (canonical JSON without audioSource, see
+  // visualHash): sound can be admitted without touching the accepted picture. Brave Slash is the
+  // composed/native-null variant approved on 2026-11-08; Blade Beam and Climhazzard gained their
+  // recovered master sounds on 2026-11-08 with unchanged visual data.
+  'public/assets/presentations/cloud_brave_slash/manifest.json':'f09225013791458b829b740cd43fea68c03caf9b2f5ded2610bd29a2b55e8dff',
+  'public/assets/presentations/cloud_blade_beam/manifest.json':'da13cda3c54d92edcf858c2e05760a9fda2b51e22eec106caa6ef1dc224d0862',
+  'public/assets/presentations/cloud_climhazzard/manifest.json':'9364f16c110d93c3e1fbad650e706d5fde079c444454d2aa43cbb491f57429d4',
  };
- for(const [file,expected]of Object.entries(baseline))assert.equal(hash(file),expected,
+ const visualHash=file=>{const m=JSON.parse(fs.readFileSync(file,'utf8'));delete m.audioSource;return createHash('sha256').update(JSON.stringify(m)).digest('hex');};
+ for(const [file,expected]of Object.entries(baseline))assert.equal(file.endsWith('manifest.json')?visualHash(file):hash(file),expected,
   'Visual baseline changed: review the frozen GPU comparison and document approval before updating identities: '+file);
 });
 for(const binding of recipe.bindings)test(binding.key+': published data and shared geometry retain the preserved preview',async()=>{

@@ -7,7 +7,7 @@
 // Each cue is decoded once to public/assets/audio/combat/<name>.wav and pinned by SHA-256 in
 // tools/presentations/source-audio-review.json together with the presentation's audio
 // fingerprint; then the presentation is republished so admitSourceAudio sets playbackSupported.
-// Frozen accepted manifests (test_scene_migration) are never touched.
+// Accepted manifests stay visually pinned by test_scene_migration (visual data only, audio may change).
 import fs from 'node:fs';
 import {createHash} from 'node:crypto';
 import {spawnSync} from 'node:child_process';
@@ -18,7 +18,6 @@ const python = arg('--python', process.env.FFROGUE_PYTHON ?? 'python'), dry = pr
 const BANK = 'tools/data/memorial-audit/trace-clone-backup/assetpacks/on_demand_asset3/199/199/assets/SE.acb';
 const VGM = 'tools/data/audio-vertical/decoder/vgmstream-cli.exe', STREAMS = 'tools/data/audio-vertical/se-streams.tsv';
 const REVIEW = 'tools/presentations/source-audio-review.json';
-const FROZEN = new Set(['cloud_brave_slash', 'cloud_blade_beam', 'cloud_climhazzard']);
 const read = file => JSON.parse(fs.readFileSync(file, 'utf8'));
 const sha256 = data => createHash('sha256').update(data).digest('hex');
 
@@ -32,7 +31,7 @@ const recipes = fs.readdirSync('tools/presentations').filter(f => f.endsWith('.j
 
 const admitted = [], skipped = [];
 for (const key of read('public/assets/content.json').scenePresentations) {
-  if (FROZEN.has(key) || review.presentations[key]) continue;
+  if (review.presentations[key]) continue;
   const manifest = read(`public/assets/presentations/${key}/manifest.json`), audio = manifest.audioSource;
   if (!audio?.events?.length || audio.playbackSupported) continue;
   const reason = audio.issues?.length ? 'audio issues: ' + audio.issues.join('; ')

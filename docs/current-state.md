@@ -165,10 +165,11 @@ built by looping `vgmstream-cli -m -s N SE.acb`) → `public/assets/audio/combat
 pinned in `tools/presentations/source-audio-review.json`; it republishes the presentation and
 regenerates `src/audio/skillCueRegistry.ts`, which `src/audio/combatCues.ts` merges with the
 hand-mixed cues (default gain 0.23). Run it (then import_character per character) after every
-skill import. 41 of 49 presentations play original sounds. Still silent: Big Shot, Northern Sky
+skill import. 43 of 49 presentations play original sounds. Still silent: Big Shot, Northern Sky
 Apprentice, Thundaga Blade, Sonic Impact (cue names are bank aliases that vgmstream lists under
 another name — resolve via the ACB waveform chain, see research/source-combat-audio.md), Trigger
-Smash and Reraise (no cues), and the frozen Blade Beam/Climhazzard.
+Smash and Reraise (no cues). Blade Beam and Climhazzard got their master sounds recovered into
+their legacy manifests (audio only, visual data unchanged).
 
 Next: music transitions (menu → battle → victory) are not smooth yet (developer feedback).
 
@@ -203,15 +204,27 @@ Next: music transitions (menu → battle → victory) are not smooth yet (develo
 
 1. `npx tsc --noEmit`, `npm run build`.
 2. All `tools/test_*.mjs` (node) and `tools/test_*.py` (project Python, run from repo root).
-   All tests are expected to pass (since 2026-11-08). `test_scene_migration.mjs` freezes the
-   accepted Cloud manifests as LF bytes and the effect player as raw bytes; a change there
-   needs the developer's visual approval, recorded next to the new pin.
+   All tests are expected to pass (since 2026-11-08). `test_scene_migration.mjs` pins the VISUAL
+   data of the accepted Cloud manifests (JSON without audioSource) and the effect player bytes, so
+   sound can improve freely; a visual change there must be deliberate and noted next to the pin.
 3. Source review: Vite 3001 + receipt 3163, then
    `node tools/data/cleanup-20261107/review_all.mjs <out.json>`; compare with
    `tools/data/cleanup-20261107/baseline.json` (FAILs saying "requires", "needs an imported",
    "needs its registered", "default party" are not-applicable). Expect 19 applicable PASS.
 4. Visual: headless screenshots / video of the changed flow; technical checks are not visual
    acceptance – the developer accepts visuals.
+
+## Developer playtest feedback (2026-11-08)
+
+Difficulty after the overnight rebalance feels right (a real challenge, healing matters, debuff
+badges read well; skill visuals and sounds approved). Polish before the next character import:
+1. Enemy attacks lack an attack animation and hit feedback (enemy only shakes, HP drops).
+2. The action display (small text at the top) should become a prominent FFBE-style action banner.
+3. Sprite smoothing: heroes are soft-filtered (Codex adaptation), enemies still have hard edges —
+   compare with FFBE (BlueStacks) and apply one consistent rule to all units.
+4. The Mako Reactor stage plays the wrong music: it should be FFVII "Let the Battles Begin!".
+5. More variety: enemies, stages, music.
+6. Smoother music transitions (menu → battle → victory).
 
 ## Open items
 

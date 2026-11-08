@@ -48220,5 +48220,75 @@
       }
     ],
     "nativeScalarAlpha": true
+  },
+  "audioSource": {
+    "schema": "ffbe-audio-source-v1",
+    "playbackSupported": true,
+    "bus": "skill-sfx",
+    "frameRate": 60,
+    "coverage": "all-resolved-effect-groups-only",
+    "timingBasis": "Reviewed composed effect-group offsets; native common-bank dispatch",
+    "events": [
+      {
+        "frame": 2,
+        "sourceGroupId": 5014250,
+        "sourceSoundId": 1,
+        "rawParameters": [
+          "1"
+        ],
+        "resource": {
+          "key": "SE:1",
+          "uri": "/assets/audio/combat/sword.wav",
+          "sha256": "2ebefb24c517ef6bd7d8c2dd193954abf4a437d3b37b488e2c05de08bd0821a2",
+          "format": "wav"
+        }
+      },
+      {
+        "frame": 3,
+        "sourceGroupId": 1000290,
+        "sourceSoundId": 1,
+        "rawParameters": [
+          "1"
+        ],
+        "resource": {
+          "key": "SE:1",
+          "uri": "/assets/audio/combat/sword.wav",
+          "sha256": "2ebefb24c517ef6bd7d8c2dd193954abf4a437d3b37b488e2c05de08bd0821a2",
+          "format": "wav"
+        }
+      },
+      {
+        "frame": 23,
+        "sourceGroupId": 7000970,
+        "sourceSoundId": 98,
+        "rawParameters": [
+          "1"
+        ],
+        "resource": {
+          "key": "SE:98",
+          "uri": "/assets/audio/combat/explosion.wav",
+          "sha256": "579fad814abad1c39fe378dc888e230b42f29a919f6a2ad249cef362a00f506d",
+          "format": "wav"
+        }
+      }
+    ],
+    "issues": [],
+    "sourceGroups": [
+      {
+        "group": 1000290,
+        "frame": 2,
+        "soundsRaw": "1:1:1"
+      },
+      {
+        "group": 5014250,
+        "frame": 2,
+        "soundsRaw": "0:1:1"
+      },
+      {
+        "group": 7000970,
+        "frame": 22,
+        "soundsRaw": "1:98:1"
+      }
+    ]
   }
 }
