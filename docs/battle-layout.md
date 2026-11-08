@@ -100,13 +100,20 @@ bar 1.00 → 0.85 in about 0.5 s and the trail followed by about 1.2 s.
 
 Limit Burst (2026-11-07): heroes with a published Limit Burst get the original LIMIT
 gauge under MP and a fifth command (key 5). Rules in `src/run/limitGauge.mjs`
-(FFRogue rule, not the FFBE crystal formula): battle-scoped 0–100; +25 per own completed
+(FFRogue rule, not the FFBE crystal formula): 0–100, carried to the next battle for heroes who end it standing (since 2026-11-08); +25 per own completed
 action; damage taken adds 60 × damage / max HP (at least 1); the Limit Burst needs 100,
 empties the gauge at commit and earns nothing itself. Full gauge: gold frame, glowing bar,
-"READY", pulsing purple command. Not yet: carrying the gauge between battles.
+"READY", pulsing purple command.
 
 Checked at 1920x1080, 1440x900, 1100x760 and 900x720: the dock fits without
 scrolling.
+
+Command details (2026-11-08): hovering or focusing a command — also a disabled one — shows
+`name · description` in the prompt line (gold tint) while a command is usable; leaving restores
+the battle message. Disabled skills append why ("Not enough MP x/y"); the Limit Burst explains
+how its gauge fills. The native `title` tooltip was replaced by `aria-description`. The caption
+shows run progress ("Battle 1 / 4", "Boss 2 / 4") and a small key legend sits under the prompt.
+Checked in headless Chromium at 1440x900 and 1100x760 (no page overflow).
 
 ## Development hooks
 
