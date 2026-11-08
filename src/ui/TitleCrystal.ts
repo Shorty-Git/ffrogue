@@ -50,8 +50,10 @@ export function startTitleCrystal(root: HTMLElement): () => void {
       for (const lower of [false, true]) {
         const polygon = polygons[k * 2 + (lower ? 1 : 0)];
         if (facing <= 0) { polygon.setAttribute('visibility', 'hidden'); continue; }
-        // Light from the upper left: faces turned left (sin < 0) are brightest.
-        const light = .5 + .5 * Math.sin(mid) + (1 - facing) * .25;
+        // Lambert light from the front left, and faces at grazing angles fade towards the dark shade so a
+        // facet turning into view on the left edge grows in smoothly instead of popping in bright.
+        const lambert = Math.max(0, -.5 * Math.sin(mid) + .866 * facing);
+        const light = 1 - (.3 + .7 * lambert) * Math.sqrt(facing);
         const apex = lower ? `${CENTER},${BOTTOM}` : `${CENTER},${TOP}`;
         polygon.setAttribute('points', `${apex} ${a.x.toFixed(2)},${a.y.toFixed(2)} ${b.x.toFixed(2)},${b.y.toFixed(2)}`);
         polygon.setAttribute('fill', shade(light, lower));

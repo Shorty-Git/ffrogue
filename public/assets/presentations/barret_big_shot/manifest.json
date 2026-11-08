@@ -59245,11 +59245,11 @@
   },
   "audioSource": {
     "schema": "ffbe-audio-source-v1",
-    "playbackSupported": false,
+    "playbackSupported": true,
     "bus": "skill-sfx",
     "frameRate": 60,
     "coverage": "all-resolved-effect-groups-only",
-    "timingBasis": "Serialized effect-group offsets; native sound dispatch not measured",
+    "timingBasis": "Reviewed composed effect-group offsets; native common-bank dispatch",
     "events": [
       {
         "frame": 118,
@@ -59258,7 +59258,12 @@
         "rawParameters": [
           "1"
         ],
-        "resource": null
+        "resource": {
+          "key": "SE:98",
+          "uri": "/assets/audio/combat/explosion.wav",
+          "sha256": "579fad814abad1c39fe378dc888e230b42f29a919f6a2ad249cef362a00f506d",
+          "format": "wav"
+        }
       },
       {
         "frame": 118,
@@ -59267,7 +59272,12 @@
         "rawParameters": [
           "1"
         ],
-        "resource": null
+        "resource": {
+          "key": "SE:8",
+          "uri": "/assets/audio/combat/se_attack_hammer_heavystrike_1.wav",
+          "sha256": "253afe99c8e79f2d058f240756a72054ceade13dc8a579d862002aa11b832d22",
+          "format": "wav"
+        }
       }
     ],
     "issues": [],

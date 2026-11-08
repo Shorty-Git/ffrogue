@@ -16,8 +16,8 @@ const cues = {
   leverMove: {duration:.17, contacts:[[0,540,.045,.23],[.052,310,.085,.31],[.104,200,.06,.18]]},
   leverSeat: {duration:.105, contacts:[[0,170,.091,.42],[.007,760,.045,.19]]},
   leverReturn: {duration:.09, contacts:[[0,450,.075,.15],[.013,870,.054,.09]]},
-  // Reel ratchet: eight dry metal ticks per loop, like a mechanical slot reel at speed.
-  rolling: {duration:.26, contacts:[[0.0020,1650,.011,0.15],[0.0345,2100,.011,0.1],[0.0670,1650,.011,0.1],[0.0995,2100,.011,0.1],[0.1320,1650,.011,0.15],[0.1645,2100,.011,0.1],[0.1970,1650,.011,0.1],[0.2295,2100,.011,0.1]]},
+  // Spinning reels: dry ratchet ticks, a soft drum thump and the electronic blip run of a slot machine.
+  rolling: {duration:.32, notes:[[0.00,1568,.034,.075],[0.08,1319,.034,.075],[0.16,1760,.034,.075],[0.24,1319,.034,.075]], contacts:[[0.002,1650,.011,0.13],[0.042,2100,.011,0.09],[0.082,1650,.011,0.09],[0.122,2100,.011,0.09],[0.162,1650,.011,0.13],[0.202,2100,.011,0.09],[0.242,1650,.011,0.09],[0.282,2100,.011,0.09],[0,90,.05,.12],[.16,90,.05,.1]]},
   // Reel brake: a heavy clunk with a short metallic latch.
   reelStop: {duration:.16, contacts:[[0,120,.13,.5],[.003,1350,.035,.22],[.028,85,.09,.28]]},
   starReveal: {duration:.31, notes:[[0,659,.18,.27],[.064,988,.19,.22],[.108,1319,.18,.16]]},

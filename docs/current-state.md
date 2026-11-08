@@ -165,11 +165,13 @@ built by looping `vgmstream-cli -m -s N SE.acb`) → `public/assets/audio/combat
 pinned in `tools/presentations/source-audio-review.json`; it republishes the presentation and
 regenerates `src/audio/skillCueRegistry.ts`, which `src/audio/combatCues.ts` merges with the
 hand-mixed cues (default gain 0.23). Run it (then import_character per character) after every
-skill import. 43 of 49 presentations play original sounds. Still silent: Big Shot, Northern Sky
-Apprentice, Thundaga Blade, Sonic Impact (cue names are bank aliases that vgmstream lists under
-another name — resolve via the ACB waveform chain, see research/source-combat-audio.md), Trigger
-Smash and Reraise (no cues). Blade Beam and Climhazzard got their master sounds recovered into
-their legacy manifests (audio only, visual data unchanged).
+skill import. 48 of 49 presentations play original sounds; only Trigger Smash is silent (its source
+has no sound record). Fixed 2026-11-08: vgmstream names a waveform shared by several cues
+"cue_a; cue_b", so the tool now maps every cue name in that list (this was the "alias" gap of Big Shot,
+Northern Sky Apprentice, Thundaga Blade and Sonic Impact). A sound group that starts before the scene
+(Reraise, raw frame -54) plays at frame 0 and keeps `clampedFromFrame`. The generator had literal line
+breaks inside its strings since 5e73b50 and did not run; restored. Blade Beam and Climhazzard got their
+master sounds recovered into their legacy manifests (audio only, visual data unchanged).
 
 Next: music transitions (menu → battle → victory) are not smooth yet (developer feedback).
 
@@ -227,8 +229,7 @@ Then, in order (scene transition DONE 2026-11-08) →
 complete character importer (one command: body, poses, all skills via import_skill_batch +
 admit_skill_audio + icons + LB + forms; test on a new character, e.g. Tifa AC) → stage importer
 (stage + SSPB animations + original music + world enemies/bosses with their skills, mainline FF I–XVI
-and Tactics only) → run twists. Remaining skill gaps: 4 alias cues without sound (Big Shot, Northern
-Sky Apprentice, Thundaga Blade, Sonic Impact), type 7 ribbons without FieldGoal, Banishga/Dispelga
+and Tactics only) → run twists. Remaining skill gaps: type 7 ribbons without FieldGoal, Banishga/Dispelga
 (BR3M mesh), support skills without mechanics (Esunaga, Protect, Blind, Store, Speed Drink).
 
 ## Developer playtest feedback (2026-11-08)
