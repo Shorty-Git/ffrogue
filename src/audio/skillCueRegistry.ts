@@ -8,6 +8,7 @@ export const skillCueFiles = {
   'SE:25': 'heal',
   'SE:26': 'se_magic_heal_2',
   'SE:28': 'se_magic_resurrection_1',
+  'SE:29': 'se_magic_fire_1',
   'SE:30': 'se_magic_fire_2',
   'SE:31': 'se_magic_fire_3',
   'SE:37': 'se_magic_thunder_1',
@@ -30,6 +31,8 @@ export const skillCueFiles = {
   'SE:106': 'se_special_drill_1',
   'SE:110': 'se_special_jump_1',
   'SE:600': 'vortex',
+  'SE:609': 'se_special_lenseflare_1',
   'SE:612': 'se_limitburst_cloud_5',
   'SE:614': 'kyougiri',
+  'SE:737': 'se_limitburst_squall_5',
 } as const;
