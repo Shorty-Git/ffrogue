@@ -1,5 +1,6 @@
 import {skillIconUrl} from '../ui/skillIcons';
-import {LB_MAX,gainFromAction,gainFromDamage,isFull} from '../run/limitGauge.mjs';
+import {LB_MAX,LB_PER_ACTION,gainFromAction,gainFromDamage,gainFromSupport,isFull} from '../run/limitGauge.mjs';
+import {enemyTargetIndex} from '../run/enemyTargeting.mjs';
 import {CombatHud} from '../ui/CombatHud';
 import Phaser from 'phaser';
 import { UnitActor, UnitCombatConfig, type UnitActorConfig } from '../entities/UnitActor';
@@ -13,11 +14,11 @@ import { createPreparedSceneBridge, type PreparedSceneBridge, type PreparedScene
 import { validateSceneManifest, validateSceneAction } from '../effects/sceneProfile.mjs';
 import { reviewedSkillEvents,skillDamageType } from '../effects/skillDamageTimeline.mjs';
 import { applyEnemyStatuses, isEnemyActionBlocked, ageEnemyStatuses, enemyAttackMultiplier } from '../effects/enemyStatus.mjs';
-import { applyHeroBuffs, heroPhysicalMultiplier } from '../effects/heroBuffs.mjs';
+import { applyHeroBuffs, consumeAutoRevive, heroPhysicalMultiplier } from '../effects/heroBuffs.mjs';
 import {resolveEnemyInstant} from '../effects/enemyInstant.mjs';
 import {validateActionChoreography,actionTravel} from '../effects/actionChoreography.mjs';
 import type {RunBattleContext} from '../run/battleContext';
-import {nextRandom,skillForRun,memberMaxMp} from '../run/runState.mjs';
+import {nextRandom,skillForRun,memberMaxMp,encounters} from '../run/runState.mjs';
 import {skillDescription} from '../run/catalog';
 import {RPG,rpgHex,RPG_FONT} from '../ui/designTokens';
 import {rpgPanel} from '../ui/rpgPanel';
@@ -51,7 +52,6 @@ export class BattleScene extends Phaser.Scene {
   private runVictoryStage:'idle'|'finishing'|'celebrating'|'rewards'='idle';
   private arenaKey: BattleArenaKey = 'forest';
   private manifests!: Record<string, UnitManifest>;
-  private cloud!: UnitActor;
   private enemies: TargetDummy[] = [];
   private currentTarget: TargetDummy | null = null;
   private actionBanner?:ActionBanner;
@@ -206,9 +206,12 @@ export class BattleScene extends Phaser.Scene {
       const actor=this.createHeroActor(member.key,slots[i],manifest,
         {...def.battle,maxHp:Math.round(this.runContext.catalog[member.key].maxHp*member.stats.hp),
          maxMp:memberMaxMp(this.runContext.catalog[member.key],member)},def.scale);
-      actor.currentHp=member.hp;actor.currentMp=member.mp;return actor;
+      actor.currentHp=member.hp;actor.currentMp=member.mp;actor.limitGauge=member.limit??0;
+      // A member still K.O. from an earlier battle enters lying down, not in the idle pose.
+      if(actor.isDead)actor.playRestPose();
+      return actor;
     });
-    this.cloud=this.turnOrder[0];
+
 
     this.actionBanner=new ActionBanner(this);
     this.combatHud=new CombatHud(this.game.canvas,(action,index)=>{
@@ -274,7 +277,7 @@ export class BattleScene extends Phaser.Scene {
     const left=Math.min(...points.map(p=>p.x)),top=Math.min(...points.map(p=>p.y));
     return new Phaser.Geom.Rectangle(left,top,Math.max(...points.map(p=>p.x))-left,Math.max(...points.map(p=>p.y))-top);
   });}
-  public runPartySnapshot(){return this.turnOrder.map(h=>({key:h.unitKey,hp:h.currentHp,mp:h.currentMp}));}
+  public runPartySnapshot(){return this.turnOrder.map(h=>({key:h.unitKey,hp:h.currentHp,mp:h.currentMp,limit:h.limitGauge}));}
   public isRunCommandWindow():boolean{return this.combatState==='PLAYER_TURN';}
   private finishRunEncounter(won:boolean):void{
     if(won){this.runVictoryStage='finishing';return;}
@@ -415,7 +418,7 @@ export class BattleScene extends Phaser.Scene {
     });
     const skills=hero?(this.unitSkills[hero.unitKey]??[]).slice(0,3):[];
     this.combatHud.render({
-      area:stage.title,phase:stage.boss?'Boss':`Battle ${this.fightNumber}`,pending:!!plan,
+      area:stage.title,phase:`${stage.boss?'Boss':'Battle'} ${this.fightNumber} / ${encounters(this.runContext.state.areas).length}`,pending:!!plan,
       message:plan?`${skill?.name??'Attack'} · ${scope==='single_ally'?'Choose an ally':'Choose an enemy'}`:
         available?`Round ${this.currentRound} · ${hero.heroName} → ${this.currentTarget?.nameTag??'no target'}`:this.statusMessage,
       actors:[...actors,...this.turnOrder.flatMap((ally,i)=>{
@@ -433,14 +436,14 @@ export class BattleScene extends Phaser.Scene {
           state,target,hp:member.currentHp,maxHp:member.maxHp,mp:member.currentMp,maxMp:member.maxMp,
           ...(this.limitBursts[member.unitKey]?{limit:{value:member.limitGauge,max:LB_MAX}}:{})};
       }),
-      commands:[{name:'Attack',icon:'attack',cost:'0 MP',description:'Normal attack',disabled:!available,selected:plan?.kind==='attack'},
+      commands:[{name:'Attack',icon:'attack',cost:'0 MP',description:'Physical damage to the target · 15% critical chance · no cost',disabled:!available,selected:plan?.kind==='attack'},
         ...[0,1,2].map(i=>{
           const action=skills[i];if(!action)return null;
-          return {name:action.name,icon:(action.motion==='magic_atk'?'magic':'ability') as 'magic'|'ability',iconUrl:skillIconUrl(action),cost:`${action.mpCost} MP${action.hpCost?' · '+action.hpCost+' HP':''}`,description:skillDescription(action),
+          return {name:action.name,icon:(action.motion==='magic_atk'?'magic':'ability') as 'magic'|'ability',iconUrl:skillIconUrl(action),cost:`${action.mpCost} MP${action.hpCost?' · '+action.hpCost+' HP':''}`,description:skillDescription(action)+(hero&&hero.currentMp<action.mpCost?` • Not enough MP (${hero.currentMp}/${action.mpCost})`:''),
             disabled:!available||!hero||hero.currentMp<action.mpCost||!!action.hpCost&&hero.currentHp<=action.hpCost||!this.canUseSourceSkill(action),selected:skill===action};
         }),
         ...(hero&&this.limitBursts[hero.unitKey]?[(()=>{const lb=this.limitBursts[hero.unitKey],ready=isFull(hero.limitGauge);
-          return {name:lb.name,icon:'limit' as const,cost:ready?'Limit ready':`Limit ${hero.limitGauge}%`,description:skillDescription(lb),
+          return {name:lb.name,icon:'limit' as const,cost:ready?'Limit ready':`Limit ${hero.limitGauge}%`,description:skillDescription(lb)+(ready?'':` • Limit gauge ${hero.limitGauge}/${LB_MAX}: +${LB_PER_ACTION} per action, damage taken also fills it; it carries to the next battle`),
             disabled:!available||!ready||!this.canUseSourceSkill(lb),selected:skill===lb,limit:true,ready};})()]:[])],
     });
   }
@@ -1029,10 +1032,15 @@ export class BattleScene extends Phaser.Scene {
               for (const ally of targets) if (ally instanceof UnitActor && !ally.isDead) {
                 for (const effect of entry.allyEffects) {
                   if (effect.kind==='heal') ally.restoreHp(effect.amount);
-                  else {
+                  else if (effect.kind==='limit-fill') {
+                    // Only heroes with a Limit Burst own a gauge.
+                    if (this.limitBursts[ally.unitKey]) {
+                      ally.limitGauge=gainFromSupport(ally.limitGauge,effect.amount);
+                      this.floatCombatText(ally.x,ally.y-100,`LIMIT +${effect.amount}`,'#f9e2af');
+                    }
+                  } else {
                     ally.sourceBuffs=applyHeroBuffs(ally.sourceBuffs,[effect],this.currentRound);
-                    const text=this.add.text(ally.x,ally.y-100,'PHYSICAL BOOST',{fontSize:'16px',color:'#f9e2af',fontFamily:'Arial'}).setOrigin(.5).setDepth(1200);
-                    this.tweens.add({targets:text,y:text.y-40,alpha:0,duration:900,onComplete:()=>text.destroy()});
+                    this.floatCombatText(ally.x,ally.y-100,effect.kind==='auto-revive'?'AUTO-REVIVE':'PHYSICAL BOOST','#f9e2af');
                   }
                 }
               }
@@ -1048,9 +1056,7 @@ export class BattleScene extends Phaser.Scene {
                 }
                 if(!statuses.length||enemy.currentHp<=0)continue;
                 enemy.statusEffects = applyEnemyStatuses(enemy.statusEffects, statuses);
-                const text=this.add.text(enemy.x,enemy.y-100,enemy.statusEffects.map(s=>({'magic-weakness':'MAGIC WEAK','physical-weakness':'ARMOR BREAK','attack-down':'ATTACK DOWN','silence':'SILENCE','stop':'STOP'}[s.kind])).join(' / '),
-                  {fontSize:'16px',color:'#cba6b1',fontFamily:'Arial'}).setOrigin(.5).setDepth(1200);
-                this.tweens.add({targets:text,y:text.y-40,alpha:0,duration:900,onComplete:()=>text.destroy()});
+                this.floatCombatText(enemy.x,enemy.y-100,enemy.statusEffects.map(s=>({'magic-weakness':'MAGIC WEAK','physical-weakness':'ARMOR BREAK','attack-down':'ATTACK DOWN','silence':'SILENCE','stop':'STOP'}[s.kind])).join(' / '),'#cba6b1');
               }
               if(this.combatState!=='VICTORY')this.updateStatus(`${skill.name}: ${entry.effects.some(e=>e.kind==='execute-or-damage')?'enemy events':'status effects'} applied.`);
             } else impact(entry.weight ?? 1);
@@ -1498,8 +1504,8 @@ export class BattleScene extends Phaser.Scene {
         return;
       }
 
-      // Target selection: Cloud if alive (Tank/Frontline), else first alive hero
-      const heroTarget = currentAliveHeroes.includes(this.cloud) ? this.cloud : currentAliveHeroes[0];
+      // Single-target pick: src/run/enemyTargeting.mjs (shared with tools/simulate_run_balance.mjs).
+      const heroTarget = this.turnOrder[enemyTargetIndex(this.turnOrder.map(h=>({alive:!h.isDead,hp:h.currentHp,maxHp:h.maxHp})),()=>this.randomValue())];
       const definition=ENEMY_CONTENT[enemy.assetKey];
       const action=definition?enemyAction(definition,enemy.actionCursor,enemy.currentHp/enemy.maxHp):null;
       if(action?.kind==='prepare'){
@@ -1526,6 +1532,7 @@ export class BattleScene extends Phaser.Scene {
             const defense=this.runContext.state.party.find(m=>m.key===target.unitKey)?.stats.defense??1;
             const dmg=Math.round(profile.damage*(action?.multiplier??1)*attackMultiplier/defense);
             target.applyDamage(dmg);
+            if(target.isDead)this.tryAutoRevive(target);
             if(!target.isDead)target.limitGauge=gainFromDamage(target.limitGauge,dmg,target.maxHp);
             impacts.push({unit:target.unitKey,damage:dmg});
           }
@@ -1567,6 +1574,23 @@ export class BattleScene extends Phaser.Scene {
     this.combatState = 'DEFEAT';
     this.updateStatus('DEFEAT: All heroes have fallen in battle!');
     this.finishRunEncounter(false);
+  }
+
+  /** Short rising combat label (statuses, buffs); purely presentational. */
+  private floatCombatText(x:number,y:number,label:string,color:string):void{
+    const text=this.add.text(x,y,label,{fontSize:'16px',color,fontFamily:'Arial'}).setOrigin(.5).setDepth(1200);
+    this.tweens.add({targets:text,y:text.y-40,alpha:0,duration:900,onComplete:()=>text.destroy()});
+  }
+
+  /** A K.O. consumes an active auto-revive status at once, so defeat checks see the revived hero. */
+  private tryAutoRevive(hero:UnitActor):boolean{
+    const revive=consumeAutoRevive(hero.sourceBuffs,this.currentRound);
+    if(!revive||!hero.isDead)return false;
+    hero.sourceBuffs=revive.buffs;
+    hero.revive(Math.max(1,Math.round(hero.maxHp*revive.hpFraction)));
+    this.floatCombatText(hero.x,hero.y-100,'REVIVED','#f9e2af');
+    this.events.emit('hero-revived',{unit:hero.unitKey,hp:hero.currentHp,round:this.currentRound});
+    return true;
   }
 
   private updateStatus(msg: string): void {

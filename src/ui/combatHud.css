@@ -128,3 +128,8 @@ body:has(#run-ui:not([data-phase=battle]):not([data-phase=rewards]):not([data-ph
 .combat-settings button{min-height:32px}
 /* Original skill icons sit on a dark slot like FFBE's ability list. */
 .command-icon.is-skill{border-radius:6px;background:radial-gradient(circle,#1d3d6e,#060f22 75%);box-shadow:inset 0 0 0 1px #8fb0d099,0 1px 2px #000a}
+/* Hovered or focused command: its description takes over the prompt line. */
+.ribbon-prompt [role=status].is-hint{color:#f3e2b0}
+.ribbon-prompt [role=status].is-hint::before,.ribbon-prompt [role=status].is-hint::after{color:#e8c46a}
+.ribbon-keys{margin:0;text-align:center;font-size:.7em;color:#9db4cc;letter-spacing:.03em;opacity:.8}
+.ribbon-keys kbd{display:inline-block;min-width:1.3em;padding:0 .25em;margin:0 .1em;border:1px solid #8fb0d066;border-radius:3px;background:#0b1d3a;color:#d6e6f5}

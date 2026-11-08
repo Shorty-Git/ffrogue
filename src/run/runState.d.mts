@@ -4,14 +4,15 @@ export interface RunCharacter extends RunForm{canonicalIdentity:string;key:strin
   /** The form's Limit Burst (skill type LIMIT); used through the LB gauge, never offered as a skill. */
   limitBurst?:SkillConfig;portrait:string;evolution?:RunForm;forms?:RunForm[];magicAvailable?:boolean;}
 export type RunCatalog=Record<string,RunCharacter>;
-export interface RunMember extends RunForm{canonicalIdentity:string;key:string;skills:{id:string;level:number}[];stats:{attack:number;magic:number;defense:number;hp:number;mp?:number};hp:number;mp:number;}
+export interface RunMember extends RunForm{canonicalIdentity:string;key:string;skills:{id:string;level:number}[];stats:{attack:number;magic:number;defense:number;hp:number;mp?:number};hp:number;mp:number;
+  /** Limit gauge carried from the previous battle (1–100); absent when empty. */limit?:number;}
 export interface AreaConfig{stageId?:string;name:string;arena:'forest'|'reactor'|'reactor_05';normals:number;}
-export interface Reward{type:'learn'|'skill'|'stat'|'evolve'|'rest';member?:string;skill?:string;stat?:'attack'|'magic'|'defense'|'hp';form?:string;}
+export interface Reward{type:'learn'|'skill'|'stat'|'evolve'|'rest'|'revive';member?:string;skill?:string;stat?:'attack'|'magic'|'defense'|'hp';form?:string;}
 export interface AwakeningNotice{id:string;member:string;encounter:number;from:{form:string;unitId:string;rarity:number};to:{form:string;unitId:string;rarity:number};}
 export interface FormPolicy{weights:Record<string,number>;pathWeights?:Record<string,number[]>;hpPerRank:number;mpPerRank:number;powerPerRank:number;defensePerRank:number;}
 export interface RunRules{awakeningMode:'sequential'|'highest-reviewed';originalForms?:FormPolicy;}
 export interface RunState{version:number;seed:string;phase:'setup'|'battle'|'rewards'|'won'|'lost';party:RunMember[];rerolls:number;encounter:number;offers:Reward[];history:unknown[];areas:AreaConfig[];rng:Record<string,number>;pendingAwakening?:AwakeningNotice;rules?:RunRules;}
-export const RUN_VERSION:number;export const SAVE_KEY:string;export const PROTOTYPE_AREAS:AreaConfig[];export const FULL_AREAS:AreaConfig[];
+export const RUN_VERSION:number;export const SAVE_KEY:string;export const REVIVE_HP_SHARE:number;export const PROTOTYPE_AREAS:AreaConfig[];export const FULL_AREAS:AreaConfig[];
 export function variantAreas(seed:string):AreaConfig[];
 export function seedHash(value:unknown):number;
 export function nextRandom(run:RunState,stream:string):number;
@@ -23,7 +24,7 @@ export function memberMaxMp(character:RunCharacter,member:RunMember):number;
 export function confirmParty(run:RunState):RunState;
 export function skillForRun(source:SkillConfig,member:RunMember):SkillConfig;
 export function rewardPool(run:RunState,catalog:RunCatalog):Reward[];
-export function completeBattle(run:RunState,catalog:RunCatalog,snapshot:{key:string;hp:number;mp:number}[],won:boolean):RunState;
+export function completeBattle(run:RunState,catalog:RunCatalog,snapshot:{key:string;hp:number;mp:number;limit?:number}[],won:boolean):RunState;
 export function chooseReward(run:RunState,index:number,catalog:RunCatalog,replace?:string):RunState;
 export function acknowledgeAwakening(run:RunState,id:string):RunState;
 export function validateRun(run:unknown,catalog:RunCatalog):RunState;

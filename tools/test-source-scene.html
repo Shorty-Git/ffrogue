@@ -56,7 +56,7 @@ async function save(){
 }
 async function matched(skillKey,frame,frozenBodies=false){
  check(!scene.preparedScenes.snapshot().active,'Finish the current action before frame review');
- resetActors();const hero=scene.cloud,skill=scene.unitSkills.cloud.find(s=>s.id===skillKey),targets=skill.scope==='all_enemies'?scene.enemies:[scene.enemies[0]];
+ resetActors();const hero=scene.turnOrder.find(h=>h.unitKey==='cloud'),skill=scene.unitSkills.cloud.find(s=>s.id===skillKey),targets=skill.scope==='all_enemies'?scene.enemies:[scene.enemies[0]];
  scene.selectHero(hero);
  scene.tweens.pauseAll();
  for(const actor of [...scene.turnOrder,...scene.enemies]){
@@ -343,12 +343,12 @@ document.querySelector('#guards').onclick=function(){return run(this,async()=>{
   check(reserve.currentMp===reserve.maxMp&&hits===(reserve.unitKey==='barret'?4:1),'Normal attack regression');
  }finally{scene.fireBulletProjectile=fire;target.applyDamage=apply;}
  results.push({kind:'source-only-unavailable-basic',unavailable,unit:reserve.unitKey,hits,bullets});
- await fresh();scene.enemies[0].currentHp=1;const hero=scene.cloud,skill=scene.unitSkills.cloud.find(s=>s.id==='cross_slash');scene.selectHero(hero);scene.planHeroSkill(skill);scene.executePlannedAction();
+ await fresh();scene.enemies[0].currentHp=1;const hero=scene.turnOrder.find(h=>h.unitKey==='cloud'),skill=scene.unitSkills.cloud.find(s=>s.id==='cross_slash');scene.selectHero(hero);scene.planHeroSkill(skill);scene.executePlannedAction();
  await until(()=>scene.combatState==='VICTORY'&&scene.activeSkillActions===0,'lethal multi-hit');const mp=hero.currentMp;check(mp===80,'MP duplicated');await nextWave();
  check(member(hero).currentMp===mp&&!scene.preparedScenes.snapshot().active,'Wave resources/effect leak');
- await fresh();scene.selectHero(scene.cloud);scene.planHeroSkill(scene.unitSkills.cloud.find(s=>s.id==='cross_slash'));scene.executePlannedAction();await until(()=>scene.preparedScenes.snapshot().active,'pending action');const old=scene.preparedScenes;
- await fresh();await delay(2400);check(old.snapshot().variants===0&&scene.cloud.currentMp===100&&scene.activeSkillActions===0,'Shutdown leaked');
- scene.events.emit('prepared-scene-error','controlled test');const before=scene.cloud.currentMp;scene.executeSkillChoice(scene.unitSkills.cloud[0]);check(before===scene.cloud.currentMp&&scene.combatState==='PLAYER_TURN','Renderer error caused fallback/charge');
+ await fresh();scene.selectHero(scene.turnOrder.find(h=>h.unitKey==='cloud'));scene.planHeroSkill(scene.unitSkills.cloud.find(s=>s.id==='cross_slash'));scene.executePlannedAction();await until(()=>scene.preparedScenes.snapshot().active,'pending action');const old=scene.preparedScenes;
+ await fresh();await delay(2400);check(old.snapshot().variants===0&&scene.turnOrder.find(h=>h.unitKey==='cloud').currentMp===100&&scene.activeSkillActions===0,'Shutdown leaked');
+ scene.events.emit('prepared-scene-error','controlled test');const before=scene.turnOrder.find(h=>h.unitKey==='cloud').currentMp;scene.executeSkillChoice(scene.unitSkills.cloud[0]);check(before===scene.turnOrder.find(h=>h.unitKey==='cloud').currentMp&&scene.combatState==='PLAYER_TURN','Renderer error caused fallback/charge');
  results.push({kind:'source-only-victory-wave-shutdown',mpPreserved:mp,errorFailsClosed:true,oldVariants:0});
 });};
 </script></html>

@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';
-import {createRun,rollParty,confirmParty,RunStore,SAVE_KEY,completeBattle,chooseReward,rewardPool,skillForRun,validateRun,encounters,FULL_AREAS,migrateRun,acknowledgeAwakening}from '../src/run/runState.mjs';
+import {createRun,rollParty,confirmParty,RunStore,SAVE_KEY,completeBattle,chooseReward,rewardPool,skillForRun,validateRun,encounters,FULL_AREAS,migrateRun,acknowledgeAwakening,REVIVE_HP_SHARE}from '../src/run/runState.mjs';
 import {runEncounter}from '../src/run/runBalance.mjs';
 const read=p=>JSON.parse(fs.readFileSync(p,'utf8')),meta=read('public/assets/run-content.json');
 const catalog={};for(const key of read('public/assets/content.json').characters){const s=read(`public/assets/units/${key}/skills.json`).skills.filter(s=>s.scenePresentation&&s.importStatus==='imported');if(!s.length)continue;const d=read(`public/assets/units/${key}/character.json`),m=meta.units[key];catalog[key]={key,name:d.battle.heroName,identity:m.identity,canonicalIdentity:m.canonicalIdentity,unitId:m.unitId,rarity:m.rarity,form:key,maxHp:d.battle.maxHp,maxMp:d.battle.maxMp,skills:s};}
@@ -119,4 +119,50 @@ test('obsolete stance fields are discarded from a saved battle without changing 
  assert.deepEqual(store.load(),run);
  store.save(run);
  assert.deepEqual(JSON.parse(storage.getItem(SAVE_KEY)),run);
+});
+test('the Limit gauge carries to the next battle only for standing heroes with a Limit Burst',()=>{
+ const lbCatalog={...catalog,cloud:{...catalog.cloud,limitBurst:read('public/assets/units/cloud/skills.json').skills.find(s=>s.type==='LIMIT')}};
+ const r=confirmParty(withCloud()),at=r.party.findIndex(m=>m.key==='cloud');
+ const shot=snapshot(r).map((s,i)=>({...s,limit:i===at?73.4:60}));
+ const next=completeBattle(r,lbCatalog,shot,true);
+ assert.equal(next.party[at].limit,73);
+ next.party.forEach((m,i)=>{if(i!==at)assert.equal(m.limit,undefined,'No Limit Burst, nothing to carry');});
+ assert.equal(validateRun(structuredClone(next),lbCatalog).party[at].limit,73);
+ const knocked=completeBattle(r,lbCatalog,shot.map((s,i)=>i===at?{...s,hp:0}:s),true);
+ assert.equal(knocked.party[at].limit,undefined,'A K.O. empties the gauge');
+ const legacy=completeBattle(r,lbCatalog,snapshot(r),true);
+ assert.equal(legacy.party[at].limit,undefined,'Snapshots without a gauge stay valid');
+ const bad=structuredClone(next);bad.party[at].limit=101;assert.throws(()=>validateRun(bad,lbCatalog));
+ bad.party[at].limit=50;assert.throws(()=>validateRun(bad,catalog),'A gauge needs a Limit Burst');
+});
+test('a K.O. member survives the victory as K.O. and is always offered exactly one revival',()=>{
+ for(let i=0;i<30;i++){
+  const start=confirmParty(initial('revive-'+i)),fallen=start.party[1].key;
+  const ko=snapshot(start).map((s,j)=>j===1?{...s,hp:0}:s);
+  const won=completeBattle(start,catalog,ko,true);
+  assert.equal(won.party[1].hp,0);
+  const revivals=won.offers.filter(r=>r.type==='revive');
+  assert.deepEqual(revivals,[{type:'revive',member:fallen}]);
+  assert.equal(new Set(won.offers.map(r=>JSON.stringify(r))).size,3);
+  validateRun(won,catalog);
+  const at=won.offers.findIndex(r=>r.type==='revive'),next=chooseReward(won,at,catalog),m=next.party[1];
+  assert.equal(m.hp,Math.round(catalog[fallen].maxHp*m.stats.hp*REVIVE_HP_SHARE));
+  assert.equal(m.mp,won.party[1].mp,'revival restores HP only');
+  assert.deepEqual(next.party.filter((_,j)=>j!==1),won.party.filter((_,j)=>j!==1));
+  assert.equal(next.phase,'battle');validateRun(next,catalog);
+  // Field Rest still never revives.
+  const rest=won.offers.findIndex(r=>r.type==='rest');
+  if(rest>=0)assert.equal(chooseReward(won,rest,catalog).party[1].hp,0);
+ }
+ const healthy=completeBattle(confirmParty(initial('revive-none')),catalog,snapshot(confirmParty(initial('revive-none'))),true);
+ assert.ok(healthy.offers.every(r=>r.type!=='revive'),'no revival without a K.O. member');
+ const forged=structuredClone(healthy);forged.offers[0]={type:'revive',member:forged.party[0].key};
+ assert.throws(()=>validateRun(forged,catalog),/Invalid saved rewards/);
+ assert.throws(()=>chooseReward(forged,0,catalog),/K.O. member/);
+ // At a boss, the guaranteed awakening and the guaranteed revival share the three offers.
+ const boss={...confirmParty(withCloud()),encounter:1};
+ const bossWon=completeBattle(boss,catalog,snapshot(boss).map((s,j)=>j===0?{...s,hp:0}:s),true);
+ assert.equal(encounters(boss.areas)[1].boss,true);
+ assert.equal(bossWon.offers.filter(r=>r.type==='revive').length,1);
+ assert.ok(bossWon.offers.some(r=>r.type==='evolve'));
 });

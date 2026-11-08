@@ -811,7 +811,30 @@ test('prepared boss charge deals no damage, burst hits each living hero once wit
  assert.equal(e.actionCursor,2);assert.equal(attacks,0);assert.deepEqual(actors.map(a=>a.currentHp),[1000,1000,0]);assert.ok(messages.some(m=>m.includes('hits the party next!')));
  e.statusEffects=[{kind:'stop',phases:1,chance:1}];s.combatState='ENEMY_TURN';s.executeEnemyTurn();while(timers.length)timers.shift()();assert.equal(e.actionCursor,2);assert.equal(attacks,0);
  s.combatState='ENEMY_TURN';s.executeEnemyTurn();while(timers.length)timers.shift()();
- assert.equal(e.actionCursor,3);assert.equal(attacks,1);assert.deepEqual(actors.map(a=>a.currentHp),[732,866,0]);
+ assert.equal(e.actionCursor,3);assert.equal(attacks,1);
+ // Encounter 1 damage = RUN_BALANCE.damage + damagePerEncounter (300+70) x burst 1.3 x overdrive 1.25, divided by defense.
+ const {RUN_BALANCE}=loadModule('src/run/runBalance.mjs'),burst=(RUN_BALANCE.damage+RUN_BALANCE.damagePerEncounter)*1.3*1.25;
+ assert.deepEqual(actors.map(a=>a.currentHp),[1000-Math.round(burst),1000-Math.round(burst/2),0]);assert.deepEqual(actors.map(a=>a.currentHp),[399,699,0]);
+});
+
+test('a lethal enemy hit consumes auto-revive at once, so the party is not defeated and the status is gone',()=>{
+ const s=battle(),timers=[],revived=[];s.events=new EventEmitter();s.events.on('hero-revived',e=>revived.push(e));
+ s.add={text:()=>({setOrigin(){return this;},setDepth(){return this;},destroy(){}})};s.tweens={add(){}};
+ const actors=[100,0].map((hp,i)=>({unitKey:'unit'+i,heroName:'Unit'+i,x:0,y:0,maxHp:1000,currentHp:hp,limitGauge:0,sourceBuffs:[],
+  get isDead(){return this.currentHp<=0;},applyDamage(n){this.currentHp=Math.max(0,this.currentHp-n);},revive:UnitActor.prototype.revive,spawnHealPopup(){},scene:{time:{delayedCall(){}}}}));
+ actors[0].sourceBuffs=[{kind:'physical-boost',multiplier:1.3,expiresAfterRound:2},{kind:'auto-revive',hpFraction:.25,expiresAfterRound:2}];
+ let defeats=0;s.triggerDefeat=()=>defeats++;
+ s.turnOrder=actors;s.startRound=()=>{};s.time.delayedCall=(_ms,cb)=>{timers.push(cb);};s.currentRound=2;
+ s.runContext={state:{areas:[{arena:'forest',name:'Whisperwood',normals:1}],encounter:0,party:[{key:'unit0',stats:{defense:1}}]}};
+ const e={assetKey:'microchu',nameTag:'Microchu',maxHp:900,currentHp:900,actionCursor:0,statusEffects:[],executeAttack(_x,_y,impact,done){impact();done();}};s.enemies=[e];
+ s.combatState='ENEMY_TURN';s.executeEnemyTurn();while(timers.length)timers.shift()();
+ assert.equal(defeats,0);assert.equal(actors[0].currentHp,250);assert.deepEqual(JSON.parse(JSON.stringify(revived)),[{unit:'unit0',hp:250,round:2}]);
+ assert.deepEqual(JSON.parse(JSON.stringify(actors[0].sourceBuffs)),[{kind:'physical-boost',multiplier:1.3,expiresAfterRound:2}]);
+ assert.ok(actors[0].limitGauge>0,'the revived hero still gains Limit from the hit');
+ actors[0].currentHp=100;s.combatState='ENEMY_TURN';s.executeEnemyTurn();while(timers.length)timers.shift()();
+ assert.equal(actors[0].currentHp,0);assert.equal(defeats,1,'the status revives only once');
+ const dead=hero(0);dead.maxHp=500;dead.spawnHealPopup=()=>{};dead.scene={time:{delayedCall(){}}};
+ assert.equal(dead.revive(0),0);assert.equal(dead.revive(9999),500);assert.equal(dead.revive(10),0,'a living hero cannot be revived again');
 });
 
 test('prepared stationary enemy uses its own origin and full clip durations with one impact before cleanup',()=>{

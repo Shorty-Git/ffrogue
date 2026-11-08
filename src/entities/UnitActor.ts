@@ -36,7 +36,7 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
   public currentHp: number;
   public maxMp: number;
   public currentMp: number;
-  /** Battle-scoped Limit Burst gauge (src/run/limitGauge.mjs). */
+  /** Limit Burst gauge (src/run/limitGauge.mjs); restored from the run at battle start. */
   public limitGauge = 0;
   public heroName: string;
   public heroRole: string;
@@ -183,20 +183,6 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
   }
 
   /**
-   * Resets unit to full HP, full MP, alive state, and idle animation.
-   */
-  public resetCombatState(): void {
-    this.currentHp = this.maxHp;
-    this.currentMp = this.maxMp;
-    this.hasActed = false;
-    this.clearTint();
-    this.setPosition(this.homeSlot.x, this.homeSlot.y);
-    this.setFacingLeft(true);
-    this.setDepthBoost(false);
-    this.playAnimation('idle');
-  }
-
-  /**
    * Spends MP if sufficient amount is available.
    * Returns true if successful, false if insufficient.
    */
@@ -213,6 +199,20 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
     this.currentHp -= cost;
     this.refreshRestPose();
     return true;
+  }
+
+  /**
+   * Auto-revive (Reraise-style status): a K.O. hero stands up with `hp` HP.
+   * The state changes at once; the rest pose follows after the death frame is visible.
+   */
+  public revive(hp: number): number {
+    if (!this.isDead || !Number.isFinite(hp) || hp < 1) return 0;
+    this.currentHp = Math.min(this.maxHp, Math.round(hp));
+    this.spawnHealPopup(this.currentHp);
+    this.scene.time.delayedCall(450, () => {
+      if (!this.isDead && this.currentAnimKey === 'dead') this.playRestPose();
+    });
+    return this.currentHp;
   }
 
   /**
@@ -234,15 +234,6 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
       this.refreshRestPose();
     }
     return actualHealed;
-  }
-
-  /**
-   * Restores MP up to maxMp.
-   */
-  public restoreMp(amount: number): number {
-    const prevMp = this.currentMp;
-    this.currentMp = Math.min(this.maxMp, this.currentMp + amount);
-    return this.currentMp - prevMp;
   }
 
   private spawnHealPopup(healAmount: number): void {
@@ -304,15 +295,6 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
     if (!this.isDepthBoosted) {
       this.setDepth(this.y);
     }
-  }
-
-  /**
-   * Sets the unit's logical home slot position.
-   */
-  public setHomeSlot(x: number, y: number): void {
-    this.homeSlot = { x, y };
-    this.setPosition(x, y);
-    this.setDepthBoost(false);
   }
 
   /**

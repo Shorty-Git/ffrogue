@@ -1,8 +1,11 @@
 // Serializable roguelike rules. Visual animations never consume these streams.
 import {STAGE_CONTENT,stageForArea} from './stageContent.mjs';
 import {awakeningPath,formAt,nextAwakening,rankValue,reviewedForms} from './unitForms.mjs';
+import {carriedLimit,LB_MAX} from './limitGauge.mjs';
 export const RUN_VERSION=2;
 export const SAVE_KEY='ffrogue.run.v1';
+/** Share of base max HP a 'revive' reward restores. */
+export const REVIVE_HP_SHARE=.5;
 export const PROTOTYPE_AREAS=Object.values(STAGE_CONTENT).map(s=>({stageId:s.id,name:s.name,arena:s.arena,normals:s.normalFights}));
 export const FULL_AREAS=[{name:'Whisperwood',arena:'forest',normals:5},{name:'Mako Outskirts',arena:'reactor',normals:5},{name:'Final Rift',arena:'forest',normals:5}];
 export function seedHash(value){let h=2166136261;for(const c of String(value)){h^=c.charCodeAt(0);h=Math.imul(h,16777619);}return h>>>0;}
@@ -96,6 +99,8 @@ export function skillForRun(source,member){
  const skill=clone(source),level=member.skills.find(s=>s.id===source.id)?.level??1,boost=1+.2*(level-1);
  skill.damageMultiplier*=boost*(skill.damageType==='holy'?member.stats.magic:member.stats.attack);
  for(const e of skill.allyEvents??[])for(const f of e.effects)if(f.kind==='heal')f.amount=Math.round(f.amount*boost*member.stats.magic);
+  else if(f.kind==='limit-fill')f.amount=Math.min(LB_MAX,f.amount+10*(level-1));
+  else if(f.kind==='auto-revive'){f.hpFraction=Math.min(1,Math.round((f.hpFraction+.1*(level-1))*100)/100);f.turns=Math.min(9,f.turns+level-1);}
   else {f.multiplier=Math.min(3,f.multiplier+.1*(level-1));f.turns=Math.min(9,f.turns+level-1);}
  for(const e of skill.supportEvents??[])for(const f of e.effects)if(f.kind==='execute-or-damage')f.fallbackDamage=Math.min(99999,Math.round(f.fallbackDamage*boost*member.stats.attack));
   else f.phases=Math.min(9,f.phases+level-1);
@@ -108,17 +113,23 @@ export function rewardPool(run,catalog){
   for(const s of m.skills)if(s.level<3)pool.push({type:'skill',member:m.key,skill:s.id});
   for(const stat of ['attack','magic','defense','hp'])if(m.stats[stat]<3&&(stat!=='magic'||c.magicAvailable||c.skills.some(s=>s.damageType==='holy'||s.allyEvents?.some(e=>e.effects.some(f=>f.kind==='heal')))))pool.push({type:'stat',member:m.key,stat});
   const awakening=nextAwakening(run,c,m);if(e.boss&&awakening)pool.push({type:'evolve',member:m.key,form:awakening.form});
+  // K.O. persists between battles; only an explicit revival reward brings a member back.
+  if(m.hp<=0)pool.push({type:'revive',member:m.key});
  }
  pool.push({type:'rest'});return pool;
 }
 export function completeBattle(input,catalog,snapshot,won){
  const run=clone(input);if(run.phase!=='battle'||run.pendingAwakening)throw Error('Battle already settled or awaiting presentation');
  if(snapshot.length!==3||snapshot.some((s,i)=>s.key!==run.party[i].key))throw Error('Fixed party snapshot required');
- run.party.forEach((m,i)=>{m.hp=Math.max(0,Math.min(Math.round(catalog[m.key].maxHp*m.stats.hp),snapshot[i].hp));m.mp=Math.max(0,Math.min(memberMaxMp(catalog[m.key],m),snapshot[i].mp));});
+ run.party.forEach((m,i)=>{m.hp=Math.max(0,Math.min(Math.round(catalog[m.key].maxHp*m.stats.hp),snapshot[i].hp));m.mp=Math.max(0,Math.min(memberMaxMp(catalog[m.key],m),snapshot[i].mp));
+  // The Limit gauge carries to the next battle for heroes who end it standing (src/run/limitGauge.mjs).
+  const gauge=carriedLimit(catalog[m.key],m.hp,snapshot[i].limit);if(gauge>0)m.limit=gauge;else delete m.limit;});
  if(!won){run.phase='lost';return run;}
  run.phase='rewards';const pool=rewardPool(run,catalog),boss=encounters(run.areas)[run.encounter].boss;
- const evolution=pool.filter(r=>r.type==='evolve');run.offers=[];
+ const evolution=pool.filter(r=>r.type==='evolve'),revival=pool.filter(r=>r.type==='revive');run.offers=[];
  if(boss&&evolution.length)run.offers.push(pick(run,'rewards',evolution));
+ // A fallen member always has one way back: one revival offer is guaranteed while anyone is K.O.
+ if(revival.length)run.offers.push(pick(run,'rewards',revival));
  while(run.offers.length<3){const available=pool.filter(r=>!run.offers.some(o=>JSON.stringify(o)===JSON.stringify(r)));run.offers.push(clone(pick(run,'rewards',available)));}
  return run;
 }
@@ -143,6 +154,8 @@ export function chooseReward(input,index,catalog,replace){
   m.form=e.form;m.unitId=e.unitId;m.rarity=e.rarity;
   if(e.rank)m.rank=e.rank;
   if(m.hp>0){m.hp+=Math.round(character.maxHp*m.stats.hp)-oldHp;m.mp+=memberMaxMp(character,m)-oldMp;}}
+ else if(r.type==='revive'){if(m.hp>0)throw Error('Revival needs a K.O. member');
+  m.hp=Math.max(1,Math.round(catalog[m.key].maxHp*m.stats.hp*REVIVE_HP_SHARE));}
  else if(r.type==='rest'){for(const a of run.party)if(a.hp>0){const c=catalog[a.key];a.hp=Math.min(Math.round(c.maxHp*a.stats.hp),a.hp+Math.round(c.maxHp*.4));a.mp=Math.min(memberMaxMp(c,a),a.mp+Math.round(c.maxMp*.4));}}
  else throw Error('Unknown reward');
  run.history.push({kind:'reward',encounter:run.encounter,reward:r,replace:replace??null});run.encounter++;run.offers=[];
@@ -186,6 +199,7 @@ export function validateRun(run,catalog){
    ||m.skills.some(s=>!c.skills.some(a=>a.id===s.id)||!Number.isInteger(s.level)||s.level<1||s.level>3)
    ||['attack','magic','defense','hp'].some(k=>!Number.isFinite(m.stats?.[k])||m.stats[k]<1||m.stats[k]>3.2)
    ||(m.stats.mp!==undefined&&(!Number.isFinite(m.stats.mp)||m.stats.mp<1||m.stats.mp>3.2))
+   ||(m.limit!==undefined&&(!Number.isInteger(m.limit)||m.limit<1||m.limit>LB_MAX||!c.limitBurst))
    ||!Number.isFinite(m.hp)||m.hp<0||m.hp>Math.ceil(c.maxHp*m.stats.hp)||!Number.isFinite(m.mp)||m.mp<0||m.mp>memberMaxMp(c,m))throw Error('Unsupported saved party/skill/form');}
  if(run.phase==='rewards'&&(run.offers.length!==3||run.offers.some(r=>!rewardPool(run,catalog).some(p=>JSON.stringify(p)===JSON.stringify(r)))))throw Error('Invalid saved rewards');
  if(run.phase==='won'?run.encounter!==encounters(run.areas).length:run.encounter>=encounters(run.areas).length)throw Error('Invalid encounter checkpoint');
