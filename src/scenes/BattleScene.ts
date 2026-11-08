@@ -280,6 +280,19 @@ export class BattleScene extends Phaser.Scene {
   });}
   public runPartySnapshot(){return this.turnOrder.map(h=>({key:h.unitKey,hp:h.currentHp,mp:h.currentMp,limit:h.limitGauge}));}
   public isRunCommandWindow():boolean{return this.combatState==='PLAYER_TURN';}
+  /**
+   * Presentation-only battle opening after the encounter shatter: the camera eases in from a slight
+   * close-up while the arena fades up, then the command HUD rises (CSS, body[data-battle-entrance]).
+   */
+  public playEntrance():void{
+    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+    const camera=this.cameras.main;
+    camera.setZoom(1.09);camera.setScroll(-this.scale.width*.035,this.scale.height*.012);
+    this.tweens.add({targets:camera,zoom:1,scrollX:0,scrollY:0,duration:1150,ease:'Cubic.easeOut'});
+    document.body.dataset.battleEntrance='';
+    this.time.delayedCall(1700,()=>delete document.body.dataset.battleEntrance);
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN,()=>delete document.body.dataset.battleEntrance);
+  }
   private finishRunEncounter(won:boolean):void{
     if(won){this.runVictoryStage='finishing';return;}
     if(this.runSettled)return;

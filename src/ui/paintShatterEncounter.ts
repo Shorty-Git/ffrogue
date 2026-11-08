@@ -1,10 +1,10 @@
 /**
  * Classic FF battle entry: the outgoing picture cracks from the centre and breaks into glass
- * shards that fly past the viewer, followed by a white flash. Geometry uses a fixed hash, so
+ * shards that fly past the viewer with a white flash; the arena then fades up out of the dark. Geometry uses a fixed hash, so
  * every entry looks alike and nothing depends on gameplay RNG.
  */
 export const SHATTER_COVER_MS = 980;
-export const SHATTER_REVEAL_MS = 620;
+export const SHATTER_REVEAL_MS = 900;
 /** Cover progress at which the glass audibly cracks and at which the shards break loose. */
 export const SHATTER_CRACK = .1;
 export const SHATTER_BREAK = .36;
@@ -98,18 +98,13 @@ export function paintShatterCover(context: CanvasRenderingContext2D, image: HTML
   context.globalAlpha = 1;
 }
 
-/** The new arena appears out of a fading white light. */
+/** The arena fades up out of the dark while the scene plays its entrance underneath. */
 export function paintShatterReveal(context: CanvasRenderingContext2D, width: number, height: number, progress: number): void {
   context.setTransform(1, 0, 0, 1, 0, 0);
   context.clearRect(0, 0, width, height);
-  const dark = (1 - ease(Math.min(1, progress / .75))) ** 1.5;
+  const dark = 1 - ease(progress);
   if (dark > 0) {
     context.fillStyle = `rgba(2, 4, 11, ${dark})`;
-    context.fillRect(0, 0, width, height);
-  }
-  const white = Math.max(0, 1 - progress / .32);
-  if (white > 0) {
-    context.fillStyle = `rgba(245, 250, 255, ${.85 * white * white})`;
     context.fillRect(0, 0, width, height);
   }
 }

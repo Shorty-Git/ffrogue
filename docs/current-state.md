@@ -247,9 +247,9 @@ badges read well; skill visuals and sounds approved). Polish before the next cha
 5. More variety: enemies, stages, music.
 6. DONE: music crossfade lengthened (1.2 s in / 0.9 s out). New default battle entry "shatter"
    (src/ui/paintShatterEncounter.ts): the outgoing screen cracks from the centre, breaks into glass
-   shards with FFBE's own se_ev_glass_break (SE.acb stream 274), and the arena emerges from white light
-   (cover 980 ms, reveal 620 ms, skippable, prefers-reduced-motion respected). Older studies remain
-   selectable with ?encounter=crystal|fold|vortex|mosaic. Verified with headless Chrome frames
+   shards with FFBE's own se_ev_glass_break (SE.acb stream 274), with a white flash
+   (cover 980 ms; then the arena fades up from the dark over 900 ms while the camera eases in and the
+   command HUD rises; skippable, reduced motion respected). Old styles deleted. Verified with headless frames
    (tools/data/shatter-transition/shatter.gif).
 
 ## Open items

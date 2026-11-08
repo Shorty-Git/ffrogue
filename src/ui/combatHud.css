@@ -141,3 +141,8 @@ body:has(#run-ui:not([data-phase=battle]):not([data-phase=rewards]):not([data-ph
 .status-badge b { position: absolute; right: -3px; bottom: -3px; min-width: 11px; padding: 0 2px; font: 700 10px/11px var(--hud-number-font, sans-serif);
   color: #fff; background: rgba(8, 14, 34, .88); border: 1px solid rgba(190, 210, 255, .55); border-radius: 6px; text-align: center; }
 .arena-health .status-row { justify-content: flex-start; margin-top: 3px; }
+
+/* Battle opening: the command HUD rises once the arena has faded up (BattleScene.playEntrance). */
+@keyframes battle-hud-rise{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+body[data-battle-entrance] .combat-ui{animation:battle-hud-rise .5s cubic-bezier(.2,.8,.2,1) .78s both}
+@media (prefers-reduced-motion: reduce){body[data-battle-entrance] .combat-ui{animation:none}}

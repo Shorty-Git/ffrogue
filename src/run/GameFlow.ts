@@ -4,8 +4,7 @@ import type {RunState,RunRules} from './runState.mjs';
 import {RunStore,createRun,variantAreas,rollParty,confirmParty,completeBattle,chooseReward,encounters,acknowledgeAwakening} from './runState.mjs';
 import {runCatalog} from './catalog';
 import {RunUI} from '../ui/RunUI';
-import {EncounterTransition,encounterStyle,snapshotStyles} from '../ui/EncounterTransition';
-import {encounterSounds} from '../audio/uiSoundDesign';
+import {EncounterTransition} from '../ui/EncounterTransition';
 import {captureEncounter} from '../ui/captureEncounter';
 import type {UnitActor} from '../entities/UnitActor';
 import type {BattleScene} from '../scenes/BattleScene';
@@ -34,7 +33,7 @@ export class GameFlow{
   // On reload, resume AFTER the already saved upgrade; never replay its reward.
   if(this.state.pendingAwakening)this.commit(acknowledgeAwakening(this.state,this.state.pendingAwakening.id));
   if(this.state.phase==='setup')this.setup();else if(this.state.phase==='battle')this.battle();else if(this.state.phase==='rewards')this.battle();else this.result();}
- private setup(){if(encounterStyle(location.search)==='fold')void import('html2canvas').catch(()=>{});
+ private setup(){void import('html2canvas').catch(()=>{});
   this.audio.setMusic(HOME_MUSIC_RESOURCE,'home');this.ui.slots(this.state!,this.busy);this.ui.on('spin',()=>this.spin());this.ui.on('skip',()=>this.finishSpin());this.ui.on('menu',()=>this.menu());this.ui.on('confirm',()=>{if(this.busy||this.state?.phase!=='setup')return;this.commit(confirmParty(this.state!));this.battle('area');});}
  private spin(){
   if(this.busy||this.state?.phase!=='setup'||(this.state.party.length>0&&this.state.rerolls===0))return;
@@ -71,16 +70,11 @@ export class GameFlow{
   };
   if(!entryKind){startMusic();start();return;}
   if(entryKind==='area')this.audio.warmMusic(music);
-  const style=entryKind==='cut'?'cut':encounterStyle(location.search);
-  const selectedSound=new URLSearchParams(location.search).get('encounterSound');
-  const sound=encounterSounds[selectedSound==='impact'||selectedSound==='classic'?selectedSound:'arcane'];
-  // The glass shatter uses FFBE's own se_ev_glass_break (SE.acb stream 274) as its only cue;
-  // the battle music then starts on reveal.
+  // Every encounter shatters the outgoing screen with FFBE's own se_ev_glass_break (SE.acb stream 274);
+  // the battle music and the scene entrance start when the arena fades up.
   const glass='assets/audio/combat/se_ev_glass_break.wav';
-  if(style==='shatter')this.audio.warmSample(glass);
-  const entry=new EncounterTransition(this.ui.root,style,state.encounter>0,
-   style==='cut'?undefined:style==='shatter'?phase=>phase==='impact'?this.audio.playSample(glass,.34):()=>{}
-    :phase=>this.audio.playUi(sound[phase]));
+  this.audio.warmSample(glass);
+  const entry=new EncounterTransition(this.ui.root,()=>this.audio.playSample(glass,.34));
   this.entry=entry;
   const onTimeout=()=>this.fail(new Error('Battle assets did not finish loading. Reload to retry.'));
   void entry.cover(()=>{
@@ -88,12 +82,12 @@ export class GameFlow{
    start(error=>{
     if(this.entry!==entry)return;
     if(error){this.fail(error);return;}
-    void entry.reveal(this.scene.game.canvas,()=>this.closeEntry(),startMusic);
+    void entry.reveal(()=>this.closeEntry(),()=>{startMusic();(this.scene.scene.get('BattleScene')as BattleScene).playEntrance();});
    });
-  },onTimeout,snapshotStyles.has(style)?()=>captureEncounter(this.ui.root,
+  },onTimeout,()=>captureEncounter(this.ui.root,
     this.scene.scene.isActive('BattleScene')?paint=>new Promise(resolve=>{
       this.scene.game.events.once('postrender',()=>{paint(this.scene.game.canvas);resolve();});
-    }):undefined):undefined).catch(error=>this.fail(error));
+    }):undefined)).catch(error=>this.fail(error));
  }
  private placeBattleToolbar(){
   const bounds=this.scene.game.canvas.getBoundingClientRect();
