@@ -138365,11 +138365,11 @@
   },
   "audioSource": {
     "schema": "ffbe-audio-source-v1",
-    "playbackSupported": false,
+    "playbackSupported": true,
     "bus": "skill-sfx",
     "frameRate": 60,
     "coverage": "all-resolved-effect-groups-only",
-    "timingBasis": "Serialized effect-group offsets; native sound dispatch not measured",
+    "timingBasis": "Reviewed composed effect-group offsets; native common-bank dispatch",
     "events": [
       {
         "frame": 89,
@@ -138378,7 +138378,12 @@
         "rawParameters": [
           "1"
         ],
-        "resource": null
+        "resource": {
+          "key": "SE:31",
+          "uri": "/assets/audio/combat/se_magic_fire_3.wav",
+          "sha256": "eed0d0d7a5b50f304e310bd3d8d86a8c3e4fbf6ba0043f3c7e88fc900b42570b",
+          "format": "wav"
+        }
       },
       {
         "frame": 149,
@@ -138387,7 +138392,12 @@
         "rawParameters": [
           "1"
         ],
-        "resource": null
+        "resource": {
+          "key": "SE:58",
+          "uri": "/assets/audio/combat/tolerance-break.wav",
+          "sha256": "1786de8c9e1a46ed119cc1b5c65bf2b9e7e1458e4ea830f1807c42091a4b2f97",
+          "format": "wav"
+        }
       }
     ],
     "issues": [],

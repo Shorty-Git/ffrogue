@@ -39,7 +39,8 @@ test('reviewed audio is reproducible and rejects changes to timing or Source ide
   admitSourceAudio(regenerated);
   assert.deepEqual(regenerated.audioSource,published,key);
   assert.throws(()=>admitSourceAudio({...prepare(),sourceId:0}),/does not match/);
-  assert.throws(()=>admitSourceAudio({...prepare(),durationFrames:1}),/Unsupported Source audio/);
+  // A zero-length scene puts every cue (including frame-0 cues) after its end.
+  assert.throws(()=>admitSourceAudio({...prepare(),durationFrames:0}),/Unsupported Source audio/);
   const changed=prepare();
   changed.audioSource.sourceGroups=changed.audioSource.sourceGroups.map(group=>({...group,frame:group.frame+1}));
   assert.throws(()=>admitSourceAudio(changed),/does not match/);

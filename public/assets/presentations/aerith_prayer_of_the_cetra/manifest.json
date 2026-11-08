@@ -108150,11 +108150,11 @@
   },
   "audioSource": {
     "schema": "ffbe-audio-source-v1",
-    "playbackSupported": false,
+    "playbackSupported": true,
     "bus": "skill-sfx",
     "frameRate": 60,
     "coverage": "all-resolved-effect-groups-only",
-    "timingBasis": "Serialized effect-group offsets; native sound dispatch not measured",
+    "timingBasis": "Reviewed composed effect-group offsets; native common-bank dispatch",
     "events": [
       {
         "frame": 41,
@@ -108163,7 +108163,12 @@
         "rawParameters": [
           "1"
         ],
-        "resource": null
+        "resource": {
+          "key": "SE:26",
+          "uri": "/assets/audio/combat/se_magic_heal_2.wav",
+          "sha256": "7efabe917021460f8429ec9f9803107b0978e9aaa832e2a06927513311d537f5",
+          "format": "wav"
+        }
       }
     ],
     "issues": [],

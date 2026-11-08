@@ -33599,11 +33599,11 @@
   },
   "audioSource": {
     "schema": "ffbe-audio-source-v1",
-    "playbackSupported": false,
+    "playbackSupported": true,
     "bus": "skill-sfx",
     "frameRate": 60,
     "coverage": "all-resolved-effect-groups-only",
-    "timingBasis": "Serialized effect-group offsets; native sound dispatch not measured",
+    "timingBasis": "Reviewed composed effect-group offsets; native common-bank dispatch",
     "events": [
       {
         "frame": 41,
@@ -33612,7 +33612,12 @@
         "rawParameters": [
           "1"
         ],
-        "resource": null
+        "resource": {
+          "key": "SE:54",
+          "uri": "/assets/audio/combat/se_magic_light_1.wav",
+          "sha256": "bd583f3f70811b5b26be073a1c8f524d7510e5af54e33a27ea47cee37a09f2db",
+          "format": "wav"
+        }
       }
     ],
     "issues": [],

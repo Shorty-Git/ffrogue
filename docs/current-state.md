@@ -156,6 +156,22 @@ Generic rules added 2026-11-07 (no per-skill exceptions):
   substitution is listed in `plan.approximations`. Staging still reports
   `missing-matched-authoring`; that is information, not a stop, in approximation mode.
 
+## Skill sound (2026-11-08)
+
+Original skill sounds come from the common SE bank (SE.acb). `node tools/admit_skill_audio.mjs --python <python>`
+admits every published presentation whose effect-group cues are all common-bank cues: cue ID →
+name (`tools/read_acb_cues.py`) → vgmstream stream (`tools/data/audio-vertical/se-streams.tsv`,
+built by looping `vgmstream-cli -m -s N SE.acb`) → `public/assets/audio/combat/<name>.wav`,
+pinned in `tools/presentations/source-audio-review.json`; it republishes the presentation and
+regenerates `src/audio/skillCueRegistry.ts`, which `src/audio/combatCues.ts` merges with the
+hand-mixed cues (default gain 0.23). Run it (then import_character per character) after every
+skill import. 41 of 49 presentations play original sounds. Still silent: Big Shot, Northern Sky
+Apprentice, Thundaga Blade, Sonic Impact (cue names are bank aliases that vgmstream lists under
+another name — resolve via the ACB waveform chain, see research/source-combat-audio.md), Trigger
+Smash and Reraise (no cues), and the frozen Blade Beam/Climhazzard.
+
+Next: music transitions (menu → battle → victory) are not smooth yet (developer feedback).
+
 ## Environment and tools
 
 - Original reference (developer's BlueStacks "FFBE Trace" Memorial instance): adb via

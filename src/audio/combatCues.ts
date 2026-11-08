@@ -1,4 +1,7 @@
-export const combatCues = {
+import {skillCueFiles} from './skillCueRegistry';
+
+// Hand-mixed cues; every other reviewed Source cue plays at a default gain.
+const mixedCues = {
   'SE:1': {file:'sword', gain:.29},
   'SE:7': {file:'strike', gain:.26},
   'SE:12': {file:'gun', gain:.25},
@@ -13,8 +16,11 @@ export const combatCues = {
   'System:48': {file:'special-dissolve', gain:.30},
   'System:69': {file:'critical', gain:.23},
 } as const;
+const generatedCues = Object.fromEntries(Object.entries(skillCueFiles)
+  .filter(([key]) => !Object.hasOwn(mixedCues, key)).map(([key, file]) => [key, {file, gain: .23}]));
+export const combatCues: Record<string, {file: string; gain: number}> = {...generatedCues, ...mixedCues};
 
-export type CombatCue = keyof typeof combatCues;
+export type CombatCue = string;
 // Memorial battle_group.deadEffect routed through MonsterUnit::deadFadeOut.
 export const enemyDissolveCues: Readonly<Partial<Record<string, CombatCue>>> = {
   '1110310':'System:47',

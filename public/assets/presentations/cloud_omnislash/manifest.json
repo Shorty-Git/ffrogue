@@ -84803,11 +84803,11 @@
   },
   "audioSource": {
     "schema": "ffbe-audio-source-v1",
-    "playbackSupported": false,
+    "playbackSupported": true,
     "bus": "skill-sfx",
     "frameRate": 60,
     "coverage": "all-resolved-effect-groups-only",
-    "timingBasis": "Serialized effect-group offsets; native sound dispatch not measured",
+    "timingBasis": "Reviewed composed effect-group offsets; native common-bank dispatch",
     "events": [
       {
         "frame": 0,
@@ -84816,7 +84816,12 @@
         "rawParameters": [
           "1"
         ],
-        "resource": null
+        "resource": {
+          "key": "SE:612",
+          "uri": "/assets/audio/combat/se_limitburst_cloud_5.wav",
+          "sha256": "6095beaac6bbfac9ac9f87345d30223e12c97228c9f2c2c8219d8687c447c536",
+          "format": "wav"
+        }
       }
     ],
     "issues": [],
