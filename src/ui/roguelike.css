@@ -79,16 +79,6 @@
 .reel-sprite{width:min(100%,var(--sprite-width))}
 .reel-form,.reel-variant{display:block;font-size:10px;color:#bbd5eb;margin-bottom:4px}
 .reel-form{font-weight:700}
-.reel-silver{--reel-accent:#b6a7de}
-.reel-gold{--reel-accent:#e8c77d}
-.reel-silver::after,.reel-gold::after{content:'';position:absolute;inset:-2px;border:2px solid var(--reel-accent);box-shadow:inset 0 0 12px color-mix(in srgb,var(--reel-accent) 24%,transparent);pointer-events:none}
-.reel-silver .reel-form,.reel-gold .reel-form{color:var(--reel-accent)}
-.is-spinning .reel-result,.is-spinning.reel-silver::after{animation:reveal-symbol var(--stop-duration) steps(1,end) both}
-.is-spinning.reel-gold::after{animation:rare-reel-reveal .24s ease-out var(--stop-duration) backwards}
-.is-spinning.reel-silver::after{animation:silver-reel-reveal .16s ease-out var(--stop-duration) backwards}
-@keyframes silver-reel-reveal{from{opacity:.5}35%{opacity:1;box-shadow:inset 0 0 12px #c8e5ff55}to{opacity:1}}
-@media(prefers-reduced-motion:reduce){.is-spinning.reel-silver::after{animation:none}}
-@keyframes rare-reel-reveal{from{opacity:0;box-shadow:inset 0 0 28px #f6d78d99}20%{opacity:1}to{opacity:1}}
 @media(prefers-reduced-motion:reduce){.is-spinning .reel-result,.is-spinning.reel::after{animation:none}}
 .machine-base .seed-chip{max-width:190px;white-space:nowrap;text-align:right}
 .reroll-count,.reroll-count b{color:#8da5bf}
@@ -110,8 +100,6 @@
 @property --lever-pull{syntax:'<number>';inherits:true;initial-value:0}
 .lever-arm{position:absolute;inset:0;pointer-events:none}
 /* The rod foreshortens through the hub as the handle swings toward the viewer. */
-.lever-rod{position:absolute;left:calc(50% - 5px);top:18px;width:10px;height:90px;transform-origin:center bottom;transform:scaleY(calc(1 - 1.6 * var(--lever-pull)));border:2px solid #24344a;background:linear-gradient(90deg,#61778a,#f2f5ed 40%,#abc4d2 65%,#3a5267);box-shadow:2px 0 0 #05132c}
-.lever-ball{position:absolute;left:calc(50% - 18px);top:0;width:36px;height:36px;transform:translateY(calc(144px * var(--lever-pull))) scale(calc(1 + .11 * var(--lever-pull)));border-radius:50%;border:3px solid #541e31;background:radial-gradient(circle at 30% 27%,#ffd0ba 0 6%,#ef6b63 14%,#cd303b 42%,#801b34 78%);box-shadow:inset -3px -3px 0 #57172c,2px 3px 0 #020b18}
 .lever-caption{position:absolute;top:100%;left:50%;transform:translateX(-50%);width:42px;border:1px solid #7593ac;border-radius:2px;background:#102b46;color:#bdeaff;font:8px/12px 'Segoe UI',sans-serif;letter-spacing:.6px;text-shadow:0 0 5px #6acaff}
 .slot-lever.is-returning .lever-arm{animation:lever-return .3s cubic-bezier(.18,.9,.25,1) both}
 @keyframes lever-return{from{--lever-pull:1}to{--lever-pull:0}}
@@ -155,18 +143,12 @@
  .victory-overlay .rpg-shell>.eyebrow{font-size:18px}.victory-overlay h1{font-size:12px!important}.reward-details summary{min-height:30px;padding:3px 5px}
 }
 
-.reel-nv{--reel-accent:#f0a2e1}
-.reel-nv::after{content:'';position:absolute;inset:-2px;border:2px solid var(--reel-accent);box-shadow:inset 0 0 12px #f0a2e144;pointer-events:none}
-.reel-nv .reel-form{color:var(--reel-accent)}
-.is-spinning.reel-nv::after{animation:nv-reel-reveal .30s ease-out var(--stop-duration) backwards}
-@keyframes nv-reel-reveal{0%{opacity:.35}18%{opacity:1;box-shadow:inset 0 0 28px #f0a2e19e,0 0 12px #e5b4ff70}100%{opacity:1}}
 .audio-preview{display:flex;flex-wrap:wrap;gap:5px}
 .audio-preview p,.audio-preview label{flex-basis:100%;margin:4px 0}
 .audio-preview .rpg-button{padding:4px 7px;min-height:28px;font-size:11px}
 .pixel-sprite.layered-body-preview{position:relative}
 .layered-body-preview{image-rendering:auto}
 .body-emission{position:absolute;inset:0;pointer-events:none;mix-blend-mode:plus-lighter;background-repeat:no-repeat;background-size:inherit;background-position:inherit}
-@media(prefers-reduced-motion:reduce){.is-spinning.reel-nv::after{animation:none}}
 
 .audio-controls{padding:7px 10px;font:12px/1.4 'Segoe UI',sans-serif;color:#cee6ff}
 .run-toolbar .audio-controls{position:relative;margin:0}

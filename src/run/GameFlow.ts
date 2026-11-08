@@ -5,6 +5,7 @@ import {RunStore,createRun,variantAreas,rollParty,confirmParty,completeBattle,ch
 import {runCatalog} from './catalog';
 import {RunUI} from '../ui/RunUI';
 import {EncounterTransition} from '../ui/EncounterTransition';
+import {ALL_FATE_SOUNDS,fateSoundUrl,fateTier,fateTimeline} from '../ui/fateEngine';
 import {captureEncounter} from '../ui/captureEncounter';
 import type {UnitActor} from '../entities/UnitActor';
 import type {BattleScene} from '../scenes/BattleScene';
@@ -19,7 +20,7 @@ export class GameFlow{
  private battleCursor:BattleCursorProfile='felt';
  private entry?:EncounterTransition;
  readonly catalog;readonly store;readonly ui;state:RunState|null=null;private animationTimer?:ReturnType<typeof setTimeout>;private busy=false;
- constructor(readonly scene:Phaser.Scene,readonly manifests:Record<string,UnitManifest>){this.audio=new GameAudio(scene.sound);this.rules=(scene.cache.json.get('run_rules')as RunRules)??{awakeningMode:'sequential'};this.catalog=runCatalog(scene,manifests);this.store=new RunStore(window.localStorage,this.catalog);this.ui=new RunUI(this.catalog,manifests);this.ui.onError=error=>this.fail(error);this.ui.onSound=(event,rate)=>this.audio.playUi(event,rate);const resize=()=>{this.placeBattleToolbar();if(this.ui.root.classList.contains('victory-overlay'))this.ui.overBattle(this.rewardBounds());};window.addEventListener('resize',resize);scene.scale.on('resize',resize);this.menu();}
+ constructor(readonly scene:Phaser.Scene,readonly manifests:Record<string,UnitManifest>){this.audio=new GameAudio(scene.sound);this.rules=(scene.cache.json.get('run_rules')as RunRules)??{awakeningMode:'sequential'};this.catalog=runCatalog(scene,manifests);this.store=new RunStore(window.localStorage,this.catalog);this.ui=new RunUI(this.catalog,manifests);this.ui.onError=error=>this.fail(error);this.ui.onSound=(event,rate)=>this.audio.playUi(event,rate);this.ui.onSample=(sound,gain)=>{this.audio.playSample(fateSoundUrl(sound),gain);};const resize=()=>{this.placeBattleToolbar();if(this.ui.root.classList.contains('victory-overlay'))this.ui.overBattle(this.rewardBounds());};window.addEventListener('resize',resize);scene.scale.on('resize',resize);this.menu();}
  private closeEntry(){this.entry?.close();this.entry=undefined;}
  private fail(error:unknown){this.closeEntry();this.audio.setMusic(null);clearTimeout(this.animationTimer);this.busy=false;this.scene.scene.stop('BattleScene');this.ui.error(String(error));this.ui.on('reload',()=>location.reload());}
  private commit(next:RunState){this.store.save(next);this.state=next;}
@@ -34,7 +35,7 @@ export class GameFlow{
   if(this.state.pendingAwakening)this.commit(acknowledgeAwakening(this.state,this.state.pendingAwakening.id));
   if(this.state.phase==='setup')this.setup();else if(this.state.phase==='battle')this.battle();else if(this.state.phase==='rewards')this.battle();else this.result();}
  private setup(){void import('html2canvas').catch(()=>{});
-  this.audio.setMusic(HOME_MUSIC_RESOURCE,'home');this.ui.slots(this.state!,this.busy);this.ui.on('spin',()=>this.spin());this.ui.on('skip',()=>this.finishSpin());this.ui.on('menu',()=>this.menu());this.ui.on('confirm',()=>{if(this.busy||this.state?.phase!=='setup')return;this.commit(confirmParty(this.state!));this.battle('area');});}
+  this.audio.setMusic(HOME_MUSIC_RESOURCE,'home');ALL_FATE_SOUNDS.forEach(sound=>this.audio.warmSample(fateSoundUrl(sound)));this.ui.slots(this.state!,this.busy);this.ui.on('spin',()=>this.spin());this.ui.on('skip',()=>this.finishSpin());this.ui.on('menu',()=>this.menu());this.ui.on('confirm',()=>{if(this.busy||this.state?.phase!=='setup')return;this.commit(confirmParty(this.state!));this.battle('area');});}
  private spin(){
   if(this.busy||this.state?.phase!=='setup'||(this.state.party.length>0&&this.state.rerolls===0))return;
   try{
@@ -47,8 +48,8 @@ export class GameFlow{
    this.setup();
    this.audio.playUi('leverSeat');
    this.ui.startSlotAudio(window.localStorage.getItem('ffrogue.slot-shake')!=='off');
-   const rare=this.state.party.some(member=>member.rank==='NV'||member.rarity===7);
-   this.animationTimer=setTimeout(()=>this.finishSpin(),rare?1620:1500);
+   // The Fate Engine owns the reel timing: rare pulls tease longer and celebrate before settling.
+   this.animationTimer=setTimeout(()=>this.finishSpin(),fateTimeline(this.state.party.map(fateTier)).end*1000);
   }catch(error){this.fail(error);}
  }
  private finishSpin(){if(!this.busy)return;

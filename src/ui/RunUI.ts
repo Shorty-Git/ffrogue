@@ -8,6 +8,7 @@ import {rewardPopupLayout} from './rewardLayout.mjs';
 import type {RewardStageBounds} from './rewardLayout.mjs';
 import type {AnimationMeta,UnitManifest} from '../types/manifest';
 import {bindSlotLever} from './SlotLever';
+import {fateTier,fateTimeline,fateVerdict,tierRank,FATE_SOUND,type FateTier,type FateSound} from './fateEngine';
 import {startCrystalSparks} from './CrystalSparks';
 import {formAt,rankLabel} from '../run/unitForms.mjs';
 const esc=(s:unknown)=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
@@ -24,6 +25,8 @@ function bodyPreview(root:string,clip:AnimationMeta,classes:string,style:string)
 export class RunUI{
  readonly root:HTMLElement;
  onSound:(event:import('../audio/battleMusic').UiSound,rate?:number)=>void|(()=>void)=()=>{};
+ /** Original one-shot samples (FFBE summon cues) for the Fate Engine. */
+ onSample:(sound:FateSound,gain:number)=>void=()=>{};
  private slotAudioCleanup?:()=>void;
  private leverCleanup?:()=>void;
  private crystalCleanup?:()=>void;
@@ -71,26 +74,31 @@ export class RunUI{
    callback();}catch(error){this.onError(error);}});}
  startSlotAudio(shake:boolean){
   const machine=this.root.querySelector<HTMLElement>('.slot-machine')!;
-  const reels=Array.from(machine.querySelectorAll('.reel'));
-  const rare=machine.querySelector('.reel-nv')??machine.querySelector('.reel-gold');
-  const motion=window.matchMedia('(prefers-reduced-motion: reduce)');
+  const reels=Array.from(machine.querySelectorAll<HTMLElement>('.reel'));
+  const tiers=reels.map(reel=>(reel.dataset.tier??'bronze') as FateTier);
+  const {stops,end}=fateTimeline(tiers);
+  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const timers:number[]=[];
+  const at=(seconds:number,action:()=>void)=>timers.push(window.setTimeout(action,seconds*1000));
   let stopRolling:void|(()=>void);
-  this.slotAudioCleanup=()=>stopRolling?.();
-  reels.forEach((reel,index)=>{
-   const tape=reel.querySelector('.reel-tape');
-   if(index===0)tape?.addEventListener('animationstart',()=>{stopRolling=this.onSound('rolling');},{once:true});
-   tape?.addEventListener('animationend',()=>{
-    if(index===reels.length-1)stopRolling?.();
-    this.onSound('reelStop',[.92,1,1.09][index]);
-    if(reel!==rare)return;
-    const nv=reel.classList.contains('reel-nv');
-    this.onSound(nv?'nvReveal':'starReveal');
-    if(shake&&!motion.matches)machine.animate([
-     {transform:'translateX(0)'},{transform:`translateX(-${nv?7:3}px)`},
-     {transform:`translateX(${nv?4:2}px)`},{transform:`translateX(-${nv?2:1}px)`},{transform:'translateX(0)'},
-    ],{duration:nv?185:140,easing:'ease-out'});
-   },{once:true});
-  });
+  this.slotAudioCleanup=()=>{timers.forEach(clearTimeout);stopRolling?.();};
+  this.onSample(FATE_SOUND.slide,.3);
+  at(.12,()=>{stopRolling=this.onSound('rolling');});
+  reels.forEach((_reel,index)=>at(stops[index],()=>{
+   if(index===reels.length-1)stopRolling?.();
+   this.onSound('reelStop',[.92,1,1.09][index]);
+   const tier=tiers[index],rank=tierRank(tier);
+   this.onSample(FATE_SOUND[tier],rank>=tierRank('gold')?.36:.3);
+   machine.dataset.flash='';void machine.offsetWidth;machine.dataset.flash=tier;
+   if(rank>=tierRank('rainbow')){this.onSample(FATE_SOUND.fireworks,.28);if(tier==='nv')this.onSample(FATE_SOUND.awaken,.24);}
+   if(shake&&!reduced&&rank>=tierRank('gold')){
+    const strength=rank>=tierRank('rainbow')?8:3;
+    machine.animate([{transform:'translate(0,0)'},{transform:`translate(-${strength}px,${strength/2}px)`},
+     {transform:`translate(${strength*.6}px,-${strength/3}px)`},{transform:`translate(-${strength*.3}px,0)`},{transform:'translate(0,0)'}],
+     {duration:rank>=tierRank('rainbow')?260:150,easing:'ease-out'});
+   }
+  }));
+  at(Math.max(stops[stops.length-1]??0,end-.35),()=>this.onSample(FATE_SOUND.verdict,.3));
   this.root.querySelector('.slot-lever.is-returning .lever-arm')?.addEventListener('animationend',()=>this.onSound('leverReturn'),{once:true});
  }
  button(action:string,label:string,secondary=false,disabled=false){return `<button class="rpg-button ${secondary?'secondary':''}" data-action="${action}" ${disabled?'disabled':''}>${label}</button>`;}
@@ -113,15 +121,21 @@ export class RunUI{
   const hint=busy?'Drawing your team…':!hasTeam?'Pull the lever to draw your first team for free.':exhausted?'No team rerolls left. Begin the expedition with this team.':'Pull again to redraw the entire team, or begin your expedition.';
   const roster=Object.values(this.catalog);
   const tape=busy?`<div class="reel-tape" aria-hidden="true">${Array.from({length:18},(_,i)=>`<div class="tape-symbol"><img src="${esc(roster[i%roster.length].portrait)}" alt=""></div>`).join('')}</div>`:'';
-  const reels=[.65,1,1.4].map((duration,i)=>{
+  const tiers=run.party.map(member=>fateTier(member));
+  const timeline=fateTimeline(tiers);
+  const verdict=hasTeam?fateVerdict(tiers,run.party.reduce((sum,member)=>sum+member.rarity,0)):undefined;
+  const stars=(member:RunMember)=>member.rank==='NV'?'<i class="nv-mark">NV</i>'
+   :Array.from({length:member.rarity},(_,i)=>`<i style="--star:${i}">★</i>`).join('');
+  const reels=[0,1,2].map(i=>{
    const member=run.party[i];
    const character=member&&this.catalog[member.key];
    const skill=character?.skills.find(s=>s.id===member.skills[0].id);
-   const accent=member?.rank==='NV'?'nv':member?.rarity===7?'gold':member?.rarity===6?'silver':'standard';
-   return `<div class="reel reel-${accent} ${busy?'is-spinning':''}" style="--stop-duration:${duration}s">
+   const tier=member?tiers[i]:undefined,stop=timeline.stops[i]??1;
+   return `<div class="reel ${tier?'tier-'+tier:''} ${busy?'is-spinning':''} ${busy&&timeline.teases[i]?'is-tease':''}" ${tier?`data-tier="${tier}"`:''} style="--stop-duration:${stop}s">
     <span class="slot-number">${String(i+1).padStart(2,'0')}</span>
-    <div class="reel-window">${tape}<div class="final-symbol">${member?this.sprite(member,true):'<span class="unknown-crystal">◆</span>'}</div></div>
+    <div class="reel-window">${tape}<span class="fate-burst" aria-hidden="true"></span><div class="final-symbol">${member?this.sprite(member,true):'<span class="unknown-crystal">◆</span>'}</div></div>
     <div class="reel-result">
+     ${member?`<span class="fate-stars" aria-label="${member.rank==='NV'?'NV':member.rarity+' stars'}">${stars(member)}</span>`:''}
      <b>${character?esc(character.name):'???'}</b>
      ${character?`<span class="reel-form">${rankLabel(member)}</span><span class="reel-variant" title="Original Unit ${esc(member.unitId)}">${esc(character.variantLabel??character.name)}</span>`:''}
      <span class="reel-detail">${skill?skillIcon(skill)+esc(skill.name):'Awaiting destiny'}</span>
@@ -133,6 +147,7 @@ export class RunUI{
     <div class="rpg-panel slot-machine ${busy?'spinning is-drawing':''}">
      <div class="machine-lights" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
      <div class="reels">${reels}</div>
+     ${verdict?`<div class="fate-verdict tier-${verdict.tier} ${busy?'is-pending':''}" style="--verdict-at:${Math.max(0,timeline.end-.35)}s" role="status"><b>${verdict.title}</b><span>${verdict.detail}</span></div>`:''}
      <div class="machine-base"><span class="reroll-count ${hasTeam&&!busy?'is-revealed':''}">TEAM REROLLS <b data-testid="rerolls">${run.rerolls}</b> / 3</span><span class="seed-chip" title="${esc(run.seed)}">Run seed: ${esc(run.seed)}</span></div>
     </div>
     <button type="button" class="slot-lever ${busy?'is-returning':''}" data-action="spin" aria-label="${exhausted?'No team rerolls left':hasTeam?'Pull the lever to redraw your team':'Pull the lever to draw your team'}" ${busy||exhausted?'disabled':''}>

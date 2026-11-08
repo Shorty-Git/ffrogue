@@ -16,8 +16,10 @@ const cues = {
   leverMove: {duration:.17, contacts:[[0,540,.045,.23],[.052,310,.085,.31],[.104,200,.06,.18]]},
   leverSeat: {duration:.105, contacts:[[0,170,.091,.42],[.007,760,.045,.19]]},
   leverReturn: {duration:.09, contacts:[[0,450,.075,.15],[.013,870,.054,.09]]},
-  rolling: {duration:.26, contacts:[[.003,430,.035,.15],[.068,340,.041,.15],[.133,475,.038,.16],[.198,380,.035,.14]]},
-  reelStop: {duration:.116, contacts:[[0,225,.103,.37],[.006,980,.04,.15]]},
+  // Reel ratchet: eight dry metal ticks per loop, like a mechanical slot reel at speed.
+  rolling: {duration:.26, contacts:[[0.0020,1650,.011,0.15],[0.0345,2100,.011,0.1],[0.0670,1650,.011,0.1],[0.0995,2100,.011,0.1],[0.1320,1650,.011,0.15],[0.1645,2100,.011,0.1],[0.1970,1650,.011,0.1],[0.2295,2100,.011,0.1]]},
+  // Reel brake: a heavy clunk with a short metallic latch.
+  reelStop: {duration:.16, contacts:[[0,120,.13,.5],[.003,1350,.035,.22],[.028,85,.09,.28]]},
   starReveal: {duration:.31, notes:[[0,659,.18,.27],[.064,988,.19,.22],[.108,1319,.18,.16]]},
   nvReveal: {duration:.42, notes:[[0,196,.23,.31],[.038,587,.25,.22],[.092,880,.26,.22],[.136,1175,.26,.17]], contacts:[[0,150,.15,.23]]},
 } satisfies Record<string, Cue>;
