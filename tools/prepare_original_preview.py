@@ -413,6 +413,12 @@ if __name__ == '__main__':
             boundary='Per member: emitter packets ordered by source SortPriority (if enabled) then node index; members in plan order. Full-Z sorting is not evaluated.')
         plan['approximations'] = dict(profile='held-constant-unverified-curves-v1', curves=bmb_channels.APPROXIMATED_CURVES,
             boundary='Visual approximation: these source curves are not evaluated; the effect is not a native-fidelity reconstruction.')
+    if a.approximate_unverified:
+        # Members authored to start before the command (negative group frames) start at frame 0.
+        for member in members:
+            if member['startFrame'] < 0:
+                bmb_channels.APPROXIMATED_CURVES.append({'memberStart': member['startFrame'], 'treatment': 'negative-start-clamped-to-0'})
+                member['startFrame'] = 0
     if a.approximate_unverified and plan['sourceHits'] and members:
         # Emitters must keep spawning until the last original hit (Holy hits at frame 450); the
         # fixed 180-frame horizon cut late elements. Accepted strict plans keep 180.

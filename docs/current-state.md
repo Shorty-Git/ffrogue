@@ -15,10 +15,11 @@ Last consolidated: 2026-11-07.
   K.O., one revival offer (50% base HP, `REVIVE_HP_SHARE`) is guaranteed among the three, next
   to the guaranteed boss awakening. A K.O. member enters the next battle in its dead pose; a
   revived member starts with an empty Limit gauge (a K.O. empties it).
-- 35 Source skills (original FFBE effect data rendered in real time). Authoring-free imports
+- 36 Source skills (original FFBE effect data rendered in real time). Authoring-free imports
   2026-11-07/08 include Meteor Rain, Banish, Holy, Fury Brand, Healing Wind, Curaja, Earthly
   Healing, Prayer of the Cetra, Northswain's Strike, Northern Sky Apprentice, Meditate, Big Shot,
-  Ungarmax, Grenade Bomb, Satellite Beam, Cheer, Call of the Void, Fusion Sword 1st/3rd, Spin Drive.
+  Ungarmax, Grenade Bomb, Satellite Beam, Cheer, Call of the Void, Fusion Sword 1st/3rd, Spin Drive,
+  Reraise (auto-revive). Members starting before frame 0 are clamped to 0 in approximation mode.
   + 2 Limit Bursts
   (Cloud's Omnislash; Cloud AC's Omnislash Version 5, the first authoring-free import, 2026-11-07).
 - Battle UI (DOM `CombatHud` over Phaser): target-first (enemies clickable any time, crystal

@@ -544,6 +544,72 @@
         "sourceRange": "2@0",
         "note": "Original target 2@3 / range 2@0 (process 2@132); adapted to a fixed 800 HP heal on all living allies."
       }
+    },
+    {
+      "id": "reraise",
+      "ffbeId": 10230,
+      "name": "Reraise",
+      "rarity": 5,
+      "level": 1,
+      "type": "MAGIC",
+      "mpCost": 45,
+      "scope": "party",
+      "damageMultiplier": 1,
+      "hitCount": 0,
+      "attackFrames": [
+        120
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "All living allies revive once with 50% HP if K.O. within 3 rounds.",
+      "execution": "prepared-friendly",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "aerith_reraise",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/wave5-20261108/reraise/source/skill-source.json",
+        "sha256": "1653b7ab512c741aced5e1dc643d256c5ddbe39e59bb37a72367815662f260dc"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "allyTargeting": "living-allies",
+      "allyEvents": [
+        {
+          "frame": 120,
+          "effects": [
+            {
+              "kind": "auto-revive",
+              "hpFraction": 0.5,
+              "turns": 3
+            }
+          ]
+        }
+      ],
+      "friendlyTargetReview": {
+        "sourceTarget": "2",
+        "sourceRange": "1",
+        "note": "Original target 2 / range 1 (process 27); adapted to auto-revive at 0.5 HP for 3 rounds on all living allies."
+      }
     }
   ],
   "portraitSource": "unit_icons/unit_icon_207000405.png"

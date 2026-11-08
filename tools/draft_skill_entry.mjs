@@ -2,7 +2,7 @@
 // tools/characters/<character>.json (replacing an entry with the same id or ffbeId).
 // Gameplay values are provisional defaults for later balancing; visuals/timing come from source.
 //   node tools/draft_skill_entry.mjs --character aerith --source <skill-source.json> --id curaja
-//        --key aerith_curaja [--heal 900] [--buff 1.3] [--mult 2.5] [--mp 30]
+//        --key aerith_curaja [--heal 900] [--buff 1.3] [--revive 0.8] [--mult 2.5] [--mp 30]
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 const arg = (name, fallback) => { const i = process.argv.indexOf(name); return i > 0 ? process.argv[i + 1] : fallback; };
@@ -12,8 +12,8 @@ const src = JSON.parse(fs.readFileSync(file, 'utf8')).skill, raw = src.raw, off 
 const groups = String(raw.attackFrames).split('@').length;
 const hits = String(raw.attackFrames).split(/[-@]/).map(t => t.split(':').map(Number));
 const target = String(raw.target ?? '1').split('@')[0], range = String(raw.targetRange ?? '1').split('@')[0];
-const heal = arg('--heal') && Number(arg('--heal')), buff = arg('--buff') && Number(arg('--buff'));
-const friendly = !!(heal || buff);
+const heal = arg('--heal') && Number(arg('--heal')), buff = arg('--buff') && Number(arg('--buff')), revive = arg('--revive') && Number(arg('--revive'));
+const friendly = !!(heal || buff || revive);
 const scope = friendly ? 'party' : range === '2' ? 'all_enemies' : 'single_enemy';
 const motion = raw.motionType ?? 2, move = raw.moveType ?? 4;
 const dash = motion === 1 && move === 1;
@@ -21,6 +21,7 @@ const clip = motion === 2 || (src.kind === 'MAGIC') ? 'magic_atk' : 'atk';
 const mult = Number(arg('--mult', scope === 'all_enemies' ? 1.6 : 2.5));
 const mp = Number(arg('--mp', Math.max(8, Math.min(60, Number(raw.cost) || 20))));
 const desc = heal ? `Restore ${heal} HP to all living allies (no revival).`
+  : revive ? `All living allies revive once with ${Math.round(revive * 100)}% HP if K.O. within 3 rounds.`
   : buff ? `Boost physical damage of all allies by ${Math.round((buff - 1) * 100)}% for 3 rounds. No HP damage.`
   : `${clip === 'magic_atk' && src.kind === 'MAGIC' ? 'Magic' : 'Physical'} damage (${mult}x) to ${scope === 'all_enemies' ? 'all enemies' : 'one enemy'}`;
 const entry = {
@@ -38,9 +39,9 @@ const entry = {
 };
 if (friendly) {
   entry.allyTargeting = 'living-allies';
-  entry.allyEvents = [{frame: hits[0][0] + off, effects: [heal ? {kind: 'heal', amount: heal} : {kind: 'physical-boost', multiplier: buff, turns: 3}]}];
+  entry.allyEvents = [{frame: hits[0][0] + off, effects: [heal ? {kind: 'heal', amount: heal} : revive ? {kind: 'auto-revive', hpFraction: revive, turns: 3} : {kind: 'physical-boost', multiplier: buff, turns: 3}]}];
   entry.friendlyTargetReview = {sourceTarget: raw.target, sourceRange: raw.targetRange,
-    note: `Original target ${raw.target} / range ${raw.targetRange} (process ${raw.processId}); adapted to ${heal ? `a fixed ${heal} HP heal` : `physical-boost x${buff} for 3 rounds`} on all living allies.`};
+    note: `Original target ${raw.target} / range ${raw.targetRange} (process ${raw.processId}); adapted to ${heal ? `a fixed ${heal} HP heal` : revive ? `auto-revive at ${revive} HP for 3 rounds` : `physical-boost x${buff} for 3 rounds`} on all living allies.`};
 } else entry.damageEvents = hits.map(([frame, weight]) => ({frame: frame + off, weight: weight / (100 * groups)}));
 const path = `tools/characters/${character}.json`, recipe = JSON.parse(fs.readFileSync(path, 'utf8'));
 const at = recipe.skills.findIndex(s => s.id === id || s.ffbeId === src.id);
