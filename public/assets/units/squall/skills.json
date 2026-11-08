@@ -1,0 +1,768 @@
+{
+  "unitId": "208000105",
+  "unitName": "SQUALL",
+  "game": "FFVIII",
+  "skills": [
+    {
+      "id": "fated_circle",
+      "ffbeId": 226621,
+      "name": "Fated Circle",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 20,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.6,
+      "hitCount": 11,
+      "attackFrames": [
+        110,
+        120,
+        130,
+        140,
+        150,
+        160,
+        170,
+        180,
+        190,
+        200,
+        110
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (1.6x) to all enemies",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "squall_fated_circle",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/squall/skills/fated_circle/source/skill-source.json",
+        "sha256": "5e8e4c89ef8b20f0475b87a021fb133f990e09941588d731814b3bb6eba79111"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 110,
+          "weight": 0.015
+        },
+        {
+          "frame": 110,
+          "weight": 0.5
+        },
+        {
+          "frame": 120,
+          "weight": 0.015
+        },
+        {
+          "frame": 130,
+          "weight": 0.015
+        },
+        {
+          "frame": 140,
+          "weight": 0.015
+        },
+        {
+          "frame": 150,
+          "weight": 0.015
+        },
+        {
+          "frame": 160,
+          "weight": 0.015
+        },
+        {
+          "frame": 170,
+          "weight": 0.015
+        },
+        {
+          "frame": 180,
+          "weight": 0.015
+        },
+        {
+          "frame": 190,
+          "weight": 0.015
+        },
+        {
+          "frame": 200,
+          "weight": 0.365
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 226621,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 226621,
+          "name": "Fated Circle",
+          "rarity": 6,
+          "dispOrder": 2731,
+          "cost": 0,
+          "6p90IFnC": null,
+          "target": "1@3@1",
+          "targetRange": "2@0@2",
+          "oL6zdpD0": 3,
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 1,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 4,
+          "processId": "1@125@24",
+          "PI18xnkD": "0@0@0",
+          "processParam": "0,0,0,0,0,0,5000,0@600,600@0,-80,0,0,3,1",
+          "H4zD2IQ5": 0,
+          "motionType": 2,
+          "effectFrames": "40:5003690:2:4:0&40:5041335:1:1:0&40:5017831:2:3:0&40:5017841:1:3:0",
+          "attackFrames": "110:3:2:2-120:3:2:2-130:3:2:2-140:3:2:2-150:3:2:2-160:3:2:2-170:3:2:2-180:3:2:2-190:3:2:2-200:73:2:2@110:100:2:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000039,
+          "equipCondition": null,
+          "2QoE3PtB": 0,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": "2:600",
+          "6ZEyK95f": "226621",
+          "n1eAG69i": "11",
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "flame_barret",
+      "ffbeId": 226624,
+      "name": "Flame Barret",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 30,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 10,
+      "attackFrames": [
+        110,
+        120,
+        130,
+        140,
+        150,
+        160,
+        170,
+        180,
+        190,
+        200
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "squall_flame_barret",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/squall/skills/flame_barret/source/skill-source.json",
+        "sha256": "d5823721ae89df8cf1d72ea9ba63291ca8465169f834323cd1616a3739653a73"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 110,
+          "weight": 0.03
+        },
+        {
+          "frame": 120,
+          "weight": 0.03
+        },
+        {
+          "frame": 130,
+          "weight": 0.03
+        },
+        {
+          "frame": 140,
+          "weight": 0.03
+        },
+        {
+          "frame": 150,
+          "weight": 0.03
+        },
+        {
+          "frame": 160,
+          "weight": 0.03
+        },
+        {
+          "frame": 170,
+          "weight": 0.03
+        },
+        {
+          "frame": 180,
+          "weight": 0.03
+        },
+        {
+          "frame": 190,
+          "weight": 0.03
+        },
+        {
+          "frame": 200,
+          "weight": 0.73
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 226624,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 226624,
+          "name": "Flame Barret",
+          "rarity": 7,
+          "dispOrder": 2734,
+          "cost": 30,
+          "6p90IFnC": null,
+          "target": "1@1",
+          "targetRange": "1@1",
+          "oL6zdpD0": 3,
+          "element": "1,0,0,0,0,0,0,0",
+          "Isb1GDe2": 1,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 4,
+          "processId": "1@33",
+          "PI18xnkD": "0@0",
+          "processParam": "0,0,0,0,0,0,3000,0@-120,0,0,0,0,0,0,0,1,3",
+          "H4zD2IQ5": 0,
+          "motionType": 2,
+          "effectFrames": "40:1900284:2:4:0&40:5041333:1:1:0&40:5028062:2:1:0&40:5028071:1:1:0",
+          "attackFrames": "110:3:2:2-120:3:2:2-130:3:2:2-140:3:2:2-150:3:2:2-160:3:2:2-170:3:2:2-180:3:2:2-190:3:2:2-200:73:2:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000021,
+          "equipCondition": null,
+          "2QoE3PtB": 0,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": "239473",
+          "n1eAG69i": "2,11",
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "blasting_zone",
+      "ffbeId": 226622,
+      "name": "Blasting Zone",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 48,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.6,
+      "hitCount": 1,
+      "attackFrames": [
+        40
+      ],
+      "moveType": "stationary",
+      "motion": "atk",
+      "desc": "Physical damage (1.6x) to all enemies",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "squall_blasting_zone",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/squall/skills/blasting_zone/source/skill-source.json",
+        "sha256": "ece7ffe8f7b95adb72ccbd51ee89f3398f7795e40db0dc26843423bcd14d99f5"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 8,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 8 / move 4: stationary atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 40,
+          "weight": 1
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 226622,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 226622,
+          "name": "Blasting Zone",
+          "rarity": 8,
+          "dispOrder": 2732,
+          "cost": 48,
+          "6p90IFnC": null,
+          "target": "1",
+          "targetRange": "2",
+          "oL6zdpD0": 3,
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 1,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 4,
+          "processId": "21",
+          "PI18xnkD": "0",
+          "processParam": "0,0,200,-50",
+          "H4zD2IQ5": 0,
+          "motionType": 8,
+          "effectFrames": "0:5013920:2:2:0&0:5025530:1:2:0&0:5003740:2:4:0",
+          "attackFrames": "40:100:2:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000054,
+          "equipCondition": null,
+          "2QoE3PtB": 0,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": null,
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "rough_divide",
+      "ffbeId": 226620,
+      "name": "Rough Divide",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 20,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 2,
+      "attackFrames": [
+        32,
+        32
+      ],
+      "moveType": "stationary",
+      "motion": "atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "squall_rough_divide",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/squall/skills/rough_divide/source/skill-source.json",
+        "sha256": "e0edcfe21eb8d7da6f8e49376261a0b65361c01a07489e506066a4c4780d6de0"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 8,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 8 / move 4: stationary atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 32,
+          "weight": 0.5
+        },
+        {
+          "frame": 32,
+          "weight": 0.5
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 226620,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 226620,
+          "name": "Rough Divide",
+          "rarity": 5,
+          "dispOrder": 2730,
+          "cost": 0,
+          "6p90IFnC": null,
+          "target": "1@3@1",
+          "targetRange": "1@0@1",
+          "oL6zdpD0": 3,
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 1,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 4,
+          "processId": "21@125@24",
+          "PI18xnkD": "0@0@0",
+          "processParam": "0,0,2500,-50@800,800@0,-85,0,0,3,1",
+          "H4zD2IQ5": 0,
+          "motionType": 8,
+          "effectFrames": "0:5003720:2:4:0&0:5025520:1:1:0&0:5025521:2:1:0&30:5000340:1:1:0&0:5017831:2:3:0&0:5017841:1:3:0",
+          "attackFrames": "32:100:2:2@32:100:2:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000039,
+          "equipCondition": null,
+          "2QoE3PtB": 0,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": "2:400",
+          "6ZEyK95f": "226620",
+          "n1eAG69i": "11",
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "lion_heart",
+      "ffbeId": 208000105,
+      "name": "Lion Heart",
+      "rarity": 5,
+      "level": 1,
+      "type": "LIMIT",
+      "mpCost": 0,
+      "scope": "single_enemy",
+      "damageMultiplier": 6,
+      "hitCount": 17,
+      "attackFrames": [
+        98,
+        118,
+        146,
+        156,
+        203,
+        225,
+        241,
+        255,
+        263,
+        273,
+        285,
+        293,
+        305,
+        321,
+        333,
+        458,
+        580
+      ],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Limit Burst: Physical damage (6x) to one enemy",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "squall_lion_heart",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/squall/skills/lion_heart/source/skill-source.json",
+        "sha256": "6f32c44f94a543c8e91cd41ba9c6d8281029bbe9919af31747484e8d88fbd2af"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "target",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "limit_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 1,
+          "sourceMoveType": 1,
+          "note": "Drafted from motion 1 / move 1: dash with limit_atk body (LB rows carry no motionType; reviewed adaptation)."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 98,
+          "weight": 0.03
+        },
+        {
+          "frame": 118,
+          "weight": 0.03
+        },
+        {
+          "frame": 146,
+          "weight": 0.03
+        },
+        {
+          "frame": 156,
+          "weight": 0.03
+        },
+        {
+          "frame": 203,
+          "weight": 0.03
+        },
+        {
+          "frame": 225,
+          "weight": 0.03
+        },
+        {
+          "frame": 241,
+          "weight": 0.03
+        },
+        {
+          "frame": 255,
+          "weight": 0.03
+        },
+        {
+          "frame": 263,
+          "weight": 0.03
+        },
+        {
+          "frame": 273,
+          "weight": 0.03
+        },
+        {
+          "frame": 285,
+          "weight": 0.03
+        },
+        {
+          "frame": 293,
+          "weight": 0.03
+        },
+        {
+          "frame": 305,
+          "weight": 0.03
+        },
+        {
+          "frame": 321,
+          "weight": 0.03
+        },
+        {
+          "frame": 333,
+          "weight": 0.03
+        },
+        {
+          "frame": 458,
+          "weight": 0.05
+        },
+        {
+          "frame": 580,
+          "weight": 0.5
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "LIMIT",
+        "id": 208000105,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "limitBurstId": 208000105,
+          "name": "Lion Heart",
+          "limitBurstType": 1,
+          "target": "1",
+          "targetRange": "1",
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 1,
+          "J35nicFV": 0,
+          "skillType": 1,
+          "aR5i4ewA": 0,
+          "KosY4a18": 2,
+          "Af2Pc0Jz": 1,
+          "processId": "21",
+          "PI18xnkD": "0",
+          "processParam": "0,0,610,-50",
+          "H4zD2IQ5": 0,
+          "fileInfo": null,
+          "effectFrame": "0:8004930:2:4:0&0:8004931:1:3:0&0:8004932:1:3:0",
+          "attackFrames": "98:3:2:2-118:3:2:2-146:3:2:2-156:3:2:2-203:3:2:2-225:3:2:2-241:3:2:2-255:3:2:2-263:3:2:2-273:3:2:2-285:3:2:2-293:3:2:2-305:3:2:2-321:3:2:2-333:3:2:2-458:5:2:2-580:50:2:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000000,
+          "description": "Deal partial unmitigated damage to one enemy",
+          "58bfqWsR": 1,
+          "6ZEyK95f": null,
+          "effectFrames": "0:8004930:2:4:0&0:8004931:1:3:0&0:8004932:1:3:0"
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    }
+  ]
+}

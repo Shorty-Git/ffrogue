@@ -40,5 +40,7 @@ function sourceHitDistribution(source,plan,offset){
   });
   if(JSON.stringify(hits)!==JSON.stringify(plan.sourceHits) || hits.reduce((sum,h)=>sum+h.weight,0)!==100*groups)
     throw Error('Matching complete 100-percent source hit distribution required');
-  return hits.map(hit=>({frame:hit.frame+offset,weight:hit.weight/(100*groups)}));
+  // Processes run in parallel, so their hits interleave in time; the timeline is ordered by frame
+  // (stable: equal frames keep their serialized process order).
+  return hits.map(hit=>({frame:hit.frame+offset,weight:hit.weight/(100*groups)})).sort((a,b)=>a.frame-b.frame);
 }

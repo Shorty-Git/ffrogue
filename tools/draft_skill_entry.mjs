@@ -15,15 +15,19 @@ const target = String(raw.target ?? '1').split('@')[0], range = String(raw.targe
 const heal = arg('--heal') && Number(arg('--heal')), buff = arg('--buff') && Number(arg('--buff')), revive = arg('--revive') && Number(arg('--revive'));
 const friendly = !!(heal || buff || revive);
 const scope = friendly ? 'party' : range === '2' ? 'all_enemies' : 'single_enemy';
-const motion = raw.motionType ?? 2, move = raw.moveType ?? 4;
+// Limit Burst rows carry no motionType: single-target LBs dash in with the limit_atk body (reviewed
+// adaptation, as Omnislash), area LBs play limit_atk where the caster stands. They cost no MP.
+const limit = src.kind === 'LIMIT';
+const motion = raw.motionType ?? (limit ? 1 : 2), move = raw.moveType ?? (limit ? (scope === 'single_enemy' ? 1 : 4) : 4);
 const dash = motion === 1 && move === 1;
-const clip = motion === 2 || (src.kind === 'MAGIC') ? 'magic_atk' : 'atk';
-const mult = Number(arg('--mult', scope === 'all_enemies' ? 1.6 : 2.5));
-const mp = Number(arg('--mp', Math.max(8, Math.min(60, Number(raw.cost) || 20))));
+const clip = !limit && (motion === 2 || src.kind === 'MAGIC') ? 'magic_atk' : 'atk';
+const bodyClip = limit ? 'limit_atk' : clip;
+const mult = Number(arg('--mult', limit ? (scope === 'all_enemies' ? 3.5 : 6) : scope === 'all_enemies' ? 1.6 : 2.5));
+const mp = limit ? 0 : Number(arg('--mp', Math.max(8, Math.min(60, Number(raw.cost) || 20))));
 const desc = heal ? `Restore ${heal} HP to all living allies (no revival).`
   : revive ? `All living allies revive once with ${Math.round(revive * 100)}% HP if K.O. within 3 rounds.`
   : buff ? `Boost physical damage of all allies by ${Math.round((buff - 1) * 100)}% for 3 rounds. No HP damage.`
-  : `${clip === 'magic_atk' && src.kind === 'MAGIC' ? 'Magic' : 'Physical'} damage (${mult}x) to ${scope === 'all_enemies' ? 'all enemies' : 'one enemy'}`;
+  : `${limit ? 'Limit Burst: ' : ''}${clip === 'magic_atk' && src.kind === 'MAGIC' ? 'Magic' : 'Physical'} damage (${mult}x) to ${scope === 'all_enemies' ? 'all enemies' : 'one enemy'}`;
 const entry = {
   id, ffbeId: src.id, name: raw.name, rarity: 5, level: 1, type: src.kind, mpCost: mp, scope,
   damageMultiplier: friendly ? 1 : mult, hitCount: friendly ? 0 : hits.length, attackFrames: hits.map(h => h[0]),
@@ -33,16 +37,17 @@ const entry = {
   scenePresentation: key, importStatus: 'imported', requiresSourceScene: true,
   preparedSourceReceipt: {file, sha256: crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex')},
   actionChoreography: {schema: 'source-action-v1', movement: dash ? 'target' : 'stationary', travelTiming: 'prepared',
-    readiness: clip === 'magic_atk' ? 'magic-standby' : 'none', body: {mode: 'clips', phases: [{frame: 0, clip}]},
+    readiness: clip === 'magic_atk' ? 'magic-standby' : 'none', body: {mode: 'clips', phases: [{frame: 0, clip: bodyClip}]},
     review: {basis: 'reviewed-adaptation', sourceMotionType: motion, sourceMoveType: move,
-      note: `Drafted from motion ${motion} / move ${move}: ${dash ? 'dash with atk body' : `stationary ${clip} body`}.`}},
+      note: `Drafted from motion ${motion} / move ${move}: ${dash ? `dash with ${bodyClip} body` : `stationary ${bodyClip} body`}${limit ? ' (LB rows carry no motionType; reviewed adaptation)' : ''}.`}},
 };
 if (friendly) {
   entry.allyTargeting = 'living-allies';
   entry.allyEvents = [{frame: hits[0][0] + off, effects: [heal ? {kind: 'heal', amount: heal} : revive ? {kind: 'auto-revive', hpFraction: revive, turns: 3} : {kind: 'physical-boost', multiplier: buff, turns: 3}]}];
   entry.friendlyTargetReview = {sourceTarget: raw.target, sourceRange: raw.targetRange,
     note: `Original target ${raw.target} / range ${raw.targetRange} (process ${raw.processId}); adapted to ${heal ? `a fixed ${heal} HP heal` : revive ? `auto-revive at ${revive} HP for 3 rounds` : `physical-boost x${buff} for 3 rounds`} on all living allies.`};
-} else entry.damageEvents = hits.map(([frame, weight]) => ({frame: frame + off, weight: weight / (100 * groups)}));
+} else entry.damageEvents = hits.map(([frame, weight]) => ({frame: frame + off, weight: weight / (100 * groups)}))
+  .sort((a, b) => a.frame - b.frame); // parallel '@' processes interleave; same order as source-damage-events.mjs
 const path = `tools/characters/${character}.json`, recipe = JSON.parse(fs.readFileSync(path, 'utf8'));
 const at = recipe.skills.findIndex(s => s.id === id || s.ffbeId === src.id);
 if (at >= 0) recipe.skills[at] = entry; else recipe.skills.push(entry);

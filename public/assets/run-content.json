@@ -2,14 +2,14 @@
   "schemaVersion": 1,
   "units": {
     "cloud": {
-      "variantLabel": "FFVII \u00b7 Classic",
+      "variantLabel": "FFVII · Classic",
       "identity": "207000105",
       "unitId": "207000105",
       "rarity": 5,
       "canonicalIdentity": "ff7:cloud-strife"
     },
     "aerith": {
-      "variantLabel": "FFVII \u00b7 Classic",
+      "variantLabel": "FFVII · Classic",
       "identity": "207000405",
       "unitId": "207000405",
       "rarity": 5,
@@ -22,32 +22,39 @@
       "canonicalIdentity": "ff7:barret-wallace"
     },
     "cloud_of_darkness": {
-      "variantLabel": "FFIII \u00b7 Base Unit",
+      "variantLabel": "FFIII · Base Unit",
       "identity": "203000803",
       "unitId": "203000803",
       "rarity": 3,
       "canonicalIdentity": "ff3:cloud-of-darkness"
     },
     "cloud_ac": {
-      "variantLabel": "FFVII \u00b7 Advent Children",
+      "variantLabel": "FFVII · Advent Children",
       "identity": "207001605",
       "unitId": "207001605",
       "rarity": 5,
       "canonicalIdentity": "ff7:cloud-strife"
     },
     "delita": {
-      "variantLabel": "FFT \u00b7 Base Unit",
+      "variantLabel": "FFT · Base Unit",
       "identity": "253000205",
       "unitId": "253000205",
       "rarity": 5,
       "canonicalIdentity": "fft:delita-heiral"
     },
     "jack": {
-      "variantLabel": "Type-0 \u00b7 Base Unit",
+      "variantLabel": "Type-0 · Base Unit",
       "identity": "254000603",
       "unitId": "254000603",
       "rarity": 3,
       "canonicalIdentity": "type0:jack"
+    },
+    "squall": {
+      "variantLabel": "FFVIII · Base Unit",
+      "identity": "208000105",
+      "unitId": "208000105",
+      "rarity": 5,
+      "canonicalIdentity": "ff8:squall-leonhart"
     }
   },
   "forms": [
@@ -249,6 +256,32 @@
         "manifestSha256": "bf5e74fc207cc9c190bf4246a811cfffac643aaa51fe5aab7d7161c98d45996f",
         "braveShiftUnitId": "253000237"
       }
+    },
+    {
+      "key": "squall_form6",
+      "identityKey": "squall",
+      "identity": "208000105",
+      "unitId": "208000106",
+      "rarity": 6,
+      "awakensFrom": "squall",
+      "assetPath": "assets/forms/squall_form6",
+      "source": {
+        "recipe": "tools/characters/squall_form6.json",
+        "manifestSha256": "21477355b023463b00b8ad6a276bfc2fa50d0e19877e0da46cb0731599490262"
+      }
+    },
+    {
+      "key": "squall_form7",
+      "identityKey": "squall",
+      "identity": "208000105",
+      "unitId": "208000107",
+      "rarity": 7,
+      "awakensFrom": "squall_form6",
+      "assetPath": "assets/forms/squall_form7",
+      "source": {
+        "recipe": "tools/characters/squall_form7.json",
+        "manifestSha256": "5e550f7e90fd729da3f8cbb2e21b69731fc9bb869c50b77aa90d6cd3c05aef67"
+      }
     }
   ],
   "canonicalCharacters": {
@@ -269,6 +302,9 @@
     },
     "type0:jack": {
       "label": "Jack"
+    },
+    "ff8:squall-leonhart": {
+      "label": "Squall Leonhart"
     }
   }
 }

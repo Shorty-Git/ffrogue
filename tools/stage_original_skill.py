@@ -83,7 +83,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--report', type=Path, required=True)
     parser.add_argument('--skill-id', type=int, required=True)
-    parser.add_argument('--kind', choices=['ABILITY', 'MAGIC', 'MONSTER_SKILL'], default='ABILITY')
+    parser.add_argument('--kind', choices=['ABILITY', 'MAGIC', 'LIMIT', 'MONSTER_SKILL'], default='ABILITY')
     parser.add_argument('--index', type=Path, default=Path('tools/data/android-cpk-audit/members.jsonl'))
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--cpk-reader', type=Path, default=Path('rawdata/ffbe_asset_dump/tools/cpk.py'))

@@ -34,7 +34,10 @@ for (const selected of report.selected) console.log(`  ${selected.id}: ${selecte
 if (!args.includes('--publish') && !args.includes('--publish-skills-only') && !args.includes('--prepare-body-only')) process.exit(0);
 if(args.includes('--prepare-body-only') && (args.includes('--publish')||args.includes('--publish-skills-only')))
   throw Error('Offline body preparation cannot publish assets');
-if(args.includes('--prepare-body-only') ? report.missingStates.length || report.files.some(f=>!f.exists) : !report.publishable)
+// --body-first publishes a new character's body before its skills exist (import_full_character.mjs); the run
+// catalog ignores characters without published skills, so the roster is unaffected until skills land.
+const bodyOnly=args.includes('--prepare-body-only')||args.includes('--body-first');
+if(bodyOnly ? report.missingStates.length || report.files.some(f=>!f.exists) : !report.publishable)
   throw Error('Import blocked. Resolve report issues before publishing. No game files were changed.');
 const run = (command, parameters) => {
   const result = spawnSync(command, parameters, { stdio: 'inherit', shell: false });

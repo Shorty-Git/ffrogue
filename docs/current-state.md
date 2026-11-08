@@ -82,6 +82,7 @@ fights alone. Not touched: Chant, buffs/debuffs, enemy patterns, reward pool, MP
 
 | Content | Entry | Doc |
 | --- | --- | --- |
+| New character (all-in-one) | `node tools/import_full_character.mjs --key <k> --unit <id> ...` | character-import-workflow.md (top) |
 | Characters / bodies | `node tools/import_character.mjs --recipe tools/characters/<key>.json` | character-import-workflow.md |
 | Skills / Limit Bursts | plan → stage → prepare → publish (see below) | skill-reconstruction-workflow.md (top entry) |
 | Skill icons | `node tools/export_skill_icons.mjs` after any skill publication | character-import-workflow.md §5 |
@@ -225,7 +226,7 @@ DONE (2026-11-08): raw-data audit plus a sixth source (Memorial download cache, 
 There is little byte duplication (2.2 of 30 GB), so the sources were not moved; source priority rules apply instead.
 Details: docs/asset_structure.md "Raw-data sources and duplicate audit". Cleanup (developer-approved):
 tools/data shrank from 92 to 37 GB; all 92 tests and tsc pass afterwards.
-Then, in order (scene transition DONE 2026-11-08) →
+Then, in order (scene transition DONE; one-command character importer DONE 2026-11-08 with Squall, see character-import-workflow.md top) →
 complete character importer (one command: body, poses, all skills via import_skill_batch +
 admit_skill_audio + icons + LB + forms; test on a new character, e.g. Tifa AC) → stage importer
 (stage + SSPB animations + original music + world enemies/bosses with their skills, mainline FF I–XVI

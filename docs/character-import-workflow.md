@@ -1,5 +1,40 @@
 # Character and skill import standard
 
+## One-command import (2026-11-08) - start here for a new character
+
+```powershell
+node tools/import_full_character.mjs --key squall --unit 208000105 --name SQUALL --canonical ff8:squall-leonhart --label "Squall Leonhart" --game FFVIII [--max-skills 8] [--skills <ids>] [--plan-only]
+```
+
+The tool chains the reviewed steps below and keeps each step's own checks:
+1. Recipe from the shared template.
+2. Inspection.
+3. Body publication (`import_character --publish --body-first`: the run catalog ignores a character
+   without published skills, so the roster is unaffected meanwhile).
+4. Skill selection: active, damaging, source motion 1/2/8 (or LIMIT), at least 30 % resolvable
+   source effect files, sorted by coverage.
+5. `import_skill_batch.sh` (authoring-free path).
+6. Dropping every skill that failed or that the re-inspection still blocks: recipe entry,
+   presentation and registry entry are removed, with the reason recorded.
+7. Skill metadata, then `admit_skill_audio`.
+8. Same-series 6★/7★ forms (non-NV) prepared into `public/assets/forms/<key>_form<r>` with
+   `assetKey`, registered in run-content.json.
+9. Roster unit and canonical identity.
+10. wrap_wide_sheets, annotate_clip_extents, export_skill_icons and prepare_victory_poses.
+
+Receipt: `tools/data/full-import/<key>/receipt.json`. It lists imported, failed and not-selected skills
+with reasons. `--plan-only` writes the selection without changing anything. Review GIFs:
+`node tools/capture_battle_screencast.mjs <dir> --reserve <key> --hero 2 [--skill <id>]`, then
+`tools/screencast_to_gif.py`. Gameplay values are the drafter's provisional defaults. Limit Bursts are
+drafted like Omnislash: no MP, dash with `limit_atk` for single targets.
+
+First run (Squall, 208000105) imported Fated Circle, Flame Barret, Blasting Zone, Rough Divide and Lion
+Heart, all with original sounds, plus forms 6 and 7. Not imported:
+- Draw: effect rectangle mode 6 is unresearched.
+- Keen Edge: source motion 5 has no choreography.
+- Wind, Thunder and Light Barret: 85-91 % of effect files missing.
+- Lion's Might: a self buff with no reviewed mechanic.
+
 ## Original class-up admission
 
 Use the master DB `unit_class_up` edge and matching `unit.unitSeries` for every

@@ -26,7 +26,8 @@ const skills = [];
 for (const unit of fs.readdirSync(unitsRoot).sort()) {
   const file = path.join(unitsRoot, unit, 'skills.json');
   if (!fs.existsSync(file)) continue;
-  for (const skill of JSON.parse(fs.readFileSync(file, 'utf8')).skills ?? []) skills.push({unit, skill});
+  // Limit Bursts have no ability/magic icon in FFBE; the battle UI shows them through the LB gauge.
+  for (const skill of JSON.parse(fs.readFileSync(file, 'utf8')).skills ?? []) if (skill.type !== 'LIMIT') skills.push({unit, skill});
 }
 
 fs.mkdirSync(output, {recursive: true});
