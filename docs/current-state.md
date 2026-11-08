@@ -251,6 +251,14 @@ badges read well; skill visuals and sounds approved). Polish before the next cha
    (cover 980 ms; then the arena fades up from the dark over 900 ms while the camera eases in and the
    command HUD rises; skippable, reduced motion respected). Old styles deleted. Verified with headless frames
    (tools/data/shatter-transition/shatter.gif).
+7. DONE (start sequence polish, 2026-11-08): the party slot machine is the "Fate Engine"
+   (src/ui/fateEngine.ts + fateEngine.css). Tiers: bronze 3★, silver 4★, gold 5★, rainbow 6-7★, NV.
+   Each tier has its own frame, landing burst, popping stars and FFBE summon sound (System.acb
+   se_menu_get_unit1-4; reel slide, fireworks, limit open and result cues in public/assets/audio/fate).
+   Rainbow/NV reels slow down with a glow first. A team verdict (Humble/Bright/Golden/Rainbow/Unbound)
+   scores the whole draw, because most base units are 5★. Reels decelerate and bounce. The lever has a
+   crystal handle, and ratchet/brake sounds were re-synthesised. Title crystal: faceted SVG FF crystal
+   (src/ui/titleCrystal.css) cycling blue, silver, bronze, gold and rainbow. GIFs: tools/data/start-sequence/.
 
 ## Open items
 

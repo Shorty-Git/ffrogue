@@ -4,6 +4,7 @@ import './ui/interfaceTheme.css';
 import './ui/combatHud.css';
 import './ui/ffbeTheme.css';
 import './ui/fateEngine.css';
+import './ui/titleCrystal.css';
 import {installRpgTheme} from './ui/designTokens';
 installRpgTheme();
 import { BootScene } from './scenes/BootScene';

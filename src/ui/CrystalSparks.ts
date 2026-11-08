@@ -9,8 +9,8 @@ export function startCrystalSparks(layer: HTMLElement): () => void {
   if (!layer.isConnected || reducedMotion.matches) return;
 
   const spark = document.createElement('i');
-  spark.style.setProperty('--spark-x', `${side * randomBetween(32, 47)}px`);
-  spark.style.setProperty('--spark-y', `${randomBetween(18, 62)}px`);
+  spark.style.setProperty('--spark-x', `${side * randomBetween(40, 72)}px`);
+  spark.style.setProperty('--spark-y', `${randomBetween(20, 160)}px`);
   spark.style.setProperty('--spark-size', `${randomBetween(7, 13)}px`);
   spark.style.setProperty('--spark-brightness', String(randomBetween(.65, 1)));
   spark.style.setProperty('--spark-duration', `${randomBetween(850, 1250)}ms`);
