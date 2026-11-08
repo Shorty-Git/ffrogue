@@ -36,7 +36,7 @@
 .victory-overlay .lead{display:none}
 .victory-overlay .reward-grid,.victory-overlay .replacement-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;padding:5px}
 .reward-option{position:relative;min-width:0;display:flex;flex-direction:column;animation:reward-popup .5s cubic-bezier(.175,.885,.32,1.275) both;animation-delay:calc(.1s + var(--card-index,0)*.035s)}
-.victory-overlay .reward-card{width:100%;min-height:190px;height:auto;flex:1;display:grid;grid-template-columns:40px 1fr;padding:12px 13px;gap:7px;background:linear-gradient(145deg,color-mix(in srgb,var(--rpg-panel-light) 88%,transparent),color-mix(in srgb,var(--rpg-panel-bottom) 94%,transparent))}
+.victory-overlay .reward-card{width:100%;min-height:190px;height:auto;flex:1;display:grid;grid-template-columns:40px 1fr;padding:12px 13px;gap:7px;background:linear-gradient(145deg,var(--rpg-panel-light),var(--rpg-panel-bottom))}
 .victory-overlay .reward-card h2{font-size:20px;grid-column:2;grid-row:2}
 .victory-overlay .reward-card p{font-size:13px;line-height:1.5;grid-column:1/-1;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
 .victory-overlay .reward-card .eyebrow{font-size:8px;min-height:14px;letter-spacing:1px;grid-column:1/-1}
@@ -154,6 +154,6 @@
 
 .encounter-transition{position:fixed;inset:0;z-index:6000;isolation:isolate}
 .encounter-transition canvas{position:absolute;inset:0;width:100%;height:100%}
-.encounter-transition:is([data-phase=cover],[data-phase=loading]):not([data-style=shatter][data-phase=cover]) canvas{background:#02040b}
+.encounter-transition[data-phase=loading] canvas{background:#02040b}
 .encounter-transition button{position:absolute;right:clamp(12px,3vw,34px);bottom:clamp(12px,3vh,28px)}
 .encounter-transition button[hidden]{display:none}

@@ -1,8 +1,11 @@
 import {SHATTER_COVER_MS,SHATTER_CRACK,SHATTER_REVEAL_MS,paintShatterCover,paintShatterReveal} from './paintShatterEncounter';
 
+const FADE_COVER_MS=320;
+
 /**
- * Battle entry: the outgoing screen shatters like glass, then the arena fades up from the dark.
- * Masks the live arena until its first rendered frame; the scene owns all gameplay.
+ * Battle entry. 'shatter' (run start only): the outgoing screen breaks like glass. 'fade' (between
+ * fights): a short dip to dark. Both then fade the arena up from the dark. Masks the live arena until
+ * its first rendered frame; the scene owns all gameplay.
  */
 export class EncounterTransition {
   private readonly root = document.createElement('div');
@@ -17,7 +20,7 @@ export class EncounterTransition {
   private stopCover?:()=>void;
   private stopSound?:()=>void;
 
-  constructor(private readonly ui: HTMLElement, private readonly crackSound?:()=>()=>void) {
+  constructor(private readonly ui: HTMLElement, private readonly mode:'shatter'|'fade', private readonly crackSound?:()=>()=>void) {
     this.root.className = 'encounter-transition';
     this.root.dataset.phase = 'capture';
     this.root.setAttribute('role', 'dialog');
@@ -45,7 +48,7 @@ export class EncounterTransition {
   }
 
   /** Shatter the captured screen; `start` begins loading the battle underneath. */
-  async cover(start: () => void, onTimeout: () => void, capture:()=>Promise<HTMLCanvasElement>): Promise<void> {
+  async cover(start: () => void, onTimeout: () => void, capture?:()=>Promise<HTMLCanvasElement>): Promise<void> {
     let loading=false;
     const load=()=>{
       if(loading||!this.root.isConnected)return;
@@ -53,6 +56,26 @@ export class EncounterTransition {
       this.loading=setTimeout(onTimeout,30000);
       start();
     };
+    if(this.mode==='fade'||!capture){
+      const context=this.canvas.getContext('2d');
+      if(this.skipped||!context){this.root.dataset.phase='loading';load();return;}
+      this.canvas.width=innerWidth;this.canvas.height=innerHeight;
+      this.root.dataset.phase='fade';
+      this.covered=new Promise(resolve=>{
+        const started=performance.now();
+        const finish=()=>{cancelAnimationFrame(this.frame);this.stopCover=undefined;this.root.dataset.phase='loading';resolve();load();};
+        this.stopCover=finish;
+        const draw=(now:number)=>{
+          const progress=Math.min(1,(now-started)/FADE_COVER_MS);
+          context.clearRect(0,0,this.canvas.width,this.canvas.height);
+          context.fillStyle=`rgba(2, 4, 11, ${progress*progress*(3-2*progress)})`;
+          context.fillRect(0,0,this.canvas.width,this.canvas.height);
+          if(progress<1)this.frame=requestAnimationFrame(draw);else finish();
+        };
+        this.frame=requestAnimationFrame(draw);
+      });
+      return;
+    }
     let picture:HTMLCanvasElement|undefined;
     if(!this.skipped){
       let deadline:number|undefined;

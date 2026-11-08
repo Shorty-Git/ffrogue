@@ -1,10 +1,12 @@
-/* The Fate Engine: party slot machine (src/ui/fateEngine.ts owns tiers and timing). */
-.reel{--tier:#7f97b4;--tier-glow:#7f97b400;transition:box-shadow .3s}
-.tier-bronze{--tier:#c98b5a;--tier-glow:#c98b5a55}
-.tier-silver{--tier:#cfe0ef;--tier-glow:#b9d6f077}
-.tier-gold{--tier:#ffd36b;--tier-glow:#ffc94a99}
-.tier-rainbow{--tier:#ff9cf0;--tier-glow:#ff9cf0aa}
-.tier-nv{--tier:#ffe9a8;--tier-glow:#ffcf5cbb}
+/* The Fate Engine: party slot machine (src/ui/fateEngine.ts owns tiers and timing).
+   No color-mix()/color(): html2canvas cannot parse them, which breaks the encounter shatter snapshot. */
+.reel{--tier:#7f97b4;--tier-glow:#7f97b400;transition:box-shadow .3s;--tier-band:#0b1a33;--tier-line:#7f97b499}
+.tier-bronze{--tier:#c98b5a;--tier-glow:#c98b5a55;--tier-band:#2a1f1d;--tier-line:#c98b5a99}
+.tier-silver{--tier:#cfe0ef;--tier-glow:#b9d6f077;--tier-band:#1f2c3e;--tier-line:#cfe0ef99}
+.tier-gold{--tier:#ffd36b;--tier-glow:#ffc94a99;--tier-band:#2e2a1d;--tier-line:#ffd36b99}
+.tier-rainbow{--tier:#ff9cf0;--tier-glow:#ff9cf066;--tier-band:#2b1c3c;--tier-line:#ff9cf099}
+.tier-prism{--tier:#ff9cf0;--tier-glow:#ff9cf0aa;--tier-band:#2b1c3c;--tier-line:#ff9cf099}
+.tier-nv{--tier:#ffe9a8;--tier-glow:#ffcf5cbb;--tier-band:#2f2816;--tier-line:#ffe9a899}
 
 /* Reels: the tape decelerates into place and the result drops in with a small bounce. */
 .is-spinning .reel-tape{animation:fate-tape var(--stop-duration) cubic-bezier(.3,.1,.45,1) forwards}
@@ -18,20 +20,21 @@
 .is-tease .reel-window{animation:fate-tease .3s ease-in-out calc(var(--stop-duration) - .75s) 3 alternate both}
 @keyframes fate-tease{from{box-shadow:inset 0 0 0 #0000}to{box-shadow:inset 0 0 26px var(--tier-glow),0 0 18px var(--tier-glow)}}
 
-/* Landing burst behind the unit, sized by tier. */
+/* Landing burst behind the unit. 3-6★ get a soft glow; only 7★ (prism) and NV get the big rays. */
 .fate-burst{position:absolute;inset:-30%;pointer-events:none;opacity:0;z-index:0;mix-blend-mode:screen}
 .reel-window .final-symbol{position:relative;z-index:1}
 .tier-bronze .fate-burst,.tier-silver .fate-burst{background:radial-gradient(circle,var(--tier-glow),transparent 55%)}
-.tier-gold .fate-burst{background:repeating-conic-gradient(from 0deg,#ffd36b66 0 7deg,transparent 7deg 22deg),radial-gradient(circle,#ffe3a0cc,transparent 58%)}
-.tier-rainbow .fate-burst,.tier-nv .fate-burst{background:repeating-conic-gradient(from 0deg,#ff7a7a77 0 6deg,transparent 6deg 15deg,#ffe07a77 15deg 21deg,transparent 21deg 30deg,#7affb077 30deg 36deg,transparent 36deg 45deg,#7ac8ff77 45deg 51deg,transparent 51deg 60deg,#d18bff77 60deg 66deg,transparent 66deg 75deg),radial-gradient(circle,#ffffffdd,transparent 55%)}
+.tier-gold .fate-burst{background:radial-gradient(circle,#ffe3a0aa,transparent 55%)}
+.tier-rainbow .fate-burst{background:radial-gradient(circle,#ffffffaa,#ffb8f455 30%,#9fd8ff33 45%,transparent 58%)}
+.tier-prism .fate-burst,.tier-nv .fate-burst{background:repeating-conic-gradient(from 0deg,#ff7a7a77 0 6deg,transparent 6deg 15deg,#ffe07a77 15deg 21deg,transparent 21deg 30deg,#7affb077 30deg 36deg,transparent 36deg 45deg,#7ac8ff77 45deg 51deg,transparent 51deg 60deg,#d18bff77 60deg 66deg,transparent 66deg 75deg),radial-gradient(circle,#ffffffdd,transparent 55%)}
 .tier-nv .fate-burst{filter:sepia(.6) saturate(2.2) hue-rotate(-12deg)}
-.is-spinning.tier-bronze .fate-burst,.is-spinning.tier-silver .fate-burst{animation:fate-burst-small .6s ease-out var(--stop-duration) both}
-.is-spinning.tier-gold .fate-burst{animation:fate-burst-big 1.1s ease-out var(--stop-duration) both}
-.is-spinning.tier-rainbow .fate-burst,.is-spinning.tier-nv .fate-burst{animation:fate-burst-big 1.5s ease-out var(--stop-duration) both}
+.is-spinning:is(.tier-bronze,.tier-silver,.tier-gold,.tier-rainbow) .fate-burst{animation:fate-burst-small .7s ease-out var(--stop-duration) both}
+.is-spinning:is(.tier-prism,.tier-nv) .fate-burst{animation:fate-burst-big 1.5s ease-out var(--stop-duration) both}
 @keyframes fate-burst-small{0%{opacity:0;transform:scale(.4)}25%{opacity:.9}100%{opacity:0;transform:scale(1.1)}}
 @keyframes fate-burst-big{0%{opacity:0;transform:scale(.3) rotate(0)}18%{opacity:1}70%{opacity:.75}100%{opacity:.35;transform:scale(1.15) rotate(40deg)}}
-/* After the draw, gold and better keep slowly turning rays so the result reads at a glance. */
-.reel:not(.is-spinning):is(.tier-gold,.tier-rainbow,.tier-nv) .fate-burst{opacity:.35;animation:fate-rays 14s linear infinite}
+/* After the draw, 7★ and NV keep slowly turning rays; 6★ keeps a faint rainbow glow. */
+.reel:not(.is-spinning):is(.tier-prism,.tier-nv) .fate-burst{opacity:.35;animation:fate-rays 14s linear infinite}
+.reel:not(.is-spinning).tier-rainbow .fate-burst{opacity:.25}
 @keyframes fate-rays{to{transform:rotate(360deg)}}
 
 /* Reel frame and stars in the tier colour. */
@@ -41,8 +44,9 @@
 @keyframes fate-frame{from{opacity:0;box-shadow:inset 0 0 40px var(--tier-glow),0 0 40px var(--tier-glow)}to{opacity:1}}
 .reel[data-tier] .reel-form{color:var(--tier)}
 .fate-stars{display:flex;justify-content:center;gap:1px;min-height:18px;margin-bottom:2px;color:var(--tier);font-size:15px;line-height:1;text-shadow:0 0 6px var(--tier-glow),0 1px 0 #000}
-.tier-rainbow .fate-stars,.tier-nv .fate-stars{color:#fff;text-shadow:0 0 5px #ff9cf0,0 0 9px #8fd3ff,0 1px 0 #000}
-.reel:not(.is-spinning).tier-rainbow::after,.reel:not(.is-spinning).tier-rainbow .fate-stars{animation:fate-hue 2.4s linear infinite}
+.tier-rainbow .fate-stars,.tier-prism .fate-stars,.tier-nv .fate-stars{color:#fff;text-shadow:0 0 5px #ff9cf0,0 0 9px #8fd3ff,0 1px 0 #000}
+.reel:not(.is-spinning):is(.tier-rainbow,.tier-prism)::after,.reel:not(.is-spinning):is(.tier-rainbow,.tier-prism) .fate-stars{animation:fate-hue 2.4s linear infinite}
+.tier-rainbow::after{box-shadow:inset 0 0 8px var(--tier-glow)}
 @keyframes fate-hue{to{filter:hue-rotate(360deg)}}
 .fate-stars i{font-style:normal}
 .is-spinning .fate-stars i{animation:fate-star .32s cubic-bezier(.2,1.8,.4,1) calc(var(--stop-duration) + .1s + var(--star,0) * .07s) both}
@@ -51,8 +55,7 @@
 
 /* Whole-machine flash when a reel lands (data-flash is set per landing). */
 .slot-machine::before{content:'';position:absolute;inset:0;pointer-events:none;opacity:0;z-index:5;border-radius:inherit}
-.slot-machine[data-flash=gold]::before{background:radial-gradient(circle,#ffe7a6aa,transparent 70%);animation:fate-flash .5s ease-out}
-.slot-machine:is([data-flash=rainbow],[data-flash=nv])::before{background:radial-gradient(circle,#ffffffee,#ffd1f4aa 40%,transparent 75%);animation:fate-flash .8s ease-out}
+.slot-machine:is([data-flash=prism],[data-flash=nv])::before{background:radial-gradient(circle,#ffffffee,#ffd1f4aa 40%,transparent 75%);animation:fate-flash .8s ease-out}
 @keyframes fate-flash{from{opacity:1}to{opacity:0}}
 .slot-machine{position:relative}
 .spinning .machine-lights i{animation:fate-lamp .16s steps(2) infinite}
@@ -60,10 +63,10 @@
 @keyframes fate-lamp{0%{background:#ffe1a0;box-shadow:0 0 12px #ffd68b}100%{background:#40698e;box-shadow:none}}
 
 /* Verdict ribbon for the whole draw. */
-.fate-verdict{display:flex;align-items:baseline;justify-content:center;gap:12px;margin:12px -14px 0;padding:8px 12px;border-block:1px solid color-mix(in srgb,var(--tier) 60%,transparent);background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--tier) 22%,#04102a) 30%,color-mix(in srgb,var(--tier) 22%,#04102a) 70%,transparent)}
+.fate-verdict{display:flex;align-items:baseline;justify-content:center;gap:12px;margin:12px -14px 0;padding:8px 12px;border-block:1px solid var(--tier-line);background:linear-gradient(90deg,transparent,var(--tier-band) 30%,var(--tier-band) 70%,transparent)}
 .fate-verdict b{font:700 20px/1.1 var(--rpg-display,serif);letter-spacing:.12em;text-transform:uppercase;color:var(--tier);text-shadow:0 0 12px var(--tier-glow),0 2px 0 #000}
 .fate-verdict span{font-size:11px;letter-spacing:.08em;color:#c9dcef;text-transform:uppercase}
-.fate-verdict.tier-rainbow b{background:linear-gradient(90deg,#ff9b9b,#ffe68a,#9bffbd,#8fd3ff,#e0a5ff);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none;filter:drop-shadow(0 0 8px #ffb8f4aa)}
+.fate-verdict:is(.tier-rainbow,.tier-prism) b{background:linear-gradient(90deg,#ff9b9b,#ffe68a,#9bffbd,#8fd3ff,#e0a5ff);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none;filter:drop-shadow(0 0 8px #ffb8f4aa)}
 .fate-verdict.is-pending{animation:fate-verdict .5s cubic-bezier(.2,1.4,.4,1) var(--verdict-at) both}
 .fate-verdict:not(.is-pending){animation:fate-verdict .35s ease-out both}
 @keyframes fate-verdict{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:none}}
@@ -78,5 +81,10 @@
 
 @media(prefers-reduced-motion:reduce){
  .is-spinning .final-symbol,.is-spinning .reel-result,.is-tease .reel-window,.fate-burst,.is-spinning .fate-stars i,.is-spinning.reel[data-tier]::after,.slot-machine::before,.fate-verdict{animation:none!important}
- .reel:not(.is-spinning):is(.tier-gold,.tier-rainbow,.tier-nv) .fate-burst{opacity:.3}
+ .reel:not(.is-spinning):is(.tier-prism,.tier-nv) .fate-burst{opacity:.3}
 }
+
+/* Stable layout: empty, spinning and settled reels share one height, so pulling never shifts the page. */
+.reel-result{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;min-height:132px}
+.reel-variant{min-height:2.4em}
+.fate-verdict.is-empty{visibility:hidden}

@@ -8,8 +8,9 @@ import {rewardPopupLayout} from './rewardLayout.mjs';
 import type {RewardStageBounds} from './rewardLayout.mjs';
 import type {AnimationMeta,UnitManifest} from '../types/manifest';
 import {bindSlotLever} from './SlotLever';
-import {fateTier,fateTimeline,fateVerdict,tierRank,FATE_SOUND,type FateTier,type FateSound} from './fateEngine';
+import {fateTier,fateTimeline,fateVerdict,tierRank,isShowTier,FATE_SOUND,type FateTier,type FateSound} from './fateEngine';
 import {startCrystalSparks} from './CrystalSparks';
+import {startTitleCrystal,titleCrystalMarkup} from './TitleCrystal';
 import {formAt,rankLabel} from '../run/unitForms.mjs';
 const esc=(s:unknown)=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
 
@@ -22,16 +23,6 @@ function bodyPreview(root:string,clip:AnimationMeta,classes:string,style:string)
   html:`<div class="${classes}${emission?' layered-body-preview':''}" style="${style};background-image:url('${esc(body)}')">${emission?`<span aria-hidden="true" class="body-emission" style="background-image:url('${esc(emission)}')"></span>`:''}</div>`,
  };
 }
-/** Title crystal: a faceted FF crystal (front facets light to dark), colour cycling in titleCrystal.css. */
-const titleCrystal=`<div class="crystal-sigil"><span class="crystal-halo"></span><svg class="crystal-svg" viewBox="0 0 120 230" role="img" aria-label="Crystal">
- <defs><clipPath id="crystal-shape"><polygon points="60,4 108,98 60,226 12,98"/></clipPath>
- <linearGradient id="crystal-shine" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".85"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs>
- <polygon class="facet f-light" points="60,4 12,98 40,108"/><polygon class="facet f-mid" points="60,4 40,108 60,114 80,108"/>
- <polygon class="facet f-dark" points="60,4 80,108 108,98"/><polygon class="facet f-mid" points="12,98 40,108 60,226"/>
- <polygon class="facet f-deep" points="40,108 60,114 80,108 60,226"/><polygon class="facet f-dark" points="80,108 108,98 60,226"/>
- <polyline class="crystal-edges" points="60,4 12,98 60,226 108,98 60,4 40,108 60,226 80,108 60,4"/><polyline class="crystal-edges" points="12,98 40,108 60,114 80,108 108,98"/>
- <g clip-path="url(#crystal-shape)"><rect class="crystal-sweep" x="-60" y="-20" width="44" height="280" fill="url(#crystal-shine)" transform="rotate(18 60 115)"/></g>
-</svg></div>`;
 export class RunUI{
  readonly root:HTMLElement;
  onSound:(event:import('../audio/battleMusic').UiSound,rate?:number)=>void|(()=>void)=()=>{};
@@ -98,14 +89,14 @@ export class RunUI{
    if(index===reels.length-1)stopRolling?.();
    this.onSound('reelStop',[.92,1,1.09][index]);
    const tier=tiers[index],rank=tierRank(tier);
-   this.onSample(FATE_SOUND[tier],rank>=tierRank('gold')?.36:.3);
-   machine.dataset.flash='';void machine.offsetWidth;machine.dataset.flash=tier;
-   if(rank>=tierRank('rainbow')){this.onSample(FATE_SOUND.fireworks,.28);if(tier==='nv')this.onSample(FATE_SOUND.awaken,.24);}
-   if(shake&&!reduced&&rank>=tierRank('gold')){
-    const strength=rank>=tierRank('rainbow')?8:3;
-    machine.animate([{transform:'translate(0,0)'},{transform:`translate(-${strength}px,${strength/2}px)`},
-     {transform:`translate(${strength*.6}px,-${strength/3}px)`},{transform:`translate(-${strength*.3}px,0)`},{transform:'translate(0,0)'}],
-     {duration:rank>=tierRank('rainbow')?260:150,easing:'ease-out'});
+   const show=isShowTier(tier);
+   this.onSample(FATE_SOUND[tier],show?.36:rank>=tierRank('gold')?.32:.3);
+   // The full show (flash, shake, fireworks) belongs to 7★ and NV only.
+   if(show){
+    machine.dataset.flash='';void machine.offsetWidth;machine.dataset.flash=tier;
+    this.onSample(FATE_SOUND.fireworks,.28);if(tier==='nv')this.onSample(FATE_SOUND.awaken,.24);
+    if(shake&&!reduced)machine.animate([{transform:'translate(0,0)'},{transform:'translate(-8px,4px)'},
+     {transform:'translate(5px,-3px)'},{transform:'translate(-2px,0)'},{transform:'translate(0,0)'}],{duration:260,easing:'ease-out'});
    }
   }));
   at(Math.max(stops[stops.length-1]??0,end-.35),()=>this.onSample(FATE_SOUND.verdict,.3));
@@ -124,11 +115,11 @@ export class RunUI{
   return `<div class="pixel-stage">${preview.html}</div>`;}
  member(m:RunMember){const c=this.catalog[m.key];return `<article class="rpg-panel member-card"><header class="member-head"><span class="portrait-frame"><img class="portrait" src="${esc(c.portrait)}" alt="${esc(c.name)}"></span><span class="member-title"><strong>${esc(c.name)}</strong><span class="stars">${rankLabel(m)}</span></span></header>${this.sprite(m)}<div class="member-gauges">${gaugeRow('hp',m.hp,Math.round(c.maxHp*m.stats.hp))}${gaugeRow('mp',m.mp,memberMaxMp(c,m))}</div>${m.skills.map(a=>{const s=skillForRun(c.skills.find(s=>s.id===a.id)!,m);return `<div class="skill-copy"><b>${skillIcon(s)}${esc(s.name)}${a.level>1?' +'+(a.level-1):''}</b><p>${esc(skillDescription(s))}</p></div>`;}).join('')}</article>`;}
  title(kicker:string,title:string,subtitle:string){return `<div class="eyebrow">${esc(kicker)}</div><h1>${title}</h1><p class="lead">${esc(subtitle)}</p>`;}
- menu(hasSave:boolean,error:string|null){const canStart=new Set(Object.values(this.catalog).map(c=>c.canonicalIdentity).filter(Boolean)).size>=3;this.show(`${this.title('FINAL FANTASY ROGUE','FINAL FANTASY<br><em>ROGUE</em>','Three allies. One journey. A different story with every seed.')}<div class="crystal-stage" aria-hidden="true">${titleCrystal}<span class="crystal-sparks"></span></div><div class="rpg-panel menu-panel"><label class="seed-label">RUN SEED <input id="run-seed" maxlength="64" placeholder="Leave blank for a new fate" autocomplete="off"></label>${hasSave?this.button('continue','Continue journey'):''}${this.button('play',hasSave?'Start a new journey':'Play',false,!canStart)}${!canStart?'<p class="muted">Three reviewed, distinct characters are required to begin.</p>':''}${error?`<p role="alert" class="error">${esc(error)}</p>`:''}<p class="muted">Short expedition · 2 areas · 4 encounters<br>One free team draw and three team rerolls</p></div><footer>Your journey is saved on this device</footer>`,'menu');this.crystalCleanup=startCrystalSparks(this.root.querySelector<HTMLElement>('.crystal-sparks')!);}
+ menu(hasSave:boolean,error:string|null){const canStart=new Set(Object.values(this.catalog).map(c=>c.canonicalIdentity).filter(Boolean)).size>=3;this.show(`${this.title('A CRYSTAL-BOUND ROGUELIKE','FINAL FANTASY<br><em>ROGUE</em>','Three heroes from across the worlds. One expedition. A new fate every run.')}<div class="crystal-stage" aria-hidden="true">${titleCrystalMarkup()}<span class="crystal-sparks"></span></div><div class="rpg-panel menu-panel"><label class="seed-label">FATE SEED <input id="run-seed" maxlength="64" placeholder="Leave empty for a random fate" autocomplete="off"></label>${hasSave?this.button('continue','Continue the journey'):''}${this.button('play',hasSave?'Begin a new journey':'Begin the journey',false,!canStart)}${!canStart?'<p class="muted">Three reviewed, distinct characters are required to begin.</p>':''}${error?`<p role="alert" class="error">${esc(error)}</p>`:''}<p class="muted">Short expedition · 2 areas · 4 battles<br>One free draw from the Fate Engine, then three rerolls</p></div><footer>Your journey is saved on this device</footer>`,'menu');{const stopSparks=startCrystalSparks(this.root.querySelector<HTMLElement>('.crystal-sparks')!),stopCrystal=startTitleCrystal(this.root.querySelector<HTMLElement>('.crystal-stage')!);this.crystalCleanup=()=>{stopSparks();stopCrystal();};}}
  slots(run:RunState,busy:boolean){
   const hasTeam=run.party.length>0;
   const exhausted=hasTeam&&run.rerolls===0;
-  const hint=busy?'Drawing your team…':!hasTeam?'Pull the lever to draw your first team for free.':exhausted?'No team rerolls left. Begin the expedition with this team.':'Pull again to redraw the entire team, or begin your expedition.';
+  const hint=busy?'The reels are turning…':!hasTeam?'Pull the crystal lever to summon your party. The first draw is free.':exhausted?'The Fate Engine is spent. Set out with this party.':'Pull again to redraw all three heroes, or set out with this party.';
   const roster=Object.values(this.catalog);
   const tape=busy?`<div class="reel-tape" aria-hidden="true">${Array.from({length:18},(_,i)=>`<div class="tape-symbol"><img src="${esc(roster[i%roster.length].portrait)}" alt=""></div>`).join('')}</div>`:'';
   const tiers=run.party.map(member=>fateTier(member));
@@ -145,10 +136,10 @@ export class RunUI{
     <span class="slot-number">${String(i+1).padStart(2,'0')}</span>
     <div class="reel-window">${tape}<span class="fate-burst" aria-hidden="true"></span><div class="final-symbol">${member?this.sprite(member,true):'<span class="unknown-crystal">◆</span>'}</div></div>
     <div class="reel-result">
-     ${member?`<span class="fate-stars" aria-label="${member.rank==='NV'?'NV':member.rarity+' stars'}">${stars(member)}</span>`:''}
+     ${member?`<span class="fate-stars" aria-label="${member.rank==='NV'?'NV':member.rarity+' stars'}">${stars(member)}</span>`:'<span class="fate-stars" aria-hidden="true">&nbsp;</span>'}
      <b>${character?esc(character.name):'???'}</b>
      ${character?`<span class="reel-form">${rankLabel(member)}</span><span class="reel-variant" title="Original Unit ${esc(member.unitId)}">${esc(character.variantLabel??character.name)}</span>`:''}
-     <span class="reel-detail">${skill?skillIcon(skill)+esc(skill.name):'Awaiting destiny'}</span>
+     <span class="reel-detail">${skill?skillIcon(skill)+esc(skill.name):'Awaiting a hero'}</span>
     </div>
    </div>`;
   }).join('');
@@ -157,16 +148,17 @@ export class RunUI{
     <div class="rpg-panel slot-machine ${busy?'spinning is-drawing':''}">
      <div class="machine-lights" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
      <div class="reels">${reels}</div>
-     ${verdict?`<div class="fate-verdict tier-${verdict.tier} ${busy?'is-pending':''}" style="--verdict-at:${Math.max(0,timeline.end-.35)}s" role="status"><b>${verdict.title}</b><span>${verdict.detail}</span></div>`:''}
-     <div class="machine-base"><span class="reroll-count ${hasTeam&&!busy?'is-revealed':''}">TEAM REROLLS <b data-testid="rerolls">${run.rerolls}</b> / 3</span><span class="seed-chip" title="${esc(run.seed)}">Run seed: ${esc(run.seed)}</span></div>
+     ${verdict?`<div class="fate-verdict tier-${verdict.tier} ${busy?'is-pending':''}" style="--verdict-at:${Math.max(0,timeline.end-.35)}s" role="status"><b>${verdict.title}</b><span>${verdict.detail}</span></div>`
+      :'<div class="fate-verdict is-empty" aria-hidden="true"><b>&nbsp;</b></div>'}
+     <div class="machine-base"><span class="reroll-count ${hasTeam&&!busy?'is-revealed':''}">REROLLS <b data-testid="rerolls">${run.rerolls}</b> / 3</span><span class="seed-chip" title="${esc(run.seed)}">Run seed: ${esc(run.seed)}</span></div>
     </div>
-    <button type="button" class="slot-lever ${busy?'is-returning':''}" data-action="spin" aria-label="${exhausted?'No team rerolls left':hasTeam?'Pull the lever to redraw your team':'Pull the lever to draw your team'}" ${busy||exhausted?'disabled':''}>
-     <span class="lever-mount"><span class="lever-caption">${exhausted?'EMPTY':'PULL &#8595;'}</span></span><span class="lever-arm"><span class="lever-rod"></span><span class="lever-ball"></span></span>
+    <button type="button" class="slot-lever ${busy?'is-returning':''}" data-action="spin" aria-label="${exhausted?'No rerolls left':hasTeam?'Pull the lever to redraw your party':'Pull the lever to summon your party'}" ${busy||exhausted?'disabled':''}>
+     <span class="lever-mount"><span class="lever-caption">${exhausted?'SPENT':'PULL'}</span></span><span class="lever-arm"><span class="lever-rod"></span><span class="lever-ball"></span></span>
     </button>
    </div>
-   <div class="actions"><button class="rpg-button secondary" data-action="lever-skip" hidden>Skip animation</button>${hasTeam?this.button('confirm','Begin expedition',false,busy):''}${busy?this.button('skip','Skip animation',true):this.button('menu','Back to title',true)}</div>
-   ${hasTeam&&!busy?`<details class="rpg-panel"><summary>Starting skills & effects</summary>${run.party.map(m=>this.member(m)).join('')}</details>`:''}
-   <p class="muted">Your team and remaining rerolls are saved.${run.rules?.awakeningMode==='highest-reviewed'?'<br>Prototype awakening: highest reviewed original form.':''}</p>`,'setup');
+   <div class="actions"><button class="rpg-button secondary" data-action="lever-skip" hidden>Skip animation</button>${hasTeam?this.button('confirm','Set out',false,busy):''}${busy?this.button('skip','Skip animation',true):this.button('menu','Back to title',true)}</div>
+   ${/* Always reserve the panel so the centred layout never jumps while the reels run. */''}<details class="rpg-panel slot-details" ${hasTeam&&!busy?'':'inert style="visibility:hidden"'}><summary>Starting skills & effects</summary>${hasTeam&&!busy?run.party.map(m=>this.member(m)).join(''):''}</details>
+   <p class="muted">Your party and remaining rerolls are saved.${run.rules?.awakeningMode==='highest-reviewed'?'<br>Prototype awakening: highest reviewed original form.':''}</p>`,'setup');
  }
  rewardText(r:Reward,run:RunState){const m=run.party.find(m=>m.key===r.member),c=m?this.catalog[m.key]:null;
   if(r.type==='revive')return {title:'Phoenix Down',detail:`Revive ${c!.name} from K.O. with ${Math.round(REVIVE_HP_SHARE*100)}% base HP.`,tag:'REVIVAL'};

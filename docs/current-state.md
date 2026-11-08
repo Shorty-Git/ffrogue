@@ -259,16 +259,18 @@ badges read well; skill visuals and sounds approved). Polish before the next cha
    scores the whole draw, because most base units are 5★. Reels decelerate and bounce. The lever has a
    crystal handle, and ratchet/brake sounds were re-synthesised. Title crystal: faceted SVG FF crystal
    (src/ui/titleCrystal.css) cycling blue, silver, bronze, gold and rainbow. GIFs: tools/data/start-sequence/.
-8. OPEN (developer playtest 2026-11-08, after the 5-hour reset):
-   a) Title crystal should visibly rotate (spin), not only float.
-   b) Fate Engine: the big celebration (flash, shake, fireworks, tease) only for 7★ and NV; 5★ and 6★
-      recognisable but subtler.
-   c) Glass shatter only once, when the run starts after the slot machine, not between fights. Bug: it
-      did NOT appear at run start but DID appear between fights. Investigate the entry paths
-      (GameFlow.battle entryKind 'area'/'cut'/none and the capture timing).
-   d) Rewrite main-menu and slot texts freely (e.g. "Pull the lever ..."), FFRogue tone.
-   e) Pulling the lever makes the whole page jump up and down (layout shift during the spin re-render
-      or the machine shake). Fix so only the machine moves.
+8. DONE (playtest follow-up 2026-11-08):
+   a) Title crystal is a hexagonal bipyramid drawn live in SVG (src/ui/TitleCrystal.ts) that turns about
+      its axis with per-facet shading; colour cycling stays in titleCrystal.css.
+   b) Tiers split: 6★ = rainbow (subtle), 7★ = prism. Tease, machine flash, shake and fireworks only for
+      prism/NV (fateEngine.isShowTier); 5★/6★ get frame, stars and a soft glow.
+   c) Shatter only at run start (GameFlow.battle('start')); between fights a 320 ms dip to dark
+      ('fade' mode), then the same fade-up. Root cause of the missing run-start shatter: html2canvas
+      cannot parse color-mix(), which the verdict banner used, so the snapshot failed. Rule: no
+      color-mix()/color() in UI CSS.
+   d) Menu and Fate Engine texts rewritten (FATE SEED, "Begin the journey", "Set out", "SPENT").
+   e) Page jump fixed: the reel results, verdict and skills panel reserve their space before the first
+      draw (the centred layout changed height by ~110 px before).
 
 ## Open items
 

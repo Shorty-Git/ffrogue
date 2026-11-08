@@ -1,12 +1,9 @@
-/* Title crystal: classic FF crystal that floats and glows through the Fate Engine tier colours
+/* Title crystal (geometry and rotation in TitleCrystal.ts): classic FF crystal that floats, turns and glows through the Fate Engine tier colours
    (FFBE blue, silver, bronze, gold, then a rainbow sweep). One filter list in every keyframe keeps
    the colour change smooth. */
 .crystal-stage{position:relative;width:200px;height:205px;margin:0 auto 18px}
 .crystal-sigil{position:absolute;left:50%;top:6px;width:96px;translate:-50% 0;animation:crystal-float 6s ease-in-out infinite,crystal-tiers 16s linear infinite;will-change:transform,filter}
 .crystal-svg{display:block;width:100%;height:auto;overflow:visible;filter:drop-shadow(0 0 10px #6fd0ffaa) drop-shadow(0 0 26px #3a8fe066)}
-.crystal-svg .facet{stroke:none}
-.crystal-svg .f-light{fill:#d8f6ff}.crystal-svg .f-mid{fill:#62bff2}.crystal-svg .f-dark{fill:#2c7fcf}.crystal-svg .f-deep{fill:#1b5aa8}
-.crystal-svg .crystal-edges{fill:none;stroke:#f2fcffcc;stroke-width:1.1;stroke-linejoin:round}
 .crystal-sweep{animation:crystal-sweep 4.5s ease-in-out infinite}
 .crystal-halo{position:absolute;left:50%;top:44%;width:210px;height:210px;translate:-50% -50%;z-index:-1;border-radius:50%;background:radial-gradient(circle,#7fd6ff66,#2f7fd022 45%,transparent 70%);animation:crystal-pulse 3.2s ease-in-out infinite;pointer-events:none}
 .crystal-stage::after{content:'';position:absolute;left:50%;bottom:0;width:110px;height:16px;translate:-50% 0;border-radius:50%;background:radial-gradient(ellipse,#6fd0ff55,transparent 70%);animation:crystal-shadow 6s ease-in-out infinite}

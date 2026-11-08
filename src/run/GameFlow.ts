@@ -35,7 +35,7 @@ export class GameFlow{
   if(this.state.pendingAwakening)this.commit(acknowledgeAwakening(this.state,this.state.pendingAwakening.id));
   if(this.state.phase==='setup')this.setup();else if(this.state.phase==='battle')this.battle();else if(this.state.phase==='rewards')this.battle();else this.result();}
  private setup(){void import('html2canvas').catch(()=>{});
-  this.audio.setMusic(HOME_MUSIC_RESOURCE,'home');ALL_FATE_SOUNDS.forEach(sound=>this.audio.warmSample(fateSoundUrl(sound)));this.ui.slots(this.state!,this.busy);this.ui.on('spin',()=>this.spin());this.ui.on('skip',()=>this.finishSpin());this.ui.on('menu',()=>this.menu());this.ui.on('confirm',()=>{if(this.busy||this.state?.phase!=='setup')return;this.commit(confirmParty(this.state!));this.battle('area');});}
+  this.audio.setMusic(HOME_MUSIC_RESOURCE,'home');ALL_FATE_SOUNDS.forEach(sound=>this.audio.warmSample(fateSoundUrl(sound)));this.ui.slots(this.state!,this.busy);this.ui.on('spin',()=>this.spin());this.ui.on('skip',()=>this.finishSpin());this.ui.on('menu',()=>this.menu());this.ui.on('confirm',()=>{if(this.busy||this.state?.phase!=='setup')return;this.commit(confirmParty(this.state!));this.battle('start');});}
  private spin(){
   if(this.busy||this.state?.phase!=='setup'||(this.state.party.length>0&&this.state.rerolls===0))return;
   try{
@@ -54,7 +54,7 @@ export class GameFlow{
  }
  private finishSpin(){if(!this.busy)return;
   clearTimeout(this.animationTimer);this.busy=false;if(this.state?.phase==='setup')this.setup();}
- private battle(entryKind?:'area'|'cut'){if(!this.state||this.entry)return;
+ private battle(entryKind?:'start'|'area'|'cut'){if(!this.state||this.entry)return;
   const state=this.state;
   this.audio.warmCombat();
   const encounter=runEncounter(state);
@@ -71,11 +71,11 @@ export class GameFlow{
   };
   if(!entryKind){startMusic();start();return;}
   if(entryKind==='area')this.audio.warmMusic(music);
-  // Every encounter shatters the outgoing screen with FFBE's own se_ev_glass_break (SE.acb stream 274);
-  // the battle music and the scene entrance start when the arena fades up.
-  const glass='assets/audio/combat/se_ev_glass_break.wav';
-  this.audio.warmSample(glass);
-  const entry=new EncounterTransition(this.ui.root,()=>this.audio.playSample(glass,.34));
+  // The run start shatters the slot screen with FFBE's own se_ev_glass_break (SE.acb stream 274);
+  // later fights dip to dark. Music and the scene entrance start when the arena fades up.
+  const shatter=entryKind==='start',glass='assets/audio/combat/se_ev_glass_break.wav';
+  if(shatter)this.audio.warmSample(glass);
+  const entry=new EncounterTransition(this.ui.root,shatter?'shatter':'fade',()=>this.audio.playSample(glass,.34));
   this.entry=entry;
   const onTimeout=()=>this.fail(new Error('Battle assets did not finish loading. Reload to retry.'));
   void entry.cover(()=>{
@@ -85,7 +85,7 @@ export class GameFlow{
     if(error){this.fail(error);return;}
     void entry.reveal(()=>this.closeEntry(),()=>{startMusic();(this.scene.scene.get('BattleScene')as BattleScene).playEntrance();});
    });
-  },onTimeout,()=>captureEncounter(this.ui.root,
+  },onTimeout,!shatter?undefined:()=>captureEncounter(this.ui.root,
     this.scene.scene.isActive('BattleScene')?paint=>new Promise(resolve=>{
       this.scene.game.events.once('postrender',()=>{paint(this.scene.game.canvas);resolve();});
     }):undefined)).catch(error=>this.fail(error));
