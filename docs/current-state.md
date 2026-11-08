@@ -88,6 +88,7 @@ fights alone. Not touched: Chant, buffs/debuffs, enemy patterns, reward pool, MP
 | Skill icons | `node tools/export_skill_icons.mjs` after any skill publication | character-import-workflow.md §5 |
 | Battle UI parts | `<python> tools/export_battle_ui.py` | battle-layout.md |
 | Long body sheets | `<python> tools/wrap_wide_sheets.py` (grid > 16384 px) | skill-reconstruction-workflow.md |
+| New stage (all-in-one) | `node tools/import_stage.mjs --recipe tools/stages/<key>.json` | background-import-workflow.md (top) |
 | Backgrounds / music | see background-import-workflow.md | |
 
 Abilities (ABILITY rows) need the composed path first (unit attack prefix / zero-prefix Motion 2):
@@ -231,7 +232,7 @@ DONE (2026-11-08): raw-data audit plus a sixth source (Memorial download cache, 
 There is little byte duplication (2.2 of 30 GB), so the sources were not moved; source priority rules apply instead.
 Details: docs/asset_structure.md "Raw-data sources and duplicate audit". Cleanup (developer-approved):
 tools/data shrank from 92 to 37 GB; all 92 tests and tsc pass afterwards.
-Then, in order (scene transition DONE; one-command character importer DONE 2026-11-08 with Squall, see character-import-workflow.md top) →
+Then, in order (scene transition DONE; one-command character importer DONE 2026-11-08 with Squall, see character-import-workflow.md top; one-command stage importer DONE with Dollet/FFVIII, see background-import-workflow.md top; NEXT for stages: original monster skills and enemy sounds) →
 complete character importer (one command: body, poses, all skills via import_skill_batch +
 admit_skill_audio + icons + LB + forms; test on a new character, e.g. Tifa AC) → stage importer
 (stage + SSPB animations + original music + world enemies/bosses with their skills, mainline FF I–XVI

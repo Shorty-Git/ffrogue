@@ -477,6 +477,46 @@ The three music pairings are thematic. Master associations are retained separate
 
 Open `/?gallery=arenas` to select the source game, arena and soundtrack and exercise the production battle renderer against training targets. Open `/?arenaVariants=1&seed=combat-audio-20` to use the seeded variant rule for a new expedition. The choice is persisted independently of gameplay RNG. The default route and the four-fight structure are unchanged.
 
+## One-command stage import (2026-11-08) - start here for a new stage
+
+```powershell
+node tools/import_stage.mjs --recipe tools/stages/dollet.json
+```
+
+The reviewed part is the recipe (`schema: stage-recipe-v1`):
+- battle_bg ID, label and floor band;
+- normal and boss music resource IDs with their titles;
+- enemy and boss monster dictionary IDs, names, scale and movement;
+- the FFRogue boss pattern;
+- formations, difficulty and normal fight count.
+
+The tool then:
+1. Writes the arena into `tools/stages/reviewed-arenas.json` and runs `prepare_reviewed_arenas.py`
+   (image, SSPB animation, bank check).
+2. Resolves music through `resource_map` (type 400) to the bank in rawdata (memorial-downloads first,
+   then memorial-packs, then android-global) and decodes it with vgmstream into public/assets/audio
+   with its native loop.
+3. Publishes every body through `import_monster.py`, after verifying the dictionary name, and
+   registers them in content.json.
+4. Regenerates `src/run/importedStages.mjs` (all stage recipes) and `src/audio/importedMusic.mjs`.
+   stageContent.mjs, musicProfiles.mjs and battleMusic.ts merge both.
+
+Runs pick COURSE_LENGTH = 2 stages per seed (`courseAreas`), ordered by difficulty. Every new stage
+adds route variety without making runs longer.
+
+Missing music bank: play the track once in the Memorial client, then run
+`tools/extract_memorial_side_stories.py`.
+
+Not imported yet:
+- original monster skills (enemies use the recipe's FFRogue pattern, labelled as such);
+- enemy sounds;
+- original encounter formations.
+
+First stage: Dollet (FFVIII). Arena 120173, "Don't Be Afraid" 400867 and "Force Your Way" 400868,
+G-Soldier 2058610, Elite Soldier 2058710, boss X-ATM092 5060020 (Galbadia variant). Bodies were
+checked in Training (screenshots); the WAVs are large (15-23 MB), so compress BGM before a web release.
+
+
 The local catalog contains 1,286 stage rows, 1,262 available JPGs and 1,181 available animation selectors. It also contains 701 registered BGM entries, with local bank filename matches for 247. The master title list covers FFI–FFXVI, FFT and spin-offs such as CCFFVIIR, Type-0 and X-2. These counts do not establish the title of individual arenas. The reviewed batch establishes usable profiles for FFVII and FFVIII only.
 
 ## Battle music roles
