@@ -19,6 +19,9 @@ const escapeHtml=(value:string)=>value.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'
 export class CombatHud {
   private readonly root=document.createElement('section');
   private previous='';
+  private state?:CombatHudState;
+  /** Command under the pointer or keyboard focus: its description replaces the prompt line. */
+  private hinted?:number;
   private readonly observer:ResizeObserver;
   private readonly resize=()=>{
     const {left,top,width,height}=this.canvas.getBoundingClientRect();
@@ -32,6 +35,15 @@ export class CombatHud {
       const button=(event.target as HTMLElement).closest<HTMLButtonElement>('button[data-command]');
       if(button&&!button.disabled)activate(button.dataset.command!,Number(button.dataset.index));
     });
+    const hint=(event:Event)=>{
+      const button=(event.target as HTMLElement).closest<HTMLButtonElement>('button[data-command=ability]');
+      const next=button?Number(button.dataset.index):undefined;
+      if(next!==this.hinted){this.hinted=next;this.showPrompt();}
+    };
+    this.root.addEventListener('pointerover',hint);
+    this.root.addEventListener('focusin',hint);
+    this.root.addEventListener('pointerleave',()=>{if(this.hinted!==undefined){this.hinted=undefined;this.showPrompt();}});
+    this.root.addEventListener('focusout',event=>{if(!this.root.contains(event.relatedTarget as Node|null))hint(event);});
     document.body.append(this.root);
     this.observer=new ResizeObserver(this.resize);
     this.observer.observe(canvas);
@@ -52,10 +64,22 @@ export class CombatHud {
     return undefined;
   }
 
+  /** Prompt line: the hinted command's description, otherwise the battle message. */
+  private showPrompt():void {
+    const line=this.root.querySelector<HTMLElement>('.ribbon-prompt [role=status]');
+    if(!line||!this.state)return;
+    // Hints belong to command selection; once every command is locked (enemy turn, victory) the battle message wins.
+    const selecting=this.state.commands.some(command=>command&&!command.disabled);
+    const command=this.hinted===undefined||!selecting?undefined:this.state.commands[this.hinted];
+    line.classList.toggle('is-hint',!!command);
+    line.textContent=command?`${command.name} · ${command.description}`:this.state.message;
+  }
+
   render(state:CombatHudState):void {
     const signature=JSON.stringify(state);
     if(signature===this.previous)return;
     this.previous=signature;
+    this.state=state;
     const focus=this.root.contains(document.activeElement)?(document.activeElement as HTMLElement).dataset.focus:undefined;
     const attrs=(action:string,i:number)=>`data-command="${action}" data-index="${i}" data-focus="${action}-${i}"`;
 
@@ -70,7 +94,7 @@ export class CombatHud {
       </span></button>`).join('');
 
     const commands=state.commands.map((command,i)=>command?`<button type="button" class="command ${command.limit?'is-limit':''} ${command.ready?'is-ready':''}" ${attrs('ability',i)} ${command.disabled?'disabled':''}
-        aria-pressed="${command.selected}" title="${escapeHtml(command.description)}">
+        aria-pressed="${command.selected}" aria-description="${escapeHtml(command.description)}">
       <img class="command-icon ${command.iconUrl?'is-skill':''}" src="${command.iconUrl??UI+command.icon+'.png'}" alt="" draggable="false">
       <span class="command-text"><strong>${escapeHtml(command.name)}</strong><small>${escapeHtml(command.cost)}</small></span>
       <kbd>${i+1}</kbd></button>`:`<span class="command is-empty" aria-hidden="true"></span>`).join('');
@@ -87,7 +111,9 @@ export class CombatHud {
     const shown=captureGauges(this.root);
     this.root.innerHTML=`<div class="combat-caption"><strong>${escapeHtml(state.area)}</strong><span>${escapeHtml(state.phase)}</span></div>
       ${actors}<div class="combat-dock"><div class="combat-party">${party}</div><div class="ribbon-commands" style="--commands:${state.commands.length}">${commands}</div>
-      <div class="ribbon-prompt"><span role="status">${escapeHtml(state.message)}</span>${state.pending?`<button type="button" class="prompt-cancel" ${attrs('clear',0)}>Cancel <kbd>Esc</kbd></button>`:''}</div></div>`;
+      <div class="ribbon-prompt"><span role="status">${escapeHtml(state.message)}</span>${state.pending?`<button type="button" class="prompt-cancel" ${attrs('clear',0)}>Cancel <kbd>Esc</kbd></button>`:''}</div>
+      <p class="ribbon-keys" aria-hidden="true"><kbd>1</kbd>–<kbd>${state.commands.length}</kbd> command · <kbd>←</kbd><kbd>→</kbd> target · <kbd>Esc</kbd> cancel · hover a command for details</p></div>`;
+    this.showPrompt();
     animateGauges(this.root,shown);
     if(focus)this.root.querySelector<HTMLElement>(`[data-focus="${focus}"]:not(:disabled)`)?.focus({preventScroll:true});
   }

@@ -811,7 +811,10 @@ test('prepared boss charge deals no damage, burst hits each living hero once wit
  assert.equal(e.actionCursor,2);assert.equal(attacks,0);assert.deepEqual(actors.map(a=>a.currentHp),[1000,1000,0]);assert.ok(messages.some(m=>m.includes('hits the party next!')));
  e.statusEffects=[{kind:'stop',phases:1,chance:1}];s.combatState='ENEMY_TURN';s.executeEnemyTurn();while(timers.length)timers.shift()();assert.equal(e.actionCursor,2);assert.equal(attacks,0);
  s.combatState='ENEMY_TURN';s.executeEnemyTurn();while(timers.length)timers.shift()();
- assert.equal(e.actionCursor,3);assert.equal(attacks,1);assert.deepEqual(actors.map(a=>a.currentHp),[732,866,0]);
+ assert.equal(e.actionCursor,3);assert.equal(attacks,1);
+ // Encounter 1 damage = RUN_BALANCE.damage + damagePerEncounter (300+70) x burst 1.3 x overdrive 1.25, divided by defense.
+ const {RUN_BALANCE}=loadModule('src/run/runBalance.mjs'),burst=(RUN_BALANCE.damage+RUN_BALANCE.damagePerEncounter)*1.3*1.25;
+ assert.deepEqual(actors.map(a=>a.currentHp),[1000-Math.round(burst),1000-Math.round(burst/2),0]);assert.deepEqual(actors.map(a=>a.currentHp),[399,699,0]);
 });
 
 test('prepared stationary enemy uses its own origin and full clip durations with one impact before cleanup',()=>{

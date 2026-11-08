@@ -1,5 +1,6 @@
 import {skillIconUrl} from '../ui/skillIcons';
-import {LB_MAX,gainFromAction,gainFromDamage,isFull} from '../run/limitGauge.mjs';
+import {LB_MAX,LB_PER_ACTION,gainFromAction,gainFromDamage,isFull} from '../run/limitGauge.mjs';
+import {enemyTargetIndex} from '../run/enemyTargeting.mjs';
 import {CombatHud} from '../ui/CombatHud';
 import Phaser from 'phaser';
 import { UnitActor, UnitCombatConfig, type UnitActorConfig } from '../entities/UnitActor';
@@ -17,7 +18,7 @@ import { applyHeroBuffs, heroPhysicalMultiplier } from '../effects/heroBuffs.mjs
 import {resolveEnemyInstant} from '../effects/enemyInstant.mjs';
 import {validateActionChoreography,actionTravel} from '../effects/actionChoreography.mjs';
 import type {RunBattleContext} from '../run/battleContext';
-import {nextRandom,skillForRun,memberMaxMp} from '../run/runState.mjs';
+import {nextRandom,skillForRun,memberMaxMp,encounters} from '../run/runState.mjs';
 import {skillDescription} from '../run/catalog';
 import {RPG,rpgHex,RPG_FONT} from '../ui/designTokens';
 import {rpgPanel} from '../ui/rpgPanel';
@@ -51,7 +52,6 @@ export class BattleScene extends Phaser.Scene {
   private runVictoryStage:'idle'|'finishing'|'celebrating'|'rewards'='idle';
   private arenaKey: BattleArenaKey = 'forest';
   private manifests!: Record<string, UnitManifest>;
-  private cloud!: UnitActor;
   private enemies: TargetDummy[] = [];
   private currentTarget: TargetDummy | null = null;
   private actionBanner?:ActionBanner;
@@ -206,9 +206,9 @@ export class BattleScene extends Phaser.Scene {
       const actor=this.createHeroActor(member.key,slots[i],manifest,
         {...def.battle,maxHp:Math.round(this.runContext.catalog[member.key].maxHp*member.stats.hp),
          maxMp:memberMaxMp(this.runContext.catalog[member.key],member)},def.scale);
-      actor.currentHp=member.hp;actor.currentMp=member.mp;return actor;
+      actor.currentHp=member.hp;actor.currentMp=member.mp;actor.limitGauge=member.limit??0;return actor;
     });
-    this.cloud=this.turnOrder[0];
+
 
     this.actionBanner=new ActionBanner(this);
     this.combatHud=new CombatHud(this.game.canvas,(action,index)=>{
@@ -274,7 +274,7 @@ export class BattleScene extends Phaser.Scene {
     const left=Math.min(...points.map(p=>p.x)),top=Math.min(...points.map(p=>p.y));
     return new Phaser.Geom.Rectangle(left,top,Math.max(...points.map(p=>p.x))-left,Math.max(...points.map(p=>p.y))-top);
   });}
-  public runPartySnapshot(){return this.turnOrder.map(h=>({key:h.unitKey,hp:h.currentHp,mp:h.currentMp}));}
+  public runPartySnapshot(){return this.turnOrder.map(h=>({key:h.unitKey,hp:h.currentHp,mp:h.currentMp,limit:h.limitGauge}));}
   public isRunCommandWindow():boolean{return this.combatState==='PLAYER_TURN';}
   private finishRunEncounter(won:boolean):void{
     if(won){this.runVictoryStage='finishing';return;}
@@ -415,7 +415,7 @@ export class BattleScene extends Phaser.Scene {
     });
     const skills=hero?(this.unitSkills[hero.unitKey]??[]).slice(0,3):[];
     this.combatHud.render({
-      area:stage.title,phase:stage.boss?'Boss':`Battle ${this.fightNumber}`,pending:!!plan,
+      area:stage.title,phase:`${stage.boss?'Boss':'Battle'} ${this.fightNumber} / ${encounters(this.runContext.state.areas).length}`,pending:!!plan,
       message:plan?`${skill?.name??'Attack'} · ${scope==='single_ally'?'Choose an ally':'Choose an enemy'}`:
         available?`Round ${this.currentRound} · ${hero.heroName} → ${this.currentTarget?.nameTag??'no target'}`:this.statusMessage,
       actors:[...actors,...this.turnOrder.flatMap((ally,i)=>{
@@ -433,14 +433,14 @@ export class BattleScene extends Phaser.Scene {
           state,target,hp:member.currentHp,maxHp:member.maxHp,mp:member.currentMp,maxMp:member.maxMp,
           ...(this.limitBursts[member.unitKey]?{limit:{value:member.limitGauge,max:LB_MAX}}:{})};
       }),
-      commands:[{name:'Attack',icon:'attack',cost:'0 MP',description:'Normal attack',disabled:!available,selected:plan?.kind==='attack'},
+      commands:[{name:'Attack',icon:'attack',cost:'0 MP',description:'Physical damage to the target · 15% critical chance · no cost',disabled:!available,selected:plan?.kind==='attack'},
         ...[0,1,2].map(i=>{
           const action=skills[i];if(!action)return null;
-          return {name:action.name,icon:(action.motion==='magic_atk'?'magic':'ability') as 'magic'|'ability',iconUrl:skillIconUrl(action),cost:`${action.mpCost} MP${action.hpCost?' · '+action.hpCost+' HP':''}`,description:skillDescription(action),
+          return {name:action.name,icon:(action.motion==='magic_atk'?'magic':'ability') as 'magic'|'ability',iconUrl:skillIconUrl(action),cost:`${action.mpCost} MP${action.hpCost?' · '+action.hpCost+' HP':''}`,description:skillDescription(action)+(hero&&hero.currentMp<action.mpCost?` • Not enough MP (${hero.currentMp}/${action.mpCost})`:''),
             disabled:!available||!hero||hero.currentMp<action.mpCost||!!action.hpCost&&hero.currentHp<=action.hpCost||!this.canUseSourceSkill(action),selected:skill===action};
         }),
         ...(hero&&this.limitBursts[hero.unitKey]?[(()=>{const lb=this.limitBursts[hero.unitKey],ready=isFull(hero.limitGauge);
-          return {name:lb.name,icon:'limit' as const,cost:ready?'Limit ready':`Limit ${hero.limitGauge}%`,description:skillDescription(lb),
+          return {name:lb.name,icon:'limit' as const,cost:ready?'Limit ready':`Limit ${hero.limitGauge}%`,description:skillDescription(lb)+(ready?'':` • Limit gauge ${hero.limitGauge}/${LB_MAX}: +${LB_PER_ACTION} per action, damage taken also fills it; it carries to the next battle`),
             disabled:!available||!ready||!this.canUseSourceSkill(lb),selected:skill===lb,limit:true,ready};})()]:[])],
     });
   }
@@ -1498,8 +1498,8 @@ export class BattleScene extends Phaser.Scene {
         return;
       }
 
-      // Target selection: Cloud if alive (Tank/Frontline), else first alive hero
-      const heroTarget = currentAliveHeroes.includes(this.cloud) ? this.cloud : currentAliveHeroes[0];
+      // Single-target pick: src/run/enemyTargeting.mjs (shared with tools/simulate_run_balance.mjs).
+      const heroTarget = this.turnOrder[enemyTargetIndex(this.turnOrder.map(h=>({alive:!h.isDead,hp:h.currentHp,maxHp:h.maxHp})),()=>this.randomValue())];
       const definition=ENEMY_CONTENT[enemy.assetKey];
       const action=definition?enemyAction(definition,enemy.actionCursor,enemy.currentHp/enemy.maxHp):null;
       if(action?.kind==='prepare'){

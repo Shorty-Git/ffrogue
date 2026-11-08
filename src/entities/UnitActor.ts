@@ -36,7 +36,7 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
   public currentHp: number;
   public maxMp: number;
   public currentMp: number;
-  /** Battle-scoped Limit Burst gauge (src/run/limitGauge.mjs). */
+  /** Limit Burst gauge (src/run/limitGauge.mjs); restored from the run at battle start. */
   public limitGauge = 0;
   public heroName: string;
   public heroRole: string;

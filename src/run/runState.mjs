@@ -1,6 +1,7 @@
 // Serializable roguelike rules. Visual animations never consume these streams.
 import {STAGE_CONTENT,stageForArea} from './stageContent.mjs';
 import {awakeningPath,formAt,nextAwakening,rankValue,reviewedForms} from './unitForms.mjs';
+import {carriedLimit,LB_MAX} from './limitGauge.mjs';
 export const RUN_VERSION=2;
 export const SAVE_KEY='ffrogue.run.v1';
 export const PROTOTYPE_AREAS=Object.values(STAGE_CONTENT).map(s=>({stageId:s.id,name:s.name,arena:s.arena,normals:s.normalFights}));
@@ -114,7 +115,9 @@ export function rewardPool(run,catalog){
 export function completeBattle(input,catalog,snapshot,won){
  const run=clone(input);if(run.phase!=='battle'||run.pendingAwakening)throw Error('Battle already settled or awaiting presentation');
  if(snapshot.length!==3||snapshot.some((s,i)=>s.key!==run.party[i].key))throw Error('Fixed party snapshot required');
- run.party.forEach((m,i)=>{m.hp=Math.max(0,Math.min(Math.round(catalog[m.key].maxHp*m.stats.hp),snapshot[i].hp));m.mp=Math.max(0,Math.min(memberMaxMp(catalog[m.key],m),snapshot[i].mp));});
+ run.party.forEach((m,i)=>{m.hp=Math.max(0,Math.min(Math.round(catalog[m.key].maxHp*m.stats.hp),snapshot[i].hp));m.mp=Math.max(0,Math.min(memberMaxMp(catalog[m.key],m),snapshot[i].mp));
+  // The Limit gauge carries to the next battle for heroes who end it standing (src/run/limitGauge.mjs).
+  const gauge=carriedLimit(catalog[m.key],m.hp,snapshot[i].limit);if(gauge>0)m.limit=gauge;else delete m.limit;});
  if(!won){run.phase='lost';return run;}
  run.phase='rewards';const pool=rewardPool(run,catalog),boss=encounters(run.areas)[run.encounter].boss;
  const evolution=pool.filter(r=>r.type==='evolve');run.offers=[];
@@ -186,6 +189,7 @@ export function validateRun(run,catalog){
    ||m.skills.some(s=>!c.skills.some(a=>a.id===s.id)||!Number.isInteger(s.level)||s.level<1||s.level>3)
    ||['attack','magic','defense','hp'].some(k=>!Number.isFinite(m.stats?.[k])||m.stats[k]<1||m.stats[k]>3.2)
    ||(m.stats.mp!==undefined&&(!Number.isFinite(m.stats.mp)||m.stats.mp<1||m.stats.mp>3.2))
+   ||(m.limit!==undefined&&(!Number.isInteger(m.limit)||m.limit<1||m.limit>LB_MAX||!c.limitBurst))
    ||!Number.isFinite(m.hp)||m.hp<0||m.hp>Math.ceil(c.maxHp*m.stats.hp)||!Number.isFinite(m.mp)||m.mp<0||m.mp>memberMaxMp(c,m))throw Error('Unsupported saved party/skill/form');}
  if(run.phase==='rewards'&&(run.offers.length!==3||run.offers.some(r=>!rewardPool(run,catalog).some(p=>JSON.stringify(p)===JSON.stringify(r)))))throw Error('Invalid saved rewards');
  if(run.phase==='won'?run.encounter!==encounters(run.areas).length:run.encounter>=encounters(run.areas).length)throw Error('Invalid encounter checkpoint');

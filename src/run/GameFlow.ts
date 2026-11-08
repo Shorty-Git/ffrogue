@@ -159,7 +159,7 @@ export class GameFlow{
  }
  private party(){const battle=this.scene.scene.get('BattleScene')as BattleScene;if(!battle.isRunCommandWindow())return;battle.scene.pause();
   const view=structuredClone(this.state!);battle.runPartySnapshot().forEach((a,i)=>{view.party[i].hp=a.hp;view.party[i].mp=a.mp;});this.ui.party(view);this.ui.on('close',()=>{battle.scene.resume();this.restoreBattleUI();});}
- private settle(actors:UnitActor[],won:boolean){if(this.state?.phase!=='battle')return;try{this.commit(completeBattle(this.state,this.catalog,actors.map(h=>({key:h.unitKey,hp:h.currentHp,mp:h.currentMp})),won));this.ui.hide();if(!won){this.scene.scene.stop('BattleScene');this.route();}}catch(error){this.fail(error);}}
+ private settle(actors:UnitActor[],won:boolean){if(this.state?.phase!=='battle')return;try{this.commit(completeBattle(this.state,this.catalog,actors.map(h=>({key:h.unitKey,hp:h.currentHp,mp:h.currentMp,limit:h.limitGauge})),won));this.ui.hide();if(!won){this.scene.scene.stop('BattleScene');this.route();}}catch(error){this.fail(error);}}
  private rewardBounds(){const battle=this.scene.scene.get('BattleScene')as BattleScene,canvas=this.scene.game.canvas.getBoundingClientRect();
   const sx=canvas.width/battle.scale.width,sy=canvas.height/battle.scale.height;
   return {left:canvas.left,top:canvas.top,width:canvas.width,height:canvas.height,
