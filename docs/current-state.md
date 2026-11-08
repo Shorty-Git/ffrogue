@@ -206,7 +206,8 @@ Generic rules added 2026-11-07 (no per-skill exceptions):
   type 7 (1856-byte records, NOT a Particle variant: Particle offsets read garbage; no BMSLN
   name in the 3957-project corpus) blocks ~25 roster skills and is the biggest next lever;
   type 4 = EmitterSimpleParticle (592 bytes, verified on 163 CPK pairs, no decoder yet);
-  type 15 = FieldGoal (208 bytes, particle attractor). Also: Warring Slash needs repeated
+  type 15 = FieldGoal (208 bytes, particle attractor). Type 7 = lightning emitter (see
+  docs/research/bmb-node-type-7-lightning.md: original reference, layout map, render plan). Also: Warring Slash needs repeated
   generation in the frozen player; commands without effect timelines (Limit Braver etc.).
 - Batch import: `sh tools/import_skill_batch.sh <batch.txt> tools/data/<run>` (lines:
   `character skillId id key [--heal N|--buff X|--mult X|--mp N]`) composes/stages, drafts the
