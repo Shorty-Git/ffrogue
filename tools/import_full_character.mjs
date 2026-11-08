@@ -156,6 +156,7 @@ writeJson('public/assets/run-content.json', runContent);
 run('wrap wide sheets', python, ['tools/wrap_wide_sheets.py']);
 run('annotate Limit Burst extents', python, ['tools/annotate_clip_extents.py']);
 run('export skill icons', 'node', ['tools/export_skill_icons.mjs']);
+run('basic attack sounds', 'node', ['tools/export_basic_attack_cues.mjs']);
 run('victory poses', python, ['tools/prepare_victory_poses.py', '--output', 'public/assets/victory-poses.json']);
 
 receipt.finishedAt = new Date().toISOString();

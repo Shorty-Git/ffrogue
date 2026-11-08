@@ -233,6 +233,18 @@ admit_skill_audio + icons + LB + forms; test on a new character, e.g. Tifa AC) �
 and Tactics only) → run twists. Remaining skill gaps: type 7 ribbons without FieldGoal, Banishga/Dispelga
 (BR3M mesh), support skills without mechanics (Esunaga, Protect, Blind, Store, Speed Drink).
 
+## Basic attack sounds and Limit Burst placement (2026-11-08)
+
+- Basic attacks: `node tools/export_basic_attack_cues.mjs` regenerates src/audio/basicAttackCues.ts for
+  every published body. It follows unit.effectFrames → effect_group sound field → the first bank-1 cue.
+  The importer runs it, so new characters (Squall was missing) get their swing sound. The 18
+  existing entries are unchanged.
+- LB placement (BattleScene.approachX): the extent clamp that keeps a travelling LB body on screen
+  now lets the body leave the screen by up to a third of its travel before shifting the whole
+  performance, because a full clamp moved every hit off the target (Lion Heart +107 px, Omnislash V5
+  +480 px). Omnislash is unchanged. Hits on target take priority over full body visibility at the
+  clip's widest frames.
+
 ## Training grounds (2026-11-08)
 
 Main menu → "Training grounds" (src/ui/TrainingSetup.ts, GameFlow.training/startTraining,

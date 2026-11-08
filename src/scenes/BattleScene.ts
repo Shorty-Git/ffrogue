@@ -928,8 +928,11 @@ export class BattleScene extends Phaser.Scene {
     }
     const extents=clips.map(clip=>hero.manifest?.animations?.[clip]?.extentX).filter((e):e is [number,number]=>!!e);
     if(!extents.length)return x;
-    const scale=Math.abs(hero.scaleX),margin=16;
-    const left=Math.min(...extents.map(e=>e[0]))*scale,right=Math.max(...extents.map(e=>e[1]))*scale;
+    // Hits on the target come first: the body may leave the screen by up to a third of its travel at
+    // the clip's widest frames before the whole performance is shifted (which moves every hit off the
+    // target). Lion Heart was 107 px off its target with a full clamp.
+    const scale=Math.abs(hero.scaleX),margin=16,allowance=1/3;
+    const left=Math.min(...extents.map(e=>e[0]))*scale*(1-allowance),right=Math.max(...extents.map(e=>e[1]))*scale*(1-allowance);
     const min=margin-left,max=this.scale.width-margin-right;
     return min<=max?Math.min(max,Math.max(min,x)):(min+max)/2;
   }
