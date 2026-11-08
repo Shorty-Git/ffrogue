@@ -7,7 +7,7 @@ import {sourceDamageEvents} from './lib/source-damage-events.mjs';
 import {validateActionChoreography} from '../src/effects/actionChoreography.mjs';
 
 for(const unit of ['delita','jack'])test(unit+': complete reviewed body, source prefix and gameplay use the common importer',()=>{
- const recipe=readJson(`tools/characters/${unit}.json`),report=inspectCharacter(recipe,{assets:'assets',dump:'ffbe_asset_dump-main'});
+ const recipe=readJson(`tools/characters/${unit}.json`),report=inspectCharacter(recipe,{assets:'rawdata/assets',dump:'rawdata/ffbe_asset_dump'});
  assert.equal(report.publishable,true,JSON.stringify(report.selected));
  const skill=readJson(`public/assets/units/${unit}/skills.json`).skills[0],body=readJson(`public/assets/units/${unit}/manifest.json`);
  const manifest=readJson(`public/assets/presentations/${skill.scenePresentation}/manifest.json`),source=report.catalog.find(s=>s.id===skill.ffbeId);
@@ -18,7 +18,7 @@ for(const unit of ['delita','jack'])test(unit+': complete reviewed body, source 
  assert.equal(manifest.plan.members.filter(m=>m.compositionOrigin==='unit-attack').length,report.basicAttackRaw.effects.split('&').length);
  assert.deepEqual(skill.originalCommand.raw,JSON.parse(JSON.stringify(source.raw)));
  const wrong=structuredClone(recipe);delete wrong.skills[0].actionChoreography;
- assert.equal(inspectCharacter(wrong,{assets:'assets',dump:'ffbe_asset_dump-main'}).publishable,false);
+ assert.equal(inspectCharacter(wrong,{assets:'rawdata/assets',dump:'rawdata/ffbe_asset_dump'}).publishable,false);
 });
 
 test('batch intake composes exact form prefixes before resource staging without granting approval',()=>{

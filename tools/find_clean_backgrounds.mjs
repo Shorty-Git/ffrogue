@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import zlib from 'zlib';
 
-const bgDir = 'ffbe_asset_dump-main/battle_bg';
+const bgDir = 'rawdata/ffbe_asset_dump/battle_bg';
 const previewDir = 'tools/bg_preview';
 
 if (!fs.existsSync(previewDir)) {
@@ -71,7 +71,7 @@ function analyzePng(filePath) {
   }
 }
 
-console.log('Scanning ffbe_asset_dump-main/battle_bg for clean landscape backgrounds...');
+console.log('Scanning rawdata/ffbe_asset_dump/battle_bg for clean landscape backgrounds...');
 const files = fs.readdirSync(bgDir).filter(f => f.endsWith('.png'));
 
 const cleanLandscapePngs = [];

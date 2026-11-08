@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 FFBE Asset Dump Indexer
-Scans ffbe_asset_dump-main and generates docs/asset_structure.md.
+Scans rawdata/ffbe_asset_dump and generates docs/asset_structure.md.
 """
 
 import os

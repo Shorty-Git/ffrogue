@@ -7,15 +7,15 @@
 // silently borrowing another image.
 //
 // Run from the repository root after publishing skills:
-//   node tools/export_skill_icons.mjs [--assets assets] [--dump ffbe_asset_dump-main]
+//   node tools/export_skill_icons.mjs [--assets assets] [--dump rawdata/ffbe_asset_dump]
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import {DatabaseSync} from 'node:sqlite';
 
 const arg = name => { const i = process.argv.indexOf(name); return i > 0 ? process.argv[i + 1] : undefined; };
-const assets = arg('--assets') ?? 'assets';
-const dump = arg('--dump') ?? 'ffbe_asset_dump-main';
+const assets = arg('--assets') ?? 'rawdata/assets';
+const dump = arg('--dump') ?? 'rawdata/ffbe_asset_dump';
 const output = 'public/assets/icons/skills';
 const sha256 = file => crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
 const ICON_BASE = 700000000;
@@ -30,7 +30,7 @@ for (const unit of fs.readdirSync(unitsRoot).sort()) {
 }
 
 fs.mkdirSync(output, {recursive: true});
-const index = {source: 'assets/static_data/ffbe-data.db (ability/magic.iconId) + ' + dump + '/abilities', skills: {}, icons: {}};
+const index = {source: 'rawdata/assets/static_data/ffbe-data.db (ability/magic.iconId) + ' + dump + '/abilities', skills: {}, icons: {}};
 const failures = [];
 for (const {unit, skill} of skills) {
   const type = (skill.type ?? 'ABILITY') === 'MAGIC' ? 'MAGIC' : 'ABILITY';

@@ -41,7 +41,7 @@ as constant. The shared decoder itself can inspect other quads for comparison.
 ## Reproduce
 
 ```powershell
-python tools/prepare_original_preview.py --source tools/data/climhazzard-source/skill-source.json --unit cloud --motion atk --authoring assets/battle_effect/atk_slash7_side_purple.bmsln --authoring assets/battle_effect/atk_blow1_purple.bmsln --distortion --fit-screen --scene-composite --quad-colors --withhold-untextured --output tools/data/climhazzard-quad-colors/plan.json
+python tools/prepare_original_preview.py --source tools/data/climhazzard-source/skill-source.json --unit cloud --motion atk --authoring rawdata/assets/battle_effect/atk_slash7_side_purple.bmsln --authoring rawdata/assets/battle_effect/atk_blow1_purple.bmsln --distortion --fit-screen --scene-composite --quad-colors --withhold-untextured --output tools/data/climhazzard-quad-colors/plan.json
 node tools/preview_original_skill.mjs --plan tools/data/climhazzard-quad-colors/plan.json --port 3117
 python -m unittest discover -s tools -p 'test_bmb_quad_colors.py'
 node --test tools/test_original_effect_player.mjs

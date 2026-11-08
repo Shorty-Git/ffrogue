@@ -160,7 +160,7 @@ export function validateImportPlacement(skill, manifest, publishedSkills = []) {
   if (!existing) throw Error('New Source import requires an explicit reviewed placement coordinate contract');
 }
 
-export function inspectCharacter(recipe, { assets = 'assets', dump = 'ffbe_asset_dump-main', effectsRoot = 'tools/effects' } = {}) {
+export function inspectCharacter(recipe, { assets = 'rawdata/assets', dump = 'rawdata/ffbe_asset_dump', effectsRoot = 'tools/effects' } = {}) {
   assertKey(recipe.key);
   if (!/^\d+$/.test(recipe.spriteUnitId)) throw Error('spriteUnitId must be a numeric string');
   if (!Number.isFinite(recipe.scale) || recipe.scale <= 0) throw Error('Invalid character scale');

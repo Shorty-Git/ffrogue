@@ -1,5 +1,5 @@
 #!/bin/sh
-# Batch skill import through the authoring-free path (local only; needs tools/data and assets/).
+# Batch skill import through the authoring-free path (local only; needs tools/data and rawdata/).
 # Each line of the batch file: character skillId id key [draft options...]
 #   e.g.  aerith 10290 curaja aerith_curaja --heal 900
 #   sh tools/import_skill_batch.sh <batch.txt> <run-dir under tools/data>
@@ -28,7 +28,7 @@ while read -r CHAR SID ID KEY REST; do
   node tools/draft_skill_entry.mjs --character "$CHAR" --source "$D/source/skill-source.json" --id "$ID" --key "$KEY" $REST >/dev/null || { echo "SKIP $ID: draft failed"; continue; }
   CLIP=$(node -e "const r=JSON.parse(require('fs').readFileSync('tools/characters/$CHAR.json'));console.log(r.skills.find(s=>s.id==='$ID').motion)")
   "$PY" tools/prepare_original_preview.py --source "$D/source/skill-source.json" --unit "$CHAR" --motion "$CLIP" --recipe "tools/characters/$CHAR.json" \
-    --profile source-preview-v1 --authoring-directory assets/battle_effect --native-shaders-apk tools/data/memorial-audit/installed-base-v208.apk \
+    --profile source-preview-v1 --authoring-directory rawdata/assets/battle_effect --native-shaders-apk tools/data/memorial-audit/installed-base-v208.apk \
     --native-shader-package tools/data/particle-native-audit/bmshaderpack.bin --renderer-reference tools/data/memorial-audit/diagnostic-v7/renderer-reference.json \
     --approximate-unverified --output "$D/source/plan.json" >"$D/prepare.log" 2>&1 || { echo "SKIP $ID: prepare: $(tail -1 "$D/prepare.log")"; continue; }
   REC=tools/presentations/$(echo "$KEY" | tr '_' '-').json

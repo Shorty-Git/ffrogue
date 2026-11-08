@@ -142,8 +142,8 @@ Particle node 10 is likewise a separate missing component.
 
 ## Local sources and reproduction inputs
 
-- `assets/battle_effect/atk_aerialslash_001_green.bmsln`
-- `assets/battle_effect/atk_aerialslash_001_green.efkefc`
+- `rawdata/assets/battle_effect/atk_aerialslash_001_green.bmsln`
+- `rawdata/assets/battle_effect/atk_aerialslash_001_green.efkefc`
 - `tools/data/shared-skill-review/blade-beam/originals/atk_aerialslash_001_green.bmb`
 - `tools/data/shared-skill-review/blade-beam/effects/atk_aerialslash_001_green/resources.json`
 - `tools/data/shared-skill-review/blade-beam/plan-appearance.json`

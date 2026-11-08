@@ -52,7 +52,7 @@ def initial_translation(node):
 
 
 def audit(root):
-    database = root / 'assets/static_data/ffbe-data.db'
+    database = root / 'rawdata/assets/static_data/ffbe-data.db'
     result = {
         'schemaVersion': 1,
         'databaseSha256': digest(database),
@@ -70,7 +70,7 @@ def audit(root):
     connection.row_factory = sqlite3.Row
     try:
         for color, ids in VARIANTS.items():
-            project_path = root / f'assets/battle_effect/atk_aerialslash_001_{color}.bmsln'
+            project_path = root / f'rawdata/assets/battle_effect/atk_aerialslash_001_{color}.bmsln'
             project = project_path.read_bytes()
             nodes = ET.fromstring(project).findall('.//ResIdeNode')[1:]
             controls = [{'nodeIndex': index, **initial_translation(nodes[index])} for index in (3, 4)]

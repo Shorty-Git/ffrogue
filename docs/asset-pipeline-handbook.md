@@ -8,7 +8,7 @@ Details and reproduction: `skill-reconstruction-workflow.md` (top entry).
 
 UI parts and skill icons (2026-11-07): `tools/export_battle_ui.py` extracts the
 original FFBE battle UI parts (window frame, gauges, command icons) from the Godot
-atlas under `assets/ui/`, and `tools/export_skill_icons.mjs` publishes each skill's
+atlas under `rawdata/assets/ui/`, and `tools/export_skill_icons.mjs` publishes each skill's
 original icon via `ability/magic.iconId` (run it after every skill publication).
 Both write provenance with SHA-256. Details: `battle-layout.md` and
 `character-import-workflow.md` (section 5).
@@ -1391,14 +1391,14 @@ discrepancy; do not force the data to match prose.
 
 | Location / format | Meaning and handling |
 | --- | --- |
-| `ffbe_asset_dump-main/` | Local art inventory: exact unit/monster atlases and CGG/CGS, icons, background companions and previews. Naming is a discovery aid, not proof of identity or completeness. |
-| `assets/static_data/ffbe-data.db` | Read-only source records: exact form to series, acquisitions, ability/magic, groups and effect references. Preserve region/version and database hash. |
-| `ffbe_data-master/` | Separate GL/JP metadata for descriptions and cross-checks. Do not silently join versions by name or presumed numeric equivalence. |
-| `com.square_enix.android_googleplay.FFBEWW/files/` | Original CPK archive source. Use indexed exact members; do not bulk-extract the backup or include preferences/account data in reports. |
+| `rawdata/ffbe_asset_dump/` | Local art inventory: exact unit/monster atlases and CGG/CGS, icons, background companions and previews. Naming is a discovery aid, not proof of identity or completeness. |
+| `rawdata/assets/static_data/ffbe-data.db` | Read-only source records: exact form to series, acquisitions, ability/magic, groups and effect references. Preserve region/version and database hash. |
+| `rawdata/ffbe_data/` | Separate GL/JP metadata for descriptions and cross-checks. Do not silently join versions by name or presumed numeric equivalence. |
+| `rawdata/android-global/files/` | Original CPK archive source. Use indexed exact members; do not bulk-extract the backup or include preferences/account data in reports. |
 | Original `.bmb` / `IBMB` | Runtime effect binary with version-specific, partially decoded node structure and resources. Known type/layout checks fail closed; unknown fields are not zeros. |
 | Original `.m3r` / `BR3M` | Model geometry/resource data. Preserve positions, normals, UVs, triangles and packed vertex colors; reading a field does not prove shader support. |
-| `assets/battle_effect/*.bmsln` | Optional authoring XML. Supplement only explicitly matched BMBs after existing comparison succeeds. Stored curves may be inactive. |
-| `assets/battle_effect/*.efkefc`, `assets/effect_resource/` | Converted counterparts and resources for the existing bake path. Conversion can omit original semantics; it is not a fidelity oracle. |
+| `rawdata/assets/battle_effect/*.bmsln` | Optional authoring XML. Supplement only explicitly matched BMBs after existing comparison succeeds. Stored curves may be inactive. |
+| `rawdata/assets/battle_effect/*.efkefc`, `rawdata/assets/effect_resource/` | Converted counterparts and resources for the existing bake path. Conversion can omit original semantics; it is not a fidelity oracle. |
 | `tools/characters/`, `tools/effects/` | Reviewed offline recipes. Gameplay adaptations, source variant and bake transforms remain explicit. |
 | `tools/data/` | Ignored staging, reports, plans, extracted resources, receipts and review screenshots. Recreate them from commands and source hashes on each PC. |
 | `public/assets/` | Selected prepared runtime sheets/images and clean JSON only. No raw-format parsers or raw dumps belong in the Phaser game. |

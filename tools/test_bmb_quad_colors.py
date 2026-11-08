@@ -14,7 +14,7 @@ class QuadColorsTest(unittest.TestCase):
     def test_source_pairs_cover_flat_and_independent_corner_values(self):
         nodes=0;flags=set();modes=set();corners=[set()for _ in range(4)]
         for stem in STEMS:
-            file=ROOT/'tools/data/bmb-format'/f'{stem}.bmb';project=ROOT/'assets/battle_effect'/f'{stem}.bmsln'
+            file=ROOT/'tools/data/bmb-format'/f'{stem}.bmb';project=ROOT/'rawdata/assets/battle_effect'/f'{stem}.bmsln'
             if not file.exists()or not project.exists():self.skipTest('Local source pairs are required')
             raw=file.read_bytes();result=read_bmb(raw);attach_quad_colors(raw,result)
             source=ET.parse(project).findall('.//ResIdeNode')[1:]
@@ -31,7 +31,7 @@ class QuadColorsTest(unittest.TestCase):
         file=ROOT/'tools/data/bmb-format/eff_bg_fire_red.bmb'
         if not file.exists():self.skipTest('Local source pair is required')
         raw=file.read_bytes();result=read_bmb(raw);attach_quad_colors(raw,result)
-        source=ET.parse(ROOT/'assets/battle_effect/eff_bg_fire_red.bmsln').findall('.//ResIdeNode')[1:]
+        source=ET.parse(ROOT/'rawdata/assets/battle_effect/eff_bg_fire_red.bmsln').findall('.//ResIdeNode')[1:]
         node=next(n for n in result['nodes']if n['typeId']==2)
         node['quadColors']['corners']['rightTop']['value'][3]+=.5
         with self.assertRaises(ValueError):compare_quad_colors(node,source[node['index']])

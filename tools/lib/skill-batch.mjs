@@ -5,7 +5,7 @@ import { inspectCharacter, inspectEffect, readJson, sha256 } from './character-p
 // Availability and reviewed execution are separate gates. Legacy commands never
 // become ready merely because the character importer permits preserving them.
 export function planSkillBatch({ characters = ['cloud', 'aerith', 'barret'], selection, all = false,
-  recipesRoot = 'tools/characters', assets = 'assets', dump = 'ffbe_asset_dump-main' } = {}) {
+  recipesRoot = 'tools/characters', assets = 'rawdata/assets', dump = 'rawdata/ffbe_asset_dump' } = {}) {
   const skills = [], effects = new Map(), found = new Set();
   for (const character of characters) {
     const recipeFile = path.join(recipesRoot, `${character}.json`);
@@ -43,7 +43,7 @@ export function planSkillBatch({ characters = ['cloud', 'aerith', 'barret'], sel
     limits: ['Ready means an existing reviewed recipe, not original-game fidelity.', 'Baking does not publish character skills or change gameplay.', 'Blocked skills are never replaced with partial effects.'] };
 }
 
-export function isEffectBakeCurrent(recipeFile, { assets = 'assets', effectsRoot = 'public/assets/effects' } = {}) {
+export function isEffectBakeCurrent(recipeFile, { assets = 'rawdata/assets', effectsRoot = 'public/assets/effects' } = {}) {
   try {
     const recipe = readJson(recipeFile), folder = path.join(effectsRoot, recipe.key);
     const manifest = readJson(`${folder}/manifest.json`);

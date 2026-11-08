@@ -84,7 +84,7 @@ revision 18 again or claim revision 19's native performance is verified.
 ## Reproduction and actual checks
 
 ```powershell
-& $env:FFROGUE_PYTHON tools/memorial/audit_ancestor_locator.py --log tools/data/memorial-audit/diagnostic-v18-locator/ancestor-locator-20261024-191133-log.txt --token ancestor-locator-20261024-191133 --source tools/data/shared-skill-review/brave-slash-composed/originals/atk_impact_001_pink.bmb --authoring assets/battle_effect/atk_impact_001_pink.bmsln --output tools/data/memorial-audit/diagnostic-v18-locator/direct-prefix-audit.json
+& $env:FFROGUE_PYTHON tools/memorial/audit_ancestor_locator.py --log tools/data/memorial-audit/diagnostic-v18-locator/ancestor-locator-20261024-191133-log.txt --token ancestor-locator-20261024-191133 --source tools/data/shared-skill-review/brave-slash-composed/originals/atk_impact_001_pink.bmb --authoring rawdata/assets/battle_effect/atk_impact_001_pink.bmsln --output tools/data/memorial-audit/diagnostic-v18-locator/direct-prefix-audit.json
 node tools/audit_renderer_coverage.mjs tools/data/particle-geometry/source-features.json tools/data/particle-geometry/coverage-after-locator.json
 node --test tools/memorial/test_locator_observer.mjs tools/memorial/test_particle_observer.mjs tools/test_renderer_coverage.mjs
 & $env:FFROGUE_PYTHON -m unittest discover -s tools/memorial -p test_ancestor_locator.py

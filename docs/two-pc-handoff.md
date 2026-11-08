@@ -11,10 +11,10 @@ other checkout. Existing identical raw packages do not need another copy.
 
 | Relative path | Purpose | Approximate size on this PC |
 | --- | --- | ---: |
-| `ffbe_asset_dump-main/` | Unit/monster art, CGG/CGS, backgrounds and CPK reader | 3.35 GiB |
+| `rawdata/ffbe_asset_dump/` | Unit/monster art, CGG/CGS, backgrounds and CPK reader | 3.35 GiB |
 | `assets/` | Source database, authoring projects, converted effects/resources | 13.47 GiB |
-| `ffbe_data-master/` | Community GL/JP metadata | 0.07 GiB |
-| `com.square_enix.android_googleplay.FFBEWW/files/` | Original CPK archive source; preserve the containing package folder name | Up to 5.55 GiB |
+| `rawdata/ffbe_data/` | Community GL/JP metadata | 0.07 GiB |
+| `rawdata/android-global/files/` | Original CPK archive source; preserve the containing package folder name | Up to 5.55 GiB |
 | `tools/bin/` | ffbetool and local rendering SDK | 0.03 GiB |
 | `tools/data/` | Current extracted sources, archive index, plans, reports and review evidence | 0.25 GiB |
 

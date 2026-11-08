@@ -51,7 +51,7 @@ tools/data/shared-skill-review/climhazzard/plan-inheritance.json
 
 Repeat the preparation commands in the shared-skill review with `--inheritance`
 and the output filename `plan-inheritance.json`. For Climhazzard also pass
-`--authoring assets/battle_effect/eff_strobe_white_a50_f30.bmsln`; its original
+`--authoring rawdata/assets/battle_effect/eff_strobe_white_a50_f30.bmsln`; its original
 binary passes the existing comparison too. Keep the previous experiment flags.
 
 ```powershell

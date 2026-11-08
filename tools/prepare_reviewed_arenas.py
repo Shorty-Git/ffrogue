@@ -9,7 +9,7 @@ from pathlib import Path
 from PIL import Image
 from prepare_stage_animation import prepare
 
-dump = Path('ffbe_asset_dump-main/battle_bg')
+dump = Path('rawdata/ffbe_asset_dump/battle_bg')
 review = json.loads(Path('tools/stages/reviewed-arenas.json').read_text(encoding='utf-8-sig'))
 target = Path('public/assets/stages')
 
@@ -19,12 +19,12 @@ def record(path):
             'sha256': hashlib.sha256(path.read_bytes()).hexdigest()}
 
 
-with sqlite3.connect('file:assets/static_data/ffbe-data.db?mode=ro', uri=True) as db:
+with sqlite3.connect('file:rawdata/assets/static_data/ffbe-data.db?mode=ro', uri=True) as db:
     db.row_factory = sqlite3.Row
     rows = {r['battleBgId']: dict(r) for r in db.execute('select * from battle_bg')}
     registry = {r['resourceId']: r['fileName'] for r in db.execute('select * from resource_map where resourceType=400')}
     banks = {}
-    for root in (Path('tools/data/memorial-audit/trace-clone-backup'), Path('com.square_enix.android_googleplay.FFBEWW')):
+    for root in (Path('tools/data/memorial-audit/trace-clone-backup'), Path('rawdata/android-global')):
         for file in sorted(root.rglob('*.acb')):
             key = file.name.lower()
             banks.setdefault(key, []).append(file.as_posix())

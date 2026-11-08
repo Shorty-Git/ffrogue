@@ -33,7 +33,7 @@ def compose_effects(unit_frames, skill_frames, motion_type):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--database', type=Path, default=Path('assets/static_data/ffbe-data.db'))
+    parser.add_argument('--database', type=Path, default=Path('rawdata/assets/static_data/ffbe-data.db'))
     parser.add_argument('--unit-id', type=int, required=True)
     parser.add_argument('--skill-id', type=int, required=True)
     parser.add_argument('--trace', type=Path, help='Optional revision-11 summary for this exact unit/ability')

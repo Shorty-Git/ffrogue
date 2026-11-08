@@ -4,7 +4,7 @@ import {DatabaseSync} from 'node:sqlite';
 import {assetInfo,resolveEffects,parseTimeline} from './character-pipeline.mjs';
 
 /** Enemy ownership is monster_skill_set, never unit learns/ability or name matching. */
-export function inspectEnemySkills(recipe,{assets='assets'}={}){
+export function inspectEnemySkills(recipe,{assets='rawdata/assets'}={}){
  const database=path.join(assets,'static_data/ffbe-data.db'),db=new DatabaseSync(database,{readOnly:true});
  try{
   const monster=db.prepare('SELECT * FROM monster WHERE monsterId=?').get(recipe.monsterId);

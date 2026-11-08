@@ -11,7 +11,7 @@ def sha(path):
 
 
 def inventory(output):
-    database = Path('assets/static_data/ffbe-data.db')
+    database = Path('rawdata/assets/static_data/ffbe-data.db')
     with sqlite3.connect(database.resolve().as_uri() + '?mode=ro', uri=True) as db:
         db.row_factory = sqlite3.Row
         rows = lambda query, args=(): [dict(r) for r in db.execute(query, args)]
@@ -19,9 +19,9 @@ def inventory(output):
         for recipe in sorted(Path('tools/monsters').glob('*.json')):
             data = json.loads(recipe.read_text())
             sprite = data['spriteId']
-            sources = [Path('ffbe_asset_dump-main/monster_animated') / f'monster_anime_{sprite}.png',
-                       Path('ffbe_asset_dump-main/monster_animated_csv') / f'monster_cgg_{sprite}.csv']
-            sources += sorted(Path('ffbe_asset_dump-main/monster_animated_csv').glob(f'monster_*_cgs_{sprite}.csv'))
+            sources = [Path('rawdata/ffbe_asset_dump/monster_animated') / f'monster_anime_{sprite}.png',
+                       Path('rawdata/ffbe_asset_dump/monster_animated_csv') / f'monster_cgg_{sprite}.csv']
+            sources += sorted(Path('rawdata/ffbe_asset_dump/monster_animated_csv').glob(f'monster_*_cgs_{sprite}.csv'))
             skill_sets = rows('SELECT * FROM monster_skill_set WHERE monsterId=?', (data['monsterId'],))
             ids = {int(s) for group in skill_sets for s in (group['skillId'] or '').split(',') if s.strip()}
             skills = [r for i in sorted(ids) for r in rows('SELECT * FROM monster_skill WHERE monsterSkillId=?', (i,))]
@@ -36,7 +36,7 @@ def inventory(output):
                         'Original named attacks are inventory only, not published gameplay or animation support.']))
         backgrounds = []
         for filename in ['battle_bg_0003_01', 'battle_bg_2013_02']:
-            files = [p for p in sorted(Path('ffbe_asset_dump-main/battle_bg').glob(filename + '.*'))]
+            files = [p for p in sorted(Path('rawdata/ffbe_asset_dump/battle_bg').glob(filename + '.*'))]
             backgrounds.append(dict(master=rows('SELECT * FROM battle_bg WHERE fileInfo=?', (filename + '.jpg',)),
                                     files=[dict(path=p.as_posix(), sha256=sha(p), bytes=p.stat().st_size) for p in files]))
         report = dict(schema='bounded-battle-content-v1', databaseSha256=sha(database),

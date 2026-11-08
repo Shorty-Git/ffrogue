@@ -32,8 +32,8 @@ class EffectProjectTests(unittest.TestCase):
         base.mkdir(parents=True, exist_ok=True)
         root = Path(tempfile.mkdtemp(prefix='uv-repair-test-', dir=base))
         try:
-            assets = root / 'assets'
-            assets.mkdir()
+            assets = root / 'rawdata/assets'
+            assets.mkdir(parents=True)
             project = ET.Element('EffekseerProject')
             authoring = ET.Element('Solution')
             for name, x in [('left', '0'), ('right', '-1')]:

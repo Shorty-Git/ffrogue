@@ -26,7 +26,7 @@ test('friendly side and cardinality are host contracts; enemy placement remains 
  assert.equal(scenePresentationMembers(plan,['a','b']).length,3);
 });
 test('two existing-roster imports pass the same source, resource and mandatory choreography gates',()=>{
- const report=inspectCharacter(recipe,{assets:'assets',dump:'ffbe_asset_dump-main'});
+ const report=inspectCharacter(recipe,{assets:'rawdata/assets',dump:'rawdata/ffbe_asset_dump'});
  assert.equal(report.publishable,true,JSON.stringify(report.selected));
  const chant=skills.find(s=>s.id==='chant'),sword=skills.find(s=>s.id==='cunning_hero_sword');
  assert.equal(chant.originalCommand.raw.processId,'41@2');assert.equal(chant.gameplayReview.ownedFields.includes('hpCost'),true);
@@ -35,5 +35,5 @@ test('two existing-roster imports pass the same source, resource and mandatory c
  assert.deepEqual(sword.damageEvents,sourceDamageEvents(report.catalog.find(s=>s.id===sword.ffbeId),manifest.plan));
  assert.equal(sword.damageEvents.length,9);assert.equal(sword.scope,'all_enemies');assert.equal(sword.actionChoreography.body.mode,'rest');
  const bad=structuredClone(recipe);bad.skills.find(s=>s.id==='chant').friendlyTargetReview.sourceRange='1';
- assert.equal(inspectCharacter(bad,{assets:'assets',dump:'ffbe_asset_dump-main'}).publishable,false);
+ assert.equal(inspectCharacter(bad,{assets:'rawdata/assets',dump:'rawdata/ffbe_asset_dump'}).publishable,false);
 });

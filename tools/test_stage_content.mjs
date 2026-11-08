@@ -1,3 +1,4 @@
+import {resolveRawPath} from './lib/raw-paths.mjs';
 import {recommendMusic} from '../src/audio/musicProfiles.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -17,7 +18,7 @@ test('all stage actors bind reviewed original identities and full validated body
   assert.equal(s.monster.monsterId,String(d.monsterId)*1);assert.equal(s.monster.dictionaryId,d.dictionaryId);
   assert.equal(s.dictionary.name,d.name);assert.equal(String(m.unitId),d.spriteId);assert.equal(m.type,'monster');
   assert.equal(hash(p+'/manifest.json'),s.manifestSha256);assert.equal(hash(s.recipe),s.recipeSha256);
-  s.files.forEach(f=>assert.equal(hash(f.path),f.sha256));s.preparedFiles.forEach(f=>assert.equal(hash(p+'/'+f.file),f.sha256));
+  s.files.forEach(f=>assert.equal(hash(resolveRawPath(f.path)),f.sha256));s.preparedFiles.forEach(f=>assert.equal(hash(p+'/'+f.file),f.sha256));
   assert.ok(m.animations.idle);const attack=m.animations[d.attack.clip];assert.ok(attack.frames[d.attack.impactFrame]);
   assert.ok(attack.frames.slice(0,d.attack.impactFrame).reduce((t,f)=>t+f.durationMs,0)<attack.frames.reduce((t,f)=>t+f.durationMs,0));
   assert.ok(Number.isFinite(attack.pivotX)&&Number.isFinite(attack.pivotY));

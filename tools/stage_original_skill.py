@@ -43,7 +43,7 @@ def stage(report_path, skill_id, kind, index, output, reader_path):
     originals = []
     def read_indexed(row):
         archive=(root/row['archive']).resolve()
-        if not archive.is_relative_to(root/'com.square_enix.android_googleplay.FFBEWW/files'):
+        if not archive.is_relative_to(root/'rawdata/android-global/files'):
             raise ValueError('Archive must stay inside backup files directory')
         cpk=module.Cpk(archive)
         try:
@@ -86,6 +86,6 @@ if __name__ == '__main__':
     parser.add_argument('--kind', choices=['ABILITY', 'MAGIC', 'MONSTER_SKILL'], default='ABILITY')
     parser.add_argument('--index', type=Path, default=Path('tools/data/android-cpk-audit/members.jsonl'))
     parser.add_argument('--output', type=Path, required=True)
-    parser.add_argument('--cpk-reader', type=Path, default=Path('ffbe_asset_dump-main/tools/cpk.py'))
+    parser.add_argument('--cpk-reader', type=Path, default=Path('rawdata/ffbe_asset_dump/tools/cpk.py'))
     args = parser.parse_args()
     stage(args.report, args.skill_id, args.kind, args.index, args.output, args.cpk_reader)

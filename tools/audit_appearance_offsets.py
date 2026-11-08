@@ -64,7 +64,7 @@ def audit(root):
     for name, candidates in sorted(grouped.items()):
         path = candidates[0]
         data = path.read_bytes()
-        project = root / 'assets/battle_effect' / Path(name).with_suffix('.bmsln')
+        project = root / 'rawdata/assets/battle_effect' / Path(name).with_suffix('.bmsln')
         record = {'binary': path.relative_to(root).as_posix(), 'binarySha256': sha256(data),
                   'aliases': [p.relative_to(root).as_posix() for p in candidates[1:]]}
         if any(p.read_bytes() != data for p in candidates[1:]):

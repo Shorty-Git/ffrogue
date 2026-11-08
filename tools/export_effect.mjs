@@ -36,7 +36,7 @@ if (recipe.frameRate !== 60) throw Error('Source effect simulation currently req
 if (!Number.isFinite(recipe.emitterScale ?? 1) || (recipe.emitterScale ?? 1) <= 0) throw Error('Invalid emitterScale');
 if (![recipe.frameWidth, recipe.frameHeight, recipe.frameCount, recipe.columns].every(Number.isInteger)) throw Error('Sheet geometry must use integer values');
 if ((recipe.frameWidth + 2 * sampling.gutter) * recipe.columns > 8192 || (recipe.frameHeight + 2 * sampling.gutter) * Math.ceil(recipe.frameCount / recipe.columns) > 8192) throw Error('Sheet exceeds 8192px texture budget');
-const assets = args.includes('--assets') ? value('--assets') : 'assets';
+const assets = args.includes('--assets') ? value('--assets') : 'rawdata/assets';
 const source = path.join(assets, recipe.source).replaceAll('\\', '/');
 const inspected = inspectEffect(source, assets);
 if (!inspected.exists || inspected.resources.some(r => !r.exists)) throw Error('Effect or dependency missing');

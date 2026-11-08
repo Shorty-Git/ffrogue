@@ -19,7 +19,7 @@ source, authoring = source_path.read_bytes(), authoring_path.read_bytes()
 if sha(source) != recipe['sourceSha256'] or sha(authoring) != recipe['authoringSha256']:
     raise ValueError('Repair source snapshot differs from the inspected version')
 output = Path(recipe['output'])
-if output.resolve() == source_path.resolve() or not output.resolve().is_relative_to(Path('assets').resolve()):
+if output.resolve() == source_path.resolve() or not output.resolve().is_relative_to(Path('rawdata/assets').resolve()):
     raise ValueError('Repair must create a separate local source variant inside assets')
 project = decode_project(source)
 original_nodes = {n.findtext('Basic_Meta_Name'): n for n in ET.fromstring(authoring).iter('ResIdeNode')

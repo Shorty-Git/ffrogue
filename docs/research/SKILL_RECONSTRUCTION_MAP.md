@@ -75,7 +75,7 @@ Reproduce:
 ```powershell
 node tools/plan_source_imports.mjs --select cloud:207000105 --output tools/data/omnislash-20261107/intake
 <python> tools/stage_source_imports.py --selection tools/data/omnislash-20261107/intake/selection.json
-<python> tools/prepare_original_preview.py --source tools/data/omnislash-20261107/intake/cloud-207000105/skill-source.json --unit cloud --motion atk --recipe tools/characters/cloud.json --profile source-preview-v1 --authoring-directory assets/battle_effect --native-shaders-apk tools/data/memorial-audit/installed-base-v208.apk --native-shader-package tools/data/particle-native-audit/bmshaderpack.bin --renderer-reference tools/data/memorial-audit/diagnostic-v7/renderer-reference.json --approximate-unverified --output tools/data/omnislash-20261107/intake/cloud-207000105/plan.json
+<python> tools/prepare_original_preview.py --source tools/data/omnislash-20261107/intake/cloud-207000105/skill-source.json --unit cloud --motion atk --recipe tools/characters/cloud.json --profile source-preview-v1 --authoring-directory rawdata/assets/battle_effect --native-shaders-apk tools/data/memorial-audit/installed-base-v208.apk --native-shader-package tools/data/particle-native-audit/bmshaderpack.bin --renderer-reference tools/data/memorial-audit/diagnostic-v7/renderer-reference.json --approximate-unverified --output tools/data/omnislash-20261107/intake/cloud-207000105/plan.json
 node tools/publish_scene_presentations.mjs --recipe tools/presentations/cloud-omnislash.json
 node tools/import_character.mjs --recipe tools/characters/cloud.json --publish-skills-only --python <python>
 ```
@@ -1719,7 +1719,7 @@ resource identity**, not a missing shader or a fitted geometry/position rule.
 The original GPU textures are RGBA/UNSIGNED_BYTE128x128. Revision9 captures their
 client bytes at glTexImage2D entry and reads the stored texels without rewriting
 the original texture. All196,608 client bytes equal the normalized GPU readbacks.
-The existing tutorial-CPK palette PNGs differ. Three local assets/effect_resource
+The existing tutorial-CPK palette PNGs differ. Three local rawdata/assets/effect_resource
 PNGs, processed through the already reconstructed integer Cocos formula, match
 all three actual uploads byte for byte. No native texel buffers are runtime inputs.
 
@@ -2074,7 +2074,7 @@ Native shader sources declare highp; mediump is not an evidenced fix.
 
 ```
 python tools/memorial/emulate_draw_priority.py --apk tools/data/memorial-audit/installed-base-v208.apk --output tools/data/memorial-audit/diagnostic-v35-render-context/priority-native-controls.json
-python tools/prepare_draw_submission.py --source tools/data/shared-skill-review/brave-slash-composed/originals/atk_slash1_white.bmb --program tools/data/memorial-audit/diagnostic-v35-render-context/program-j.json --authoring assets/battle_effect/atk_slash1_white.bmsln --output tools/data/memorial-audit/diagnostic-v35-render-context/program-j-ordered.json
+python tools/prepare_draw_submission.py --source tools/data/shared-skill-review/brave-slash-composed/originals/atk_slash1_white.bmb --program tools/data/memorial-audit/diagnostic-v35-render-context/program-j.json --authoring rawdata/assets/battle_effect/atk_slash1_white.bmsln --output tools/data/memorial-audit/diagnostic-v35-render-context/program-j-ordered.json
 ```
 
 Use existing Python native dependencies/PYTHONPATH in the handoff. The source-only
@@ -4510,7 +4510,7 @@ reuse checked staging; blockers remain explicit and publication is not automatic
 4. **Implemented:** `stage_original_skill.py` uses checked archive entries; `inspect_bmb_resources.py` follows typed resource tables and preserves candidate provenance.
 5. **Integration:** yes, in common original-source staging used by the three inspected skills, within the readable reviewed-index/PNG/M3R profile.
 6. **Missing/outside profile:** other resource kinds/archives/encodings; ambiguous candidate selection must remain visible to P10, not be flattened by filename.
-7. **Evidence:** R02; staging/resource tools and CPK reader under `ffbe_asset_dump-main/tools/cpk.py`; historical extracted Climhazzard dependency receipts.
+7. **Evidence:** R02; staging/resource tools and CPK reader under `rawdata/ffbe_asset_dump/tools/cpk.py`; historical extracted Climhazzard dependency receipts.
 8. **Dependencies/consumers:** P01/P05 -> P06 -> P07/P08/P10.
 9. **Next:** retain current extractor; require unique resolved dependency identities at the compiler boundary.
 10. **Acceptance:** staged bytes/counts/hashes agree with the indexed decompressed members; missing, changed and ambiguous dependencies cannot yield an approved plan.
@@ -5089,7 +5089,7 @@ Paths below are repository-relative and concrete. Linked reports describe their 
 | Bundle | Primary code/tests | Findings and research records |
 | --- | --- | --- |
 | R01 | `tools/import_character.mjs`; `tools/lib/character-pipeline.mjs`; `tools/export_unit.py`; `tools/validate_character.py`; `tools/test_character_pipeline.mjs` | [character standard](../character-import-workflow.md), [animation audit](character-animation-audit.md), [batch](skill-batch.md). Reusable selected-profile import/publication and38 checked body sheets documented; not all skills |
-| R02 | `tools/stage_original_skill.py`; `tools/inspect_bmb_resources.py`; `ffbe_asset_dump-main/tools/cpk.py` | [recovered sources](missing-effect-sources.md), [original feasibility](climhazzard-original-feasibility.md), [asset structure](../asset_structure.md). Four Climhazzard binaries/19 resources staged,13 PNGs/six M3R; availability not rendering |
+| R02 | `tools/stage_original_skill.py`; `tools/inspect_bmb_resources.py`; `rawdata/ffbe_asset_dump/tools/cpk.py` | [recovered sources](missing-effect-sources.md), [original feasibility](climhazzard-original-feasibility.md), [asset structure](../asset_structure.md). Four Climhazzard binaries/19 resources staged,13 PNGs/six M3R; availability not rendering |
 | R03 | `tools/audit_cloud_versions.mjs`; `tools/memorial/export_master_reference.py`; `tools/memorial/test_particle_trace.py` | [version comparison](cloud-version-comparison.md), [hit profiles](native-hit-profiles.md), [MVP audit](mvp-skill-audit.md), `mvp-skill-audit.json`, `cloud-skill-effects.json`. Three loaded abilities/six timeline fields match; incomplete ownership closure |
 | R04 | `tools/compose_skill_effects.py`; `tools/resolve_composed_skill.mjs`; `tools/test_compose_skill_effects.py`; `tools/memorial/observer.js` | [native hit profiles](native-hit-profiles.md), [composed preview](brave-slash-composed-preview.md), [composition audit](original-composition-audit.md). Actual upgraded unit prefix differs from project-form prefix; motion1 rule tested, not every motion |
 | R05 | `tools/lib/character-pipeline.mjs`; `tools/prepare_original_preview.py`; `tools/probe_original_skill_features.mjs` | [Cloud mapping](cloud-skill-effects.md), [shared import](shared-skill-import-review.md), [composition](original-composition-audit.md). Raw tuples/fields survive, several meanings/gates remain partial |

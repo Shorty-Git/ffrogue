@@ -9,7 +9,7 @@ const read = p => JSON.parse(fs.readFileSync(p, 'utf8'));
 
 test('Helm Break imports the whole original composition with separate reviewed gameplay', () => {
   const recipe = read('tools/characters/delita.json');
-  const report = inspectCharacter(recipe, {assets: 'assets', dump: 'ffbe_asset_dump-main'});
+  const report = inspectCharacter(recipe, {assets: 'rawdata/assets', dump: 'rawdata/ffbe_asset_dump'});
   assert.equal(report.publishable, true);
   const skill = read('public/assets/units/delita/skills.json').skills.find(s => s.ffbeId === 202190);
   const manifest = read(`public/assets/presentations/${skill.scenePresentation}/manifest.json`);
@@ -36,5 +36,5 @@ test('Helm Break imports the whole original composition with separate reviewed g
   // Reject admission without either mandatory review, before runtime publication.
   const unresolved = structuredClone(recipe);
   delete unresolved.skills.find(s => s.ffbeId === 202190).actionChoreography;
-  assert.equal(inspectCharacter(unresolved, {assets: 'assets', dump: 'ffbe_asset_dump-main'}).publishable, false);
+  assert.equal(inspectCharacter(unresolved, {assets: 'rawdata/assets', dump: 'rawdata/ffbe_asset_dump'}).publishable, false);
 });

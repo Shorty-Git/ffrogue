@@ -4,6 +4,7 @@ import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {DatabaseSync} from 'node:sqlite';
 import {formLearning} from './lib/form-learning.mjs';
+import {resolveRawPath} from './lib/raw-paths.mjs';
 import {inspectCharacter,readJson,sha256,composeEffectFrames,unresolvedEffectAnchors} from './lib/character-pipeline.mjs';
 const args=process.argv.slice(2),get=k=>args[args.indexOf(k)+1];
 if(!args.includes('--output')||args.includes('--select')===args.includes('--shortlist-catalog'))
@@ -15,7 +16,7 @@ if(args.includes('--shortlist-catalog')){
  if(args.includes('--compose-unit-effects'))throw Error('Shortlisting is not exact form composition; use an owned --select first');
  const file=path.resolve(get('--shortlist-catalog'));if(!file.startsWith(stage))throw Error('Use the preserved ignored census');
  const catalog=readJson(file),database=catalog.summary?.database;
- if(database?.file!=='assets/static_data/ffbe-data.db'||database.sha256!==sha256(database.file))throw Error('Census database identity changed');
+ if(resolveRawPath(database?.file)!=='rawdata/assets/static_data/ffbe-data.db'||database.sha256!==sha256(resolveRawPath(database.file)))throw Error('Census database identity changed');
  const registry=readJson('public/assets/content.json'),known=new Set(),published=new Set(),identities={};
  for(const key of registry.scenePresentations){
   const file=`public/assets/presentations/${key}/manifest.json`,manifest=readJson(file);
@@ -44,7 +45,7 @@ const requests=get('--select').split(',').map(value=>{
 const reports=new Map(),selection=[],excluded=[];fs.mkdirSync(output,{recursive:true});
 for(const request of requests){
  if(!reports.has(request.character)){
-  const report=inspectCharacter(readJson(`tools/characters/${request.character}.json`),{assets:'assets',dump:'ffbe_asset_dump-main'});
+  const report=inspectCharacter(readJson(`tools/characters/${request.character}.json`),{assets:'rawdata/assets',dump:'rawdata/ffbe_asset_dump'});
   const file=path.join(output,request.character+'-inspection.json');fs.writeFileSync(file,JSON.stringify(report,null,2));
   reports.set(request.character,{report,file});
  }

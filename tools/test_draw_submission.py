@@ -21,7 +21,7 @@ class SubmissionDataTests(unittest.TestCase):
                 nodes=[n for n in read_bmb(raw)['nodes'] if n['typeId'] in (2,3)]
                 decoded=read_draw_submission(raw,[n['index'] for n in nodes])
                 sources+=1;fields+=len(nodes)
-                authoring=Path('assets/battle_effect')/Path(effect['name']).with_suffix('.bmsln')
+                authoring=Path('rawdata/assets/battle_effect')/Path(effect['name']).with_suffix('.bmsln')
                 if not authoring.is_file():
                     self.assertIsNone(effect.get('authoringSupplement'));missing.append(effect['name']);continue
                 xml=ET.parse(authoring).findall('.//ResIdeNode')

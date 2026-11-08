@@ -105,7 +105,7 @@ export async function importEffect(effectKey, config, tempUid = 999001) {
   const rawJson = fs.readFileSync(genJsonPath, 'utf-8');
   const meta = JSON.parse(rawJson);
 
-  const destDir = path.join('public', 'assets', 'effects', effectKey);
+  const destDir = path.join('public', 'rawdata/assets', 'effects', effectKey);
   fs.mkdirSync(destDir, { recursive: true });
 
   const destPngName = `${effectKey}.png`;

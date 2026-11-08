@@ -6,7 +6,7 @@ Only used by prepare_original_preview.py --approximate-unverified when an effect
 matched BMSLN: decoded binary fields still win, and every default taken is listed in
 plan.approximations. A corpus mode is a visual approximation, never source evidence.
 
-    <python> tools/build_authoring_defaults.py [--directory assets/battle_effect]
+    <python> tools/build_authoring_defaults.py [--directory rawdata/assets/battle_effect]
 """
 import argparse
 import hashlib
@@ -59,7 +59,7 @@ def build(directory):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--directory', type=Path, default=Path('assets/battle_effect'))
+    parser.add_argument('--directory', type=Path, default=Path('rawdata/assets/battle_effect'))
     args = parser.parse_args()
     result = build(args.directory)
     OUTPUT.write_text(json.dumps(result, indent=1, sort_keys=True) + '\n', encoding='utf-8')

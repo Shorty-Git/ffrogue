@@ -45,7 +45,7 @@ def audit(selection_file):
                 reused=True
             else:
                 with contextlib.redirect_stdout(log):
-                    stage(Path(item['report']),item['sourceId'],item['kind'],Path('tools/data/android-cpk-audit/members.jsonl'),output,Path('ffbe_asset_dump-main/tools/cpk.py'))
+                    stage(Path(item['report']),item['sourceId'],item['kind'],Path('tools/data/android-cpk-audit/members.jsonl'),output,Path('rawdata/ffbe_asset_dump/tools/cpk.py'))
             source=json.loads(receipt.read_text(encoding='utf-8'))
             verify_staged_identity(output,source)
             if any(branch.get('conditional') for branch in source['skill']['effects']):
@@ -54,7 +54,7 @@ def audit(selection_file):
                 report=json.loads((output/'effects'/Path(original['member']).stem/'resources.json').read_text(encoding='utf-8'))
                 source_bytes=Path(report['source']).read_bytes()
                 structure=read_bmb(source_bytes);nodes=structure['nodes']
-                authoring=Path('assets/battle_effect')/Path(original['member']).with_suffix('.bmsln')
+                authoring=Path('rawdata/assets/battle_effect')/Path(original['member']).with_suffix('.bmsln')
                 local=[]
                 if not authoring.exists():local.append('missing-matched-authoring')
                 else:

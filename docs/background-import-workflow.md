@@ -47,7 +47,7 @@ Provisions and Bright Forest entries. `resource_map` resolves 400005 to
 encounters. The boss assignment is a local presentation choice.
 
 The preserved bank is under
-`tools/data/memorial-audit/trace-clone-backup/assetpacks/on_demand_asset3/199/199/assets/`.
+`rawdata/memorial-packs/on_demand_asset3/199/199/assets/`.
 Its SHA-256 is `a404058782637cfd7cfca1d58b062990be10ea4e28817beb4a0c07d3498c42cd`.
 With the official vgmstream r2168 Windows CLI, run
 `vgmstream-cli.exe -m -s 1 <bank>` for evidence and
@@ -111,7 +111,7 @@ sampler semantics. Existing source quantization is preserved, not painted away.
 CURRENT reproduction requires BOTH steps (the earlier plain export is unsampled):
 
 ```powershell
-& $env:FFROGUE_PYTHON tools/prepare_stage_animation.py --source ffbe_asset_dump-main/battle_bg/battle_bg_2013_02.ssbp --output public/assets/stages/reactor --offset 0 216 --canvas 960 1024
+& $env:FFROGUE_PYTHON tools/prepare_stage_animation.py --source rawdata/ffbe_asset_dump/battle_bg/battle_bg_2013_02.ssbp --output public/assets/stages/reactor --offset 0 216 --canvas 960 1024
 & $env:FFROGUE_PYTHON tools/prepare_stage_sampling.py --root public/assets/stages/reactor --recipe tools/stages/reactor-sampling.json
 node tools/review_stage_sampling.mjs --playwright INSTALLED_PLAYWRIGHT_PATH
 ```
@@ -196,7 +196,7 @@ filtering/nested visibility or native pixel parity. No new native capture.
 Reproduce with configured Python/Pillow:
 
 ```powershell
-& $env:FFROGUE_PYTHON tools/prepare_stage_animation.py --source ffbe_asset_dump-main/battle_bg/battle_bg_2013_02.ssbp --output public/assets/stages/reactor --offset 0 216 --canvas 960 1024
+& $env:FFROGUE_PYTHON tools/prepare_stage_animation.py --source rawdata/ffbe_asset_dump/battle_bg/battle_bg_2013_02.ssbp --output public/assets/stages/reactor --offset 0 216 --canvas 960 1024
 & $env:FFROGUE_PYTHON -m unittest tools/test_stage_animation.py
 node tools/review_stage_runtime.mjs --playwright INSTALLED_PLAYWRIGHT_PATH
 ```
@@ -267,7 +267,7 @@ how the original game combined or animated them.
 Search only the relevant source directory after reading the structure guide:
 
 ```powershell
-rg --files ffbe_asset_dump-main/battle_bg -g '*2013_02*'
+rg --files rawdata/ffbe_asset_dump/battle_bg -g '*2013_02*'
 ```
 
 Inspect the actual image with a real image decoder, including dimensions, alpha,
@@ -280,7 +280,7 @@ from pathlib import Path
 from PIL import Image
 import hashlib
 
-for path in sorted(Path('ffbe_asset_dump-main/battle_bg').glob('*2013_02*')):
+for path in sorted(Path('rawdata/ffbe_asset_dump/battle_bg').glob('*2013_02*')):
     print(path, path.stat().st_size, hashlib.sha256(path.read_bytes()).hexdigest())
     if path.suffix.lower() not in {'.jpg', '.jpeg', '.png', '.gif'}:
         continue
@@ -313,7 +313,7 @@ On 2026-10-22, both runtime JPGs were decoded with Pillow, visually inspected,
 and SHA-256 compared with their source files and JSON receipts. Each is an RGB,
 single-frame 960 by 1024 image, copied byte-for-byte without resampling.
 
-| Arena | Exact local source under `ffbe_asset_dump-main/battle_bg/` | Prepared file | SHA-256 |
+| Arena | Exact local source under `rawdata/ffbe_asset_dump/battle_bg/` | Prepared file | SHA-256 |
 | --- | --- | --- | --- |
 | Forest clearing | `battle_bg_0003_01.jpg` | `public/assets/backgrounds/forest_clearing.jpg` | `621d9ef2a4f4ef511793e55412a6b7243825f8cc9a6bad4a048b00892a36035f` |
 | Reactor marked 01 | `battle_bg_2013_02.jpg` | `public/assets/backgrounds/reactor_01.jpg` | `e6a781b66e91c8008e083773c1bee13839d78438a1ff6095596dcfdd658a015f` |
@@ -339,8 +339,8 @@ reproduces the existing reactor file and must only be run when that is the
 intended publication operation:
 
 ```powershell
-Copy-Item -LiteralPath 'ffbe_asset_dump-main/battle_bg/battle_bg_2013_02.jpg' -Destination 'public/assets/backgrounds/reactor_01.jpg'
-Get-FileHash -LiteralPath 'ffbe_asset_dump-main/battle_bg/battle_bg_2013_02.jpg' -Algorithm SHA256
+Copy-Item -LiteralPath 'rawdata/ffbe_asset_dump/battle_bg/battle_bg_2013_02.jpg' -Destination 'public/assets/backgrounds/reactor_01.jpg'
+Get-FileHash -LiteralPath 'rawdata/ffbe_asset_dump/battle_bg/battle_bg_2013_02.jpg' -Algorithm SHA256
 Get-FileHash -LiteralPath 'public/assets/backgrounds/reactor_01.jpg' -Algorithm SHA256
 ```
 

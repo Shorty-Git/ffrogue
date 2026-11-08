@@ -54,7 +54,7 @@ Inputs:
 
 - Database SHA-256: `ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f`.
 - Recipe: `tools/characters/cloud.json` (hash retained by prepared plan).
-- Archive: `com.square_enix.android_googleplay.FFBEWW/files/common_lang/sd/battleEffect/Ver31_battleEffect1_common.cpk`.
+- Archive: `rawdata/android-global/files/common_lang/sd/battleEffect/Ver31_battleEffect1_common.cpk`.
 - Pink BMB SHA-256: `89c3cb5e7c16df69bf8d1c538622afdd42e30942240141a8147dd55da4de690f`.
 - White BMB SHA-256: `32c66c01d93f64f2fb67a5c0580bb62f2622b1a56a1e36e55210594e10b07de9`.
 - Prepared plan SHA-256: `35f5737ff196e8055f7acad1afc6c5f63d246f890c57025092745168ac641488`.
@@ -75,7 +75,7 @@ node tools/import_character.mjs --recipe tools/characters/cloud.json
 & $env:FFROGUE_PYTHON tools/compose_skill_effects.py --unit-id 207000105 --skill-id 214800 --output tools/data/shared-skill-review/brave-slash/composition-five-star.json
 node tools/resolve_composed_skill.mjs --composition tools/data/shared-skill-review/brave-slash/composition-five-star.json --report tools/data/characters/cloud/report.json --output tools/data/shared-skill-review/brave-slash-composed/inspection.json
 & $env:FFROGUE_PYTHON tools/stage_original_skill.py --report tools/data/shared-skill-review/brave-slash-composed/inspection.json --skill-id 214800 --output tools/data/shared-skill-review/brave-slash-composed
-& $env:FFROGUE_PYTHON tools/prepare_original_preview.py --source tools/data/shared-skill-review/brave-slash-composed/skill-source.json --unit cloud --recipe tools/characters/cloud.json --authoring assets/battle_effect/atk_slash1_white.bmsln --authoring assets/battle_effect/atk_impact_001_pink.bmsln --scene-composite --withhold-untextured --inheritance --source-appearance --basic-uv --rectangle-placement --renderer-reference tools/data/memorial-audit/diagnostic-v7/renderer-reference.json --output tools/data/shared-skill-review/brave-slash-composed/plan.json
+& $env:FFROGUE_PYTHON tools/prepare_original_preview.py --source tools/data/shared-skill-review/brave-slash-composed/skill-source.json --unit cloud --recipe tools/characters/cloud.json --authoring rawdata/assets/battle_effect/atk_slash1_white.bmsln --authoring rawdata/assets/battle_effect/atk_impact_001_pink.bmsln --scene-composite --withhold-untextured --inheritance --source-appearance --basic-uv --rectangle-placement --renderer-reference tools/data/memorial-audit/diagnostic-v7/renderer-reference.json --output tools/data/shared-skill-review/brave-slash-composed/plan.json
 node tools/preview_original_skill.mjs --plan tools/data/shared-skill-review/brave-slash-composed/plan.json --port 3126
 ```
 

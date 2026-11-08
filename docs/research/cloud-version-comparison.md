@@ -77,7 +77,7 @@ Research artifacts:
 
 ## GL/JP metadata and ffbetool follow-up
 
-Both local `ffbe_data-master/gl/` and `/jp/` were checked, including `unit.json`,
+Both local `rawdata/ffbe_data/gl/` and `/jp/` were checked, including `unit.json`,
 `ability.json`, `learns.json` and `limits.json`. Neither snapshot contains the
 requested Remake form IDs 207002007/207002017 or the checked Remake skill IDs
 236010/236027/236032/236034/236045. The JP unit file has 1,115 records, the GL

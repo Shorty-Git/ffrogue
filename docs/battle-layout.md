@@ -72,8 +72,8 @@ The HUD combines original FFBE battle UI parts with FFRogue layout and typograph
   enemy HP gauge with green/yellow/red bars; bosses get a wider gauge.
 
 `tools/export_battle_ui.py` (project Python with Pillow) extracts these parts from
-the offline Godot atlas resources in `assets/ui/battle/*.tres` and composes the
-window frame from `assets/ui/window/window_*`. Output and provenance (source,
+the offline Godot atlas resources in `rawdata/assets/ui/battle/*.tres` and composes the
+window frame from `rawdata/assets/ui/window/window_*`. Output and provenance (source,
 atlas region, SHA-256): `public/assets/ui/battle/provenance.json`. Gauge bars sit in
 measured tracks: unit gauges 186x26 with the 180x4 bar at (3,19); enemy gauge
 416x40 with the 374x16 bar at (21,8).
@@ -120,8 +120,8 @@ Checked in headless Chromium at 1440x900 and 1100x760 (no page overflow).
 Party cards and enemy plates show active buffs/debuffs as original FFBE status icons with the
 remaining rounds in a small badge (`statusRow` in `src/ui/CombatHud.ts`, mapping in
 `src/ui/statusIcons.ts`). Icons are exported by `<python> tools/export_status_icons.py` from
-`assets/ui/battle/state_icon_up.png` (32 px grid, 9 columns: ATK up = 0, Reraise = 24) and
-`assets/icons/ailments/*.png` into `public/assets/ui/status/<kind>.png`. Hero buffs count rounds
+`rawdata/assets/ui/battle/state_icon_up.png` (32 px grid, 9 columns: ATK up = 0, Reraise = 24) and
+`rawdata/assets/icons/ailments/*.png` into `public/assets/ui/status/<kind>.png`. Hero buffs count rounds
 until `expiresAfterRound`; enemy statuses count enemy phases. Supported kinds: physical-boost,
 auto-revive, attack-down, physical-weakness, magic-weakness, silence, stop. A new status kind
 needs an icon entry in both files. The text status line now carries only the boss intent.

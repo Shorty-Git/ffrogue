@@ -139,7 +139,7 @@ Muted effects still suppress playback.
 
 ## Reproduction
 
-- `python tools/audit_source_combat_audio.py assets/static_data/ffbe-data.db <SE.acb>`
+- `python tools/audit_source_combat_audio.py rawdata/assets/static_data/ffbe-data.db <SE.acb>`
 - `node --test tools/test_skill_support.mjs`
 - `node tools/review_skill_sfx.mjs <Playwright module path>`
 - `node tools/review_combat_sfx.mjs <Playwright module path>`

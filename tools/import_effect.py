@@ -106,7 +106,7 @@ def import_effect(effect_key, atlas_rel, cgg_rel, cgs_rel, anim_name="limit_atke
     with open(gen_json_path, "r", encoding="utf-8") as f:
         meta = json.load(f)
 
-    dest_dir = os.path.join("public", "assets", "effects", effect_key)
+    dest_dir = os.path.join("public", "rawdata/assets", "effects", effect_key)
     os.makedirs(dest_dir, exist_ok=True)
 
     dest_png_name = f"{effect_key}.png"

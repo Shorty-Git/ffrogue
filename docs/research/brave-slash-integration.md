@@ -217,7 +217,7 @@ Scene shutdown/restart destroys remaining scene objects and timers.
 - The attack pose runs for its exported duration plus the existing 80 ms hit-stop
   before the return movement. Other skills retain their previous timing.
 - Delayed effect playback checks battle state and target HP before spawning.
-- `ffbe_data-master/` is ignored by Git and Vite's file watcher.
+- `rawdata/ffbe_data/` is ignored by Git and Vite's file watcher.
 
 ## Verification
 

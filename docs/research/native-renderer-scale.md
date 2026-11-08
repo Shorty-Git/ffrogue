@@ -88,7 +88,7 @@ falling back to a guessed value. A visible UI note identifies the measured
 resolution/factor and remaining layer/camera uncertainty.
 
 ```powershell
-& $env:FFROGUE_PYTHON tools/prepare_original_preview.py --source tools/data/shared-skill-review/blade-beam/skill-source.json --unit cloud --recipe tools/characters/cloud.json --authoring assets/battle_effect/atk_aerialslash_001_green.bmsln --authoring assets/battle_effect/atk_slash5_blue.bmsln --scene-composite --withhold-untextured --inheritance --source-appearance --basic-uv --rectangle-placement --renderer-reference tools/data/memorial-audit/diagnostic-v7/renderer-reference.json --output tools/data/shared-skill-review/blade-beam/plan-renderer-reference.json
+& $env:FFROGUE_PYTHON tools/prepare_original_preview.py --source tools/data/shared-skill-review/blade-beam/skill-source.json --unit cloud --recipe tools/characters/cloud.json --authoring rawdata/assets/battle_effect/atk_aerialslash_001_green.bmsln --authoring rawdata/assets/battle_effect/atk_slash5_blue.bmsln --scene-composite --withhold-untextured --inheritance --source-appearance --basic-uv --rectangle-placement --renderer-reference tools/data/memorial-audit/diagnostic-v7/renderer-reference.json --output tools/data/shared-skill-review/blade-beam/plan-renderer-reference.json
 node tools/preview_original_skill.mjs --plan tools/data/shared-skill-review/blade-beam/plan-renderer-reference.json --port 3124
 node --test tools/test_original_effect_player.mjs
 ```

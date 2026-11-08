@@ -7,12 +7,12 @@ import { inspectCharacter, readJson, sha256, writeJson } from './lib/character-p
 
 const output = 'tools/data/blade-beam-preview';
 const port = 3103;
-const report = inspectCharacter(readJson('tools/characters/cloud.json'), { assets: 'assets', dump: 'ffbe_asset_dump-main' });
+const report = inspectCharacter(readJson('tools/characters/cloud.json'), { assets: 'rawdata/assets', dump: 'rawdata/ffbe_asset_dump' });
 const skill = report.catalog.find(s => s.kind === 'ABILITY' && s.id === 214810);
 const members = skill.effects.flatMap(b => b.groups.flatMap(g => g.members.map(m => ({ ...m, group: g }))));
 if (members.length !== 2 || members.some(m => m.status !== 'available-unreviewed')) throw Error('Expected both complete Blade Beam source members');
 const allowed = new Map();
-const rawUrl = file => '/raw/' + path.relative('assets', file).replaceAll('\\', '/');
+const rawUrl = file => '/raw/' + path.relative('rawdata/assets', file).replaceAll('\\', '/');
 for (const member of members) for (const asset of [member.asset, ...member.asset.resources]) allowed.set(rawUrl(asset.file), asset.file);
 const sdk = 'tools/bin/effekseer-webgl-1.80.7';
 for (const file of ['effekseer.js', 'effekseer.wasm', 'Sample/three.min.js']) {

@@ -7,7 +7,7 @@ from original_texture_layers import attach_texture_layers
 
 ROOT = Path(__file__).resolve().parents[1]
 RAW = ROOT / 'tools/data/climhazzard-source/originals/atk_slash7_side_purple.bmb'
-PROJECT = ROOT / 'assets/battle_effect/atk_slash7_side_purple.bmsln'
+PROJECT = ROOT / 'rawdata/assets/battle_effect/atk_slash7_side_purple.bmsln'
 
 
 @unittest.skipUnless(RAW.exists() and PROJECT.exists(), 'Local original source pair is required')

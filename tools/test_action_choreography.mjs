@@ -26,7 +26,7 @@ test('VFX and hit support alone cannot authorize an implicit standard attack',()
   const bad=structuredClone(skill);mutate(bad);assert.throws(()=>validateActionChoreography(bad));
  }
  const recipe=read('tools/characters/cloud_ac.json');delete recipe.skills[0].actionChoreography;
- const report=inspectCharacter(recipe,{assets:'assets',dump:'ffbe_asset_dump-main'});
+ const report=inspectCharacter(recipe,{assets:'rawdata/assets',dump:'rawdata/ffbe_asset_dump'});
  assert.equal(report.publishable,false);assert.ok(report.selected[0].issues.some(x=>x.includes('choreography')));
 });
 

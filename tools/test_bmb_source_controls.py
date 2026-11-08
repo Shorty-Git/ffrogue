@@ -4,6 +4,7 @@ import struct
 import unittest
 from pathlib import Path
 import xml.etree.ElementTree as ET
+from raw_paths import resolve_raw_path
 from bmb_source_controls import read_source_controls, compare_source_controls, control_coverage, read_intake_controls
 
 
@@ -17,8 +18,8 @@ class SourceControlTests(unittest.TestCase):
         count = 0
         mutable = None
         for pair in pairs:
-            binary = Path(pair['binary']).read_bytes()
-            xml = Path(pair['authoring']).read_bytes()
+            binary = Path(resolve_raw_path(pair['binary'])).read_bytes()
+            xml = Path(resolve_raw_path(pair['authoring'])).read_bytes()
             result = compare_intake_pair(binary, xml)
             count += result['intakeFieldsChecked']
             self.assertFalse(result['wholeProjectCompared'])
@@ -121,7 +122,7 @@ class SourceControlTests(unittest.TestCase):
         if not corpus.exists():self.skipTest('Optional preserved matched control corpus missing')
         pairs=json.loads(corpus.read_text())['pairs'];count=0
         for pair in pairs:
-            data=read_bmb(Path(pair['binary']).read_bytes());xml=Path(pair['authoring']).read_bytes()
+            data=read_bmb(Path(resolve_raw_path(pair['binary'])).read_bytes());xml=Path(resolve_raw_path(pair['authoring'])).read_bytes()
             compare_project(data,xml)
             source=ET.fromstring(xml).findall('.//ResIdeNode')[1:]
             for node,s in zip(data['nodes'],source):count+=compare_source_controls(node,s)

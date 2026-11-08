@@ -7,14 +7,14 @@ import { sourceCommandMetadata } from './lib/source-command-metadata.mjs';
 const args = process.argv.slice(2);
 const value = flag => { const i = args.indexOf(flag); if (i < 0) return undefined; if (!args[i + 1] || args[i + 1].startsWith('--')) throw Error(`Missing value for ${flag}`); return args[i + 1]; };
 if (args.includes('--help') || !value('--recipe')) {
-  console.log('Usage: node tools/import_character.mjs --recipe tools/characters/cloud.json [--publish | --publish-skills-only | --prepare-body-only] [--python <python.exe>] [--assets assets] [--dump ffbe_asset_dump-main]');
+  console.log('Usage: node tools/import_character.mjs --recipe tools/characters/cloud.json [--publish | --publish-skills-only | --prepare-body-only] [--python <python.exe>] [--assets assets] [--dump rawdata/ffbe_asset_dump]');
   console.log('Default: local read-only inspection, reports in tools/data/characters/<key>/. --publish stages all sprites and validates selected skills/effects before copying prepared content and registering it.');
   process.exit(args.includes('--help') ? 0 : 1);
 }
 const recipe = readJson(value('--recipe'));
 if (recipe.schemaVersion !== 1) throw Error('Unsupported character recipe version');
-const assets = value('--assets') ?? 'assets';
-const dump = value('--dump') ?? 'ffbe_asset_dump-main';
+const assets = value('--assets') ?? 'rawdata/assets';
+const dump = value('--dump') ?? 'rawdata/ffbe_asset_dump';
 const report = inspectCharacter(recipe, { assets, dump });
 const skills = recipe.skills.map(({ execution, sourcePresentation, ...skill }) => {
   const source = report.catalog.find(entry => entry.id === skill.ffbeId && entry.kind === skill.type);

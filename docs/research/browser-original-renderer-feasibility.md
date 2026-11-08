@@ -90,8 +90,8 @@ This is a V8 format/startup prerequisite check, **not a browser-renderer executi
 test**, a failed SDK compilation or a proof that binary translation is impossible.
 No HTML demo pretending to run the renderer was created.
 
-The project-scoped source/artifact search covered assets/, ffbe_data-master/,
-ffbe_asset_dump-main/ and tools/, excluding generated tools/data and bundled JRE/
+The project-scoped source/artifact search covered assets/, rawdata/ffbe_data/,
+rawdata/ffbe_asset_dump/ and tools/, excluding generated tools/data and bundled JRE/
 signing tools. It searched source/header/archive/bitcode/Wasm and Bishamon JS
 filenames, not raw texture contents. Its sole match was
 tools/bin/effekseer-webgl-1.80.7/effekseer.wasm: a different renderer, not a

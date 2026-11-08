@@ -9,7 +9,7 @@ from PIL import Image
 from ssbp_v1 import Project
 from prepare_stage_animation import render_frame
 
-ROOT=Path('ffbe_asset_dump-main/battle_bg')
+ROOT=Path('rawdata/ffbe_asset_dump/battle_bg')
 SELECTED=['2013_01','2013_02','2013_03','2013_04','2013_05','2013_06','2013_07','2013_08','2013_13','2013_16','2006_01','2016_03']
 
 
@@ -19,7 +19,7 @@ def info(p):
 
 
 def inventory(output):
-    database=Path('assets/static_data/ffbe-data.db')
+    database=Path('rawdata/assets/static_data/ffbe-data.db')
     with sqlite3.connect(database.resolve().as_uri()+'?mode=ro',uri=True)as db:
         db.row_factory=sqlite3.Row
         backgrounds=[dict(r)for r in db.execute('select * from battle_bg')]
@@ -63,9 +63,9 @@ def inventory(output):
         for name in names:
             for r in db.execute('select d.*,e.explainShort from monster_dictionary d left join monster_dictionary_explain e using(dictionaryId) where d.name=?',(name,)):
                 data=dict(r);sprite=str(data['dictionaryId'])
-                files=[Path('ffbe_asset_dump-main/monster_animated')/f'monster_anime_{sprite}.png',
-                    Path('ffbe_asset_dump-main/monster_animated_csv')/f'monster_cgg_{sprite}.csv']
-                files += [Path('ffbe_asset_dump-main/monster_animated_csv')/f'monster_{clip}_cgs_{sprite}.csv'for clip in ['idle','atk']]
+                files=[Path('rawdata/ffbe_asset_dump/monster_animated')/f'monster_anime_{sprite}.png',
+                    Path('rawdata/ffbe_asset_dump/monster_animated_csv')/f'monster_cgg_{sprite}.csv']
+                files += [Path('rawdata/ffbe_asset_dump/monster_animated_csv')/f'monster_{clip}_cgs_{sprite}.csv'for clip in ['idle','atk']]
                 enemies.append(dict(original=data,bodyCandidates=[info(f)for f in files],allBodyCandidatesPresent=all(f.is_file()for f in files),
                   status='Exact dictionary ID filename candidates, not assembled/validated bodies or original stage encounters'))
         report=dict(schema='stage-candidates-v1',database=info(database),mainlineTitleCatalog=mainline,backgrounds=catalog,selected=selected,enemies=enemies,

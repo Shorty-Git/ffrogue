@@ -1,5 +1,5 @@
 """
-Inspect Cloud animations and files in the local ffbe_asset_dump-main directory.
+Inspect Cloud animations and files in the local rawdata/ffbe_asset_dump directory.
 Target IDs: 207000105, 207000107
 Keywords: climhazzard, unit_atkeff
 """
@@ -8,7 +8,7 @@ import os
 import glob
 import json
 
-DUMP_DIR = "ffbe_asset_dump-main"
+DUMP_DIR = "rawdata/ffbe_asset_dump"
 
 def main():
     if not os.path.exists(DUMP_DIR):

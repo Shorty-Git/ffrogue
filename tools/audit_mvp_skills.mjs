@@ -47,7 +47,7 @@ for (const key of ['cloud', 'aerith', 'barret']) {
   const recipeFile = `tools/characters/${key}.json`;
   const runtimeFile = `public/assets/units/${key}/skills.json`;
   const recipe = readJson(recipeFile);
-  const inspection = inspectCharacter(recipe, { assets: 'assets', dump: 'ffbe_asset_dump-main' });
+  const inspection = inspectCharacter(recipe, { assets: 'rawdata/assets', dump: 'rawdata/ffbe_asset_dump' });
   const runtime = readJson(runtimeFile);
   const manifest = readJson(`public/assets/units/${key}/manifest.json`);
   characters.push({ ...inspection.unit, recipeFile, recipeSha256: sha256(recipeFile), runtimeFile,
@@ -98,17 +98,17 @@ function scan(folder) {
     }
   }
 }
-scan('assets');
-scan('ffbe_asset_dump-main');
+scan('rawdata/assets');
+scan('rawdata/ffbe_asset_dump');
 
 const secondaryEvidence = [
-  { file: 'ffbe_data-master/jp/ability.json', ids: [214810, 214820, 227870, 227872, 227874] },
-  { file: 'ffbe_data-master/jp/magic.json', ids: [10170, 10290] },
+  { file: 'rawdata/ffbe_data/jp/ability.json', ids: [214810, 214820, 227870, 227872, 227874] },
+  { file: 'rawdata/ffbe_data/jp/magic.json', ids: [10170, 10290] },
 ].map(({ file, ids }) => {
   const data = readJson(file);
   return { file, sha256: sha256(file), records: ids.map(id => ({ id, value: data[String(id)] ?? null })) };
 });
-const audit = { schemaVersion: 1, sourceDatabase: { file: 'assets/static_data/ffbe-data.db', sha256: sha256('assets/static_data/ffbe-data.db') },
+const audit = { schemaVersion: 1, sourceDatabase: { file: 'rawdata/assets/static_data/ffbe-data.db', sha256: sha256('rawdata/assets/static_data/ffbe-data.db') },
   inspectedCode: ['tools/audit_mvp_skills.mjs', 'tools/lib/character-pipeline.mjs', 'tools/export_effect.mjs', 'src/scenes/BattleScene.ts', 'src/entities/UnitActor.ts']
     .map(file => ({ file, sha256: sha256(file) })),
   limits: ['No effects were rendered, baked, published or visually approved in this audit.',
@@ -158,7 +158,7 @@ const lines = ['# Remaining MVP skill audit', '',
       : [`| F${group.startFrame} / ${group.groupId} ${group.name} | ${group.anchor}; ${group.layer} | No effectData | ${group.status}; semantics require review |`])), '',
     `Source attackFrames: \`${row.source.attackFrames}\`. Source processId: \`${row.source.processId}\`; processParam: \`${row.source.processParam}\`.`, '']),
   '## Asset search and reproducibility', '',
-  `${missingStems.size} unique required stems have no usable converted effect in the directly resolved path. Exact-stem results across assets/ and ffbe_asset_dump-main/ are retained in the JSON. No same-named alternative file was found in this inspection. Renamed or similar effects were not substituted.`, '',
+  `${missingStems.size} unique required stems have no usable converted effect in the directly resolved path. Exact-stem results across assets/ and rawdata/ffbe_asset_dump/ are retained in the JSON. No same-named alternative file was found in this inspection. Renamed or similar effects were not substituted.`, '',
   'Re-run from the repository root with Node 24:', '', '```powershell', 'node tools/audit_mvp_skills.mjs', '```', '',
   'The adjacent JSON retains database/recipe/runtime/code hashes, acquisition records, source mechanics, member transforms, raw placement fields, resource hashes and exact-stem search results. Larger general importer reports are ignored under tools/data/characters/.', '',
   'Verification: all three CLI character inspections and this audit executed locally; generated JSON and Markdown were checked. No new effect playback, visual comparison, game build or gameplay test is claimed for this documentation-only milestone.', ''];

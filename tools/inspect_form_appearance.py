@@ -14,7 +14,7 @@ def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
 def inspect(output):
     content=json.loads(Path('public/assets/run-content.json').read_text());results=[]
     board=Image.new('RGB',(760,len(content['forms'])*310),(7,20,45));draw=ImageDraw.Draw(board)
-    with sqlite3.connect(Path('assets/static_data/ffbe-data.db').resolve().as_uri()+'?mode=ro',uri=True)as db:
+    with sqlite3.connect(Path('rawdata/assets/static_data/ffbe-data.db').resolve().as_uri()+'?mode=ro',uri=True)as db:
         db.row_factory=sqlite3.Row
         for row,form in enumerate(content['forms']):
             key=form['identityKey'];roots=[Path('public/assets/units')/key,Path('public')/form['assetPath']]
@@ -41,7 +41,7 @@ def inspect(output):
             visible=ImageChops.lighter(*differences);changed=sum(max(v)>0 for v in visible.get_flattened_data())
             sources=[]
             for m in manifests:
-                atlas=Path('ffbe_asset_dump-main/unit_animated')/f"unit_anime_{m['unitId']}.png"
+                atlas=Path('rawdata/ffbe_asset_dump/unit_animated')/f"unit_anime_{m['unitId']}.png"
                 sources.append(dict(path=atlas.as_posix(),sha256=sha(atlas)))
             results.append(dict(key=key,original=original,prepared=[dict(path=(r/'manifest.json').as_posix(),sha256=sha(r/'manifest.json'))for r in roots],
               sourceAtlases=sources,alignedFirstIdle=dict(changedVisiblePixels=changed,identical=changed==0,comparison='Aligned prepared foot pivot; composited over black and white, excludes invisible RGB'),

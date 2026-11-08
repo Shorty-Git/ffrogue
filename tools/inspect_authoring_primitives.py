@@ -56,7 +56,7 @@ def inspect(directory, members=None):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--directory', type=Path, default=Path('assets/battle_effect'))
+    parser.add_argument('--directory', type=Path, default=Path('rawdata/assets/battle_effect'))
     parser.add_argument('--members', type=Path)
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()

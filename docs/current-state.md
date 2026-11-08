@@ -99,7 +99,7 @@ Skill / Limit Burst import (example Omnislash; replace character and source id):
 ```powershell
 node tools/plan_source_imports.mjs --select cloud:207000105 --output tools/data/<run>/intake
 <python> tools/stage_source_imports.py --selection tools/data/<run>/intake/selection.json
-<python> tools/prepare_original_preview.py --source tools/data/<run>/intake/cloud-207000105/skill-source.json --unit cloud --motion atk --recipe tools/characters/cloud.json --profile source-preview-v1 --authoring-directory assets/battle_effect --native-shaders-apk tools/data/memorial-audit/installed-base-v208.apk --native-shader-package tools/data/particle-native-audit/bmshaderpack.bin --renderer-reference tools/data/memorial-audit/diagnostic-v7/renderer-reference.json --approximate-unverified --output tools/data/<run>/intake/cloud-207000105/plan.json
+<python> tools/prepare_original_preview.py --source tools/data/<run>/intake/cloud-207000105/skill-source.json --unit cloud --motion atk --recipe tools/characters/cloud.json --profile source-preview-v1 --authoring-directory rawdata/assets/battle_effect --native-shaders-apk tools/data/memorial-audit/installed-base-v208.apk --native-shader-package tools/data/particle-native-audit/bmshaderpack.bin --renderer-reference tools/data/memorial-audit/diagnostic-v7/renderer-reference.json --approximate-unverified --output tools/data/<run>/intake/cloud-207000105/plan.json
 node tools/publish_scene_presentations.mjs --recipe tools/presentations/<recipe>.json
 node tools/import_character.mjs --recipe tools/characters/cloud.json --publish-skills-only --python <python>
 node tools/export_skill_icons.mjs
@@ -217,6 +217,8 @@ Next: music transitions (menu → battle → victory) are not smooth yet (develo
 ## Next steps (handoff, 2026-11-08 evening)
 
 GitHub account is suspended (appeal pending / maybe a new account): commit locally only, push later.
+DONE (2026-11-08): all raw sources moved into rawdata/ (one folder per source; identical files hard-linked,
+legacy recorded paths resolved by tools/lib/raw-paths.mjs). See asset_structure.md "Raw-data layout".
 DONE (2026-11-08): raw-data audit plus a sixth source (Memorial download cache, holds la842 and ~286 BGM banks).
 There is little byte duplication (2.2 of 30 GB), so the sources were not moved; source priority rules apply instead.
 Details: docs/asset_structure.md "Raw-data sources and duplicate audit". Cleanup (developer-approved):

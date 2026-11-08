@@ -7,7 +7,7 @@ source color/alpha modes, not a claim of complete skill reconstruction.
 
 ## Evidence and confidence
 
-The database inspected was `assets/static_data/ffbe-data.db`, SHA-256
+The database inspected was `rawdata/assets/static_data/ffbe-data.db`, SHA-256
 `ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f`.
 Queries used SQLite read-only mode. A full scan of non-null
 `effect_group.effectData` split on commas found **70,724 member tuples; every

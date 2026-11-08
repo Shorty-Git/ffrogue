@@ -35,7 +35,7 @@ if (!source?.raw || source.effects.some(b => b.conditional)) throw Error('Missin
 const repair = args.includes('--repair-receipt') ? readJson(value('--repair-receipt')) : null;
 let repairedMembers = 0;
 if (repair) {
-  const relative = path.relative(path.resolve('assets'), path.resolve(repair.output));
+  const relative = path.relative(path.resolve('rawdata/assets'), path.resolve(repair.output));
   if (!relative || relative.startsWith('..') || path.isAbsolute(relative) || !repair.reason
     || sha256(repair.output) !== repair.outputSha256 || sha256(repair.source) !== repair.sourceSha256
     || sha256(repair.recipe) !== repair.recipeSha256) throw Error('Invalid or stale research repair receipt');
@@ -49,7 +49,7 @@ const effects = source.effects.flatMap(b => b.groups.flatMap(g => {
     let asset = m.asset, repairReason = null;
     if (repair && path.resolve(m.asset.file) === path.resolve(repair.source)) {
       if (m.asset.sha256 !== repair.sourceSha256) throw Error('Repair does not match this source member');
-      asset = inspectEffect(repair.output, 'assets');
+      asset = inspectEffect(repair.output, 'rawdata/assets');
       if (!asset.exists || asset.resources.some(r => !r.exists)) throw Error('Repaired effect or dependency missing');
       repairReason = repair.reason; repairedMembers++;
     }
@@ -71,7 +71,7 @@ function loadTs(file) {
 }
 const { BATTLE_ARENAS } = loadTs('src/data/battleArenas.ts'), { getBattleLayout } = loadTs('src/ui/battleLayout.ts');
 const allowed = new Map(), allow = (url, file) => { if (!fs.existsSync(file)) throw Error(`Missing ${file}`); allowed.set(url, file); return url; };
-const rawUrl = file => '/raw/' + path.relative('assets', file).replaceAll('\\', '/');
+const rawUrl = file => '/raw/' + path.relative('rawdata/assets', file).replaceAll('\\', '/');
 for (const member of effects) for (const asset of [member.asset, ...member.asset.resources]) allow(rawUrl(asset.file), asset.file);
 for (const file of ['effekseer.js', 'effekseer.wasm', 'Sample/three.min.js']) allow('/sdk/' + file, 'tools/bin/effekseer-webgl-1.80.7/' + file);
 const prepared = file => allow('/prepared/' + file, 'public/assets/' + file);

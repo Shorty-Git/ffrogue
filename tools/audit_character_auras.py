@@ -51,7 +51,7 @@ def inventory(key, path, dump):
 
 if __name__ == '__main__':
     cli = argparse.ArgumentParser(description=__doc__)
-    cli.add_argument('--dump', type=Path, default=Path('ffbe_asset_dump-main'))
+    cli.add_argument('--dump', type=Path, default=Path('rawdata/ffbe_asset_dump'))
     cli.add_argument('--output', type=Path, required=True)
     args = cli.parse_args()
     root = Path('public')

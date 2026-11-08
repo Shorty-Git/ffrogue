@@ -1,10 +1,10 @@
 /**
- * Node runner to inspect Cloud animations and files in ffbe_asset_dump-main.
+ * Node runner to inspect Cloud animations and files in rawdata/ffbe_asset_dump.
  */
 import fs from 'fs';
 import path from 'path';
 
-const DUMP_DIR = 'ffbe_asset_dump-main';
+const DUMP_DIR = 'rawdata/ffbe_asset_dump';
 
 function walkDir(dir, callback) {
   if (!fs.existsSync(dir)) return;

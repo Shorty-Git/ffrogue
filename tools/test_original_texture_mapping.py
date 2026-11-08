@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 class BasicTextureMappingTests(unittest.TestCase):
     def source(self, folder='blade-beam', stem='atk_aerialslash_001_green'):
         raw = ROOT / 'tools/data/shared-skill-review' / folder / 'originals' / (stem + '.bmb')
-        project = ROOT / 'assets/battle_effect' / (stem + '.bmsln')
+        project = ROOT / 'rawdata/assets/battle_effect' / (stem + '.bmsln')
         if not raw.exists():
             self.skipTest('Local original binary required')
         return read_bmb(raw.read_bytes()), project.read_bytes() if project.exists() else None

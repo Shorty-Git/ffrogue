@@ -11,11 +11,11 @@ from prepare_stage_sampling import prepare as prepare_sampling
 class StageAnimationTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.project = Project('ffbe_asset_dump-main/battle_bg/battle_bg_2013_02.ssbp')
+        cls.project = Project('rawdata/ffbe_asset_dump/battle_bg/battle_bg_2013_02.ssbp')
 
     def test_both_independent_original_projects_have_complete_bounded_streams(self):
         for name, cells, packs in [('2013_02',14,5),('0003_01',28,3)]:
-            p = Project('ffbe_asset_dump-main/battle_bg/battle_bg_'+name+'.ssbp')
+            p = Project('rawdata/ffbe_asset_dump/battle_bg/battle_bg_'+name+'.ssbp')
             self.assertEqual(len(p.cells),cells)
             self.assertEqual(len(p.animations),packs)
             for a in p.animations.values():
@@ -67,7 +67,7 @@ class StageAnimationTests(unittest.TestCase):
                     self.assertEqual(im.getpixel((0,0)),original.getpixel((0,0)))
 
     def test_unsupported_forest_deformation_is_blocked_not_silently_omitted(self):
-        forest=Project('ffbe_asset_dump-main/battle_bg/battle_bg_0003_01.ssbp')
+        forest=Project('rawdata/ffbe_asset_dump/battle_bg/battle_bg_0003_01.ssbp')
         with self.assertRaisesRegex(ValueError,'deformed'):
             render_frame(forest,'back/anime',0)
 

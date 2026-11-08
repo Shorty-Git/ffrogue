@@ -79,7 +79,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
-    inventory = inspect(Path("public/assets/run-content.json"), Path("assets/static_data/ffbe-data.db"), Path("ffbe_asset_dump-main"))
+    inventory = inspect(Path("public/assets/run-content.json"), Path("rawdata/assets/static_data/ffbe-data.db"), Path("rawdata/ffbe_asset_dump"))
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(inventory, indent=2) + "\n", encoding="utf8")
     print(f"Verified {sum('publishedBody' in row for unit in inventory.values() for row in unit['forms'])} published original edges")

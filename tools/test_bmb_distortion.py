@@ -18,7 +18,7 @@ class DistortionFieldsTest(unittest.TestCase):
         nodes=keys=0
         for stem in STEMS:
             raw=ROOT/'tools/data/bmb-format'/f'{stem}.bmb'
-            project=ROOT/'assets/battle_effect'/f'{stem}.bmsln'
+            project=ROOT/'rawdata/assets/battle_effect'/f'{stem}.bmsln'
             if not raw.exists() or not project.exists():
                 self.skipTest('Local original source pairs are required')
             data=raw.read_bytes();result=read_bmb(data);attach_distortion_fields(data,result)
@@ -34,7 +34,7 @@ class DistortionFieldsTest(unittest.TestCase):
         stem=STEMS[0];raw=ROOT/'tools/data/bmb-format'/f'{stem}.bmb'
         if not raw.exists():self.skipTest('Local original source pair is required')
         data=raw.read_bytes();result=read_bmb(data);attach_distortion_fields(data,result)
-        source=ET.parse(ROOT/'assets/battle_effect'/f'{stem}.bmsln').findall('.//ResIdeNode')[1:]
+        source=ET.parse(ROOT/'rawdata/assets/battle_effect'/f'{stem}.bmsln').findall('.//ResIdeNode')[1:]
         node=next(n for n in result['nodes']if n['typeId']==2)
         node['distortionFields']['layers']['texture2']['rgbInitial'][0]+=1
         with self.assertRaises(ValueError):compare_distortion_fields(node,source[node['index']])

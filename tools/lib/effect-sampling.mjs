@@ -1,3 +1,4 @@
+import {resolveRawPath} from './raw-paths.mjs';
 import fs from 'node:fs';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
@@ -21,8 +22,8 @@ export function repackPublishedEffect(recipeFile,python) {
     throw Error('Reviewed effect sampling adaptation required');
   sheetSampling(recipe.sampling);
   const folder='public/assets/effects/'+recipe.key,file=folder+'/manifest.json',manifest=read(file),sheet=folder+'/'+manifest.file;
-  if(manifest.sampling||hash(sheet)!==manifest.sheetSha256||hash('assets/'+recipe.source)!==manifest.sourceSha256
-    ||manifest.resources.some(r=>hash(r.file)!==r.sha256))throw Error('Expected an unchanged unpadded published source');
+  if(manifest.sampling||hash(sheet)!==manifest.sheetSha256||hash('rawdata/assets/'+recipe.source)!==manifest.sourceSha256
+    ||manifest.resources.some(r=>hash(resolveRawPath(r.file))!==r.sha256))throw Error('Expected an unchanged unpadded published source');
   for(const key of ['frameWidth','frameHeight','frameCount','frameRate','originX','originY','scale','blend','contentBounds'])
     if(JSON.stringify(manifest[key])!==JSON.stringify(recipe[key]))throw Error('Non-sampling setting changed: '+key);
   if((manifest.artworkRotationDegrees??0)!==(recipe.artworkRotationDegrees??0)||(manifest.artworkPivot??'origin')!==(recipe.artworkPivot??'origin'))

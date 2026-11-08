@@ -97,7 +97,7 @@ positions, UVs, normals and faces without material simulation.
 ```powershell
 & $env:FFROGUE_PYTHON -m unittest discover -s tools -p 'test_bmb*.py'
 & $env:FFROGUE_PYTHON tools/test_m3r.py
-& $env:FFROGUE_PYTHON tools/inspect_m3r.py assets/effect_resource/model_glow_004.m3r --compare-effekseer assets/effect_resource/model_glow_004.efkmodel --output tools/data/bmb-format/models/model_glow_004.json --obj
+& $env:FFROGUE_PYTHON tools/inspect_m3r.py rawdata/assets/effect_resource/model_glow_004.m3r --compare-effekseer rawdata/assets/effect_resource/model_glow_004.efkmodel --output tools/data/bmb-format/models/model_glow_004.json --obj
 ```
 
 Twenty-one BMB tests and five M3R tests pass. New coverage includes source-label

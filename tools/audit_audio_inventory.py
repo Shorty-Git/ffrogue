@@ -3,7 +3,7 @@ import argparse,collections,hashlib,importlib.util,json,wave
 from pathlib import Path
 
 def audit(output, live_hash=None):
- root=Path('tools/data/memorial-audit/trace-clone-backup/assetpacks');banks=[];headers=collections.Counter();streams=[]
+ root=Path('rawdata/memorial-packs');banks=[];headers=collections.Counter();streams=[]
  for path in sorted(root.rglob('*')):
   if not path.is_file() or path.suffix.lower() not in ['.acb','.dat']:continue
   with path.open('rb') as file:magic=file.read(4)
@@ -11,12 +11,12 @@ def audit(output, live_hash=None):
   row=dict(path=path.as_posix(),bytes=path.stat().st_size,magicHex=magic.hex())
   (banks if path.suffix=='.acb' else streams).append(row)
  waves=[]
- for path in sorted(Path('assets/audio').rglob('*.wav')):
+ for path in sorted(Path('rawdata/assets/audio').rglob('*.wav')):
   with wave.open(str(path),'rb') as sound:
    row=dict(path=path.as_posix(),channels=sound.getnchannels(),sampleRate=sound.getframerate(),sampleBytes=sound.getsampwidth(),durationSeconds=sound.getnframes()/sound.getframerate(),frames=sound.getnframes())
   row['sha256']=hashlib.sha256(path.read_bytes()).hexdigest();waves.append(row)
  se=next(Path(r['path']) for r in banks if Path(r['path']).name=='SE.acb');raw=se.read_bytes()
- spec=importlib.util.spec_from_file_location('existing_cpk','ffbe_asset_dump-main/tools/cpk.py');reader=importlib.util.module_from_spec(spec);spec.loader.exec_module(reader)
+ spec=importlib.util.spec_from_file_location('existing_cpk','rawdata/ffbe_asset_dump/tools/cpk.py');reader=importlib.util.module_from_spec(spec);spec.loader.exec_module(reader)
  try:
   table,rows=reader.read_utf(raw);cue=dict(compatible=True,table=table,columns=list(rows[0]),bankCueMappingVerified=False)
  except (ValueError,IndexError,KeyError) as error:

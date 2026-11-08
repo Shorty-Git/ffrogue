@@ -148,7 +148,7 @@ def main():
     if not args.all:
         parsed = [sk for sk in parsed if sk["mpCost"] <= 65][:6]
 
-    out_path = args.out or os.path.join(os.path.dirname(BASE_DIR), "public", "assets", "units", unit_slug, "skills.json")
+    out_path = args.out or os.path.join(os.path.dirname(BASE_DIR), "public", "rawdata/assets", "units", unit_slug, "skills.json")
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump({

@@ -46,7 +46,7 @@ the missing normalized starts from the original constant texture transforms.
 Eight starts change; four remain at `(0,0)`. Both editor data and compiled UV
 records are updated in a separate ignored source variant:
 
-`assets/battle_effect/sp_20157_kyogiri_front_uvfix.efkefc`
+`rawdata/assets/battle_effect/sp_20157_kyogiri_front_uvfix.efkefc`
 
 The repair rejects changed input hashes, ambiguous compiled record counts,
 unexpected editor node order, different crop sizes, unsupported versions,

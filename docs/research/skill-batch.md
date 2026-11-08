@@ -42,7 +42,7 @@ registry publication must remain sequential.
 ## Remaining source blockers
 
 All six remaining commands are currently blocked, with nine unique missing
-converted effect files under `assets/battle_effect/`:
+converted effect files under `rawdata/assets/battle_effect/`:
 
 | Character / skill | Missing `.efkefc` stems |
 | --- | --- |

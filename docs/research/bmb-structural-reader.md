@@ -90,7 +90,7 @@ tables parse, but those node types are not claimed as supported.
 
 ```powershell
 & $env:FFROGUE_PYTHON tools/test_bmb_structure.py
-& $env:FFROGUE_PYTHON tools/inspect_bmb.py tools/data/bmb-format/sp_20157_kyogiri_front.bmb --project assets/battle_effect/sp_20157_kyogiri_front.bmsln --output tools/data/bmb-format/sp_20157_kyogiri_front-verified.json
+& $env:FFROGUE_PYTHON tools/inspect_bmb.py tools/data/bmb-format/sp_20157_kyogiri_front.bmb --project rawdata/assets/battle_effect/sp_20157_kyogiri_front.bmsln --output tools/data/bmb-format/sp_20157_kyogiri_front-verified.json
 & $env:FFROGUE_PYTHON tools/inspect_bmb.py tools/data/climhazzard-source/originals/atk_powergeyser_001_purple.bmb --output tools/data/bmb-format/climhazzard-structure.json
 & $env:FFROGUE_PYTHON tools/inspect_bmb_resources.py --source tools/data/climhazzard-source/originals/atk_powergeyser_001_purple.bmb --index tools/data/android-cpk-audit/members.jsonl --output tools/data/climhazzard-source/verified-tables
 ```

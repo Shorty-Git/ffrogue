@@ -8,7 +8,7 @@ import {sourceDamageEvents} from './lib/source-damage-events.mjs';
 import {validateSceneAction} from '../src/effects/sceneProfile.mjs';
 
 test('new zero-prefix command passes the same importer with exact source timing and separate balance',()=>{
- const recipe=readJson('tools/characters/cloud_ac.json'),report=inspectCharacter(recipe,{assets:'assets',dump:'ffbe_asset_dump-main'});
+ const recipe=readJson('tools/characters/cloud_ac.json'),report=inspectCharacter(recipe,{assets:'rawdata/assets',dump:'rawdata/ffbe_asset_dump'});
  assert.equal(report.publishable,true,JSON.stringify(report.selected));
  const skill=readJson('public/assets/units/cloud_ac/skills.json').skills[0];
  const manifest=readJson(`public/assets/presentations/${skill.scenePresentation}/manifest.json`);
@@ -26,7 +26,7 @@ test('new zero-prefix command passes the same importer with exact source timing 
  for(const effect of manifest.plan.effects)for(const url of Object.values(effect.textures))
   assert.equal(createHash('sha256').update(fs.readFileSync('public'+url)).digest('hex'),url.match(/([a-f0-9]{64})\.png$/)[1]);
  const wrong=structuredClone(recipe);wrong.skills[0].damageEvents[0].frame++;
- assert.equal(inspectCharacter(wrong,{assets:'assets',dump:'ffbe_asset_dump-main'}).publishable,false);
+ assert.equal(inspectCharacter(wrong,{assets:'rawdata/assets',dump:'rawdata/ffbe_asset_dump'}).publishable,false);
 });
 
 test('census shortlisting excludes current publication and never grants import approval',()=>{

@@ -14,7 +14,7 @@ Rebuild using the existing local inputs and configured Python executable:
 
 ```powershell
 $env:PYTHONPATH='tools;tools/memorial'
-& $python tools/prepare_static_basic_effect.py --request tools/data/connected-effect/capsule-request.json --apk tools/data/memorial-audit/installed-base-v208.apk --authoring assets/battle_effect/eff_capsule_001.bmsln --shader-package tools/data/particle-native-audit/bmshaderpack.bin --output tools/data/gameplay-quality-20261028/capsule --seed 123456789 362436069 521288629 88675123
+& $python tools/prepare_static_basic_effect.py --request tools/data/connected-effect/capsule-request.json --apk tools/data/memorial-audit/installed-base-v208.apk --authoring rawdata/assets/battle_effect/eff_capsule_001.bmsln --shader-package tools/data/particle-native-audit/bmshaderpack.bin --output tools/data/gameplay-quality-20261028/capsule --seed 123456789 362436069 521288629 88675123
 node --test tools/test_static_basic_branch.mjs
 ```
 
@@ -119,19 +119,19 @@ under ignored tools/data/connected-effect/candidates/.
 Reproduce the two exact archive members using the existing dump CPK reader:
 
 ```powershell
-& 'C:/Users/Daniel/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe' ffbe_asset_dump-main/tools/cpk.py extract com.square_enix.android_googleplay.FFBEWW/files/common_lang/sd/battleEffect/Ver31_battleEffect1_common.cpk tools/data/connected-effect/candidates eff_capsule_001.bmb
-& 'C:/Users/Daniel/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe' ffbe_asset_dump-main/tools/cpk.py extract com.square_enix.android_googleplay.FFBEWW/files/common_lang/sd/effectResource/Ver13_effectResource1_common.cpk tools/data/connected-effect/candidates capsule_001.png
+& 'C:/Users/Daniel/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe' rawdata/ffbe_asset_dump/tools/cpk.py extract rawdata/android-global/files/common_lang/sd/battleEffect/Ver31_battleEffect1_common.cpk tools/data/connected-effect/candidates eff_capsule_001.bmb
+& 'C:/Users/Daniel/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe' rawdata/ffbe_asset_dump/tools/cpk.py extract rawdata/android-global/files/common_lang/sd/effectResource/Ver13_effectResource1_common.cpk tools/data/connected-effect/candidates capsule_001.png
 ```
 
 Those are reproduction commands for the targeted read/extract procedure actually
 used through the same CPK library. Confirm the hashes above before preparing.
-The authoring source is local `assets/battle_effect/eff_capsule_001.bmsln`.
+The authoring source is local `rawdata/assets/battle_effect/eff_capsule_001.bmsln`.
 
 ## Reproduce the connected fixture
 
 ```powershell
 $env:PYTHONPATH=(Resolve-Path tools/data/native-locator-emulation/python-deps).Path
-& 'C:/Users/Daniel/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe' tools/memorial/prepare_connected_fixture.py --apk tools/data/memorial-audit/installed-base-v208.apk --source tools/data/connected-effect/candidates/eff_capsule_001.bmb --authoring assets/battle_effect/eff_capsule_001.bmsln --texture-root tools/data/connected-effect/candidates --host-request tools/data/connected-effect/strobe-request.json --output tools/data/connected-effect/capsule-request.json
+& 'C:/Users/Daniel/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe' tools/memorial/prepare_connected_fixture.py --apk tools/data/memorial-audit/installed-base-v208.apk --source tools/data/connected-effect/candidates/eff_capsule_001.bmb --authoring rawdata/assets/battle_effect/eff_capsule_001.bmsln --texture-root tools/data/connected-effect/candidates --host-request tools/data/connected-effect/strobe-request.json --output tools/data/connected-effect/capsule-request.json
 & 'C:/Users/Daniel/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe' tools/memorial/export_connected_effect.py --apk tools/data/memorial-audit/installed-base-v208.apk --request tools/data/connected-effect/capsule-request.json --output tools/data/connected-effect/capsule.json
 node tools/preview_original_skill.mjs --plan tools/data/shared-skill-review/climhazzard/plan-native-alpha.json --port 3144 --connected-effect tools/data/connected-effect/capsule.json
 ```

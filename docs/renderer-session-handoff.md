@@ -1781,7 +1781,7 @@ REPRODUCE / SERVERS:
 - QA /tools/test-source-scene.html?reserve=delita&captureOrigin=http://127.0.0.1:3155
  placement/area checks. Omit reserve for frozen baseline/party checks. Fresh user
  review: http://127.0.0.1:3001/?reserve=delita (reload old game tabs).
-- Prepare with working Python tools/prepare_original_preview.py --source tools/data/roster-expansion-20261101/follow-up/delita-1323010/skill-source.json --unit delita --unit-assets public/assets/units/delita --recipe tools/characters/delita.json --motion atk --profile source-preview-v1 --authoring-directory assets/battle_effect --native-shaders-apk tools/data/memorial-audit/installed-base-v208.apk --native-shader-package tools/data/particle-native-audit/bmshaderpack.bin --renderer-reference tools/data/memorial-audit/diagnostic-v7/renderer-reference.json --flat-quad-rgb --output tools/data/sword-color-20261101/plan.json
+- Prepare with working Python tools/prepare_original_preview.py --source tools/data/roster-expansion-20261101/follow-up/delita-1323010/skill-source.json --unit delita --unit-assets public/assets/units/delita --recipe tools/characters/delita.json --motion atk --profile source-preview-v1 --authoring-directory rawdata/assets/battle_effect --native-shaders-apk tools/data/memorial-audit/installed-base-v208.apk --native-shader-package tools/data/particle-native-audit/bmshaderpack.bin --renderer-reference tools/data/memorial-audit/diagnostic-v7/renderer-reference.json --flat-quad-rgb --output tools/data/sword-color-20261101/plan.json
 - Publish node tools/publish_scene_presentations.mjs --recipe tools/presentations/existing-roster-support.json; refresh all manifest playerSha256 after shared code changes without altering their plans. No character importer/body rebuild is needed.
 - Working Python C:/Users/Daniel/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe;
  PYTHONUTF8=1; PYTHONPATH=tools/data/memorial-audit/python-deps;tools;tools/memorial.
@@ -1887,7 +1887,7 @@ REPRODUCE / RESUME:
  in the archive. Trace package com.square_enix.ffbejpn; main instance untouched.
 - Audit: working Python tools/audit_bmb_controls.py --corpus tools/data/main-party-import-20261101/extended-corpus.json --output tools/data/big-shot-20261101/control-comparison.json
 - Inventory: node tools/inventory_roster_skills.mjs --control-audit tools/data/big-shot-20261101/control-comparison.json --output tools/data/big-shot-20261101/coverage
-- Prepare Helm: working Python tools/prepare_original_preview.py --source tools/data/roster-expansion-20261101/follow-up/delita-202190/skill-source.json --unit delita --unit-assets public/assets/units/delita --recipe tools/characters/delita.json --motion atk --profile source-preview-v1 --authoring-directory assets/battle_effect --native-shaders-apk tools/data/memorial-audit/installed-base-v208.apk --native-shader-package tools/data/particle-native-audit/bmshaderpack.bin --renderer-reference tools/data/memorial-audit/diagnostic-v7/renderer-reference.json --output tools/data/big-shot-20261101/helm-break/plan.json
+- Prepare Helm: working Python tools/prepare_original_preview.py --source tools/data/roster-expansion-20261101/follow-up/delita-202190/skill-source.json --unit delita --unit-assets public/assets/units/delita --recipe tools/characters/delita.json --motion atk --profile source-preview-v1 --authoring-directory rawdata/assets/battle_effect --native-shaders-apk tools/data/memorial-audit/installed-base-v208.apk --native-shader-package tools/data/particle-native-audit/bmshaderpack.bin --renderer-reference tools/data/memorial-audit/diagnostic-v7/renderer-reference.json --output tools/data/big-shot-20261101/helm-break/plan.json
 - Publish: node tools/publish_scene_presentations.mjs --recipe tools/presentations/helm-break-import.json ; node tools/import_character.mjs --recipe tools/characters/delita.json --publish-skills-only --python WORKING_PYTHON
 - WORKING_PYTHON=C:/Users/Daniel/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe
  PYTHONUTF8=1; PYTHONPATH=tools/data/memorial-audit/python-deps;tools;tools/memorial.
@@ -3154,7 +3154,7 @@ texels, identical for all three textures. Do not reuse the failed run as evidenc
 No further emulator work is needed for the current white texture question.
 
 Cause: tutorial-CPK palette texture versions differ from the game. Exact local
-PNGs in assets/effect_resource generate the native bytes with the existing Cocos
+PNGs in rawdata/assets/effect_resource generate the native bytes with the existing Cocos
 formula. tools/effects/verified_native_textures.json pins file/upload hashes;
 prepare_texture_upload.py --resource-bindings fails incomplete/mismatched
 selection. No native intermediate matrices/vertices/texels feed the new replay.

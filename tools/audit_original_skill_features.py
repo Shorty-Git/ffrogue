@@ -128,7 +128,7 @@ def audit(plan_path, authoring):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--plan', type=Path, action='append', required=True)
-    parser.add_argument('--authoring', type=Path, default=ROOT / 'assets/battle_effect')
+    parser.add_argument('--authoring', type=Path, default=ROOT / 'rawdata/assets/battle_effect')
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
     if not args.output.resolve().is_relative_to(STAGE.resolve()):

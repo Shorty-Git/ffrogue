@@ -97,7 +97,7 @@ sys.path.insert(0, 'tools')
 from inspect_bmb import read_bmb
 binary = Path('tools/data/shared-skill-review/blade-beam/originals/atk_aerialslash_001_green.bmb').read_bytes()
 node = read_bmb(binary)['nodes'][9]
-source = ET.fromstring(Path('assets/battle_effect/atk_aerialslash_001_green.bmsln').read_bytes()).findall('.//ResIdeNode')[1:][9]
+source = ET.fromstring(Path('rawdata/assets/battle_effect/atk_aerialslash_001_green.bmsln').read_bytes()).findall('.//ResIdeNode')[1:][9]
 print('block+328:', struct.unpack_from('<3f', binary, node['offset'] + 328))
 print('area scale:', source.find('GenerateShape_Area_Scale').attrib)
 print('center color:', source.find('Color_Center_Value').attrib)

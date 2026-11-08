@@ -1,7 +1,7 @@
 """Extract reviewed FFBE battle UI parts for the DOM CombatHud; raw Godot resources stay offline.
 
-Reads AtlasTexture regions from `assets/ui/battle/*.tres` (each names its own atlas PNG)
-and composes the FFBE window frame from `assets/ui/window/window_*` into one 9-slice
+Reads AtlasTexture regions from `rawdata/assets/ui/battle/*.tres` (each names its own atlas PNG)
+and composes the FFBE window frame from `rawdata/assets/ui/window/window_*` into one 9-slice
 image for CSS `border-image`. Writes standard PNGs plus a provenance receipt to
 `public/assets/ui/battle/`.
 
@@ -13,8 +13,8 @@ import json
 import re
 from PIL import Image
 
-SOURCE = Path('assets/ui/battle')
-WINDOW = Path('assets/ui/window')
+SOURCE = Path('rawdata/assets/ui/battle')
+WINDOW = Path('rawdata/assets/ui/window')
 OUTPUT = Path('public/assets/ui/battle')
 REGIONS = {
     # Original command icons.

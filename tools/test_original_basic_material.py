@@ -9,7 +9,7 @@ from original_basic_material import attach_basic_material
 class BasicMaterialSourceTests(unittest.TestCase):
     def source(self):
         raw = Path('tools/data/shared-skill-review/blade-beam/originals/atk_aerialslash_001_green.bmb')
-        project = Path('assets/battle_effect/atk_aerialslash_001_green.bmsln')
+        project = Path('rawdata/assets/battle_effect/atk_aerialslash_001_green.bmsln')
         if not raw.exists() or not project.exists():
             self.skipTest('Local original and authoring required')
         data = read_bmb(raw.read_bytes())

@@ -97,7 +97,7 @@ def preserve(output):
             if digest(Path(asset['file']).read_bytes()) != asset['sha256']:
                 raise ValueError('Stale published source resource: ' + asset['file'])
             include(asset['file'])
-        authoring = Path('assets/battle_effect') / Path(meta['masterSource']).with_suffix('.bmsln')
+        authoring = Path('rawdata/assets/battle_effect') / Path(meta['masterSource']).with_suffix('.bmsln')
         include(authoring)
     for file in ['tools/bin/effekseer-webgl-1.80.7/effekseer.js', 'tools/bin/effekseer-webgl-1.80.7/effekseer.wasm',
                  'tools/bin/effekseer-webgl-1.80.7/Sample/three.min.js',
@@ -119,7 +119,7 @@ def preserve(output):
             if digest(Path(source).read_bytes()) != expected:
                 raise ValueError('Independent control input changed: ' + source)
             include(source)
-        include('assets/battle_effect/eff_capsule_001.bmsln')
+        include('rawdata/assets/battle_effect/eff_capsule_001.bmsln')
     for file in Path('tools/data/memorial-audit/diagnostic-v6').glob('rectangle-*.png'):
         include(file)
     entries = [dict(path=file, bytes=Path(file).stat().st_size, sha256=digest(Path(file).read_bytes())) for file in sorted(files)]

@@ -24,7 +24,7 @@ class SharedSkillSources(unittest.TestCase):
         dormant_uv = 0
         for folder, stem in CASES:
             path = ROOT / 'tools/data/shared-skill-review' / folder / 'originals' / (stem + '.bmb')
-            project = ROOT / 'assets/battle_effect' / (stem + '.bmsln')
+            project = ROOT / 'rawdata/assets/battle_effect' / (stem + '.bmsln')
             if not path.exists() or not project.exists():
                 self.skipTest('Stage local shared-skill source cases first')
             result = read_bmb(path.read_bytes())

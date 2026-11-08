@@ -4,7 +4,7 @@ import crypto from 'node:crypto';
 import { DatabaseSync } from 'node:sqlite';
 
 // Read only the relevant database rows and directly referenced effect files.
-const root = path.resolve(process.argv[2] ?? 'assets');
+const root = path.resolve(process.argv[2] ?? 'rawdata/assets');
 const database = path.join(root, 'static_data/ffbe-data.db');
 const db = new DatabaseSync(database, { readOnly: true });
 const selected = JSON.parse(fs.readFileSync('public/assets/units/cloud/skills.json', 'utf8'));

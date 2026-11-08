@@ -96,7 +96,7 @@ Reproduce:
 ```powershell
 node tools/plan_source_imports.mjs --select cloud:207000105 --output tools/data/omnislash-20261107/intake
 <python> tools/stage_source_imports.py --selection tools/data/omnislash-20261107/intake/selection.json
-<python> tools/prepare_original_preview.py --source tools/data/omnislash-20261107/intake/cloud-207000105/skill-source.json --unit cloud --motion atk --recipe tools/characters/cloud.json --profile source-preview-v1 --authoring-directory assets/battle_effect --native-shaders-apk tools/data/memorial-audit/installed-base-v208.apk --native-shader-package tools/data/particle-native-audit/bmshaderpack.bin --renderer-reference tools/data/memorial-audit/diagnostic-v7/renderer-reference.json --approximate-unverified --output tools/data/omnislash-20261107/intake/cloud-207000105/plan.json
+<python> tools/prepare_original_preview.py --source tools/data/omnislash-20261107/intake/cloud-207000105/skill-source.json --unit cloud --motion atk --recipe tools/characters/cloud.json --profile source-preview-v1 --authoring-directory rawdata/assets/battle_effect --native-shaders-apk tools/data/memorial-audit/installed-base-v208.apk --native-shader-package tools/data/particle-native-audit/bmshaderpack.bin --renderer-reference tools/data/memorial-audit/diagnostic-v7/renderer-reference.json --approximate-unverified --output tools/data/omnislash-20261107/intake/cloud-207000105/plan.json
 node tools/publish_scene_presentations.mjs --recipe tools/presentations/cloud-omnislash.json
 node tools/import_character.mjs --recipe tools/characters/cloud.json --publish-skills-only --python <python>
 ```
@@ -193,7 +193,7 @@ node tools/import_character.mjs --recipe tools/characters/jack.json --publish-sk
 Before publication the plan is regenerated with prepare_original_preview.py:
 --source .../iai-intake/jack-200300/skill-source.json --unit jack --motion magic_atk
 --recipe tools/characters/jack.json --profile source-preview-v1
---authoring-directory assets/battle_effect --native-shaders-apk
+--authoring-directory rawdata/assets/battle_effect --native-shaders-apk
 tools/data/memorial-audit/installed-base-v208.apk --native-shader-package
 tools/data/particle-native-audit/bmshaderpack.bin --renderer-reference
 tools/data/memorial-audit/diagnostic-v7/renderer-reference.json
@@ -614,7 +614,7 @@ node tools/resolve_composed_skill.mjs --composition tools/data/braver-20261101/c
 & $py tools/stage_original_skill.py --report tools/data/braver-20261101/composed-report.json --skill-id 233930 --output tools/data/braver-20261101/source
 # Reuse checked offline body; on a fresh machine use --prepare-body-only first.
 $body=(Get-Content tools/data/characters/cloud_ac/body-preparation.json | ConvertFrom-Json).directory
-& $py tools/prepare_original_preview.py --source tools/data/braver-20261101/source/skill-source.json --unit cloud_ac --unit-assets $body --motion atk --recipe tools/characters/cloud_ac.json --profile source-preview-v1 --authoring-directory assets/battle_effect --native-shaders-apk tools/data/memorial-audit/installed-base-v208.apk --native-shader-package tools/data/particle-native-audit/bmshaderpack.bin --renderer-reference tools/data/memorial-audit/diagnostic-v7/renderer-reference.json --output tools/data/braver-20261101/source/plan.json
+& $py tools/prepare_original_preview.py --source tools/data/braver-20261101/source/skill-source.json --unit cloud_ac --unit-assets $body --motion atk --recipe tools/characters/cloud_ac.json --profile source-preview-v1 --authoring-directory rawdata/assets/battle_effect --native-shaders-apk tools/data/memorial-audit/installed-base-v208.apk --native-shader-package tools/data/particle-native-audit/bmshaderpack.bin --renderer-reference tools/data/memorial-audit/diagnostic-v7/renderer-reference.json --output tools/data/braver-20261101/source/plan.json
 # Inspect/audit the full profile before these publication operations.
 node tools/publish_scene_presentations.mjs --recipe tools/presentations/cloud-ac.json --python $py
 node tools/import_character.mjs --recipe tools/characters/cloud_ac.json --publish --python $py
@@ -1488,8 +1488,8 @@ This command requires actual loaded rows from the selected arm window; a
 successful export does not approve a reconstructed visual.
 
 ```powershell
-& $env:FFROGUE_PYTHON tools/prepare_original_preview.py --source tools/data/shared-skill-review/brave-slash/skill-source.json --unit cloud --recipe tools/characters/cloud.json --authoring assets/battle_effect/atk_impact_001_pink.bmsln --scene-composite --withhold-untextured --inheritance --source-appearance --basic-uv --rectangle-placement --renderer-reference tools/data/memorial-audit/diagnostic-v7/renderer-reference.json --output tools/data/shared-skill-review/brave-slash/plan-renderer-reference.json
-& $env:FFROGUE_PYTHON tools/prepare_original_preview.py --source tools/data/shared-skill-review/climhazzard/skill-source.json --unit cloud --recipe tools/characters/cloud.json --authoring assets/battle_effect/atk_slash7_side_purple.bmsln --authoring assets/battle_effect/atk_blow1_purple.bmsln --authoring assets/battle_effect/eff_strobe_white_a50_f30.bmsln --distortion --scene-composite --quad-colors --withhold-untextured --inheritance --source-appearance --basic-uv --rectangle-placement --renderer-reference tools/data/memorial-audit/diagnostic-v7/renderer-reference.json --output tools/data/shared-skill-review/climhazzard/plan-renderer-reference.json
+& $env:FFROGUE_PYTHON tools/prepare_original_preview.py --source tools/data/shared-skill-review/brave-slash/skill-source.json --unit cloud --recipe tools/characters/cloud.json --authoring rawdata/assets/battle_effect/atk_impact_001_pink.bmsln --scene-composite --withhold-untextured --inheritance --source-appearance --basic-uv --rectangle-placement --renderer-reference tools/data/memorial-audit/diagnostic-v7/renderer-reference.json --output tools/data/shared-skill-review/brave-slash/plan-renderer-reference.json
+& $env:FFROGUE_PYTHON tools/prepare_original_preview.py --source tools/data/shared-skill-review/climhazzard/skill-source.json --unit cloud --recipe tools/characters/cloud.json --authoring rawdata/assets/battle_effect/atk_slash7_side_purple.bmsln --authoring rawdata/assets/battle_effect/atk_blow1_purple.bmsln --authoring rawdata/assets/battle_effect/eff_strobe_white_a50_f30.bmsln --distortion --scene-composite --quad-colors --withhold-untextured --inheritance --source-appearance --basic-uv --rectangle-placement --renderer-reference tools/data/memorial-audit/diagnostic-v7/renderer-reference.json --output tools/data/shared-skill-review/climhazzard/plan-renderer-reference.json
 node tools/preview_original_skill.mjs --plan tools/data/shared-skill-review/brave-slash/plan-renderer-reference.json --plan tools/data/shared-skill-review/blade-beam/plan-renderer-reference.json --plan tools/data/shared-skill-review/climhazzard/plan-renderer-reference.json --port 3125
 ```
 
@@ -1502,7 +1502,7 @@ npm run character:import -- --recipe tools/characters/cloud.json
 ```
 
 The ignored report is `tools/data/characters/cloud/report.json`. The read-only
-SQLite source is `assets/static_data/ffbe-data.db`. Resolve this chain:
+SQLite source is `rawdata/assets/static_data/ffbe-data.db`. Resolve this chain:
 
 ```text
 sprite form -> unit.unitSeries -> unit_series_lv_acquire -> ability / magic
@@ -1535,7 +1535,7 @@ summary does not prove every empty group is audio-only. See the
 
 | Source | Reader / role | Established boundary |
 | --- | --- | --- |
-| `com.square_enix.android_googleplay.FFBEWW/files/**/*.cpk` | `ffbe_asset_dump-main/tools/cpk.py` | Masked CRI UTF tables, archive entries and CRILAYLA decompression; indexing is not validation of every payload |
+| `rawdata/android-global/files/**/*.cpk` | `rawdata/ffbe_asset_dump/tools/cpk.py` | Masked CRI UTF tables, archive entries and CRILAYLA decompression; indexing is not validation of every payload |
 | Original `.bmb` (`IBMB`) | `tools/inspect_bmb.py` and `bmb_*.py` | Supported version bytes `01 01 03 01`, bounded typed blocks/resources, selected parameters and curves; unknown layouts must stay unknown |
 | Matching `.bmsln` | XML authoring supplement, compared by `compare_project` | Explicitly selected matching project, known-field comparison and hashes; supplemental fields are not automatically decoded BMB fields |
 | Original `.m3r` (`BR3M`) | `tools/inspect_m3r.py` | Observed single-material versions 34/35; positions, normals, packed RGBA, UV and indices preserved |
@@ -1574,10 +1574,10 @@ import json
 from pathlib import Path
 
 root = Path.cwd().resolve()
-spec = importlib.util.spec_from_file_location("cpk_reader", root / "ffbe_asset_dump-main/tools/cpk.py")
+spec = importlib.util.spec_from_file_location("cpk_reader", root / "rawdata/ffbe_asset_dump/tools/cpk.py")
 reader = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(reader)
-archives = sorted((root / "com.square_enix.android_googleplay.FFBEWW/files").rglob("*.cpk"))
+archives = sorted((root / "rawdata/android-global/files").rglob("*.cpk"))
 if not archives:
     raise ValueError("No local CPK archives found")
 rows = []
@@ -1627,9 +1627,9 @@ matching local authoring project and must not receive one from another effect.
 Prepare the current experimental capability set explicitly:
 
 ```powershell
-& $env:FFROGUE_PYTHON tools/prepare_original_preview.py --source tools/data/shared-skill-review/brave-slash/skill-source.json --unit cloud --recipe tools/characters/cloud.json --authoring assets/battle_effect/atk_impact_001_pink.bmsln --scene-composite --withhold-untextured --inheritance --source-appearance --basic-uv --output tools/data/shared-skill-review/brave-slash/plan-basic-uv.json
-& $env:FFROGUE_PYTHON tools/prepare_original_preview.py --source tools/data/shared-skill-review/blade-beam/skill-source.json --unit cloud --recipe tools/characters/cloud.json --authoring assets/battle_effect/atk_aerialslash_001_green.bmsln --authoring assets/battle_effect/atk_slash5_blue.bmsln --scene-composite --withhold-untextured --inheritance --source-appearance --basic-uv --output tools/data/shared-skill-review/blade-beam/plan-basic-uv.json
-& $env:FFROGUE_PYTHON tools/prepare_original_preview.py --source tools/data/shared-skill-review/climhazzard/skill-source.json --unit cloud --recipe tools/characters/cloud.json --authoring assets/battle_effect/atk_slash7_side_purple.bmsln --authoring assets/battle_effect/atk_blow1_purple.bmsln --authoring assets/battle_effect/eff_strobe_white_a50_f30.bmsln --distortion --fit-screen --scene-composite --quad-colors --withhold-untextured --inheritance --source-appearance --basic-uv --output tools/data/shared-skill-review/climhazzard/plan-basic-uv.json
+& $env:FFROGUE_PYTHON tools/prepare_original_preview.py --source tools/data/shared-skill-review/brave-slash/skill-source.json --unit cloud --recipe tools/characters/cloud.json --authoring rawdata/assets/battle_effect/atk_impact_001_pink.bmsln --scene-composite --withhold-untextured --inheritance --source-appearance --basic-uv --output tools/data/shared-skill-review/brave-slash/plan-basic-uv.json
+& $env:FFROGUE_PYTHON tools/prepare_original_preview.py --source tools/data/shared-skill-review/blade-beam/skill-source.json --unit cloud --recipe tools/characters/cloud.json --authoring rawdata/assets/battle_effect/atk_aerialslash_001_green.bmsln --authoring rawdata/assets/battle_effect/atk_slash5_blue.bmsln --scene-composite --withhold-untextured --inheritance --source-appearance --basic-uv --output tools/data/shared-skill-review/blade-beam/plan-basic-uv.json
+& $env:FFROGUE_PYTHON tools/prepare_original_preview.py --source tools/data/shared-skill-review/climhazzard/skill-source.json --unit cloud --recipe tools/characters/cloud.json --authoring rawdata/assets/battle_effect/atk_slash7_side_purple.bmsln --authoring rawdata/assets/battle_effect/atk_blow1_purple.bmsln --authoring rawdata/assets/battle_effect/eff_strobe_white_a50_f30.bmsln --distortion --fit-screen --scene-composite --quad-colors --withhold-untextured --inheritance --source-appearance --basic-uv --output tools/data/shared-skill-review/climhazzard/plan-basic-uv.json
 
 node tools/preview_original_skill.mjs --plan tools/data/shared-skill-review/brave-slash/plan-basic-uv.json --plan tools/data/shared-skill-review/blade-beam/plan-basic-uv.json --plan tools/data/shared-skill-review/climhazzard/plan-basic-uv.json --port 3121
 ```

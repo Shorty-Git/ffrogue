@@ -4,9 +4,9 @@ import {DatabaseSync} from 'node:sqlite';
 import {spawnSync} from 'node:child_process';
 import {readJson,inspectCharacter,unresolvedEffectAnchors} from './lib/character-pipeline.mjs';
 import {formLearning} from './lib/form-learning.mjs';
-const database='assets/static_data/ffbe-data.db';
+const database='rawdata/assets/static_data/ffbe-data.db';
 test('classic Barret forms keep ordinary four/five/six-star acquisition separate',()=>{
- const report=inspectCharacter(readJson('tools/characters/barret.json'),{assets:'assets',dump:'ffbe_asset_dump-main'});
+ const report=inspectCharacter(readJson('tools/characters/barret.json'),{assets:'rawdata/assets',dump:'rawdata/ffbe_asset_dump'});
  const db=new DatabaseSync(database,{readOnly:true});
  try{
   for(const [id,expected]of [[207000204,[227870,227871,227872]],[207000205,[227870,227871,227872,227873]],
@@ -30,7 +30,7 @@ test('conditional and malformed acquisition stays unknown rather than granting f
 test('independent roster forms retain acquisition bounds without rewriting published host balance',()=>{
  const db=new DatabaseSync(database,{readOnly:true});
  try{for(const key of ['aerith','delita','jack']){
-  const recipe=readJson(`tools/characters/${key}.json`),report=inspectCharacter(recipe,{assets:'assets',dump:'ffbe_asset_dump-main'});
+  const recipe=readJson(`tools/characters/${key}.json`),report=inspectCharacter(recipe,{assets:'rawdata/assets',dump:'rawdata/ffbe_asset_dump'});
   const form=db.prepare('SELECT unitId,rare,maxLv FROM unit WHERE unitId=?').get(Number(recipe.spriteUnitId));
   for(const s of report.catalog.filter(s=>!s.passive)){
    const expected=s.learned.some(r=>r.rarity>=1&&r.rarity<=form.rare&&r.level>=1&&r.level<=form.maxLv&&r.nvLevel===0&&r.unlockType===0&&r.braveAbility===0);
@@ -53,7 +53,7 @@ test('current-form batch selection excludes later forms and rejects wrong varian
 });
 
 test('unresolved spatial dispatch is reported independently of effect resource availability',()=>{
- const report=inspectCharacter(readJson('tools/characters/barret.json'),{assets:'assets',dump:'ffbe_asset_dump-main'});
+ const report=inspectCharacter(readJson('tools/characters/barret.json'),{assets:'rawdata/assets',dump:'rawdata/ffbe_asset_dump'});
  const mind=report.catalog.find(s=>s.id===227871);assert.equal(unresolvedEffectAnchors(mind).length,1);
  assert.equal(unresolvedEffectAnchors(mind)[0].groupId,2000311);
  assert.deepEqual(unresolvedEffectAnchors(report.catalog.find(s=>s.id===227870)),[]);

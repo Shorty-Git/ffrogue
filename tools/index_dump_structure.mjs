@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT_DIR = path.resolve(__dirname, '..');
-const DUMP_DIR = path.resolve(ROOT_DIR, 'ffbe_asset_dump-main');
+const DUMP_DIR = path.resolve(ROOT_DIR, 'rawdata/ffbe_asset_dump');
 const DOCS_DIR = path.resolve(ROOT_DIR, 'docs');
 const OUTPUT_FILE = path.resolve(DOCS_DIR, 'asset_structure.md');
 
@@ -13,7 +13,7 @@ const OUTPUT_FILE = path.resolve(DOCS_DIR, 'asset_structure.md');
  * Main indexer function.
  */
 async function main() {
-  console.log('[Index] Scanning ffbe_asset_dump-main directory structure...');
+  console.log('[Index] Scanning rawdata/ffbe_asset_dump directory structure...');
   if (!fs.existsSync(DUMP_DIR)) {
     console.error(`[Error] Dump directory not found at: ${DUMP_DIR}`);
     process.exit(1);
@@ -129,7 +129,7 @@ function generateMarkdown(data) {
 
   let md = `# FFBE Asset Dump Atlas & Structure Guide
 
-This document is the canonical reference guide for the local repository \`ffbe_asset_dump-main/\`.
+This document is the canonical reference guide for the local repository \`rawdata/ffbe_asset_dump/\`.
 It provides complete directory maps, file naming conventions, ID decoding schemas, and standard workflows for importing assets into our game.
 
 > [!IMPORTANT]
@@ -282,9 +282,9 @@ py tools/import_unit.py --id 10001 --name dire_rat --type monster
 \`\`\`
 
 ### Workflow 4: Importing an Arena Background
-Copy the desired PNG directly from \`ffbe_asset_dump-main/battle_bg/\` into \`public/assets/backgrounds/\`:
+Copy the desired PNG directly from \`rawdata/ffbe_asset_dump/battle_bg/\` into \`public/assets/backgrounds/\`:
 \`\`\`powershell
-Copy-Item "ffbe_asset_dump-main/battle_bg/battle_bg_0001.png" "public/assets/backgrounds/arena_01.png"
+Copy-Item "rawdata/ffbe_asset_dump/battle_bg/battle_bg_0001.png" "public/assets/backgrounds/arena_01.png"
 \`\`\`
 `;
 

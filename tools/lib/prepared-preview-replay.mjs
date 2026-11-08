@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import http from 'node:http';
 import {createHash} from 'node:crypto';
+import {resolveRawPath} from './raw-paths.mjs';
 const hash=file=>createHash('sha256').update(fs.readFileSync(file)).digest('hex');
 
 export function convertedReplay(planFile) {
@@ -18,7 +19,7 @@ export function convertedReplay(planFile) {
     allowed.set(url,absolute);
   };
   for(const member of config.effects)for(const asset of [member.asset,...member.asset.resources])
-    allow('/raw/'+path.relative('assets',asset.file).replaceAll('\\','/'),asset.file,asset.sha256);
+    allow('/raw/'+path.relative('rawdata/assets',resolveRawPath(asset.file)).replaceAll('\\','/'),resolveRawPath(asset.file),asset.sha256);
   for(const url of [config.actor.bodyUrl,config.actor.idleUrl,config.rat.url,...Object.values(config.arenas).map(a=>a.url)]){
     if(!url.startsWith('/prepared/')||url.includes('..'))throw Error('Unexpected preserved image URL');
     allow(url,'public/assets/'+url.slice('/prepared/'.length));

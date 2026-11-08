@@ -1,13 +1,15 @@
 """Inventory the local FFBE raw-data extractions and find byte-identical duplicates.
 
-Read-only: it never moves or deletes anything. Files are grouped by size first and only
+By default read-only. With --hardlink, every byte-identical copy is replaced by an NTFS hard
+link to one stored copy: all recorded paths keep working, the bytes exist once on disk.
+Files are grouped by size first and only
 same-size candidates are hashed (SHA-256), so a full run over ~30 GB stays practical.
 Besides exact duplicates it reports "same logical name" pairs across sources (version
 prefixes such as ``Ver2_`` stripped, extension ignored), which catches the same resource
 stored in a different form (raw .acb vs decoded .wav, CGG vs PNG).
 
 Usage:
-  python -I tools/audit_raw_duplicates.py --out tools/data/raw-dedup
+  python -I tools/audit_raw_duplicates.py --out tools/data/raw-dedup [--hardlink]
 """
 import argparse
 import hashlib
@@ -19,11 +21,12 @@ from collections import defaultdict
 from pathlib import Path
 
 SOURCES = {
-    'android-global': 'com.square_enix.android_googleplay.FFBEWW',
-    'jp-assetpacks': 'tools/data/memorial-audit/trace-clone-backup/assetpacks',
-    'github-asset-dump': 'ffbe_asset_dump-main',
-    'github-data': 'ffbe_data-master',
-    'godot-assets': 'assets',
+    'android-global': 'rawdata/android-global',
+    'jp-assetpacks': 'rawdata/memorial-packs',
+    'github-asset-dump': 'rawdata/ffbe_asset_dump',
+    'github-data': 'rawdata/ffbe_data',
+    'godot-assets': 'rawdata/assets',
+    'memorial-downloads': 'rawdata/memorial-downloads',
 }
 VERSION_PREFIX = re.compile(r'^Ver\d+_', re.I)
 
@@ -48,6 +51,7 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument('--root', default='.')
     parser.add_argument('--out', default='tools/data/raw-dedup')
+    parser.add_argument('--hardlink', action='store_true', help='replace identical copies by hard links')
     args = parser.parse_args()
     root = Path(args.root).resolve()
     out = Path(args.out)
@@ -91,10 +95,37 @@ def main() -> int:
     pair_bytes = defaultdict(int)
     pair_files = defaultdict(int)
     wasted = 0
+    linked = linked_bytes = 0
     for (length, digest), members in by_hash.items():
         if len(members) < 2:
             continue
-        wasted += length * (len(members) - 1)
+        stored = {}
+        for _, path in members:
+            info = path.stat()
+            stored.setdefault((info.st_dev, info.st_ino), path)
+        if args.hardlink and len(stored) > 1:
+            keep = members[0][1]
+            keep_id = (keep.stat().st_dev, keep.stat().st_ino)
+            for _, path in members[1:]:
+                info = path.stat()
+                if (info.st_dev, info.st_ino) == keep_id:
+                    continue
+                temporary = path.with_name(path.name + '.dedup-link')
+                try:
+                    os.link(keep, temporary)
+                except OSError as error:
+                    if getattr(error, 'winerror', None) != 1142:  # NTFS allows 1,023 links per file
+                        raise
+                    keep, keep_id = path, (info.st_dev, info.st_ino)
+                    continue
+                os.replace(temporary, path)
+                linked += 1
+                linked_bytes += length
+            stored = {}
+            for _, path in members:
+                info = path.stat()
+                stored.setdefault((info.st_dev, info.st_ino), path)
+        wasted += length * (len(stored) - 1)
         sources = sorted({source for source, _ in members})
         key = '+'.join(sources)
         pair_bytes[key] += length * (len(members) - 1)
@@ -114,6 +145,7 @@ def main() -> int:
         'sources': per_source,
         'duplicateGroups': len(groups),
         'redundantBytes': wasted,
+        'hardLinkedThisRun': {'files': linked, 'bytes': linked_bytes},
         'duplicatesBySourceSet': {key: {'groups': pair_files[key], 'redundantBytes': pair_bytes[key]}
                                   for key in sorted(pair_bytes, key=pair_bytes.get, reverse=True)},
         'sameLogicalNameBySourceSet': dict(sorted(cross_names.items(), key=lambda kv: -kv[1])),

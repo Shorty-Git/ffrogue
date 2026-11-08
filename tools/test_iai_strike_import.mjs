@@ -8,7 +8,7 @@ import {validateSceneAction} from '../src/effects/sceneProfile.mjs';
 
 test('Iai Strike uses the complete source composition, independent command/body tracks and separate balance',()=>{
  const recipe=readJson('tools/characters/jack.json');
- const report=inspectCharacter(recipe,{assets:'assets',dump:'ffbe_asset_dump-main'});
+ const report=inspectCharacter(recipe,{assets:'rawdata/assets',dump:'rawdata/ffbe_asset_dump'});
  assert.equal(report.publishable,true,JSON.stringify(report.selected));
  const skill=readJson('public/assets/units/jack/skills.json').skills.find(s=>s.ffbeId===200300);
  const body=readJson('public/assets/units/jack/manifest.json');
@@ -32,8 +32,8 @@ test('Iai Strike uses the complete source composition, independent command/body 
  assert.equal(plan.members[0].placement.rectangle,'target-side');assert.deepEqual(plan.members[0].placement.offset,[80,0]);
  assert.equal(manifest.originalFidelityVerified,false);
  const wrong=structuredClone(recipe);delete wrong.skills.find(s=>s.ffbeId===200300).actionChoreography;
- assert.equal(inspectCharacter(wrong,{assets:'assets',dump:'ffbe_asset_dump-main'}).publishable,false);
+ assert.equal(inspectCharacter(wrong,{assets:'rawdata/assets',dump:'rawdata/ffbe_asset_dump'}).publishable,false);
  const badScope=structuredClone(recipe);badScope.skills.find(s=>s.ffbeId===200300).scope='single_enemy';
- assert.ok(inspectCharacter(badScope,{assets:'assets',dump:'ffbe_asset_dump-main'}).selected.some(s=>s.issues.includes('original-target-scope-review-mismatch')));
+ assert.ok(inspectCharacter(badScope,{assets:'rawdata/assets',dump:'rawdata/ffbe_asset_dump'}).selected.some(s=>s.issues.includes('original-target-scope-review-mismatch')));
  assert.ok(fs.existsSync('public/assets/units/jack/magic_atk.png'));
 });

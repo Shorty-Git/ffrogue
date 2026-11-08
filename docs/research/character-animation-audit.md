@@ -2,7 +2,7 @@
 
 ## Source coverage
 
-The local `ffbe_asset_dump-main/unit_animated_csv/` tracks were compared with
+The local `rawdata/ffbe_asset_dump/unit_animated_csv/` tracks were compared with
 the manifests actually loaded by the game:
 
 | Character | Runtime form | Raw tracks | Exported tracks |

@@ -10,7 +10,7 @@ class FlatQuadColorTests(unittest.TestCase):
     def test_original_sword_colors_and_ranges_are_retained_separately_from_alpha(self):
         p = Path('tools/data/roster-expansion-20261101/follow-up/delita-1323010/originals/atk_slash6_rand_orange.bmb')
         raw = p.read_bytes()
-        project = Path('assets/battle_effect/atk_slash6_rand_orange.bmsln').read_bytes()
+        project = Path('rawdata/assets/battle_effect/atk_slash6_rand_orange.bmsln').read_bytes()
         result = read_bmb(raw)
         hints = quad_color_preparation_hints(raw, result)
         self.assertEqual(hints['flatRgbNodes'], [4, 5, 6, 7, 9, 11])

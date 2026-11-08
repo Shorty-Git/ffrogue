@@ -33,7 +33,7 @@ test.after(() => {
   fs.rmSync(resolved, { recursive: true });
 });
 
-const assets = path.join(root, 'assets');
+const assets = path.join(root, 'rawdata/assets');
 const dump = path.join(root, 'dump');
 for (const dir of ['static_data', 'battle_effect', 'effect_resource']) fs.mkdirSync(path.join(assets, dir), { recursive: true });
 fs.mkdirSync(path.join(dump, 'unit_animated_csv'), { recursive: true });

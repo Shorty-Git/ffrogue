@@ -93,7 +93,7 @@ claim. No curve evaluator or renderer has been implemented in this milestone.
 
 ```powershell
 & $env:FFROGUE_PYTHON -m unittest discover -s tools -p 'test_bmb*.py'
-& $env:FFROGUE_PYTHON tools/inspect_bmb.py tools/data/bmb-format/sp_20157_kyogiri_front.bmb --project assets/battle_effect/sp_20157_kyogiri_front.bmsln --output tools/data/bmb-format/sp_20157_kyogiri_front-verified.json
+& $env:FFROGUE_PYTHON tools/inspect_bmb.py tools/data/bmb-format/sp_20157_kyogiri_front.bmb --project rawdata/assets/battle_effect/sp_20157_kyogiri_front.bmsln --output tools/data/bmb-format/sp_20157_kyogiri_front-verified.json
 & $env:FFROGUE_PYTHON tools/inspect_bmb.py tools/data/climhazzard-source/originals/atk_powergeyser_001_purple.bmb --output tools/data/bmb-format/climhazzard-structure.json
 ```
 

@@ -1,7 +1,7 @@
 """Export original FFBE status icons for the battle HUD (offline; reads the asset dump).
 
 state_icon_up.png / state_icon_down.png are 32 px grids (9 columns); the single ailment icons
-come from assets/icons/ailments. Output: public/assets/ui/status/<key>.png, one per game status.
+come from rawdata/assets/icons/ailments. Output: public/assets/ui/status/<key>.png, one per game status.
     <python> tools/export_status_icons.py
 """
 from pathlib import Path
@@ -10,15 +10,15 @@ from PIL import Image
 OUT = Path('public/assets/ui/status')
 CELL, COLUMNS = 34, 9  # 32 px icon plus 2 px gap, measured from the alpha runs (1..30, 33..62, ...)
 GRID = {
-    'physical-boost': ('assets/ui/battle/state_icon_up.png', 0),   # ATK up
-    'auto-revive': ('assets/ui/battle/state_icon_up.png', 24),     # Reraise (figure with golden aura)
+    'physical-boost': ('rawdata/assets/ui/battle/state_icon_up.png', 0),   # ATK up
+    'auto-revive': ('rawdata/assets/ui/battle/state_icon_up.png', 24),     # Reraise (figure with golden aura)
 }
 SINGLE = {
-    'attack-down': 'assets/icons/ailments/break_atk.png',
-    'physical-weakness': 'assets/icons/ailments/break_def.png',
-    'magic-weakness': 'assets/icons/ailments/break_spr.png',
-    'silence': 'assets/icons/ailments/silence.png',
-    'stop': 'assets/icons/ailments/stop.png',
+    'attack-down': 'rawdata/assets/icons/ailments/break_atk.png',
+    'physical-weakness': 'rawdata/assets/icons/ailments/break_def.png',
+    'magic-weakness': 'rawdata/assets/icons/ailments/break_spr.png',
+    'silence': 'rawdata/assets/icons/ailments/silence.png',
+    'stop': 'rawdata/assets/icons/ailments/stop.png',
 }
 
 

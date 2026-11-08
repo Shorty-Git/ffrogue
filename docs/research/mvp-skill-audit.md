@@ -215,7 +215,7 @@ Source attackFrames: `125:10:2:2-135:10:2:2-145:10:2:2-155:10:2:2-165:10:2:2-175
 
 ## Asset search and reproducibility
 
-9 unique required stems have no usable converted effect in the directly resolved path. Exact-stem results across assets/ and ffbe_asset_dump-main/ are retained in the JSON. No same-named alternative file was found in this inspection. Renamed or similar effects were not substituted.
+9 unique required stems have no usable converted effect in the directly resolved path. Exact-stem results across assets/ and rawdata/ffbe_asset_dump/ are retained in the JSON. No same-named alternative file was found in this inspection. Renamed or similar effects were not substituted.
 
 Re-run from the repository root with Node 24:
 

@@ -89,7 +89,7 @@ there is no second enemy engine. Its historical class name is not a sprite bindi
 | sweeper | Sweeper | 206131000 | 2061310 | idle4, atk2 |
 | guard_scorpion | Guard Scorpion | 406081000 | 4060810 | idle4, atk2 |
 
-Exact sources: ffbe_asset_dump-main/monster_animated/monster_anime_ID.png and
+Exact sources: rawdata/ffbe_asset_dump/monster_animated/monster_anime_ID.png and
 monster_animated_csv/monster_cgg_ID.csv, monster_{idle,atk}_cgs_ID.csv. Explicit
 reviewed bindings live under tools/monsters/. The master monster.dictionaryId join
 proves the original name/identity; dictionary.fileName=test1 does NOT resolve an

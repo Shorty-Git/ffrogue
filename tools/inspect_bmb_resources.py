@@ -57,7 +57,7 @@ def inspect(source, index, output, reader_path):
             report['missingCandidates'].append(name)
         for row in candidates:
             archive = (root / row['archive']).resolve()
-            backup = (root / 'com.square_enix.android_googleplay.FFBEWW/files').resolve()
+            backup = (root / 'rawdata/android-global/files').resolve()
             if not archive.is_relative_to(backup):
                 raise ValueError('Archive must be inside the Android backup files directory')
             cpk = module.Cpk(archive)
@@ -107,6 +107,6 @@ if __name__ == '__main__':
     parser.add_argument('--source', type=Path, required=True)
     parser.add_argument('--index', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
-    parser.add_argument('--cpk-reader', type=Path, default=Path('ffbe_asset_dump-main/tools/cpk.py'))
+    parser.add_argument('--cpk-reader', type=Path, default=Path('rawdata/ffbe_asset_dump/tools/cpk.py'))
     args = parser.parse_args()
     inspect(args.source, args.index, args.output, args.cpk_reader)

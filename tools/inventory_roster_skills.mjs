@@ -9,7 +9,7 @@ const output=value('--output','tools/data/roster-expansion-20261101/coverage');
 if(!path.resolve(output).startsWith(path.resolve('tools/data')+path.sep))throw Error('Ignored output directory required');
 const censusFile=value('--census','tools/data/source-only-20261028/catalog/inventory.json'),census=readJson(censusFile);
 const controlAuditFile=value('--control-audit'),controlComparisons=controlAuditFile?loadControlAudit(controlAuditFile):[];
-const database='assets/static_data/ffbe-data.db';
+const database='rawdata/assets/static_data/ffbe-data.db';
 if(sha256(database)!==census.summary.database.sha256)throw Error('Global census database is stale; refresh it before roster coverage');
 if(sha256(census.summary.resourceIndex.file)!==census.summary.resourceIndex.sha256)throw Error('Global resource index changed; refresh the census first');
 const db=new DatabaseSync(database,{readOnly:true}),audits=[];
@@ -24,7 +24,7 @@ for(const root of roots){
 const roster=[];
 for(const key of readJson('public/assets/content.json').characters){
  const recipe=readJson(`tools/characters/${key}.json`),body=readJson(`public/assets/units/${key}/manifest.json`);
- const inspection=inspectCharacter({...recipe,spriteUnitId:String(body.unitId)},{assets:'assets',dump:'ffbe_asset_dump-main'});
+ const inspection=inspectCharacter({...recipe,spriteUnitId:String(body.unitId)},{assets:'rawdata/assets',dump:'rawdata/ffbe_asset_dump'});
  const published=readJson(`public/assets/units/${key}/skills.json`).skills;
  const master=db.prepare('SELECT unitId,unitSeries,rare,maxLv,limitBurstId FROM unit WHERE unitId=?').get(Number(body.unitId));
  const active=inspection.catalog.filter(s=>!s.passive).map(s=>{

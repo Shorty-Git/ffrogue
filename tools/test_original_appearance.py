@@ -13,7 +13,7 @@ STAGE = ROOT / 'tools/data/shared-skill-review'
 class AppearanceTests(unittest.TestCase):
     def source(self, folder, stem, authoring=True):
         raw = STAGE / folder / 'originals' / (stem + '.bmb')
-        project = ROOT / 'assets/battle_effect' / (stem + '.bmsln')
+        project = ROOT / 'rawdata/assets/battle_effect' / (stem + '.bmsln')
         if not raw.exists() or (authoring and not project.exists()):
             self.skipTest('Local original data is required')
         data = read_bmb(raw.read_bytes())

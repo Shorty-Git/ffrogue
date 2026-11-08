@@ -97,10 +97,10 @@ def inventory(database,index,output):
             'statusBySeries':statuses,'scope':'Series learning, not equipment/quest eligibility for each form',
             'effectGroups':group_count,'soundOnlyGroups':sound_only,'originalFiles':sorted(files),
             'indexedOriginalCount':len(files)-len(absent),'unindexedOriginals':absent,
-            'matchedAuthoringFiles':[name for name in sorted(files) if Path('assets/battle_effect',Path(name).with_suffix('.bmsln')).exists()],
+            'matchedAuthoringFiles':[name for name in sorted(files) if Path('rawdata/assets/battle_effect',Path(name).with_suffix('.bmsln')).exists()],
             'knownBlockers':sorted(set(mechanics)),'dataGaps':sorted(set(data_gaps)),'existingIntake':evidence,
             'hasExistingIntakeEvidence':bool(evidence),'fullyImportableUnpublished':False})
-    sprite_ids={p.stem.removeprefix('unit_anime_') for p in Path('ffbe_asset_dump-main/unit_animated').glob('unit_anime_*.png')}
+    sprite_ids={p.stem.removeprefix('unit_anime_') for p in Path('rawdata/ffbe_asset_dump/unit_animated').glob('unit_anime_*.png')}
     characters=[{'seriesId':sid,'names':sorted({u['unitName'] for u in us}),'forms':[u['unitId'] for u in us],
         'formsWithLocalSprite':[u['unitId'] for u in us if str(u['unitId']) in sprite_ids],
         'knownActiveCommands':sum(sid in owned for owned in owners.values())} for sid,us in sorted(series.items())]
@@ -123,6 +123,6 @@ def inventory(database,index,output):
 
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--database',type=Path,default=Path('assets/static_data/ffbe-data.db'))
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--database',type=Path,default=Path('rawdata/assets/static_data/ffbe-data.db'))
     p.add_argument('--index',type=Path,default=Path('tools/data/android-cpk-audit/members.jsonl'));p.add_argument('--output',type=Path,required=True)
     a=p.parse_args();inventory(a.database,a.index,a.output)

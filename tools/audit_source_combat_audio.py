@@ -26,7 +26,7 @@ def groups(db, timeline):
 
 
 def attack_clip(form):
-    path = Path(f'ffbe_asset_dump-main/unit_animated_csv/unit_atk_cgs_{form}.csv')
+    path = Path(f'rawdata/ffbe_asset_dump/unit_animated_csv/unit_atk_cgs_{form}.csv')
     if not path.is_file():
         return None
     with path.open(newline='', encoding='utf-8-sig') as source:

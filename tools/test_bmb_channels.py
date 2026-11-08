@@ -66,7 +66,7 @@ class BmbChannelTests(unittest.TestCase):
         for file, sha in cases:
             raw = Path(file).read_bytes()
             self.assertEqual(hashlib.sha256(raw).hexdigest(), sha)
-            project = Path('assets/battle_effect', Path(file).stem + '.bmsln').read_bytes()
+            project = Path('rawdata/assets/battle_effect', Path(file).stem + '.bmsln').read_bytes()
             data = read_bmb(raw)
             compare_project(data, project)
             xml = ET.fromstring(project)

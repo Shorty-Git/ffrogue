@@ -15,7 +15,7 @@ import {audioFingerprint} from './lib/admit-source-audio.mjs';
 
 const arg = (name, fallback) => { const i = process.argv.indexOf(name); return i > 0 ? process.argv[i + 1] : fallback; };
 const python = arg('--python', process.env.FFROGUE_PYTHON ?? 'python'), dry = process.argv.includes('--dry-run');
-const BANK = 'tools/data/memorial-audit/trace-clone-backup/assetpacks/on_demand_asset3/199/199/assets/SE.acb';
+const BANK = 'rawdata/memorial-packs/on_demand_asset3/199/199/assets/SE.acb';
 const VGM = 'tools/data/audio-vertical/decoder/vgmstream-cli.exe', STREAMS = 'tools/data/audio-vertical/se-streams.tsv';
 const REVIEW = 'tools/presentations/source-audio-review.json';
 const read = file => JSON.parse(fs.readFileSync(file, 'utf8'));

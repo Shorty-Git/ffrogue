@@ -25,16 +25,16 @@ def visit(p):
 visit('src/main.ts')
 hashed=[];duplicates=collections.defaultdict(list)
 selected=set(p for p in Path('public').rglob('*')if p.is_file())
-selected|={p for root in ['assets/static_data','assets/audio']for p in Path(root).rglob('*')if p.is_file()}
+selected|={p for root in ['rawdata/assets/static_data','rawdata/assets/audio']for p in Path(root).rglob('*')if p.is_file()}
 for p in Path('tools/characters').glob('*.json'):
  recipe=json.loads(p.read_text(encoding='utf-8'));id=recipe['spriteUnitId']
- selected|={p for p in Path('ffbe_asset_dump-main/unit_animated_csv').glob('*_'+id+'.csv')}
- selected.add(Path('ffbe_asset_dump-main/unit_animated')/('unit_anime_'+id+'.png'))
+ selected|={p for p in Path('rawdata/ffbe_asset_dump/unit_animated_csv').glob('*_'+id+'.csv')}
+ selected.add(Path('rawdata/ffbe_asset_dump/unit_animated')/('unit_anime_'+id+'.png'))
 for p in Path('tools/monsters').glob('*.json'):
- id=json.loads(p.read_text())['spriteId'];selected|=set(Path('ffbe_asset_dump-main/monster_animated_csv').glob('*_'+id+'.csv'))
- selected.add(Path('ffbe_asset_dump-main/monster_animated')/('monster_anime_'+id+'.png'))
+ id=json.loads(p.read_text())['spriteId'];selected|=set(Path('rawdata/ffbe_asset_dump/monster_animated_csv').glob('*_'+id+'.csv'))
+ selected.add(Path('rawdata/ffbe_asset_dump/monster_animated')/('monster_anime_'+id+'.png'))
 for name in ['battle_bg_0003_01.jpg','battle_bg_0003_01.ssbp','battle_bg_0003_01_1.png','battle_bg_0003_01_2.png','battle_bg_2013_02.jpg','battle_bg_2013_02.ssbp','battle_bg_2013_01.png']:
- selected.add(Path('ffbe_asset_dump-main/battle_bg')/name)
+ selected.add(Path('rawdata/ffbe_asset_dump/battle_bg')/name)
 for p in sorted(selected):
  if not p.is_file():continue
  h=sha(p);category='productive'if p.is_relative_to('public')else'original-reference'
@@ -42,7 +42,7 @@ for p in sorted(selected):
 texture_headers=[]
 for p in sorted(Path('public/assets').rglob('*.png')):
  with Image.open(p)as image:texture_headers.append({'path':p.as_posix(),'width':image.width,'height':image.height,'rgba8Bytes':image.width*image.height*4})
-asset_counts=collections.Counter(p.suffix.lower()for p in Path('assets').rglob('*')if p.is_file())
+asset_counts=collections.Counter(p.suffix.lower()for p in Path('rawdata/assets').rglob('*')if p.is_file())
 receipts=[]
 for name in ['barret-path-20261101','full-import-path-20261101','control-groups-20261101']:
  p=Path('tools/data')/name/'preservation.json'
@@ -55,8 +55,8 @@ r={'schema':'game-foundation-audit-v1','sourceFiles':len(files),'staticImportGra
   'limits':['Header-based RGBA8 texel estimate across all prepared PNGs, not measured live VRAM.',
    'Does not account for lazy loading, shared GPU textures, compression, mipmaps or framebuffer overhead.']},
  'classification':{'public':'Productive prepared assets; registry/dynamic URLs remain references',
-  'ffbe_asset_dump-main':'Original versions; selected recipe/stage inputs hashed, whole dump not certified',
-  'assets':'Original DB/audio/effect package; audio codec/joins unconfirmed',
+  'rawdata/ffbe_asset_dump':'Original versions; selected recipe/stage inputs hashed, whole dump not certified',
+  'rawdata/assets':'Original DB/audio/effect package; audio codec/joins unconfirmed',
   'tools/data':'Generated previews, caches AND irreplaceable research/backup evidence; never bulk-delete',
   'dist':'Reproducible production build, separate from original data',
   'node_modules/.vite':'Development cache, not proof that running servers are current'},

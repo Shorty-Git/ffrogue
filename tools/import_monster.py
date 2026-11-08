@@ -24,7 +24,7 @@ def prepare(recipe_path, publish=False):
     key, sprite = recipe['key'], str(recipe['spriteId'])
     if recipe['schemaVersion'] != 1 or not re.fullmatch(r'[a-z][a-z0-9_]*', key) or not sprite.isdigit():
         raise ValueError('Reviewed monster recipe required')
-    database = Path('assets/static_data/ffbe-data.db')
+    database = Path('rawdata/assets/static_data/ffbe-data.db')
     with sqlite3.connect(database.resolve().as_uri() + '?mode=ro', uri=True) as db:
         db.row_factory = sqlite3.Row
         row = db.execute('SELECT * FROM monster WHERE monsterId=?', (recipe['monsterId'],)).fetchone()
@@ -32,7 +32,7 @@ def prepare(recipe_path, publish=False):
         if not row or not dictionary or row['dictionaryId'] != recipe['dictionaryId'] or dictionary['name'] != recipe['displayName']:
             raise ValueError('Original monster/dictionary/name identity mismatch')
         source = {'monster': dict(row), 'dictionary': dict(dictionary), 'databaseSha256': digest(database)}
-    dump = Path('ffbe_asset_dump-main')
+    dump = Path('rawdata/ffbe_asset_dump')
     files = [dump / 'monster_animated' / f'monster_anime_{sprite}.png',
              dump / 'monster_animated_csv' / f'monster_cgg_{sprite}.csv']
     tracks = sorted((dump / 'monster_animated_csv').glob(f'monster_*_cgs_{sprite}.csv'))

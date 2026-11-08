@@ -697,7 +697,7 @@ from those preserved inputs without fitting any source node:
 $scenePython = $env:FFROGUE_PYTHON
 node tools/resolve_composed_skill.mjs --composition tools/data/scene-migration/cross-slash/composition.json --report tools/data/characters/cloud/report.json --output tools/data/scene-migration/cross-slash/composed-report.json
 & $scenePython tools/stage_original_skill.py --report tools/data/scene-migration/cross-slash/composed-report.json --skill-id 214790 --output tools/data/scene-migration/cross-slash
-& $scenePython tools/prepare_original_preview.py --source tools/data/scene-migration/cross-slash/skill-source.json --unit cloud --recipe tools/data/scene-migration/cross-slash/recipe.json --authoring assets/battle_effect/sp_20157_kyogiri_back.bmsln --authoring assets/battle_effect/sp_20157_kyogiri_front.bmsln --authoring assets/battle_effect/atk_slash1_white.bmsln --scene-composite --withhold-untextured --inheritance --source-appearance --basic-uv --model-vertex-rgba --particle-geometry --null-locator --rectangle-placement --renderer-reference tools/data/memorial-audit/diagnostic-v7/renderer-reference.json --output tools/data/scene-migration/cross-slash/plan.json
+& $scenePython tools/prepare_original_preview.py --source tools/data/scene-migration/cross-slash/skill-source.json --unit cloud --recipe tools/data/scene-migration/cross-slash/recipe.json --authoring rawdata/assets/battle_effect/sp_20157_kyogiri_back.bmsln --authoring rawdata/assets/battle_effect/sp_20157_kyogiri_front.bmsln --authoring rawdata/assets/battle_effect/atk_slash1_white.bmsln --scene-composite --withhold-untextured --inheritance --source-appearance --basic-uv --model-vertex-rgba --particle-geometry --null-locator --rectangle-placement --renderer-reference tools/data/memorial-audit/diagnostic-v7/renderer-reference.json --output tools/data/scene-migration/cross-slash/plan.json
 node tools/publish_scene_presentations.mjs --recipe tools/presentations/cross-slash-import-test.json
 ```
 
@@ -754,11 +754,11 @@ before binding an original skill to this profile. Current evidence and commands:
 
 | Layer | Location | Purpose |
 | --- | --- | --- |
-| Raw unit art | `ffbe_asset_dump-main/unit_animated/`, `unit_animated_csv/` | Atlas, CGG parts and every CGS track for an exact sprite form |
-| Master data | `assets/static_data/ffbe-data.db` | Form-to-series relationship, acquisition conditions, motions and effect timelines; read-only |
-| Converted effects | `assets/battle_effect/`, `assets/effect_resource/` | Effekseer files, textures, models and optional authoring data for the current sheet publication path |
-| Original effects | `com.square_enix.android_googleplay.FFBEWW/files/` | Ignored CPK backup; selectively staged original BMB/texture/model resources for the separate reconstruction workflow |
-| Secondary metadata | `ffbe_data-master/` | DanUgore GL/JP descriptions and decoded mechanics for manual cross-checks; not automatically joined to a different game version |
+| Raw unit art | `rawdata/ffbe_asset_dump/unit_animated/`, `unit_animated_csv/` | Atlas, CGG parts and every CGS track for an exact sprite form |
+| Master data | `rawdata/assets/static_data/ffbe-data.db` | Form-to-series relationship, acquisition conditions, motions and effect timelines; read-only |
+| Converted effects | `rawdata/assets/battle_effect/`, `rawdata/assets/effect_resource/` | Effekseer files, textures, models and optional authoring data for the current sheet publication path |
+| Original effects | `rawdata/android-global/files/` | Ignored CPK backup; selectively staged original BMB/texture/model resources for the separate reconstruction workflow |
+| Secondary metadata | `rawdata/ffbe_data/` | DanUgore GL/JP descriptions and decoded mechanics for manual cross-checks; not automatically joined to a different game version |
 | Character recipe | `tools/characters/<key>.json` | Exact sprite form, reviewed game stats, selected commands and supported execution mode |
 | Effect recipe | `tools/effects/<key>.json` | Reviewed source/variant, camera, sheet settings, blend and review reason; shared across characters |
 | Inspection report | `tools/data/characters/<key>/report.json` and `.md` | Full acquisition catalog and raw mechanics, per-skill effects/dependencies, issues and provenance |
@@ -922,7 +922,7 @@ row describes an assembled pose; a CGS sequence references those rows in playbac
 order and supplies delays. A referenced CGG row number, an exported body-sheet
 index and a 60 Hz effect tick are three different coordinates.
 
-The dump validators (`ffbe_asset_dump-main/tools/validate_unit_identities.py` and
+The dump validators (`rawdata/ffbe_asset_dump/tools/validate_unit_identities.py` and
 `validate_recovery.py`, local ignored sources) establish this structural subset:
 
 - CGS column 0 is a zero-based CGG row reference. Preserve sequence order and
@@ -1132,7 +1132,7 @@ node tools/export_skill_icons.mjs
 ```
 
 Resolves each published skill's `type:ffbeId` through `ability.iconId` /
-`magic.iconId` in `assets/static_data/ffbe-data.db` (iconId 7000000NN →
+`magic.iconId` in `rawdata/assets/static_data/ffbe-data.db` (iconId 7000000NN →
 `<dump>/abilities/ability_NN_HD.png`, else the SD file), copies the icons unchanged
 to `public/assets/icons/skills/` and writes `index.json` (lookup + source and
 SHA-256). FFBE shares icons between skills (Cloud's sword techniques all use 54).

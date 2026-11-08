@@ -320,7 +320,7 @@ bounds/zero scatter instead. Existing source starts and effect scales are kept;
 no global native +2 lead or per-character correction was introduced.
 
 ```powershell
-& $env:FFROGUE_PYTHON tools/prepare_original_preview.py --source tools/data/shared-skill-review/blade-beam/skill-source.json --unit cloud --recipe tools/characters/cloud.json --authoring assets/battle_effect/atk_aerialslash_001_green.bmsln --authoring assets/battle_effect/atk_slash5_blue.bmsln --scene-composite --withhold-untextured --inheritance --source-appearance --basic-uv --rectangle-placement --output tools/data/shared-skill-review/blade-beam/plan-rectangle-placement.json
+& $env:FFROGUE_PYTHON tools/prepare_original_preview.py --source tools/data/shared-skill-review/blade-beam/skill-source.json --unit cloud --recipe tools/characters/cloud.json --authoring rawdata/assets/battle_effect/atk_aerialslash_001_green.bmsln --authoring rawdata/assets/battle_effect/atk_slash5_blue.bmsln --scene-composite --withhold-untextured --inheritance --source-appearance --basic-uv --rectangle-placement --output tools/data/shared-skill-review/blade-beam/plan-rectangle-placement.json
 node tools/preview_original_skill.mjs --plan tools/data/shared-skill-review/blade-beam/plan-rectangle-placement.json --port 3123
 node --test tools/test_original_effect_player.mjs
 ```

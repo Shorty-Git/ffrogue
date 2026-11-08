@@ -1,5 +1,30 @@
 # FFBE Asset Dump Atlas & Structure Guide
 
+## Raw-data layout (since 2026-11-08) - read first
+
+All raw FFBE sources live in one git-ignored folder, each source exactly once:
+
+| Folder | Former location | Content |
+|---|---|---|
+| `rawdata/assets/` | `assets/` | Godot dump: battle_effect authoring, static_data DB, unit/monster spritesheets, town_data, ui, icons |
+| `rawdata/ffbe_asset_dump/` | `ffbe_asset_dump-main/` | GitHub decoded dump: unit/monster animated CSV+PNG, items, illustrations, battle_bg |
+| `rawdata/ffbe_data/` | `ffbe_data-master/` | GitHub master-data JSON |
+| `rawdata/android-global/` | `com.square_enix.android_googleplay.FFBEWW/` | Global Android client (VerN_ BGM/SE banks, encrypted mst) |
+| `rawdata/memorial-packs/` | `tools/data/memorial-audit/trace-clone-backup/assetpacks/` | JP Memorial on-demand asset packs |
+| `rawdata/memorial-downloads/` | `tools/data/memorial-side-stories/` | JP Memorial download cache (most BGM, see below) |
+
+Rules:
+- Byte-identical copies are stored once as NTFS hard links. Run
+  `<python> -I tools/audit_raw_duplicates.py --hardlink` after adding sources. The first run linked
+  94,490 files and saved 2.3 GB. Treat rawdata as read-only: a tool must never rewrite an existing
+  raw file in place, because hard-linked twins share the bytes. Write new files instead.
+- Receipts, plans and provenance written before the move record the old locations. Code that reads such
+  recorded paths goes through `resolveRawPath` (`tools/lib/raw-paths.mjs`) or `resolve_raw_path`
+  (`tools/raw_paths.py`), a deterministic prefix rename. Hashed receipts are not rewritten.
+- Same-name pairs that are NOT byte-identical stay. They are different encodings needed by different
+  tools (for example dump CSV/PNG versus Godot rawpng spritesheets).
+- What used space beyond the raw sources was old research data in `tools/data`; see the cleanup below.
+
 ## Raw-data sources and duplicate audit (2026-11-08)
 
 Five local raw sources exist; all are git-ignored. `tools/audit_raw_duplicates.py` (read-only,
@@ -8,10 +33,10 @@ size-grouped SHA-256) inventories them. Receipts: `tools/data/raw-dedup/summary.
 
 | Source id | Path | Files | Size | Content |
 |---|---|---|---|---|
-| android-global | `com.square_enix.android_googleplay.FFBEWW/` | 1,357 | 5.6 GB | Global Android client: `VerN_` BGM/SE `.acb`, encrypted `mst/*.dat` |
-| jp-assetpacks | `tools/data/memorial-audit/trace-clone-backup/assetpacks/` | 4,126 | 7.0 GB | JP Memorial on-demand packs (252 `.acb`, CPK, battle_effect sources) |
-| github-asset-dump | `ffbe_asset_dump-main/` | 148,132 | 3.4 GB | Decoded PNG/CSV/GIF dump (units, monsters, items, battle_bg) |
-| github-data | `ffbe_data-master/` | 37 | 0.1 GB | Master-data JSON |
+| android-global | `rawdata/android-global/` | 1,357 | 5.6 GB | Global Android client: `VerN_` BGM/SE `.acb`, encrypted `mst/*.dat` |
+| jp-assetpacks | `rawdata/memorial-packs/` | 4,126 | 7.0 GB | JP Memorial on-demand packs (252 `.acb`, CPK, battle_effect sources) |
+| github-asset-dump | `rawdata/ffbe_asset_dump/` | 148,132 | 3.4 GB | Decoded PNG/CSV/GIF dump (units, monsters, items, battle_bg) |
+| github-data | `rawdata/ffbe_data/` | 37 | 0.1 GB | Master-data JSON |
 | godot-assets | `assets/` | 175,171 | 13.5 GB | Second decoded dump with Godot `.import` sidecars (sprites, town_data, battle_effect, 6 BGM `.wav`) |
 
 Findings:
@@ -21,7 +46,7 @@ Findings:
   - 0.29 GB is shared between the GitHub dump and `assets/` (15,777 groups: items, illustrations, icons, battle_bg);
   - 90 MB is shared between android-global and jp-assetpacks (37 BGM `.acb`). A `VerN_` prefix in the global client does not change the bytes.
 - 17,690 logical names exist in both decoded dumps. Rule: when both have the resource, pipelines read the
-  decoded `ffbe_asset_dump-main/` copy; `assets/` stays the source for what only it has (battle_effect
+  decoded `rawdata/ffbe_asset_dump/` copy; `assets/` stays the source for what only it has (battle_effect
   authoring, town_data, unit/monster spritesheets). Audio rule: raw `.acb` from jp-assetpacks first,
   android-global second (it alone has several FF7R/FFX/FFXII tracks such as `la00713`).
 - Not deduplicated physically: moving files would break the recorded source paths and hashes in
@@ -41,10 +66,10 @@ cannot read without root.
 
 | Source id | Path | Files | Size | Content |
 |---|---|---|---|---|
-| memorial-side-stories | `tools/data/memorial-side-stories/` | 1,856 | 2.8 GB | JP Memorial download cache: 286 BGM `.acb` (classic and remake battle/boss themes across FF I-XVI, FFT, Type-0, crossovers), 1,479 `.cpk`, 18 `.usm`, scenes |
+| memorial-side-stories | `rawdata/memorial-downloads/` | 1,856 | 2.8 GB | JP Memorial download cache: 286 BGM `.acb` (classic and remake battle/boss themes across FF I-XVI, FFT, Type-0, crossovers), 1,479 `.cpk`, 18 `.usm`, scenes |
 
 Reproduce (read-only; the VM may keep running):
-`<python> -I tools/extract_memorial_side_stories.py --pylib tools/data/pylib --disk C:/ProgramData/BlueStacks_nxt/Engine/Tiramisu64_2/Data.vhdx --out tools/data/memorial-side-stories`
+`<python> -I tools/extract_memorial_side_stories.py --pylib tools/data/pylib --disk C:/ProgramData/BlueStacks_nxt/Engine/Tiramisu64_2/Data.vhdx --out rawdata/memorial-downloads`
 (`tools/data/pylib` = `pip install --target tools/data/pylib dissect.hypervisor dissect.extfs dissect.volume`).
 `index.json` records name, bucket and SHA-256 per file. Re-run it after playing new content in the
 Memorial client: the game downloads tracks on first use, so files appear only after they were needed.
@@ -223,9 +248,9 @@ stream is named `se_attack_kh_cloud`. This identifies an archive stream, not a
 published hero or skill mapping. Skill and enemy tuples still need a native
 dispatch-to-cue join and timing confirmation.
 
-`assets/audio/` currently has8 WAVs (6 background tracks and2 system SFX), not
+`rawdata/assets/audio/` currently has8 WAVs (6 background tracks and2 system SFX), not
 skill mappings. Preserved Memorial assetpacks under
-`tools/data/memorial-audit/trace-clone-backup/assetpacks/` include252 .acb paths:
+`rawdata/memorial-packs/` include252 .acb paths:
 250 @UTF-header bank candidates and2 XML-header unvalidated files.126 adjacent
 .dat files are UNCLASSIFIED, not confirmed audio streams. SE.acb under
 on_demand_asset3/199/199/assets is32,641,440bytes and matches the running Trace
@@ -235,7 +260,7 @@ Sound IDs/times come from resolved effect-group records, never basename guesses.
 The initial audit predates the verified Whisperwood playback path described above.
 
 This document is the source-location and naming reference for the local
-`ffbe_asset_dump-main/` inventory and additional raw packages. Counts and naming
+`rawdata/ffbe_asset_dump/` inventory and additional raw packages. Counts and naming
 examples describe the cataloged snapshot; they are not current availability or
 format-support guarantees. Consult [the asset pipeline handbook](asset-pipeline-handbook.md)
 for the current support boundary and task-specific workflows.
@@ -255,7 +280,7 @@ Do not treat historical direct-import commands as the reviewed publication path.
 
 ### Additional local ExviusReborn assets
 
-`com.square_enix.android_googleplay.FFBEWW/` is an additional local Android
+`rawdata/android-global/` is an additional local Android
 application backup supplied on 2026-10-22. Its `files/` directory contains original
 CPK archives. The entire backup is Git-ignored and excluded from Vite watching.
 Inspect archive member indexes before extracting selected assets into ignored
@@ -263,17 +288,17 @@ Inspect archive member indexes before extracting selected assets into ignored
 asset reports and runtime inputs. Archive presence alone does not establish
 effect availability, payload readability or rendering support.
 
-`ffbe_data-master/` is a separate ignored DanUgore datamining checkout. Treat it
+`rawdata/ffbe_data/` is a separate ignored DanUgore datamining checkout. Treat it
 as offline metadata, not a runtime asset folder; Vite must not watch it.
 
 The repository-root `assets/` directory is a separate, Git-ignored source package
 from [ExviusReborn](https://github.com/Hirurawa/ExviusReborn). It is not the game's
 `public/assets/` directory. Vite must not watch this raw package.
 
-- `assets/static_data/ffbe-data.db`: SQLite master data; open read-only.
-- `assets/battle_effect/`: converted Effekseer `.efkefc` particle effects and some
+- `rawdata/assets/static_data/ffbe-data.db`: SQLite master data; open read-only.
+- `rawdata/assets/battle_effect/`: converted Effekseer `.efkefc` particle effects and some
   original Matchlock/Bishamon `.bmsln` authoring files.
-- `assets/effect_resource/`: referenced textures and models.
+- `rawdata/assets/effect_resource/`: referenced textures and models.
 - Resolve skill visuals through `ability.effectFrames -> effect_group.effectData
   -> effect.fileInfo`. **Do not join effectFrames directly to effect.effectId.**
   Group IDs and effect IDs overlap but can identify unrelated visuals.

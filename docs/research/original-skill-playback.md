@@ -75,7 +75,7 @@ Generate the supplementary plan explicitly; authoring files are not discovered
 or silently added by the preparer:
 
 ```powershell
-python tools/prepare_original_preview.py --source tools/data/climhazzard-source/skill-source.json --unit cloud --motion atk --authoring assets/battle_effect/atk_slash7_side_purple.bmsln --authoring assets/battle_effect/atk_blow1_purple.bmsln --output tools/data/climhazzard-layered/plan.json
+python tools/prepare_original_preview.py --source tools/data/climhazzard-source/skill-source.json --unit cloud --motion atk --authoring rawdata/assets/battle_effect/atk_slash7_side_purple.bmsln --authoring rawdata/assets/battle_effect/atk_blow1_purple.bmsln --output tools/data/climhazzard-layered/plan.json
 node tools/preview_original_skill.mjs --plan tools/data/climhazzard-layered/plan.json --port 3114
 python -m unittest discover -s tools -p 'test_original_texture_layers.py'
 ```
@@ -113,7 +113,7 @@ source pair is unavailable.
 ## Distortion material milestone
 
 ```powershell
-python tools/prepare_original_preview.py --source tools/data/climhazzard-source/skill-source.json --unit cloud --motion atk --authoring assets/battle_effect/atk_slash7_side_purple.bmsln --authoring assets/battle_effect/atk_blow1_purple.bmsln --distortion --output tools/data/climhazzard-distortion/plan.json
+python tools/prepare_original_preview.py --source tools/data/climhazzard-source/skill-source.json --unit cloud --motion atk --authoring rawdata/assets/battle_effect/atk_slash7_side_purple.bmsln --authoring rawdata/assets/battle_effect/atk_blow1_purple.bmsln --distortion --output tools/data/climhazzard-distortion/plan.json
 node tools/preview_original_skill.mjs --plan tools/data/climhazzard-distortion/plan.json --port 3115
 python -m unittest discover -s tools -p 'test_bmb_distortion.py'
 node --test tools/test_original_effect_player.mjs
@@ -185,7 +185,7 @@ material retains its own normal/additive blend rather than applying a single
 Canvas2D additive operation to all effects, including opaque debris.
 
 ```powershell
-python tools/prepare_original_preview.py --source tools/data/climhazzard-source/skill-source.json --unit cloud --motion atk --authoring assets/battle_effect/atk_slash7_side_purple.bmsln --authoring assets/battle_effect/atk_blow1_purple.bmsln --distortion --fit-screen --scene-composite --output tools/data/climhazzard-screen/plan.json
+python tools/prepare_original_preview.py --source tools/data/climhazzard-source/skill-source.json --unit cloud --motion atk --authoring rawdata/assets/battle_effect/atk_slash7_side_purple.bmsln --authoring rawdata/assets/battle_effect/atk_blow1_purple.bmsln --distortion --fit-screen --scene-composite --output tools/data/climhazzard-screen/plan.json
 node tools/preview_original_skill.mjs --plan tools/data/climhazzard-screen/plan.json --port 3116
 ```
 

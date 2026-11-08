@@ -12,7 +12,7 @@ STAGE = ROOT / 'tools/data/shared-skill-review'
 class OriginalInheritanceTest(unittest.TestCase):
     def source(self, folder, stem):
         raw = STAGE / folder / 'originals' / (stem + '.bmb')
-        xml = ROOT / 'assets/battle_effect' / (stem + '.bmsln')
+        xml = ROOT / 'rawdata/assets/battle_effect' / (stem + '.bmsln')
         if not raw.exists() or not xml.exists():
             self.skipTest('Local original pair is required')
         return read_bmb(raw.read_bytes()), xml.read_bytes()

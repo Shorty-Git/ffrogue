@@ -3,15 +3,15 @@ import { DatabaseSync } from 'node:sqlite';
 import { inspectCharacter, readJson, writeJson, sha256 } from './lib/character-pipeline.mjs';
 
 // Read-only comparison of exact forms. Available art does not imply skill support.
-const master = readJson('ffbe_asset_dump-main/catalog/unit_master.json');
+const master = readJson('rawdata/ffbe_asset_dump/catalog/unit_master.json');
 const ids = ['207000105', '207001607', '207002007', '207002017', '207003107', '207003117', '207003407', '207003427'];
-const db = new DatabaseSync('assets/static_data/ffbe-data.db', { readOnly: true });
+const db = new DatabaseSync('rawdata/assets/static_data/ffbe-data.db', { readOnly: true });
 const rows = [];
 try {
   for (const id of ids) {
     const identity = master.units.find(u => u.original_id === id);
     const suffix = `_cgs_${id}.csv`;
-    const tracks = fs.readdirSync('ffbe_asset_dump-main/unit_animated_csv')
+    const tracks = fs.readdirSync('rawdata/ffbe_asset_dump/unit_animated_csv')
       .filter(f => f.startsWith('unit_') && f.endsWith(suffix)).map(f => f.slice(5, -suffix.length)).sort();
     const row = { id, name: identity?.name ?? null, tracks };
     if (!db.prepare('SELECT unitId FROM unit WHERE unitId = ?').get(Number(id))) {
@@ -44,12 +44,12 @@ try {
 } finally { db.close(); }
 const secondarySnapshots = ['gl', 'jp'].map(region => {
   const files = ['unit', 'ability', 'learns', 'limits'].map(kind => {
-    const file = `ffbe_data-master/${region}/${kind}.json`, data = readJson(file);
+    const file = `rawdata/ffbe_data/${region}/${kind}.json`, data = readJson(file);
     const checks = kind === 'ability' ? ['236010', '236027', '236032', '236034', '236045'] : ['207002007', '207002017'];
     return { kind, file, sha256: sha256(file), recordCount: Object.keys(data).length,
       requestedIds: Object.fromEntries(checks.map(id => [id, Object.hasOwn(data, id)])) };
   });
-  const marker = `ffbe_data-master/${region}/lastmodified.txt`;
+  const marker = `rawdata/ffbe_data/${region}/lastmodified.txt`;
   return { region, files, lastmodifiedMarker: fs.existsSync(marker) ? fs.readFileSync(marker, 'utf8').trim() : null };
 });
 writeJson('tools/data/cloud-versions/availability.json', {

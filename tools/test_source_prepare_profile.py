@@ -39,7 +39,7 @@ class SourcePrepareProfileTests(unittest.TestCase):
                         str(Path(reference).parent / 'skill-source.json'), '--unit', unit,
                         '--unit-assets', str(body), '--recipe', recipe,
                         '--motion', 'magic_atk' if name == 'aura' else 'atk',
-                        '--profile', 'source-preview-v1', '--authoring-directory', 'assets/battle_effect',
+                        '--profile', 'source-preview-v1', '--authoring-directory', 'rawdata/assets/battle_effect',
                         '--native-shaders-apk', 'tools/data/memorial-audit/installed-base-v208.apk',
                         '--native-shader-package', 'tools/data/particle-native-audit/bmshaderpack.bin',
                         '--renderer-reference', 'tools/data/memorial-audit/diagnostic-v7/renderer-reference.json',

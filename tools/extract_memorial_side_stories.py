@@ -12,7 +12,7 @@ Requires: pip install --target <dir> dissect.hypervisor dissect.extfs  (pass --p
 Usage:
   python -I tools/extract_memorial_side_stories.py --pylib <dir> \
     --disk C:/ProgramData/BlueStacks_nxt/Engine/Tiramisu64_2/Data.vhdx \
-    --out tools/data/memorial-side-stories
+    --out rawdata/memorial-downloads
 """
 import argparse
 import hashlib
@@ -27,7 +27,7 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument('--pylib', help='directory with the dissect packages')
     parser.add_argument('--disk', default='C:/ProgramData/BlueStacks_nxt/Engine/Tiramisu64_2/Data.vhdx')
-    parser.add_argument('--out', default='tools/data/memorial-side-stories')
+    parser.add_argument('--out', default='rawdata/memorial-downloads')
     args = parser.parse_args()
     if args.pylib:
         sys.path.insert(0, args.pylib)

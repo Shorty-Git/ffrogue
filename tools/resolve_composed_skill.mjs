@@ -21,7 +21,7 @@ const skill = structuredClone(skills[0]);
 if (skill.raw.effectFrames !== composition.skill.effectFrames || skill.raw.motionType !== composition.skill.motionType) {
   throw Error('Composition differs from inspected raw ability');
 }
-const assets = path.resolve(value('--assets') ?? 'assets');
+const assets = path.resolve(value('--assets') ?? 'rawdata/assets');
 const database = path.join(assets, 'static_data/ffbe-data.db');
 if (sha256(database) !== composition.source.sha256) throw Error('Composition database hash mismatch');
 const db = new DatabaseSync(database, { readOnly: true });

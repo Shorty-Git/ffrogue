@@ -4,7 +4,7 @@ Checked on 2026-10-22. No runtime files were changed by this investigation.
 
 ## Android backup follow-up: exact originals recovered
 
-The developer supplied `com.square_enix.android_googleplay.FFBEWW/` on
+The developer supplied `rawdata/android-global/` on
 2026-10-22. This supersedes the earlier source-availability blocker below.
 The backup is excluded from Git and Vite watching.
 
@@ -13,7 +13,7 @@ The backup is excluded from Git and Vite watching.
   9,835 `.bmb` records. Counts include records across archives, not unique assets.
 - All nine missing exact filenames occur in
   `files/common_lang/sd/battleEffect/Ver31_battleEffect1_common.cpk`.
-- Extracted all nine with the existing `ffbe_asset_dump-main/tools/cpk.py`
+- Extracted all nine with the existing `rawdata/ffbe_asset_dump/tools/cpk.py`
   reader, including CRILAYLA decompression. Every extracted size matches the
   archive's declared size, and each written file was checked with SHA-256.
   All nine have an `IBMB` binary header.
@@ -42,7 +42,7 @@ conversion/rendering path before publishing any skill.
   two project source roots as loose original or converted effect files. Broader
   filename searches for powergeyser, fullcure, hardshot, convergence, cure5 and
   banish found related cure-back variants, not the missing exact files.
-- The local `ffbe_asset_dump-main` is a curated extraction, not all original
+- The local `rawdata/ffbe_asset_dump` is a curated extraction, not all original
   game archives. Its [published recovery report](https://raw.githubusercontent.com/DaddyRaegen/ffbe_asset_dump/main/reports/2026-09-29-recovery/REPORT.md)
   states that 128,905 additional destinations (approximately 15.19 GB), including
   effects, were inventoried but not imported. This establishes an omitted asset

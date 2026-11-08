@@ -25,10 +25,10 @@ def info(path):
 
 def inspect(output):
     records = []
-    with sqlite3.connect(Path('assets/static_data/ffbe-data.db').resolve().as_uri() + '?mode=ro', uri=True) as db:
+    with sqlite3.connect(Path('rawdata/assets/static_data/ffbe-data.db').resolve().as_uri() + '?mode=ro', uri=True) as db:
         db.row_factory = sqlite3.Row
         for stem in ['battle_bg_0003_01', 'battle_bg_2013_02']:
-            root = Path('ffbe_asset_dump-main/battle_bg')
+            root = Path('rawdata/ffbe_asset_dump/battle_bg')
             binary = root / (stem + '.ssbp')
             data = binary.read_bytes()
             if data[:4] != b'SSPB' or struct.unpack_from('<I', data, 4)[0] != 1:
