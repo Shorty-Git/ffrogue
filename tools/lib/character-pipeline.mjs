@@ -308,12 +308,13 @@ export function inspectCharacter(recipe, { assets = 'assets', dump = 'ffbe_asset
           }else if(['prepared-support','prepared-self','prepared-friendly'].includes(skill.execution)){
             const frames=parseTimeline(source.raw.attackFrames,/[-&,]/).map(f=>Number(f.fields[0]));
             const events=skill.execution==='prepared-support'?skill.supportEvents:skill.allyEvents;
-            if(skill.hitCount!==0 || skill.damageEvents || !events?.length || source.raw.motionType!==2
-              ||composition.skillFrameOffset!==0 || events.some(e=>!frames.includes(e.frame))
+            // Magic rows carry no motionType and no composition: same zero-prefix cast profile as Motion 2.
+            if(skill.hitCount!==0 || skill.damageEvents || !events?.length || (source.raw.motionType??2)!==2
+              ||(composition?.skillFrameOffset??0)!==0 || events.some(e=>!frames.includes(e.frame))
               ||JSON.stringify(frames)!==JSON.stringify(skill.attackFrames))throw Error('Reviewed non-damaging source markers required');
             if(skill.execution==='prepared-self'&&(skill.scope!=='self'||source.raw.target!=='3'||source.raw.moveType!==4))
               throw Error('Source self target and stationary profile required');
-            if(skill.execution==='prepared-friendly'&&(skill.scope!=='party'||source.raw.moveType!==4||!skill.allyTargeting
+            if(skill.execution==='prepared-friendly'&&(skill.scope!=='party'||(source.raw.moveType??4)!==4||!skill.allyTargeting
               ||!skill.friendlyTargetReview?.note||skill.friendlyTargetReview.sourceTarget!==source.raw.target
               ||skill.friendlyTargetReview.sourceRange!==source.raw.targetRange))
               throw Error('Explicit original friendly-target review required');

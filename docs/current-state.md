@@ -10,9 +10,10 @@ Last consolidated: 2026-11-07.
   expedition (2 areas, 4 encounters, Ochu and Guard Scorpion bosses) → rewards / awakening →
   result. Saves locally. Roster: Cloud, Aerith, Barret, Cloud of Darkness, Cloud AC, Delita,
   Jack (+ awakened forms up to 7★ / NV).
-- 24 Source skills (original FFBE effect data rendered in real time; authoring-free imports
-  2026-11-07/08: Cloud's Meteor Rain, Aerith's Banish, Holy and Fury Brand, Delita's
-  Northswain's Strike and Northern Sky Apprentice, Barret's Big Shot and Ungarmax, Jack's Cheer)
+- 34 Source skills (original FFBE effect data rendered in real time). Authoring-free imports
+  2026-11-07/08 include Meteor Rain, Banish, Holy, Fury Brand, Healing Wind, Curaja, Earthly
+  Healing, Prayer of the Cetra, Northswain's Strike, Northern Sky Apprentice, Meditate, Big Shot,
+  Ungarmax, Grenade Bomb, Satellite Beam, Cheer, Call of the Void, Fusion Sword 1st/3rd.
   + 2 Limit Bursts
   (Cloud's Omnislash; Cloud AC's Omnislash Version 5, the first authoring-free import, 2026-11-07).
 - Battle UI (DOM `CombatHud` over Phaser): target-first (enemies clickable any time, crystal
@@ -167,6 +168,15 @@ Generic rules added 2026-11-07 (no per-skill exceptions):
   type 4 = EmitterSimpleParticle (592 bytes, verified on 163 CPK pairs, no decoder yet);
   type 15 = FieldGoal (208 bytes, particle attractor). Also: Warring Slash needs repeated
   generation in the frozen player; commands without effect timelines (Limit Braver etc.).
+- Batch import: `sh tools/import_skill_batch.sh <batch.txt> tools/data/<run>` (lines:
+  `character skillId id key [--heal N|--buff X|--mult X|--mp N]`) composes/stages, drafts the
+  recipe entry (`tools/draft_skill_entry.mjs`, provisional gameplay values), prepares in
+  approximation mode, publishes and runs import_character per character. Review GIFs after.
+- Unsupported node types 7/4/15 are omitted with their subtrees in approximation mode
+  (`tools/bmb_prune.py`, listed in plan.approximations). Type 7 + FieldGoal children = lightning/
+  line emitters: lightning-centred skills (Thundara/Thundaga/Thundaga Blade) stay unimported.
+  Still open: multi-process hit strings with '@' (Spin Drive), another generation mode
+  (Ancient Holy), authoring-comparison mismatches (Finishing Touch, Fusion Sword 2nd/4th).
 - Party buffs (Fury Brand, Cheer) reuse the existing physical-boost status (x1.3, 3 rounds,
   allyTargeting living-allies) and need a `friendlyTargetReview` with the source target/range.
   Support skills without a game mechanic (Reraise, Speed Drink, Store, Return) stay unimported.

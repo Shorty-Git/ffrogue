@@ -23,7 +23,7 @@ def quad_color_preparation_hints(raw, result):
 
 def attach_flat_quad_color(raw, result, project):
     import bmb_channels
-    approximate = project is None and bmb_channels.APPROXIMATED_CURVES is not None
+    approximate = bmb_channels.APPROXIMATED_CURVES is not None
     if project is None and not approximate:
         raise ValueError('Flat Quad RGB requires exact matching authoring')
     # Authoring-free approximation: the binary ConstFlat RGB is used without the BMSLN cross-check.

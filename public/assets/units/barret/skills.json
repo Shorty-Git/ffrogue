@@ -126,21 +126,54 @@
       "id": "grenade_bomb",
       "ffbeId": 227872,
       "name": "Grenade Bomb",
-      "rarity": 4,
-      "level": 60,
+      "rarity": 5,
+      "level": 1,
       "type": "ABILITY",
       "mpCost": 36,
       "scope": "all_enemies",
-      "damageMultiplier": 1.8,
+      "damageMultiplier": 1.6,
       "hitCount": 1,
       "attackFrames": [
         150
       ],
       "moveType": "stationary",
       "motion": "atk",
-      "desc": "Physical damage (1.8x, ATK) to all enemies",
-      "importStatus": "not-imported",
-      "unavailableReason": "Original visual resources and execution profile are not yet fully supported by the Source pipeline.",
+      "desc": "Physical damage (1.6x) to all enemies",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "barret_grenade_bomb",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/wave5-20261108/grenade_bomb/source/skill-source.json",
+        "sha256": "448ee4e3bf6da25b29d601802c6c54a2059c89f3af12d1c4ec57a81f82959065"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 8,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 8 / move 4: stationary atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 150,
+          "weight": 1
+        }
+      ],
       "originalCommand": {
         "schema": "ffbe-command-source-v1",
         "kind": "ABILITY",
@@ -193,7 +226,7 @@
       },
       "gameplayReview": {
         "policy": "reviewed-roguelike",
-        "note": "",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
         "ownedFields": [
           "mpCost",
           "damageMultiplier",
@@ -212,12 +245,12 @@
       "id": "satellite_beam",
       "ffbeId": 227874,
       "name": "Satellite Beam",
-      "rarity": 6,
-      "level": 73,
+      "rarity": 5,
+      "level": 1,
       "type": "ABILITY",
       "mpCost": 45,
       "scope": "all_enemies",
-      "damageMultiplier": 3,
+      "damageMultiplier": 1.6,
       "hitCount": 10,
       "attackFrames": [
         125,
@@ -233,10 +266,78 @@
       ],
       "moveType": "stationary",
       "motion": "atk",
-      "desc": "Physical damage (3x, ATK) to all enemies",
-      "reviewNote": "Simplified roguelike area presentation: original marker, rotated blue beam and alpha screen fade; total 3x physical damage once at F165 without extra recoil. Source ten 10-percent hits F125..215 remain provenance and are intentionally combined. Unknown raw member offsets 150/-150 and fade offset 150 stay unapplied. No original-game fidelity claim. The original alpha fade is fitted to the arena using measured sheet content bounds; no replacement rectangle is drawn. Clockwise 45-degree artwork correction around each target origin makes the source diagonal beam horizontal; source XYZ rotation is retained separately.",
-      "importStatus": "not-imported",
-      "unavailableReason": "Original visual resources and execution profile are not yet fully supported by the Source pipeline.",
+      "desc": "Physical damage (1.6x) to all enemies",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "barret_satellite_beam",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/wave5-20261108/satellite_beam/source/skill-source.json",
+        "sha256": "5b452b021da72422d234c4cb30f6f559f826c63c6412bd46f76ff371fa742474"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 8,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 8 / move 4: stationary atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 125,
+          "weight": 0.1
+        },
+        {
+          "frame": 135,
+          "weight": 0.1
+        },
+        {
+          "frame": 145,
+          "weight": 0.1
+        },
+        {
+          "frame": 155,
+          "weight": 0.1
+        },
+        {
+          "frame": 165,
+          "weight": 0.1
+        },
+        {
+          "frame": 175,
+          "weight": 0.1
+        },
+        {
+          "frame": 185,
+          "weight": 0.1
+        },
+        {
+          "frame": 195,
+          "weight": 0.1
+        },
+        {
+          "frame": 205,
+          "weight": 0.1
+        },
+        {
+          "frame": 215,
+          "weight": 0.1
+        }
+      ],
       "originalCommand": {
         "schema": "ffbe-command-source-v1",
         "kind": "ABILITY",
@@ -289,7 +390,7 @@
       },
       "gameplayReview": {
         "policy": "reviewed-roguelike",
-        "note": "Simplified roguelike area presentation: original marker, rotated blue beam and alpha screen fade; total 3x physical damage once at F165 without extra recoil. Source ten 10-percent hits F125..215 remain provenance and are intentionally combined. Unknown raw member offsets 150/-150 and fade offset 150 stay unapplied. No original-game fidelity claim. The original alpha fade is fitted to the arena using measured sheet content bounds; no replacement rectangle is drawn. Clockwise 45-degree artwork correction around each target origin makes the source diagonal beam horizontal; source XYZ rotation is retained separately.",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
         "ownedFields": [
           "mpCost",
           "damageMultiplier",

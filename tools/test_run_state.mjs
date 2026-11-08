@@ -50,7 +50,7 @@ test('full skill slots require an explicit replacement and preserve immutable so
  let r=withCloud();r.phase='rewards';const m=r.party.find(m=>m.key==='cloud');m.skills=catalog.cloud.skills.slice(0,3).map(s=>({id:s.id,level:1}));const next=catalog.cloud.skills.find(s=>!m.skills.some(a=>a.id===s.id));
  r.offers=[{type:'learn',member:'cloud',skill:next.id},...rewardPool(r,catalog).filter(o=>o.type==='stat').slice(0,2)];const before=JSON.stringify(r);assert.throws(()=>chooseReward(r,0,catalog));assert.equal(JSON.stringify(r),before);
  const applied=chooseReward(r,0,catalog,m.skills[1].id);assert.equal(applied.party.find(m=>m.key==='cloud').skills.length,3);assert.ok(applied.party.find(m=>m.key==='cloud').skills.some(s=>s.id===next.id));
- const seal=catalog.aerith.skills[0],original=JSON.stringify(seal),member={skills:[{id:seal.id,level:2}],stats:{attack:1.2,magic:1.2}};
+ const seal=catalog.aerith.skills.find(s=>s.id==='seal_evil'),original=JSON.stringify(seal),member={skills:[{id:seal.id,level:2}],stats:{attack:1.2,magic:1.2}};
  assert.ok(skillForRun(seal,member).supportEvents[0].effects[0].phases>seal.supportEvents[0].effects[0].phases);assert.equal(JSON.stringify(seal),original);
 });
 test('boss evolution retains identity and skills; fixed party survives all configurable encounters',()=>{

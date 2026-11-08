@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import {validateSceneAction} from '../src/effects/sceneProfile.mjs';
 import {reviewedSkillEvents} from '../src/effects/skillDamageTimeline.mjs';
 const read=p=>JSON.parse(fs.readFileSync(p,'utf8'));
-test('all eleven accepted commands have explicit Source clocks; five unavailable entries remain data only',()=>{
+test('all eleven accepted commands have explicit Source clocks; one unavailable entry remains data only',()=>{
  const accepted=new Set(['214800','214810','214820','214790','227151','229751','201150','203280','233930','202180','203050']);
  let unavailable=0;
  for(const key of read('public/assets/content.json').characters)for(const skill of read(`public/assets/units/${key}/skills.json`).skills){
@@ -14,7 +14,7 @@ test('all eleven accepted commands have explicit Source clocks; five unavailable
    validateSceneAction(m,skill);assert.ok(reviewedSkillEvents(skill,m.durationFrames).length);accepted.delete(String(skill.ffbeId));
   }else{assert.equal(skill.importStatus,'not-imported');assert.ok(skill.unavailableReason);unavailable++;}
  }
- assert.equal(accepted.size,0,'Previously accepted commands must remain playable');assert.equal(unavailable,5);
+ assert.equal(accepted.size,0,'Previously accepted commands must remain playable');assert.equal(unavailable,1);
 });
 test('the accepted Cloud impact clocks are explicit reviewed gameplay, independent of historical sheets',()=>{
  const skills=read('public/assets/units/cloud/skills.json').skills;

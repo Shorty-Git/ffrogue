@@ -205,6 +205,9 @@ if __name__ == '__main__':
         if hashlib.sha256(raw).hexdigest() != original['sha256']:
             raise ValueError('Original hash changed')
         data = read_bmb(raw)
+        if a.approximate_unverified:
+            from bmb_prune import prune_unknown_subtrees
+            prune_unknown_subtrees(raw, data, bmb_channels.APPROXIMATED_CURVES)
         attach_playback_fields(raw, data['nodes'])
         if a.approximate_unverified:
             from bmb_draw_priority import attach_draw_priorities
