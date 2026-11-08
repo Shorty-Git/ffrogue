@@ -28,7 +28,10 @@ Findings:
   workflows and receipts for little gain. Space is dominated by research data, not by raw sources:
   `tools/data` is 92 GB, of which `memorial-audit/lifecycle-v27-backup/engine` (44 GB) is a cold copy of
   the BlueStacks VM disks and `visual-preservation` 9.8 GB / `memorial-audit/diagnostic-v*` ~10 GB
-  are old receipts. Deleting them is the developer's decision.
+  were old receipts. Cleanup 2026-11-08 (developer: "keep only what is still needed"): deleted the
+  VM disk copy (`lifecycle-v27-backup/engine`; the live BlueStacks instances remain the source), the
+  45 archived snapshot zips in `visual-preservation/`, and `diagnostic-v8/v13/v14`. Every diagnostic
+  folder still read by a test or tool was kept. `tools/data` went from 92 to 37 GB, and all tests still pass.
 
 Classic FFVII "Let the Battles Begin!" (`la842_bgm_ff7_tatakaumono`, master resource 400842):
 not present in any local source. Checked by file name and `.acb` cue strings in all five sources, by adb

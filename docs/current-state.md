@@ -219,8 +219,8 @@ Next: music transitions (menu → battle → victory) are not smooth yet (develo
 GitHub account is suspended (appeal pending / maybe a new account): commit locally only, push later.
 DONE (2026-11-08): raw-data audit. All five raw sources were searched; classic la842 is in none of them.
 There is little byte duplication (2.2 of 30 GB), so the sources were not moved; source priority rules apply instead.
-Details: docs/asset_structure.md "Raw-data sources and duplicate audit". Pending developer decision:
-delete the 44 GB BlueStacks VM disk copy (tools/data/memorial-audit/lifecycle-v27-backup) and ~20 GB of old receipts?
+Details: docs/asset_structure.md "Raw-data sources and duplicate audit". Cleanup (developer-approved):
+tools/data shrank from 92 to 37 GB; all 92 tests and tsc pass afterwards.
 Then, in order: new scene transition (replace Codex placeholder; immersive FF-style battle intro) →
 complete character importer (one command: body, poses, all skills via import_skill_batch +
 admit_skill_audio + icons + LB + forms; test on a new character, e.g. Tifa AC) → stage importer
