@@ -217,7 +217,7 @@ Next: music transitions (menu → battle → victory) are not smooth yet (develo
 ## Next steps (handoff, 2026-11-08 evening)
 
 GitHub account is suspended (appeal pending / maybe a new account): commit locally only, push later.
-DONE (2026-11-08): raw-data audit. All five raw sources were searched; classic la842 is in none of them.
+DONE (2026-11-08): raw-data audit plus a sixth source (Memorial download cache, holds la842 and ~286 BGM banks).
 There is little byte duplication (2.2 of 30 GB), so the sources were not moved; source priority rules apply instead.
 Details: docs/asset_structure.md "Raw-data sources and duplicate audit". Cleanup (developer-approved):
 tools/data shrank from 92 to 37 GB; all 92 tests and tsc pass afterwards.
@@ -239,9 +239,9 @@ badges read well; skill visuals and sounds approved). Polish before the next cha
    with the ability name large. Root cause of the tiny text everywhere: the unquoted "Source Sans 3"
    family made every Phaser font shorthand invalid (10 px fallback) — RPG_FONT is now quoted.
 3. DONE: enemies use the same body sampling rule as heroes (run_rules bodyTextureFilter, linear).
-4. OPEN: Mako Reactor should play classic FFVII "Let the Battles Begin!" (master resource 400842,
-   la842_bgm_ff7_tatakaumono.acb) — verified absent from all five raw sources (asset_structure.md); needs
-   a source from the developer.
+4. DONE: Mako Reactor plays classic FFVII "Let the Battles Begin!" (400842, loop [143152, 3230640)).
+   Source: JP Memorial download cache on the VM disk (tools/extract_memorial_side_stories.py),
+   which also holds ~286 BGM banks for the stage importer (asset_structure.md).
 5. More variety: enemies, stages, music.
 6. PARTLY: music crossfade lengthened (1.2 s in / 0.9 s out). Scene transitions are still the Codex
    placeholder and will be redesigned.

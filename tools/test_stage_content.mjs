@@ -33,9 +33,9 @@ test('two original-backed lineups use different arenas, bosses and declared futu
   assert.equal(stageForArea({stageId:s.id,arena:s.arena}),s);
  }
  assert.equal(STAGE_CONTENT.whisperwood.audio.musicResourceId,400005);
- assert.equal(STAGE_CONTENT.mako_reactor.audio.musicResourceId,4000713);
+ assert.equal(STAGE_CONTENT.mako_reactor.audio.musicResourceId,400842);
  assert.equal(STAGE_CONTENT.mako_reactor.audio.bossMusicResourceId,400993);
- assert.equal(STAGE_CONTENT.mako_reactor.audio.musicAssignment,'FFRogue thematic selection');
+ assert.equal(STAGE_CONTENT.mako_reactor.audio.musicAssignment,'Original FFVII battle theme (Memorial client download)');
  assert.throws(()=>stageForArea({stageId:'unimported',arena:'forest'}));
  assert.throws(()=>stageForArea({stageId:'mako_reactor',arena:'forest'}));
 });
@@ -79,9 +79,9 @@ test('reviewed reactor variants are seeded and preserve the four-fight route',()
 });
 
 test('music recommendations separate normal, boss and special roles',()=>{
- assert.equal(recommendMusic('FFVII','normal'),4000713);
+ assert.equal(recommendMusic('FFVII','normal'),400842);
  assert.equal(recommendMusic('FFVII','boss',400993),400993);
- assert.equal(recommendMusic('FFVII','boss',4000711),4000713);
+ assert.equal(recommendMusic('FFVII','boss',4000711),400842);
  assert.equal(recommendMusic('FFVIII','normal'),400005);
  assert.equal(recommendMusic('FFVIII','boss'),400005);
  assert.equal(recommendMusic('FFVIII','event'),4001101);

@@ -502,7 +502,12 @@ Both Reactor backgrounds use it for normal combat. Guard Scorpion is reserved
 for its boss encounter, and the boss track remains active through the reward.
 
 FFVIII's Don't Be Afraid (400867, `la867_bgm_ff8_Dont_be_Afraid.acb`) and Force
-Your Way (400868) are registry-only in the surveyed files. The three classic
+Your Way (400868) are registry-only in the surveyed files. Update 2026-11-08: classic `la842` is now published as `public/assets/audio/la842_let_the_battles_begin.wav`
+(bank SHA-256 `a2999d0f03f2858b50c8c1a19ff2baa0def2eb0e7eab0a93adf530599f948b58`, WAV SHA-256
+`ac850c3b138a8ef143d27149670e08b78108b9c39b851eb1280c13533c8b51fb`, native loop [143152, 3230640)) and is
+the Mako Reactor normal track; the developer confirmed the Memorial client plays it there. Bank source:
+memorial-side-stories (asset_structure.md); `la843`/`la867`/`la868` are present there too. Earlier text:
+The three classic
 FFVII entries (400842–400844) and the alternate Remake banks 400989 and 401038
 also lack payloads in the local search. Dollet uses FFBE Battle 1 as an explicit
 cross-series fallback. Dead End and Kikaitou no Kessen remain manual audition

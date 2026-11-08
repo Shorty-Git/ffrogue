@@ -5,6 +5,7 @@ import {combatCues,type CombatCue} from './combatCues';
 const tracks = new Map([
   [400003, { url: 'assets/audio/la003_mypage_normal1.wav', loopStart: 215038 / 44100, loopEnd: 3390206 / 44100 }],
   [400005, { url: 'assets/audio/la005_battle1.wav', loopStart: 370898 / 44100, loopEnd: 3816914 / 44100 }],
+  [400842, { url: 'assets/audio/la842_let_the_battles_begin.wav', loopStart: 143152 / 44100, loopEnd: 3230640 / 44100 }],
   [4000713, { url: 'assets/audio/la00713_ex_soldier.wav', loopStart: 1239453 / 44100, loopEnd: 2619933 / 44100 }],
   [400993, { url: 'assets/audio/la993_guard_scorpion.ogg', loopStart: 13261697 / 44100, loopEnd: 16655233 / 44100 }],
   [4000711, { url: 'assets/audio/la00711_machine_battle.ogg', loopStart: 30046 / 44100, loopEnd: 11216606 / 44100 }],

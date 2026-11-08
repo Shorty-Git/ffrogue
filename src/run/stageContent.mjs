@@ -27,7 +27,7 @@ export const STAGE_CONTENT = {
     variants:['reactor_05'],
     source:{battleBgId:120142,file:'battle_bg_2013_02.jpg',worldIdentity:'Reviewed FFVII reactor theme; original stage-to-world join not established'},
     enemyPool:['sweeper'],formations:[['top','bottom']],bossId:'guard_scorpion',difficulty:1.45,rewardCategory:'reactor-relic',normalFights:1,
-    audio:{musicResourceId:4000713,musicSeries:'FFVII',bossMusicResourceId:400993,musicAssignment:'FFRogue thematic selection',soundCues:[]}},
+    audio:{musicResourceId:400842,musicSeries:'FFVII',bossMusicResourceId:400993,musicAssignment:'Original FFVII battle theme (Memorial client download)',soundCues:[]}},
 };
 
 export function stageForArea(area){

@@ -1,10 +1,10 @@
 export const musicProfiles = [
   {id:400005,title:'Battle 1',game:'FFBE',series:'FFBE',role:'normal',available:true},
+  {id:400842,title:'Let the Battles Begin!',game:'FFVII',series:'FFVII',role:'normal',available:true},
   {id:4000713,title:'Let the Battles Begin! – Ex-SOLDIER',game:'FFVII Remake',series:'FFVII',role:'normal',available:true},
   {id:400993,title:'Guard Scorpion',game:'FFVII Remake',series:'FFVII',role:'boss',available:true},
   {id:4000711,title:'Kikaitou no Kessen',game:'FFVII Remake',series:'FFVII',role:'event',available:true},
   {id:4001101,title:'Dead End',game:'FFVIII',series:'FFVIII',role:'event',available:true},
-  {id:400842,title:'Let the Battles Begin!',game:'FFVII',series:'FFVII',role:'normal',available:false},
   {id:400843,title:'Those Who Fight Further',game:'FFVII',series:'FFVII',role:'boss',available:false},
   {id:400844,title:'Mako Reactor',game:'FFVII',series:'FFVII',role:'area',available:false},
   {id:400867,title:"Don't Be Afraid",game:'FFVIII',series:'FFVIII',role:'normal',available:false},

@@ -33,14 +33,26 @@ Findings:
   45 archived snapshot zips in `visual-preservation/`, and `diagnostic-v8/v13/v14`. Every diagnostic
   folder still read by a test or tool was kept. `tools/data` went from 92 to 37 GB, and all tests still pass.
 
-Classic FFVII "Let the Battles Begin!" (`la842_bgm_ff7_tatakaumono`, master resource 400842):
-not present in any local source. Checked by file name and `.acb` cue strings in all five sources, by adb
-in both BlueStacks instances (`/sdcard/Android/data/com.square_enix.ffbejpn`, both pack trees), and by
-byte search for `la842`. The only FFVII battle arrangement on disk is FF7R `la00713`
-(`TatakauMonotachi_MotoSoldier`, Android global), which the Mako Reactor already uses
-(`musicResourceId 4000713`). Obtaining la842 needs the on-demand pack that downloads when the game
-plays it (e.g. an FFVII event in the JP Memorial client), which is not reachable without root.
-Other classic battle themes are available: FF1 `la913`, FF2 `la821`, FF9 `la852`, FF3 DS `la1004`, FF5 PR `la01606`.
+Correction (same day): the classic tracks DO exist, in a sixth source. After the developer played
+a Mako Reactor battle in the JP Memorial client, `la842_bgm_ff7_tatakaumono` was found on the
+BlueStacks VM disk: on-demand downloads live in app-internal storage
+`/data/data/com.square_enix.ffbejpn/files/side_stories/<sha256 of file>/<original name>`, which adb
+cannot read without root.
+
+| Source id | Path | Files | Size | Content |
+|---|---|---|---|---|
+| memorial-side-stories | `tools/data/memorial-side-stories/` | 1,856 | 2.8 GB | JP Memorial download cache: 286 BGM `.acb` (classic and remake battle/boss themes across FF I-XVI, FFT, Type-0, crossovers), 1,479 `.cpk`, 18 `.usm`, scenes |
+
+Reproduce (read-only; the VM may keep running):
+`<python> -I tools/extract_memorial_side_stories.py --pylib tools/data/pylib --disk C:/ProgramData/BlueStacks_nxt/Engine/Tiramisu64_2/Data.vhdx --out tools/data/memorial-side-stories`
+(`tools/data/pylib` = `pip install --target tools/data/pylib dissect.hypervisor dissect.extfs dissect.volume`).
+`index.json` records name, bucket and SHA-256 per file. Re-run it after playing new content in the
+Memorial client: the game downloads tracks on first use, so files appear only after they were needed.
+Notable music for the stage importer: FFVII `la842` Let the Battles Begin!, `la843` Those Who Fight
+Further, `la866` One-Winged Angel, `la890` jukai; FFVIII `la867` Don't Be Afraid, `la868` Force Your
+Way; battle themes FF1 `la01501`, FF2 `la822`/`la01506`, FF3 `la813`/`la814`, FF4 `la807`/`la863`,
+FF5 `la898`/`la816`, FF6 `la826`/`la827`, FF9 `la853`/`la937`, FF10 `la829`/`la833`, FF12 `la836`,
+FF13, FF14, FF15, FF16 and FFT (`bgm_fft_*`).
 
 ## Reviewed higher same-unit forms (2026-11-02)
 
