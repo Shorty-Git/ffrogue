@@ -20,8 +20,36 @@ Last consolidated: 2026-11-07.
   (window frame, HP/MP/LIMIT gauges, enemy gauge, skill icons), animated HP drain with damage
   trail. All menus use the same FFBE window style (`src/ui/ffbeTheme.css`).
   Details: `docs/battle-layout.md`.
-- Limit Burst gauge: `src/run/limitGauge.mjs` (battle-scoped; +25 per action, damage taken
-  fills, LB empties it). Only heroes with a published `type: LIMIT` skill have one.
+- Limit Burst gauge: `src/run/limitGauge.mjs` (+25 per action, damage taken fills, LB empties
+  it). Only heroes with a published `type: LIMIT` skill have one. Since 2026-11-08 the gauge
+  carries to the next battle (`member.limit` in the run save) for heroes who end a battle
+  standing; a K.O. empties it.
+- Enemy single-target attacks hit a random standing hero (`src/run/enemyTargeting.mjs`,
+  combat RNG stream); before 2026-11-08 they always hit party slot 1.
+
+## Balance (2026-11-08, overnight cloud session)
+
+Evidence tool: `node tools/simulate_run_balance.mjs [--runs 400] [--json out.json]` plays
+seeded runs with a greedy policy through the game's own rule modules (run state, encounters,
+enemy patterns, statuses, buffs, Limit gauge, skill scaling); only BattleScene's damage
+formulas are re-implemented there (kept next to the code they mirror — update both). It reports
+pacing trends, not skilled play. Rerun it after any balance change.
+
+| | before | after |
+| --- | --- | --- |
+| `RUN_BALANCE` (normal HP / boss HP / +per area / damage / +per encounter) | 950 / 2600 / 1200 / 140 / 25 | 2000 / 5000 / 2200 / 300 / 70 |
+| Simulated run win rate | 100 % | 99.5 % |
+| Rounds per encounter 1–4 | 1.0 / 1.7 / 2.1 / 3.0 | 1.2 / 2.7 / 3.6 / 5.0 |
+| Party HP after final boss | 92 % | 51 % |
+| Limit Bursts per run | 0.01 | 1.54 |
+
+Skill gameplay fields (recipe and published `skills.json`; visuals untouched): Brave Slash
+18→12 MP; Trigger Smash 55→40 MP; Meteor Rain 2→3.5×; Ungarmax 2→4.2×; Holy 2.5→3.5×;
+Northswain's Strike 20→18 MP, 2.2→2.6×; Northern Sky Apprentice 2.8→3.4×; Omnislash Version 5
+15.2→8× (desc keeps the original 15.2× as provenance); Iai Strike 12→20 MP. Reason: each was
+dominated by a sibling skill (e.g. Meteor Rain 2×/45 MP vs Blade Beam 3×/30 MP) or ended
+fights alone. Not touched: Chant, buffs/debuffs, enemy patterns, reward pool, MP economy
+(no MP regeneration; ~23 % party MP left after the final boss in the simulator).
 
 ## Decisions that shape all work (from the developer)
 
@@ -170,7 +198,11 @@ Generic rules added 2026-11-07 (no per-skill exceptions):
 - Party buffs (Fury Brand, Cheer) reuse the existing physical-boost status (x1.3, 3 rounds,
   allyTargeting living-allies) and need a `friendlyTargetReview` with the source target/range.
   Support skills without a game mechanic (Reraise, Speed Drink, Store, Return) stay unimported.
-- Cloud AC LB (15.2x, original LB level 1) kills most training enemies; balance is open.
-- LB gauge does not carry between battles; all Cloud forms use the 5★ Omnislash.
+- Balance values from 2026-11-08 are simulator-based and await play-testing by the developer.
+- All Cloud forms use the 5★ Omnislash.
+- Several node tests pin manifest SHA-256 values of Windows (CRLF) checkouts
+  (test_body_assets, test_stage_content, test_victory_poses); on a Linux/LF checkout they fail
+  without any content change (verified for test_body_assets: every mismatch matches after CRLF
+  conversion).
 - Cinzel name font: developer mildly unsure, kept for now.
 - Brave Slash manifest hash alarm decision.
