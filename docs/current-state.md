@@ -223,7 +223,7 @@ DONE (2026-11-08): raw-data audit plus a sixth source (Memorial download cache, 
 There is little byte duplication (2.2 of 30 GB), so the sources were not moved; source priority rules apply instead.
 Details: docs/asset_structure.md "Raw-data sources and duplicate audit". Cleanup (developer-approved):
 tools/data shrank from 92 to 37 GB; all 92 tests and tsc pass afterwards.
-Then, in order: new scene transition (replace Codex placeholder; immersive FF-style battle intro) →
+Then, in order (scene transition DONE 2026-11-08) →
 complete character importer (one command: body, poses, all skills via import_skill_batch +
 admit_skill_audio + icons + LB + forms; test on a new character, e.g. Tifa AC) → stage importer
 (stage + SSPB animations + original music + world enemies/bosses with their skills, mainline FF I–XVI
@@ -245,8 +245,12 @@ badges read well; skill visuals and sounds approved). Polish before the next cha
    Source: JP Memorial download cache on the VM disk (tools/extract_memorial_side_stories.py),
    which also holds ~286 BGM banks for the stage importer (asset_structure.md).
 5. More variety: enemies, stages, music.
-6. PARTLY: music crossfade lengthened (1.2 s in / 0.9 s out). Scene transitions are still the Codex
-   placeholder and will be redesigned.
+6. DONE: music crossfade lengthened (1.2 s in / 0.9 s out). New default battle entry "shatter"
+   (src/ui/paintShatterEncounter.ts): the outgoing screen cracks from the centre, breaks into glass
+   shards with FFBE's own se_ev_glass_break (SE.acb stream 274), and the arena emerges from white light
+   (cover 980 ms, reveal 620 ms, skippable, prefers-reduced-motion respected). Older studies remain
+   selectable with ?encounter=crystal|fold|vortex|mosaic. Verified with headless Chrome frames
+   (tools/data/shatter-transition/shatter.gif).
 
 ## Open items
 

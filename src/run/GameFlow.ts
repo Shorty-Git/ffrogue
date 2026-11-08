@@ -4,7 +4,7 @@ import type {RunState,RunRules} from './runState.mjs';
 import {RunStore,createRun,variantAreas,rollParty,confirmParty,completeBattle,chooseReward,encounters,acknowledgeAwakening} from './runState.mjs';
 import {runCatalog} from './catalog';
 import {RunUI} from '../ui/RunUI';
-import {EncounterTransition,encounterStyle} from '../ui/EncounterTransition';
+import {EncounterTransition,encounterStyle,snapshotStyles} from '../ui/EncounterTransition';
 import {encounterSounds} from '../audio/uiSoundDesign';
 import {captureEncounter} from '../ui/captureEncounter';
 import type {UnitActor} from '../entities/UnitActor';
@@ -74,8 +74,13 @@ export class GameFlow{
   const style=entryKind==='cut'?'cut':encounterStyle(location.search);
   const selectedSound=new URLSearchParams(location.search).get('encounterSound');
   const sound=encounterSounds[selectedSound==='impact'||selectedSound==='classic'?selectedSound:'arcane'];
+  // The glass shatter uses FFBE's own se_ev_glass_break (SE.acb stream 274) as its only cue;
+  // the battle music then starts on reveal.
+  const glass='assets/audio/combat/se_ev_glass_break.wav';
+  if(style==='shatter')this.audio.warmSample(glass);
   const entry=new EncounterTransition(this.ui.root,style,state.encounter>0,
-   style==='cut'?undefined:phase=>this.audio.playUi(sound[phase]));
+   style==='cut'?undefined:style==='shatter'?phase=>phase==='impact'?this.audio.playSample(glass,.34):()=>{}
+    :phase=>this.audio.playUi(sound[phase]));
   this.entry=entry;
   const onTimeout=()=>this.fail(new Error('Battle assets did not finish loading. Reload to retry.'));
   void entry.cover(()=>{
@@ -85,7 +90,7 @@ export class GameFlow{
     if(error){this.fail(error);return;}
     void entry.reveal(this.scene.game.canvas,()=>this.closeEntry(),startMusic);
    });
-  },onTimeout,style==='fold'?()=>captureEncounter(this.ui.root,
+  },onTimeout,snapshotStyles.has(style)?()=>captureEncounter(this.ui.root,
     this.scene.scene.isActive('BattleScene')?paint=>new Promise(resolve=>{
       this.scene.game.events.once('postrender',()=>{paint(this.scene.game.canvas);resolve();});
     }):undefined):undefined).catch(error=>this.fail(error));

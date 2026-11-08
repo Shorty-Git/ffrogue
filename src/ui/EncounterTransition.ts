@@ -1,13 +1,18 @@
 import {paintEncounterFold} from './paintEncounterFold';
 import {crystalPulsePeak,paintCrystal} from './paintCrystalEncounter';
+import {SHATTER_COVER_MS,SHATTER_CRACK,SHATTER_REVEAL_MS,paintShatterCover,paintShatterReveal} from './paintShatterEncounter';
 import type {EncounterSoundPhase} from '../audio/uiSoundDesign';
 
-export type EncounterStyle = 'vortex' | 'mosaic' | 'fold' | 'crystal';
+export type EncounterStyle = 'shatter' | 'vortex' | 'mosaic' | 'fold' | 'crystal';
 
+/** Default is the glass shatter; the older studies stay selectable with ?encounter=<style>. */
 export function encounterStyle(search: string): EncounterStyle {
   const requested=new URLSearchParams(search).get('encounter');
-  return requested==='vortex'||requested==='fold'||requested==='mosaic'?requested:'crystal';
+  return requested==='vortex'||requested==='fold'||requested==='mosaic'||requested==='crystal'?requested:'shatter';
 }
+
+/** Styles that break the outgoing picture apart and therefore need a snapshot of it. */
+export const snapshotStyles:ReadonlySet<string>=new Set(['fold','shatter']);
 
 /** Masks the live arena after its first rendered frame. The scene owns all gameplay. */
 export class EncounterTransition {
@@ -102,6 +107,54 @@ export class EncounterTransition {
       });
       return;
     }
+    if(this.style==='shatter'&&capture&&!this.skipped){
+      let picture:HTMLCanvasElement|undefined;
+      let captureDeadline:number|undefined;
+      try{
+        picture=await Promise.race([capture(),new Promise<undefined>(resolve=>{
+          captureDeadline=window.setTimeout(resolve,650);
+        })]);
+      }catch(error){console.warn('Encounter snapshot unavailable',error);}
+      finally{clearTimeout(captureDeadline);}
+      if(!this.root.isConnected)return;
+      const context=this.canvas.getContext('2d');
+      if(picture&&context&&!this.skipped){
+        const snapshot=picture;
+        this.canvas.width=innerWidth;this.canvas.height=innerHeight;
+        paintShatterCover(context,snapshot,this.canvas.width,this.canvas.height,0);
+        this.root.dataset.phase='shatter';
+        let loading=false;
+        const load=()=>{
+          if(loading||!this.root.isConnected)return;
+          loading=true;
+          this.loading=setTimeout(onTimeout,30000);
+          start();
+        };
+        this.covered=new Promise(resolve=>{
+          let cracked=false;
+          const started=performance.now();
+          const finish=()=>{
+            cancelAnimationFrame(this.frame);
+            this.stopCover=undefined;
+            this.root.dataset.phase='loading';
+            resolve();
+            load();
+          };
+          this.stopCover=finish;
+          const draw=(now:number)=>{
+            const progress=Math.min(1,(now-started)/SHATTER_COVER_MS);
+            if(!cracked&&progress>=SHATTER_CRACK){cracked=true;this.playSound('impact');}
+            paintShatterCover(context,snapshot,this.canvas.width,this.canvas.height,progress);
+            // Battle preparation runs underneath while the shards are still flying.
+            if(progress>=.45)load();
+            if(progress<1)this.frame=requestAnimationFrame(draw);
+            else finish();
+          };
+          this.frame=requestAnimationFrame(draw);
+        });
+        return;
+      }
+    }
     if(this.style==='fold'&&capture&&!this.skipped){
       let picture:HTMLCanvasElement|undefined;
       let captureDeadline:number|undefined;
@@ -166,13 +219,20 @@ export class EncounterTransition {
     const started = performance.now();
     let sounded=false;
     const draw = (now: number) => {
-      const duration={cut:155,fold:320,vortex:720,mosaic:640,crystal:620}[this.style];
+      const duration={cut:155,fold:320,vortex:720,mosaic:640,crystal:620,shatter:SHATTER_REVEAL_MS}[this.style];
       const progress = Math.min(1, (now - started) / duration);
       if (progress >= 1) { finish(); return; }
       if(!sounded){sounded=true;this.playSound('reveal');}
       const width = innerWidth, height = innerHeight;
       if (this.canvas.width !== width) this.canvas.width = width;
       if (this.canvas.height !== height) this.canvas.height = height;
+      if(this.style==='shatter'){
+        this.animation?.cancel();
+        paintShatterReveal(context,width,height,progress);
+        if(this.root.dataset.phase!=='reveal')this.root.dataset.phase='reveal';
+        this.frame=requestAnimationFrame(draw);
+        return;
+      }
       if(this.style==='crystal'){
         this.animation?.cancel();
         context.clearRect(0,0,width,height);

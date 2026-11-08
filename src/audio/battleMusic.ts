@@ -127,6 +127,29 @@ export class GameAudio {
     return loaded;
   }
 
+  /** Preload a one-shot original sample (e.g. the encounter glass break) so it can start on time. */
+  warmSample(url:string):void {
+    const context=this.context;
+    if(context)void this.loadBuffer(context,url).catch(error=>console.warn('Sample unavailable',url,error));
+  }
+
+  /** Play a one-shot original sample on the effects bus; returns a stop function. */
+  playSample(url:string,gain:number):()=>void {
+    const context=this.context;
+    if(!context||context.state!=='running'||this.preferences.effects.muted)return ()=>{};
+    let source:AudioBufferSourceNode|undefined,stopped=false;
+    void this.loadBuffer(context,url).then(buffer=>{
+      if(stopped)return;
+      source=context.createBufferSource();
+      const level=context.createGain();
+      source.buffer=buffer;level.gain.value=gain;
+      source.connect(level).connect(this.bus('effects'));
+      source.onended=()=>{source?.disconnect();level.disconnect();};
+      source.start();
+    }).catch(error=>console.warn('Sample unavailable',url,error));
+    return ()=>{stopped=true;try{source?.stop();}catch{/* already ended */}};
+  }
+
   warmCombat():void {
     const context=this.context;
     if(!context)return;
