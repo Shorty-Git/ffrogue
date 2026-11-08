@@ -308,7 +308,11 @@ if __name__ == '__main__':
             raise ValueError('Conditional branches not supported by this experiment')
         for group in branch['groups']:
             if not group['members'] and (group.get('status')!='sound-only-unreviewed' or not group.get('soundsRaw') or group.get('extraRaw')):
-                raise ValueError('Unresolved non-file group requires explicit original semantics: '+str(group['groupId']))
+                if not a.approximate_unverified:
+                    raise ValueError('Unresolved non-file group requires explicit original semantics: '+str(group['groupId']))
+                # Approximation: engine-only groups without effect files are skipped and listed.
+                bmb_channels.APPROXIMATED_CURVES.append({'group': group['groupId'], 'treatment': 'non-file-group-skipped'})
+                continue
             if group.get('soundsRaw'):
                 audio_groups.append({'group': group['groupId'], 'frame': group['startFrame'], 'soundsRaw': group.get('soundsRaw')})
             for member in group['members']:

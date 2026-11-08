@@ -26,7 +26,12 @@ def attach_appearance(result, project=None):
         if alpha_mode not in ['Constant', 'Curve']:
             raise ValueError('Unknown alpha mode at node ' + str(i))
         if alpha_mode == 'Curve' and not node['alphaCurve']['keys']:
-            raise ValueError('Selected alpha curve is empty at node ' + str(i))
+            import bmb_channels
+            if bmb_channels.APPROXIMATED_CURVES is None:
+                raise ValueError('Selected alpha curve is empty at node ' + str(i))
+            # Approximation: an empty selected curve falls back to the constant material alpha.
+            bmb_channels.APPROXIMATED_CURVES.append({'node': i, 'alphaMode': 'Curve', 'treatment': 'empty-alpha-curve-as-constant'})
+            alpha_mode = 'Constant'
         alpha = {'mode': alpha_mode, 'origin': 'IBMB', 'value': node['materialAlpha']['value']}
         if alpha_mode == 'Constant' and node['alphaCurve']['keys']:
             report['dormantAlphaCurves'].append(i)
