@@ -14,7 +14,8 @@ export const HOME_MUSIC_RESOURCE = 400003;
 
 const preferencesKey = 'ffrogue.audio.v1';
 const positionKey = 'ffrogue.music-position.v1';
-const fadeTime = .24;
+// Crossfade: the next track rises while the previous one falls (a 0.24 s cut felt abrupt).
+const fadeInTime = 1.2, fadeOutTime = .9;
 const systemSamples = {
   select: {file:'cursor', level:.20},
   confirm: {file:'confirm', level:.24},
@@ -212,7 +213,7 @@ export class GameAudio {
       source.loopEnd = track.loopEnd;
       source.connect(gain).connect(this.bus('music'));
       gain.gain.setValueAtTime(0, now);
-      gain.gain.linearRampToValueAtTime(1, now + fadeTime);
+      gain.gain.linearRampToValueAtTime(1, now + fadeInTime);
       source.start(now, offset);
       this.current = { source, gain, started: now, offset, scope, resource };
     }).catch(error => {
@@ -245,16 +246,16 @@ export class GameAudio {
     const now = source.context.currentTime;
     this.retiring?.source.stop(now);
     this.retiring = { source, resource: playing.resource };
-    const level = Math.min(1, (now - playing.started) / fadeTime);
+    const level = Math.min(1, (now - playing.started) / fadeInTime);
     gain.gain.cancelScheduledValues(now);
     gain.gain.setValueAtTime(level, now);
-    gain.gain.linearRampToValueAtTime(0, now + fadeTime);
+    gain.gain.linearRampToValueAtTime(0, now + fadeOutTime);
     source.onended = () => {
       if (this.retiring?.source === source) this.retiring = undefined;
       source.disconnect();
       gain.disconnect();
     };
-    source.stop(now + fadeTime);
+    source.stop(now + fadeOutTime);
   }
 
   previewUi(event: 'select'|'confirm', profile: UiPreview|'original'): void {

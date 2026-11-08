@@ -619,6 +619,9 @@ export class BattleScene extends Phaser.Scene {
       this.enemies[index]?.destroy();
       const definition=ENEMY_CONTENT[key],manifest=this.manifests[key];
       if(!manifest||!definition&&!this.runContext.encounter)throw Error('Unpublished enemy body: '+key);
+      // Enemies follow the same body sampling rule as heroes (FFBE draws monsters as smoothly as units).
+      const linear=(this.runContext.bodyTextureFilter??this.cache.json.get('run_rules')?.bodyTextureFilter)==='linear';
+      for(const clip of Object.keys(manifest.animations))setBodySampling(this,`${key}_${clip}`,linear);
       const arena=getBattleLayout(this.scale.width,this.scale.height,BATTLE_ARENAS[this.arenaKey]).arena;
       this.enemies[index]=new TargetDummy(this,config.x,config.y,manifest,definition?{assetKey:key,scale:definition.scale,attack:definition.attack,
         bounds:{left:arena.x+8,right:arena.x+arena.width-8,top:arena.y+8,bottom:arena.y+arena.height-8}}:undefined);
@@ -946,6 +949,32 @@ export class BattleScene extends Phaser.Scene {
         if(cue&&isCombatCue(cue))this.emitCombatSound(cue,'source',event.frame);
       }
     }:undefined);
+  }
+
+  /**
+   * Readable enemy hit on a hero (until imported monster attack effects exist): an impact burst at
+   * the hero's body, a short knockback away from the attacker, a strike cue and, for heavy hits
+   * (> 18 % of max HP), a small camera shake. Presentation only; damage is already applied.
+   */
+  private playHeroHitFeedback(hero:UnitActor,fromX:number,share:number):void {
+    if(typeof hero.getBounds!=='function'||typeof this.add?.graphics!=='function')return;
+    const bounds=hero.getBounds(),x=bounds.centerX,y=bounds.centerY,away=hero.x>=fromX?1:-1;
+    const burst=this.add.graphics({x,y}).setDepth(1500).setBlendMode(Phaser.BlendModes.ADD);
+    const rays=9,inner=10,outer=46+Math.min(40,share*160);
+    burst.fillStyle(0xfff3c4,1);
+    for(let i=0;i<rays;i++){
+      const a=i/rays*Math.PI*2+Math.random()*.3,b=a+Math.PI/rays*.55,r=outer*(.65+Math.random()*.35);
+      burst.fillTriangle(Math.cos(a)*inner,Math.sin(a)*inner,Math.cos(b)*inner,Math.sin(b)*inner,Math.cos((a+b)/2)*r,Math.sin((a+b)/2)*r);
+    }
+    burst.fillStyle(0xffffff,.9).fillCircle(0,0,inner+4);
+    burst.setScale(.35).setRotation(Math.random()*Math.PI);
+    this.tweens.add({targets:burst,scale:1.15,alpha:0,duration:240,ease:'Cubic.easeOut',onComplete:()=>burst.destroy()});
+    if(!hero.isDead){
+      const home=hero.x;
+      this.tweens.add({targets:hero,x:home+away*16,duration:70,yoyo:true,ease:'Quad.easeOut',onComplete:()=>{hero.x=home;}});
+    }
+    this.emitCombatSound('SE:7','enemy-hit');
+    if(share>.18)this.cameras.main.shake(140,.004);
   }
 
   private emitCombatSound(cue:CombatCue,event:string,sourceFrame?:number):void {
@@ -1535,6 +1564,7 @@ export class BattleScene extends Phaser.Scene {
             const defense=this.runContext.state.party.find(m=>m.key===target.unitKey)?.stats.defense??1;
             const dmg=Math.round(profile.damage*(action?.multiplier??1)*attackMultiplier/defense);
             target.applyDamage(dmg);
+            this.playHeroHitFeedback(target,enemy.x,dmg/Math.max(1,target.maxHp));
             if(target.isDead)this.tryAutoRevive(target);
             if(!target.isDead)target.limitGauge=gainFromDamage(target.limitGauge,dmg,target.maxHp);
             impacts.push({unit:target.unitKey,damage:dmg});

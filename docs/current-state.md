@@ -218,13 +218,18 @@ Next: music transitions (menu → battle → victory) are not smooth yet (develo
 
 Difficulty after the overnight rebalance feels right (a real challenge, healing matters, debuff
 badges read well; skill visuals and sounds approved). Polish before the next character import:
-1. Enemy attacks lack an attack animation and hit feedback (enemy only shakes, HP drops).
-2. The action display (small text at the top) should become a prominent FFBE-style action banner.
-3. Sprite smoothing: heroes are soft-filtered (Codex adaptation), enemies still have hard edges —
-   compare with FFBE (BlueStacks) and apply one consistent rule to all units.
-4. The Mako Reactor stage plays the wrong music: it should be FFVII "Let the Battles Begin!".
+1. DONE (interim): heroes hit by enemies get an impact burst, knockback, strike cue and, for heavy
+   hits, a camera shake (`playHeroHitFeedback`). Real monster attack effects come with the enemy importer.
+2. DONE: original FFBE skill banners (blue party / red enemy, `skill_banner_*` from the battle UI atlas)
+   with the ability name large. Root cause of the tiny text everywhere: the unquoted "Source Sans 3"
+   family made every Phaser font shorthand invalid (10 px fallback) — RPG_FONT is now quoted.
+3. DONE: enemies use the same body sampling rule as heroes (run_rules bodyTextureFilter, linear).
+4. OPEN: Mako Reactor should play classic FFVII "Let the Battles Begin!" (master resource 400842,
+   la842_bgm_ff7_tatakaumono.acb) — not shipped in any local archive nor on the Memorial device; needs
+   a source from the developer.
 5. More variety: enemies, stages, music.
-6. Smoother music transitions (menu → battle → victory).
+6. PARTLY: music crossfade lengthened (1.2 s in / 0.9 s out). Scene transitions are still the Codex
+   placeholder and will be redesigned.
 
 ## Open items
 

@@ -23,6 +23,8 @@ REGIONS = {
     'ability': 'battle_com_icon_special',
     'limit': 'battle_com_icon_limit',
     # Limit Burst gauge.
+    'skill_banner_ally': 'battle_skill_ally',
+    'skill_banner_enemy': 'battle_skill_enemy',
     'limit_gauge': 'battle_unit_limit_gauge',
     'limit_gauge_full': 'battle_unit_limit_gauge_full',
     'limit_bar': 'battle_unit_limit_bar',

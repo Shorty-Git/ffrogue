@@ -7,7 +7,8 @@ export const RPG = {
   hp:0x83ceb0, warning:0xe5bc77, danger:0xf19691, mp:0x81caff,
 } as const;
 export const rpgHex=(color:number)=>'#'+color.toString(16).padStart(6,'0');
-export const RPG_FONT='Source Sans 3, Segoe UI, sans-serif';
+// Quoted: an unquoted family ending in a digit makes the whole CSS font shorthand invalid (10px fallback).
+export const RPG_FONT='"Source Sans 3", "Segoe UI", sans-serif';
 export function installRpgTheme(root=document.documentElement):void{
   for(const [key,value]of Object.entries(RPG))root.style.setProperty('--rpg-'+key.replace(/[A-Z]/g,c=>'-'+c.toLowerCase()),rpgHex(value));
   root.style.setProperty('--rpg-gap','18px');root.style.setProperty('--rpg-radius','4px');
