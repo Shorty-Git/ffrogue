@@ -217,14 +217,10 @@ Next: music transitions (menu → battle → victory) are not smooth yet (develo
 ## Next steps (handoff, 2026-11-08 evening)
 
 GitHub account is suspended (appeal pending / maybe a new account): commit locally only, push later.
-In progress: (a) search ALL raw data sources for classic FFVII "Let the Battles Begin!"
-(`la842_bgm_ff7_tatakaumono.acb`, master resource 400842) — so far only checked tools/data, the
-Android backup and the BlueStacks device; still to check: `assets/` (14 GB), `ffbe_asset_dump-main/`,
-`ffbe_data-master/`, `com.square_enix.android_googleplay.FFBEWW/` by name and by .acb/.awb/.hca/.ogg
-content. (b) The developer extracted raw data three times (Android version, two GitHub dumps:
-`ffbe_asset_dump-main`, `ffbe_data-master`, plus `assets/`): inventory them, find duplicates
-(hash-based), and propose/implement one deduplicated raw-data layout with a single source per file;
-update docs/asset_structure.md and every tool path accordingly.
+DONE (2026-11-08): raw-data audit. All five raw sources were searched; classic la842 is in none of them.
+There is little byte duplication (2.2 of 30 GB), so the sources were not moved; source priority rules apply instead.
+Details: docs/asset_structure.md "Raw-data sources and duplicate audit". Pending developer decision:
+delete the 44 GB BlueStacks VM disk copy (tools/data/memorial-audit/lifecycle-v27-backup) and ~20 GB of old receipts?
 Then, in order: new scene transition (replace Codex placeholder; immersive FF-style battle intro) →
 complete character importer (one command: body, poses, all skills via import_skill_batch +
 admit_skill_audio + icons + LB + forms; test on a new character, e.g. Tifa AC) → stage importer
@@ -244,7 +240,7 @@ badges read well; skill visuals and sounds approved). Polish before the next cha
    family made every Phaser font shorthand invalid (10 px fallback) — RPG_FONT is now quoted.
 3. DONE: enemies use the same body sampling rule as heroes (run_rules bodyTextureFilter, linear).
 4. OPEN: Mako Reactor should play classic FFVII "Let the Battles Begin!" (master resource 400842,
-   la842_bgm_ff7_tatakaumono.acb) — not shipped in any local archive nor on the Memorial device; needs
+   la842_bgm_ff7_tatakaumono.acb) — verified absent from all five raw sources (asset_structure.md); needs
    a source from the developer.
 5. More variety: enemies, stages, music.
 6. PARTLY: music crossfade lengthened (1.2 s in / 0.9 s out). Scene transitions are still the Codex

@@ -1,5 +1,44 @@
 # FFBE Asset Dump Atlas & Structure Guide
 
+## Raw-data sources and duplicate audit (2026-11-08)
+
+Five local raw sources exist; all are git-ignored. `tools/audit_raw_duplicates.py` (read-only,
+size-grouped SHA-256) inventories them. Receipts: `tools/data/raw-dedup/summary.json` and
+`duplicate-groups.json`.
+
+| Source id | Path | Files | Size | Content |
+|---|---|---|---|---|
+| android-global | `com.square_enix.android_googleplay.FFBEWW/` | 1,357 | 5.6 GB | Global Android client: `VerN_` BGM/SE `.acb`, encrypted `mst/*.dat` |
+| jp-assetpacks | `tools/data/memorial-audit/trace-clone-backup/assetpacks/` | 4,126 | 7.0 GB | JP Memorial on-demand packs (252 `.acb`, CPK, battle_effect sources) |
+| github-asset-dump | `ffbe_asset_dump-main/` | 148,132 | 3.4 GB | Decoded PNG/CSV/GIF dump (units, monsters, items, battle_bg) |
+| github-data | `ffbe_data-master/` | 37 | 0.1 GB | Master-data JSON |
+| godot-assets | `assets/` | 175,171 | 13.5 GB | Second decoded dump with Godot `.import` sidecars (sprites, town_data, battle_effect, 6 BGM `.wav`) |
+
+Findings:
+- Byte-identical redundancy is only 2.2 GB of 30 GB. The sources mostly complement each other:
+  - 1.46 GB is reuse inside `assets/` (identical mapchips across towns, identical idle/atk sheets of placeholder units);
+  - 0.34 GB is reuse inside the GitHub dump (GIFs/CSVs of placeholder units);
+  - 0.29 GB is shared between the GitHub dump and `assets/` (15,777 groups: items, illustrations, icons, battle_bg);
+  - 90 MB is shared between android-global and jp-assetpacks (37 BGM `.acb`). A `VerN_` prefix in the global client does not change the bytes.
+- 17,690 logical names exist in both decoded dumps. Rule: when both have the resource, pipelines read the
+  decoded `ffbe_asset_dump-main/` copy; `assets/` stays the source for what only it has (battle_effect
+  authoring, town_data, unit/monster spritesheets). Audio rule: raw `.acb` from jp-assetpacks first,
+  android-global second (it alone has several FF7R/FFX/FFXII tracks such as `la00713`).
+- Not deduplicated physically: moving files would break the recorded source paths and hashes in
+  workflows and receipts for little gain. Space is dominated by research data, not by raw sources:
+  `tools/data` is 92 GB, of which `memorial-audit/lifecycle-v27-backup/engine` (44 GB) is a cold copy of
+  the BlueStacks VM disks and `visual-preservation` 9.8 GB / `memorial-audit/diagnostic-v*` ~10 GB
+  are old receipts. Deleting them is the developer's decision.
+
+Classic FFVII "Let the Battles Begin!" (`la842_bgm_ff7_tatakaumono`, master resource 400842):
+not present in any local source. Checked by file name and `.acb` cue strings in all five sources, by adb
+in both BlueStacks instances (`/sdcard/Android/data/com.square_enix.ffbejpn`, both pack trees), and by
+byte search for `la842`. The only FFVII battle arrangement on disk is FF7R `la00713`
+(`TatakauMonotachi_MotoSoldier`, Android global), which the Mako Reactor already uses
+(`musicResourceId 4000713`). Obtaining la842 needs the on-demand pack that downloads when the game
+plays it (e.g. an FFVII event in the JP Memorial client), which is not reachable without root.
+Other classic battle themes are available: FF1 `la913`, FF2 `la821`, FF9 `la852`, FF3 DS `la1004`, FF5 PR `la01606`.
+
 ## Reviewed higher same-unit forms (2026-11-02)
 
 Original `unit`/`unit_class_up` rows confirm Cloud207000105->106->107 and
