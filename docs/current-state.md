@@ -259,6 +259,16 @@ badges read well; skill visuals and sounds approved). Polish before the next cha
    scores the whole draw, because most base units are 5★. Reels decelerate and bounce. The lever has a
    crystal handle, and ratchet/brake sounds were re-synthesised. Title crystal: faceted SVG FF crystal
    (src/ui/titleCrystal.css) cycling blue, silver, bronze, gold and rainbow. GIFs: tools/data/start-sequence/.
+8. OPEN (developer playtest 2026-11-08, after the 5-hour reset):
+   a) Title crystal should visibly rotate (spin), not only float.
+   b) Fate Engine: the big celebration (flash, shake, fireworks, tease) only for 7★ and NV; 5★ and 6★
+      recognisable but subtler.
+   c) Glass shatter only once, when the run starts after the slot machine, not between fights. Bug: it
+      did NOT appear at run start but DID appear between fights. Investigate the entry paths
+      (GameFlow.battle entryKind 'area'/'cut'/none and the capture timing).
+   d) Rewrite main-menu and slot texts freely (e.g. "Pull the lever ..."), FFRogue tone.
+   e) Pulling the lever makes the whole page jump up and down (layout shift during the spin re-render
+      or the machine shake). Fix so only the machine moves.
 
 ## Open items
 
