@@ -13,7 +13,10 @@ import {recommendMusic} from '../audio/musicProfiles.mjs';
 import {GameAudio,HOME_MUSIC_RESOURCE,battleCursorProfiles,type BattleCursorProfile,type UiSound} from '../audio/battleMusic';
 import type {CombatCue} from '../audio/combatCues';
 import {runEncounter} from './runBalance.mjs';
-import {STAGE_CONTENT} from './stageContent.mjs';
+import {STAGE_CONTENT,ENEMY_CONTENT} from './stageContent.mjs';
+import {createTrainingRun,type TrainingOpponent} from './trainingRun';
+import {renderTrainingSetup,type TrainingSelection} from '../ui/TrainingSetup';
+import {BATTLE_ARENAS,type BattleArenaKey} from '../data/battleArenas';
 export class GameFlow{
  readonly rules:RunRules;
  private readonly audio:GameAudio;
@@ -26,9 +29,43 @@ export class GameFlow{
  private commit(next:RunState){this.store.save(next);this.state=next;}
  menu(){this.closeEntry();this.audio.setMusic(HOME_MUSIC_RESOURCE,'home');if(this.scene.scene.isActive('BattleScene'))this.scene.scene.stop('BattleScene');this.busy=false;clearTimeout(this.animationTimer);
   try{this.state=this.store.load();this.ui.menu(!!this.state,null);this.audioControls();if(this.state?.phase==='battle'){const note=document.createElement('p');note.className='muted';note.textContent='Continue restarts the current encounter from its saved starting state.';this.ui.root.querySelector('.menu-panel')?.append(note);}}catch(error){this.ui.error(String(error),true);this.ui.on('reload',()=>location.reload());this.ui.on('discard',()=>{this.store.clear();this.state=null;this.menu();});return;}
+  this.ui.on('training',()=>this.training());
   this.ui.on('continue',()=>this.route());this.ui.on('play',()=>{const seed=(this.ui.root.querySelector('#run-seed')as HTMLInputElement).value.trim()||new URLSearchParams(location.search).get('seed')||crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
    const start=()=>{try{this.commit(createRun(seed,this.catalog,new URLSearchParams(location.search).get("arenaVariants")==="1"?variantAreas(seed):undefined,this.rules));this.audio.clearRunPosition();this.setup();}catch(e){this.fail(e);}};
    if(this.state){this.ui.dialog('Begin a new expedition?','The saved expedition will be abandoned. Rerolls and upgrades belong only to that run.','Start new run');this.ui.on('accept',start);this.ui.on('cancel',()=>this.menu());}else start();});
+ }
+ /** Training grounds: free party, form and skill choice against endurance opponents; never saved. */
+ private training(){
+  this.closeEntry();clearTimeout(this.animationTimer);this.busy=false;
+  if(this.scene.scene.isActive('BattleScene'))this.scene.scene.stop('BattleScene');
+  delete document.body.dataset.training;
+  this.audio.setMusic(HOME_MUSIC_RESOURCE,'home');
+  this.ui.show('<div class="training-setup"></div>','training');
+  const arenas=(Object.keys(BATTLE_ARENAS) as BattleArenaKey[]).map(key=>{const arena=BATTLE_ARENAS[key] as {name?:string;title?:string};
+   return {key,label:arena.name?`${arena.name}${arena.title?` (${arena.title})`:''}`:{forest:'Forest Clearing',reactor:'Mako Reactor'}[key as string]??key};});
+  const opponents:{key:TrainingOpponent;label:string}[]=[{key:'dummy',label:'Training dummy'},{key:'dummies',label:'Two training dummies'},
+   ...Object.values(ENEMY_CONTENT).map(e=>({key:e.key as TrainingOpponent,label:e.name}))];
+  renderTrainingSetup(this.ui.root.querySelector<HTMLElement>('.training-setup')!,this.catalog,arenas,opponents,
+   selection=>this.startTraining(selection),()=>this.menu());
+ }
+ private startTraining(selection:TrainingSelection){
+  try{
+   const {context}=createTrainingRun(this.scene.cache,{party:selection.party,arena:selection.arena as BattleArenaKey,opponent:selection.opponent,
+    unlimitedMp:selection.unlimitedMp,fullLimit:selection.fullLimit,
+    // A finished fight (won or lost) returns to the setup after the battle has had its moment.
+    onSettle:()=>{this.animationTimer=setTimeout(()=>this.training(),1800);}});
+   Object.assign(context,{menu:()=>this.training(),party:()=>{},rewardsReady:()=>{},
+    uiSound:(event:UiSound)=>this.audio.playBattleUi(event,this.battleCursor),
+    combatSound:(cue:CombatCue,authored:boolean)=>this.audio.playCombat(cue,authored),stopCombatSounds:()=>this.audio.stopCombat()});
+   this.audio.warmCombat();this.audio.setMusic(400005,'training');
+   this.ui.hide();document.body.dataset.training='';
+   this.scene.scene.start('BattleScene',{manifests:this.manifests,runContext:context});
+   this.placeBattleToolbar();
+   this.ui.root.innerHTML='<div class="run-toolbar"><button class="rpg-button secondary" data-action="training-setup">Change setup</button><button class="rpg-button secondary" data-action="training-restart">Restart</button><button class="rpg-button secondary" data-action="menu">Title</button></div>';
+   this.ui.on('training-setup',()=>this.training());
+   this.ui.on('training-restart',()=>this.startTraining(selection));
+   this.ui.on('menu',()=>{delete document.body.dataset.training;this.menu();});
+  }catch(error){this.fail(error);}
  }
  route(){if(!this.state)return this.menu();
   // On reload, resume AFTER the already saved upgrade; never replay its reward.

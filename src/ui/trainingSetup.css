@@ -1,0 +1,23 @@
+/* Training grounds setup (src/ui/TrainingSetup.ts). */
+.training-setup{max-width:960px;margin:0 auto;text-align:center}
+.training-count{color:#c9dcef;font-size:13px;margin:4px 0 14px}
+.training-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;text-align:left}
+.training-hero{padding:12px;opacity:.72;transition:opacity .15s,box-shadow .15s}
+.training-hero.is-chosen{opacity:1;box-shadow:0 0 0 2px #e8c77d,0 0 16px #e8c77d55}
+.training-pick{display:flex;align-items:center;gap:10px;cursor:pointer}
+.training-pick b{display:block;font-size:15px}
+.training-pick small{display:block;color:#a9c3dc;font-size:11px}
+.training-pick .portrait{width:40px;height:40px}
+.training-form{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:10px 0;font-size:12px;color:#c9dcef}
+.training-form select,.training-options select{background:#071a33;color:#eaf4ff;border:1px solid #5d7fa0;border-radius:3px;padding:4px 6px;font:inherit}
+.training-skills{border:1px solid #39597a;border-radius:3px;margin:0;padding:6px 8px;display:grid;gap:4px;font-size:12px}
+.training-skills legend{font-size:11px;color:#a9c3dc;padding:0 4px}
+.training-skills label{display:flex;align-items:center;gap:6px;cursor:pointer}
+.training-skills label:has(input:disabled){opacity:.45;cursor:default}
+.training-skills .skill-icon{width:20px;height:20px}
+.training-lb{margin:4px 0 0;font-size:11px;color:#e8c77d}
+.training-options{display:flex;flex-wrap:wrap;justify-content:center;gap:12px 22px;margin:16px 0;padding:12px 16px;font-size:13px;text-align:left}
+.training-options label{display:flex;align-items:center;gap:8px}
+/* The global run-UI input style (seed field) must not stretch checkboxes. */
+#run-ui .training-setup input[type=checkbox]{appearance:auto;width:16px;height:16px;min-width:0;margin:0;padding:0;flex:none;border:0;background:none;box-shadow:none;accent-color:#e8c77d}
+.training-skills label{justify-content:flex-start}

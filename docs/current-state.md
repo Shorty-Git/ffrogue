@@ -233,6 +233,18 @@ admit_skill_audio + icons + LB + forms; test on a new character, e.g. Tifa AC) �
 and Tactics only) → run twists. Remaining skill gaps: type 7 ribbons without FieldGoal, Banishga/Dispelga
 (BR3M mesh), support skills without mechanics (Esunaga, Protect, Blind, Store, Speed Drink).
 
+## Training grounds (2026-11-08)
+
+Main menu → "Training grounds" (src/ui/TrainingSetup.ts, GameFlow.training/startTraining,
+src/run/trainingRun.ts options `party`, `opponent`, `unlimitedMp`, `fullLimit`, `onSettle`).
+- Setup: pick 1-3 heroes, each with a form (base, 6★, 7★, NV as admitted by the run catalog)
+  and up to three skills; then an arena (every BATTLE_ARENAS entry) and an opponent (one or two
+  training dummies, or any ENEMY_CONTENT enemy).
+- Opponents have 999,999 HP. Unlimited MP sets MP to 999; a full Limit gauge starts at LB_MAX.
+- Never saved as a run; only the last setup is remembered in localStorage.
+- In battle: Change setup / Restart / Title. A finished fight returns to the setup.
+- Verified headless: Squall 7★ form, MP 999, full LB, Lion Heart against Guard Scorpion in Reactor 05.
+
 ## Developer playtest feedback (2026-11-08)
 
 Difficulty after the overnight rebalance feels right (a real challenge, healing matters, debuff
