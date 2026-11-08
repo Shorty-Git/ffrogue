@@ -25,7 +25,7 @@ from original_texture_mapping import attach_basic_texture_mapping
 def source_hit_markers(raw):
     """Preserve every serialized hit marker for the research overlay."""
     return [{'frame': int(fields[0]), 'weight': int(fields[1])}
-            for entry in re.split(r'[&-]', raw) if entry
+            for entry in re.split(r'[&@-]', raw) if entry
             for fields in [entry.split(':')]]
 
 

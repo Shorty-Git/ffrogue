@@ -9,7 +9,8 @@ const arg = (name, fallback) => { const i = process.argv.indexOf(name); return i
 const character = arg('--character'), file = arg('--source'), id = arg('--id'), key = arg('--key');
 if (!character || !file || !id || !key) throw Error('--character, --source, --id and --key are required');
 const src = JSON.parse(fs.readFileSync(file, 'utf8')).skill, raw = src.raw, off = src.composition?.skillFrameOffset ?? 0;
-const hits = String(raw.attackFrames).split('-').map(t => t.split(':').map(Number));
+const groups = String(raw.attackFrames).split('@').length;
+const hits = String(raw.attackFrames).split(/[-@]/).map(t => t.split(':').map(Number));
 const target = String(raw.target ?? '1').split('@')[0], range = String(raw.targetRange ?? '1').split('@')[0];
 const heal = arg('--heal') && Number(arg('--heal')), buff = arg('--buff') && Number(arg('--buff'));
 const friendly = !!(heal || buff);
@@ -40,7 +41,7 @@ if (friendly) {
   entry.allyEvents = [{frame: hits[0][0] + off, effects: [heal ? {kind: 'heal', amount: heal} : {kind: 'physical-boost', multiplier: buff, turns: 3}]}];
   entry.friendlyTargetReview = {sourceTarget: raw.target, sourceRange: raw.targetRange,
     note: `Original target ${raw.target} / range ${raw.targetRange} (process ${raw.processId}); adapted to ${heal ? `a fixed ${heal} HP heal` : `physical-boost x${buff} for 3 rounds`} on all living allies.`};
-} else entry.damageEvents = hits.map(([frame, weight]) => ({frame: frame + off, weight: weight / 100}));
+} else entry.damageEvents = hits.map(([frame, weight]) => ({frame: frame + off, weight: weight / (100 * groups)}));
 const path = `tools/characters/${character}.json`, recipe = JSON.parse(fs.readFileSync(path, 'utf8'));
 const at = recipe.skills.findIndex(s => s.id === id || s.ffbeId === src.id);
 if (at >= 0) recipe.skills[at] = entry; else recipe.skills.push(entry);

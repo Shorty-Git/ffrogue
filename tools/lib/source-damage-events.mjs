@@ -30,13 +30,15 @@ export function sourceDamageEvents(source, plan, unit = plan.composition?.unit) 
 
 /** Every serialized source hit with a complete 100 % distribution, shifted by the composed offset. */
 function sourceHitDistribution(source,plan,offset){
-  const hits=String(source.raw.attackFrames).split('-').map(token=>{
+  // Multi-process commands separate each process's hit list with '@'; every list sums to 100 %.
+  const groups=String(source.raw.attackFrames).split('@').length;
+  const hits=String(source.raw.attackFrames).split(/[-@]/).map(token=>{
     const fields=token.split(':').map(Number);
     if(!/^\d+:\d+:\d+:\d+$/.test(token) || fields.length!==4 || fields.some(v=>!Number.isSafeInteger(v)) || fields[0]<0 || fields[1]<=0)
       throw Error('Unverified source attack-frame entry');
     return {frame:fields[0],weight:fields[1]};
   });
-  if(JSON.stringify(hits)!==JSON.stringify(plan.sourceHits) || hits.reduce((sum,h)=>sum+h.weight,0)!==100)
+  if(JSON.stringify(hits)!==JSON.stringify(plan.sourceHits) || hits.reduce((sum,h)=>sum+h.weight,0)!==100*groups)
     throw Error('Matching complete 100-percent source hit distribution required');
-  return hits.map(hit=>({frame:hit.frame+offset,weight:hit.weight/100}));
+  return hits.map(hit=>({frame:hit.frame+offset,weight:hit.weight/(100*groups)}));
 }

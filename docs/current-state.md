@@ -175,7 +175,7 @@ Generic rules added 2026-11-07 (no per-skill exceptions):
 - Unsupported node types 7/4/15 are omitted with their subtrees in approximation mode
   (`tools/bmb_prune.py`, listed in plan.approximations). Type 7 + FieldGoal children = lightning/
   line emitters: lightning-centred skills (Thundara/Thundaga/Thundaga Blade) stay unimported.
-  Still open: multi-process hit strings with '@' (Spin Drive), another generation mode
+  Multi-process hit strings ("@", e.g. Spin Drive) split weights per process. Still open: another generation mode
   (Ancient Holy), authoring-comparison mismatches (Finishing Touch, Fusion Sword 2nd/4th).
 - Party buffs (Fury Brand, Cheer) reuse the existing physical-boost status (x1.3, 3 rounds,
   allyTargeting living-allies) and need a `friendlyTargetReview` with the source target/range.
