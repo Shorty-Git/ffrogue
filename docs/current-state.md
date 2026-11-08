@@ -214,6 +214,25 @@ Next: music transitions (menu → battle → victory) are not smooth yet (develo
 4. Visual: headless screenshots / video of the changed flow; technical checks are not visual
    acceptance – the developer accepts visuals.
 
+## Next steps (handoff, 2026-11-08 evening)
+
+GitHub account is suspended (appeal pending / maybe a new account): commit locally only, push later.
+In progress: (a) search ALL raw data sources for classic FFVII "Let the Battles Begin!"
+(`la842_bgm_ff7_tatakaumono.acb`, master resource 400842) — so far only checked tools/data, the
+Android backup and the BlueStacks device; still to check: `assets/` (14 GB), `ffbe_asset_dump-main/`,
+`ffbe_data-master/`, `com.square_enix.android_googleplay.FFBEWW/` by name and by .acb/.awb/.hca/.ogg
+content. (b) The developer extracted raw data three times (Android version, two GitHub dumps:
+`ffbe_asset_dump-main`, `ffbe_data-master`, plus `assets/`): inventory them, find duplicates
+(hash-based), and propose/implement one deduplicated raw-data layout with a single source per file;
+update docs/asset_structure.md and every tool path accordingly.
+Then, in order: new scene transition (replace Codex placeholder; immersive FF-style battle intro) →
+complete character importer (one command: body, poses, all skills via import_skill_batch +
+admit_skill_audio + icons + LB + forms; test on a new character, e.g. Tifa AC) → stage importer
+(stage + SSPB animations + original music + world enemies/bosses with their skills, mainline FF I–XVI
+and Tactics only) → run twists. Remaining skill gaps: 4 alias cues without sound (Big Shot, Northern
+Sky Apprentice, Thundaga Blade, Sonic Impact), type 7 ribbons without FieldGoal, Banishga/Dispelga
+(BR3M mesh), support skills without mechanics (Esunaga, Protect, Blind, Store, Speed Drink).
+
 ## Developer playtest feedback (2026-11-08)
 
 Difficulty after the overnight rebalance feels right (a real challenge, healing matters, debuff
