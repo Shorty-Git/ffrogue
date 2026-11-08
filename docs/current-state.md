@@ -15,11 +15,11 @@ Last consolidated: 2026-11-07.
   K.O., one revival offer (50% base HP, `REVIVE_HP_SHARE`) is guaranteed among the three, next
   to the guaranteed boss awakening. A K.O. member enters the next battle in its dead pose; a
   revived member starts with an empty Limit gauge (a K.O. empties it).
-- 36 Source skills (original FFBE effect data rendered in real time). Authoring-free imports
+- 37 Source skills (original FFBE effect data rendered in real time). Authoring-free imports
   2026-11-07/08 include Meteor Rain, Banish, Holy, Fury Brand, Healing Wind, Curaja, Earthly
   Healing, Prayer of the Cetra, Northswain's Strike, Northern Sky Apprentice, Meditate, Big Shot,
   Ungarmax, Grenade Bomb, Satellite Beam, Cheer, Call of the Void, Fusion Sword 1st/3rd, Spin Drive,
-  Reraise (auto-revive). Members starting before frame 0 are clamped to 0 in approximation mode.
+  Reraise (auto-revive), Thundaga Blade (first type 7 lightning). Members starting before frame 0 are clamped to 0 in approximation mode.
   + 2 Limit Bursts
   (Cloud's Omnislash; Cloud AC's Omnislash Version 5, the first authoring-free import, 2026-11-07).
 - Battle UI (DOM `CombatHud` over Phaser): target-first (enemies clickable any time, crystal
@@ -206,8 +206,8 @@ Generic rules added 2026-11-07 (no per-skill exceptions):
   type 7 (1856-byte records, NOT a Particle variant: Particle offsets read garbage; no BMSLN
   name in the 3957-project corpus) blocks ~25 roster skills and is the biggest next lever;
   type 4 = EmitterSimpleParticle (592 bytes, verified on 163 CPK pairs, no decoder yet);
-  type 15 = FieldGoal (208 bytes, particle attractor). Type 7 = lightning emitter (see
-  docs/research/bmb-node-type-7-lightning.md: original reference, layout map, render plan). Also: Warring Slash needs repeated
+  type 15 = FieldGoal (208 bytes, particle attractor). Type 7 = lightning emitter, drawn as approximate bolts by
+  src/effects/lightningLayer.mjs when it has FieldGoal children (docs/research/bmb-node-type-7-lightning.md). Also: Warring Slash needs repeated
   generation in the frozen player; commands without effect timelines (Limit Braver etc.).
 - Batch import: `sh tools/import_skill_batch.sh <batch.txt> tools/data/<run>` (lines:
   `character skillId id key [--heal N|--buff X|--mult X|--mp N]`) composes/stages, drafts the

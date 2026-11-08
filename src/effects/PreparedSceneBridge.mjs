@@ -1,5 +1,6 @@
 import {createEffectPlayer, presentationMembers, presentationAnchor, sourceRectanglePoint} from './originalEffectPlayer.mjs';
 import {validateSceneManifest} from './sceneProfile.mjs';
+import {createLightningLayer} from './lightningLayer.mjs';
 
 const unitRectangle=(point,unit)=>({x:point.x-unit.pivotX*unit.frameWidth*unit.scale,y:point.y-unit.pivotY*unit.frameHeight*unit.scale,
   width:unit.frameWidth*unit.scale,height:unit.frameHeight*unit.scale});
@@ -120,6 +121,12 @@ export function createPreparedSceneBridge(scene, manifests) {
       member => scenePresentationAnchor(member, host, manifest.plan),
       {x:host.arena.x-host.width/2,y:host.height/2-host.arena.y-host.arena.height,
         width:host.arena.width,height:host.arena.height});
+    for (const layer of Object.values(layers)) layer.lightning?.update(frame, member => {
+      const key = member.targetKey ?? Object.keys(host.targets)[0], point = host.targets[key], unit = host.units[key];
+      if (!point) return null;
+      const centerY = unit ? point.y - (unit.pivotY - .5) * unit.frameHeight * unit.scale : point.y;
+      return {x: point.x - host.width/2, y: host.height/2 - centerY};
+    });
   }
   for (const [name, depth] of [['back',-50],['front',1100]]) {
     const external = scene.add.extern().setDepth(depth);
@@ -187,7 +194,10 @@ export function createPreparedSceneBridge(scene, manifests) {
           const layerMembers = members.filter(m=>m.layer===name);
           const player = await createEffectPlayer(THREE,layerScene,{...manifest.plan,members:layerMembers});
           applyOriginalDrawOrder(layerScene,player,manifest.plan,layerMembers);
-          variant.layers[name] = {scene:layerScene,player};
+          // Type 7 lightning emitters (approximation plans only); the frozen player never sees them.
+          const lightning = manifest.plan.effects.some(e=>e.lightning?.some(b=>b.goals))
+            ? createLightningLayer(THREE,layerScene,player,manifest.plan,layerMembers,(effect,texture)=>effect.textures[texture]) : null;
+          variant.layers[name] = {scene:layerScene,player,lightning};
         }
         if(disposed){disposeVariant(variant);return;}
         variants.set(manifest.key+'/'+count,variant);

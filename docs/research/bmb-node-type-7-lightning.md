@@ -1,8 +1,15 @@
 # BMB node type 7 (lightning emitter) and type 15 (FieldGoal) — findings 2026-11-08
 
-Status: identified and partially mapped; NOT rendered yet. In approximation mode type 7/4/15
-subtrees are omitted (`tools/bmb_prune.py`), so lightning-centred skills (Thundara, Thundaga,
-Thundaga Blade) stay unimported and other skills lose their bolts.
+Status (2026-11-08, later the same day): RENDERED as an approximation. `tools/bmb_prune.py` still
+omits type 7/4/15 subtrees, but records every type 7 node whose parent survives as an
+`effect.lightning` entry (parent node, colour +104, life +280, start +272, texture via the Particle
+binding block, FieldGoal child count). `src/effects/lightningLayer.mjs`, created per layer by
+`PreparedSceneBridge.mjs` (frozen player untouched), draws entries WITH FieldGoal children as
+jagged additive textured strips (10 segments, jitter re-seeded every 2 frames) from the parent
+node's world position to the member's target centre; a source sitting on the target strikes from
+420 px above. Delita's Thundaga Blade (200720) is published with it and matches the original
+recording closely (`tools/data/lightning-20261108/compare.jpg`). Type 7 nodes WITHOUT FieldGoal
+children (cure/aero/barrier effects) are still omitted: they are probably ribbons/trails.
 
 ## What it is (original reference)
 
@@ -48,7 +55,7 @@ ControlNull/EmitterQuad/EmitterParticle/EmitterModel/EmitterSimpleParticle/Field
 ranges, i.e. a randomised direction/attractor rather than a fixed endpoint. In the original the
 bolts land on the enemy, so the goal is most likely resolved from the effect's target/anchor.
 
-## Implementation plan (next session)
+## Original implementation plan (steps 1–2 done, see status)
 
 1. Preparation (approximation only): instead of dropping type 7, emit `plan.lightning[]` per
    effect: parent node (kept index), texture binding (read with the Particle binding offsets),

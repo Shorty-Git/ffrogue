@@ -51,6 +51,34 @@ def prune_unknown_subtrees(data, result, log):
                         'subtreeSize': len(subtree), 'treatment': 'unsupported-node-type-subtree-omitted'})
     kept = [i for i in range(len(nodes)) if i not in dropped]
     remap = {old: new for new, old in enumerate(kept)}
+    # Type 7 = lightning emitter (docs/research/bmb-node-type-7-lightning.md). Its Particle-shaped
+    # header gives the texture binding; colour (+104), life (+280) and generation start (+272)
+    # follow the statistical Particle alignment (+0 / +32). The bridge draws them as bolts.
+    lightning = []
+    strings = struct.unpack_from('<I', data, 88)[0]
+    for index, node in enumerate(nodes):
+        parent = parents[index]
+        if node['typeId'] != 7 or parent is None or parent in dropped:
+            continue
+        from bmb_parameters import read_bindings
+        probe = {'typeId': 3, 'offset': node['offset']}
+        try:
+            read_bindings(data, probe, result.get('resources', []), strings)
+            texture = (probe.get('resourceBindings') or {}).get('texture1')
+        except ValueError:
+            texture = None
+        life = struct.unpack_from('<I', data, node['offset'] + 280)[0]
+        start = struct.unpack_from('<I', data, node['offset'] + 272)[0]
+        color = list(struct.unpack_from('<3f', data, node['offset'] + 104))
+        if not (0 < life < 2000) or start > 2000 or not all(0 <= c <= 4 for c in color):
+            log.append({'droppedNode': index, 'treatment': 'lightning-fields-implausible-omitted'})
+            continue
+        lightning.append({'parent': remap[parent], 'sourceIndex': index, 'life': life, 'start': start,
+                          'color': [round(c, 4) for c in color], 'texture': texture['name'] if texture else None,
+                          'goals': sum(1 for j, p in enumerate(parents) if p == index and nodes[j]['typeId'] == 15)})
+        log.append({'lightningNode': index, 'treatment': 'type-7-drawn-as-approximate-bolt'})
+    if lightning:
+        result['lightning'] = lightning
     rebuilt = []
     for old in kept:
         node = nodes[old]

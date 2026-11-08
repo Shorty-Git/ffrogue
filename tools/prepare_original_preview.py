@@ -296,6 +296,7 @@ if __name__ == '__main__':
         effects.append({'name': original['member'], 'sha256': data['sha256'],
                         'rootLifecycle': data['rootLifecycle'],
                         **({'drawOrder': data['drawOrder']} if 'drawOrder' in data else {}),
+                        **({'lightning': data['lightning']} if 'lightning' in data else {}),
                         'nodes': data['nodes'], 'textures': textures, 'meshes': meshes,
                         'authoringSupplement': supplement,
                         'inheritanceSupplement': inheritance_supplement,
