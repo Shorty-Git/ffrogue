@@ -71,6 +71,10 @@ skills and Limit Bursts plus every `presentation` the encounter's enemies refere
   drafts them with `--source-buff`; `node tools/refresh_source_buffs.mjs [--check]` re-derived the 8
   earlier physical-boost-only drafts (Cheer x3 and Embolden gained Protect; Focus x2, Meditate and
   Magical Activation gained Shell). Tests: `tools/test_guard_buffs.mjs`.
+- Imported with the new rule: Protect/Shell (Cecil, Ramza), Protect/Protectga (Cloud of Darkness),
+  Protectga/Shellga (Aerith Cetra) and Protectga (Avalanche's Barret, now drawable). Roster: 355 skills,
+  50 of 51 units drawable (Red Wings Cecil still needs barrier/cover mechanics). Browser check:
+  Protect cut a 290 hit to 203.
 
 ## Playtest round 2026-11-09 (developer feedback)
 
