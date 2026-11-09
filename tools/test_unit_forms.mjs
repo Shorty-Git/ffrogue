@@ -1,7 +1,7 @@
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';
 import {createRun,rollParty,confirmParty,completeBattle,chooseReward,acknowledgeAwakening,validateRun,RunStore,SAVE_KEY} from '../src/run/runState.mjs';
 import {runCatalog}from '../src/run/catalog.ts';
-import {nextAwakening,rankValue}from '../src/run/unitForms.mjs';
+import {formForLevel,levelOf,MAX_LEVEL}from '../src/run/unitForms.mjs';
 const read=p=>JSON.parse(fs.readFileSync(p,'utf8'));
 function catalog(){const r=read('public/assets/content.json'),content=read('public/assets/run-content.json'),values={content_registry:r,run_content:content},m={};
  for(const k of r.characters){values['character_'+k]=read(`public/assets/units/${k}/character.json`);values['skills_'+k]=read(`public/assets/units/${k}/skills.json`);m[k]=read(`public/assets/units/${k}/manifest.json`);}
@@ -11,15 +11,51 @@ function catalog(){const r=read('public/assets/content.json'),content=read('publ
 const c=catalog();
 function party(mode){for(let i=0;i<100;i++){const r=confirmParty(rollParty(createRun('form-path-'+i,c,undefined,mode?{awakeningMode:mode}:undefined),c));if(r.party.some(m=>m.key==='cloud'))return r;}throw Error('Seed');}
 function bossReward(r){r.encounter=r.encounter<2?1:3;return completeBattle(r,c,r.party.map(m=>({key:m.key,hp:m.hp,mp:m.mp})),true);}
-test('sequential 5/6/7 and prototype 5/7 paths share original forms, retain identity and accept old saves',()=>{
- for(const mode of ['sequential','highest-reviewed']){
-  let r=party(mode),m=r.party.find(m=>m.key==='cloud');assert.equal(nextAwakening(r,c.cloud,m).rarity,mode==='sequential'?6:7);
-  r=bossReward(r);let at=r.offers.findIndex(o=>o.type==='evolve'&&o.member==='cloud');if(at<0){r.offers[0]={type:'evolve',member:'cloud',form:nextAwakening(r,c.cloud,m).form};at=0;}
-  r=chooseReward(r,at,c);validateRun(r,c);r=acknowledgeAwakening(r,r.pendingAwakening.id);m=r.party.find(m=>m.key==='cloud');assert.equal(m.unitId,mode==='sequential'?'207000106':'207000107');assert.equal(m.identity,'207000105');
-  if(mode==='sequential'){r=bossReward(r);r.offers[0]={type:'evolve',member:'cloud',form:'cloud_form7'};r=chooseReward(r,0,c);validateRun(r,c);assert.equal(r.pendingAwakening.from.form,'cloud_form6');r=acknowledgeAwakening(r,r.pendingAwakening.id);assert.equal(r.party.find(m=>m.key==='cloud').unitId,'207000107');}
-  assert.equal(nextAwakening(r,c.cloud,r.party.find(m=>m.key==='cloud')).form,'cloud_nv');
+test('levels 1-6 share one power scale; boss relics raise the level and the body follows original forms',()=>{
+ assert.deepEqual([3,4,5,6,7].map(r=>levelOf({rarity:r})),[1,2,3,4,5]);assert.equal(levelOf({rarity:7,rank:'NV'}),6);
+ // Cloud (5★ base): Lv 1-3 keep the 5★ body, then 6★, 7★ and NV.
+ assert.deepEqual([1,2,3,4,5,6].map(l=>formForLevel(c.cloud,l).form),['cloud','cloud','cloud','cloud_form6','cloud_form7','cloud_nv']);
+ // NV-only units keep their NV body at every level.
+ assert.equal(formForLevel(c.clive,1).form,'clive');
+ let r=party('sequential'),m=r.party.find(m=>m.key==='cloud');
+ m.level=3;Object.assign(m,{form:'cloud',unitId:c.cloud.unitId,rarity:c.cloud.rarity});delete m.rank;validateRun(r,c);
+ r=bossReward(r);r.offers[0]={type:'evolve',member:'cloud',level:4};r=chooseReward(r,0,c);validateRun(r,c);
+ assert.equal(r.pendingAwakening.to.form,'cloud_form6');r=acknowledgeAwakening(r,r.pendingAwakening.id);
+ m=r.party.find(m=>m.key==='cloud');assert.equal(m.level,4);assert.equal(m.unitId,'207000106');assert.equal(m.identity,'207000105');
+ assert.throws(()=>{const x=bossReward(r);x.offers[0]={type:'evolve',member:'cloud',level:6};chooseReward(x,0,c);},/Unverified evolution/);
+});
+test('a level without a new body raises power only and needs no awakening presentation',()=>{
+ let r=party('sequential'),m=r.party.find(m=>m.key==='cloud');
+ m.level=1;Object.assign(m,{form:'cloud',unitId:c.cloud.unitId,rarity:c.cloud.rarity});delete m.rank;
+ const hp=m.stats.hp;r=bossReward(r);r.offers[0]={type:'evolve',member:'cloud',level:2};r=chooseReward(r,0,c);
+ assert.equal(r.pendingAwakening,undefined);m=r.party.find(m=>m.key==='cloud');assert.equal(m.level,2);assert.equal(m.form,'cloud');assert.ok(m.stats.hp>hp);validateRun(r,c);
+});
+test('start levels follow one weight table for every hero and are stored once',()=>{
+ const rules=read('public/assets/run-rules.json'),keys=['3','4','5','6','7','NV'];
+ const counts=[0,0,0,0,0,0];let total=0;
+ for(let i=0;i<4000;i++){
+  const seed='start-level-'+i,legacy=rollParty(createRun(seed,c),c),current=rollParty(createRun(seed,c,undefined,rules),c);
+  assert.deepEqual(current.party.map(m=>[m.key,m.skills]),legacy.party.map(m=>[m.key,m.skills]));
+  for(const m of legacy.party)assert.equal(m.level,levelOf(c[m.key]));
+  for(const m of current.party){
+   const character=c[m.key];
+   assert.equal(m.form,formForLevel(character,m.level).form);
+   assert.equal(m.stats.hp,1+(m.level-1)*rules.originalForms.hpPerRank);
+   assert.equal(m.hp,Math.round(character.maxHp*m.stats.hp));
+   counts[m.level-1]++;total++;
+  }
  }
- const old=party();delete old.rules;validateRun(old,c);assert.equal(nextAwakening(old,c.cloud,old.party.find(m=>m.key==='cloud')).rarity,6);
+ const weights=keys.map(k=>rules.originalForms.weights[k]),sum=weights.reduce((a,b)=>a+b,0);
+ counts.forEach((n,i)=>{const p=weights[i]/sum;assert.ok(Math.abs(n/total-p)<Math.max(.01,4*Math.sqrt(p*(1-p)/total)),JSON.stringify(counts));});
+ console.log('Start levels Lv1..6 over',total,'heroes:',counts);
+});
+test('maximum level heroes get other boss rewards and old v2 saves gain levels',()=>{
+ let r=party('sequential'),m=r.party.find(m=>m.key==='cloud');
+ m.level=MAX_LEVEL;const nv=formForLevel(c.cloud,MAX_LEVEL);Object.assign(m,{form:nv.form,unitId:nv.unitId,rarity:nv.rarity,rank:nv.rank});validateRun(r,c);
+ const rewards=bossReward(r);assert.ok(rewards.offers.every(o=>o.member!=='cloud'||o.type!=='evolve'));
+ const old=JSON.parse(JSON.stringify(party('sequential')));old.version=2;for(const p of old.party)delete p.level;
+ let raw=JSON.stringify(old);const store=new RunStore({getItem:k=>k===SAVE_KEY?raw:null,setItem:(_k,v)=>{raw=v;}},c);
+ const loaded=store.load();assert.equal(loaded.version,3);for(const p of loaded.party)assert.equal(p.level,levelOf(p));
 });
 test('star and NV bodies have complete Source clips; shifted forms and unknown policies stay excluded',()=>{
  assert.equal(c.cloud.forms.at(-1).unitId,'207000117');assert.equal(c.aerith.forms.at(-1).unitId,'207000407');
@@ -29,108 +65,3 @@ test('star and NV bodies have complete Source clips; shifted forms and unknown p
  const r=party('highest-reviewed');r.party.find(m=>m.key==='cloud').form='cloud_ac';assert.throws(()=>validateRun(r,c));
 });
 
-test('start form weights preserve the roster and normalize across available levels',()=>{
- const rules=read('public/assets/run-rules.json');
- const counts=Object.fromEntries(Object.values(c).map(character=>[
-  character.key,Object.fromEntries([character,...character.forms].map(form=>[form.rank??form.rarity,0]))
- ]));
- const twoForms={...c,cloud:{...c.cloud,forms:c.cloud.forms.filter(f=>f.rarity===6)}};
- let secondLevel=0,twoFormDraws=0;
- for(let i=0;i<12000;i++){
-  const seed='start-form-'+i;
-  const legacy=rollParty(createRun(seed,c),c);
-  const current=rollParty(createRun(seed,c,undefined,rules),c);
-  assert.deepEqual(current.party.map(m=>[m.key,m.skills]),legacy.party.map(m=>[m.key,m.skills]));
-  assert.equal(new Set(current.party.map(m=>m.canonicalIdentity)).size,3);
-  for(const member of current.party){
-   const character=c[member.key],form=[character,...character.forms].find(f=>f.form===member.form);
-   const steps=rankValue(form)-rankValue(character);
-   assert.equal(member.unitId,form.unitId);
-   assert.equal(member.stats.hp,1+steps*rules.originalForms.hpPerRank);
-   assert.equal(member.hp,Math.round(character.maxHp*member.stats.hp));
-   counts[member.key][form.rank??form.rarity]++;
-  }
-  const cloud=rollParty(createRun(seed,twoForms,undefined,rules),twoForms).party.find(m=>m.key==='cloud');
-  if(cloud){twoFormDraws++;secondLevel+=Number(cloud.form==='cloud_form6');assert.notEqual(cloud.form,'cloud_form7');}
- }
- for(const values of Object.values(counts)){
-  const total=Object.values(values).reduce((sum,n)=>sum+n,0);
-  const ranks=Object.keys(values);
-  const weights=rules.originalForms.pathWeights?.[ranks.join('/')]??ranks.map(rank=>rules.originalForms.weights[rank]);
-  const weightTotal=weights.reduce((sum,w)=>sum+w,0);
-  // Four standard errors: with 25+ characters, each sees only ~1400 draws.
-  ranks.forEach((rank,index)=>{const p=weights[index]/weightTotal;assert.ok(Math.abs(values[rank]/total-p)<Math.max(rank==='NV'?.008:.025,4*Math.sqrt(p*(1-p)/total)),JSON.stringify({ranks,values}));});
- }
- assert.ok(Math.abs(secondLevel/twoFormDraws-17/97)<.02);
- console.log('Seeded start form totals:',counts,'two-form Cloud:',[twoFormDraws-secondLevel,secondLevel]);
-});
-
-test('start form bonuses are stored once and maximum forms have other boss rewards',()=>{
- const rules=read('public/assets/run-rules.json');
- let drawn;
- for(let i=0;i<1000;i++){
-  const run=rollParty(createRun('max-start-'+i,c,undefined,rules),c);
-  if(run.party.some(m=>m.form==='cloud_nv')){drawn=run;break;}
- }
- assert.ok(drawn);
- const cloud=drawn.party.find(m=>m.key==='cloud');
- assert.equal(cloud.stats.hp,1.15);
- let raw;
- const store=new RunStore({getItem:k=>k===SAVE_KEY?raw??null:null,setItem:(_k,v)=>{raw=v;}},c);
- store.save(drawn);
- assert.deepEqual(store.load(),drawn);
- const rewards=bossReward(confirmParty(store.load()));
- assert.equal(rewards.offers.length,3);
- assert.ok(rewards.offers.every(r=>r.member!=='cloud'||r.type!=='evolve'));
- assert.equal(rewards.party.find(m=>m.key==='cloud').stats.hp,1.15);
- const secondPolicy={...rules,originalForms:{...rules.originalForms,pathWeights:{},weights:{...rules.originalForms.weights,5:1,6:10000,7:1}}};
- const middle=rollParty(createRun(drawn.seed,c,undefined,secondPolicy),c);
- const member=middle.party.find(m=>m.key==='cloud');
- assert.equal(member.form,'cloud_form6');
- assert.equal(nextAwakening(middle,c.cloud,member).form,'cloud_form7');
-});
-
-test('same raw rarity NV edge changes rank and applies only the incremental growth',()=>{
- const rules=read('public/assets/run-rules.json');
- const weighted={...rules,originalForms:{...rules.originalForms,pathWeights:{},weights:{...rules.originalForms.weights,5:1,6:1,7:100000,NV:.3}}};
- let run;
- for(let i=0;i<50;i++){
-  const candidate=rollParty(createRun('nv-edge-'+i,c,undefined,weighted),c);
-  if(candidate.party.some(m=>m.form==='cloud_form7')){run=candidate;break;}
- }
- const before=run.party.find(m=>m.key==='cloud');
- const reward=bossReward(confirmParty(run));
- reward.offers[0]={type:'evolve',member:'cloud',form:'cloud_nv'};
- const next=chooseReward(reward,0,c);
- const upgraded=next.party.find(m=>m.key==='cloud');
- assert.equal(upgraded.rarity,before.rarity);
- assert.equal(upgraded.rank,'NV');
- assert.equal(upgraded.unitId,'207000117');
- assert.equal(upgraded.hp,Math.round(c.cloud.maxHp*1.15));
- assert.equal(upgraded.mp,Math.round(c.cloud.maxMp*1.09));
- assert.deepEqual(validateRun(JSON.parse(JSON.stringify(next)),c),next);
-});
-
-test('four draws preserve roster and skill sequences and measure exposure to rarer teams',()=>{
- const current=read('public/assets/run-rules.json');
- const previous={...current,originalForms:{...current.originalForms,pathWeights:{}}};
- const counts={previous:{higher:0,nv:0},current:{higher:0,nv:0}};
- for(let i=0;i<12000;i++){
-  const seed='four-draw-balance-'+i;
-  let before=createRun(seed,c,undefined,previous),after=createRun(seed,c,undefined,current);
-  const seen={previous:{higher:false,nv:false},current:{higher:false,nv:false}};
-  for(let draw=0;draw<4;draw++){
-   before=rollParty(before,c);after=rollParty(after,c);
-   assert.deepEqual(after.party.map(m=>[m.key,m.skills]),before.party.map(m=>[m.key,m.skills]));
-   assert.equal(after.rerolls,3-draw);
-   for(const [label,run] of [['previous',before],['current',after]]){
-    seen[label].higher||=run.party.some(m=>m.form!==c[m.key].form);
-    seen[label].nv||=run.party.some(m=>m.rank==='NV'&&m.form!==c[m.key].form); // NV-only base units are always NV
-   }
-  }
-  for(const label of Object.keys(counts))for(const key of ['higher','nv'])counts[label][key]+=Number(seen[label][key]);
- }
- assert.ok(counts.current.nv>5*counts.previous.nv);
- assert.ok(counts.current.higher>counts.previous.higher);
- console.log('Runs with at least one result across four draws (12000 each):',counts);
-});

@@ -116,10 +116,17 @@ class BmbStructureTests(unittest.TestCase):
         struct.pack_into('<f', unordered, len(data) - 4, -1)
         with self.assertRaises(ValueError):
             read_bmb(unordered)
+        # A non-finite key value (authoring glitch in some originals) reads as 0 and is flagged;
+        # previews accept it only under --approximate-unverified. A non-finite frame still fails.
         nonfinite = bytearray(data)
         struct.pack_into('<f', nonfinite, 824 + 12, float('nan'))
+        repaired = read_bmb(nonfinite)['nodes'][0]['alphaCurve']
+        self.assertEqual(repaired['nonFiniteRepaired'], [0])
+        self.assertEqual(repaired['keys'][0]['value'], 0.0)
+        badframe = bytearray(data)
+        struct.pack_into('<f', badframe, 824 + 16, float('nan'))
         with self.assertRaises(ValueError):
-            read_bmb(nonfinite)
+            read_bmb(badframe)
 
     def test_tree_rejects_missing_children_and_second_root(self):
         data = fixture()

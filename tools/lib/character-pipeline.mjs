@@ -331,7 +331,9 @@ export function inspectCharacter(recipe, { assets = 'rawdata/assets', dump = 'ra
               ||skill.friendlyTargetReview.sourceRange!==source.raw.targetRange))
               throw Error('Explicit original friendly-target review required');
           }else throw Error('Only the Source skill execution profile can publish');
-          if(source.effects.some(b=>b.conditional))throw Error('Unresolved process-indexed timeline');
+          // '@' process branches publish only from an approximation plan that played them in parallel.
+          if(source.effects.some(b=>b.conditional)&&!manifest.plan.approximations?.curves?.some(c=>c.treatment==='process-branch-played-in-parallel'))
+            throw Error('Unresolved process-indexed timeline');
         }catch(error){issues.push(`source-import-blocked: ${error.message}`);}
       }
       return { id: skill.id, ffbeId: skill.ffbeId, execution: skill.execution, issues,

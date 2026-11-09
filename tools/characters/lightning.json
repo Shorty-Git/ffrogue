@@ -725,6 +725,60 @@
           "weight": 1
         }
       ]
+    },
+    {
+      "id": "heat_blitz",
+      "ffbeId": 202100,
+      "name": "Heat Blitz",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 20,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.6,
+      "hitCount": 1,
+      "attackFrames": [
+        110
+      ],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Physical damage (1.6x) to all enemies",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "lightning_heat_blitz",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/lightning/skills/heat_blitz/source/skill-source.json",
+        "sha256": "949e4c766defc56aaca3c4304fcd40dfc20aafba8be3a003969c2d4e6e60ca31"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "target",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 1,
+          "sourceMoveType": 1,
+          "note": "Drafted from motion 1 / move 1: dash with atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 242,
+          "weight": 1
+        }
+      ]
     }
   ],
   "portraitSource": "unit_icons/unit_icon_213000105.png"

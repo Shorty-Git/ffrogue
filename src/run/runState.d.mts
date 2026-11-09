@@ -4,10 +4,11 @@ export interface RunCharacter extends RunForm{canonicalIdentity:string;key:strin
   /** The form's Limit Burst (skill type LIMIT); used through the LB gauge, never offered as a skill. */
   limitBurst?:SkillConfig;portrait:string;evolution?:RunForm;forms?:RunForm[];magicAvailable?:boolean;}
 export type RunCatalog=Record<string,RunCharacter>;
-export interface RunMember extends RunForm{canonicalIdentity:string;key:string;skills:{id:string;level:number}[];stats:{attack:number;magic:number;defense:number;hp:number;mp?:number};hp:number;mp:number;
+export interface RunMember extends RunForm{canonicalIdentity:string;key:string;
+  /** FFRogue level 1–6 (unitForms.mjs MAX_LEVEL); the form is the body for it. */level:number;skills:{id:string;level:number}[];stats:{attack:number;magic:number;defense:number;hp:number;mp?:number};hp:number;mp:number;
   /** Limit gauge carried from the previous battle (1–100); absent when empty. */limit?:number;}
 export interface AreaConfig{stageId?:string;name:string;arena:string;normals:number;}
-export interface Reward{type:'learn'|'skill'|'stat'|'evolve'|'rest'|'revive';member?:string;skill?:string;stat?:'attack'|'magic'|'defense'|'hp';form?:string;}
+export interface Reward{type:'learn'|'skill'|'stat'|'evolve'|'rest'|'revive';member?:string;skill?:string;stat?:'attack'|'magic'|'defense'|'hp';form?:string;level?:number;}
 export interface AwakeningNotice{id:string;member:string;encounter:number;from:{form:string;unitId:string;rarity:number};to:{form:string;unitId:string;rarity:number};}
 export interface FormPolicy{weights:Record<string,number>;pathWeights?:Record<string,number[]>;hpPerRank:number;mpPerRank:number;powerPerRank:number;defensePerRank:number;}
 export interface RunRules{awakeningMode:'sequential'|'highest-reviewed';originalForms?:FormPolicy;}

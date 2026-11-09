@@ -3,6 +3,17 @@ export function reviewedForms(character){return [character,...(character.forms??
 export function formAt(character,key){return reviewedForms(character).find(f=>f.form===key);}
 export const rankValue=form=>form.rank==='NV'?8:form.rarity;
 export const rankLabel=form=>form.rank??form.rarity+'★';
+/** FFRogue level scale (docs/progression-design.md): 3★=1, 4★=2, 5★=3, 6★=4, 7★=5, NV=6.
+ * Level is the power axis for every variant alike; the form is the body shown at that level. */
+export const MAX_LEVEL=6;
+export const levelOf=form=>form.rank==='NV'?MAX_LEVEL:Math.max(1,Math.min(MAX_LEVEL-1,form.rarity-2));
+export const levelLabel=level=>'Lv '+level;
+/** Body at a level: the highest reviewed same-identity form at or below it, else the base form
+ * (an NV-only unit at Lv 3 keeps its NV body; a 5★-max unit at Lv 6 keeps its 5★ body). */
+export function formForLevel(character,level){
+ const forms=reviewedForms(character).filter(f=>f.identity===character.identity&&levelOf(f)<=level);
+ return forms.sort((a,b)=>levelOf(a)-levelOf(b)).at(-1)??character;
+}
 export function awakeningPath(character,from){
  const forms=reviewedForms(character).filter(f=>f.identity===character.identity);
  const path=[];

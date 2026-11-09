@@ -400,6 +400,100 @@
           "weight": 0.73
         }
       ]
+    },
+    {
+      "id": "blitz_ace",
+      "ffbeId": 210000105,
+      "name": "Blitz Ace",
+      "rarity": 5,
+      "level": 1,
+      "type": "LIMIT",
+      "mpCost": 0,
+      "scope": "single_enemy",
+      "damageMultiplier": 6,
+      "hitCount": 9,
+      "attackFrames": [
+        106,
+        120,
+        134,
+        142,
+        158,
+        182,
+        200,
+        240,
+        390
+      ],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Limit Burst: Physical damage (6x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "tidus_blitz_ace",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/tidus/skills/blitz_ace/source/skill-source.json",
+        "sha256": "70bb28a27515e08b3aba99e32db0622c21c5d5ce5c6ceca8bae8784ca5b165d0"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "target",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "limit_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 1,
+          "sourceMoveType": 1,
+          "note": "Drafted from motion 1 / move 1: dash with limit_atk body (LB rows carry no motionType; reviewed adaptation)."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 106,
+          "weight": 0.1
+        },
+        {
+          "frame": 120,
+          "weight": 0.1
+        },
+        {
+          "frame": 134,
+          "weight": 0.1
+        },
+        {
+          "frame": 142,
+          "weight": 0.1
+        },
+        {
+          "frame": 158,
+          "weight": 0.1
+        },
+        {
+          "frame": 182,
+          "weight": 0.1
+        },
+        {
+          "frame": 200,
+          "weight": 0.1
+        },
+        {
+          "frame": 240,
+          "weight": 0.1
+        },
+        {
+          "frame": 390,
+          "weight": 0.2
+        }
+      ]
     }
   ],
   "portraitSource": "unit_icons/unit_icon_210000105.png"

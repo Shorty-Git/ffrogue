@@ -18,7 +18,7 @@ test('published choreography and combat states are admitted for every unit and b
    assert.ok(a.every(a=>a.texture.startsWith(f.key+'_')&&fs.existsSync('public/'+a.url)));
   }
  }
- assert.equal(skills,142);assert.equal(limits,16);
+ assert.equal(skills,161);assert.equal(limits,26);
 });
 test('reviewed CGG passes retain the published strip geometry',()=>{
  const run=read('public/assets/run-content.json');
@@ -51,4 +51,14 @@ test('requests deduplicate, preserve exact metadata and fail closed on unavailab
  assert.throws(()=>bodyAssets({},[{key:'missing',clips:['idle']}]));assert.throws(()=>bodyAssets({ochu:m},[{key:'ochu',clips:['unknown']}]));
  assert.throws(()=>heroBodyClips({animations:{}},[]));
  const hero=read('public/assets/units/cloud/manifest.json');assert.throws(()=>heroBodyClips(hero,[{id:'unreviewed',importStatus:'imported'}]));
+});
+test('every roster unit keeps a reviewed canonical identity and variant label',()=>{
+ const run=read('public/assets/run-content.json');
+ for(const [key,unit] of Object.entries(run.units)){
+  // 'ff:<key>' is the importer's placeholder for a missing --canonical; it must never be published.
+  assert.match(unit.canonicalIdentity,/^(ff\d+|fft|type0|ffbe|ffcc|kh|dffoo|ff\w+):[a-z0-9-]+$/,key);
+  assert.ok(!/^ff:/.test(unit.canonicalIdentity),key);
+  assert.ok(run.canonicalCharacters[unit.canonicalIdentity]?.label,key);
+  assert.ok(!unit.variantLabel||!unit.variantLabel.startsWith('FF ·'),key);
+ }
 });

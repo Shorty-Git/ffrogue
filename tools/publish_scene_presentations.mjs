@@ -6,7 +6,7 @@ import {spawnSync} from 'node:child_process';
 import {sourceAudioPlan} from './lib/source-audio-events.mjs';
 import {admitSourceAudio} from './lib/admit-source-audio.mjs';
 import {instances, POLICIES} from './original_effect_player.mjs';
-import {SCENE_PROFILE, validateSceneManifest, validateSceneAction} from '../src/effects/sceneProfile.mjs';
+import {SCENE_PROFILE, MAX_SCENE_FRAMES, validateSceneManifest, validateSceneAction} from '../src/effects/sceneProfile.mjs';
 const hash = file => createHash('sha256').update(fs.readFileSync(file)).digest('hex');
 const read = file => JSON.parse(fs.readFileSync(file, 'utf8'));
 const write = (file, value) => { fs.mkdirSync(path.dirname(file), {recursive:true}); fs.writeFileSync(file, JSON.stringify(value, null, 2)+'\n'); };
@@ -55,8 +55,14 @@ for (const binding of recipe.bindings) {
     resources.set(destination, resource.path);
     effect.textures[name] = '/'+destination.replace(/^public\//, '');
   }
-  const durationFrames = 1+Math.ceil(Math.max(...plan.members.flatMap(member =>
+  let durationFrames = 1+Math.ceil(Math.max(...plan.members.flatMap(member =>
     instances(plan.effects[member.effect], plan.seed, plan.effectHorizon).map(instance => member.startFrame+instance.birth+instance.life))));
+  // Approximation plans: instances outliving the scene limit (e.g. Auron's Tornado, 1385 frames) end at
+  // the plan's own effect horizon; recorded with the other approximations.
+  if (durationFrames > MAX_SCENE_FRAMES && plan.approximations?.curves) {
+    plan.approximations.curves.push({treatment: 'scene-capped-at-effect-horizon', computedFrames: durationFrames, cappedFrames: Math.min(MAX_SCENE_FRAMES, plan.effectHorizon)});
+    durationFrames = Math.min(MAX_SCENE_FRAMES, plan.effectHorizon);
+  }
   // Remove preview-only scene/body resources. Source identities remain provenance, not runtime paths.
   for (const key of ['actor','rat','backgrounds','files','audioGroupsNotPlayed']) delete plan[key];
   const manifest = {schemaVersion:1, profile:SCENE_PROFILE, key:binding.key, sourceId:binding.sourceId,

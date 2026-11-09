@@ -31,7 +31,7 @@ test('reserve selection preserves the default party and rejects unregistered or 
 });
 test('new Source commands retain exact learned identities and complete source membership',()=>{
  const report=inspectCharacter(readJson('tools/characters/cloud_of_darkness.json'),{});
- assert.equal(report.publishable,true);assert.equal(report.selected.length,5);
+ assert.equal(report.publishable,true);assert.equal(report.selected.length,6);
  for(const s of report.selected)assert.deepEqual(s.issues,[]);
  for(const key of ['cod_armor_break','cod_aura_ball']){
   const m=readJson('public/assets/presentations/'+key+'/manifest.json');

@@ -625,6 +625,165 @@
           "weight": 1
         }
       ]
+    },
+    {
+      "id": "tornado",
+      "ffbeId": 210000605,
+      "name": "Tornado",
+      "rarity": 5,
+      "level": 1,
+      "type": "LIMIT",
+      "mpCost": 0,
+      "scope": "all_enemies",
+      "damageMultiplier": 3.5,
+      "hitCount": 22,
+      "attackFrames": [
+        225,
+        237,
+        249,
+        261,
+        273,
+        285,
+        297,
+        309,
+        321,
+        333,
+        345,
+        357,
+        369,
+        381,
+        393,
+        405,
+        417,
+        429,
+        441,
+        453,
+        465,
+        477
+      ],
+      "moveType": "stationary",
+      "motion": "atk",
+      "desc": "Limit Burst: Physical damage (3.5x) to all enemies",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "auron_tornado",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/auron/skills/tornado/source/skill-source.json",
+        "sha256": "80a23ebb90055b3ac9cf229466196af95101b76359a34afbf98cf96b2eae97bc"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "limit_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 1,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 1 / move 4: stationary limit_atk body (LB rows carry no motionType; reviewed adaptation)."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 225,
+          "weight": 0.02
+        },
+        {
+          "frame": 237,
+          "weight": 0.02
+        },
+        {
+          "frame": 249,
+          "weight": 0.02
+        },
+        {
+          "frame": 261,
+          "weight": 0.02
+        },
+        {
+          "frame": 273,
+          "weight": 0.02
+        },
+        {
+          "frame": 285,
+          "weight": 0.02
+        },
+        {
+          "frame": 297,
+          "weight": 0.02
+        },
+        {
+          "frame": 309,
+          "weight": 0.05
+        },
+        {
+          "frame": 321,
+          "weight": 0.05
+        },
+        {
+          "frame": 333,
+          "weight": 0.05
+        },
+        {
+          "frame": 345,
+          "weight": 0.05
+        },
+        {
+          "frame": 357,
+          "weight": 0.06
+        },
+        {
+          "frame": 369,
+          "weight": 0.06
+        },
+        {
+          "frame": 381,
+          "weight": 0.06
+        },
+        {
+          "frame": 393,
+          "weight": 0.06
+        },
+        {
+          "frame": 405,
+          "weight": 0.06
+        },
+        {
+          "frame": 417,
+          "weight": 0.06
+        },
+        {
+          "frame": 429,
+          "weight": 0.06
+        },
+        {
+          "frame": 441,
+          "weight": 0.06
+        },
+        {
+          "frame": 453,
+          "weight": 0.06
+        },
+        {
+          "frame": 465,
+          "weight": 0.06
+        },
+        {
+          "frame": 477,
+          "weight": 0.06
+        }
+      ]
     }
   ],
   "portraitSource": "unit_icons/unit_icon_210000605.png"

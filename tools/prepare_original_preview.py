@@ -216,6 +216,12 @@ if __name__ == '__main__':
         if hashlib.sha256(raw).hexdigest() != original['sha256']:
             raise ValueError('Original hash changed')
         data = read_bmb(raw)
+        for node in data['nodes']:
+            if node.get('alphaCurve', {}).get('nonFiniteRepaired'):
+                if not a.approximate_unverified:
+                    raise ValueError('Non-finite IBMB scalar keyframe')
+                bmb_channels.APPROXIMATED_CURVES.append({'member': original['member'], 'node': node.get('index'),
+                    'treatment': 'non-finite-alpha-key-as-0', 'keys': node['alphaCurve']['nonFiniteRepaired']})
         if a.approximate_unverified:
             from bmb_prune import prune_unknown_subtrees
             prune_unknown_subtrees(raw, data, bmb_channels.APPROXIMATED_CURVES)

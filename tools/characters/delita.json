@@ -650,6 +650,70 @@
           "weight": 1
         }
       ]
+    },
+    {
+      "id": "hallowed_bolt",
+      "ffbeId": 253000205,
+      "name": "Hallowed Bolt",
+      "rarity": 5,
+      "level": 1,
+      "type": "LIMIT",
+      "mpCost": 0,
+      "scope": "all_enemies",
+      "damageMultiplier": 3.5,
+      "hitCount": 3,
+      "attackFrames": [
+        30,
+        69,
+        110
+      ],
+      "moveType": "stationary",
+      "motion": "atk",
+      "desc": "Limit Burst: Physical damage (3.5x) to all enemies",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "delita_hallowed_bolt",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/delita/skills/hallowed_bolt/source/skill-source.json",
+        "sha256": "4603ed7cc94a229aa35869591922d7e608e8701384c4ea9c41ce8b34f8482f43"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "limit_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 1,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 1 / move 4: stationary limit_atk body (LB rows carry no motionType; reviewed adaptation)."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 30,
+          "weight": 0.2
+        },
+        {
+          "frame": 69,
+          "weight": 0.2
+        },
+        {
+          "frame": 110,
+          "weight": 0.6
+        }
+      ]
     }
   ],
   "portraitSource": "unit_icons/unit_icon_253000205.png"

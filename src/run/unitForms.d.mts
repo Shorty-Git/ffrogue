@@ -5,3 +5,7 @@ export function awakeningPath(character:RunCharacter,from:RunForm):RunForm[];
 export function rankValue(form:Pick<RunForm,'rarity'|'rank'>):number;
 export function rankLabel(form:Pick<RunForm,'rarity'|'rank'>):string;
 export function nextAwakening(run:RunState,character:RunCharacter,member:RunMember):RunForm|undefined;
+export const MAX_LEVEL:number;
+export function levelOf(form:Pick<RunForm,'rarity'|'rank'>):number;
+export function levelLabel(level:number):string;
+export function formForLevel(character:RunCharacter,level:number):RunForm;

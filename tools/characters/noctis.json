@@ -177,6 +177,85 @@
           "weight": 1
         }
       ]
+    },
+    {
+      "id": "armiger",
+      "ffbeId": 215000105,
+      "name": "Armiger",
+      "rarity": 5,
+      "level": 1,
+      "type": "LIMIT",
+      "mpCost": 0,
+      "scope": "single_enemy",
+      "damageMultiplier": 6,
+      "hitCount": 6,
+      "attackFrames": [
+        121,
+        126,
+        137,
+        179,
+        229,
+        120
+      ],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Limit Burst: Physical damage (6x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "noctis_armiger",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/noctis/skills/armiger/source/skill-source.json",
+        "sha256": "f4492dd32ca4317cc154ce147d32f54c4908971ee6994f73214a7e707408289e"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "target",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "limit_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 1,
+          "sourceMoveType": 1,
+          "note": "Drafted from motion 1 / move 1: dash with limit_atk body (LB rows carry no motionType; reviewed adaptation)."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 120,
+          "weight": 0.5
+        },
+        {
+          "frame": 121,
+          "weight": 0.1
+        },
+        {
+          "frame": 126,
+          "weight": 0.1
+        },
+        {
+          "frame": 137,
+          "weight": 0.1
+        },
+        {
+          "frame": 179,
+          "weight": 0.1
+        },
+        {
+          "frame": 229,
+          "weight": 0.1
+        }
+      ]
     }
   ],
   "portraitSource": "unit_icons/unit_icon_215000105.png"

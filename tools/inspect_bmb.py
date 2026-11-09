@@ -38,18 +38,24 @@ def read_scalar_curve(data, parameters, field):
     start = parameters + relative
     if start + count * 20 > len(data):
         raise ValueError('Truncated IBMB scalar curve')
-    keys = []
+    keys, repaired = [], []
     for index in range(count):
         offset = start + index * 20
         kind, left, right, value, frame = struct.unpack_from('<I4f', data, offset)
-        if not all(math.isfinite(v) for v in [left, right, value, frame]):
+        if not math.isfinite(frame):
             raise ValueError('Non-finite IBMB scalar keyframe')
+        if not all(math.isfinite(v) for v in [left, right, value]):
+            # Authoring glitch in some originals (e.g. a NaN first alpha key before a 1 -> 0 fade).
+            # Read as 0 and flagged; previews accept it only under --approximate-unverified.
+            left, right, value = (v if math.isfinite(v) else 0.0 for v in (left, right, value))
+            repaired.append(index)
         if keys and frame < keys[-1]['frame']:
             raise ValueError('Unordered IBMB scalar keyframes')
         keys.append({'offset': offset, 'typeId': kind,
                      'type': SCALAR_KEY_TYPES.get(kind, 'Unknown'),
                      'slopeLeft': left, 'slopeRight': right, 'value': value, 'frame': frame})
-    return {'fieldOffset': field, 'dataOffset': start, 'keys': keys}
+    return {'fieldOffset': field, 'dataOffset': start, 'keys': keys,
+            **({'nonFiniteRepaired': repaired} if repaired else {})}
 
 
 def read_hierarchy(data, nodes, parameters):

@@ -359,6 +359,136 @@
         ],
         "boundary": "Original process parameters and source markers do not execute as game balance rules"
       }
+    },
+    {
+      "id": "armiger",
+      "ffbeId": 215000105,
+      "name": "Armiger",
+      "rarity": 5,
+      "level": 1,
+      "type": "LIMIT",
+      "mpCost": 0,
+      "scope": "single_enemy",
+      "damageMultiplier": 6,
+      "hitCount": 6,
+      "attackFrames": [
+        121,
+        126,
+        137,
+        179,
+        229,
+        120
+      ],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Limit Burst: Physical damage (6x) to one enemy",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "noctis_armiger",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/noctis/skills/armiger/source/skill-source.json",
+        "sha256": "f4492dd32ca4317cc154ce147d32f54c4908971ee6994f73214a7e707408289e"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "target",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "limit_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 1,
+          "sourceMoveType": 1,
+          "note": "Drafted from motion 1 / move 1: dash with limit_atk body (LB rows carry no motionType; reviewed adaptation)."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 120,
+          "weight": 0.5
+        },
+        {
+          "frame": 121,
+          "weight": 0.1
+        },
+        {
+          "frame": 126,
+          "weight": 0.1
+        },
+        {
+          "frame": 137,
+          "weight": 0.1
+        },
+        {
+          "frame": 179,
+          "weight": 0.1
+        },
+        {
+          "frame": 229,
+          "weight": 0.1
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "LIMIT",
+        "id": 215000105,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "limitBurstId": 215000105,
+          "name": "Armiger",
+          "limitBurstType": 1,
+          "target": "1@2@3@3",
+          "targetRange": "1@2@1@1",
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 1,
+          "J35nicFV": 0,
+          "skillType": 1,
+          "aR5i4ewA": 0,
+          "KosY4a18": 2,
+          "Af2Pc0Jz": 1,
+          "processId": "1@3@101@100",
+          "PI18xnkD": "0@0@0@0",
+          "processParam": "0,0,0,0,0,0,900,0@80,80,80,80,2,0@20,2,1@2,501620,99999,2,0,1",
+          "H4zD2IQ5": 0,
+          "fileInfo": null,
+          "effectFrame": "0:8002690:2:4:0&0:8002691:1:3:0@260:3000580:1:1:0&260:3000581:2:1:0",
+          "attackFrames": "121:20:3:2-126:20:3:2-137:20:3:2-179:20:3:2-229:20:3:2@120:100:2:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000000,
+          "description": "Damage one enemy, reduce damage taken for self for two turns, boost ATK, DEF, MAG, and SPR for all allies, and enable point-blank warp-strike for one turn",
+          "58bfqWsR": 1,
+          "6ZEyK95f": null,
+          "effectFrames": "0:8002690:2:4:0&0:8002691:1:3:0@260:3000580:1:1:0&260:3000581:2:1:0"
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
     }
   ]
 }

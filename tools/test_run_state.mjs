@@ -55,7 +55,7 @@ test('full skill slots require an explicit replacement and preserve immutable so
 });
 test('boss evolution retains identity and skills; fixed party survives all configurable encounters',()=>{
  let r=confirmParty(withCloud());const keys=r.party.map(m=>m.key);r=chooseReward(completeBattle(r,catalog,snapshot(r),true),0,catalog);r=completeBattle(r,catalog,snapshot(r),true);
- const ix=r.offers.findIndex(o=>o.type==='evolve');assert.ok(ix>=0);const old=r.party.find(m=>m.key==='cloud'),skills=structuredClone(old.skills);r=chooseReward(r,ix,catalog);
+ assert.ok(r.offers.some(o=>o.type==='evolve'));const old=r.party.find(m=>m.key==='cloud'),skills=structuredClone(old.skills);let ix=r.offers.findIndex(o=>o.type==='evolve'&&o.member==='cloud');if(ix<0){r.offers[0]={type:'evolve',member:'cloud',level:old.level+1};ix=0;}r=chooseReward(r,ix,catalog);
  const evolved=r.party.find(m=>m.key==='cloud');assert.equal(evolved.unitId,'207000106');assert.equal(evolved.identity,'207000105');assert.deepEqual(evolved.skills,skills);assert.deepEqual(r.party.map(m=>m.key),keys);validateRun(r,catalog);
  r=acknowledgeAwakening(r,r.pendingAwakening.id);
  while(r.phase==='battle'){const p=completeBattle(r,catalog,snapshot(r),true);let at=p.offers.findIndex(o=>o.type!=='learn');r=chooseReward(p,at,catalog);}
@@ -69,7 +69,8 @@ test('loss ends progress and encounter difficulty depends on stage rather than r
 
 test('awakening commits once before presentation; reload acknowledgement preserves upgrades/RNG and rejects forged notices',()=>{
  let r=confirmParty(withCloud());r.encounter=1;r=completeBattle(r,catalog,snapshot(r),true);
- const before=JSON.stringify(r),ix=r.offers.findIndex(o=>o.type==='evolve');const next=chooseReward(r,ix,catalog),notice=next.pendingAwakening;
+ let ix=r.offers.findIndex(o=>o.type==='evolve'&&o.member==='cloud');if(ix<0){r.offers[0]={type:'evolve',member:'cloud',level:r.party.find(m=>m.key==='cloud').level+1};ix=0;}
+ const before=JSON.stringify(r);const next=chooseReward(r,ix,catalog),notice=next.pendingAwakening;
  assert.equal(JSON.stringify(r),before);assert.equal(next.party.find(m=>m.key==='cloud').form,'cloud_form6');assert.equal(next.party.find(m=>m.key==='cloud').stats.hp,1.15);
  assert.throws(()=>chooseReward(next,ix,catalog));assert.throws(()=>completeBattle(next,catalog,snapshot(next),true));
  const storage=memory(),store=new RunStore(storage,catalog);store.save(next);const restored=new RunStore(storage,catalog).load();assert.deepEqual(restored,next);

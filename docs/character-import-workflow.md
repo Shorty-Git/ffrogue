@@ -64,6 +64,17 @@ existing skills are skipped. These generic rules replaced single-skill blockers 
 - Converted-file coverage is no longer a selection gate. The authoring-free path stages the original
   BMBs, and a missing file fails visibly in the receipt.
 - `import_skill_batch.sh` keeps compose/stage errors in `<skill>/compose.log`.
+- Re-runs over the full roster are safe (2026-11-09):
+  - existing skills, published form bodies, canonical identities and variant labels are kept;
+  - only skills imported in this run are dropped when the re-inspection blocks them;
+  - drafted entries without a published scene (interrupted runs) are removed and retried.
+- Non-finite alpha key values (NaN in some originals, e.g. Blitz Ace) read as 0 and are flagged
+  (`non-finite-alpha-key-as-0`).
+- Scenes whose instances outlive 900 frames are capped at the plan's effect horizon
+  (`scene-capped-at-effect-horizon`, Auron's Tornado).
+- Still open (single skills): research instance limit and unknown generation delay profile. Both sit
+  in the frozen player, so changing them would republish every scene.
+- Windows: an open file lock (`errno -4094`, `EBUSY`) fails one character. Rerun it with `--only <key>`.
 
 ## Original class-up admission
 

@@ -11,7 +11,7 @@ import {bindSlotLever} from './SlotLever';
 import {fateTier,fateTimeline,fateVerdict,tierRank,isShowTier,FATE_SOUND,type FateTier,type FateSound} from './fateEngine';
 import {startCrystalSparks} from './CrystalSparks';
 import {startTitleCrystal,titleCrystalMarkup} from './TitleCrystal';
-import {formAt,rankLabel} from '../run/unitForms.mjs';
+import {formAt,formForLevel,rankLabel,levelLabel,MAX_LEVEL} from '../run/unitForms.mjs';
 const esc=(s:unknown)=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
 
 function bodyPreview(root:string,clip:AnimationMeta,classes:string,style:string){
@@ -113,7 +113,7 @@ export class RunUI{
   const scale=Math.min(1.4,145/a.frameWidth,150/a.frameHeight);
   const preview=bodyPreview('/assets/'+path,a,'pixel-sprite',`width:${a.frameWidth*scale}px;height:${a.frameHeight*scale}px;background-size:${a.frameWidth*a.frameCount*scale}px ${a.frameHeight*scale}px;background-position:${-a.frames[0].index*a.frameWidth*scale}px 0`);
   return `<div class="pixel-stage">${preview.html}</div>`;}
- member(m:RunMember){const c=this.catalog[m.key];return `<article class="rpg-panel member-card"><header class="member-head"><span class="portrait-frame"><img class="portrait" src="${esc(c.portrait)}" alt="${esc(c.name)}"></span><span class="member-title"><strong>${esc(c.name)}</strong><span class="stars">${rankLabel(m)}</span></span></header>${this.sprite(m)}<div class="member-gauges">${gaugeRow('hp',m.hp,Math.round(c.maxHp*m.stats.hp))}${gaugeRow('mp',m.mp,memberMaxMp(c,m))}</div>${m.skills.map(a=>{const s=skillForRun(c.skills.find(s=>s.id===a.id)!,m);return `<div class="skill-copy"><b>${skillIcon(s)}${esc(s.name)}${a.level>1?' +'+(a.level-1):''}</b><p>${esc(skillDescription(s))}</p></div>`;}).join('')}</article>`;}
+ member(m:RunMember){const c=this.catalog[m.key];return `<article class="rpg-panel member-card"><header class="member-head"><span class="portrait-frame"><img class="portrait" src="${esc(c.portrait)}" alt="${esc(c.name)}"></span><span class="member-title"><strong>${esc(c.name)}</strong><span class="stars">${levelLabel(m.level)}</span></span></header>${this.sprite(m)}<div class="member-gauges">${gaugeRow('hp',m.hp,Math.round(c.maxHp*m.stats.hp))}${gaugeRow('mp',m.mp,memberMaxMp(c,m))}</div>${m.skills.map(a=>{const s=skillForRun(c.skills.find(s=>s.id===a.id)!,m);return `<div class="skill-copy"><b>${skillIcon(s)}${esc(s.name)}${a.level>1?' +'+(a.level-1):''}</b><p>${esc(skillDescription(s))}</p></div>`;}).join('')}</article>`;}
  title(kicker:string,title:string,subtitle:string){return `<div class="eyebrow">${esc(kicker)}</div><h1>${title}</h1><p class="lead">${esc(subtitle)}</p>`;}
  menu(hasSave:boolean,error:string|null,meta?:{crystals:number;unlocked:number;total:number;cost:number;canSummon:boolean}){const canStart=new Set(Object.values(this.catalog).map(c=>c.canonicalIdentity).filter(Boolean)).size>=3;this.show(`${this.title('A CRYSTAL-BOUND ROGUELIKE','FINAL FANTASY<br><em>ROGUE</em>','Three heroes from across the worlds. One expedition. A new fate every run.')}<div class="crystal-stage" aria-hidden="true">${titleCrystalMarkup()}<span class="crystal-sparks"></span></div><div class="rpg-panel menu-panel"><label class="seed-label">FATE SEED <input id="run-seed" maxlength="64" placeholder="Leave empty for a random fate" autocomplete="off"></label>${hasSave?this.button('continue','Continue the journey'):''}${this.button('play',hasSave?'Begin a new journey':'Begin the journey',false,!canStart)}${this.button('training','Training grounds',true,!canStart)}${!canStart?'<p class="muted">Three reviewed, distinct characters are required to begin.</p>':''}${meta?`<div class="profile-line"><span>◆ ${meta.crystals} crystals</span><span>Heroes ${meta.unlocked}/${meta.total}</span></div>${meta.unlocked<meta.total?this.button('summon',`Summon a hero · ${meta.cost} ◆`,true,!meta.canSummon):''}`:''}${error?`<p role="alert" class="error">${esc(error)}</p>`:''}<p class="muted">Short expedition · 2 areas · 4 battles<br>One free draw from the Fate Engine, then three rerolls</p></div><footer>Your journey is saved on this device</footer>`,'menu');{const stopSparks=startCrystalSparks(this.root.querySelector<HTMLElement>('.crystal-sparks')!),stopCrystal=startTitleCrystal(this.root.querySelector<HTMLElement>('.crystal-stage')!);this.crystalCleanup=()=>{stopSparks();stopCrystal();};}}
  slots(run:RunState,busy:boolean){
@@ -124,9 +124,10 @@ export class RunUI{
   const tape=busy?`<div class="reel-tape" aria-hidden="true">${Array.from({length:18},(_,i)=>`<div class="tape-symbol"><img src="${esc(roster[i%roster.length].portrait)}" alt=""></div>`).join('')}</div>`:'';
   const tiers=run.party.map(member=>fateTier(member));
   const timeline=fateTimeline(tiers);
-  const verdict=hasTeam?fateVerdict(tiers,run.party.reduce((sum,member)=>sum+member.rarity,0)):undefined;
-  const stars=(member:RunMember)=>member.rank==='NV'?'<i class="nv-mark">NV</i>'
-   :Array.from({length:member.rarity},(_,i)=>`<i style="--star:${i}">★</i>`).join('');
+  const verdict=hasTeam?fateVerdict(tiers,run.party.reduce((sum,member)=>sum+member.level,0)):undefined;
+  // One scale on screen: a star per level, NV at the top level (src/run/unitForms.mjs MAX_LEVEL).
+  const stars=(member:RunMember)=>member.level>=MAX_LEVEL?'<i class="nv-mark">NV</i>'
+   :Array.from({length:member.level},(_,i)=>`<i style="--star:${i}">★</i>`).join('');
   const reels=[0,1,2].map(i=>{
    const member=run.party[i];
    const character=member&&this.catalog[member.key];
@@ -136,9 +137,9 @@ export class RunUI{
     <span class="slot-number">${String(i+1).padStart(2,'0')}</span>
     <div class="reel-window">${tape}<span class="fate-burst" aria-hidden="true"></span><div class="final-symbol">${member?this.sprite(member,true):'<span class="unknown-crystal">◆</span>'}</div></div>
     <div class="reel-result">
-     ${member?`<span class="fate-stars" aria-label="${member.rank==='NV'?'NV':member.rarity+' stars'}">${stars(member)}</span>`:'<span class="fate-stars" aria-hidden="true">&nbsp;</span>'}
+     ${member?`<span class="fate-stars" aria-label="${levelLabel(member.level)}">${stars(member)}</span>`:'<span class="fate-stars" aria-hidden="true">&nbsp;</span>'}
      <b>${character?esc(character.name):'???'}</b>
-     ${character?`<span class="reel-form">${rankLabel(member)}</span><span class="reel-variant" title="Original Unit ${esc(member.unitId)}">${esc(character.variantLabel??character.name)}</span>`:''}
+     ${character?`<span class="reel-form">${levelLabel(member.level)}</span><span class="reel-variant" title="Original Unit ${esc(member.unitId)}">${esc(character.variantLabel??character.name)}</span>`:''}
      <span class="reel-detail">${skill?skillIcon(skill)+esc(skill.name):'Awaiting a hero'}</span>
     </div>
    </div>`;
@@ -163,7 +164,8 @@ export class RunUI{
  rewardText(r:Reward,run:RunState){const m=run.party.find(m=>m.key===r.member),c=m?this.catalog[m.key]:null;
   if(r.type==='revive')return {title:'Phoenix Down',detail:`Revive ${c!.name} from K.O. with ${Math.round(REVIVE_HP_SHARE*100)}% base HP.`,tag:'REVIVAL'};
   if(r.type==='rest')return {title:'Field Rest',detail:'Restore 40% base HP and 40% maximum MP to living allies. Does not revive.',tag:'PARTY RECOVERY'};
-  if(r.type==='evolve')return {title:'Awakening',detail:`Evolve ${c!.name} to the original ${rankLabel(formAt(c!,r.form!)!)} form within the same unit. ${run.rules?.originalForms?'Improves HP, MP, power and defense.':'+15% base HP.'}`,tag:'BOSS RELIC'};
+  if(r.type==='evolve'){const m=run.party.find(p=>p.key===r.member)!,body=formForLevel(c!,r.level!);
+   return {title:'Awakening',detail:`Raise ${c!.name} to ${levelLabel(r.level!)}${body.form!==m.form?` and awaken the original ${rankLabel(body)} form`:''}. ${run.rules?.originalForms?'Improves HP, MP, power and defense.':'+15% base HP.'}`,tag:'BOSS RELIC'};}
   if(r.type==='stat')return {title:{attack:'Warrior’s Resolve',magic:'Arcane Focus',defense:'Iron Will',hp:'Life Crystal'}[r.stat!],detail:`${c!.name}: +20% base ${r.stat==='hp'?'maximum HP':r.stat==='defense'?'damage resistance rating':r.stat+' power'} for this run.`,tag:'PERMANENT RUN BONUS'};
   const s=c!.skills.find(s=>s.id===r.skill)!;return {title:r.type==='learn'?`Learn ${s.name}`:`Enhance ${s.name}`,detail:skillDescription(skillForRun(s,m!))+(r.type==='skill'?' • Next rank: +20% base damage/healing power or longer status duration.':m!.skills.length===3?' • Choose a skill to replace.':''),tag:r.type==='learn'?'NEW ORIGINAL SKILL':'SKILL MASTERY'};
  }

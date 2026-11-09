@@ -62,6 +62,19 @@ if (!planOnly && !fs.existsSync(`public/assets/units/${key}/manifest.json`)) {
   run('wrap wide sheets', python, ['tools/wrap_wide_sheets.py']);
 }
 
+// An interrupted earlier run can leave a drafted entry without its published scene; such entries are
+// removed here so this run selects and imports them again instead of skipping them as existing.
+{
+  const current = readJson(recipeFile);
+  const stale = current.skills.filter(s => s.importStatus === 'imported' && s.scenePresentation
+    && !fs.existsSync(`public/assets/presentations/${s.scenePresentation}/manifest.json`));
+  if (stale.length) {
+    current.skills = current.skills.filter(s => !stale.includes(s));
+    writeJson(recipeFile, current);
+    receipt.removedStale = stale.map(s => s.id);
+    console.log(`Removed ${stale.length} unpublished recipe entr${stale.length === 1 ? 'y' : 'ies'}: ${stale.map(s => s.id).join(', ')}`);
+  }
+}
 // 4. Skill selection: active, damaging, with resolvable source effects; plus the Limit Burst.
 const recipe = readJson(recipeFile);
 const members = skill => (skill.effects ?? []).flatMap(branch => branch.groups.flatMap(group => group.members));
@@ -137,8 +150,10 @@ for (const s of receipt.skills.filter(s => s.status === 'failed')) dropSkill(s.i
 run('re-inspect', 'node', ['tools/import_character.mjs', '--recipe', recipeFile]);
 for (const selected of readJson(`tools/data/characters/${key}/report.json`).selected.filter(s => s.issues.length)) {
   const entry = receipt.skills.find(s => s.id === selected.id);
-  if (entry) Object.assign(entry, {status: 'failed', reason: selected.issues[0]});
-  dropSkill(selected.id, entry?.presentation ?? `${key}_${selected.id}`);
+  // Only skills imported by this run are dropped; earlier (reviewed) skills stay and keep their report issue.
+  if (!entry) { receipt.keptWithIssues = [...(receipt.keptWithIssues ?? []), {id: selected.id, issues: selected.issues}]; continue; }
+  Object.assign(entry, {status: 'failed', reason: selected.issues[0]});
+  dropSkill(selected.id, entry.presentation ?? `${key}_${selected.id}`);
 }
 const finalRecipe = readJson(recipeFile);
 run('publish skill metadata', 'node', ['tools/import_character.mjs', '--recipe', recipeFile, '--publish-skills-only', '--python', python]);
@@ -150,6 +165,10 @@ const runContent = readJson('public/assets/run-content.json');
 let previous = key;
 for (const row of db.prepare('select unitId,rare from unit where unitSeries=? and isNv=0 and rare>? order by rare').all(unitRow.unitSeries, unitRow.rare)) {
   const formKey = `${key}_form${row.rare}`, formRecipe = `tools/characters/${formKey}.json`;
+  // Re-runs keep published (possibly reviewed) form bodies; delete the folder to re-prepare one.
+  if (fs.existsSync(`public/assets/forms/${formKey}/manifest.json`) && runContent.forms.some(f => f.key === formKey)) {
+    previous = formKey; continue;
+  }
   if (!fs.existsSync(formRecipe)) writeJson(formRecipe, {...template(row.unitId, formKey, 'Same-series original class-up body preparation.'), battle: finalRecipe.battle, scale: finalRecipe.scale});
   run(`prepare ${formKey} body`, 'node', ['tools/import_character.mjs', '--recipe', formRecipe, '--prepare-body-only', '--python', python]);
   const prepared = readJson(`tools/data/characters/${formKey}/body-preparation.json`).directory;
@@ -167,10 +186,13 @@ for (const row of db.prepare('select unitId,rare from unit where unitSeries=? an
 }
 
 // 8. Roster: run identity, canonical character, published registry.
-runContent.units[key] = {variantLabel: `${arg('--game', 'FF')} · Base Unit`, identity: unit, unitId: unit, rarity: unitRow.rare,
+// Existing reviewed entries keep their label and canonical identity unless the arguments name new ones.
+const existingUnit = runContent.units[key], canonical = arg('--canonical', existingUnit?.canonicalIdentity ?? `ff:${key}`);
+runContent.units[key] = {variantLabel: existingUnit?.variantLabel ?? `${arg('--game', 'FF')} · Base Unit`,
+  identity: unit, unitId: unit, rarity: unitRow.rare,
   // NV-only units (late FFBE, e.g. FFXVI) start at their NV base; the Fate Engine shows them as NV.
-  ...(unitRow.isNv ? {rank: 'NV'} : {}), canonicalIdentity: arg('--canonical', `ff:${key}`)};
-runContent.canonicalCharacters[arg('--canonical', `ff:${key}`)] = {label: arg('--label', unitRow.unitName)};
+  ...(unitRow.isNv ? {rank: 'NV'} : {}), canonicalIdentity: canonical};
+runContent.canonicalCharacters[canonical] = {label: arg('--label', runContent.canonicalCharacters[canonical]?.label ?? unitRow.unitName)};
 writeJson('public/assets/run-content.json', runContent);
 
 // 9. Shared post-processing passes (each is idempotent for already published content).

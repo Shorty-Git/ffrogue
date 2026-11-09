@@ -712,6 +712,204 @@
           "weight": 0.58
         }
       ]
+    },
+    {
+      "id": "gaia_break",
+      "ffbeId": 233932,
+      "name": "Gaia Break",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 42,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 10,
+      "attackFrames": [
+        110,
+        120,
+        130,
+        140,
+        150,
+        160,
+        170,
+        180,
+        190,
+        200
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "cloud_ac_gaia_break",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/cloud_ac/skills/gaia_break/source/skill-source.json",
+        "sha256": "8c8f342b98c2a66c7be0e21753df3468eeef7529babc9d60772e0eabd349ee62"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 110,
+          "weight": 0.03
+        },
+        {
+          "frame": 120,
+          "weight": 0.03
+        },
+        {
+          "frame": 130,
+          "weight": 0.03
+        },
+        {
+          "frame": 140,
+          "weight": 0.03
+        },
+        {
+          "frame": 150,
+          "weight": 0.03
+        },
+        {
+          "frame": 160,
+          "weight": 0.03
+        },
+        {
+          "frame": 170,
+          "weight": 0.03
+        },
+        {
+          "frame": 180,
+          "weight": 0.03
+        },
+        {
+          "frame": 190,
+          "weight": 0.03
+        },
+        {
+          "frame": 200,
+          "weight": 0.73
+        }
+      ]
+    },
+    {
+      "id": "helios_break",
+      "ffbeId": 233933,
+      "name": "Helios Break",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 42,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 10,
+      "attackFrames": [
+        110,
+        120,
+        130,
+        140,
+        150,
+        160,
+        170,
+        180,
+        190,
+        200
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "cloud_ac_helios_break",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/cloud_ac/skills/helios_break/source/skill-source.json",
+        "sha256": "e6ba57e9b246840018e0d9f4d14a3b98c40cac5d1eb101d70b8cc77e271448ac"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 110,
+          "weight": 0.03
+        },
+        {
+          "frame": 120,
+          "weight": 0.03
+        },
+        {
+          "frame": 130,
+          "weight": 0.03
+        },
+        {
+          "frame": 140,
+          "weight": 0.03
+        },
+        {
+          "frame": 150,
+          "weight": 0.03
+        },
+        {
+          "frame": 160,
+          "weight": 0.03
+        },
+        {
+          "frame": 170,
+          "weight": 0.03
+        },
+        {
+          "frame": 180,
+          "weight": 0.03
+        },
+        {
+          "frame": 190,
+          "weight": 0.03
+        },
+        {
+          "frame": 200,
+          "weight": 0.73
+        }
+      ]
     }
   ],
   "portraitSource": "unit_icons/unit_icon_207001605.png"

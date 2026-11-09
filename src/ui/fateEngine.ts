@@ -10,7 +10,9 @@
 export type FateTier = 'bronze' | 'silver' | 'gold' | 'rainbow' | 'prism' | 'nv';
 const ORDER: readonly FateTier[] = ['bronze', 'silver', 'gold', 'rainbow', 'prism', 'nv'];
 
-export function fateTier(member: {rarity: number; rank?: string}): FateTier {
+/** Lv 1..6 (src/run/unitForms.mjs) map onto the six tiers; members without a level use their rarity. */
+export function fateTier(member: {rarity: number; rank?: string; level?: number}): FateTier {
+  if (member.level !== undefined) return ORDER[Math.max(0, Math.min(ORDER.length - 1, member.level - 1))];
   if (member.rank === 'NV') return 'nv';
   if (member.rarity >= 7) return 'prism';
   if (member.rarity === 6) return 'rainbow';
@@ -65,5 +67,5 @@ export function fateVerdict(tiers: FateTier[], stars: number): {tier: FateTier; 
     : tiers.includes('rainbow') && score >= 7 ? 'rainbow' : score >= 6 ? 'gold' : score >= 4 ? 'silver' : 'bronze';
   const title = {bronze: 'Humble Fate', silver: 'Bright Fate', gold: 'Golden Fate', rainbow: 'Rainbow Fate',
     prism: 'Prismatic Fate!', nv: 'Fate Unbound!'}[tier];
-  return {tier, title, detail: `Team ${stars}★`};
+  return {tier, title, detail: `Team Lv ${stars}`};
 }

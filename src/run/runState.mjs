@@ -1,8 +1,8 @@
 // Serializable roguelike rules. Visual animations never consume these streams.
 import {STAGE_CONTENT,stageForArea} from './stageContent.mjs';
-import {awakeningPath,formAt,nextAwakening,rankValue,reviewedForms} from './unitForms.mjs';
+import {awakeningPath,formAt,formForLevel,levelOf,MAX_LEVEL} from './unitForms.mjs';
 import {carriedLimit,LB_MAX} from './limitGauge.mjs';
-export const RUN_VERSION=2;
+export const RUN_VERSION=3;
 export const SAVE_KEY='ffrogue.run.v1';
 /** Share of base max HP a 'revive' reward restores. */
 export const REVIVE_HP_SHARE=.5;
@@ -44,33 +44,29 @@ export function createRun(seed,catalog,areas=courseAreas(seed),rules){
  for(const s of ['roster','skills','rewards','combat'])run.rng[s]=seedHash(seed+':'+s);
  return run;
 }
-function drawStartForm(run,character){
+/** Start levels share one table for every hero (run-rules weights by original rank: 3★..NV = Lv 1..6),
+ * so a variant's original rarity never decides its power. Without a policy a hero starts at its base level. */
+const LEVEL_KEYS=['3','4','5','6','7','NV'];
+function drawStartLevel(run,character){
  const policy=run.rules?.originalForms;
- if(!policy)return character;
- const rank=form=>form.rank??form.rarity;
- const forms=reviewedForms(character).filter(form=>form.identity===character.identity&&policy.weights[rank(form)]>0);
- if(!forms.length)return character;
- if(forms.length===1)return character;
- const weights=policy.pathWeights?.[forms.map(rank).join('/')]??forms.map(form=>policy.weights[rank(form)]);
- const total=weights.reduce((sum,weight)=>sum+weight,0);
+ if(!policy)return levelOf(character);
+ const weights=LEVEL_KEYS.map(key=>policy.weights[key]),total=weights.reduce((sum,w)=>sum+w,0);
  run.rng.forms??=seedHash(run.seed+':forms');
  let roll=nextRandom(run,'forms')*total;
- for(const [index,form] of forms.entries()){
-  roll-=weights[index];
-  if(roll<0)return form;
- }
- return character;
+ for(const [index,weight] of weights.entries()){roll-=weight;if(roll<0)return index+1;}
+ return 1;
 }
 export const memberMaxMp=(character,member)=>Math.round(character.maxMp*(member.stats.mp??1));
+/** Stat multipliers for level steps; Lv 1 is 1.0, every level adds the per-rank growth. */
 function formStats(policy,steps){
  return {hp:1+steps*policy.hpPerRank,mp:1+steps*policy.mpPerRank,
   attack:1+steps*policy.powerPerRank,magic:1+steps*policy.powerPerRank,defense:1+steps*policy.defensePerRank};
 }
 function newMember(run,key,catalog){
- const character=catalog[key],form=drawStartForm(run,character);
+ const character=catalog[key],level=drawStartLevel(run,character),form=formForLevel(character,level);
  const policy=run.rules?.originalForms;
- const stats=policy?formStats(policy,rankValue(form)-rankValue(character)):{attack:1,magic:1,defense:1,hp:1};
- return {key,identity:character.identity,canonicalIdentity:character.canonicalIdentity,
+ const stats=policy?formStats(policy,level-1):{attack:1,magic:1,defense:1,hp:1};
+ return {key,identity:character.identity,canonicalIdentity:character.canonicalIdentity,level,
   form:form.form,unitId:form.unitId,rarity:form.rarity,...(form.rank?{rank:form.rank}:{}),
   skills:[{id:pick(run,'skills',character.skills).id,level:1}],
   stats,hp:Math.round(character.maxHp*stats.hp),mp:Math.round(character.maxMp*(stats.mp??1))};
@@ -120,7 +116,8 @@ export function rewardPool(run,catalog){
   for(const s of c.skills)if(!m.skills.some(a=>a.id===s.id))pool.push({type:'learn',member:m.key,skill:s.id});
   for(const s of m.skills)if(s.level<3)pool.push({type:'skill',member:m.key,skill:s.id});
   for(const stat of ['attack','magic','defense','hp'])if(m.stats[stat]<3&&(stat!=='magic'||c.magicAvailable||c.skills.some(s=>s.damageType==='holy'||s.allyEvents?.some(e=>e.effects.some(f=>f.kind==='heal')))))pool.push({type:'stat',member:m.key,stat});
-  const awakening=nextAwakening(run,c,m);if(e.boss&&awakening)pool.push({type:'evolve',member:m.key,form:awakening.form});
+  // Boss relic: one level up to MAX_LEVEL for every hero; the body changes where an original form exists.
+  if(e.boss&&m.level<MAX_LEVEL)pool.push({type:'evolve',member:m.key,level:m.level+1});
   // K.O. persists between battles; only an explicit revival reward brings a member back.
   if(m.hp<=0)pool.push({type:'revive',member:m.key});
  }
@@ -150,17 +147,21 @@ export function chooseReward(input,index,catalog,replace){
   m.skills.push({id:r.skill,level:1});
  }else if(r.type==='skill'){const s=m.skills.find(s=>s.id===r.skill);if(!s||s.level>=3)throw Error('Invalid skill upgrade');s.level++;}
  else if(r.type==='stat'){if(!Object.hasOwn(m.stats,r.stat))throw Error('Unsupported stat');m.stats[r.stat]=Math.min(3,m.stats[r.stat]+.2);if(r.stat==='hp'&&m.hp>0)m.hp+=Math.round(catalog[m.key].maxHp*.2);}
- else if(r.type==='evolve'){const e=nextAwakening(run,catalog[m.key],m);if(!e||e.form!==r.form||e.identity!==m.identity)throw Error('Unverified evolution');
-  run.pendingAwakening={id:`${run.seed}:${run.encounter}:${m.key}:${e.form}`,member:m.key,encounter:run.encounter,
-   from:{form:m.form,unitId:m.unitId,rarity:m.rarity},to:{form:e.form,unitId:e.unitId,rarity:e.rarity}};
-  const character=catalog[m.key],oldHp=Math.round(character.maxHp*m.stats.hp),oldMp=memberMaxMp(character,m);
+ else if(r.type==='evolve'){
+  if(r.level!==m.level+1||r.level>MAX_LEVEL)throw Error('Unverified evolution');
+  const character=catalog[m.key],oldHp=Math.round(character.maxHp*m.stats.hp),oldMp=memberMaxMp(character,m),e=formForLevel(character,r.level);
   const policy=run.rules?.originalForms;
   if(policy){
-   const growth=formStats(policy,rankValue(e)-rankValue(m));
+   const growth=formStats(policy,1);
    for(const stat of Object.keys(growth))m.stats[stat]=Math.min(3.2,(m.stats[stat]??1)+growth[stat]-1);
   }else m.stats.hp=Math.min(3.2,m.stats.hp+.15);
-  m.form=e.form;m.unitId=e.unitId;m.rarity=e.rarity;
-  if(e.rank)m.rank=e.rank;
+  m.level=r.level;
+  if(e.form!==m.form){
+   run.pendingAwakening={id:`${run.seed}:${run.encounter}:${m.key}:${e.form}`,member:m.key,encounter:run.encounter,
+    from:{form:m.form,unitId:m.unitId,rarity:m.rarity},to:{form:e.form,unitId:e.unitId,rarity:e.rarity}};
+   m.form=e.form;m.unitId=e.unitId;m.rarity=e.rarity;
+   if(e.rank)m.rank=e.rank;else delete m.rank;
+  }
   if(m.hp>0){m.hp+=Math.round(character.maxHp*m.stats.hp)-oldHp;m.mp+=memberMaxMp(character,m)-oldMp;}}
  else if(r.type==='revive'){if(m.hp>0)throw Error('Revival needs a K.O. member');
   m.hp=Math.max(1,Math.round(catalog[m.key].maxHp*m.stats.hp*REVIVE_HP_SHARE));}
@@ -171,17 +172,31 @@ export function chooseReward(input,index,catalog,replace){
 }
 /** Presentation acknowledgement never reapplies a reward or consumes RNG. */
 export function acknowledgeAwakening(input,id){const run=clone(input);if(run.pendingAwakening?.id!==id)throw Error('No matching saved awakening');delete run.pendingAwakening;return run;}
+/** v2 -> v3: members gain their level from the saved form; pending boss relics name the next level. */
+function upgradeToLevels(run,catalog){
+ for(const m of run.party??[])if(m&&!Number.isInteger(m.level))m.level=levelOf(m);
+ for(const offer of run.offers??[])if(offer?.type==='evolve'&&!Number.isInteger(offer.level)){
+  const m=run.party.find(p=>p.key===offer.member);delete offer.form;offer.level=(m?.level??0)+1;
+ }
+ for(const h of run.history??[])if(h?.reward?.type==='evolve'&&!Number.isInteger(h.reward.level)){
+  const c=catalog[h.reward.member],f=c&&formAt(c,h.reward.form);if(f)h.reward.level=levelOf(f);
+ }
+ run.version=RUN_VERSION;
+ return run;
+}
 export function migrateRun(input,catalog){
  const obsolete=['stance','meleeStance','rangedStance','stanceSwitch'];
  const hasLegacy=row=>row&&typeof row==='object'&&obsolete.some(key=>Object.hasOwn(row,key));
  const legacy=hasLegacy(input)||(Array.isArray(input?.party)&&input.party.some(hasLegacy));
+ if(input?.version===2&&!legacy)return validateRun(upgradeToLevels(clone(input),catalog),catalog);
  if(input?.version!==1&&!legacy)return validateRun(input,catalog);
  const run=clone(input);
  for(const row of [run,...(Array.isArray(run.party)?run.party:[])])if(hasLegacy(row))for(const key of obsolete)delete row[key];
+ if(run.version===2)return validateRun(upgradeToLevels(run,catalog),catalog);
  if(run.version!==1)return validateRun(run,catalog);
  run.version=RUN_VERSION;
  for(const m of run.party??[]){const c=catalog[m.key];if(!c||m.identity!==c.identity||!c.canonicalIdentity)throw Error('Saved unit has no reviewed canonical identity');m.canonicalIdentity=c.canonicalIdentity;}
- return validateRun(run,catalog);
+ return validateRun(upgradeToLevels(run,catalog),catalog);
 }
 export function validateRun(run,catalog){
  if(run?.version!==RUN_VERSION||typeof run.seed!=='string'||!['setup','battle','rewards','won','lost'].includes(run.phase)
@@ -198,11 +213,12 @@ export function validateRun(run,catalog){
   if(!['battle','won'].includes(run.phase)||p.encounter!==run.encounter-1||p.id!==`${run.seed}:${p.encounter}:${p.member}:${p.to?.form}`
    ||!from||!to||!(c.forms?.some(f=>f.awakensFrom)?awakeningPath(c,from).includes(to):to.rarity>from.rarity)||m?.form!==to.form||p.from.unitId!==from.unitId||p.from.rarity!==from.rarity
    ||p.to?.form!==m.form||p.to.unitId!==m.unitId||p.to.rarity!==m.rarity||last?.kind!=='reward'||last.encounter!==p.encounter
-   ||last.reward?.type!=='evolve'||last.reward.member!==p.member||last.reward.form!==p.to.form)throw Error('Invalid saved awakening presentation');
+   ||last.reward?.type!=='evolve'||last.reward.member!==p.member||formForLevel(c,last.reward.level)?.form!==p.to.form)throw Error('Invalid saved awakening presentation');
  }
  if(new Set(run.party.map(m=>m.canonicalIdentity)).size!==run.party.length)throw Error('Saved party contains duplicate canonical characters. Start a new journey; original save is retained until discarded.');
  for(const m of run.party){const c=catalog[m.key],form=c&&formAt(c,m.form);if(!c||m.identity!==c.identity||!c.canonicalIdentity||m.canonicalIdentity!==c.canonicalIdentity||!c.skills.length||!form
    ||m.unitId!==form.unitId||m.rarity!==form.rarity||m.rank!==form.rank
+   ||!Number.isInteger(m.level)||m.level<1||m.level>MAX_LEVEL||formForLevel(c,m.level).form!==m.form
    ||!Array.isArray(m.skills)||m.skills.length<1||m.skills.length>3||new Set(m.skills.map(s=>s.id)).size!==m.skills.length
    ||m.skills.some(s=>!c.skills.some(a=>a.id===s.id)||!Number.isInteger(s.level)||s.level<1||s.level>3)
    ||['attack','magic','defense','hp'].some(k=>!Number.isFinite(m.stats?.[k])||m.stats[k]<1||m.stats[k]>3.2)
