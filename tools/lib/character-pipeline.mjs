@@ -3,7 +3,8 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { DatabaseSync } from 'node:sqlite';
 import { validateSceneAction } from '../../src/effects/sceneProfile.mjs';
-import {sourceDamageEvents} from './source-damage-events.mjs';
+import {sourceDamageEvents,ZERO_PREFIX_MOTIONS} from './source-damage-events.mjs';
+import {writeFileRetry} from './fs-retry.mjs';
 import {validateActionChoreography} from '../../src/effects/actionChoreography.mjs';
 
 export const readJson = file => JSON.parse(fs.readFileSync(file, 'utf8'));
@@ -321,7 +322,7 @@ export function inspectCharacter(recipe, { assets = 'rawdata/assets', dump = 'ra
             const frames=parseTimeline(source.raw.attackFrames,/[-&,]/).map(f=>Number(f.fields[0]));
             const events=skill.execution==='prepared-support'?skill.supportEvents:skill.allyEvents;
             // Magic rows carry no motionType and no composition: same zero-prefix cast profile as Motion 2.
-            if(skill.hitCount!==0 || skill.damageEvents || !events?.length || (source.raw.motionType??2)!==2
+            if(skill.hitCount!==0 || skill.damageEvents || !events?.length || !ZERO_PREFIX_MOTIONS.includes(source.raw.motionType??2)
               ||(composition?.skillFrameOffset??0)!==0 || events.some(e=>!frames.includes(e.frame))
               ||JSON.stringify(frames)!==JSON.stringify(skill.attackFrames))throw Error('Reviewed non-damaging source markers required');
             if(skill.execution==='prepared-self'&&(skill.scope!=='self'||source.raw.target!=='3'||source.raw.moveType!==4))

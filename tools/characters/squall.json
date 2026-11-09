@@ -762,6 +762,65 @@
           "weight": 0.73
         }
       ]
+    },
+    {
+      "id": "keen_edge",
+      "ffbeId": 911245,
+      "name": "Keen Edge",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 52,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 2,
+      "attackFrames": [
+        2,
+        12
+      ],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "squall_keen_edge",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/squall/skills/keen_edge/source/skill-source.json",
+        "sha256": "8958638f3a37ef0e71ea4975bcad4d9cf210f6cefbfb048da8d5d861483be117"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "target",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 5,
+          "sourceMoveType": 6,
+          "note": "Drafted from motion 5 / move 6: dash with atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 2,
+          "weight": 0.5
+        },
+        {
+          "frame": 12,
+          "weight": 0.5
+        }
+      ]
     }
   ],
   "portraitSource": "unit_icons/unit_icon_208000105.png"

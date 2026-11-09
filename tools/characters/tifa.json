@@ -766,6 +766,168 @@
           "weight": 0.73
         }
       ]
+    },
+    {
+      "id": "meteodrive",
+      "ffbeId": 227833,
+      "name": "Meteodrive",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 40,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 1,
+      "attackFrames": [
+        10
+      ],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "tifa_meteodrive",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/tifa/skills/meteodrive/source/skill-source.json",
+        "sha256": "042239ba39894799bed522485f30ff1b575a4e764fb7fa057b28100a33613cf5"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "target",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 5,
+          "sourceMoveType": 1,
+          "note": "Drafted from motion 5 / move 1: dash with atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 10,
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "meteor_strike",
+      "ffbeId": 227835,
+      "name": "Meteor Strike",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 54,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.6,
+      "hitCount": 1,
+      "attackFrames": [
+        82
+      ],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Physical damage (1.6x) to all enemies",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "tifa_meteor_strike",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/tifa/skills/meteor_strike/source/skill-source.json",
+        "sha256": "aa8dc7cafc42daa7da1e3e05d646537e6ca141724bd4a6c369b49124a6757ef7"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "target",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 5,
+          "sourceMoveType": 6,
+          "note": "Drafted from motion 5 / move 6: dash with atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 82,
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "somersault",
+      "ffbeId": 227831,
+      "name": "Somersault",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 30,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 1,
+      "attackFrames": [
+        10
+      ],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "tifa_somersault",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/tifa/skills/somersault/source/skill-source.json",
+        "sha256": "287ac027ea02e867e1c9c2b2de2dd76309194cd2a14fd3112f35bb687700b2e9"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "target",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 5,
+          "sourceMoveType": 1,
+          "note": "Drafted from motion 5 / move 1: dash with atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 10,
+          "weight": 1
+        }
+      ]
     }
   ],
   "portraitSource": "unit_icons/unit_icon_207000305.png"

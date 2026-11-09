@@ -61,6 +61,30 @@ existing skills are skipped. These generic rules replaced single-skill blockers 
   BMB rectangle modes 0 and 5-9 follow the same mapping.
 - Source motion 3 (plain action) and 6 (dance) play in place. Motion 5 (lunge/jump strike) dashes when
   its moveType is 1 or 6 (6 is a leap to the target).
+- Damage timing (2026-11-09): only Motion 1 adds the unit attack prefix (`composeEffectFrames`).
+  Motions 2, 3, 5, 6 and 8 share the zero-offset hit clock (`ZERO_PREFIX_MOTIONS` in
+  `tools/lib/source-damage-events.mjs`), also for non-damaging friendly markers. Before this, motions
+  3/5/6 were selected but then blocked at publish ("Matching supported source composition required").
+  Motion 5 timelines start when the dashing body arrives.
+- `@` branches pass the source-timeline check entry by entry (they used to fail "Ordinary complete
+  source effect timeline required").
+- Effect group 99999999 is skipped whether the database omits it or holds it as an empty row
+  (`unresolved-group`); the empty-row case blocked Ace, Terra NV and others with "Composed group lacks
+  resolved original members".
+- Raise (process 4, alone or first): `--raise <hpFraction>` drafts a `prepared-friendly` entry with a
+  `raise` effect. Source range 2 targets every fallen ally (`fallen-allies`), otherwise the first
+  fallen ally in party order (`fallen-ally`). The skill is unusable while nobody is K.O.
+- Shared files (skill icon index, registries) are written through `tools/lib/fs-retry.mjs`: Windows
+  sometimes rejects an open with errno -4094/EBUSY while Defender or a watcher holds the file. The wave
+  runner also preloads `tools/lib/fs-retry-preload.mjs` (NODE_OPTIONS) into every child node process.
+  Run waves with the dev server stopped.
+- Each importer step has a 15-minute timeout and reruns once after a timeout: an inspection step
+  occasionally stalled with no CPU and no child process (Cidolfus, Warrior of Light; not reproducible).
+- A drafted recipe entry is removed again when its prepare/publish fails (`undraft` in
+  `import_skill_batch.sh`); otherwise a later metadata publish shipped it without a scene.
+- Same-named source rows (two "Agile Edge" ids) are not selected when their snake-case id already
+  exists: the second one used to reuse the published skill's id, and cleaning up its failure deleted
+  the published skill's recipe entry, presentation recipe and registry entry.
 - Converted-file coverage is no longer a selection gate. The authoring-free path stages the original
   BMBs, and a missing file fails visibly in the receipt.
 - `import_skill_batch.sh` keeps compose/stage errors in `<skill>/compose.log`.

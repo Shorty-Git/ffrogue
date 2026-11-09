@@ -109,6 +109,1329 @@
           "weight": 0.2
         }
       ]
+    },
+    {
+      "id": "offensive_card",
+      "ffbeId": 234850,
+      "name": "Offensive Card",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 60,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.6,
+      "hitCount": 9,
+      "attackFrames": [
+        42,
+        48,
+        54,
+        60,
+        66,
+        72,
+        78,
+        84,
+        90
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (1.6x) to all enemies",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "ace_wild_card_offensive_card",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/ace_wild_card/skills/offensive_card/source/skill-source.json",
+        "sha256": "bbe942c0144a0122d955e4e663e61d807c7bcf6d46d9ddcbc6d7e9ad41409a1d"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.07
+        },
+        {
+          "frame": 48,
+          "weight": 0.07
+        },
+        {
+          "frame": 54,
+          "weight": 0.07
+        },
+        {
+          "frame": 60,
+          "weight": 0.07
+        },
+        {
+          "frame": 66,
+          "weight": 0.07
+        },
+        {
+          "frame": 72,
+          "weight": 0.07
+        },
+        {
+          "frame": 78,
+          "weight": 0.07
+        },
+        {
+          "frame": 84,
+          "weight": 0.07
+        },
+        {
+          "frame": 90,
+          "weight": 0.44
+        }
+      ]
+    },
+    {
+      "id": "blind_stud",
+      "ffbeId": 234851,
+      "name": "Blind Stud",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 30,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 8,
+      "attackFrames": [
+        42,
+        62,
+        82,
+        102,
+        122,
+        142,
+        162,
+        182
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "ace_wild_card_blind_stud",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/ace_wild_card/skills/blind_stud/source/skill-source.json",
+        "sha256": "ef90cfa2a739708e7f8b462c7804ac6b6c80bb39b4476b6e140dfeafb173cbf9"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.08
+        },
+        {
+          "frame": 62,
+          "weight": 0.08
+        },
+        {
+          "frame": 82,
+          "weight": 0.08
+        },
+        {
+          "frame": 102,
+          "weight": 0.08
+        },
+        {
+          "frame": 122,
+          "weight": 0.08
+        },
+        {
+          "frame": 142,
+          "weight": 0.08
+        },
+        {
+          "frame": 162,
+          "weight": 0.08
+        },
+        {
+          "frame": 182,
+          "weight": 0.44
+        }
+      ]
+    },
+    {
+      "id": "short_burst",
+      "ffbeId": 234859,
+      "name": "Short Burst+",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 28,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 8,
+      "attackFrames": [
+        42,
+        62,
+        82,
+        102,
+        122,
+        142,
+        162,
+        182
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "ace_wild_card_short_burst",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/ace_wild_card/skills/short_burst/source/skill-source.json",
+        "sha256": "cce76c02e2b99d487b174514cff1a6bdebe208152c40abe9cb5db12549ca0575"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.08
+        },
+        {
+          "frame": 62,
+          "weight": 0.08
+        },
+        {
+          "frame": 82,
+          "weight": 0.08
+        },
+        {
+          "frame": 102,
+          "weight": 0.08
+        },
+        {
+          "frame": 122,
+          "weight": 0.08
+        },
+        {
+          "frame": 142,
+          "weight": 0.08
+        },
+        {
+          "frame": 162,
+          "weight": 0.08
+        },
+        {
+          "frame": 182,
+          "weight": 0.44
+        }
+      ]
+    },
+    {
+      "id": "hp_charge",
+      "ffbeId": 234861,
+      "name": "HP Charge+",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 28,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 8,
+      "attackFrames": [
+        42,
+        62,
+        82,
+        102,
+        122,
+        142,
+        162,
+        182
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "ace_wild_card_hp_charge",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/ace_wild_card/skills/hp_charge/source/skill-source.json",
+        "sha256": "b19df17f1d2ee664e9f77c6e254758bb91e1ec2c86d50b748a7d1ddaf7888296"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.08
+        },
+        {
+          "frame": 62,
+          "weight": 0.08
+        },
+        {
+          "frame": 82,
+          "weight": 0.08
+        },
+        {
+          "frame": 102,
+          "weight": 0.08
+        },
+        {
+          "frame": 122,
+          "weight": 0.08
+        },
+        {
+          "frame": 142,
+          "weight": 0.08
+        },
+        {
+          "frame": 162,
+          "weight": 0.08
+        },
+        {
+          "frame": 182,
+          "weight": 0.44
+        }
+      ]
+    },
+    {
+      "id": "mp_charge",
+      "ffbeId": 234862,
+      "name": "MP Charge+",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 28,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 8,
+      "attackFrames": [
+        42,
+        62,
+        82,
+        102,
+        122,
+        142,
+        162,
+        182
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "ace_wild_card_mp_charge",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/ace_wild_card/skills/mp_charge/source/skill-source.json",
+        "sha256": "f6e8fe7256e38bd5ac3abba50194a08efa85546d1ffe10540db0ee7a278b9986"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.08
+        },
+        {
+          "frame": 62,
+          "weight": 0.08
+        },
+        {
+          "frame": 82,
+          "weight": 0.08
+        },
+        {
+          "frame": 102,
+          "weight": 0.08
+        },
+        {
+          "frame": 122,
+          "weight": 0.08
+        },
+        {
+          "frame": 142,
+          "weight": 0.08
+        },
+        {
+          "frame": 162,
+          "weight": 0.08
+        },
+        {
+          "frame": 182,
+          "weight": 0.44
+        }
+      ]
+    },
+    {
+      "id": "attack_hand",
+      "ffbeId": 511876,
+      "name": "Attack Hand+",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 60,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 24,
+      "attackFrames": [
+        42,
+        62,
+        82,
+        102,
+        122,
+        142,
+        162,
+        182,
+        42,
+        62,
+        82,
+        102,
+        122,
+        142,
+        162,
+        182,
+        42,
+        62,
+        82,
+        102,
+        122,
+        142,
+        162,
+        182
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "ace_wild_card_attack_hand",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/ace_wild_card/skills/attack_hand/source/skill-source.json",
+        "sha256": "7c0dfed8ac3b66ab7514b2c1e1ea10eae41d4c12d71940af2e8ee5901691785a"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.02666666666666667
+        },
+        {
+          "frame": 42,
+          "weight": 0.03333333333333333
+        },
+        {
+          "frame": 42,
+          "weight": 0.03333333333333333
+        },
+        {
+          "frame": 62,
+          "weight": 0.02666666666666667
+        },
+        {
+          "frame": 62,
+          "weight": 0.03333333333333333
+        },
+        {
+          "frame": 62,
+          "weight": 0.03333333333333333
+        },
+        {
+          "frame": 82,
+          "weight": 0.02666666666666667
+        },
+        {
+          "frame": 82,
+          "weight": 0.03333333333333333
+        },
+        {
+          "frame": 82,
+          "weight": 0.03333333333333333
+        },
+        {
+          "frame": 102,
+          "weight": 0.02666666666666667
+        },
+        {
+          "frame": 102,
+          "weight": 0.03333333333333333
+        },
+        {
+          "frame": 102,
+          "weight": 0.03333333333333333
+        },
+        {
+          "frame": 122,
+          "weight": 0.02666666666666667
+        },
+        {
+          "frame": 122,
+          "weight": 0.03333333333333333
+        },
+        {
+          "frame": 122,
+          "weight": 0.03333333333333333
+        },
+        {
+          "frame": 142,
+          "weight": 0.02666666666666667
+        },
+        {
+          "frame": 142,
+          "weight": 0.03333333333333333
+        },
+        {
+          "frame": 142,
+          "weight": 0.03333333333333333
+        },
+        {
+          "frame": 162,
+          "weight": 0.02666666666666667
+        },
+        {
+          "frame": 162,
+          "weight": 0.03333333333333333
+        },
+        {
+          "frame": 162,
+          "weight": 0.03333333333333333
+        },
+        {
+          "frame": 182,
+          "weight": 0.14666666666666667
+        },
+        {
+          "frame": 182,
+          "weight": 0.1
+        },
+        {
+          "frame": 182,
+          "weight": 0.1
+        }
+      ]
+    },
+    {
+      "id": "burst",
+      "ffbeId": 234877,
+      "name": "Burst++",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 28,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 18,
+      "attackFrames": [
+        42,
+        48,
+        54,
+        60,
+        66,
+        72,
+        78,
+        84,
+        90,
+        42,
+        48,
+        54,
+        60,
+        66,
+        72,
+        78,
+        84,
+        90
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "ace_wild_card_burst",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/ace_wild_card/skills/burst/source/skill-source.json",
+        "sha256": "1851a717d2ad68ed2d785e2d2a97d82f129f3ed47807f35a5b3b15316963b73d"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.035
+        },
+        {
+          "frame": 42,
+          "weight": 0.035
+        },
+        {
+          "frame": 48,
+          "weight": 0.035
+        },
+        {
+          "frame": 48,
+          "weight": 0.035
+        },
+        {
+          "frame": 54,
+          "weight": 0.035
+        },
+        {
+          "frame": 54,
+          "weight": 0.035
+        },
+        {
+          "frame": 60,
+          "weight": 0.035
+        },
+        {
+          "frame": 60,
+          "weight": 0.035
+        },
+        {
+          "frame": 66,
+          "weight": 0.035
+        },
+        {
+          "frame": 66,
+          "weight": 0.035
+        },
+        {
+          "frame": 72,
+          "weight": 0.035
+        },
+        {
+          "frame": 72,
+          "weight": 0.035
+        },
+        {
+          "frame": 78,
+          "weight": 0.035
+        },
+        {
+          "frame": 78,
+          "weight": 0.035
+        },
+        {
+          "frame": 84,
+          "weight": 0.035
+        },
+        {
+          "frame": 84,
+          "weight": 0.035
+        },
+        {
+          "frame": 90,
+          "weight": 0.22
+        },
+        {
+          "frame": 90,
+          "weight": 0.22
+        }
+      ]
+    },
+    {
+      "id": "support_hand",
+      "ffbeId": 234852,
+      "name": "Support Hand+",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 60,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 8,
+      "attackFrames": [
+        42,
+        62,
+        82,
+        102,
+        122,
+        142,
+        162,
+        182
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "ace_wild_card_support_hand",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/ace_wild_card/skills/support_hand/source/skill-source.json",
+        "sha256": "4b640bc4da423dff1758c8a4d462c57f44566b644fa7bdf04514ec7c21732d88"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.08
+        },
+        {
+          "frame": 62,
+          "weight": 0.08
+        },
+        {
+          "frame": 82,
+          "weight": 0.08
+        },
+        {
+          "frame": 102,
+          "weight": 0.08
+        },
+        {
+          "frame": 122,
+          "weight": 0.08
+        },
+        {
+          "frame": 142,
+          "weight": 0.08
+        },
+        {
+          "frame": 162,
+          "weight": 0.08
+        },
+        {
+          "frame": 182,
+          "weight": 0.44
+        }
+      ]
+    },
+    {
+      "id": "jackpot_triad",
+      "ffbeId": 511903,
+      "name": "Jackpot Triad",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 60,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 8,
+      "attackFrames": [
+        42,
+        62,
+        82,
+        102,
+        122,
+        142,
+        162,
+        182
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "ace_wild_card_jackpot_triad",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/ace_wild_card/skills/jackpot_triad/source/skill-source.json",
+        "sha256": "01ff43252fd72cad8be4ebd0f8f5930de70b8f11cd50edefc8f2d461d80b9c22"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.08
+        },
+        {
+          "frame": 62,
+          "weight": 0.08
+        },
+        {
+          "frame": 82,
+          "weight": 0.08
+        },
+        {
+          "frame": 102,
+          "weight": 0.08
+        },
+        {
+          "frame": 122,
+          "weight": 0.08
+        },
+        {
+          "frame": 142,
+          "weight": 0.08
+        },
+        {
+          "frame": 162,
+          "weight": 0.08
+        },
+        {
+          "frame": 182,
+          "weight": 0.44
+        }
+      ]
+    },
+    {
+      "id": "spark_card",
+      "ffbeId": 234853,
+      "name": "Spark Card",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 60,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 16,
+      "attackFrames": [
+        42,
+        62,
+        82,
+        102,
+        122,
+        142,
+        162,
+        182,
+        42,
+        62,
+        82,
+        102,
+        122,
+        142,
+        162,
+        182
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "ace_wild_card_spark_card",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/ace_wild_card/skills/spark_card/source/skill-source.json",
+        "sha256": "6ed764300022af9ea2b6a74ff4c1c0b7aa796e8e7f0011915de313db1dfd38aa"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.04
+        },
+        {
+          "frame": 42,
+          "weight": 0.05
+        },
+        {
+          "frame": 62,
+          "weight": 0.04
+        },
+        {
+          "frame": 62,
+          "weight": 0.05
+        },
+        {
+          "frame": 82,
+          "weight": 0.04
+        },
+        {
+          "frame": 82,
+          "weight": 0.05
+        },
+        {
+          "frame": 102,
+          "weight": 0.04
+        },
+        {
+          "frame": 102,
+          "weight": 0.05
+        },
+        {
+          "frame": 122,
+          "weight": 0.04
+        },
+        {
+          "frame": 122,
+          "weight": 0.05
+        },
+        {
+          "frame": 142,
+          "weight": 0.04
+        },
+        {
+          "frame": 142,
+          "weight": 0.05
+        },
+        {
+          "frame": 162,
+          "weight": 0.04
+        },
+        {
+          "frame": 162,
+          "weight": 0.05
+        },
+        {
+          "frame": 182,
+          "weight": 0.22
+        },
+        {
+          "frame": 182,
+          "weight": 0.15
+        }
+      ]
+    },
+    {
+      "id": "misdirection",
+      "ffbeId": 511953,
+      "name": "Misdirection",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 60,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 16,
+      "attackFrames": [
+        42,
+        62,
+        82,
+        102,
+        122,
+        142,
+        162,
+        182,
+        42,
+        62,
+        82,
+        102,
+        122,
+        142,
+        162,
+        182
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "ace_wild_card_misdirection",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/ace_wild_card/skills/misdirection/source/skill-source.json",
+        "sha256": "cffb30d4714c1ad10b8d989d664609b6df87c13eeb40b58b5a900bd166761a31"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.04
+        },
+        {
+          "frame": 42,
+          "weight": 0.04
+        },
+        {
+          "frame": 62,
+          "weight": 0.04
+        },
+        {
+          "frame": 62,
+          "weight": 0.04
+        },
+        {
+          "frame": 82,
+          "weight": 0.04
+        },
+        {
+          "frame": 82,
+          "weight": 0.04
+        },
+        {
+          "frame": 102,
+          "weight": 0.04
+        },
+        {
+          "frame": 102,
+          "weight": 0.04
+        },
+        {
+          "frame": 122,
+          "weight": 0.04
+        },
+        {
+          "frame": 122,
+          "weight": 0.04
+        },
+        {
+          "frame": 142,
+          "weight": 0.04
+        },
+        {
+          "frame": 142,
+          "weight": 0.04
+        },
+        {
+          "frame": 162,
+          "weight": 0.04
+        },
+        {
+          "frame": 162,
+          "weight": 0.04
+        },
+        {
+          "frame": 182,
+          "weight": 0.22
+        },
+        {
+          "frame": 182,
+          "weight": 0.22
+        }
+      ]
+    },
+    {
+      "id": "freeze_card",
+      "ffbeId": 234854,
+      "name": "Freeze Card",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 60,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 16,
+      "attackFrames": [
+        42,
+        62,
+        82,
+        102,
+        122,
+        142,
+        162,
+        182,
+        42,
+        62,
+        82,
+        102,
+        122,
+        142,
+        162,
+        182
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "ace_wild_card_freeze_card",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/ace_wild_card/skills/freeze_card/source/skill-source.json",
+        "sha256": "3862c8ebf925f8e158b177796c3fce0460726ab231aff8fe78f0f79f8f81f039"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.04
+        },
+        {
+          "frame": 42,
+          "weight": 0.05
+        },
+        {
+          "frame": 62,
+          "weight": 0.04
+        },
+        {
+          "frame": 62,
+          "weight": 0.05
+        },
+        {
+          "frame": 82,
+          "weight": 0.04
+        },
+        {
+          "frame": 82,
+          "weight": 0.05
+        },
+        {
+          "frame": 102,
+          "weight": 0.04
+        },
+        {
+          "frame": 102,
+          "weight": 0.05
+        },
+        {
+          "frame": 122,
+          "weight": 0.04
+        },
+        {
+          "frame": 122,
+          "weight": 0.05
+        },
+        {
+          "frame": 142,
+          "weight": 0.04
+        },
+        {
+          "frame": 142,
+          "weight": 0.05
+        },
+        {
+          "frame": 162,
+          "weight": 0.04
+        },
+        {
+          "frame": 162,
+          "weight": 0.05
+        },
+        {
+          "frame": 182,
+          "weight": 0.22
+        },
+        {
+          "frame": 182,
+          "weight": 0.15
+        }
+      ]
     }
   ],
   "portraitSource": "unit_icons/unit_icon_254001505.png"

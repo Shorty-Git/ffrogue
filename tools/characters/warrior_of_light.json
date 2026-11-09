@@ -328,6 +328,71 @@
           "weight": 0.6
         }
       ]
+    },
+    {
+      "id": "raise",
+      "ffbeId": 10100,
+      "name": "Raise",
+      "rarity": 5,
+      "level": 1,
+      "type": "MAGIC",
+      "mpCost": 12,
+      "scope": "party",
+      "damageMultiplier": 1,
+      "hitCount": 0,
+      "attackFrames": [
+        120
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Revive one fallen ally with 50% HP.",
+      "execution": "prepared-friendly",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "warrior_of_light_raise",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/warrior_of_light/skills/raise/source/skill-source.json",
+        "sha256": "2c54b8c007531b4d7a23bf925942537084af76c53c59783b9ed041b50adf316c"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "allyTargeting": "fallen-ally",
+      "allyEvents": [
+        {
+          "frame": 120,
+          "effects": [
+            {
+              "kind": "raise",
+              "hpFraction": 0.5
+            }
+          ]
+        }
+      ],
+      "friendlyTargetReview": {
+        "sourceTarget": "6",
+        "sourceRange": "1",
+        "note": "Original target 6 / range 1 (process 4); adapted to raise at 0.5 HP on fallen-ally."
+      }
     }
   ],
   "portraitSource": "unit_icons/unit_icon_201000104.png"

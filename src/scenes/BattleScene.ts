@@ -25,6 +25,7 @@ import {RPG,rpgHex,RPG_FONT} from '../ui/designTokens';
 import {rpgPanel} from '../ui/rpgPanel';
 import {runEncounter} from '../run/runBalance.mjs';
 import {ENEMY_CONTENT,enemyAction,type EnemyAction} from '../run/stageContent.mjs';
+import {ENEMY_SKILLS} from '../run/enemySkills.mjs';
 import {ActionBanner,type CombatActionNotice} from '../ui/ActionBanner';
 import {bodyAssets,heroBodyClips,type BodyAsset} from '../data/bodyAssets.mjs';
 import {queueBodyAssets,missingBodyAssets,setBodySampling} from './bodyLoading';
@@ -153,17 +154,24 @@ export class BattleScene extends Phaser.Scene {
       this.sourceVisualError = message;
       this.updateStatus('Skill visuals unavailable. Restart to retry. Normal attacks remain available.');
     });
-    try {
-      const prepared = (registry.scenePresentations ?? []).map(key => validateSceneManifest(this.cache.json.get(`scene_${key}_manifest`)));
-      if (prepared.length && this.game.renderer.type === Phaser.WEBGL) this.preparedScenes = createPreparedSceneBridge(this, prepared);
-      else this.sourceVisualError = 'Source skills require WebGL and published presentations';
-    } catch (error) { this.sourceVisualError = String(error); }
     this.fightNumber=this.runContext.state.encounter+1;
     this.enemyEventRandom=()=>this.randomValue();
     this.limitBursts={};this.limitCasters.clear();
     for(const m of this.runContext.state.party){const lb=this.runContext.catalog[m.key].limitBurst;if(lb)this.limitBursts[m.key]=lb;}
     for(const m of this.runContext.state.party)this.unitSkills[m.key]=this.runContext.catalog[m.key].skills
       .filter(s=>m.skills.some(a=>a.id===s.id)).map(s=>skillForRun(s,m));
+    // Only the scenes this battle can play are prepared: the party's chosen skills and Limit Bursts plus
+    // every presentation the encounter's enemies reference. Preparing the whole registry (hundreds of
+    // scenes, three target variants each) delayed late entries for minutes as the roster grew.
+    try {
+      const needed=new Set<string>();
+      for(const skill of [...Object.values(this.unitSkills).flat(),...Object.values(this.limitBursts)])if(skill.scenePresentation)needed.add(skill.scenePresentation);
+      for(const key of new Set(this.currentEncounter().enemies.map(e=>e.key)))
+        JSON.stringify([ENEMY_CONTENT[key],ENEMY_SKILLS[key]],(field,value)=>{if(field==='presentation'&&typeof value==='string')needed.add(value);return value;});
+      const prepared = (registry.scenePresentations ?? []).filter(key=>needed.has(key)).map(key => validateSceneManifest(this.cache.json.get(`scene_${key}_manifest`)));
+      if (prepared.length && this.game.renderer.type === Phaser.WEBGL) this.preparedScenes = createPreparedSceneBridge(this, prepared);
+      else if (this.game.renderer.type !== Phaser.WEBGL) this.sourceVisualError = 'Source skills require WebGL and published presentations';
+    } catch (error) { this.sourceVisualError = String(error); }
 
     // 1. Arena Background
     this.createArenaBackground(width, height);
@@ -764,6 +772,10 @@ export class BattleScene extends Phaser.Scene {
 
   private friendlySkillTargets(hero: UnitActor | undefined, skill: SkillConfig): UnitActor[] {
     if (!hero) return [];
+    if (skill.allyTargeting==='fallen-ally' || skill.allyTargeting==='fallen-allies') {
+      const fallen=this.turnOrder.filter(ally=>ally.isDead && ally!==hero);
+      return skill.allyTargeting==='fallen-ally' ? fallen.slice(0,1) : fallen;
+    }
     return (skill.scope==='party' ? this.turnOrder : [hero]).filter(ally =>
       !ally.isDead && ally.currentHp>0 && (skill.allyTargeting!=='other-living-allies' || ally!==hero));
   }
@@ -1080,8 +1092,15 @@ export class BattleScene extends Phaser.Scene {
           consumed.add(index);
           if (!hero.isDead) {
             if (entry.allyEffects) {
+              for (const ally of targets) if (ally instanceof UnitActor && ally.isDead && entry.allyEffects.every(e=>e.kind==='raise')) {
+                ally.revive(Math.max(1,Math.round(ally.maxHp*Math.max(...entry.allyEffects.map(e=>e.kind==='raise'?e.hpFraction:0)))));
+                ally.limitGauge=0;
+                this.floatCombatText(ally.x,ally.y-100,'REVIVED','#f9e2af');
+                this.events.emit('hero-revived',{unit:ally.unitKey,hp:ally.currentHp,round:this.currentRound});
+              }
               for (const ally of targets) if (ally instanceof UnitActor && !ally.isDead) {
                 for (const effect of entry.allyEffects) {
+                  if (effect.kind==='raise') continue;
                   if (effect.kind==='heal') ally.restoreHp(effect.amount);
                   else if (effect.kind==='limit-fill') {
                     // Only heroes with a Limit Burst own a gauge.

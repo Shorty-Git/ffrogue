@@ -31,7 +31,10 @@ export function reviewedSkillEvents(skill,durationFrames=Infinity){
     const events=skill.allyEvents;
     if(damage||skill.supportEvents||!skill.requiresSourceScene||!skill.scenePresentation||!['self','party'].includes(skill.scope)||skill.moveType!=='stationary'
       ||!Array.isArray(events)||!events.length||events.length>32)throw Error('Reviewed stationary friendly-event track required');
-    if(skill.scope==='party'&&!['living-allies','other-living-allies'].includes(skill.allyTargeting))throw Error('Explicit friendly target contract required');
+    if(skill.scope==='party'&&!['living-allies','other-living-allies','fallen-ally','fallen-allies'].includes(skill.allyTargeting))throw Error('Explicit friendly target contract required');
+    // Raise and fallen-ally targeting come together: nothing else may act on a K.O. hero.
+    const fallen=String(skill.allyTargeting).startsWith('fallen-');
+    if(events?.some?.(e=>e.effects?.some?.(x=>(x.kind==='raise')!==fallen)))throw Error('Raise requires fallen-ally targeting and only raise effects');
     if(skill.scope==='self'&&skill.allyTargeting!==undefined)throw Error('Party recipient filters cannot be attached to self actions');
     if(skill.hpCost!==undefined&&(!Number.isInteger(skill.hpCost)||skill.hpCost<1||skill.hpCost>99999))throw Error('Invalid nonlethal HP cost');
     let previous=-1;
@@ -40,7 +43,9 @@ export function reviewedSkillEvents(skill,durationFrames=Infinity){
         ||!Array.isArray(event.effects)||!event.effects.length||event.effects.length>3)throw Error('Invalid friendly event');
       previous=event.frame;
       for(const e of event.effects){
-        if(e.kind==='heal'){
+        if(e.kind==='raise'){
+          if(!Number.isFinite(e.hpFraction)||e.hpFraction<=0||e.hpFraction>1)throw Error('Invalid reviewed raise');
+        }else if(e.kind==='heal'){
           if(!Number.isInteger(e.amount)||e.amount<1||e.amount>99999)throw Error('Invalid reviewed healing amount');
         }else if(e.kind==='limit-fill'){
           if(!Number.isInteger(e.amount)||e.amount<1||e.amount>100)throw Error('Invalid reviewed Limit fill');

@@ -1533,6 +1533,269 @@
         ],
         "boundary": "Original process parameters and source markers do not execute as game balance rules"
       }
+    },
+    {
+      "id": "blade_beam_ffvii_ac",
+      "ffbeId": 233931,
+      "name": "Blade Beam (FFVII: AC)",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 45,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.6,
+      "hitCount": 5,
+      "attackFrames": [
+        10,
+        21,
+        36,
+        79,
+        180
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (1.6x) to all enemies",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "cloud_ac_blade_beam_ffvii_ac",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/cloud_ac/skills/blade_beam_ffvii_ac/source/skill-source.json",
+        "sha256": "cef9f8324843b216300d74fa05878716d9224648ccdd78bbbf50a4ceded8cfad"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 10,
+          "weight": 0.05
+        },
+        {
+          "frame": 21,
+          "weight": 0.05
+        },
+        {
+          "frame": 36,
+          "weight": 0.05
+        },
+        {
+          "frame": 79,
+          "weight": 0.35
+        },
+        {
+          "frame": 180,
+          "weight": 0.5
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 233931,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 233931,
+          "name": "Blade Beam (FFVII: AC)",
+          "rarity": 7,
+          "dispOrder": 7984,
+          "cost": 45,
+          "6p90IFnC": null,
+          "target": "1@3",
+          "targetRange": "2@0",
+          "oL6zdpD0": 3,
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 1,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 4,
+          "processId": "1@125",
+          "PI18xnkD": "0@0",
+          "processParam": "0,0,0,0,0,0,360,0@300,300",
+          "H4zD2IQ5": 0,
+          "motionType": 2,
+          "effectFrames": "8:1000340:1:1:0&19:1000340:1:1:0&34:1000340:1:1:0&73:5003901:1:2:0&77:1000350:1:1:0&77:7000280:1:2:0@145:5017850:2:7:0&145:5017860:1:7:0",
+          "attackFrames": "10:10:2:2-21:10:2:2-36:10:2:2-79:70:2:2@180:100:2:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000054,
+          "equipCondition": null,
+          "2QoE3PtB": 0,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": null,
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "climhazzard_ffvii_ac",
+      "ffbeId": 233934,
+      "name": "Climhazzard (FFVII: AC)",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 52,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 2,
+      "attackFrames": [
+        6,
+        110
+      ],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "cloud_ac_climhazzard_ffvii_ac",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/cloud_ac/skills/climhazzard_ffvii_ac/source/skill-source.json",
+        "sha256": "6a06c76e775d041404d2385dd654ad228991c9860d50693e141576cd7652b57a"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "target",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 5,
+          "sourceMoveType": 6,
+          "note": "Drafted from motion 5 / move 6: dash with atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 6,
+          "weight": 0.5
+        },
+        {
+          "frame": 110,
+          "weight": 0.5
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 233934,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 233934,
+          "name": "Climhazzard (FFVII: AC)",
+          "rarity": 8,
+          "dispOrder": 7987,
+          "cost": 52,
+          "6p90IFnC": null,
+          "target": "1@3",
+          "targetRange": "1@0",
+          "oL6zdpD0": 3,
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 1,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 6,
+          "processId": "21@127",
+          "PI18xnkD": "0@0",
+          "processParam": "0,0,550,-50@500,3,1",
+          "H4zD2IQ5": 0,
+          "motionType": 5,
+          "effectFrames": "0:5014250:1:1:0&4:5007070:1:1:0&4:7000970:1:1:0&0:5002080:2:4:0@90:5003130:1:7:0&90:7000800:1:7:0",
+          "attackFrames": "6:100:2:2@110:100:2:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000054,
+          "equipCondition": null,
+          "2QoE3PtB": 0,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": "10",
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
     }
   ]
 }

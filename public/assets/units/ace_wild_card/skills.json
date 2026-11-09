@@ -147,6 +147,2109 @@
         ],
         "boundary": "Original process parameters and source markers do not execute as game balance rules"
       }
+    },
+    {
+      "id": "offensive_card",
+      "ffbeId": 234850,
+      "name": "Offensive Card",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 60,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.6,
+      "hitCount": 9,
+      "attackFrames": [
+        42,
+        48,
+        54,
+        60,
+        66,
+        72,
+        78,
+        84,
+        90
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (1.6x) to all enemies",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "ace_wild_card_offensive_card",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/ace_wild_card/skills/offensive_card/source/skill-source.json",
+        "sha256": "bbe942c0144a0122d955e4e663e61d807c7bcf6d46d9ddcbc6d7e9ad41409a1d"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.07
+        },
+        {
+          "frame": 48,
+          "weight": 0.07
+        },
+        {
+          "frame": 54,
+          "weight": 0.07
+        },
+        {
+          "frame": 60,
+          "weight": 0.07
+        },
+        {
+          "frame": 66,
+          "weight": 0.07
+        },
+        {
+          "frame": 72,
+          "weight": 0.07
+        },
+        {
+          "frame": 78,
+          "weight": 0.07
+        },
+        {
+          "frame": 84,
+          "weight": 0.07
+        },
+        {
+          "frame": 90,
+          "weight": 0.44
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 234850,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 234850,
+          "name": "Offensive Card",
+          "rarity": 6,
+          "dispOrder": 8707,
+          "cost": 150,
+          "6p90IFnC": null,
+          "target": "1",
+          "targetRange": "2",
+          "oL6zdpD0": 3,
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 1,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 4,
+          "processId": "15",
+          "PI18xnkD": "0",
+          "processParam": "0,0,0,0,0,25000,0",
+          "H4zD2IQ5": 0,
+          "motionType": 2,
+          "effectFrames": "38:99999999:1:1:0&40:5039512:1:1:0",
+          "attackFrames": "42:7:2:2-48:7:2:2-54:7:2:2-60:7:2:2-66:7:2:2-72:7:2:2-78:7:2:2-84:7:2:2-90:44:2:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000019,
+          "equipCondition": null,
+          "2QoE3PtB": 0,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": "234850",
+          "n1eAG69i": null,
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "blind_stud",
+      "ffbeId": 234851,
+      "name": "Blind Stud",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 30,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 8,
+      "attackFrames": [
+        42,
+        62,
+        82,
+        102,
+        122,
+        142,
+        162,
+        182
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "ace_wild_card_blind_stud",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/ace_wild_card/skills/blind_stud/source/skill-source.json",
+        "sha256": "ef90cfa2a739708e7f8b462c7804ac6b6c80bb39b4476b6e140dfeafb173cbf9"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.08
+        },
+        {
+          "frame": 62,
+          "weight": 0.08
+        },
+        {
+          "frame": 82,
+          "weight": 0.08
+        },
+        {
+          "frame": 102,
+          "weight": 0.08
+        },
+        {
+          "frame": 122,
+          "weight": 0.08
+        },
+        {
+          "frame": 142,
+          "weight": 0.08
+        },
+        {
+          "frame": 162,
+          "weight": 0.08
+        },
+        {
+          "frame": 182,
+          "weight": 0.44
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 234851,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 234851,
+          "name": "Blind Stud",
+          "rarity": 6,
+          "dispOrder": 8708,
+          "cost": 30,
+          "6p90IFnC": null,
+          "target": "1@3",
+          "targetRange": "1@0",
+          "oL6zdpD0": 3,
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 1,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 4,
+          "processId": "15@84",
+          "PI18xnkD": "0@0",
+          "processParam": "0,0,0,0,0,1300,0@1,0,1",
+          "H4zD2IQ5": 0,
+          "motionType": 2,
+          "effectFrames": "76:99999999:1:4:0&40:5039513:1:1:0&40:5037660:2:3:0",
+          "attackFrames": "42:8:2:2-62:8:2:2-82:8:2:2-102:8:2:2-122:8:2:2-142:8:2:2-162:8:2:2-182:44:2:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000019,
+          "equipCondition": null,
+          "2QoE3PtB": 1,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": null,
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "short_burst",
+      "ffbeId": 234859,
+      "name": "Short Burst+",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 28,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 8,
+      "attackFrames": [
+        42,
+        62,
+        82,
+        102,
+        122,
+        142,
+        162,
+        182
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "ace_wild_card_short_burst",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/ace_wild_card/skills/short_burst/source/skill-source.json",
+        "sha256": "cce76c02e2b99d487b174514cff1a6bdebe208152c40abe9cb5db12549ca0575"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.08
+        },
+        {
+          "frame": 62,
+          "weight": 0.08
+        },
+        {
+          "frame": 82,
+          "weight": 0.08
+        },
+        {
+          "frame": 102,
+          "weight": 0.08
+        },
+        {
+          "frame": 122,
+          "weight": 0.08
+        },
+        {
+          "frame": 142,
+          "weight": 0.08
+        },
+        {
+          "frame": 162,
+          "weight": 0.08
+        },
+        {
+          "frame": 182,
+          "weight": 0.44
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 234859,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 234859,
+          "name": "Short Burst+",
+          "rarity": 8,
+          "dispOrder": 8716,
+          "cost": 28,
+          "6p90IFnC": null,
+          "target": "1@1@1@3",
+          "targetRange": "1@1@1@0",
+          "oL6zdpD0": 3,
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 1,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 4,
+          "processId": "15@6@88@100",
+          "PI18xnkD": "0@0@0@0",
+          "processParam": "0,0,0,0,0,3000,0@0,0,0,0,30,0,0,0,1@30,1@2,511877,1,5,1,2",
+          "H4zD2IQ5": 0,
+          "motionType": 2,
+          "effectFrames": "76:99999999:1:4:0&40:1900284:2:4:0&40:5039520:1:1:0",
+          "attackFrames": "42:8:2:2-62:8:2:2-82:8:2:2-102:8:2:2-122:8:2:2-142:8:2:2-162:8:2:2-182:44:2:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000009,
+          "equipCondition": null,
+          "2QoE3PtB": 1,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": "234859",
+          "n1eAG69i": "14",
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "hp_charge",
+      "ffbeId": 234861,
+      "name": "HP Charge+",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 28,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 8,
+      "attackFrames": [
+        42,
+        62,
+        82,
+        102,
+        122,
+        142,
+        162,
+        182
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "ace_wild_card_hp_charge",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/ace_wild_card/skills/hp_charge/source/skill-source.json",
+        "sha256": "b19df17f1d2ee664e9f77c6e254758bb91e1ec2c86d50b748a7d1ddaf7888296"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.08
+        },
+        {
+          "frame": 62,
+          "weight": 0.08
+        },
+        {
+          "frame": 82,
+          "weight": 0.08
+        },
+        {
+          "frame": 102,
+          "weight": 0.08
+        },
+        {
+          "frame": 122,
+          "weight": 0.08
+        },
+        {
+          "frame": 142,
+          "weight": 0.08
+        },
+        {
+          "frame": 162,
+          "weight": 0.08
+        },
+        {
+          "frame": 182,
+          "weight": 0.44
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 234861,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 234861,
+          "name": "HP Charge+",
+          "rarity": 8,
+          "dispOrder": 8719,
+          "cost": 28,
+          "6p90IFnC": null,
+          "target": "1@3@3",
+          "targetRange": "1@0@0",
+          "oL6zdpD0": 3,
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 1,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 4,
+          "processId": "15@100@132",
+          "PI18xnkD": "0@0@0",
+          "processParam": "0,0,0,0,0,3000,0@2,511892,1,4,1,4@511891,1,1,100,0,5",
+          "H4zD2IQ5": 0,
+          "motionType": 2,
+          "effectFrames": "76:99999999:1:4:0&40:1900284:2:4:0&40:5011111:1:1:0&40:5039532:1:1:0&40:5011111:2:3:0",
+          "attackFrames": "42:8:2:2-62:8:2:2-82:8:2:2-102:8:2:2-122:8:2:2-142:8:2:2-162:8:2:2-182:44:2:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000019,
+          "equipCondition": null,
+          "2QoE3PtB": 1,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": "234861",
+          "n1eAG69i": null,
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "mp_charge",
+      "ffbeId": 234862,
+      "name": "MP Charge+",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 28,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 8,
+      "attackFrames": [
+        42,
+        62,
+        82,
+        102,
+        122,
+        142,
+        162,
+        182
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "ace_wild_card_mp_charge",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/ace_wild_card/skills/mp_charge/source/skill-source.json",
+        "sha256": "f6e8fe7256e38bd5ac3abba50194a08efa85546d1ffe10540db0ee7a278b9986"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.08
+        },
+        {
+          "frame": 62,
+          "weight": 0.08
+        },
+        {
+          "frame": 82,
+          "weight": 0.08
+        },
+        {
+          "frame": 102,
+          "weight": 0.08
+        },
+        {
+          "frame": 122,
+          "weight": 0.08
+        },
+        {
+          "frame": 142,
+          "weight": 0.08
+        },
+        {
+          "frame": 162,
+          "weight": 0.08
+        },
+        {
+          "frame": 182,
+          "weight": 0.44
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 234862,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 234862,
+          "name": "MP Charge+",
+          "rarity": 8,
+          "dispOrder": 8720,
+          "cost": 28,
+          "6p90IFnC": null,
+          "target": "1@3@3",
+          "targetRange": "1@0@0",
+          "oL6zdpD0": 3,
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 1,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 4,
+          "processId": "15@100@132",
+          "PI18xnkD": "0@0@0",
+          "processParam": "0,0,0,0,0,3000,0@2,511897,1,4,1,6@511896,1,1,100,0,7",
+          "H4zD2IQ5": 0,
+          "motionType": 2,
+          "effectFrames": "76:99999999:1:4:0&40:1900284:2:4:0&40:5011122:1:1:0&40:5039533:1:1:0&40:5011122:2:3:0",
+          "attackFrames": "42:8:2:2-62:8:2:2-82:8:2:2-102:8:2:2-122:8:2:2-142:8:2:2-162:8:2:2-182:44:2:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000019,
+          "equipCondition": null,
+          "2QoE3PtB": 1,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": "234862",
+          "n1eAG69i": null,
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "attack_hand",
+      "ffbeId": 511876,
+      "name": "Attack Hand+",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 60,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 24,
+      "attackFrames": [
+        42,
+        62,
+        82,
+        102,
+        122,
+        142,
+        162,
+        182,
+        42,
+        62,
+        82,
+        102,
+        122,
+        142,
+        162,
+        182,
+        42,
+        62,
+        82,
+        102,
+        122,
+        142,
+        162,
+        182
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "ace_wild_card_attack_hand",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/ace_wild_card/skills/attack_hand/source/skill-source.json",
+        "sha256": "7c0dfed8ac3b66ab7514b2c1e1ea10eae41d4c12d71940af2e8ee5901691785a"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.02666666666666667
+        },
+        {
+          "frame": 42,
+          "weight": 0.03333333333333333
+        },
+        {
+          "frame": 42,
+          "weight": 0.03333333333333333
+        },
+        {
+          "frame": 62,
+          "weight": 0.02666666666666667
+        },
+        {
+          "frame": 62,
+          "weight": 0.03333333333333333
+        },
+        {
+          "frame": 62,
+          "weight": 0.03333333333333333
+        },
+        {
+          "frame": 82,
+          "weight": 0.02666666666666667
+        },
+        {
+          "frame": 82,
+          "weight": 0.03333333333333333
+        },
+        {
+          "frame": 82,
+          "weight": 0.03333333333333333
+        },
+        {
+          "frame": 102,
+          "weight": 0.02666666666666667
+        },
+        {
+          "frame": 102,
+          "weight": 0.03333333333333333
+        },
+        {
+          "frame": 102,
+          "weight": 0.03333333333333333
+        },
+        {
+          "frame": 122,
+          "weight": 0.02666666666666667
+        },
+        {
+          "frame": 122,
+          "weight": 0.03333333333333333
+        },
+        {
+          "frame": 122,
+          "weight": 0.03333333333333333
+        },
+        {
+          "frame": 142,
+          "weight": 0.02666666666666667
+        },
+        {
+          "frame": 142,
+          "weight": 0.03333333333333333
+        },
+        {
+          "frame": 142,
+          "weight": 0.03333333333333333
+        },
+        {
+          "frame": 162,
+          "weight": 0.02666666666666667
+        },
+        {
+          "frame": 162,
+          "weight": 0.03333333333333333
+        },
+        {
+          "frame": 162,
+          "weight": 0.03333333333333333
+        },
+        {
+          "frame": 182,
+          "weight": 0.14666666666666667
+        },
+        {
+          "frame": 182,
+          "weight": 0.1
+        },
+        {
+          "frame": 182,
+          "weight": 0.1
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 511876,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 511876,
+          "name": "Attack Hand+",
+          "rarity": 9,
+          "dispOrder": 8715,
+          "cost": 62,
+          "6p90IFnC": null,
+          "target": "1@3@1",
+          "targetRange": "1@0@1",
+          "oL6zdpD0": 3,
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 1,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 4,
+          "processId": "24@3@15",
+          "PI18xnkD": "0@0@0",
+          "processParam": "0,0,0,0,0,0@0,0,250,0,4,1,1@0,0,0,0,0,10000,0",
+          "H4zD2IQ5": 0,
+          "motionType": 2,
+          "effectFrames": "76:99999999:1:4:0&40:1900284:2:4:0&40:5039519:1:1:0@40:5017852:2:3:0&40:5017862:1:3:0",
+          "attackFrames": "42:8:2:2-62:8:2:2-82:8:2:2-102:8:2:2-122:8:2:2-142:8:2:2-162:8:2:2-182:44:2:2@42:10:2:2-62:10:2:2-82:10:2:2-102:10:2:2-122:10:2:2-142:10:2:2-162:10:2:2-182:30:2:2@42:10:2:2-62:10:2:2-82:10:2:2-102:10:2:2-122:10:2:2-142:10:2:2-162:10:2:2-182:30:2:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000105,
+          "equipCondition": null,
+          "2QoE3PtB": 0,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": null,
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "burst",
+      "ffbeId": 234877,
+      "name": "Burst++",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 28,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 18,
+      "attackFrames": [
+        42,
+        48,
+        54,
+        60,
+        66,
+        72,
+        78,
+        84,
+        90,
+        42,
+        48,
+        54,
+        60,
+        66,
+        72,
+        78,
+        84,
+        90
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "ace_wild_card_burst",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/ace_wild_card/skills/burst/source/skill-source.json",
+        "sha256": "1851a717d2ad68ed2d785e2d2a97d82f129f3ed47807f35a5b3b15316963b73d"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.035
+        },
+        {
+          "frame": 42,
+          "weight": 0.035
+        },
+        {
+          "frame": 48,
+          "weight": 0.035
+        },
+        {
+          "frame": 48,
+          "weight": 0.035
+        },
+        {
+          "frame": 54,
+          "weight": 0.035
+        },
+        {
+          "frame": 54,
+          "weight": 0.035
+        },
+        {
+          "frame": 60,
+          "weight": 0.035
+        },
+        {
+          "frame": 60,
+          "weight": 0.035
+        },
+        {
+          "frame": 66,
+          "weight": 0.035
+        },
+        {
+          "frame": 66,
+          "weight": 0.035
+        },
+        {
+          "frame": 72,
+          "weight": 0.035
+        },
+        {
+          "frame": 72,
+          "weight": 0.035
+        },
+        {
+          "frame": 78,
+          "weight": 0.035
+        },
+        {
+          "frame": 78,
+          "weight": 0.035
+        },
+        {
+          "frame": 84,
+          "weight": 0.035
+        },
+        {
+          "frame": 84,
+          "weight": 0.035
+        },
+        {
+          "frame": 90,
+          "weight": 0.22
+        },
+        {
+          "frame": 90,
+          "weight": 0.22
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 234877,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 234877,
+          "name": "Burst++",
+          "rarity": 8,
+          "dispOrder": 8718,
+          "cost": 28,
+          "6p90IFnC": null,
+          "target": "1@1@3",
+          "targetRange": "1@1@0",
+          "oL6zdpD0": 3,
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 1,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 4,
+          "processId": "33@15@100",
+          "PI18xnkD": "0@0@0",
+          "processParam": "0,-100,-100,0,0,0,0,0,1,3@0,0,0,0,0,5300,0@2,511884,1,4,1,10",
+          "H4zD2IQ5": 0,
+          "motionType": 2,
+          "effectFrames": "38:5003680:2:4:0&40:5039528:1:1:0@38:5027942:2:1:0&40:5027951:1:1:0&40:5028102:2:1:0&40:5028111:1:1:0",
+          "attackFrames": "42:7:2:2-48:7:2:2-54:7:2:2-60:7:2:2-66:7:2:2-72:7:2:2-78:7:2:2-84:7:2:2-90:44:2:2@42:7:2:2-48:7:2:2-54:7:2:2-60:7:2:2-66:7:2:2-72:7:2:2-78:7:2:2-84:7:2:2-90:44:2:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000039,
+          "equipCondition": null,
+          "2QoE3PtB": 1,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": "234877",
+          "n1eAG69i": "11",
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "support_hand",
+      "ffbeId": 234852,
+      "name": "Support Hand+",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 60,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 8,
+      "attackFrames": [
+        42,
+        62,
+        82,
+        102,
+        122,
+        142,
+        162,
+        182
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "ace_wild_card_support_hand",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/ace_wild_card/skills/support_hand/source/skill-source.json",
+        "sha256": "4b640bc4da423dff1758c8a4d462c57f44566b644fa7bdf04514ec7c21732d88"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.08
+        },
+        {
+          "frame": 62,
+          "weight": 0.08
+        },
+        {
+          "frame": 82,
+          "weight": 0.08
+        },
+        {
+          "frame": 102,
+          "weight": 0.08
+        },
+        {
+          "frame": 122,
+          "weight": 0.08
+        },
+        {
+          "frame": 142,
+          "weight": 0.08
+        },
+        {
+          "frame": 162,
+          "weight": 0.08
+        },
+        {
+          "frame": 182,
+          "weight": 0.44
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 234852,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 234852,
+          "name": "Support Hand+",
+          "rarity": 6,
+          "dispOrder": 8709,
+          "cost": 99,
+          "6p90IFnC": null,
+          "target": "1@2",
+          "targetRange": "1@2",
+          "oL6zdpD0": 3,
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 1,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 4,
+          "processId": "15@54",
+          "PI18xnkD": "0@0",
+          "processParam": "0,0,0,0,0,10000,0@2,3,0",
+          "H4zD2IQ5": 0,
+          "motionType": 2,
+          "effectFrames": "76:99999999:1:1:0&40:5039514:1:1:0@40:5017831:2:1:0&40:5017841:1:1:0",
+          "attackFrames": "42:8:2:2-62:8:2:2-82:8:2:2-102:8:2:2-122:8:2:2-142:8:2:2-162:8:2:2-182:44:2:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000097,
+          "equipCondition": null,
+          "2QoE3PtB": 0,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": "234852",
+          "n1eAG69i": null,
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "jackpot_triad",
+      "ffbeId": 511903,
+      "name": "Jackpot Triad",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 60,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 8,
+      "attackFrames": [
+        42,
+        62,
+        82,
+        102,
+        122,
+        142,
+        162,
+        182
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "ace_wild_card_jackpot_triad",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/ace_wild_card/skills/jackpot_triad/source/skill-source.json",
+        "sha256": "01ff43252fd72cad8be4ebd0f8f5930de70b8f11cd50edefc8f2d461d80b9c22"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.08
+        },
+        {
+          "frame": 62,
+          "weight": 0.08
+        },
+        {
+          "frame": 82,
+          "weight": 0.08
+        },
+        {
+          "frame": 102,
+          "weight": 0.08
+        },
+        {
+          "frame": 122,
+          "weight": 0.08
+        },
+        {
+          "frame": 142,
+          "weight": 0.08
+        },
+        {
+          "frame": 162,
+          "weight": 0.08
+        },
+        {
+          "frame": 182,
+          "weight": 0.44
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 511903,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 511903,
+          "name": "Jackpot Triad",
+          "rarity": 9,
+          "dispOrder": 8720,
+          "cost": 72,
+          "6p90IFnC": null,
+          "target": "1",
+          "targetRange": "1",
+          "oL6zdpD0": 3,
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 1,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 4,
+          "processId": "15",
+          "PI18xnkD": "0",
+          "processParam": "0,0,0,0,0,100000,0",
+          "H4zD2IQ5": 0,
+          "motionType": 2,
+          "effectFrames": "76:99999999:1:4:0&40:5005110:2:4:0&40:5039541:2:1:0&40:5039540:1:1:0",
+          "attackFrames": "42:8:2:2-62:8:2:2-82:8:2:2-102:8:2:2-122:8:2:2-142:8:2:2-162:8:2:2-182:44:2:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000105,
+          "equipCondition": null,
+          "2QoE3PtB": 0,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": "511903",
+          "n1eAG69i": null,
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "spark_card",
+      "ffbeId": 234853,
+      "name": "Spark Card",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 60,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 16,
+      "attackFrames": [
+        42,
+        62,
+        82,
+        102,
+        122,
+        142,
+        162,
+        182,
+        42,
+        62,
+        82,
+        102,
+        122,
+        142,
+        162,
+        182
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "ace_wild_card_spark_card",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/ace_wild_card/skills/spark_card/source/skill-source.json",
+        "sha256": "6ed764300022af9ea2b6a74ff4c1c0b7aa796e8e7f0011915de313db1dfd38aa"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.04
+        },
+        {
+          "frame": 42,
+          "weight": 0.05
+        },
+        {
+          "frame": 62,
+          "weight": 0.04
+        },
+        {
+          "frame": 62,
+          "weight": 0.05
+        },
+        {
+          "frame": 82,
+          "weight": 0.04
+        },
+        {
+          "frame": 82,
+          "weight": 0.05
+        },
+        {
+          "frame": 102,
+          "weight": 0.04
+        },
+        {
+          "frame": 102,
+          "weight": 0.05
+        },
+        {
+          "frame": 122,
+          "weight": 0.04
+        },
+        {
+          "frame": 122,
+          "weight": 0.05
+        },
+        {
+          "frame": 142,
+          "weight": 0.04
+        },
+        {
+          "frame": 142,
+          "weight": 0.05
+        },
+        {
+          "frame": 162,
+          "weight": 0.04
+        },
+        {
+          "frame": 162,
+          "weight": 0.05
+        },
+        {
+          "frame": 182,
+          "weight": 0.22
+        },
+        {
+          "frame": 182,
+          "weight": 0.15
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 234853,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 234853,
+          "name": "Spark Card",
+          "rarity": 7,
+          "dispOrder": 1222082,
+          "cost": 66,
+          "6p90IFnC": null,
+          "target": "1@1@3@3@3",
+          "targetRange": "1@1@0@0@0",
+          "oL6zdpD0": 3,
+          "element": "0,0,1,0,0,0,0,0",
+          "Isb1GDe2": 1,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 4,
+          "processId": "33@15@95@149@149",
+          "PI18xnkD": "0@0@0@0@0",
+          "processParam": "0,0,-130,0,0,0,0,0,1,6@0,0,0,0,0,10000,0@0,0,100,0,0,0,0,0,6,1@0,0&0&30&0&0&0&0&0,1,6,1@1,0&0&30&0&0&0&0&0,1,6,1",
+          "H4zD2IQ5": 0,
+          "motionType": 2,
+          "effectFrames": "76:99999999:1:4:0&40:5039515:1:1:0&40:3000301:1:3:0@40:5028102:2:1:0&40:5028111:1:1:0",
+          "attackFrames": "42:8:2:2-62:8:2:2-82:8:2:2-102:8:2:2-122:8:2:2-142:8:2:2-162:8:2:2-182:44:2:2@42:10:2:2-62:10:2:2-82:10:2:2-102:10:2:2-122:10:2:2-142:10:2:2-162:10:2:2-182:30:2:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000020,
+          "equipCondition": null,
+          "2QoE3PtB": 0,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": "234853",
+          "n1eAG69i": "4,10,11",
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "misdirection",
+      "ffbeId": 511953,
+      "name": "Misdirection",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 60,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 16,
+      "attackFrames": [
+        42,
+        62,
+        82,
+        102,
+        122,
+        142,
+        162,
+        182,
+        42,
+        62,
+        82,
+        102,
+        122,
+        142,
+        162,
+        182
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "ace_wild_card_misdirection",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/ace_wild_card/skills/misdirection/source/skill-source.json",
+        "sha256": "cffb30d4714c1ad10b8d989d664609b6df87c13eeb40b58b5a900bd166761a31"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.04
+        },
+        {
+          "frame": 42,
+          "weight": 0.04
+        },
+        {
+          "frame": 62,
+          "weight": 0.04
+        },
+        {
+          "frame": 62,
+          "weight": 0.04
+        },
+        {
+          "frame": 82,
+          "weight": 0.04
+        },
+        {
+          "frame": 82,
+          "weight": 0.04
+        },
+        {
+          "frame": 102,
+          "weight": 0.04
+        },
+        {
+          "frame": 102,
+          "weight": 0.04
+        },
+        {
+          "frame": 122,
+          "weight": 0.04
+        },
+        {
+          "frame": 122,
+          "weight": 0.04
+        },
+        {
+          "frame": 142,
+          "weight": 0.04
+        },
+        {
+          "frame": 142,
+          "weight": 0.04
+        },
+        {
+          "frame": 162,
+          "weight": 0.04
+        },
+        {
+          "frame": 162,
+          "weight": 0.04
+        },
+        {
+          "frame": 182,
+          "weight": 0.22
+        },
+        {
+          "frame": 182,
+          "weight": 0.22
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 511953,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 511953,
+          "name": "Misdirection",
+          "rarity": 9,
+          "dispOrder": 465,
+          "cost": 120,
+          "6p90IFnC": null,
+          "target": "2@1",
+          "targetRange": "1@2",
+          "oL6zdpD0": 3,
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 1,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 4,
+          "processId": "61@15",
+          "PI18xnkD": "0@0",
+          "processParam": "100,1@0,0,0,0,0,2000,0",
+          "H4zD2IQ5": 0,
+          "motionType": 2,
+          "effectFrames": "76:99999999:1:4:0&40:99999999:2:4:0@76:99999999:1:4:0&40:5004580:2:4:0&40:5039577:1:1:0&40:5013920:1:3:0",
+          "attackFrames": "42:8:2:2-62:8:2:2-82:8:2:2-102:8:2:2-122:8:2:2-142:8:2:2-162:8:2:2-182:44:2:2@42:8:2:2-62:8:2:2-82:8:2:2-102:8:2:2-122:8:2:2-142:8:2:2-162:8:2:2-182:44:2:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000105,
+          "equipCondition": null,
+          "2QoE3PtB": 1,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": null,
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "freeze_card",
+      "ffbeId": 234854,
+      "name": "Freeze Card",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 60,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 16,
+      "attackFrames": [
+        42,
+        62,
+        82,
+        102,
+        122,
+        142,
+        162,
+        182,
+        42,
+        62,
+        82,
+        102,
+        122,
+        142,
+        162,
+        182
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "ace_wild_card_freeze_card",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/ace_wild_card/skills/freeze_card/source/skill-source.json",
+        "sha256": "3862c8ebf925f8e158b177796c3fce0460726ab231aff8fe78f0f79f8f81f039"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.04
+        },
+        {
+          "frame": 42,
+          "weight": 0.05
+        },
+        {
+          "frame": 62,
+          "weight": 0.04
+        },
+        {
+          "frame": 62,
+          "weight": 0.05
+        },
+        {
+          "frame": 82,
+          "weight": 0.04
+        },
+        {
+          "frame": 82,
+          "weight": 0.05
+        },
+        {
+          "frame": 102,
+          "weight": 0.04
+        },
+        {
+          "frame": 102,
+          "weight": 0.05
+        },
+        {
+          "frame": 122,
+          "weight": 0.04
+        },
+        {
+          "frame": 122,
+          "weight": 0.05
+        },
+        {
+          "frame": 142,
+          "weight": 0.04
+        },
+        {
+          "frame": 142,
+          "weight": 0.05
+        },
+        {
+          "frame": 162,
+          "weight": 0.04
+        },
+        {
+          "frame": 162,
+          "weight": 0.05
+        },
+        {
+          "frame": 182,
+          "weight": 0.22
+        },
+        {
+          "frame": 182,
+          "weight": 0.15
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 234854,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 234854,
+          "name": "Freeze Card",
+          "rarity": 7,
+          "dispOrder": 1222081,
+          "cost": 66,
+          "6p90IFnC": null,
+          "target": "1@1@3@3@3",
+          "targetRange": "1@1@0@0@0",
+          "oL6zdpD0": 3,
+          "element": "0,1,0,0,0,0,0,0",
+          "Isb1GDe2": 1,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 4,
+          "processId": "33@15@95@149@149",
+          "PI18xnkD": "0@0@0@0@0",
+          "processParam": "0,-130,0,0,0,0,0,0,1,6@0,0,0,0,0,10000,0@0,100,0,0,0,0,0,0,6,1@0,0&30&0&0&0&0&0&0,1,6,1@1,0&30&0&0&0&0&0&0,1,6,1",
+          "H4zD2IQ5": 0,
+          "motionType": 2,
+          "effectFrames": "76:99999999:1:4:0&40:5039516:1:1:0&40:3000271:1:3:0@40:5027942:2:1:0&40:5027951:1:1:0",
+          "attackFrames": "42:8:2:2-62:8:2:2-82:8:2:2-102:8:2:2-122:8:2:2-142:8:2:2-162:8:2:2-182:44:2:2@42:10:2:2-62:10:2:2-82:10:2:2-102:10:2:2-122:10:2:2-142:10:2:2-162:10:2:2-182:30:2:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000022,
+          "equipCondition": null,
+          "2QoE3PtB": 0,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": "234854",
+          "n1eAG69i": "3,10,11",
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
     }
   ]
 }

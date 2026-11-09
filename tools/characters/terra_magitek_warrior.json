@@ -673,6 +673,381 @@
           "weight": 0.16
         }
       ]
+    },
+    {
+      "id": "full_life",
+      "ffbeId": 10180,
+      "name": "Full-Life",
+      "rarity": 5,
+      "level": 1,
+      "type": "MAGIC",
+      "mpCost": 20,
+      "scope": "party",
+      "damageMultiplier": 1,
+      "hitCount": 0,
+      "attackFrames": [
+        120
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Revive one fallen ally with 50% HP.",
+      "execution": "prepared-friendly",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "terra_magitek_warrior_full_life",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/terra_magitek_warrior/skills/full_life/source/skill-source.json",
+        "sha256": "c5563a2061e25b52b6aca6a08e58b5b75a16edca9ed025be2449892ecd26c829"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "allyTargeting": "fallen-ally",
+      "allyEvents": [
+        {
+          "frame": 120,
+          "effects": [
+            {
+              "kind": "raise",
+              "hpFraction": 0.5
+            }
+          ]
+        }
+      ],
+      "friendlyTargetReview": {
+        "sourceTarget": "6",
+        "sourceRange": "1",
+        "note": "Original target 6 / range 1 (process 4); adapted to raise at 0.5 HP on fallen-ally."
+      }
+    },
+    {
+      "id": "blizzaja",
+      "ffbeId": 20300,
+      "name": "Blizzaja",
+      "rarity": 5,
+      "level": 1,
+      "type": "MAGIC",
+      "mpCost": 28,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.6,
+      "hitCount": 1,
+      "attackFrames": [
+        240
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Magic damage (1.6x) to all enemies",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "terra_magitek_warrior_blizzaja",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/terra_magitek_warrior/skills/blizzaja/source/skill-source.json",
+        "sha256": "2e2a7f7ac5ce83e813bd01134a3cfe17f77c70559ddadc1acfaaf78dca09a03e"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 240,
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "thundaja",
+      "ffbeId": 20310,
+      "name": "Thundaja",
+      "rarity": 5,
+      "level": 1,
+      "type": "MAGIC",
+      "mpCost": 28,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.6,
+      "hitCount": 1,
+      "attackFrames": [
+        150
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Magic damage (1.6x) to all enemies",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "terra_magitek_warrior_thundaja",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/terra_magitek_warrior/skills/thundaja/source/skill-source.json",
+        "sha256": "5d6e1dbf42207e6ab83d6deb522187c642c137cda88f404d182da045d96b9d4d"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 150,
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "aero_riot",
+      "ffbeId": 230961,
+      "name": "Aero Riot",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 52,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.6,
+      "hitCount": 5,
+      "attackFrames": [
+        52,
+        72,
+        92,
+        112,
+        132
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (1.6x) to all enemies",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "terra_magitek_warrior_aero_riot",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/terra_magitek_warrior/skills/aero_riot/source/skill-source.json",
+        "sha256": "74a33977b9d0a94ef75b8cc540e5356e19b74a9e9c413b30d7d00b6be893a76b"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 52,
+          "weight": 0.2
+        },
+        {
+          "frame": 72,
+          "weight": 0.2
+        },
+        {
+          "frame": 92,
+          "weight": 0.2
+        },
+        {
+          "frame": 112,
+          "weight": 0.2
+        },
+        {
+          "frame": 132,
+          "weight": 0.2
+        }
+      ]
+    },
+    {
+      "id": "saint_riot",
+      "ffbeId": 230962,
+      "name": "Saint Riot",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 52,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.6,
+      "hitCount": 5,
+      "attackFrames": [
+        52,
+        72,
+        92,
+        112,
+        132
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (1.6x) to all enemies",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "terra_magitek_warrior_saint_riot",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/terra_magitek_warrior/skills/saint_riot/source/skill-source.json",
+        "sha256": "7a281a8b5ade25cab8118729f41ec9a25bdd75b439c2e49e4b8957006d6cc57d"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 52,
+          "weight": 0.2
+        },
+        {
+          "frame": 72,
+          "weight": 0.2
+        },
+        {
+          "frame": 92,
+          "weight": 0.2
+        },
+        {
+          "frame": 112,
+          "weight": 0.2
+        },
+        {
+          "frame": 132,
+          "weight": 0.2
+        }
+      ]
+    },
+    {
+      "id": "meltdown",
+      "ffbeId": 20420,
+      "name": "Meltdown",
+      "rarity": 5,
+      "level": 1,
+      "type": "MAGIC",
+      "mpCost": 48,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.6,
+      "hitCount": 1,
+      "attackFrames": [
+        280
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Magic damage (1.6x) to all enemies",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "terra_magitek_warrior_meltdown",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/terra_magitek_warrior/skills/meltdown/source/skill-source.json",
+        "sha256": "e950add238878fb0f4aa753bf2226e914e556b566f50b43d2dfc26d51ab14f71"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 280,
+          "weight": 1
+        }
+      ]
     }
   ],
   "portraitSource": "unit_icons/unit_icon_206002105.png"

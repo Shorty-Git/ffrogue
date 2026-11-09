@@ -8,8 +8,9 @@ Last consolidated: 2026-11-07.
 
 - Playable PC roguelike prototype: title → slot-machine team draw (3 heroes, rerolls) →
   expedition (2 areas, 4 encounters, Ochu and Guard Scorpion bosses) → rewards / awakening →
-  result. Saves locally. Roster since 2026-11-09: 51 units (26 characters plus 25 variants, 47 drawable) with 253 Source skills and 49 Limit
-  Bursts (variants: `tools/characters/roster-variants.json`); before the variants: 26 characters, 161 skills, an LB each (`tools/import_character_wave.mjs`). The original seven (Cloud, Aerith, Barret, Cloud of Darkness,
+  result. Saves locally. Roster since 2026-11-09: 51 units (26 characters plus 25 variants, 49 drawable) with 346 Source skills and 49 Limit
+  Bursts (253 before the pipeline-gate fixes of 2026-11-09 evening: zero-prefix motions 3/5/6, `@` branches,
+  empty 99999999 rows, raise) (variants: `tools/characters/roster-variants.json`); before the variants: 26 characters, 161 skills, an LB each (`tools/import_character_wave.mjs`). The original seven (Cloud, Aerith, Barret, Cloud of Darkness,
   Cloud AC, Delita, Jack) plus Squall, Tifa and 18 wave characters (Warrior of Light … Cidolfus, FFI–FFXVI,
   FFT, Type-0). Awakened forms go up to 7★ / NV; FFXVI units are NV-only. New profiles unlock heroes
   gradually (see Meta-progression).
@@ -43,9 +44,18 @@ Last consolidated: 2026-11-07.
   combat RNG stream); before 2026-11-08 they always hit party slot 1.
 - Friendly effect kinds (`allyEvents`, stationary `self`/`party` skills): `heal`, `physical-boost`,
   `auto-revive` (Reraise-style: `hpFraction`, `turns`; the next K.O. in the window revives once)
-  and `limit-fill` (`amount` 1–100 on the Limit gauge). Validated in `reviewedSkillEvents`,
+  `limit-fill` (`amount` 1–100 on the Limit gauge) and `raise` (2026-11-09: revives K.O. allies with
+  `hpFraction`; only with `allyTargeting` `fallen-ally`/`fallen-allies`). Validated in `reviewedSkillEvents`,
   scaled by skill level in `skillForRun`, described in the HUD by `skillDescription`. The last two
   are data model + battle handling only (2026-11-08); no published skill uses them yet.
+
+## Battle start prepares only this battle's scenes (2026-11-09)
+
+BattleScene used to prepare every registered skill scene (about 400, each in 1-3 target variants)
+one after another at battle start, so late registry entries (e.g. Aerith's Full-Life) stayed
+unplayable for minutes and the cost grew with every import. It now prepares only the party's chosen
+skills and Limit Bursts plus every `presentation` the encounter's enemies reference
+(`ENEMY_CONTENT`/`ENEMY_SKILLS`). BootScene still loads all manifest JSONs (cheap).
 
 ## Levels Lv 1-6 and Bond (2026-11-09)
 

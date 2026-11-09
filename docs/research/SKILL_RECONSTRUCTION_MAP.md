@@ -21,9 +21,13 @@ None of them is native placement proof. Details are in `docs/character-import-wo
 - BR3M stride 28 (emitter shapes without UV) is read next to stride 36.
 - Source motions 3 and 6 play in place. Motion 5 dashes for moveType 1 or 6.
 
+- Zero-prefix hit clock for motions 2, 3, 5, 6, 8 (`ZERO_PREFIX_MOTIONS`); `@` branches pass the
+  source-timeline check; empty 99999999 rows are skipped like missing ones.
+- Raise (process 4) as friendly effect `raise` with `fallen-ally`/`fallen-allies` targeting.
+
 Still open:
 - jump (process 52);
-- support mechanics (raise, dispel, protect/shell, debuffs);
+- support mechanics (dispel, esuna, protect/shell, imbue, debuffs);
 - delayed or conditional damage without attack frames.
 
 ## Gameplay data model: auto-revive and Limit fill friendly effects (2026-11-08)

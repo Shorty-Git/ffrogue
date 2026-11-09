@@ -26,7 +26,9 @@ export interface AutoReviveEffect {kind:'auto-revive';hpFraction:number;turns:nu
 /** Adds a bounded amount to the recipient's Limit gauge (heroes without a Limit Burst have none). */
 export interface LimitFillEffect {kind:'limit-fill';amount:number;}
 export type HeroStatusEffect = HeroBuffEffect | AutoReviveEffect;
-export type FriendlySkillEffect = HeroStatusEffect | LimitFillEffect | {kind:'heal';amount:number};
+/** Revives a K.O. recipient with hpFraction of max HP; only on skills that target fallen allies. */
+export interface RaiseEffect {kind:'raise';hpFraction:number;}
+export type FriendlySkillEffect = HeroStatusEffect | LimitFillEffect | RaiseEffect | {kind:'heal';amount:number};
 export type ActiveHeroBuff =
   | {kind:'physical-boost';multiplier:number;expiresAfterRound:number}
   | {kind:'auto-revive';hpFraction:number;expiresAfterRound:number};
@@ -60,7 +62,8 @@ export interface SkillConfig {
   mpCost: number;
   /** Reviewed nonlethal caster cost, paid once after complete admission. */
   hpCost?: number;
-  allyTargeting?: 'living-allies' | 'other-living-allies';
+  /** fallen-ally: the first K.O. ally in party order; fallen-allies: every K.O. ally (raise skills only). */
+  allyTargeting?: 'living-allies' | 'other-living-allies' | 'fallen-ally' | 'fallen-allies';
   scope: TargetScope;
   damageMultiplier: number;
   /** Reviewed damage lane, independent of the character's body pose. */

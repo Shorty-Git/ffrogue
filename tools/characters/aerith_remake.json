@@ -258,6 +258,71 @@
           "weight": 0.5
         }
       ]
+    },
+    {
+      "id": "white_resurrection",
+      "ffbeId": 236431,
+      "name": "White Resurrection",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 60,
+      "scope": "party",
+      "damageMultiplier": 1,
+      "hitCount": 0,
+      "attackFrames": [
+        120
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Revive all fallen allies with 50% HP.",
+      "execution": "prepared-friendly",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "aerith_remake_white_resurrection",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/aerith_remake/skills/white_resurrection/source/skill-source.json",
+        "sha256": "e084b887f3c7a7f43819c25041c1ce066a2eb6d5408e96ce50e5c14fe49d073f"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "allyTargeting": "fallen-allies",
+      "allyEvents": [
+        {
+          "frame": 120,
+          "effects": [
+            {
+              "kind": "raise",
+              "hpFraction": 0.5
+            }
+          ]
+        }
+      ],
+      "friendlyTargetReview": {
+        "sourceTarget": "2",
+        "sourceRange": "2",
+        "note": "Original target 2 / range 2 (process 4); adapted to raise at 0.5 HP on fallen-allies."
+      }
     }
   ],
   "portraitSource": "unit_icons/unit_icon_207002207.png"

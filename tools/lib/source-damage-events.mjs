@@ -1,4 +1,8 @@
-/** Source timing for reviewed Motion-1 and zero-prefix Motion-2 profiles; no damage formula import. */
+/** Motions without a unit attack prefix (composeEffectFrames returns the skill row unchanged):
+ * 2 = cast in place, 8 = Barret's ranged commands, 3/6 = in-place actions, 5 = dash-in strikes whose
+ * timeline starts on arrival. All share the zero-offset hit clock; only Motion 1 adds a prefix. */
+export const ZERO_PREFIX_MOTIONS=[2,3,5,6,8];
+/** Source timing for reviewed Motion-1 and zero-prefix profiles; no damage formula import. */
 export function sourceDamageEvents(source, plan, unit = plan.composition?.unit) {
   // Limit Bursts and magic have no unit attack prefix (their rows carry no motionType, like the
   // zero-prefix Motion-2 profile): hits are the row's attackFrames at offset 0.
@@ -7,7 +11,7 @@ export function sourceDamageEvents(source, plan, unit = plan.composition?.unit) 
   const motion=source?.raw?.motionType;
   // Motion 8 (Barret's ranged commands): native observer shows standby -> atk -> idle in place and
   // the composition adds no unit prefix, so it shares the zero-prefix Motion-2 timing.
-  if(![1,2,8].includes(motion) || !Number.isSafeInteger(offset) || offset<0
+  if(![1,...ZERO_PREFIX_MOTIONS].includes(motion) || !Number.isSafeInteger(offset) || offset<0
     || composition?.skill?.abilityId!==source.id || composition.skill.motionType!==motion
     || composition.skill.effectFrames!==source.raw.effectFrames)
     throw Error('Matching supported source composition required for damage timing');
@@ -18,7 +22,8 @@ export function sourceDamageEvents(source, plan, unit = plan.composition?.unit) 
   if(!prefix.every(entry=>/^\d+:\d+(?::-?\d+){1,3}$/.test(entry))
     || offset!==(motion===1?Math.max(...prefix.map(entry=>Number(entry.split(':')[0]))):0))
     throw Error('Prepared offset differs from the exact source unit attack prefix');
-  const entries=String(source.raw.effectFrames).split('&');
+  // '@' separates per-process branches (played in parallel); each entry is still an ordinary group.
+  const entries=String(source.raw.effectFrames).split(/[&@]/);
   if(!entries.every(entry=>/^\d+:\d+(?::-?\d+){1,3}$/.test(entry)))
     throw Error('Ordinary complete source effect timeline required');
   const expected=motion===1?[...prefix,...entries.map(entry=>{

@@ -12,6 +12,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import {DatabaseSync} from 'node:sqlite';
+import {writeFileRetry} from './lib/fs-retry.mjs';
 
 const arg = name => { const i = process.argv.indexOf(name); return i > 0 ? process.argv[i + 1] : undefined; };
 const assets = arg('--assets') ?? 'rawdata/assets';
@@ -52,5 +53,5 @@ for (const {unit, skill} of skills) {
 db.close();
 if (failures.length) { console.error(failures.join('\n')); process.exit(1); }
 for (const file of fs.readdirSync(output)) if (file.endsWith('.png') && !index.icons[file]) fs.rmSync(path.join(output, file));
-fs.writeFileSync(path.join(output, 'index.json'), JSON.stringify(index, null, 2) + '\n');
+writeFileRetry(path.join(output, 'index.json'), JSON.stringify(index, null, 2) + '\n');
 console.log(`Published ${Object.keys(index.icons).length} icons for ${Object.keys(index.skills).length} skills to ${output}`);

@@ -37,3 +37,14 @@ test('two existing-roster imports pass the same source, resource and mandatory c
  const bad=structuredClone(recipe);bad.skills.find(s=>s.id==='chant').friendlyTargetReview.sourceRange='1';
  assert.equal(inspectCharacter(bad,{assets:'rawdata/assets',dump:'rawdata/ffbe_asset_dump'}).publishable,false);
 });
+test('raise pairs only with fallen-ally targeting and a bounded HP share',()=>{
+ const raise=structuredClone(skills.find(s=>s.id==='chant'));
+ raise.allyTargeting='fallen-ally';raise.allyEvents[0].effects=[{kind:'raise',hpFraction:.5}];
+ assert.equal(reviewedSkillEvents(raise,222)[0].allyEffects[0].kind,'raise');
+ for(const mutate of [s=>s.allyTargeting='living-allies',s=>s.allyEvents[0].effects[0].hpFraction=0,
+  s=>s.allyEvents[0].effects[0].hpFraction=1.5,s=>s.allyEvents[0].effects.push({kind:'heal',amount:500})]){
+  const invalid=structuredClone(raise);mutate(invalid);assert.throws(()=>reviewedSkillEvents(invalid,222));
+ }
+ const healOnFallen=structuredClone(skills.find(s=>s.id==='chant'));healOnFallen.allyTargeting='fallen-allies';
+ assert.throws(()=>reviewedSkillEvents(healOnFallen,222));
+});

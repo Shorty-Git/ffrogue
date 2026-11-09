@@ -779,6 +779,352 @@
           "weight": 1
         }
       ]
+    },
+    {
+      "id": "lightning_fast",
+      "ffbeId": 800411,
+      "name": "Lightning Fast",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 60,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.6,
+      "hitCount": 9,
+      "attackFrames": [
+        70,
+        76,
+        82,
+        88,
+        94,
+        100,
+        106,
+        112,
+        112
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (1.6x) to all enemies",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "lightning_lightning_fast",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/lightning/skills/lightning_fast/source/skill-source.json",
+        "sha256": "727f5686ce1c0a95cb1093fa7a0250549a228296c597f7b37a5c6f0387856d27"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 70,
+          "weight": 0.05
+        },
+        {
+          "frame": 76,
+          "weight": 0.05
+        },
+        {
+          "frame": 82,
+          "weight": 0.05
+        },
+        {
+          "frame": 88,
+          "weight": 0.05
+        },
+        {
+          "frame": 94,
+          "weight": 0.05
+        },
+        {
+          "frame": 100,
+          "weight": 0.05
+        },
+        {
+          "frame": 106,
+          "weight": 0.05
+        },
+        {
+          "frame": 112,
+          "weight": 0.15
+        },
+        {
+          "frame": 112,
+          "weight": 0.5
+        }
+      ]
+    },
+    {
+      "id": "lightning_strike_ffxiii",
+      "ffbeId": 507240,
+      "name": "Lightning Strike (FFXIII)",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 60,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 3,
+      "attackFrames": [
+        2,
+        12,
+        22
+      ],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "lightning_lightning_strike_ffxiii",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/lightning/skills/lightning_strike_ffxiii/source/skill-source.json",
+        "sha256": "93ad68f302952ad9d9cb0beabcc6c6796f48d1d6d60fd16f6dc86d0873f9c68e"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "target",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 5,
+          "sourceMoveType": 6,
+          "note": "Drafted from motion 5 / move 6: dash with atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 2,
+          "weight": 0.3
+        },
+        {
+          "frame": 12,
+          "weight": 0.3
+        },
+        {
+          "frame": 22,
+          "weight": 0.4
+        }
+      ]
+    },
+    {
+      "id": "blade_of_thunder",
+      "ffbeId": 239090,
+      "name": "Blade of Thunder",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 60,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 9,
+      "attackFrames": [
+        42,
+        48,
+        54,
+        60,
+        66,
+        72,
+        78,
+        84,
+        90
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "lightning_blade_of_thunder",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/lightning/skills/blade_of_thunder/source/skill-source.json",
+        "sha256": "6f1e418ad388747d34ba9667ff30e2060e76b91dd1f70fcbc8ad1697c426efb7"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.06
+        },
+        {
+          "frame": 48,
+          "weight": 0.06
+        },
+        {
+          "frame": 54,
+          "weight": 0.06
+        },
+        {
+          "frame": 60,
+          "weight": 0.06
+        },
+        {
+          "frame": 66,
+          "weight": 0.065
+        },
+        {
+          "frame": 72,
+          "weight": 0.065
+        },
+        {
+          "frame": 78,
+          "weight": 0.065
+        },
+        {
+          "frame": 84,
+          "weight": 0.065
+        },
+        {
+          "frame": 90,
+          "weight": 0.5
+        }
+      ]
+    },
+    {
+      "id": "crashing_thunder_slash",
+      "ffbeId": 239096,
+      "name": "Crashing Thunder Slash",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 60,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.6,
+      "hitCount": 9,
+      "attackFrames": [
+        42,
+        48,
+        54,
+        60,
+        66,
+        72,
+        78,
+        84,
+        90
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (1.6x) to all enemies",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "lightning_crashing_thunder_slash",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/lightning/skills/crashing_thunder_slash/source/skill-source.json",
+        "sha256": "219078884e8f52fafd022cf014350d9aa5b87d4f3f248bda94adc9c7d500c37a"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.07
+        },
+        {
+          "frame": 48,
+          "weight": 0.07
+        },
+        {
+          "frame": 54,
+          "weight": 0.07
+        },
+        {
+          "frame": 60,
+          "weight": 0.07
+        },
+        {
+          "frame": 66,
+          "weight": 0.07
+        },
+        {
+          "frame": 72,
+          "weight": 0.07
+        },
+        {
+          "frame": 78,
+          "weight": 0.07
+        },
+        {
+          "frame": 84,
+          "weight": 0.07
+        },
+        {
+          "frame": 90,
+          "weight": 0.44
+        }
+      ]
     }
   ],
   "portraitSource": "unit_icons/unit_icon_213000105.png"

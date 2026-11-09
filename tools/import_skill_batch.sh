@@ -10,6 +10,9 @@ BATCH=$1; RUN=$2
 PY=${FFROGUE_PYTHON:-C:/Users/Daniel/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe}
 export PYTHONUTF8=1 PYTHONPATH='tools;tools/memorial'
 CHARS=""
+# A drafted recipe entry whose scene never published must not stay behind: a later
+# import_character for the same character would publish it without a scene.
+undraft() { node -e "const fs=require('fs'),p='tools/characters/$1.json',r=JSON.parse(fs.readFileSync(p));r.skills=r.skills.filter(s=>s.id!=='$2');fs.writeFileSync(p,JSON.stringify(r,null,2)+'\n')"; }
 while read -r CHAR SID ID KEY REST; do
   [ -z "$CHAR" ] && continue
   case "$CHAR" in \#*) continue;; esac
@@ -30,10 +33,10 @@ while read -r CHAR SID ID KEY REST; do
   "$PY" tools/prepare_original_preview.py --source "$D/source/skill-source.json" --unit "$CHAR" --motion "$CLIP" --recipe "tools/characters/$CHAR.json" \
     --profile source-preview-v1 --authoring-directory rawdata/assets/battle_effect --native-shaders-apk tools/data/memorial-audit/installed-base-v208.apk \
     --native-shader-package tools/data/particle-native-audit/bmshaderpack.bin --renderer-reference tools/data/memorial-audit/diagnostic-v7/renderer-reference.json \
-    --approximate-unverified --output "$D/source/plan.json" >"$D/prepare.log" 2>&1 || { echo "SKIP $ID: prepare: $(tail -1 "$D/prepare.log")"; continue; }
+    --approximate-unverified --output "$D/source/plan.json" >"$D/prepare.log" 2>&1 || { echo "SKIP $ID: prepare: $(tail -1 "$D/prepare.log")"; undraft "$CHAR" "$ID"; continue; }
   REC=tools/presentations/$(echo "$KEY" | tr '_' '-').json
   node -e "const fs=require('fs');fs.writeFileSync('$REC',JSON.stringify({schemaVersion:1,quality:'experimental-preview',reviewNote:'Batch authoring-free import via tools/import_skill_batch.sh; unsupported node-type subtrees omitted under --approximate-unverified. Visual acceptance bar per docs/vision.md.',bindings:[{key:'$KEY',standalone:true,sourceId:$SID,plan:'$D/source/plan.json',placementCoordinates:'ffbe-screen-api',placementReview:'Exact source group anchors through shared native screen-down semantics per native-effect-placement.md; anchor mode 3 as caster-unit under --approximate-unverified. Visual acceptance, not native placement proof.'}]},null,2)+'\n')"
-  node tools/publish_scene_presentations.mjs --recipe "$REC" --python "$PY" >"$D/publish.log" 2>&1 || { echo "SKIP $ID: publish: $(grep -m1 Error "$D/publish.log")"; rm -f "$REC"; continue; }
+  node tools/publish_scene_presentations.mjs --recipe "$REC" --python "$PY" >"$D/publish.log" 2>&1 || { echo "SKIP $ID: publish: $(grep -m1 Error "$D/publish.log")"; rm -f "$REC"; undraft "$CHAR" "$ID"; continue; }
   echo "OK $CHAR $ID"; CHARS="$CHARS $CHAR"
 done < "$BATCH"
 for C in $(echo $CHARS | tr ' ' '\n' | sort -u); do

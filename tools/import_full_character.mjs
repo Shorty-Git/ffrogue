@@ -28,10 +28,18 @@ const readJson = file => JSON.parse(fs.readFileSync(file, 'utf8'));
 const writeJson = (file, data) => fs.writeFileSync(file, JSON.stringify(data, null, 2) + '\n');
 const sha256 = file => createHash('sha256').update(fs.readFileSync(file)).digest('hex');
 const receipt = {schemaVersion: 1, key, unit, startedAt: new Date().toISOString(), steps: [], skills: [], forms: []};
+const STEP_TIMEOUT_MS = 15 * 60 * 1000;
 const run = (label, command, parameters, {allowFail = false} = {}) => {
   const started = Date.now();
-  const result = spawnSync(command, parameters, {encoding: 'utf8', maxBuffer: 256 << 20, env: {...process.env, FFROGUE_PYTHON: python, PYTHONUTF8: '1'}});
-  const step = {label, status: result.status, seconds: Math.round((Date.now() - started) / 100) / 10};
+  // A step occasionally stalls on Windows with no CPU and no child process (seen in the inspection of
+  // Cidolfus and Warrior of Light; not reproducible). Steps are bounded and a timed-out step reruns once.
+  const spawn = () => spawnSync(command, parameters, {encoding: 'utf8', maxBuffer: 256 << 20, timeout: STEP_TIMEOUT_MS,
+    env: {...process.env, FFROGUE_PYTHON: python, PYTHONUTF8: '1'}});
+  let result = spawn();
+  const timedOut = result.error?.code === 'ETIMEDOUT';
+  if (timedOut) { console.log(`TIMEOUT ${label}; retrying once`); result = spawn(); }
+  if (result.error?.code === 'ETIMEDOUT') result = {...result, status: 1, stderr: `${label} timed out twice after ${STEP_TIMEOUT_MS / 60000} min`};
+  const step = {label, status: result.status, seconds: Math.round((Date.now() - started) / 100) / 10, ...(timedOut ? {retriedAfterTimeout: true} : {})};
   receipt.steps.push(step);
   console.log(`${result.status === 0 ? 'OK  ' : 'FAIL'} ${label} (${step.seconds}s)`);
   if (result.status !== 0 && !allowFail) {
@@ -83,10 +91,12 @@ const wanted = arg('--skills')?.split(',').map(Number);
 const snake = name => name.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
 const candidates = report.catalog.filter(skill => !skill.passive && ['ABILITY', 'MAGIC', 'LIMIT'].includes(skill.kind)
   && (wanted ? wanted.includes(skill.id) : true)
-  && !recipe.skills.some(s => s.ffbeId === skill.id && s.type === skill.kind));
+  && !recipe.skills.some(s => s.ffbeId === skill.id && s.type === skill.kind)
+  // Same-named rows (e.g. two "Agile Edge" ids) would reuse an existing skill's id and presentation key.
+  && !recipe.skills.some(s => s.id === snake(skill.name)));
 // Original process IDs (first '@' process decides support kinds): damage processes become attacks,
 // 2 (cure) a party heal and 3 (stat up) a party physical boost through the reviewed friendly path.
-// Everything else (raise, dispel, libra, entrust, debuff-only, ...) waits for its own mechanic.
+// 4 (raise) revives fallen allies. Everything else (dispel, libra, entrust, debuff-only, ...) waits for its own mechanic.
 const DAMAGE_PROCESSES = new Set(['1', '15', '21', '25', '40', '43', '70', '103', '112', '126', '157', '169']);
 const roleOf = skill => {
   if (skill.kind === 'LIMIT') return 'damage';
@@ -94,9 +104,10 @@ const roleOf = skill => {
   if (processes.some(p => DAMAGE_PROCESSES.has(p))) return 'damage';
   // Pure stat-up (3 alone) only: protect/shell (3@18, 3@19) raise defence, which the friendly path does not model.
   if (processes.length === 1 && processes[0] === '3') return 'buff';
+  if (processes[0] === '4') return 'raise';
   return processes[0] === '2' ? 'heal' : null;
 };
-const DRAFT_OPTIONS = {damage: '', heal: '--heal 900', buff: '--buff 1.3'};
+const DRAFT_OPTIONS = {damage: '', heal: '--heal 900', buff: '--buff 1.3', raise: '--raise 0.5'};
 const decide = skill => {
   const role = roleOf(skill);
   if (!role) return `process ${skill.raw?.processId} is not a supported damage, heal or buff mechanic`;
