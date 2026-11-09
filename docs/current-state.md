@@ -57,6 +57,20 @@ unplayable for minutes and the cost grew with every import. It now prepares only
 skills and Limit Bursts plus every `presentation` the encounter's enemies reference
 (`ENEMY_CONTENT`/`ENEMY_SKILLS`). BootScene still loads all manifest JSONs (cheap).
 
+## Cooldown commands and periodic Null activations (2026-11-09)
+
+- Process 130 ("cast ability X, every a turns, first after b") is a wrapper. inspectCharacter already adds
+  the wrapped ability to the catalog and imports it; the wrapper itself is reported as "not supported"
+  but has no content of its own. Of 86 such wrappers in the roster, 24 wrap damage skills and 18 of those
+  were already published (Limit Raid, Seventh Heaven, Boiling Point, ...). FFBE cooldowns are not
+  modelled; wrapped skills cost MP like any other.
+- `bmb_playback_fields.py`: a ControlNull with generation mode 1, count 1, duration > 1 and interval > 0
+  (periodic activation) plays the decoded mode-0 schedule in approximation mode and is recorded as
+  `periodic-null-activation-as-mode-0`. Unblocked "Unknown native generation delay profile" for
+  Ancient Holy, Flames of Rebirth, Cherry Blossom, Focused Shot and Burst; Ace Vermilion's wave also
+  added Burst++, Support Hand+, Jackpot Triad, Shining Card, Spark Card and Card Showdown. Roster: 366
+  skills. Visual check: tools/data/delay-profile-check/ (Ancient Holy, Cherry Blossom hit the target).
+
 ## Protect, Shell and source-derived stat buffs (2026-11-09)
 
 - New hero status `guard` ({damageType: physical|magical, reduction, turns}; `src/effects/heroBuffs.mjs`

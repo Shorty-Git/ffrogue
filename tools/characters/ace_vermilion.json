@@ -1312,6 +1312,764 @@
           "weight": 0.22
         }
       ]
+    },
+    {
+      "id": "burst_ffbe",
+      "ffbeId": 20370,
+      "name": "Burst (FFBE)",
+      "rarity": 5,
+      "level": 1,
+      "type": "MAGIC",
+      "mpCost": 48,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.6,
+      "hitCount": 16,
+      "attackFrames": [
+        80,
+        90,
+        100,
+        110,
+        120,
+        130,
+        140,
+        150,
+        160,
+        170,
+        180,
+        190,
+        200,
+        210,
+        220,
+        230
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Magic damage (1.6x) to all enemies",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "ace_vermilion_burst_ffbe",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/ace_vermilion/skills/burst_ffbe/source/skill-source.json",
+        "sha256": "56e792e529d6866743dcaefef8988cb9333de0ae507bcba1d368a3a019612e89"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 80,
+          "weight": 0.06
+        },
+        {
+          "frame": 90,
+          "weight": 0.06
+        },
+        {
+          "frame": 100,
+          "weight": 0.06
+        },
+        {
+          "frame": 110,
+          "weight": 0.06
+        },
+        {
+          "frame": 120,
+          "weight": 0.06
+        },
+        {
+          "frame": 130,
+          "weight": 0.06
+        },
+        {
+          "frame": 140,
+          "weight": 0.06
+        },
+        {
+          "frame": 150,
+          "weight": 0.06
+        },
+        {
+          "frame": 160,
+          "weight": 0.06
+        },
+        {
+          "frame": 170,
+          "weight": 0.06
+        },
+        {
+          "frame": 180,
+          "weight": 0.06
+        },
+        {
+          "frame": 190,
+          "weight": 0.06
+        },
+        {
+          "frame": 200,
+          "weight": 0.06
+        },
+        {
+          "frame": 210,
+          "weight": 0.06
+        },
+        {
+          "frame": 220,
+          "weight": 0.06
+        },
+        {
+          "frame": 230,
+          "weight": 0.1
+        }
+      ]
+    },
+    {
+      "id": "burst",
+      "ffbeId": 234877,
+      "name": "Burst++",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 28,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 18,
+      "attackFrames": [
+        42,
+        48,
+        54,
+        60,
+        66,
+        72,
+        78,
+        84,
+        90,
+        42,
+        48,
+        54,
+        60,
+        66,
+        72,
+        78,
+        84,
+        90
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "ace_vermilion_burst",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/ace_vermilion/skills/burst/source/skill-source.json",
+        "sha256": "59771ee140401a80bcf6374b3b90e338a84673a0aa12ff6697c331d851f74fed"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.035
+        },
+        {
+          "frame": 42,
+          "weight": 0.035
+        },
+        {
+          "frame": 48,
+          "weight": 0.035
+        },
+        {
+          "frame": 48,
+          "weight": 0.035
+        },
+        {
+          "frame": 54,
+          "weight": 0.035
+        },
+        {
+          "frame": 54,
+          "weight": 0.035
+        },
+        {
+          "frame": 60,
+          "weight": 0.035
+        },
+        {
+          "frame": 60,
+          "weight": 0.035
+        },
+        {
+          "frame": 66,
+          "weight": 0.035
+        },
+        {
+          "frame": 66,
+          "weight": 0.035
+        },
+        {
+          "frame": 72,
+          "weight": 0.035
+        },
+        {
+          "frame": 72,
+          "weight": 0.035
+        },
+        {
+          "frame": 78,
+          "weight": 0.035
+        },
+        {
+          "frame": 78,
+          "weight": 0.035
+        },
+        {
+          "frame": 84,
+          "weight": 0.035
+        },
+        {
+          "frame": 84,
+          "weight": 0.035
+        },
+        {
+          "frame": 90,
+          "weight": 0.22
+        },
+        {
+          "frame": 90,
+          "weight": 0.22
+        }
+      ]
+    },
+    {
+      "id": "support_hand",
+      "ffbeId": 234852,
+      "name": "Support Hand+",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 60,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 8,
+      "attackFrames": [
+        42,
+        62,
+        82,
+        102,
+        122,
+        142,
+        162,
+        182
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "ace_vermilion_support_hand",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/ace_vermilion/skills/support_hand/source/skill-source.json",
+        "sha256": "62499fc57269fa66a9151153ddd890a2062a458c62ed8fc6bd2292a00270203b"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.08
+        },
+        {
+          "frame": 62,
+          "weight": 0.08
+        },
+        {
+          "frame": 82,
+          "weight": 0.08
+        },
+        {
+          "frame": 102,
+          "weight": 0.08
+        },
+        {
+          "frame": 122,
+          "weight": 0.08
+        },
+        {
+          "frame": 142,
+          "weight": 0.08
+        },
+        {
+          "frame": 162,
+          "weight": 0.08
+        },
+        {
+          "frame": 182,
+          "weight": 0.44
+        }
+      ]
+    },
+    {
+      "id": "jackpot_triad",
+      "ffbeId": 511903,
+      "name": "Jackpot Triad",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 60,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 8,
+      "attackFrames": [
+        42,
+        62,
+        82,
+        102,
+        122,
+        142,
+        162,
+        182
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "ace_vermilion_jackpot_triad",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/ace_vermilion/skills/jackpot_triad/source/skill-source.json",
+        "sha256": "639ecf2a6d61b1f82d778ac1be82ed2f209513210fe08079da7eb0949e6c9770"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.08
+        },
+        {
+          "frame": 62,
+          "weight": 0.08
+        },
+        {
+          "frame": 82,
+          "weight": 0.08
+        },
+        {
+          "frame": 102,
+          "weight": 0.08
+        },
+        {
+          "frame": 122,
+          "weight": 0.08
+        },
+        {
+          "frame": 142,
+          "weight": 0.08
+        },
+        {
+          "frame": 162,
+          "weight": 0.08
+        },
+        {
+          "frame": 182,
+          "weight": 0.44
+        }
+      ]
+    },
+    {
+      "id": "shining_card",
+      "ffbeId": 1222120,
+      "name": "Shining Card",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 60,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 9,
+      "attackFrames": [
+        42,
+        42,
+        62,
+        82,
+        102,
+        122,
+        142,
+        162,
+        182
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "ace_vermilion_shining_card",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/ace_vermilion/skills/shining_card/source/skill-source.json",
+        "sha256": "a11727118463e819c7a303d894bccf92d159950b0cb22e0635ac52678c139fa9"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.5
+        },
+        {
+          "frame": 42,
+          "weight": 0.04
+        },
+        {
+          "frame": 62,
+          "weight": 0.04
+        },
+        {
+          "frame": 82,
+          "weight": 0.04
+        },
+        {
+          "frame": 102,
+          "weight": 0.04
+        },
+        {
+          "frame": 122,
+          "weight": 0.04
+        },
+        {
+          "frame": 142,
+          "weight": 0.04
+        },
+        {
+          "frame": 162,
+          "weight": 0.04
+        },
+        {
+          "frame": 182,
+          "weight": 0.22
+        }
+      ]
+    },
+    {
+      "id": "spark_card",
+      "ffbeId": 234853,
+      "name": "Spark Card",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 60,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 16,
+      "attackFrames": [
+        42,
+        62,
+        82,
+        102,
+        122,
+        142,
+        162,
+        182,
+        42,
+        62,
+        82,
+        102,
+        122,
+        142,
+        162,
+        182
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "ace_vermilion_spark_card",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/ace_vermilion/skills/spark_card/source/skill-source.json",
+        "sha256": "d3122c971aa05ba48892d5caaf610a458963f7bc02a9068a6141368d4cd4244e"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.04
+        },
+        {
+          "frame": 42,
+          "weight": 0.05
+        },
+        {
+          "frame": 62,
+          "weight": 0.04
+        },
+        {
+          "frame": 62,
+          "weight": 0.05
+        },
+        {
+          "frame": 82,
+          "weight": 0.04
+        },
+        {
+          "frame": 82,
+          "weight": 0.05
+        },
+        {
+          "frame": 102,
+          "weight": 0.04
+        },
+        {
+          "frame": 102,
+          "weight": 0.05
+        },
+        {
+          "frame": 122,
+          "weight": 0.04
+        },
+        {
+          "frame": 122,
+          "weight": 0.05
+        },
+        {
+          "frame": 142,
+          "weight": 0.04
+        },
+        {
+          "frame": 142,
+          "weight": 0.05
+        },
+        {
+          "frame": 162,
+          "weight": 0.04
+        },
+        {
+          "frame": 162,
+          "weight": 0.05
+        },
+        {
+          "frame": 182,
+          "weight": 0.22
+        },
+        {
+          "frame": 182,
+          "weight": 0.15
+        }
+      ]
+    },
+    {
+      "id": "card_showdown",
+      "ffbeId": 1222030,
+      "name": "Card Showdown",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 60,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.6,
+      "hitCount": 8,
+      "attackFrames": [
+        42,
+        62,
+        82,
+        102,
+        122,
+        142,
+        162,
+        182
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (1.6x) to all enemies",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "ace_vermilion_card_showdown",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/ace_vermilion/skills/card_showdown/source/skill-source.json",
+        "sha256": "5222a08d577aae0010792710270b5256a7e4b90ff69b83420a2900998ca064d2"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.1
+        },
+        {
+          "frame": 62,
+          "weight": 0.1
+        },
+        {
+          "frame": 82,
+          "weight": 0.1
+        },
+        {
+          "frame": 102,
+          "weight": 0.1
+        },
+        {
+          "frame": 122,
+          "weight": 0.1
+        },
+        {
+          "frame": 142,
+          "weight": 0.1
+        },
+        {
+          "frame": 162,
+          "weight": 0.1
+        },
+        {
+          "frame": 182,
+          "weight": 0.3
+        }
+      ]
     }
   ],
   "portraitSource": "unit_icons/unit_icon_254002307.png"

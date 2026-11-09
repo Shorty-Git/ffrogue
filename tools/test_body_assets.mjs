@@ -18,7 +18,7 @@ test('published choreography and combat states are admitted for every unit and b
    assert.ok(a.every(a=>a.texture.startsWith(f.key+'_')&&fs.existsSync('public/'+a.url)));
   }
  }
- assert.equal(skills,355);assert.equal(limits,49);
+ assert.equal(skills,366);assert.equal(limits,49);
 });
 test('reviewed CGG passes retain the published strip geometry',()=>{
  const run=read('public/assets/run-content.json');

@@ -48,6 +48,16 @@ def attach_playback_fields(data, nodes):
                     bmb_channels.APPROXIMATED_CURVES.append({'node': node['index'], 'generationMode': generation['mode'],
                                                              'treatment': 'single-activation-as-mode-0'})
                     generation['mode'] = 0
+            elif (generation['mode'] == 1 and node['typeId'] == 0 and generation['count'] == 1
+                  and generation['duration'] > 1 and generation['interval'] > 0):
+                import bmb_channels
+                # Periodic Null activation (one child per interval over the duration; Ancient Holy,
+                # Cherry Blossom, Burst, Focused Shot, Flames of Rebirth). Mode 1 is not decoded;
+                # approximation mode plays these fields with the decoded mode-0 schedule and records it.
+                if bmb_channels.APPROXIMATED_CURVES is not None:
+                    bmb_channels.APPROXIMATED_CURVES.append({'node': node['index'], 'generationMode': generation['mode'],
+                                                             'treatment': 'periodic-null-activation-as-mode-0'})
+                    generation['mode'] = 0
         # Color fields are checked separately against the known source projects.
         color_offset = {0: 328, 2: 720, 3: 104, 6: 120}[node['typeId']]
         node['initialColor'] = list(struct.unpack_from('<3f', data, start + color_offset))
