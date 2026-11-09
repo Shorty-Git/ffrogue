@@ -21,6 +21,12 @@ SINGLE = {
     'magic-weakness': 'rawdata/assets/icons/ailments/break_spr.png',
     'silence': 'rawdata/assets/icons/ailments/silence.png',
     'stop': 'rawdata/assets/icons/ailments/stop.png',
+    # Enemy debuffs on heroes (heroBuffs.mjs 'break' per stat, 'blind').
+    'break-attack': 'rawdata/assets/icons/ailments/break_atk.png',
+    'break-defense': 'rawdata/assets/icons/ailments/break_def.png',
+    'break-magic': 'rawdata/assets/icons/ailments/break_mag.png',
+    'break-spirit': 'rawdata/assets/icons/ailments/break_spr.png',
+    'blind': 'rawdata/assets/icons/ailments/blind.png',
 }
 
 

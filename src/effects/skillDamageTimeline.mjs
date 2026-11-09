@@ -52,6 +52,8 @@ export function reviewedSkillEvents(skill,durationFrames=Infinity){
         }else if(e.kind==='auto-revive'){
           if(!Number.isFinite(e.hpFraction)||e.hpFraction<=0||e.hpFraction>1
             ||!Number.isInteger(e.turns)||e.turns<1||e.turns>9)throw Error('Invalid reviewed auto-revive');
+        }else if(e.kind==='cleanse'){
+          if(Object.keys(e).length!==1)throw Error('Invalid reviewed cleanse');
         }else if(e.kind==='guard'){
           if(!['physical','magical'].includes(e.damageType)||!Number.isFinite(e.reduction)||e.reduction<=0||e.reduction>=1
             ||!Number.isInteger(e.turns)||e.turns<1||e.turns>9)throw Error('Invalid reviewed guard');

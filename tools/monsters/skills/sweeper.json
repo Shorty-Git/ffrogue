@@ -95,7 +95,14 @@
       ],
       "scenePresentation": "sweeper_smoke_shot",
       "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value. Not reconstructed: original process(es) 6 beyond the damage.",
-      "damageType": "physical"
+      "damageType": "physical",
+      "heroEffects": [
+        {
+          "kind": "blind",
+          "turns": 3,
+          "chance": 1
+        }
+      ]
     }
   ]
 }

@@ -27,8 +27,9 @@ None of them is native placement proof. Details are in `docs/character-import-wo
 
 Still open:
 - jump (process 52);
-- support mechanics (dispel, esuna, imbue, debuffs); Protect/Shell guards and source-derived stat buffs
-  landed 2026-11-09 (docs/current-state.md);
+- support mechanics (dispel, imbue, poison and other ailments); Protect/Shell guards, source-derived stat
+  buffs (2026-11-09), Barrage repeats, enemy breaks/blind and Esuna cleanse (2026-11-10) landed
+  (docs/current-state.md);
 - delayed or conditional damage without attack frames.
 
 ## Gameplay data model: auto-revive and Limit fill friendly effects (2026-11-08)

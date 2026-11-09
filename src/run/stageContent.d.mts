@@ -3,6 +3,8 @@ export interface EnemyAction{kind:'attack'|'prepare';name:string;multiplier:numb
  presentation?:string;damageEvents?:{frame:number;weight:number}[];origin?:'source'|'ffrogue';
  /** Original damage process of an imported skill (1 physical, 15 magical); FFRogue actions are physical. */
  damageType?:'physical'|'magical';
+ /** Enemy debuffs from the original skill (stat breaks, blind), applied to each hit hero. */
+ heroEffects?:import('../types/skills').HeroDebuffEffect[];
  /** Pattern step that plays this imported original skill (src/run/enemySkills.mjs) when present. */
  skill?:string;}
 export interface EnemyDefinition{key:string;name:string;spriteId:string;monsterId:string;dictionaryId:number;scale:number;

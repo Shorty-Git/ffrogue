@@ -57,6 +57,22 @@ unplayable for minutes and the cost grew with every import. It now prepares only
 skills and Limit Bursts plus every `presentation` the encounter's enemies reference
 (`ENEMY_CONTENT`/`ENEMY_SKILLS`). BootScene still loads all manifest JSONs (cheap).
 
+## Enemy debuffs on heroes and Esuna (2026-11-10)
+
+- Hero statuses gain enemy debuffs (`src/effects/heroBuffs.mjs`): `break` per stat (ATK/MAG lower
+  dealt damage, DEF/SPR raise taken damage of that type, alongside Protect/Shell) and `blind` (each
+  basic-attack hit misses with 50 %, "MISS"). Original ailment icons (break_atk/def/mag/spr, blind).
+- import_enemy_skills.mjs decodes the extra processes of damaging monster skills: 24 (negative stat
+  changes -> breaks, strength held to 10-40 %, 1-5 rounds) and 6 (blind chance). Current carriers:
+  Condor Beak (DEF -30 %), Sweeper Smoke Shot (blind), X-ATM092 Arm Crush+ (all stats -40 %, party).
+  Debuffs land once per hit hero with their chance; floating "... BREAK" / "BLIND".
+- Esuna-type cleanse (process 5 whose ailment list includes blind): friendly effect `cleanse` removes
+  breaks and blind (adaptation: original Esuna clears ailments only). Imported: Esunaga (Aerith, Unsung
+  Hero Ramza), Esuna (Wondrous Flash Lightning), Medicate (Delita, Ramza), Return (Cloud of Darkness),
+  Ray of Hope (Terra). Poisona waits for poison. Dispel (59) waits for enemy buffs.
+- Browser check: Arm Crush+ broke all four stats on the party, Esunaga cleared them
+  (tools/data/debuff-check/). Roster: 379 skills. Tests: `tools/test_hero_debuffs.mjs`.
+
 ## Barrage-type commands (process 42, 2026-11-10)
 
 - Process 42 ("0,0,minHits,maxHits,power%", no effect or hit frames) repeats the unit's basic attack.

@@ -28,13 +28,20 @@ export interface LimitFillEffect {kind:'limit-fill';amount:number;}
 /** Protect/Shell-style guard: enemy damage of `damageType` is reduced by `reduction` (0-1) for `turns` rounds. */
 export interface GuardEffect {kind:'guard';damageType:'physical'|'magical';reduction:number;turns:number;}
 export type HeroStatusEffect = HeroBuffEffect | AutoReviveEffect | GuardEffect;
+/** Enemy debuffs on heroes (original process 24 stat breaks, process 6 blind); `chance` is rolled per hit target. */
+export type HeroDebuffEffect = {kind:'break';stat:'attack'|'defense'|'magic'|'spirit';amount:number;turns:number;chance?:number}
+  | {kind:'blind';turns:number;chance?:number};
 /** Revives a K.O. recipient with hpFraction of max HP; only on skills that target fallen allies. */
 export interface RaiseEffect {kind:'raise';hpFraction:number;}
-export type FriendlySkillEffect = HeroStatusEffect | LimitFillEffect | RaiseEffect | {kind:'heal';amount:number};
+/** Esuna-type cleanse: removes enemy debuffs (breaks, blind) from living allies. */
+export interface CleanseEffect {kind:'cleanse';}
+export type FriendlySkillEffect = HeroStatusEffect | LimitFillEffect | RaiseEffect | CleanseEffect | {kind:'heal';amount:number};
 export type ActiveHeroBuff =
   | {kind:'physical-boost';multiplier:number;expiresAfterRound:number}
   | {kind:'auto-revive';hpFraction:number;expiresAfterRound:number}
-  | {kind:'guard';damageType:'physical'|'magical';reduction:number;expiresAfterRound:number};
+  | {kind:'guard';damageType:'physical'|'magical';reduction:number;expiresAfterRound:number}
+  | {kind:'break';stat:'attack'|'defense'|'magic'|'spirit';amount:number;expiresAfterRound:number}
+  | {kind:'blind';expiresAfterRound:number};
 export interface ActionChoreography {
   schema:'source-action-v1';
   movement:'target'|'step'|'stationary';

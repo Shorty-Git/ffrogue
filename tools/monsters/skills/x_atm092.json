@@ -51,7 +51,33 @@
       ],
       "scenePresentation": "x_atm092_arm_crush_plus",
       "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value. Not reconstructed: original process(es) 24 beyond the damage.",
-      "damageType": "physical"
+      "damageType": "physical",
+      "heroEffects": [
+        {
+          "kind": "break",
+          "stat": "attack",
+          "amount": 0.4,
+          "turns": 3
+        },
+        {
+          "kind": "break",
+          "stat": "defense",
+          "amount": 0.4,
+          "turns": 3
+        },
+        {
+          "kind": "break",
+          "stat": "magic",
+          "amount": 0.4,
+          "turns": 3
+        },
+        {
+          "kind": "break",
+          "stat": "spirit",
+          "amount": 0.4,
+          "turns": 3
+        }
+      ]
     },
     {
       "id": "ray_bomb",

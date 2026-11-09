@@ -43,7 +43,15 @@ export const ENEMY_SKILLS = {
           "weight": 1
         }
       ],
-      "damageType": "physical"
+      "damageType": "physical",
+      "heroEffects": [
+        {
+          "kind": "break",
+          "stat": "defense",
+          "amount": 0.3,
+          "turns": 3
+        }
+      ]
     }
   },
   "dingo": {
@@ -519,7 +527,14 @@ export const ENEMY_SKILLS = {
           "weight": 1
         }
       ],
-      "damageType": "physical"
+      "damageType": "physical",
+      "heroEffects": [
+        {
+          "kind": "blind",
+          "turns": 3,
+          "chance": 1
+        }
+      ]
     }
   },
   "water_flan": {
@@ -577,7 +592,33 @@ export const ENEMY_SKILLS = {
           "weight": 0.25
         }
       ],
-      "damageType": "physical"
+      "damageType": "physical",
+      "heroEffects": [
+        {
+          "kind": "break",
+          "stat": "attack",
+          "amount": 0.4,
+          "turns": 3
+        },
+        {
+          "kind": "break",
+          "stat": "defense",
+          "amount": 0.4,
+          "turns": 3
+        },
+        {
+          "kind": "break",
+          "stat": "magic",
+          "amount": 0.4,
+          "turns": 3
+        },
+        {
+          "kind": "break",
+          "stat": "spirit",
+          "amount": 0.4,
+          "turns": 3
+        }
+      ]
     },
     "ray_bomb": {
       "name": "Ray-Bomb",

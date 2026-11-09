@@ -109,9 +109,12 @@ const roleOf = skill => {
   // Pure stat buffs (3, optionally with 18/19 mitigation: Protect, Shell); statuses come from the source.
   if (sourceFriendlyBuffs(skill.raw)) return 'buff';
   if (processes[0] === '4') return 'raise';
+  // Esuna-type cleanse (process 5 alone, ailment list including blind = 2): removes enemy debuffs.
+  // Single-ailment cures such as Poisona stay out until poison exists.
+  if (processes.length === 1 && processes[0] === '5' && String(skill.raw.processParam).split(',').includes('2')) return 'cleanse';
   return processes[0] === '2' ? 'heal' : null;
 };
-const DRAFT_OPTIONS = {damage: '', heal: '--heal 900', buff: '--source-buff', raise: '--raise 0.5'};
+const DRAFT_OPTIONS = {damage: '', heal: '--heal 900', buff: '--source-buff', raise: '--raise 0.5', cleanse: '--cleanse'};
 const decide = skill => {
   const role = roleOf(skill);
   if (!role) return `process ${skill.raw?.processId} is not a supported damage, heal or buff mechanic`;

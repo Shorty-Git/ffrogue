@@ -591,6 +591,70 @@
       "importStatus": "imported",
       "requiresSourceScene": false,
       "reviewNote": "Original process 42 (0,0,4,4,1500,0, range 3): repeats the unit's basic attack with its original hit frames; per-hit power is a reviewed default."
+    },
+    {
+      "id": "return",
+      "ffbeId": 203300,
+      "name": "Return",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 20,
+      "scope": "party",
+      "damageMultiplier": 1,
+      "hitCount": 0,
+      "attackFrames": [
+        120
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Remove stat breaks and blind from all living allies.",
+      "execution": "prepared-friendly",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "cloud_of_darkness_return",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/cloud_of_darkness/skills/return/source/skill-source.json",
+        "sha256": "55ad012bf06edd1e17b8c5b69cbda3b9a7c5a7e8537ef9b903d3e5142e482602"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "allyTargeting": "living-allies",
+      "allyEvents": [
+        {
+          "frame": 120,
+          "effects": [
+            {
+              "kind": "cleanse"
+            }
+          ]
+        }
+      ],
+      "friendlyTargetReview": {
+        "sourceTarget": "2",
+        "sourceRange": "2",
+        "note": "Original target 2 / range 2 (process 5); adapted to a cleanse of enemy debuffs (stat breaks, blind; FFRogue adaptation: original Esuna clears ailments only) on all living allies."
+      }
     }
   ],
   "portraitSource": "unit_icons/unit_icon_203000803.png"

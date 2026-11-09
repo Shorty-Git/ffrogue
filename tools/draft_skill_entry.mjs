@@ -17,8 +17,10 @@ const target = String(raw.target ?? '1').split('@')[0], range = String(raw.targe
 const heal = arg('--heal') && Number(arg('--heal')), buff = arg('--buff') && Number(arg('--buff')), revive = arg('--revive') && Number(arg('--revive'));
 const raise = arg('--raise') && Number(arg('--raise'));
 const sourceBuffs = process.argv.includes('--source-buff') ? sourceFriendlyBuffs(raw) : null;
+const cleanse = process.argv.includes('--cleanse');
+if (cleanse && String(raw.processId) !== '5') throw Error(`process ${raw.processId} is not an Esuna-type cleanse`);
 if (process.argv.includes('--source-buff') && !sourceBuffs) throw Error(`process ${raw.processId} is not a pure stat buff`);
-const friendly = !!(heal || buff || revive || raise || sourceBuffs);
+const friendly = !!(heal || buff || revive || raise || sourceBuffs || cleanse);
 // Raise (process 4): range 2 revives every fallen ally, otherwise the first fallen ally in party order.
 const raiseTargets = range === '2' ? 'fallen-allies' : 'fallen-ally';
 const scope = friendly ? 'party' : range === '2' ? 'all_enemies' : 'single_enemy';
@@ -33,6 +35,7 @@ const bodyClip = limit ? 'limit_atk' : clip;
 const mult = Number(arg('--mult', limit ? (scope === 'all_enemies' ? 3.5 : 6) : scope === 'all_enemies' ? 1.6 : 2.5));
 const mp = limit ? 0 : Number(arg('--mp', Math.max(8, Math.min(60, Number(raw.cost) || 20))));
 const desc = raise ? `Revive ${raiseTargets === 'fallen-allies' ? 'all fallen allies' : 'one fallen ally'} with ${Math.round(raise * 100)}% HP.`
+  : cleanse ? 'Remove stat breaks and blind from all living allies.'
   : sourceBuffs ? buffDescription(sourceBuffs)
   : heal ? `Restore ${heal} HP to all living allies (no revival).`
   : revive ? `All living allies revive once with ${Math.round(revive * 100)}% HP if K.O. within 3 rounds.`
@@ -53,9 +56,9 @@ const entry = {
 };
 if (friendly) {
   entry.allyTargeting = raise ? raiseTargets : 'living-allies';
-  entry.allyEvents = [{frame: hits[0][0] + off, effects: sourceBuffs ?? [raise ? {kind: 'raise', hpFraction: raise} : heal ? {kind: 'heal', amount: heal} : revive ? {kind: 'auto-revive', hpFraction: revive, turns: 3} : {kind: 'physical-boost', multiplier: buff, turns: 3}]}];
+  entry.allyEvents = [{frame: hits[0][0] + off, effects: cleanse ? [{kind: 'cleanse'}] : sourceBuffs ?? [raise ? {kind: 'raise', hpFraction: raise} : heal ? {kind: 'heal', amount: heal} : revive ? {kind: 'auto-revive', hpFraction: revive, turns: 3} : {kind: 'physical-boost', multiplier: buff, turns: 3}]}];
   entry.friendlyTargetReview = {sourceTarget: raw.target, sourceRange: raw.targetRange,
-    note: `Original target ${raw.target} / range ${raw.targetRange} (process ${raw.processId}); adapted to ${sourceBuffs ? `${sourceBuffs.map(e => e.kind === 'guard' ? `${e.damageType} guard -${e.reduction}` : `physical-boost x${e.multiplier}`).join(' + ')} for ${sourceBuffs[0].turns} rounds (statuses from the original stat-buff processes ${raw.processId} / ${raw.processParam})` : raise ? `raise at ${raise} HP on ${raiseTargets}` : heal ? `a fixed ${heal} HP heal` : revive ? `auto-revive at ${revive} HP for 3 rounds` : `physical-boost x${buff} for 3 rounds`}${raise ? '' : ' on all living allies'}.`};
+    note: `Original target ${raw.target} / range ${raw.targetRange} (process ${raw.processId}); adapted to ${cleanse ? 'a cleanse of enemy debuffs (stat breaks, blind; FFRogue adaptation: original Esuna clears ailments only)' : sourceBuffs ? `${sourceBuffs.map(e => e.kind === 'guard' ? `${e.damageType} guard -${e.reduction}` : `physical-boost x${e.multiplier}`).join(' + ')} for ${sourceBuffs[0].turns} rounds (statuses from the original stat-buff processes ${raw.processId} / ${raw.processParam})` : raise ? `raise at ${raise} HP on ${raiseTargets}` : heal ? `a fixed ${heal} HP heal` : revive ? `auto-revive at ${revive} HP for 3 rounds` : `physical-boost x${buff} for 3 rounds`}${raise ? '' : ' on all living allies'}.`};
 } else entry.damageEvents = hits.map(([frame, weight]) => ({frame: frame + off, weight: weight / (100 * groups)}))
   .sort((a, b) => a.frame - b.frame); // parallel '@' processes interleave; same order as source-damage-events.mjs
 const path = `tools/characters/${character}.json`, recipe = JSON.parse(fs.readFileSync(path, 'utf8'));

@@ -16,7 +16,7 @@ import { validateSceneManifest, validateSceneAction } from '../effects/sceneProf
 import { reviewedSkillEvents,skillDamageType } from '../effects/skillDamageTimeline.mjs';
 import { applyEnemyStatuses, isEnemyActionBlocked, ageEnemyStatuses, enemyAttackMultiplier } from '../effects/enemyStatus.mjs';
 import { validateBasicRepeat } from '../effects/basicRepeat.mjs';
-import { applyHeroBuffs, consumeAutoRevive, heroDamageTakenMultiplier, heroPhysicalMultiplier } from '../effects/heroBuffs.mjs';
+import { applyHeroBuffs, cleanseHeroDebuffs, consumeAutoRevive, heroDamageTakenMultiplier, heroMagicMultiplier, heroPhysicalMultiplier, isHeroBlind } from '../effects/heroBuffs.mjs';
 import {resolveEnemyInstant} from '../effects/enemyInstant.mjs';
 import {validateActionChoreography,actionTravel} from '../effects/actionChoreography.mjs';
 import type {RunBattleContext} from '../run/battleContext';
@@ -49,6 +49,8 @@ type PlannedAction = ({ kind: 'attack'; config: UnitCombatConfig } | { kind: 'sk
   & { target: TargetDummy | null };
 /** Beat after an enemy skill's last hit before the next enemy acts (the scene tail keeps fading). */
 const ENEMY_SKILL_SETTLE_MS = 400;
+/** Chance that a blinded hero's basic-attack hit misses (reviewed FFRogue value). */
+const BLIND_MISS_CHANCE = 0.5;
 
 export class BattleScene extends Phaser.Scene {
   private runContext!:RunBattleContext;
@@ -1113,6 +1115,11 @@ export class BattleScene extends Phaser.Scene {
                 for (const effect of entry.allyEffects) {
                   if (effect.kind==='raise') continue;
                   if (effect.kind==='heal') ally.restoreHp(effect.amount);
+                  else if (effect.kind==='cleanse') {
+                    const before=ally.sourceBuffs.length;
+                    ally.sourceBuffs=cleanseHeroDebuffs(ally.sourceBuffs);
+                    if (ally.sourceBuffs.length<before) this.floatCombatText(ally.x,ally.y-100,'CLEANSED','#a6e3a1');
+                  }
                   else if (effect.kind==='limit-fill') {
                     // Only heroes with a Limit Burst own a gauge.
                     if (this.limitBursts[ally.unitKey]) {
@@ -1314,6 +1321,7 @@ export class BattleScene extends Phaser.Scene {
             if (this.combatState !== 'HERO_ATTACKING') return;
             const victims = repeat.targeting === 'all' ? living() : [target.currentHp > 0 ? target : pick()].filter((v): v is TargetDummy => !!v);
             for (const victim of victims) {
+              if (this.blindMiss(hero, victim)) continue;
               victim.applyDamage(Math.max(1, Math.round(roll * skill.damageMultiplier * hits[index].weight)), false, 'physical');
               this.handleTargetDamaged(victim);
             }
@@ -1521,11 +1529,12 @@ export class BattleScene extends Phaser.Scene {
   /** Skill base roll; run attack/magic ranks are already folded into skill multipliers. */
   private skillBaseDamage(hero: UnitActor, skill: SkillConfig): number {
     const roll = this.randomBetween(300, 380);
-    return roll * (skillDamageType(skill)==='holy' ? 1 : heroPhysicalMultiplier(hero.sourceBuffs,this.currentRound));
+    return roll * (skillDamageType(skill)==='holy' ? heroMagicMultiplier(hero.sourceBuffs,this.currentRound) : heroPhysicalMultiplier(hero.sourceBuffs,this.currentRound));
   }
 
   private applyHeroMeleeDamage(hero: UnitActor, target: TargetDummy, weight = 1, roll = this.randomBetween(300,380), isCrit = this.randomValue()<.15): void {
     if (this.combatState !== 'HERO_ATTACKING' || target.currentHp <= 0) return;
+    if (this.blindMiss(hero, target)) return;
     let baseDmg = roll*weight*(this.runContext.state.party.find(m=>m.key===hero.unitKey)?.stats.attack??1);
 
     baseDmg = Math.max(1, Math.round(baseDmg * heroPhysicalMultiplier(hero.sourceBuffs,this.currentRound)));
@@ -1533,6 +1542,13 @@ export class BattleScene extends Phaser.Scene {
     this.basicImpactSound(hero,isCrit);
     target.applyDamage(baseDmg, isCrit, 'physical');
     this.handleTargetDamaged(target);
+  }
+
+  /** Blind (enemy debuff): each basic-attack hit misses with BLIND_MISS_CHANCE and shows MISS. */
+  private blindMiss(hero: UnitActor, target: TargetDummy): boolean {
+    if (!isHeroBlind(hero.sourceBuffs, this.currentRound) || this.randomValue() >= BLIND_MISS_CHANCE) return false;
+    this.floatCombatText(target.x, target.y - 90, 'MISS', '#cdd6f4');
+    return true;
   }
 
   private finishAfterImpacts(onComplete: () => void): void {
@@ -1725,6 +1741,7 @@ export class BattleScene extends Phaser.Scene {
     enemy.playCastBody();
     this.playPreparedScene(action.presentation!,enemy,targets,()=>enemy.setDepthBoost(false));
     let remaining=events.length;
+    const debuffed=new Set<UnitActor>();
     events.forEach(event=>timers.push(this.time.delayedCall(event.frame*1000/60,()=>{
       if(closed)return;
       for(const target of targets){
@@ -1736,6 +1753,15 @@ export class BattleScene extends Phaser.Scene {
         this.playHeroHitFeedback(target,enemy.x,dmg/Math.max(1,target.maxHp));
         if(target.isDead)this.tryAutoRevive(target);
         if(!target.isDead)target.limitGauge=gainFromDamage(target.limitGauge,dmg,target.maxHp);
+        // Original debuffs land once per hit hero, each with its own chance.
+        if(action.heroEffects&&!target.isDead&&!debuffed.has(target)){
+          debuffed.add(target);
+          const applied=action.heroEffects.filter(e=>this.randomValue()<(e.chance??1)).map(({chance:_chance,...e})=>e);
+          if(applied.length){
+            target.sourceBuffs=applyHeroBuffs(target.sourceBuffs,applied,this.currentRound);
+            this.floatCombatText(target.x,target.y-120,applied.map(e=>e.kind==='blind'?'BLIND':({attack:'ATK',defense:'DEF',magic:'MAG',spirit:'SPR'}[e.stat])).join(' ')+(applied.some(e=>e.kind==='break')?' BREAK':''),'#f38ba8');
+          }
+        }
       }
       if(--remaining===0)timers.push(this.time.delayedCall(ENEMY_SKILL_SETTLE_MS,finish));
     })));

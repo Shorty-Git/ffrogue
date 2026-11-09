@@ -618,6 +618,70 @@
         "sourceRange": "1",
         "note": "Original target 6 / range 1 (process 4); adapted to raise at 0.5 HP on fallen-ally."
       }
+    },
+    {
+      "id": "esuna",
+      "ffbeId": 10110,
+      "name": "Esuna",
+      "rarity": 5,
+      "level": 1,
+      "type": "MAGIC",
+      "mpCost": 8,
+      "scope": "party",
+      "damageMultiplier": 1,
+      "hitCount": 0,
+      "attackFrames": [
+        120
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Remove stat breaks and blind from all living allies.",
+      "execution": "prepared-friendly",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "lightning_wondrous_flash_esuna",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/lightning_wondrous_flash/skills/esuna/source/skill-source.json",
+        "sha256": "288c39be1bde73aa68cdb2d208941896b681bc15d8f3e062312a5fd83461a76e"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "allyTargeting": "living-allies",
+      "allyEvents": [
+        {
+          "frame": 120,
+          "effects": [
+            {
+              "kind": "cleanse"
+            }
+          ]
+        }
+      ],
+      "friendlyTargetReview": {
+        "sourceTarget": "2",
+        "sourceRange": "1",
+        "note": "Original target 2 / range 1 (process 5); adapted to a cleanse of enemy debuffs (stat breaks, blind; FFRogue adaptation: original Esuna clears ailments only) on all living allies."
+      }
     }
   ],
   "portraitSource": "unit_icons/unit_icon_213001407.png"
