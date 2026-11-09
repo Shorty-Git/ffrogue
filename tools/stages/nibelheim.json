@@ -1,0 +1,133 @@
+{
+  "schema": "stage-recipe-v1",
+  "key": "nibelheim",
+  "name": "Nibelheim",
+  "theme": "FINAL FANTASY VII",
+  "series": "FFVII",
+  "arena": {
+    "key": "nibelheim",
+    "battleBgId": 120144,
+    "title": "FFVII",
+    "label": "Shinra Mansion",
+    "floor": [
+      0.56,
+      0.78
+    ],
+    "worldIdentity": "Reviewed manor image (tools/stages/mainline-candidates.json priority 2); original Ghirofelgo/Yin & Yang descriptions mention the Nibelheim manor. Sephiroth is a reviewed FFRogue assembly from the FFBE trial boss, not an original encounter list."
+  },
+  "music": {
+    "normal": {
+      "resourceId": 400842,
+      "title": "Let the Battles Begin!",
+      "game": "FFVII"
+    },
+    "boss": {
+      "resourceId": 4002203,
+      "title": "J-E-N-O-V-A",
+      "game": "FFVII Remake"
+    }
+  },
+  "enemies": [
+    {
+      "key": "ghirofelgo",
+      "dictionaryId": 2058210,
+      "name": "Ghirofelgo",
+      "scale": 2,
+      "movement": "approach",
+      "monsterId": "205821000"
+    },
+    {
+      "key": "yin_yang",
+      "dictionaryId": 2058310,
+      "name": "Yin & Yang",
+      "scale": 2,
+      "movement": "approach",
+      "monsterId": "205831000"
+    }
+  ],
+  "boss": {
+    "key": "sephiroth",
+    "dictionaryId": 3254710,
+    "name": "Sephiroth",
+    "scale": 2,
+    "movement": "approach",
+    "note": "FFBE trial boss (Sephiroth, dictionary 3254710); original moves are imported by import_enemy_skills.mjs.",
+    "behavior": {
+      "phaseAt": 0.5,
+      "phaseName": "One-Winged Angel",
+      "phaseMultiplier": 1.3,
+      "pattern": [
+        {
+          "kind": "attack",
+          "name": "Double Strike",
+          "multiplier": 1,
+          "scope": "single",
+          "skill": "double_strike"
+        },
+        {
+          "kind": "prepare",
+          "name": "Masamune gleams",
+          "next": "Octaslash"
+        },
+        {
+          "kind": "attack",
+          "name": "Octaslash",
+          "multiplier": 1.4,
+          "scope": "party",
+          "skill": "octaslash"
+        },
+        {
+          "kind": "attack",
+          "name": "Double Strike",
+          "multiplier": 1,
+          "scope": "single",
+          "skill": "double_strike"
+        },
+        {
+          "kind": "prepare",
+          "name": "Sephiroth vanishes",
+          "next": "Quad Strike"
+        },
+        {
+          "kind": "attack",
+          "name": "Quad Strike",
+          "multiplier": 1.1,
+          "scope": "party",
+          "skill": "quad_strike"
+        },
+        {
+          "kind": "attack",
+          "name": "Double Strike",
+          "multiplier": 1,
+          "scope": "single",
+          "skill": "double_strike"
+        },
+        {
+          "kind": "prepare",
+          "name": "A black wing unfolds",
+          "next": "Heartless Angel"
+        },
+        {
+          "kind": "attack",
+          "name": "Heartless Angel",
+          "multiplier": 1.6,
+          "scope": "party",
+          "skill": "heartless_angel"
+        }
+      ]
+    },
+    "monsterId": "325471000"
+  },
+  "formations": [
+    [
+      "top",
+      "bottom"
+    ],
+    [
+      "center"
+    ]
+  ],
+  "difficulty": 1.4,
+  "normalFights": 1,
+  "rewardCategory": "nibelheim-relic"
+}

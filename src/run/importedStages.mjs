@@ -267,6 +267,112 @@ export const IMPORTED_ENEMIES = {
         }
       ]
     }
+  },
+  "ghirofelgo": {
+    "key": "ghirofelgo",
+    "name": "Ghirofelgo",
+    "spriteId": "2058210",
+    "monsterId": "205821000",
+    "dictionaryId": 2058210,
+    "scale": 2,
+    "attack": {
+      "clip": "atk",
+      "impactFrame": 1,
+      "movement": "approach"
+    },
+    "audio": []
+  },
+  "yin_yang": {
+    "key": "yin_yang",
+    "name": "Yin & Yang",
+    "spriteId": "2058310",
+    "monsterId": "205831000",
+    "dictionaryId": 2058310,
+    "scale": 2,
+    "attack": {
+      "clip": "atk",
+      "impactFrame": 1,
+      "movement": "approach"
+    },
+    "audio": []
+  },
+  "sephiroth": {
+    "key": "sephiroth",
+    "name": "Sephiroth",
+    "spriteId": "3254710",
+    "monsterId": "325471000",
+    "dictionaryId": 3254710,
+    "scale": 2,
+    "attack": {
+      "clip": "atk",
+      "impactFrame": 1,
+      "movement": "approach"
+    },
+    "audio": [],
+    "behavior": {
+      "phaseAt": 0.5,
+      "phaseName": "One-Winged Angel",
+      "phaseMultiplier": 1.3,
+      "pattern": [
+        {
+          "kind": "attack",
+          "name": "Double Strike",
+          "multiplier": 1,
+          "scope": "single",
+          "skill": "double_strike"
+        },
+        {
+          "kind": "prepare",
+          "name": "Masamune gleams",
+          "next": "Octaslash"
+        },
+        {
+          "kind": "attack",
+          "name": "Octaslash",
+          "multiplier": 1.4,
+          "scope": "party",
+          "skill": "octaslash"
+        },
+        {
+          "kind": "attack",
+          "name": "Double Strike",
+          "multiplier": 1,
+          "scope": "single",
+          "skill": "double_strike"
+        },
+        {
+          "kind": "prepare",
+          "name": "Sephiroth vanishes",
+          "next": "Quad Strike"
+        },
+        {
+          "kind": "attack",
+          "name": "Quad Strike",
+          "multiplier": 1.1,
+          "scope": "party",
+          "skill": "quad_strike"
+        },
+        {
+          "kind": "attack",
+          "name": "Double Strike",
+          "multiplier": 1,
+          "scope": "single",
+          "skill": "double_strike"
+        },
+        {
+          "kind": "prepare",
+          "name": "A black wing unfolds",
+          "next": "Heartless Angel"
+        },
+        {
+          "kind": "attack",
+          "name": "Heartless Angel",
+          "multiplier": 1.6,
+          "scope": "party",
+          "skill": "heartless_angel"
+        }
+      ]
+    }
   }
 };
 export const IMPORTED_STAGES = {
@@ -406,6 +512,41 @@ export const IMPORTED_STAGES = {
       "musicResourceId": 400807,
       "musicSeries": "FFIV",
       "bossMusicResourceId": 400863,
+      "musicAssignment": "Original series battle and boss themes (tools/import_stage.mjs)",
+      "soundCues": []
+    }
+  },
+  "nibelheim": {
+    "id": "nibelheim",
+    "name": "Nibelheim",
+    "theme": "FINAL FANTASY VII",
+    "arena": "nibelheim",
+    "source": {
+      "battleBgId": 120144,
+      "file": "battle_bg_2013_04.jpg",
+      "worldIdentity": "Reviewed manor image (tools/stages/mainline-candidates.json priority 2); original Ghirofelgo/Yin & Yang descriptions mention the Nibelheim manor. Sephiroth is a reviewed FFRogue assembly from the FFBE trial boss, not an original encounter list."
+    },
+    "enemyPool": [
+      "ghirofelgo",
+      "yin_yang"
+    ],
+    "formations": [
+      [
+        "top",
+        "bottom"
+      ],
+      [
+        "center"
+      ]
+    ],
+    "bossId": "sephiroth",
+    "difficulty": 1.4,
+    "rewardCategory": "nibelheim-relic",
+    "normalFights": 1,
+    "audio": {
+      "musicResourceId": 400842,
+      "musicSeries": "FFVII",
+      "bossMusicResourceId": 4002203,
       "musicAssignment": "Original series battle and boss themes (tools/import_stage.mjs)",
       "soundCues": []
     }

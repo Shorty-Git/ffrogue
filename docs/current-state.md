@@ -166,6 +166,18 @@ economy proposal (Bond) and variant import: `docs/progression-design.md`.
 - Developer direction for later: more influence over starting heroes and their level between runs.
   Candidates are duplicates raising a hero's minimum start rank, and a "favoured hero" slot.
 
+## Nibelheim, Sephiroth and weapon data (2026-11-10)
+
+- New stage Nibelheim (FFVII, Shinra Mansion bg 120144, music Let the Battles Begin! / J-E-N-O-V-A
+  4002203): Ghirofelgo, Yin & Yang (Blizzara, Thundara) and boss Sephiroth (FFBE trial, dictionary
+  3254710) with 7 original moves (Double Strike, Quad Strike, Draw Slash, Octaslash, Heartless Angel,
+  Firaga, Blizzaga). Pattern announces every party attack (test convention). Known: Heartless Angel's
+  feather storm shows a hard right edge (effect pipeline, local fix needed).
+- Further trial boss candidates in the DB: Safer-Sephiroth (Super Nova, Flare), Gilgamesh, Kefka,
+  Exdeath, Ultima Weapon, summons (Bahamut, Ifrit, Shiva, Odin). Each needs a reviewed arena/music.
+- `public/assets/items/weapons.json`: 984 original weapons (tools/export_weapons.mjs); gameplay is
+  the cloud brief's task. Simulator after Nibelheim: 99.7 % wins, 49.8 % HP after the final fight.
+
 ## Playtest round 2026-11-10 (developer feedback)
 
 - Great Gospel showed a dark box: screen-sized particle rule now starts at 200 units and also accepts

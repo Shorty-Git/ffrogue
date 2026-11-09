@@ -446,6 +446,178 @@ export const ENEMY_SKILLS = {
       "damageType": "magical"
     }
   },
+  "sephiroth": {
+    "double_strike": {
+      "name": "Double Strike",
+      "scope": "single",
+      "multiplier": 1.2,
+      "origin": "source",
+      "presentation": "sephiroth_double_strike",
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.5
+        },
+        {
+          "frame": 52,
+          "weight": 0.5
+        }
+      ],
+      "damageType": "physical"
+    },
+    "quad_strike": {
+      "name": "Quad Strike",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "sephiroth_quad_strike",
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.25
+        },
+        {
+          "frame": 52,
+          "weight": 0.25
+        },
+        {
+          "frame": 62,
+          "weight": 0.25
+        },
+        {
+          "frame": 72,
+          "weight": 0.25
+        }
+      ],
+      "damageType": "physical"
+    },
+    "draw_slash": {
+      "name": "Draw Slash",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "sephiroth_draw_slash",
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 1
+        }
+      ],
+      "damageType": "physical"
+    },
+    "heartless_angel": {
+      "name": "Heartless Angel",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "sephiroth_heartless_angel",
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 1
+        }
+      ],
+      "damageType": "physical"
+    },
+    "octaslash": {
+      "name": "Octaslash",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "sephiroth_octaslash",
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 1
+        }
+      ],
+      "damageType": "physical"
+    },
+    "firaga": {
+      "name": "Firaga",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "sephiroth_firaga",
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.1
+        },
+        {
+          "frame": 62,
+          "weight": 0.1
+        },
+        {
+          "frame": 82,
+          "weight": 0.1
+        },
+        {
+          "frame": 102,
+          "weight": 0.1
+        },
+        {
+          "frame": 122,
+          "weight": 0.1
+        },
+        {
+          "frame": 142,
+          "weight": 0.1
+        },
+        {
+          "frame": 162,
+          "weight": 0.1
+        },
+        {
+          "frame": 182,
+          "weight": 0.3
+        }
+      ],
+      "damageType": "magical"
+    },
+    "blizzaga": {
+      "name": "Blizzaga",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "sephiroth_blizzaga",
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.1
+        },
+        {
+          "frame": 62,
+          "weight": 0.1
+        },
+        {
+          "frame": 82,
+          "weight": 0.1
+        },
+        {
+          "frame": 102,
+          "weight": 0.1
+        },
+        {
+          "frame": 122,
+          "weight": 0.1
+        },
+        {
+          "frame": 142,
+          "weight": 0.1
+        },
+        {
+          "frame": 162,
+          "weight": 0.1
+        },
+        {
+          "frame": 182,
+          "weight": 0.3
+        }
+      ],
+      "damageType": "magical"
+    }
+  },
   "sweeper": {
     "machine_gun": {
       "name": "Machine Gun",
@@ -629,6 +801,36 @@ export const ENEMY_SKILLS = {
       "damageEvents": [
         {
           "frame": 120,
+          "weight": 1
+        }
+      ],
+      "damageType": "magical"
+    }
+  },
+  "yin_yang": {
+    "blizzara": {
+      "name": "Blizzara",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "yin_yang_blizzara",
+      "damageEvents": [
+        {
+          "frame": 145,
+          "weight": 1
+        }
+      ],
+      "damageType": "magical"
+    },
+    "thundara": {
+      "name": "Thundara",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "yin_yang_thundara",
+      "damageEvents": [
+        {
+          "frame": 80,
           "weight": 1
         }
       ],

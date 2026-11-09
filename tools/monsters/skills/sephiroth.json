@@ -1,0 +1,206 @@
+{
+  "schema": "enemy-skills-v1",
+  "key": "sephiroth",
+  "monsterId": 325471000,
+  "dictionaryId": 3254710,
+  "skills": [
+    {
+      "id": "double_strike",
+      "ffbeId": 223068,
+      "type": "MONSTER_SKILL",
+      "name": "Double Strike",
+      "scope": "single_enemy",
+      "damageType": "physical",
+      "moveType": "stationary",
+      "multiplier": 1.2,
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.5
+        },
+        {
+          "frame": 52,
+          "weight": 0.5
+        }
+      ],
+      "scenePresentation": "sephiroth_double_strike",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    },
+    {
+      "id": "quad_strike",
+      "ffbeId": 223069,
+      "type": "MONSTER_SKILL",
+      "name": "Quad Strike",
+      "scope": "all_enemies",
+      "damageType": "physical",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.25
+        },
+        {
+          "frame": 52,
+          "weight": 0.25
+        },
+        {
+          "frame": 62,
+          "weight": 0.25
+        },
+        {
+          "frame": 72,
+          "weight": 0.25
+        }
+      ],
+      "scenePresentation": "sephiroth_quad_strike",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    },
+    {
+      "id": "draw_slash",
+      "ffbeId": 223070,
+      "type": "MONSTER_SKILL",
+      "name": "Draw Slash",
+      "scope": "all_enemies",
+      "damageType": "physical",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "sephiroth_draw_slash",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value. Not reconstructed: original process(es) 35 beyond the damage."
+    },
+    {
+      "id": "heartless_angel",
+      "ffbeId": 223071,
+      "type": "MONSTER_SKILL",
+      "name": "Heartless Angel",
+      "scope": "all_enemies",
+      "damageType": "physical",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "sephiroth_heartless_angel",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value. Not reconstructed: original process(es) 33 beyond the damage."
+    },
+    {
+      "id": "octaslash",
+      "ffbeId": 223073,
+      "type": "MONSTER_SKILL",
+      "name": "Octaslash",
+      "scope": "all_enemies",
+      "damageType": "physical",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "sephiroth_octaslash",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    },
+    {
+      "id": "firaga",
+      "ffbeId": 800002,
+      "type": "MONSTER_SKILL",
+      "name": "Firaga",
+      "scope": "all_enemies",
+      "damageType": "magical",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.1
+        },
+        {
+          "frame": 62,
+          "weight": 0.1
+        },
+        {
+          "frame": 82,
+          "weight": 0.1
+        },
+        {
+          "frame": 102,
+          "weight": 0.1
+        },
+        {
+          "frame": 122,
+          "weight": 0.1
+        },
+        {
+          "frame": 142,
+          "weight": 0.1
+        },
+        {
+          "frame": 162,
+          "weight": 0.1
+        },
+        {
+          "frame": 182,
+          "weight": 0.3
+        }
+      ],
+      "scenePresentation": "sephiroth_firaga",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    },
+    {
+      "id": "blizzaga",
+      "ffbeId": 800052,
+      "type": "MONSTER_SKILL",
+      "name": "Blizzaga",
+      "scope": "all_enemies",
+      "damageType": "magical",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.1
+        },
+        {
+          "frame": 62,
+          "weight": 0.1
+        },
+        {
+          "frame": 82,
+          "weight": 0.1
+        },
+        {
+          "frame": 102,
+          "weight": 0.1
+        },
+        {
+          "frame": 122,
+          "weight": 0.1
+        },
+        {
+          "frame": 142,
+          "weight": 0.1
+        },
+        {
+          "frame": 162,
+          "weight": 0.1
+        },
+        {
+          "frame": 182,
+          "weight": 0.3
+        }
+      ],
+      "scenePresentation": "sephiroth_blizzaga",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    }
+  ]
+}

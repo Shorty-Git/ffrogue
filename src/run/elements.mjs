@@ -64,7 +64,17 @@ export const ENEMY_ELEMENT_RESIST = {
   "light": 50,
   "dark": 50
  },
- "kain": {}
+ "kain": {},
+ "ghirofelgo": {
+  "earth": 50
+ },
+ "yin_yang": {},
+ "sephiroth": {
+  "ice": 100,
+  "wind": 100,
+  "earth": 100,
+  "dark": 100
+ }
 };
 export const ENEMY_SKILL_ELEMENTS = {
  "baron_marine": {
@@ -93,6 +103,17 @@ export const ENEMY_SKILL_ELEMENTS = {
    "ice"
   ]
  },
+ "sephiroth": {
+  "heartless_angel": [
+   "dark"
+  ],
+  "firaga": [
+   "fire"
+  ],
+  "blizzaga": [
+   "ice"
+  ]
+ },
  "water_flan": {
   "water": [
    "water"
@@ -101,6 +122,14 @@ export const ENEMY_SKILL_ELEMENTS = {
  "x_atm092": {
   "ray_bomb": [
    "fire"
+  ]
+ },
+ "yin_yang": {
+  "blizzara": [
+   "ice"
+  ],
+  "thundara": [
+   "lightning"
   ]
  }
 };

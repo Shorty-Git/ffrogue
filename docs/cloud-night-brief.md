@@ -41,7 +41,24 @@ Autonomous overnight session. Read `AGENTS.md`, `docs/current-state.md` (newest 
   stronger guards. Keep offers readable and the pool deterministic per seed (existing RNG streams).
 - Record every changed value with before/after numbers in `docs/current-state.md`.
 
-### 3. Battle placement across all arenas
+### 3. Weapons (new reward type)
+- Data: `public/assets/items/weapons.json` (984 original FFBE weapons: name, category, rarity 1-8,
+  stats, elements, ailment chances, resistances, short description; exported by tools/export_weapons.mjs).
+  No icons yet (their file names do not match iconId); use a small glyph per category.
+- Developer idea: weapons as rewards after a won fight (and/or found/unlocked between runs, chosen
+  before a run). They need not work like FFBE: design what fits FFRogue. Suggested core: one weapon
+  slot per hero; a weapon adds a bounded stat bonus and, if it has elements, gives that hero's basic
+  attacks (and maybe physical skills) its element; rarity sets the tier. Pick a curated pool that fits
+  the run length (not all 984), weighted by rarity and the current area.
+- Show the equipped weapon on the hero card/HUD, include it in saves (run version bump + migration),
+  the simulator and tests. Keep the reward screen readable.
+
+### 4. Balance the whole system
+- After elements and weapons exist, rerun the balance targets from task 2 with everything active,
+  including the new stage Nibelheim (FFVII, boss Sephiroth with Octaslash / Quad Strike / Heartless
+  Angel; 19 enemies now). Sephiroth should feel like the strongest boss.
+
+### 5. Battle placement across all arenas
 - The developer finds unit/enemy placement sometimes off (noticed in Altissia; placement was set by
   hand earlier). Analyse the backgrounds (`public/assets/backgrounds/`, arena list in
   `src/data/battleArenas.ts`, layout in `src/ui/battleLayout.ts`) and find one layout (party right, enemies left, FFBE
@@ -51,7 +68,7 @@ Autonomous overnight session. Read `AGENTS.md`, `docs/current-state.md` (newest 
 - Prove it with headless screenshots of every arena (Playwright is available via npx) and keep them
   out of git; describe the result in the report.
 
-### 4. Optional, if time is left
+### 6. Optional, if time is left
 - Squall's Flame Barret runs ~18 ms/frame (others 6 ms): find what makes it expensive in the bridge or
   lightning layer, without changing the frozen player.
 

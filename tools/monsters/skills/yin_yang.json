@@ -1,0 +1,44 @@
+{
+  "schema": "enemy-skills-v1",
+  "key": "yin_yang",
+  "monsterId": 205831000,
+  "dictionaryId": 2058310,
+  "skills": [
+    {
+      "id": "blizzara",
+      "ffbeId": 120090,
+      "type": "MONSTER_SKILL",
+      "name": "Blizzara",
+      "scope": "all_enemies",
+      "damageType": "magical",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 145,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "yin_yang_blizzara",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    },
+    {
+      "id": "thundara",
+      "ffbeId": 120100,
+      "type": "MONSTER_SKILL",
+      "name": "Thundara",
+      "scope": "all_enemies",
+      "damageType": "magical",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 80,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "yin_yang_thundara",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    }
+  ]
+}
