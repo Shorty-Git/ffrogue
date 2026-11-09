@@ -1,0 +1,72 @@
+{
+  "schema": "enemy-skills-v1",
+  "key": "x_atm092",
+  "monsterId": 506002000,
+  "dictionaryId": 5060020,
+  "skillMonsterId": 506002006,
+  "skills": [
+    {
+      "id": "clash",
+      "ffbeId": 223089,
+      "type": "MONSTER_SKILL",
+      "name": "Clash",
+      "scope": "all_enemies",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "x_atm092_clash",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    },
+    {
+      "id": "arm_crush_plus",
+      "ffbeId": 223088,
+      "type": "MONSTER_SKILL",
+      "name": "Arm Crush+",
+      "scope": "all_enemies",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 40,
+          "weight": 0.25
+        },
+        {
+          "frame": 46,
+          "weight": 0.25
+        },
+        {
+          "frame": 50,
+          "weight": 0.25
+        },
+        {
+          "frame": 56,
+          "weight": 0.25
+        }
+      ],
+      "scenePresentation": "x_atm092_arm_crush_plus",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value. Not reconstructed: original process(es) 24 beyond the damage."
+    },
+    {
+      "id": "ray_bomb",
+      "ffbeId": 223090,
+      "type": "MONSTER_SKILL",
+      "name": "Ray-Bomb",
+      "scope": "all_enemies",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 120,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "x_atm092_ray_bomb",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value. Not reconstructed: original process(es) 33 beyond the damage."
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "schema": "enemy-skills-v1",
+  "key": "g_soldier",
+  "monsterId": 205861000,
+  "dictionaryId": 2058610,
+  "skills": [
+    {
+      "id": "fire",
+      "ffbeId": 184510,
+      "type": "MONSTER_SKILL",
+      "name": "Fire",
+      "scope": "single_enemy",
+      "moveType": "stationary",
+      "multiplier": 1.2,
+      "damageEvents": [
+        {
+          "frame": 80,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "g_soldier_fire",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    }
+  ]
+}

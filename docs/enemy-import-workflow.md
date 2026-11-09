@@ -1,5 +1,49 @@
 # Prepared enemy and encounter workflow
 
+## Original monster skills in battle (2026-11-09) - start here
+
+```powershell
+node tools/import_enemy_skills.mjs [--monsters sweeper,x_atm092]
+```
+
+For every published enemy, the tool reads the body recipe (`tools/monsters/<key>.json`, hash-pinned by
+its publication, never edited) and the skill recipe (`tools/monsters/skills/<key>.json`, optional
+`skillMonsterId` for a same-dictionary variant that owns the skill set, e.g. X-ATM092 506002006).
+Then:
+1. It takes monster_skill_set and selects the skills with a damage process (1 physical, 15 magic).
+   Extra processes (debuffs, blind, self effects) are noted in the entry, not reconstructed.
+2. It stages the original BMB (`stage_original_skill.py --kind MONSTER_SKILL`).
+3. It prepares the scene with the monster as caster (`prepare_original_preview.py`: monster recipes
+   set `presentation.caster='enemy'`; monster bodies without a move clip use idle).
+4. It publishes the scene and admits the original sounds.
+5. It regenerates `src/run/enemySkills.mjs`.
+
+Runtime:
+- `enemyAction` resolves a pattern step with `skill:'<id>'` to the imported skill. The step's
+  multiplier wins and the skill's name, scope, scene and damage events apply.
+- Enemies without a reviewed pattern alternate their basic attack with each imported skill.
+- `BattleScene.executeEnemySkill` plays the scene from the enemy at the party, plays the atk body once,
+  and splits the action damage over the source hit frames on every target.
+- The bridge places `target-side` on the party half for enemy casters. A very early enemy turn waits
+  for the background scene preparation (`preparedScenes.ready`).
+- A missing scene keeps the labelled FFRogue attack (tested fallback).
+
+Imported (12):
+- Sweeper: Machine Gun, Double Barrel, Smoke Shot (blind not reconstructed).
+- Guard Scorpion: Tail Laser, Focused Fire, Scorpion Tail.
+- Ochu: Ochu Dance.
+- G-Soldier: Fire.
+- Elite Soldier: Charge.
+- X-ATM092: Clash, Arm Crush+ (debuff not reconstructed), Ray-Bomb.
+
+Boss patterns now name the originals: Guard Scorpion → Focused Fire / Tail Laser, Ochu → Ochu Dance,
+X-ATM092 → Ray-Bomb. Arm Hook stays the single-target opener.
+
+Skipped (no damage process): Protect, Shell, Aura, Locked On Target, tail raise/lower, Guardian Ivy,
+stat-down, Repairing, debuff removal. Receipt: tools/data/enemy-skills/receipt.json.
+Multipliers are provisional (single 1.2, party 0.9).
+
+
 ## Bounded next-import decision (2026-11-02)
 
 No new original monster skill is admitted. A real MONSTER_SKILL166960 staging of

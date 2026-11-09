@@ -2,8 +2,10 @@
 export const skillCueFiles = {
   'SE:1': 'sword',
   'SE:4': 'se_attack_sword_all_slash_1',
+  'SE:5': 'se_attack_lance_stab_1',
   'SE:7': 'strike',
   'SE:8': 'se_attack_hammer_heavystrike_1',
+  'SE:12': 'se_attack_gun_shot_1',
   'SE:24': 'se_magic_libra_1',
   'SE:25': 'heal',
   'SE:26': 'se_magic_heal_2',
@@ -17,6 +19,7 @@ export const skillCueFiles = {
   'SE:45': 'se_magic_aero_1',
   'SE:46': 'se_magic_aero_2',
   'SE:47': 'se_magic_aero_3',
+  'SE:53': 'se_magic_dark_bio_1',
   'SE:54': 'se_magic_light_1',
   'SE:58': 'tolerance-break',
   'SE:59': 'se_magic_commet_1',

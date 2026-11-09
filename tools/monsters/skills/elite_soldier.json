@@ -1,0 +1,25 @@
+{
+  "schema": "enemy-skills-v1",
+  "key": "elite_soldier",
+  "monsterId": 205871000,
+  "dictionaryId": 2058710,
+  "skills": [
+    {
+      "id": "charge",
+      "ffbeId": 184570,
+      "type": "MONSTER_SKILL",
+      "name": "Charge",
+      "scope": "single_enemy",
+      "moveType": "stationary",
+      "multiplier": 1.2,
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "elite_soldier_charge",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    }
+  ]
+}

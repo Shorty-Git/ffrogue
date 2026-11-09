@@ -25,6 +25,9 @@ export function casterStrikeOffset(plan, casterUnit) {
   return {x:point.x/u,y:point.y/u};
 }
 
+/** The recipients stand on the party side (right half) for friendly skills and for enemy casters. */
+const partySide=plan=>plan.presentation.scope==='party'||plan.presentation.caster==='enemy';
+
 export function scenePresentationAnchor(member, host, plan) {
   const selected = member.targetKey ?? Object.keys(host.targets)[0];
   const unit = host.units[selected];
@@ -34,7 +37,7 @@ export function scenePresentationAnchor(member, host, plan) {
     let rect;
     if(placement.rectangle==='screen')rect={x:0,y:0,width:host.width,height:host.height};
     else if(placement.rectangle==='target-side')rect={...host.arena,
-      x:host.arena.x+(plan.presentation.scope==='party'?host.arena.width/2:0),width:host.arena.width/2};
+      x:host.arena.x+(partySide(plan)?host.arena.width/2:0),width:host.arena.width/2};
     else if(placement.rectangle==='target-unit') {
       const point=host.targets[selected];
       if(!point||!unit)throw Error('Explicit target footprint required');
@@ -50,7 +53,7 @@ export function scenePresentationAnchor(member, host, plan) {
   }
   // Rectangle allegiance belongs to the host, not to the geometry player.
   // Its target-side convention uses the left half; friendly parties occupy the right half.
-  const arena = plan.presentation.scope==='party' && member.placement?.rectangle==='target-side'
+  const arena = partySide(plan) && member.placement?.rectangle==='target-side'
     ? {...host.arena,x:host.arena.x+host.arena.width/2} : host.arena;
   return presentationAnchor(member, host.caster, host.targets, selected, {
     ...plan.rectanglePlacement, arena, screen: {x:0,y:0,width:host.width,height:host.height},

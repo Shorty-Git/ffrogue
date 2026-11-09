@@ -24,7 +24,7 @@ import {skillDescription} from '../run/catalog';
 import {RPG,rpgHex,RPG_FONT} from '../ui/designTokens';
 import {rpgPanel} from '../ui/rpgPanel';
 import {runEncounter} from '../run/runBalance.mjs';
-import {ENEMY_CONTENT,enemyAction} from '../run/stageContent.mjs';
+import {ENEMY_CONTENT,enemyAction,type EnemyAction} from '../run/stageContent.mjs';
 import {ActionBanner,type CombatActionNotice} from '../ui/ActionBanner';
 import {bodyAssets,heroBodyClips,type BodyAsset} from '../data/bodyAssets.mjs';
 import {queueBodyAssets,missingBodyAssets,setBodySampling} from './bodyLoading';
@@ -905,10 +905,12 @@ export class BattleScene extends Phaser.Scene {
   }
 
   /** Stable unit rectangle of a hero (idle frame), independent of the clip currently playing. */
-  private casterFootprint(hero: UnitActor){
-    const idle=hero.manifest?.animations?.idle;
+  private casterFootprint(caster: UnitActor|TargetDummy){
+    const idle=caster.manifest?.animations?.idle;
     if(!idle)return undefined;
-    return {frameWidth:idle.frameWidth,frameHeight:idle.frameHeight,pivotX:idle.pivotX,pivotY:idle.pivotY,scale:Math.abs(hero.scaleX)};
+    // Enemy bodies scale their sprite inside the container; heroes scale the actor itself.
+    const scale=caster instanceof TargetDummy?Math.abs(caster.sprite.scaleX*caster.scaleX):Math.abs(caster.scaleX);
+    return {frameWidth:idle.frameWidth,frameHeight:idle.frameHeight,pivotX:idle.pivotX,pivotY:idle.pivotY,scale};
   }
 
   /**
@@ -937,7 +939,7 @@ export class BattleScene extends Phaser.Scene {
     return min<=max?Math.min(max,Math.max(min,x)):(min+max)/2;
   }
 
-  private playPreparedScene(key: string, hero: UnitActor, targets: (TargetDummy | UnitActor)[], onComplete?: () => void): void {
+  private playPreparedScene(key: string, hero: UnitActor | TargetDummy, targets: (TargetDummy | UnitActor)[], onComplete?: () => void): void {
     const host: PreparedSceneHost = {width:this.scale.width,height:this.scale.height,
       arena:getBattleLayout(this.scale.width,this.scale.height,BATTLE_ARENAS[this.arenaKey]).arena,
       caster:{x:hero.x,y:hero.y},targets:{},units:{}};
@@ -1564,10 +1566,21 @@ export class BattleScene extends Phaser.Scene {
         this.time.delayedCall(450,()=>attackNextEnemy(index+1));return;
       }
       if(action)enemy.actionCursor++;
-      this.announceCombatAction(enemy.assetKey??'training_dummy',enemy.nameTag,action?.name??'attack',action?.name??'Attack','enemy','attack',action?'ffrogue':'basic');
+      this.announceCombatAction(enemy.assetKey??'training_dummy',enemy.nameTag,action?.name??'attack',action?.name??'Attack','enemy','attack',action?.presentation?'source':action?'ffrogue':'basic');
       const stepStr = livingEnemies.length > 1 ? ` (${index + 1}/${livingEnemies.length})` : '';
       this.updateStatus(`ENEMY TURN${stepStr}: ${enemy.nameTag} ${action?'uses '+action.name+' on':'attacks'} ${action?.scope==='party'?'the party':heroTarget.heroName}!`);
       if(action)this.events.emit('enemy-action',{key:enemy.assetKey,action,cursor:enemy.actionCursor,round:this.currentRound});
+
+      // Original monster skill: the published scene plays from the enemy at the party and the
+      // reviewed damage events split the action's damage over the source hit frames.
+      if(action?.presentation&&action.damageEvents&&this.preparedScenes&&this.cache.json.get('scene_'+action.presentation+'_manifest')){
+        const targets=action.scope==='party'?this.turnOrder.filter(h=>!h.isDead):[heroTarget];
+        const cast=()=>this.executeEnemySkill(enemy,action,targets,attackMultiplier,()=>this.time.delayedCall(250,()=>attackNextEnemy(index+1)));
+        // Scene variants are prepared in the background; a very early enemy turn waits for them.
+        if(this.preparedScenes.canPlay(action.presentation,targets.length))cast();
+        else void this.preparedScenes.ready.then(()=>{if(this.combatState==='ENEMY_TURN')cast();});
+        return;
+      }
 
       enemy.executeAttack(
         heroTarget.x,
@@ -1598,6 +1611,40 @@ export class BattleScene extends Phaser.Scene {
     };
 
     attackNextEnemy(0);
+  }
+
+  /** Plays an original monster skill scene and applies its damage at the source hit frames. */
+  private executeEnemySkill(enemy:TargetDummy,action:EnemyAction,targets:UnitActor[],attackMultiplier:number,onComplete:()=>void):void{
+    const profile=this.currentEncounter(),events=action.damageEvents!;
+    const total=new Map<UnitActor,number>();
+    let sceneDone=false,hitsDone=false,closed=false;
+    const finish=()=>{
+      if(closed||!sceneDone||!hitsDone)return;
+      closed=true;this.events.off('shutdown',cancel);
+      this.events.emit('enemy-impact',{key:enemy.assetKey,action,impacts:[...total].map(([t,d])=>({unit:t.unitKey,damage:d})),round:this.currentRound});
+      onComplete();
+    };
+    const timers:Phaser.Time.TimerEvent[]=[];
+    const cancel=()=>{closed=true;timers.forEach(t=>t.remove(false));};
+    this.events.once('shutdown',cancel);
+    enemy.setDepthBoost(true);
+    enemy.playCastBody();
+    this.playPreparedScene(action.presentation!,enemy,targets,()=>{enemy.setDepthBoost(false);sceneDone=true;finish();});
+    let remaining=events.length;
+    events.forEach(event=>timers.push(this.time.delayedCall(event.frame*1000/60,()=>{
+      if(closed)return;
+      for(const target of targets){
+        if(target.isDead)continue;
+        const defense=this.runContext.state.party.find(m=>m.key===target.unitKey)?.stats.defense??1;
+        const dmg=Math.max(1,Math.round(profile.damage*action.multiplier*attackMultiplier/defense*event.weight));
+        target.applyDamage(dmg);
+        total.set(target,(total.get(target)??0)+dmg);
+        this.playHeroHitFeedback(target,enemy.x,dmg/Math.max(1,target.maxHp));
+        if(target.isDead)this.tryAutoRevive(target);
+        if(!target.isDead)target.limitGauge=gainFromDamage(target.limitGauge,dmg,target.maxHp);
+      }
+      if(--remaining===0){hitsDone=true;finish();}
+    })));
   }
 
   /**

@@ -1,0 +1,6159 @@
+{
+  "schemaVersion": 1,
+  "profile": "bmb-preview-scene-v1",
+  "key": "sweeper_smoke_shot",
+  "sourceId": 166920,
+  "quality": "experimental-preview",
+  "originalFidelityVerified": false,
+  "durationFrames": 222,
+  "provenance": {
+    "planFile": "tools/data/enemy-skills/sweeper-166920/source/plan.json",
+    "planSha256": "92c4570728f97ecd11fad2a3a35d5b018104da8a42afb5b07acba230e4b060ab",
+    "playerSha256": "e4e4f09f03c649f80c0f5f3bfa4a383a4033680d33d473799cc2e4d7472a834e",
+    "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
+    "recipeSha256": "8155aadacdce8eddfa4043979e52b525cb0644c9fb2a506bc80cc4a4b5599426"
+  },
+  "limitations": [
+    "Source-admitted constant generators use the native symmetric/exclusive delay window and enabled byte. Birth traversal, lifetime, parameter sampling and the integer-seeded LCG remain experimental; the separate four-word activation oracle does not establish whole-tree RNG ownership.",
+    "Optional native Particle scalar alpha requires pinned source-selected InitCurve/UpdateCurve wrappers and unchanged key evidence. Only eligible local Particle curves use native tangents/clamping; vector, model/quad alpha and parent combination rules keep their existing paths.",
+    "Host scene dimensions are explicit: legacy cropped study, actual game viewport, or rounded captured logical proportions. Host anchors and diagnostic foreground dock remain adaptations; foreground compositing never changes source effect geometry or recovers native UI/scissor state.",
+    "Optional deterministic native Particle X display uses source-selected OneX/ConstX and replicates Joint X across axes. It requires matched constant Null ancestry and active inheritance/native locator switches; random scales, VelocityX timing and broader simulation remain unsupported.",
+    "Optional source-dispatched ZScreen locator ignores local X/Y rotation, keeps sampled constant Z roll and applies positive constant inherited scales after facing. Identity view/unrotated Standard ancestors only; random distribution, source timing and other locator variants remain unverified.",
+    "Optional native blending uses pinned FUNC_ADD and identical RGB/alpha factors from the native table. Scene composition preserves framebuffer alpha internally and presents opaque RGB; animation colorScale 1 is constructor-verified, while caller overrides remain unverified.",
+    "Optional native Basic material uses exact initial shader identity and matched constant, non-random texture tint. Model selection covers only verified UV single-submesh BR3M. Missing authoring, random tint and other layouts retain labeled legacy comparison.",
+    "Optional pinned-shader Add candidate preserves base alpha and adds secondary RGB times secondary alpha after vertex color. Native-selection plans require an exact initial Quad/Particle fragment match; other variants retain labeled legacy comparison. Runtime overrides and global colorScale remain unverified.",
+    "Optional Null/Billboard locator neutralizes constant XY tilt only for the matched zero-roll, unit-scale, identity-view subset. Standard nodes keep TRS; unsupported variants retain labeled legacy comparison. No general camera/roll/compatibility support is claimed.",
+    "Constant generation interpreted as duration/interval batches; endless/repeated generator modes not reconstructed.",
+    "Curve Frame interpreted as normalized particle lifetime; standard Hermite interpolation is experimental.",
+    "Optional authoring inheritance evaluates rate-zero alpha and birth-time parent translation. Nonzero alpha rates, rotation/scale exclusions, fields and expiration rules retain explicit legacy assumptions; source-less effects are unchanged.",
+    "Seeded centered ranges and discrete Newton integration are preview policies.",
+    "Legacy plans use Three.js additive/normal presets. Native-blend plans use recovered factors for RGB and alpha instead; other native depth/cull behavior remains outside this preview.",
+    "Distortion is enabled only for plans carrying decoded experimental fields. Midpoint subtraction, color strength and UV order are shader hypotheses; native fidelity remains unverified.",
+    "Optional model vertex RGBA multiplies interpolated source bytes into material RGBA. This is an explicit shader experiment; native combination/control semantics remain unverified.",
+    "Quad and baseline Particle geometry use inherited unit XY planes. Optional Particle geometry evaluates only the declared zero-roll, constant-scale subset as view-aligned radius-one planes; unsupported nodes retain explicitly labeled legacy comparison geometry. Native locator, roll and other primitive variants remain unresolved.",
+    "Optional source appearance selects Constant or Curve explicitly. Dormant keys stay inactive. Opt-in Flat Quad RGB uses source constants/ranges and independent alpha; its deterministic color seeds are host policy. Other RGB random ranges and parent tint remain unsupported.",
+    "Optional Basic single-texture UV playback uses the same inverse texture TRS/pivot matrix as layered materials. Source values/modes are checked; the native matrix convention remains experimental. Unsupported mapping retains the labeled legacy path.",
+    "Body approach/return is an explicit preview adaptation; damage is a source-tick marker, not game execution.",
+    "Supplemented Add nodes sample two independent UV transforms and constant layer colors. Clamped RGBA addition and inverse pivot transforms are experimental shader policies.",
+    "Native-selection Distortion candidates weight displacement and output alpha by the sampled secondary alpha. Source per-layer alpha controls remain unresolved. The quad texture-2 speed curve slot lacks a nonempty matching authoring example.",
+    "Optional screen fitting is an explicit arena-composition adaptation for static screen-anchored effects, not a decoded original-game coordinate mapping.",
+    "Supported distortion quads can evaluate constant source RGBA per corner. Animated/randomized corner colors remain unsupported by this experiment.",
+    "Emission shapes are checked when matching authoring metadata is supplied. Known non-point shapes are withheld; unsupplemented source shapes remain unverified."
+  ],
+  "plan": {
+    "approved": false,
+    "name": "Smoke Shot",
+    "sourceId": 166920,
+    "unit": "sweeper",
+    "sourceSha256": "e87ab16486e450fd92d3e54ba71ee2b1fcb57da0befc284e4aec1276a3a9ab27",
+    "seed": 1,
+    "effectHorizon": 180,
+    "endFrame": 210,
+    "approachFrames": 18,
+    "presentation": {
+      "movement": "stationary",
+      "scope": "all_enemies",
+      "approachFrames": 0,
+      "returnFrames": 12,
+      "targetOffsetX": 0,
+      "caster": "enemy",
+      "recipeSha256": "ea5c7c518200406326c813b9e7e706e7807dcc76d5b5ff60f5acabc7b8bcf5ff",
+      "origin": "Reviewed game recipe; preview timing and offsets are adaptations"
+    },
+    "fitScreenToArena": false,
+    "sceneComposite": true,
+    "withholdUntexturedParticles": true,
+    "sourceInheritance": true,
+    "sourceAppearance": true,
+    "basicTextureUv": true,
+    "modelVertexRgba": true,
+    "particleGeometry": true,
+    "nativeParticleX": true,
+    "nullLocator": true,
+    "nativeMaterialSelection": {
+      "schemaVersion": 1,
+      "nativeSha256": "6c7e501c98939581528df3d712ff1f58afcfd392160f1e71ef1f903d49926b77",
+      "packages": {
+        "bmshaderpack.bin": "2f36d1839cad4ede93764b4237a05d4cbe4085392a9a2b6f93c5833e14d7dd0b"
+      },
+      "scope": "Static initial selection; runtime overrides and global uniforms unverified",
+      "distortionReference": {
+        "slot": 184,
+        "offset": 413264,
+        "bytesWithNul": 820,
+        "sha256": "f4cef6ffc96d8f8fc66d33fec28619c18390ce445dd06bb2b01d204bbbbea990",
+        "source": "precision highp float;uniform vec4 alphaTestParam;uniform vec4 colorScale;uniform vec4 fogColor;uniform vec4 fogArea;uniform mat4 invProjMat;uniform vec4 specular;uniform vec4 softParam;uniform vec4 distDMapMid;uniform vec4 screenParam;uniform sampler2D baseTex;uniform sampler2D subTex;varying vec2 ipo_uv1;varying vec4 ipo_tcs1;varying vec2 ipo_uv2;varying vec4 ipo_tcs2;varying vec4 ipo_color;void main(){vec4 output_color;vec2 uv1;vec2 uv2;output_color = ipo_color;uv1 = ipo_uv1;uv2 = ipo_uv2;vec4 offset_uv = texture2D(subTex,uv2);offset_uv.rgb -= distDMapMid.rgb;offset_uv *= ipo_tcs2;offset_uv.rgb *= offset_uv.a;uv1 += offset_uv.xy;output_color *= texture2D(baseTex,uv1);output_color *= ipo_tcs1;output_color.a *= offset_uv.a;output_color = clamp((output_color*colorScale),0.0,1.0);gl_FragColor = output_color;}"
+      },
+      "basicReference": {
+        "slot": 224,
+        "offset": 469328,
+        "bytesWithNul": 556,
+        "sha256": "8ae381afc9f95ab42caafc2c03266ddc08500489623d2e16d39d89737b7d1fb4",
+        "source": "precision highp float;uniform vec4 alphaTestParam;uniform vec4 colorScale;uniform vec4 fogColor;uniform vec4 fogArea;uniform mat4 invProjMat;uniform vec4 specular;uniform vec4 softParam;uniform vec4 distDMapMid;uniform vec4 screenParam;uniform sampler2D baseTex;varying vec2 ipo_uv1;varying vec4 ipo_tcs1;varying vec4 ipo_color;void main(){vec4 output_color;vec2 uv1;output_color = ipo_color;uv1 = ipo_uv1;output_color *= texture2D(baseTex,uv1);output_color *= ipo_tcs1;output_color = clamp((output_color*colorScale),0.0,1.0);gl_FragColor = output_color;}",
+        "vertexSource": "precision highp float;uniform mat4 viewMat;uniform mat4 projMat;uniform mat4 worldMat;uniform vec4 offset;uniform vec4 texOffset;uniform vec4 tex1Rotate;uniform vec4 tex2Rotate;uniform vec4 tex1ColorScale;uniform vec4 tex2ColorScale;uniform vec4 diffuseColor;uniform vec4 lightDir;uniform vec4 lightColor;uniform vec4 ambientLightColor;uniform vec4 emissionColor;uniform vec4 falloffParam;uniform vec4 falloffColor1;uniform vec4 falloffColor2;attribute vec3 in_pos;attribute vec4 in_color;attribute vec2 in_tex0;varying vec2 ipo_uv1;varying vec4 ipo_tcs1;varying vec4 ipo_color;void main(){vec4 ipo_pos;vec4 pos = vec4(in_pos,1.0);vec4 pw = (pos*worldMat);pw.xyz += offset.xyz;vec4 pwv = (pw*viewMat);vec4 pwvp = (pwv*projMat);ipo_pos = pwvp;ipo_color = in_color*diffuseColor;ipo_uv1 = vec2(dot(in_tex0,tex1Rotate.xy),dot(in_tex0,tex1Rotate.zw));ipo_uv1 += texOffset.xy;ipo_tcs1 = tex1ColorScale;gl_Position = ipo_pos;}",
+        "vertexSha256": "f41d379d2ee21af1a2de4ae30eaaec079eb99d77d85779b7782958814eba389f"
+      }
+    },
+    "nativeBasicMaterial": true,
+    "nativeBlend": {
+      "nativeSha256": "6c7e501c98939581528df3d712ff1f58afcfd392160f1e71ef1f903d49926b77",
+      "tableAddress": "0x255ab8c",
+      "tableSha256": "1c0282c137455fdc03d413a9ba966e1da51cd170b1f5ffa34beb6b8201dbf072",
+      "blendRows": [
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          1,
+          770,
+          771
+        ],
+        [
+          1,
+          770,
+          1
+        ],
+        [
+          1,
+          0,
+          771
+        ],
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          1,
+          0,
+          769
+        ],
+        [
+          1,
+          775,
+          769
+        ]
+      ],
+      "equation": 32774,
+      "equationOrigin": "RenderContext::Begin at 0x15c6914",
+      "defaultColorScale": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "colorScaleOrigin": "Animation constructor +0x44; copied to pixel constants +0x10 by Draw",
+      "colorScaleBoundary": "Constructor default only; caller writes remain unverified"
+    },
+    "nativeNullLocator": {
+      "nativeSha256": "6c7e501c98939581528df3d712ff1f58afcfd392160f1e71ef1f903d49926b77",
+      "parameterOffset": 692,
+      "typeId": 0,
+      "moduleIndex": 3,
+      "moduleAddress": "0x1fc04b0",
+      "functionSha256": "8788174e86964bd11e97f55521d4606fe86af3798cd8f5ac9e920b5802f8f20d",
+      "scope": "ZScreen kind 0, identity view, sampled constant roll and positive constant scales"
+    },
+    "rendererReference": {
+      "schemaVersion": 1,
+      "nativeSha256": "6c7e501c98939581528df3d712ff1f58afcfd392160f1e71ef1f903d49926b77",
+      "sourceLogSha256": "6f3f750a30b9e0b401bfe2b8d8d35d876ecf399d4d70df0105efc8eac206f0b6",
+      "type": "renderer-reference",
+      "seq": 3,
+      "ms": 910,
+      "action": 0,
+      "globalScale": 1.774999976158142,
+      "screenWidth": 640,
+      "screenHeight": 1100,
+      "formulaScale": 1.775,
+      "formulaMatches": true,
+      "note": "Global geometry multiplier; distinct from member scale, layer scale and placement coordinates"
+    },
+    "rectanglePlacement": {
+      "unitsPerPixel": 1,
+      "scatter": [
+        0,
+        0
+      ],
+      "policy": "Preview adaptation: left half of arena for target-side; prepared frame box for target-unit; full arena for screen; one source unit per preview pixel; zero scatter. Not native rectangle geometry.",
+      "coordinateSystem": "ffbe-screen-api",
+      "coordinateReview": "Exact source group anchors through shared native screen-down semantics; the caster is the enemy and the recipients are party members."
+    },
+    "sourceHits": [
+      {
+        "frame": 130,
+        "weight": 100
+      }
+    ],
+    "effects": [
+      {
+        "name": "battle_generic_smoke2_purple.bmb",
+        "sha256": "e28d19731f1bf6e84bedb6a36454e347c9b90d2a33b329372d1b7e26c5ccbb05",
+        "rootLifecycle": {
+          "profile": "native-root-header-v1",
+          "lifeFramesRaw": 0,
+          "fieldOffset": 80,
+          "boundary": "Header RootLife only; child expiration, flags and source emitter ownership are separate"
+        },
+        "drawOrder": {
+          "fullZSort": false,
+          "prioritySort": true
+        },
+        "nodes": [
+          {
+            "index": 0,
+            "offset": 96,
+            "bytes": 704,
+            "typeId": 0,
+            "type": "ControlNull",
+            "lifeParameter": 0,
+            "lifeRangeParameter": 0,
+            "alphaCurve": {
+              "fieldOffset": 376,
+              "keys": []
+            },
+            "vectorCurves": {
+              "translationValue": {
+                "fieldOffset": 656,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "translationSpeed": {
+                "fieldOffset": 672,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "rotationValue": {
+                "fieldOffset": 688,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "rotationSpeed": {
+                "fieldOffset": 704,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "scaleValue": {
+                "fieldOffset": 720,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "scaleSpeed": {
+                "fieldOffset": 736,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "centerColor": {
+                "fieldOffset": 768,
+                "axes": [
+                  "R",
+                  "G",
+                  "B"
+                ],
+                "keys": []
+              }
+            },
+            "staticVectors": {
+              "transform": {
+                "translation": {
+                  "valueInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "rotation": {
+                  "valueInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "scale": {
+                  "valueInitial": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                }
+              }
+            },
+            "texturePivots": {},
+            "motionModes": {
+              "translation": {
+                "id": 1,
+                "name": "NewtonDynamics",
+                "fieldOffset": 652
+              },
+              "rotation": {
+                "id": 1,
+                "name": "NewtonDynamics",
+                "fieldOffset": 752
+              },
+              "scale": {
+                "id": 1,
+                "name": "NewtonDynamics",
+                "fieldOffset": 756
+              }
+            },
+            "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 760
+              },
+              "alphaMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 784
+              }
+            },
+            "materialAlpha": {
+              "value": 1,
+              "fieldOffset": 340
+            },
+            "sourceControls": {
+              "profile": "ibmb-parent-controls-v1",
+              "fields": {
+                "rotation": {
+                  "raw": 0,
+                  "value": "On",
+                  "fieldOffset": 232,
+                  "status": "decoded"
+                },
+                "alphaRate": {
+                  "raw": 0,
+                  "value": 0,
+                  "fieldOffset": 308,
+                  "status": "decoded"
+                },
+                "nullType": {
+                  "raw": 1,
+                  "value": "Standard",
+                  "fieldOffset": 788,
+                  "status": "decoded"
+                }
+              },
+              "missingInheritance": [
+                "translation",
+                "scale",
+                "matrix",
+                "alphaMode",
+                "colorRate"
+              ],
+              "compatibility": "unresolved-authoring-to-runtime-mapping",
+              "boundary": "Binary parameters only; no inheritance equation or complete profile admission"
+            },
+            "nativeInitialization": {
+              "profile": "native-null-init-inputs-v1",
+              "status": "supported-inputs",
+              "parameters": {
+                "locator_index": 1,
+                "field_c8": 0,
+                "field_cc": 1
+              },
+              "fieldOffsets": {
+                "locator_index": 788,
+                "field_c8": 296,
+                "field_cc": 300
+              },
+              "requiredContext": [
+                "parent_flags",
+                "child_flags"
+              ],
+              "boundary": "Input extraction only; child execution supplies flags, never default zero"
+            },
+            "parentIndex": null,
+            "children": [
+              1
+            ],
+            "childCount": 1,
+            "resourceBindings": {},
+            "generation": {
+              "start": 0,
+              "startRange": 0,
+              "count": 1,
+              "duration": 1,
+              "repeatCount": 1,
+              "interval": 1
+            },
+            "uniformScale": true,
+            "nativeGeneration": {
+              "start": 0,
+              "startRange": 0,
+              "count": 1,
+              "duration": 1,
+              "repeatCount": 1,
+              "interval": 1,
+              "profile": "native-constant-activation-v1",
+              "typeId": 0,
+              "childCount": 1,
+              "mode": 0,
+              "enabled": true,
+              "nullLifetimeMode": 0,
+              "rawControlBytes": {
+                "offset": "0x69",
+                "values": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              "boundary": "Activation only; Null enabled means an explicitly invoked caller, not decoded source visibility"
+            },
+            "initialColor": [
+              1,
+              1,
+              1
+            ],
+            "nativeModuleInputs": {
+              "color1": {
+                "value": [
+                  1,
+                  1,
+                  1
+                ],
+                "range": [
+                  0,
+                  0,
+                  0
+                ],
+                "valueOffset": 424,
+                "rangeOffset": 440
+              }
+            },
+            "authoringEmissionShape": "Point",
+            "authoringInheritance": {
+              "translation": "On",
+              "rotation": "On",
+              "scale": "On",
+              "matrix": "On",
+              "alphaMode": "Multiply",
+              "alphaRate": 0,
+              "colorRate": 0,
+              "compatibility": {
+                "nodeV16": true,
+                "nodeV15": false,
+                "rootV16": true,
+                "rootV15": false
+              }
+            },
+            "particleGeometrySource": {
+              "rotationMode": "NewtonDynamics",
+              "scaleMode": "NewtonDynamics",
+              "origin": "Explicit matching BMSLN; these selectors are not newly decoded binary fields",
+              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+            },
+            "nullLocatorSource": {
+              "type": "Standard",
+              "rotationMode": "NewtonDynamics",
+              "scaleMode": "NewtonDynamics",
+              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7",
+              "origin": "IBMB Null type; rotation/scale still require explicit matching BMSLN"
+            },
+            "appearance": {
+              "alpha": {
+                "mode": "Constant",
+                "origin": "IBMB",
+                "value": 1
+              },
+              "color": {
+                "mode": "Constant",
+                "origin": "IBMB",
+                "domain": "center",
+                "supported": true,
+                "value": [
+                  1,
+                  1,
+                  1
+                ]
+              },
+              "limitations": [
+                "RGB random-range support is unverified without authoring"
+              ]
+            },
+            "nativeNullLocator": {
+              "typeId": 1,
+              "fieldOffset": 788,
+              "moduleAddress": null,
+              "nativeSha256": "6c7e501c98939581528df3d712ff1f58afcfd392160f1e71ef1f903d49926b77",
+              "functionSha256": null
+            }
+          },
+          {
+            "index": 1,
+            "offset": 800,
+            "bytes": 704,
+            "typeId": 0,
+            "type": "ControlNull",
+            "lifeParameter": 84,
+            "lifeRangeParameter": 0,
+            "alphaCurve": {
+              "fieldOffset": 1080,
+              "keys": []
+            },
+            "vectorCurves": {
+              "translationValue": {
+                "fieldOffset": 1360,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "translationSpeed": {
+                "fieldOffset": 1376,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "rotationValue": {
+                "fieldOffset": 1392,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "rotationSpeed": {
+                "fieldOffset": 1408,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "scaleValue": {
+                "fieldOffset": 1424,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "scaleSpeed": {
+                "fieldOffset": 1440,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "centerColor": {
+                "fieldOffset": 1472,
+                "axes": [
+                  "R",
+                  "G",
+                  "B"
+                ],
+                "keys": []
+              }
+            },
+            "staticVectors": {
+              "transform": {
+                "translation": {
+                  "valueInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "rotation": {
+                  "valueInitial": [
+                    25,
+                    0,
+                    0
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "scale": {
+                  "valueInitial": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                }
+              }
+            },
+            "texturePivots": {},
+            "motionModes": {
+              "translation": {
+                "id": 1,
+                "name": "NewtonDynamics",
+                "fieldOffset": 1356
+              },
+              "rotation": {
+                "id": 1,
+                "name": "NewtonDynamics",
+                "fieldOffset": 1456
+              },
+              "scale": {
+                "id": 1,
+                "name": "NewtonDynamics",
+                "fieldOffset": 1460
+              }
+            },
+            "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 1464
+              },
+              "alphaMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 1488
+              }
+            },
+            "materialAlpha": {
+              "value": 1,
+              "fieldOffset": 1044
+            },
+            "sourceControls": {
+              "profile": "ibmb-parent-controls-v1",
+              "fields": {
+                "rotation": {
+                  "raw": 0,
+                  "value": "On",
+                  "fieldOffset": 936,
+                  "status": "decoded"
+                },
+                "alphaRate": {
+                  "raw": 0,
+                  "value": 0,
+                  "fieldOffset": 1012,
+                  "status": "decoded"
+                },
+                "nullType": {
+                  "raw": 0,
+                  "value": "Billboard",
+                  "fieldOffset": 1492,
+                  "status": "decoded"
+                }
+              },
+              "missingInheritance": [
+                "translation",
+                "scale",
+                "matrix",
+                "alphaMode",
+                "colorRate"
+              ],
+              "compatibility": "unresolved-authoring-to-runtime-mapping",
+              "boundary": "Binary parameters only; no inheritance equation or complete profile admission"
+            },
+            "nativeInitialization": {
+              "profile": "native-null-init-inputs-v1",
+              "status": "supported-inputs",
+              "parameters": {
+                "locator_index": 0,
+                "field_c8": 0,
+                "field_cc": 1
+              },
+              "fieldOffsets": {
+                "locator_index": 1492,
+                "field_c8": 1000,
+                "field_cc": 1004
+              },
+              "requiredContext": [
+                "parent_flags",
+                "child_flags"
+              ],
+              "boundary": "Input extraction only; child execution supplies flags, never default zero"
+            },
+            "parentIndex": 0,
+            "children": [
+              2
+            ],
+            "childCount": 1,
+            "resourceBindings": {},
+            "generation": {
+              "start": 0,
+              "startRange": 0,
+              "count": 1,
+              "duration": 1,
+              "repeatCount": 1,
+              "interval": 1
+            },
+            "uniformScale": true,
+            "nativeGeneration": {
+              "start": 0,
+              "startRange": 0,
+              "count": 1,
+              "duration": 1,
+              "repeatCount": 1,
+              "interval": 1,
+              "profile": "native-constant-activation-v1",
+              "typeId": 0,
+              "childCount": 1,
+              "mode": 0,
+              "enabled": true,
+              "nullLifetimeMode": 0,
+              "rawControlBytes": {
+                "offset": "0x69",
+                "values": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              "boundary": "Activation only; Null enabled means an explicitly invoked caller, not decoded source visibility"
+            },
+            "initialColor": [
+              1,
+              1,
+              1
+            ],
+            "nativeModuleInputs": {
+              "color1": {
+                "value": [
+                  1,
+                  1,
+                  1
+                ],
+                "range": [
+                  0,
+                  0,
+                  0
+                ],
+                "valueOffset": 1128,
+                "rangeOffset": 1144
+              }
+            },
+            "authoringEmissionShape": "Point",
+            "authoringInheritance": {
+              "translation": "On",
+              "rotation": "On",
+              "scale": "On",
+              "matrix": "On",
+              "alphaMode": "Multiply",
+              "alphaRate": 0,
+              "colorRate": 0,
+              "compatibility": {
+                "nodeV16": true,
+                "nodeV15": false,
+                "rootV16": true,
+                "rootV15": false
+              }
+            },
+            "particleGeometrySource": {
+              "rotationMode": "NewtonDynamics",
+              "scaleMode": "NewtonDynamics",
+              "origin": "Explicit matching BMSLN; these selectors are not newly decoded binary fields",
+              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+            },
+            "nullLocatorSource": {
+              "type": "Billboard",
+              "rotationMode": "NewtonDynamics",
+              "scaleMode": "NewtonDynamics",
+              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7",
+              "origin": "IBMB Null type; rotation/scale still require explicit matching BMSLN"
+            },
+            "appearance": {
+              "alpha": {
+                "mode": "Constant",
+                "origin": "IBMB",
+                "value": 1
+              },
+              "color": {
+                "mode": "Constant",
+                "origin": "IBMB",
+                "domain": "center",
+                "supported": true,
+                "value": [
+                  1,
+                  1,
+                  1
+                ]
+              },
+              "limitations": [
+                "RGB random-range support is unverified without authoring"
+              ]
+            },
+            "nativeNullLocator": {
+              "typeId": 0,
+              "fieldOffset": 1492,
+              "moduleAddress": "0x1fc04b0",
+              "nativeSha256": "6c7e501c98939581528df3d712ff1f58afcfd392160f1e71ef1f903d49926b77",
+              "functionSha256": "8788174e86964bd11e97f55521d4606fe86af3798cd8f5ac9e920b5802f8f20d"
+            }
+          },
+          {
+            "index": 2,
+            "offset": 1504,
+            "bytes": 704,
+            "typeId": 0,
+            "type": "ControlNull",
+            "lifeParameter": 84,
+            "lifeRangeParameter": 0,
+            "alphaCurve": {
+              "fieldOffset": 1784,
+              "keys": []
+            },
+            "vectorCurves": {
+              "translationValue": {
+                "fieldOffset": 2064,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "translationSpeed": {
+                "fieldOffset": 2080,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "rotationValue": {
+                "fieldOffset": 2096,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "rotationSpeed": {
+                "fieldOffset": 2112,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "scaleValue": {
+                "fieldOffset": 2128,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "scaleSpeed": {
+                "fieldOffset": 2144,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "centerColor": {
+                "fieldOffset": 2176,
+                "axes": [
+                  "R",
+                  "G",
+                  "B"
+                ],
+                "keys": []
+              }
+            },
+            "staticVectors": {
+              "transform": {
+                "translation": {
+                  "valueInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "rotation": {
+                  "valueInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    10
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "scale": {
+                  "valueInitial": [
+                    2,
+                    1,
+                    1
+                  ],
+                  "valueRange": [
+                    0.5,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                }
+              }
+            },
+            "texturePivots": {},
+            "motionModes": {
+              "translation": {
+                "id": 1,
+                "name": "NewtonDynamics",
+                "fieldOffset": 2060
+              },
+              "rotation": {
+                "id": 1,
+                "name": "NewtonDynamics",
+                "fieldOffset": 2160
+              },
+              "scale": {
+                "id": 1,
+                "name": "NewtonDynamics",
+                "fieldOffset": 2164
+              }
+            },
+            "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 2168
+              },
+              "alphaMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 2192
+              }
+            },
+            "materialAlpha": {
+              "value": 1,
+              "fieldOffset": 1748
+            },
+            "sourceControls": {
+              "profile": "ibmb-parent-controls-v1",
+              "fields": {
+                "rotation": {
+                  "raw": 0,
+                  "value": "On",
+                  "fieldOffset": 1640,
+                  "status": "decoded"
+                },
+                "alphaRate": {
+                  "raw": 0,
+                  "value": 0,
+                  "fieldOffset": 1716,
+                  "status": "decoded"
+                },
+                "nullType": {
+                  "raw": 1,
+                  "value": "Standard",
+                  "fieldOffset": 2196,
+                  "status": "decoded"
+                }
+              },
+              "missingInheritance": [
+                "translation",
+                "scale",
+                "matrix",
+                "alphaMode",
+                "colorRate"
+              ],
+              "compatibility": "unresolved-authoring-to-runtime-mapping",
+              "boundary": "Binary parameters only; no inheritance equation or complete profile admission"
+            },
+            "nativeInitialization": {
+              "profile": "native-null-init-inputs-v1",
+              "status": "supported-inputs",
+              "parameters": {
+                "locator_index": 1,
+                "field_c8": 0,
+                "field_cc": 1
+              },
+              "fieldOffsets": {
+                "locator_index": 2196,
+                "field_c8": 1704,
+                "field_cc": 1708
+              },
+              "requiredContext": [
+                "parent_flags",
+                "child_flags"
+              ],
+              "boundary": "Input extraction only; child execution supplies flags, never default zero"
+            },
+            "parentIndex": 1,
+            "children": [
+              3,
+              5,
+              7
+            ],
+            "childCount": 3,
+            "resourceBindings": {},
+            "generation": {
+              "start": 0,
+              "startRange": 0,
+              "count": 1,
+              "duration": 1,
+              "repeatCount": 1,
+              "interval": 1
+            },
+            "uniformScale": true,
+            "nativeGeneration": {
+              "start": 0,
+              "startRange": 0,
+              "count": 1,
+              "duration": 1,
+              "repeatCount": 1,
+              "interval": 1,
+              "profile": "native-constant-activation-v1",
+              "typeId": 0,
+              "childCount": 3,
+              "mode": 0,
+              "enabled": true,
+              "nullLifetimeMode": 0,
+              "rawControlBytes": {
+                "offset": "0x69",
+                "values": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              "boundary": "Activation only; Null enabled means an explicitly invoked caller, not decoded source visibility"
+            },
+            "initialColor": [
+              1,
+              1,
+              1
+            ],
+            "nativeModuleInputs": {
+              "color1": {
+                "value": [
+                  1,
+                  1,
+                  1
+                ],
+                "range": [
+                  0,
+                  0,
+                  0
+                ],
+                "valueOffset": 1832,
+                "rangeOffset": 1848
+              }
+            },
+            "authoringEmissionShape": "Point",
+            "authoringInheritance": {
+              "translation": "On",
+              "rotation": "On",
+              "scale": "On",
+              "matrix": "On",
+              "alphaMode": "Multiply",
+              "alphaRate": 0,
+              "colorRate": 0,
+              "compatibility": {
+                "nodeV16": true,
+                "nodeV15": false,
+                "rootV16": true,
+                "rootV15": false
+              }
+            },
+            "particleGeometrySource": {
+              "rotationMode": "NewtonDynamics",
+              "scaleMode": "NewtonDynamics",
+              "origin": "Explicit matching BMSLN; these selectors are not newly decoded binary fields",
+              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+            },
+            "nullLocatorSource": {
+              "type": "Standard",
+              "rotationMode": "NewtonDynamics",
+              "scaleMode": "NewtonDynamics",
+              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7",
+              "origin": "IBMB Null type; rotation/scale still require explicit matching BMSLN"
+            },
+            "appearance": {
+              "alpha": {
+                "mode": "Constant",
+                "origin": "IBMB",
+                "value": 1
+              },
+              "color": {
+                "mode": "Constant",
+                "origin": "IBMB",
+                "domain": "center",
+                "supported": true,
+                "value": [
+                  1,
+                  1,
+                  1
+                ]
+              },
+              "limitations": [
+                "RGB random-range support is unverified without authoring"
+              ]
+            },
+            "nativeNullLocator": {
+              "typeId": 1,
+              "fieldOffset": 2196,
+              "moduleAddress": null,
+              "nativeSha256": "6c7e501c98939581528df3d712ff1f58afcfd392160f1e71ef1f903d49926b77",
+              "functionSha256": null
+            }
+          },
+          {
+            "index": 3,
+            "offset": 2208,
+            "bytes": 704,
+            "typeId": 0,
+            "type": "ControlNull",
+            "lifeParameter": 55,
+            "lifeRangeParameter": 0,
+            "alphaCurve": {
+              "fieldOffset": 2488,
+              "keys": []
+            },
+            "vectorCurves": {
+              "translationValue": {
+                "fieldOffset": 2768,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": [
+                  {
+                    "offset": 10032,
+                    "typeIds": [
+                      1,
+                      2,
+                      1
+                    ],
+                    "types": [
+                      "Linear",
+                      "Spline",
+                      "Linear"
+                    ],
+                    "slopeLeft": [
+                      0,
+                      0,
+                      0
+                    ],
+                    "slopeRight": [
+                      0,
+                      0,
+                      0
+                    ],
+                    "value": [
+                      0.008533477783203125,
+                      0.04582786560058594,
+                      0
+                    ],
+                    "frame": 0
+                  },
+                  {
+                    "offset": 10084,
+                    "typeIds": [
+                      1,
+                      2,
+                      1
+                    ],
+                    "types": [
+                      "Linear",
+                      "Spline",
+                      "Linear"
+                    ],
+                    "slopeLeft": [
+                      0,
+                      0,
+                      0
+                    ],
+                    "slopeRight": [
+                      0,
+                      0,
+                      0
+                    ],
+                    "value": [
+                      0.0030762702226638794,
+                      130.81752014160156,
+                      0
+                    ],
+                    "frame": 0.7321428656578064
+                  }
+                ],
+                "dataOffset": 10032
+              },
+              "translationSpeed": {
+                "fieldOffset": 2784,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "rotationValue": {
+                "fieldOffset": 2800,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "rotationSpeed": {
+                "fieldOffset": 2816,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "scaleValue": {
+                "fieldOffset": 2832,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": [
+                  {
+                    "offset": 10136,
+                    "typeIds": [
+                      2,
+                      1,
+                      1
+                    ],
+                    "types": [
+                      "Spline",
+                      "Linear",
+                      "Linear"
+                    ],
+                    "slopeLeft": [
+                      42.43694305419922,
+                      0,
+                      0
+                    ],
+                    "slopeRight": [
+                      42.43694305419922,
+                      0,
+                      0
+                    ],
+                    "value": [
+                      0,
+                      0,
+                      0
+                    ],
+                    "frame": 0
+                  },
+                  {
+                    "offset": 10188,
+                    "typeIds": [
+                      2,
+                      1,
+                      1
+                    ],
+                    "types": [
+                      "Spline",
+                      "Linear",
+                      "Linear"
+                    ],
+                    "slopeLeft": [
+                      0,
+                      0,
+                      0
+                    ],
+                    "slopeRight": [
+                      0,
+                      0,
+                      0
+                    ],
+                    "value": [
+                      30.001930236816406,
+                      0,
+                      0
+                    ],
+                    "frame": 0.36623379588127136
+                  }
+                ],
+                "dataOffset": 10136
+              },
+              "scaleSpeed": {
+                "fieldOffset": 2848,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "centerColor": {
+                "fieldOffset": 2880,
+                "axes": [
+                  "R",
+                  "G",
+                  "B"
+                ],
+                "keys": []
+              }
+            },
+            "staticVectors": {
+              "transform": {
+                "translation": {
+                  "valueInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    1,
+                    0
+                  ],
+                  "speedRange": [
+                    0.20000000298023224,
+                    0.20000000298023224,
+                    0.20000000298023224
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "rotation": {
+                  "valueInitial": [
+                    0,
+                    0,
+                    360
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "scale": {
+                  "valueInitial": [
+                    30,
+                    1,
+                    1
+                  ],
+                  "valueRange": [
+                    3,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                }
+              }
+            },
+            "texturePivots": {},
+            "motionModes": {
+              "translation": {
+                "id": 1,
+                "name": "NewtonDynamics",
+                "fieldOffset": 2764
+              },
+              "rotation": {
+                "id": 1,
+                "name": "NewtonDynamics",
+                "fieldOffset": 2864
+              },
+              "scale": {
+                "id": 2,
+                "name": "CurveValue",
+                "fieldOffset": 2868
+              }
+            },
+            "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 2872
+              },
+              "alphaMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 2896
+              }
+            },
+            "materialAlpha": {
+              "value": 1,
+              "fieldOffset": 2452
+            },
+            "sourceControls": {
+              "profile": "ibmb-parent-controls-v1",
+              "fields": {
+                "rotation": {
+                  "raw": 0,
+                  "value": "On",
+                  "fieldOffset": 2344,
+                  "status": "decoded"
+                },
+                "alphaRate": {
+                  "raw": 0,
+                  "value": 0,
+                  "fieldOffset": 2420,
+                  "status": "decoded"
+                },
+                "nullType": {
+                  "raw": 1,
+                  "value": "Standard",
+                  "fieldOffset": 2900,
+                  "status": "decoded"
+                }
+              },
+              "missingInheritance": [
+                "translation",
+                "scale",
+                "matrix",
+                "alphaMode",
+                "colorRate"
+              ],
+              "compatibility": "unresolved-authoring-to-runtime-mapping",
+              "boundary": "Binary parameters only; no inheritance equation or complete profile admission"
+            },
+            "nativeInitialization": {
+              "profile": "native-null-init-inputs-v1",
+              "status": "supported-inputs",
+              "parameters": {
+                "locator_index": 1,
+                "field_c8": 0,
+                "field_cc": 1
+              },
+              "fieldOffsets": {
+                "locator_index": 2900,
+                "field_c8": 2408,
+                "field_cc": 2412
+              },
+              "requiredContext": [
+                "parent_flags",
+                "child_flags"
+              ],
+              "boundary": "Input extraction only; child execution supplies flags, never default zero"
+            },
+            "parentIndex": 2,
+            "children": [
+              4
+            ],
+            "childCount": 1,
+            "resourceBindings": {},
+            "generation": {
+              "start": 0,
+              "startRange": 0,
+              "count": 1,
+              "duration": 30,
+              "repeatCount": 1,
+              "interval": 8
+            },
+            "uniformScale": true,
+            "nativeGeneration": {
+              "start": 0,
+              "startRange": 0,
+              "count": 1,
+              "duration": 30,
+              "repeatCount": 1,
+              "interval": 8,
+              "profile": "native-constant-activation-v1",
+              "typeId": 0,
+              "childCount": 1,
+              "mode": 0,
+              "enabled": true,
+              "nullLifetimeMode": 0,
+              "rawControlBytes": {
+                "offset": "0x69",
+                "values": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              "boundary": "Activation only; Null enabled means an explicitly invoked caller, not decoded source visibility"
+            },
+            "initialColor": [
+              1,
+              1,
+              1
+            ],
+            "nativeModuleInputs": {
+              "color1": {
+                "value": [
+                  1,
+                  1,
+                  1
+                ],
+                "range": [
+                  0,
+                  0,
+                  0
+                ],
+                "valueOffset": 2536,
+                "rangeOffset": 2552
+              }
+            },
+            "authoringEmissionShape": "Point",
+            "authoringInheritance": {
+              "translation": "On",
+              "rotation": "On",
+              "scale": "On",
+              "matrix": "On",
+              "alphaMode": "Multiply",
+              "alphaRate": 0,
+              "colorRate": 0,
+              "compatibility": {
+                "nodeV16": true,
+                "nodeV15": false,
+                "rootV16": true,
+                "rootV15": false
+              }
+            },
+            "particleGeometrySource": {
+              "rotationMode": "NewtonDynamics",
+              "scaleMode": "NewtonDynamics",
+              "origin": "Explicit matching BMSLN; these selectors are not newly decoded binary fields",
+              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+            },
+            "nullLocatorSource": {
+              "type": "Standard",
+              "rotationMode": "NewtonDynamics",
+              "scaleMode": "NewtonDynamics",
+              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7",
+              "origin": "IBMB Null type; rotation/scale still require explicit matching BMSLN"
+            },
+            "appearance": {
+              "alpha": {
+                "mode": "Constant",
+                "origin": "IBMB",
+                "value": 1
+              },
+              "color": {
+                "mode": "Constant",
+                "origin": "IBMB",
+                "domain": "center",
+                "supported": true,
+                "value": [
+                  1,
+                  1,
+                  1
+                ]
+              },
+              "limitations": [
+                "RGB random-range support is unverified without authoring"
+              ]
+            },
+            "nativeNullLocator": {
+              "typeId": 1,
+              "fieldOffset": 2900,
+              "moduleAddress": null,
+              "nativeSha256": "6c7e501c98939581528df3d712ff1f58afcfd392160f1e71ef1f903d49926b77",
+              "functionSha256": null
+            }
+          },
+          {
+            "index": 4,
+            "offset": 2912,
+            "bytes": 1840,
+            "typeId": 3,
+            "type": "EmitterParticle",
+            "lifeParameter": 55,
+            "lifeRangeParameter": 0,
+            "alphaCurve": {
+              "fieldOffset": 3456,
+              "dataOffset": 10344,
+              "keys": [
+                {
+                  "offset": 10344,
+                  "typeId": 2,
+                  "type": "Spline",
+                  "slopeLeft": 0,
+                  "slopeRight": 0,
+                  "value": 0,
+                  "frame": 0
+                },
+                {
+                  "offset": 10364,
+                  "typeId": 2,
+                  "type": "Spline",
+                  "slopeLeft": 0,
+                  "slopeRight": 0,
+                  "value": 1,
+                  "frame": 0.5107143521308899
+                },
+                {
+                  "offset": 10384,
+                  "typeId": 2,
+                  "type": "Spline",
+                  "slopeLeft": 0,
+                  "slopeRight": 0,
+                  "value": 0,
+                  "frame": 1
+                }
+              ]
+            },
+            "vectorCurves": {
+              "translationSpeed": {
+                "fieldOffset": 4256,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "texture1TranslationSpeed": {
+                "fieldOffset": 4352,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "centerColor": {
+                "fieldOffset": 4544,
+                "axes": [
+                  "R",
+                  "G",
+                  "B"
+                ],
+                "keys": [
+                  {
+                    "offset": 10240,
+                    "typeIds": [
+                      1,
+                      1,
+                      2
+                    ],
+                    "types": [
+                      "Linear",
+                      "Linear",
+                      "Spline"
+                    ],
+                    "slopeLeft": [
+                      0,
+                      0,
+                      0
+                    ],
+                    "slopeRight": [
+                      0,
+                      0,
+                      0
+                    ],
+                    "value": [
+                      0.30126431584358215,
+                      0.30792489647865295,
+                      0.33331114053726196
+                    ],
+                    "frame": 0
+                  },
+                  {
+                    "offset": 10292,
+                    "typeIds": [
+                      1,
+                      1,
+                      2
+                    ],
+                    "types": [
+                      "Linear",
+                      "Linear",
+                      "Spline"
+                    ],
+                    "slopeLeft": [
+                      0,
+                      0,
+                      0
+                    ],
+                    "slopeRight": [
+                      0,
+                      0,
+                      0
+                    ],
+                    "value": [
+                      0.30092668533325195,
+                      0.2995356023311615,
+                      0.3183009624481201
+                    ],
+                    "frame": 0.5404762029647827
+                  }
+                ],
+                "dataOffset": 10240
+              }
+            },
+            "staticVectors": {
+              "transform": {
+                "translation": {
+                  "valueInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "rotation": {
+                  "valueInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    360
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "scale": {
+                  "valueInitial": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                }
+              },
+              "texture1": {
+                "translation": {
+                  "valueInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "rotation": {
+                  "valueInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "scale": {
+                  "valueInitial": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                }
+              },
+              "texture2": {
+                "translation": {
+                  "valueInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "rotation": {
+                  "valueInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "scale": {
+                  "valueInitial": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                }
+              }
+            },
+            "texturePivots": {
+              "texture1": [
+                0.5,
+                0.5,
+                0.5
+              ],
+              "texture2": [
+                0.5,
+                0.5,
+                0.5
+              ]
+            },
+            "motionModes": {
+              "translation": {
+                "id": 1,
+                "name": "NewtonDynamics",
+                "fieldOffset": 4232
+              },
+              "texture1Translation": {
+                "id": 1,
+                "name": "NewtonDynamics",
+                "fieldOffset": 4712
+              }
+            },
+            "materialControls": {
+              "blend": {
+                "id": 1,
+                "name": "Semitrans",
+                "fieldOffset": 4592
+              },
+              "alphaMode": {
+                "id": 1,
+                "name": "Curve",
+                "fieldOffset": 4596
+              },
+              "textureCombination": {
+                "id": 0,
+                "name": "Basic",
+                "fieldOffset": 4608
+              },
+              "texture1Address": {
+                "id": 0,
+                "name": "Clamp",
+                "fieldOffset": 4612
+              },
+              "texture2Address": {
+                "id": 1,
+                "name": "Repeat",
+                "fieldOffset": 4616
+              }
+            },
+            "materialAlpha": {
+              "value": 1,
+              "fieldOffset": 3356
+            },
+            "sourceControls": {
+              "profile": "ibmb-parent-controls-v1",
+              "fields": {
+                "alphaMode": {
+                  "raw": 0,
+                  "value": "Lerp",
+                  "fieldOffset": 3428,
+                  "status": "decoded"
+                },
+                "alphaRate": {
+                  "raw": 0,
+                  "value": 0,
+                  "fieldOffset": 3324,
+                  "status": "decoded"
+                }
+              },
+              "missingInheritance": [
+                "translation",
+                "rotation",
+                "scale",
+                "matrix",
+                "colorRate"
+              ],
+              "compatibility": "unresolved-authoring-to-runtime-mapping",
+              "boundary": "Binary parameters only; no inheritance equation or complete profile admission"
+            },
+            "parentIndex": 3,
+            "children": [],
+            "childCount": 0,
+            "resourceBindings": {
+              "texture1": {
+                "kind": "texture",
+                "name": "lapis_eff_material_028_cloud_0000_cloud2",
+                "resourceIndex": 0,
+                "fieldOffset": 2976,
+                "stringOffset": 9844
+              },
+              "texture2": null
+            },
+            "generation": {
+              "start": 0,
+              "startRange": 0,
+              "count": 1,
+              "duration": 1,
+              "repeatCount": 1,
+              "interval": 1
+            },
+            "uniformScale": true,
+            "nativeGeneration": {
+              "start": 0,
+              "startRange": 0,
+              "count": 1,
+              "duration": 1,
+              "repeatCount": 1,
+              "interval": 1,
+              "profile": "native-constant-activation-v1",
+              "typeId": 3,
+              "childCount": 0,
+              "mode": 0,
+              "enabled": true,
+              "nullLifetimeMode": null,
+              "rawControlBytes": {
+                "offset": "0xd8",
+                "values": [
+                  1,
+                  0,
+                  0
+                ]
+              },
+              "boundary": "Activation only; Null enabled means an explicitly invoked caller, not decoded source visibility"
+            },
+            "initialColor": [
+              0.3156832754611969,
+              0.05700834468007088,
+              0.7102804183959961
+            ],
+            "nativeModuleInputs": {
+              "color1": {
+                "value": [
+                  0.3156832754611969,
+                  0.05700834468007088,
+                  0.7102804183959961
+                ],
+                "range": [
+                  0.042553193867206573,
+                  0.042553193867206573,
+                  0.042553193867206573
+                ],
+                "valueOffset": 3016,
+                "rangeOffset": 3032
+              },
+              "texture2Scale": {
+                "value": [
+                  1,
+                  1,
+                  1
+                ],
+                "range": [
+                  0,
+                  0,
+                  0
+                ],
+                "valueOffset": 4160,
+                "rangeOffset": 4172
+              }
+            },
+            "sortPriority": 0.44999998807907104,
+            "authoringEmissionShape": "Point",
+            "authoringInheritance": {
+              "translation": "On",
+              "rotation": "On",
+              "scale": "On",
+              "matrix": "On",
+              "alphaMode": "Lerp",
+              "alphaRate": 0,
+              "colorRate": 0,
+              "compatibility": {
+                "nodeV16": true,
+                "nodeV15": true,
+                "rootV16": true,
+                "rootV15": false
+              }
+            },
+            "particleGeometrySource": {
+              "rotationMode": "NewtonDynamics",
+              "scaleMode": "NewtonDynamics",
+              "origin": "Explicit matching BMSLN; these selectors are not newly decoded binary fields",
+              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+            },
+            "appearance": {
+              "alpha": {
+                "mode": "Curve",
+                "origin": "IBMB",
+                "value": 1
+              },
+              "color": {
+                "mode": "Unresolved",
+                "origin": "Unresolved",
+                "domain": "center",
+                "supported": false,
+                "value": [
+                  0.3156832754611969,
+                  0.05700834468007088,
+                  0.7102804183959961
+                ]
+              },
+              "limitations": [
+                "RGB random-range support is unverified without authoring",
+                "color selector unresolved; legacy preview tint retained"
+              ]
+            },
+            "basicTextureMapping": {
+              "supported": false,
+              "motionModes": {},
+              "origin": "Explicit BMSLN after known-field comparison",
+              "limitations": [
+                "single-texture mapping/motion modes lack an authoring supplement"
+              ]
+            },
+            "nativeMaterialSelection": {
+              "scope": "Initial ordinary Quad/Particle constructor; no runtime override",
+              "resourceType": 1,
+              "specialFlag": 0,
+              "operation": 0,
+              "textured": true,
+              "mask": 0,
+              "rawInputs": {
+                "0xe1": 0,
+                "0xe6": 0,
+                "0x1c8": 0,
+                "0x6b8": 0,
+                "0x6b4": 0,
+                "0x6a0": 0
+              },
+              "supported": true,
+              "descriptorIndex": 224,
+              "descriptor": [
+                4,
+                8,
+                0,
+                1
+              ],
+              "vertexSlot": 4,
+              "fragmentSlot": 8,
+              "vertexSha256": "75ffb9bda0b6276b79d9960e40e7369fd03ce469117f9dd7320095cb30824520",
+              "fragmentSha256": "8ae381afc9f95ab42caafc2c03266ddc08500489623d2e16d39d89737b7d1fb4",
+              "fragmentOffset": 157968,
+              "addCandidateCompatible": false,
+              "distortionCandidateCompatible": false,
+              "basicCandidateCompatible": true
+            },
+            "nativeParticleX": {
+              "nativeSha256": "6c7e501c98939581528df3d712ff1f58afcfd392160f1e71ef1f903d49926b77",
+              "scale": {
+                "resolved": true,
+                "index": 15,
+                "slot": "0x2d92fb8",
+                "target": {
+                  "address": "0x1fc213c",
+                  "symbol": "_ZN2ml2bm6module7scaling11make_vertex4OneXERNS1_17MakeVertexContextE",
+                  "bytes": 40,
+                  "sha256": "549644baf3d7082741d320b6184e226f1b37d009bd46cac9321fc2b90971dfbe"
+                }
+              },
+              "scaleInit": {
+                "resolved": true,
+                "index": 15,
+                "slot": "0x2d94d38",
+                "target": null
+              },
+              "rotation": {
+                "resolved": true,
+                "index": 1,
+                "slot": "0x2d92ed8",
+                "target": {
+                  "address": "0x1fc2060",
+                  "symbol": "_ZN2ml2bm6module8rotation11make_vertex5ConstERNS1_17MakeVertexContextE",
+                  "bytes": 56,
+                  "sha256": "484853a98927c994a0fadf78af6c079f25145bf26ba41b692cba26c9949339cb"
+                }
+              },
+              "parentCoord": {
+                "resolved": true,
+                "index": 0,
+                "slot": "0x2d92dc0",
+                "target": null
+              }
+            },
+            "nativeBasicTint": {
+              "supported": true,
+              "rgba": [
+                0.9929168820381165,
+                0.9999999403953552,
+                0.9999999403953552,
+                1
+              ],
+              "limitations": [],
+              "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
+              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+            }
+          },
+          {
+            "index": 5,
+            "offset": 4752,
+            "bytes": 704,
+            "typeId": 0,
+            "type": "ControlNull",
+            "lifeParameter": 55,
+            "lifeRangeParameter": 0,
+            "alphaCurve": {
+              "fieldOffset": 5032,
+              "keys": []
+            },
+            "vectorCurves": {
+              "translationValue": {
+                "fieldOffset": 5312,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": [
+                  {
+                    "offset": 10412,
+                    "typeIds": [
+                      1,
+                      2,
+                      1
+                    ],
+                    "types": [
+                      "Linear",
+                      "Spline",
+                      "Linear"
+                    ],
+                    "slopeLeft": [
+                      0,
+                      0,
+                      0
+                    ],
+                    "slopeRight": [
+                      0,
+                      0,
+                      0
+                    ],
+                    "value": [
+                      0.008533477783203125,
+                      0.04582786560058594,
+                      0
+                    ],
+                    "frame": 0
+                  },
+                  {
+                    "offset": 10464,
+                    "typeIds": [
+                      1,
+                      2,
+                      1
+                    ],
+                    "types": [
+                      "Linear",
+                      "Spline",
+                      "Linear"
+                    ],
+                    "slopeLeft": [
+                      0,
+                      0,
+                      0
+                    ],
+                    "slopeRight": [
+                      0,
+                      0,
+                      0
+                    ],
+                    "value": [
+                      0.0030762702226638794,
+                      130.81752014160156,
+                      0
+                    ],
+                    "frame": 0.7321428656578064
+                  }
+                ],
+                "dataOffset": 10412
+              },
+              "translationSpeed": {
+                "fieldOffset": 5328,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "rotationValue": {
+                "fieldOffset": 5344,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "rotationSpeed": {
+                "fieldOffset": 5360,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "scaleValue": {
+                "fieldOffset": 5376,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": [
+                  {
+                    "offset": 10516,
+                    "typeIds": [
+                      2,
+                      1,
+                      1
+                    ],
+                    "types": [
+                      "Spline",
+                      "Linear",
+                      "Linear"
+                    ],
+                    "slopeLeft": [
+                      42.43694305419922,
+                      0,
+                      0
+                    ],
+                    "slopeRight": [
+                      42.43694305419922,
+                      0,
+                      0
+                    ],
+                    "value": [
+                      0,
+                      0,
+                      0
+                    ],
+                    "frame": 0
+                  },
+                  {
+                    "offset": 10568,
+                    "typeIds": [
+                      2,
+                      1,
+                      1
+                    ],
+                    "types": [
+                      "Spline",
+                      "Linear",
+                      "Linear"
+                    ],
+                    "slopeLeft": [
+                      0,
+                      0,
+                      0
+                    ],
+                    "slopeRight": [
+                      0,
+                      0,
+                      0
+                    ],
+                    "value": [
+                      30.001930236816406,
+                      0,
+                      0
+                    ],
+                    "frame": 0.36623379588127136
+                  }
+                ],
+                "dataOffset": 10516
+              },
+              "scaleSpeed": {
+                "fieldOffset": 5392,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "centerColor": {
+                "fieldOffset": 5424,
+                "axes": [
+                  "R",
+                  "G",
+                  "B"
+                ],
+                "keys": []
+              }
+            },
+            "staticVectors": {
+              "transform": {
+                "translation": {
+                  "valueInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    1,
+                    0
+                  ],
+                  "speedRange": [
+                    0.20000000298023224,
+                    0.20000000298023224,
+                    0.20000000298023224
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "rotation": {
+                  "valueInitial": [
+                    0,
+                    0,
+                    360
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "scale": {
+                  "valueInitial": [
+                    30,
+                    1,
+                    1
+                  ],
+                  "valueRange": [
+                    3,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                }
+              }
+            },
+            "texturePivots": {},
+            "motionModes": {
+              "translation": {
+                "id": 1,
+                "name": "NewtonDynamics",
+                "fieldOffset": 5308
+              },
+              "rotation": {
+                "id": 1,
+                "name": "NewtonDynamics",
+                "fieldOffset": 5408
+              },
+              "scale": {
+                "id": 2,
+                "name": "CurveValue",
+                "fieldOffset": 5412
+              }
+            },
+            "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 5416
+              },
+              "alphaMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 5440
+              }
+            },
+            "materialAlpha": {
+              "value": 1,
+              "fieldOffset": 4996
+            },
+            "sourceControls": {
+              "profile": "ibmb-parent-controls-v1",
+              "fields": {
+                "rotation": {
+                  "raw": 0,
+                  "value": "On",
+                  "fieldOffset": 4888,
+                  "status": "decoded"
+                },
+                "alphaRate": {
+                  "raw": 0,
+                  "value": 0,
+                  "fieldOffset": 4964,
+                  "status": "decoded"
+                },
+                "nullType": {
+                  "raw": 1,
+                  "value": "Standard",
+                  "fieldOffset": 5444,
+                  "status": "decoded"
+                }
+              },
+              "missingInheritance": [
+                "translation",
+                "scale",
+                "matrix",
+                "alphaMode",
+                "colorRate"
+              ],
+              "compatibility": "unresolved-authoring-to-runtime-mapping",
+              "boundary": "Binary parameters only; no inheritance equation or complete profile admission"
+            },
+            "nativeInitialization": {
+              "profile": "native-null-init-inputs-v1",
+              "status": "supported-inputs",
+              "parameters": {
+                "locator_index": 1,
+                "field_c8": 0,
+                "field_cc": 1
+              },
+              "fieldOffsets": {
+                "locator_index": 5444,
+                "field_c8": 4952,
+                "field_cc": 4956
+              },
+              "requiredContext": [
+                "parent_flags",
+                "child_flags"
+              ],
+              "boundary": "Input extraction only; child execution supplies flags, never default zero"
+            },
+            "parentIndex": 2,
+            "children": [
+              6
+            ],
+            "childCount": 1,
+            "resourceBindings": {},
+            "generation": {
+              "start": 0,
+              "startRange": 0,
+              "count": 1,
+              "duration": 30,
+              "repeatCount": 1,
+              "interval": 10
+            },
+            "uniformScale": true,
+            "nativeGeneration": {
+              "start": 0,
+              "startRange": 0,
+              "count": 1,
+              "duration": 30,
+              "repeatCount": 1,
+              "interval": 10,
+              "profile": "native-constant-activation-v1",
+              "typeId": 0,
+              "childCount": 1,
+              "mode": 0,
+              "enabled": true,
+              "nullLifetimeMode": 0,
+              "rawControlBytes": {
+                "offset": "0x69",
+                "values": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              "boundary": "Activation only; Null enabled means an explicitly invoked caller, not decoded source visibility"
+            },
+            "initialColor": [
+              1,
+              1,
+              1
+            ],
+            "nativeModuleInputs": {
+              "color1": {
+                "value": [
+                  1,
+                  1,
+                  1
+                ],
+                "range": [
+                  0,
+                  0,
+                  0
+                ],
+                "valueOffset": 5080,
+                "rangeOffset": 5096
+              }
+            },
+            "authoringEmissionShape": "Point",
+            "authoringInheritance": {
+              "translation": "On",
+              "rotation": "On",
+              "scale": "On",
+              "matrix": "On",
+              "alphaMode": "Multiply",
+              "alphaRate": 0,
+              "colorRate": 0,
+              "compatibility": {
+                "nodeV16": true,
+                "nodeV15": false,
+                "rootV16": true,
+                "rootV15": false
+              }
+            },
+            "particleGeometrySource": {
+              "rotationMode": "NewtonDynamics",
+              "scaleMode": "NewtonDynamics",
+              "origin": "Explicit matching BMSLN; these selectors are not newly decoded binary fields",
+              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+            },
+            "nullLocatorSource": {
+              "type": "Standard",
+              "rotationMode": "NewtonDynamics",
+              "scaleMode": "NewtonDynamics",
+              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7",
+              "origin": "IBMB Null type; rotation/scale still require explicit matching BMSLN"
+            },
+            "appearance": {
+              "alpha": {
+                "mode": "Constant",
+                "origin": "IBMB",
+                "value": 1
+              },
+              "color": {
+                "mode": "Constant",
+                "origin": "IBMB",
+                "domain": "center",
+                "supported": true,
+                "value": [
+                  1,
+                  1,
+                  1
+                ]
+              },
+              "limitations": [
+                "RGB random-range support is unverified without authoring"
+              ]
+            },
+            "nativeNullLocator": {
+              "typeId": 1,
+              "fieldOffset": 5444,
+              "moduleAddress": null,
+              "nativeSha256": "6c7e501c98939581528df3d712ff1f58afcfd392160f1e71ef1f903d49926b77",
+              "functionSha256": null
+            }
+          },
+          {
+            "index": 6,
+            "offset": 5456,
+            "bytes": 1840,
+            "typeId": 3,
+            "type": "EmitterParticle",
+            "lifeParameter": 55,
+            "lifeRangeParameter": 0,
+            "alphaCurve": {
+              "fieldOffset": 6000,
+              "dataOffset": 10724,
+              "keys": [
+                {
+                  "offset": 10724,
+                  "typeId": 2,
+                  "type": "Spline",
+                  "slopeLeft": 0,
+                  "slopeRight": 0,
+                  "value": 0,
+                  "frame": 0
+                },
+                {
+                  "offset": 10744,
+                  "typeId": 2,
+                  "type": "Spline",
+                  "slopeLeft": 0,
+                  "slopeRight": 0,
+                  "value": 0.5972222089767456,
+                  "frame": 0.5107143521308899
+                },
+                {
+                  "offset": 10764,
+                  "typeId": 2,
+                  "type": "Spline",
+                  "slopeLeft": 0,
+                  "slopeRight": 0,
+                  "value": 0,
+                  "frame": 1
+                }
+              ]
+            },
+            "vectorCurves": {
+              "translationSpeed": {
+                "fieldOffset": 6800,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "texture1TranslationSpeed": {
+                "fieldOffset": 6896,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "centerColor": {
+                "fieldOffset": 7088,
+                "axes": [
+                  "R",
+                  "G",
+                  "B"
+                ],
+                "keys": [
+                  {
+                    "offset": 10620,
+                    "typeIds": [
+                      1,
+                      1,
+                      2
+                    ],
+                    "types": [
+                      "Linear",
+                      "Linear",
+                      "Spline"
+                    ],
+                    "slopeLeft": [
+                      0,
+                      0,
+                      0
+                    ],
+                    "slopeRight": [
+                      0,
+                      0,
+                      0
+                    ],
+                    "value": [
+                      0.30126431584358215,
+                      0.30792489647865295,
+                      0.33331114053726196
+                    ],
+                    "frame": 0
+                  },
+                  {
+                    "offset": 10672,
+                    "typeIds": [
+                      1,
+                      1,
+                      2
+                    ],
+                    "types": [
+                      "Linear",
+                      "Linear",
+                      "Spline"
+                    ],
+                    "slopeLeft": [
+                      0,
+                      0,
+                      0
+                    ],
+                    "slopeRight": [
+                      0,
+                      0,
+                      0
+                    ],
+                    "value": [
+                      0.30092668533325195,
+                      0.2995356023311615,
+                      0.3183009624481201
+                    ],
+                    "frame": 0.5404762029647827
+                  }
+                ],
+                "dataOffset": 10620
+              }
+            },
+            "staticVectors": {
+              "transform": {
+                "translation": {
+                  "valueInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "rotation": {
+                  "valueInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    360
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "scale": {
+                  "valueInitial": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                }
+              },
+              "texture1": {
+                "translation": {
+                  "valueInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "rotation": {
+                  "valueInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "scale": {
+                  "valueInitial": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                }
+              },
+              "texture2": {
+                "translation": {
+                  "valueInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "rotation": {
+                  "valueInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "scale": {
+                  "valueInitial": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                }
+              }
+            },
+            "texturePivots": {
+              "texture1": [
+                0.5,
+                0.5,
+                0.5
+              ],
+              "texture2": [
+                0.5,
+                0.5,
+                0.5
+              ]
+            },
+            "motionModes": {
+              "translation": {
+                "id": 1,
+                "name": "NewtonDynamics",
+                "fieldOffset": 6776
+              },
+              "texture1Translation": {
+                "id": 1,
+                "name": "NewtonDynamics",
+                "fieldOffset": 7256
+              }
+            },
+            "materialControls": {
+              "blend": {
+                "id": 2,
+                "name": "SemiAdd",
+                "fieldOffset": 7136
+              },
+              "alphaMode": {
+                "id": 1,
+                "name": "Curve",
+                "fieldOffset": 7140
+              },
+              "textureCombination": {
+                "id": 0,
+                "name": "Basic",
+                "fieldOffset": 7152
+              },
+              "texture1Address": {
+                "id": 0,
+                "name": "Clamp",
+                "fieldOffset": 7156
+              },
+              "texture2Address": {
+                "id": 1,
+                "name": "Repeat",
+                "fieldOffset": 7160
+              }
+            },
+            "materialAlpha": {
+              "value": 1,
+              "fieldOffset": 5900
+            },
+            "sourceControls": {
+              "profile": "ibmb-parent-controls-v1",
+              "fields": {
+                "alphaMode": {
+                  "raw": 0,
+                  "value": "Lerp",
+                  "fieldOffset": 5972,
+                  "status": "decoded"
+                },
+                "alphaRate": {
+                  "raw": 0,
+                  "value": 0,
+                  "fieldOffset": 5868,
+                  "status": "decoded"
+                }
+              },
+              "missingInheritance": [
+                "translation",
+                "rotation",
+                "scale",
+                "matrix",
+                "colorRate"
+              ],
+              "compatibility": "unresolved-authoring-to-runtime-mapping",
+              "boundary": "Binary parameters only; no inheritance equation or complete profile admission"
+            },
+            "parentIndex": 5,
+            "children": [],
+            "childCount": 0,
+            "resourceBindings": {
+              "texture1": {
+                "kind": "texture",
+                "name": "lapis_eff_material_028_cloud_0007_cloud19",
+                "resourceIndex": 1,
+                "fieldOffset": 5520,
+                "stringOffset": 9885
+              },
+              "texture2": null
+            },
+            "generation": {
+              "start": 0,
+              "startRange": 0,
+              "count": 1,
+              "duration": 1,
+              "repeatCount": 1,
+              "interval": 1
+            },
+            "uniformScale": true,
+            "nativeGeneration": {
+              "start": 0,
+              "startRange": 0,
+              "count": 1,
+              "duration": 1,
+              "repeatCount": 1,
+              "interval": 1,
+              "profile": "native-constant-activation-v1",
+              "typeId": 3,
+              "childCount": 0,
+              "mode": 0,
+              "enabled": true,
+              "nullLifetimeMode": null,
+              "rawControlBytes": {
+                "offset": "0xd8",
+                "values": [
+                  1,
+                  0,
+                  0
+                ]
+              },
+              "boundary": "Activation only; Null enabled means an explicitly invoked caller, not decoded source visibility"
+            },
+            "initialColor": [
+              0.18993262946605682,
+              0.2609167993068695,
+              0.7730495929718018
+            ],
+            "nativeModuleInputs": {
+              "color1": {
+                "value": [
+                  0.18993262946605682,
+                  0.2609167993068695,
+                  0.7730495929718018
+                ],
+                "range": [
+                  0.042553193867206573,
+                  0.042553193867206573,
+                  0.042553193867206573
+                ],
+                "valueOffset": 5560,
+                "rangeOffset": 5576
+              },
+              "texture2Scale": {
+                "value": [
+                  1,
+                  1,
+                  1
+                ],
+                "range": [
+                  0,
+                  0,
+                  0
+                ],
+                "valueOffset": 6704,
+                "rangeOffset": 6716
+              }
+            },
+            "sortPriority": 0.5,
+            "authoringEmissionShape": "Point",
+            "authoringInheritance": {
+              "translation": "On",
+              "rotation": "On",
+              "scale": "On",
+              "matrix": "On",
+              "alphaMode": "Lerp",
+              "alphaRate": 0,
+              "colorRate": 0,
+              "compatibility": {
+                "nodeV16": true,
+                "nodeV15": true,
+                "rootV16": true,
+                "rootV15": false
+              }
+            },
+            "particleGeometrySource": {
+              "rotationMode": "NewtonDynamics",
+              "scaleMode": "NewtonDynamics",
+              "origin": "Explicit matching BMSLN; these selectors are not newly decoded binary fields",
+              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+            },
+            "appearance": {
+              "alpha": {
+                "mode": "Curve",
+                "origin": "IBMB",
+                "value": 1
+              },
+              "color": {
+                "mode": "Unresolved",
+                "origin": "Unresolved",
+                "domain": "center",
+                "supported": false,
+                "value": [
+                  0.18993262946605682,
+                  0.2609167993068695,
+                  0.7730495929718018
+                ]
+              },
+              "limitations": [
+                "RGB random-range support is unverified without authoring",
+                "color selector unresolved; legacy preview tint retained"
+              ]
+            },
+            "basicTextureMapping": {
+              "supported": false,
+              "motionModes": {},
+              "origin": "Explicit BMSLN after known-field comparison",
+              "limitations": [
+                "single-texture mapping/motion modes lack an authoring supplement"
+              ]
+            },
+            "nativeMaterialSelection": {
+              "scope": "Initial ordinary Quad/Particle constructor; no runtime override",
+              "resourceType": 1,
+              "specialFlag": 0,
+              "operation": 0,
+              "textured": true,
+              "mask": 0,
+              "rawInputs": {
+                "0xe1": 0,
+                "0xe6": 0,
+                "0x1c8": 0,
+                "0x6b8": 0,
+                "0x6b4": 0,
+                "0x6a0": 0
+              },
+              "supported": true,
+              "descriptorIndex": 224,
+              "descriptor": [
+                4,
+                8,
+                0,
+                1
+              ],
+              "vertexSlot": 4,
+              "fragmentSlot": 8,
+              "vertexSha256": "75ffb9bda0b6276b79d9960e40e7369fd03ce469117f9dd7320095cb30824520",
+              "fragmentSha256": "8ae381afc9f95ab42caafc2c03266ddc08500489623d2e16d39d89737b7d1fb4",
+              "fragmentOffset": 157968,
+              "addCandidateCompatible": false,
+              "distortionCandidateCompatible": false,
+              "basicCandidateCompatible": true
+            },
+            "nativeParticleX": {
+              "nativeSha256": "6c7e501c98939581528df3d712ff1f58afcfd392160f1e71ef1f903d49926b77",
+              "scale": {
+                "resolved": true,
+                "index": 15,
+                "slot": "0x2d92fb8",
+                "target": {
+                  "address": "0x1fc213c",
+                  "symbol": "_ZN2ml2bm6module7scaling11make_vertex4OneXERNS1_17MakeVertexContextE",
+                  "bytes": 40,
+                  "sha256": "549644baf3d7082741d320b6184e226f1b37d009bd46cac9321fc2b90971dfbe"
+                }
+              },
+              "scaleInit": {
+                "resolved": true,
+                "index": 15,
+                "slot": "0x2d94d38",
+                "target": null
+              },
+              "rotation": {
+                "resolved": true,
+                "index": 1,
+                "slot": "0x2d92ed8",
+                "target": {
+                  "address": "0x1fc2060",
+                  "symbol": "_ZN2ml2bm6module8rotation11make_vertex5ConstERNS1_17MakeVertexContextE",
+                  "bytes": 56,
+                  "sha256": "484853a98927c994a0fadf78af6c079f25145bf26ba41b692cba26c9949339cb"
+                }
+              },
+              "parentCoord": {
+                "resolved": true,
+                "index": 0,
+                "slot": "0x2d92dc0",
+                "target": null
+              }
+            },
+            "nativeBasicTint": {
+              "supported": true,
+              "rgba": [
+                0.9929168820381165,
+                0.9999999403953552,
+                0.9999999403953552,
+                1
+              ],
+              "limitations": [],
+              "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
+              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+            }
+          },
+          {
+            "index": 7,
+            "offset": 7296,
+            "bytes": 704,
+            "typeId": 0,
+            "type": "ControlNull",
+            "lifeParameter": 55,
+            "lifeRangeParameter": 0,
+            "alphaCurve": {
+              "fieldOffset": 7576,
+              "keys": []
+            },
+            "vectorCurves": {
+              "translationValue": {
+                "fieldOffset": 7856,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": [
+                  {
+                    "offset": 10792,
+                    "typeIds": [
+                      1,
+                      2,
+                      1
+                    ],
+                    "types": [
+                      "Linear",
+                      "Spline",
+                      "Linear"
+                    ],
+                    "slopeLeft": [
+                      0,
+                      0,
+                      0
+                    ],
+                    "slopeRight": [
+                      0,
+                      0,
+                      0
+                    ],
+                    "value": [
+                      0.008533477783203125,
+                      0.04582786560058594,
+                      0
+                    ],
+                    "frame": 0
+                  },
+                  {
+                    "offset": 10844,
+                    "typeIds": [
+                      1,
+                      2,
+                      1
+                    ],
+                    "types": [
+                      "Linear",
+                      "Spline",
+                      "Linear"
+                    ],
+                    "slopeLeft": [
+                      0,
+                      0,
+                      0
+                    ],
+                    "slopeRight": [
+                      0,
+                      0,
+                      0
+                    ],
+                    "value": [
+                      0.0030762702226638794,
+                      130.81752014160156,
+                      0
+                    ],
+                    "frame": 0.7321428656578064
+                  }
+                ],
+                "dataOffset": 10792
+              },
+              "translationSpeed": {
+                "fieldOffset": 7872,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "rotationValue": {
+                "fieldOffset": 7888,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "rotationSpeed": {
+                "fieldOffset": 7904,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "scaleValue": {
+                "fieldOffset": 7920,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": [
+                  {
+                    "offset": 10896,
+                    "typeIds": [
+                      2,
+                      1,
+                      1
+                    ],
+                    "types": [
+                      "Spline",
+                      "Linear",
+                      "Linear"
+                    ],
+                    "slopeLeft": [
+                      82.55686950683594,
+                      0,
+                      0
+                    ],
+                    "slopeRight": [
+                      82.55686950683594,
+                      0,
+                      0
+                    ],
+                    "value": [
+                      0,
+                      0,
+                      0
+                    ],
+                    "frame": 0
+                  },
+                  {
+                    "offset": 10948,
+                    "typeIds": [
+                      2,
+                      1,
+                      1
+                    ],
+                    "types": [
+                      "Spline",
+                      "Linear",
+                      "Linear"
+                    ],
+                    "slopeLeft": [
+                      0,
+                      0,
+                      0
+                    ],
+                    "slopeRight": [
+                      0,
+                      0,
+                      0
+                    ],
+                    "value": [
+                      40.17427444458008,
+                      0,
+                      0
+                    ],
+                    "frame": 0.5249999761581421
+                  }
+                ],
+                "dataOffset": 10896
+              },
+              "scaleSpeed": {
+                "fieldOffset": 7936,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "centerColor": {
+                "fieldOffset": 7968,
+                "axes": [
+                  "R",
+                  "G",
+                  "B"
+                ],
+                "keys": []
+              }
+            },
+            "staticVectors": {
+              "transform": {
+                "translation": {
+                  "valueInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    1,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "rotation": {
+                  "valueInitial": [
+                    0,
+                    0,
+                    360
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "scale": {
+                  "valueInitial": [
+                    30,
+                    1,
+                    1
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                }
+              }
+            },
+            "texturePivots": {},
+            "motionModes": {
+              "translation": {
+                "id": 1,
+                "name": "NewtonDynamics",
+                "fieldOffset": 7852
+              },
+              "rotation": {
+                "id": 1,
+                "name": "NewtonDynamics",
+                "fieldOffset": 7952
+              },
+              "scale": {
+                "id": 2,
+                "name": "CurveValue",
+                "fieldOffset": 7956
+              }
+            },
+            "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 7960
+              },
+              "alphaMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 7984
+              }
+            },
+            "materialAlpha": {
+              "value": 1,
+              "fieldOffset": 7540
+            },
+            "sourceControls": {
+              "profile": "ibmb-parent-controls-v1",
+              "fields": {
+                "rotation": {
+                  "raw": 0,
+                  "value": "On",
+                  "fieldOffset": 7432,
+                  "status": "decoded"
+                },
+                "alphaRate": {
+                  "raw": 0,
+                  "value": 0,
+                  "fieldOffset": 7508,
+                  "status": "decoded"
+                },
+                "nullType": {
+                  "raw": 1,
+                  "value": "Standard",
+                  "fieldOffset": 7988,
+                  "status": "decoded"
+                }
+              },
+              "missingInheritance": [
+                "translation",
+                "scale",
+                "matrix",
+                "alphaMode",
+                "colorRate"
+              ],
+              "compatibility": "unresolved-authoring-to-runtime-mapping",
+              "boundary": "Binary parameters only; no inheritance equation or complete profile admission"
+            },
+            "nativeInitialization": {
+              "profile": "native-null-init-inputs-v1",
+              "status": "supported-inputs",
+              "parameters": {
+                "locator_index": 1,
+                "field_c8": 0,
+                "field_cc": 1
+              },
+              "fieldOffsets": {
+                "locator_index": 7988,
+                "field_c8": 7496,
+                "field_cc": 7500
+              },
+              "requiredContext": [
+                "parent_flags",
+                "child_flags"
+              ],
+              "boundary": "Input extraction only; child execution supplies flags, never default zero"
+            },
+            "parentIndex": 2,
+            "children": [
+              8
+            ],
+            "childCount": 1,
+            "resourceBindings": {},
+            "generation": {
+              "start": 0,
+              "startRange": 0,
+              "count": 1,
+              "duration": 1,
+              "repeatCount": 1,
+              "interval": 1
+            },
+            "uniformScale": true,
+            "nativeGeneration": {
+              "start": 0,
+              "startRange": 0,
+              "count": 1,
+              "duration": 1,
+              "repeatCount": 1,
+              "interval": 1,
+              "profile": "native-constant-activation-v1",
+              "typeId": 0,
+              "childCount": 1,
+              "mode": 0,
+              "enabled": true,
+              "nullLifetimeMode": 0,
+              "rawControlBytes": {
+                "offset": "0x69",
+                "values": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              "boundary": "Activation only; Null enabled means an explicitly invoked caller, not decoded source visibility"
+            },
+            "initialColor": [
+              1,
+              1,
+              1
+            ],
+            "nativeModuleInputs": {
+              "color1": {
+                "value": [
+                  1,
+                  1,
+                  1
+                ],
+                "range": [
+                  0,
+                  0,
+                  0
+                ],
+                "valueOffset": 7624,
+                "rangeOffset": 7640
+              }
+            },
+            "authoringEmissionShape": "Point",
+            "authoringInheritance": {
+              "translation": "On",
+              "rotation": "On",
+              "scale": "On",
+              "matrix": "On",
+              "alphaMode": "Multiply",
+              "alphaRate": 0,
+              "colorRate": 0,
+              "compatibility": {
+                "nodeV16": true,
+                "nodeV15": false,
+                "rootV16": true,
+                "rootV15": false
+              }
+            },
+            "particleGeometrySource": {
+              "rotationMode": "NewtonDynamics",
+              "scaleMode": "NewtonDynamics",
+              "origin": "Explicit matching BMSLN; these selectors are not newly decoded binary fields",
+              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+            },
+            "nullLocatorSource": {
+              "type": "Standard",
+              "rotationMode": "NewtonDynamics",
+              "scaleMode": "NewtonDynamics",
+              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7",
+              "origin": "IBMB Null type; rotation/scale still require explicit matching BMSLN"
+            },
+            "appearance": {
+              "alpha": {
+                "mode": "Constant",
+                "origin": "IBMB",
+                "value": 1
+              },
+              "color": {
+                "mode": "Constant",
+                "origin": "IBMB",
+                "domain": "center",
+                "supported": true,
+                "value": [
+                  1,
+                  1,
+                  1
+                ]
+              },
+              "limitations": [
+                "RGB random-range support is unverified without authoring"
+              ]
+            },
+            "nativeNullLocator": {
+              "typeId": 1,
+              "fieldOffset": 7988,
+              "moduleAddress": null,
+              "nativeSha256": "6c7e501c98939581528df3d712ff1f58afcfd392160f1e71ef1f903d49926b77",
+              "functionSha256": null
+            }
+          },
+          {
+            "index": 8,
+            "offset": 8000,
+            "bytes": 1840,
+            "typeId": 3,
+            "type": "EmitterParticle",
+            "lifeParameter": 55,
+            "lifeRangeParameter": 0,
+            "alphaCurve": {
+              "fieldOffset": 8544,
+              "dataOffset": 11104,
+              "keys": [
+                {
+                  "offset": 11104,
+                  "typeId": 2,
+                  "type": "Spline",
+                  "slopeLeft": 0,
+                  "slopeRight": 0,
+                  "value": 1,
+                  "frame": 0
+                },
+                {
+                  "offset": 11124,
+                  "typeId": 2,
+                  "type": "Spline",
+                  "slopeLeft": 0,
+                  "slopeRight": 0,
+                  "value": 0,
+                  "frame": 1
+                }
+              ]
+            },
+            "vectorCurves": {
+              "translationSpeed": {
+                "fieldOffset": 9344,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "texture1TranslationSpeed": {
+                "fieldOffset": 9440,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "centerColor": {
+                "fieldOffset": 9632,
+                "axes": [
+                  "R",
+                  "G",
+                  "B"
+                ],
+                "keys": [
+                  {
+                    "offset": 11000,
+                    "typeIds": [
+                      1,
+                      1,
+                      2
+                    ],
+                    "types": [
+                      "Linear",
+                      "Linear",
+                      "Spline"
+                    ],
+                    "slopeLeft": [
+                      0,
+                      0,
+                      0
+                    ],
+                    "slopeRight": [
+                      0,
+                      0,
+                      0
+                    ],
+                    "value": [
+                      0.30126431584358215,
+                      0.30792489647865295,
+                      0.33331114053726196
+                    ],
+                    "frame": 0
+                  },
+                  {
+                    "offset": 11052,
+                    "typeIds": [
+                      1,
+                      1,
+                      2
+                    ],
+                    "types": [
+                      "Linear",
+                      "Linear",
+                      "Spline"
+                    ],
+                    "slopeLeft": [
+                      0,
+                      0,
+                      0
+                    ],
+                    "slopeRight": [
+                      0,
+                      0,
+                      0
+                    ],
+                    "value": [
+                      0.30092668533325195,
+                      0.2995356023311615,
+                      0.3183009624481201
+                    ],
+                    "frame": 0.5404762029647827
+                  }
+                ],
+                "dataOffset": 11000
+              }
+            },
+            "staticVectors": {
+              "transform": {
+                "translation": {
+                  "valueInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "rotation": {
+                  "valueInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    360
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "scale": {
+                  "valueInitial": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                }
+              },
+              "texture1": {
+                "translation": {
+                  "valueInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "rotation": {
+                  "valueInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "scale": {
+                  "valueInitial": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                }
+              },
+              "texture2": {
+                "translation": {
+                  "valueInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "rotation": {
+                  "valueInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "scale": {
+                  "valueInitial": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "valueRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "speedRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "accelerationRange": [
+                    0,
+                    0,
+                    0
+                  ]
+                }
+              }
+            },
+            "texturePivots": {
+              "texture1": [
+                0.5,
+                0.5,
+                0.5
+              ],
+              "texture2": [
+                0.5,
+                0.5,
+                0.5
+              ]
+            },
+            "motionModes": {
+              "translation": {
+                "id": 1,
+                "name": "NewtonDynamics",
+                "fieldOffset": 9320
+              },
+              "texture1Translation": {
+                "id": 1,
+                "name": "NewtonDynamics",
+                "fieldOffset": 9800
+              }
+            },
+            "materialControls": {
+              "blend": {
+                "id": 2,
+                "name": "SemiAdd",
+                "fieldOffset": 9680
+              },
+              "alphaMode": {
+                "id": 1,
+                "name": "Curve",
+                "fieldOffset": 9684
+              },
+              "textureCombination": {
+                "id": 0,
+                "name": "Basic",
+                "fieldOffset": 9696
+              },
+              "texture1Address": {
+                "id": 0,
+                "name": "Clamp",
+                "fieldOffset": 9700
+              },
+              "texture2Address": {
+                "id": 1,
+                "name": "Repeat",
+                "fieldOffset": 9704
+              }
+            },
+            "materialAlpha": {
+              "value": 1,
+              "fieldOffset": 8444
+            },
+            "sourceControls": {
+              "profile": "ibmb-parent-controls-v1",
+              "fields": {
+                "alphaMode": {
+                  "raw": 0,
+                  "value": "Lerp",
+                  "fieldOffset": 8516,
+                  "status": "decoded"
+                },
+                "alphaRate": {
+                  "raw": 0,
+                  "value": 0,
+                  "fieldOffset": 8412,
+                  "status": "decoded"
+                }
+              },
+              "missingInheritance": [
+                "translation",
+                "rotation",
+                "scale",
+                "matrix",
+                "colorRate"
+              ],
+              "compatibility": "unresolved-authoring-to-runtime-mapping",
+              "boundary": "Binary parameters only; no inheritance equation or complete profile admission"
+            },
+            "parentIndex": 7,
+            "children": [],
+            "childCount": 0,
+            "resourceBindings": {
+              "texture1": {
+                "kind": "texture",
+                "name": "lapis_eff_material_028_cloud_0005_cloud17",
+                "resourceIndex": 2,
+                "fieldOffset": 8064,
+                "stringOffset": 9927
+              },
+              "texture2": null
+            },
+            "generation": {
+              "start": 0,
+              "startRange": 0,
+              "count": 1,
+              "duration": 1,
+              "repeatCount": 1,
+              "interval": 1
+            },
+            "uniformScale": true,
+            "nativeGeneration": {
+              "start": 0,
+              "startRange": 0,
+              "count": 1,
+              "duration": 1,
+              "repeatCount": 1,
+              "interval": 1,
+              "profile": "native-constant-activation-v1",
+              "typeId": 3,
+              "childCount": 0,
+              "mode": 0,
+              "enabled": true,
+              "nullLifetimeMode": null,
+              "rawControlBytes": {
+                "offset": "0xd8",
+                "values": [
+                  1,
+                  0,
+                  0
+                ]
+              },
+              "boundary": "Activation only; Null enabled means an explicitly invoked caller, not decoded source visibility"
+            },
+            "initialColor": [
+              0.4822695255279541,
+              0.1702127754688263,
+              0.7943262457847595
+            ],
+            "nativeModuleInputs": {
+              "color1": {
+                "value": [
+                  0.4822695255279541,
+                  0.1702127754688263,
+                  0.7943262457847595
+                ],
+                "range": [
+                  0.042553193867206573,
+                  0.042553193867206573,
+                  0.042553193867206573
+                ],
+                "valueOffset": 8104,
+                "rangeOffset": 8120
+              },
+              "texture2Scale": {
+                "value": [
+                  1,
+                  1,
+                  1
+                ],
+                "range": [
+                  0,
+                  0,
+                  0
+                ],
+                "valueOffset": 9248,
+                "rangeOffset": 9260
+              }
+            },
+            "sortPriority": 0.5,
+            "authoringEmissionShape": "Point",
+            "authoringInheritance": {
+              "translation": "On",
+              "rotation": "On",
+              "scale": "On",
+              "matrix": "On",
+              "alphaMode": "Lerp",
+              "alphaRate": 0,
+              "colorRate": 0,
+              "compatibility": {
+                "nodeV16": true,
+                "nodeV15": true,
+                "rootV16": true,
+                "rootV15": false
+              }
+            },
+            "particleGeometrySource": {
+              "rotationMode": "NewtonDynamics",
+              "scaleMode": "NewtonDynamics",
+              "origin": "Explicit matching BMSLN; these selectors are not newly decoded binary fields",
+              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+            },
+            "appearance": {
+              "alpha": {
+                "mode": "Curve",
+                "origin": "IBMB",
+                "value": 1
+              },
+              "color": {
+                "mode": "Unresolved",
+                "origin": "Unresolved",
+                "domain": "center",
+                "supported": false,
+                "value": [
+                  0.4822695255279541,
+                  0.1702127754688263,
+                  0.7943262457847595
+                ]
+              },
+              "limitations": [
+                "RGB random-range support is unverified without authoring",
+                "color selector unresolved; legacy preview tint retained"
+              ]
+            },
+            "basicTextureMapping": {
+              "supported": false,
+              "motionModes": {},
+              "origin": "Explicit BMSLN after known-field comparison",
+              "limitations": [
+                "single-texture mapping/motion modes lack an authoring supplement"
+              ]
+            },
+            "nativeMaterialSelection": {
+              "scope": "Initial ordinary Quad/Particle constructor; no runtime override",
+              "resourceType": 1,
+              "specialFlag": 0,
+              "operation": 0,
+              "textured": true,
+              "mask": 0,
+              "rawInputs": {
+                "0xe1": 0,
+                "0xe6": 0,
+                "0x1c8": 0,
+                "0x6b8": 0,
+                "0x6b4": 0,
+                "0x6a0": 0
+              },
+              "supported": true,
+              "descriptorIndex": 224,
+              "descriptor": [
+                4,
+                8,
+                0,
+                1
+              ],
+              "vertexSlot": 4,
+              "fragmentSlot": 8,
+              "vertexSha256": "75ffb9bda0b6276b79d9960e40e7369fd03ce469117f9dd7320095cb30824520",
+              "fragmentSha256": "8ae381afc9f95ab42caafc2c03266ddc08500489623d2e16d39d89737b7d1fb4",
+              "fragmentOffset": 157968,
+              "addCandidateCompatible": false,
+              "distortionCandidateCompatible": false,
+              "basicCandidateCompatible": true
+            },
+            "nativeParticleX": {
+              "nativeSha256": "6c7e501c98939581528df3d712ff1f58afcfd392160f1e71ef1f903d49926b77",
+              "scale": {
+                "resolved": true,
+                "index": 15,
+                "slot": "0x2d92fb8",
+                "target": {
+                  "address": "0x1fc213c",
+                  "symbol": "_ZN2ml2bm6module7scaling11make_vertex4OneXERNS1_17MakeVertexContextE",
+                  "bytes": 40,
+                  "sha256": "549644baf3d7082741d320b6184e226f1b37d009bd46cac9321fc2b90971dfbe"
+                }
+              },
+              "scaleInit": {
+                "resolved": true,
+                "index": 15,
+                "slot": "0x2d94d38",
+                "target": null
+              },
+              "rotation": {
+                "resolved": true,
+                "index": 1,
+                "slot": "0x2d92ed8",
+                "target": {
+                  "address": "0x1fc2060",
+                  "symbol": "_ZN2ml2bm6module8rotation11make_vertex5ConstERNS1_17MakeVertexContextE",
+                  "bytes": 56,
+                  "sha256": "484853a98927c994a0fadf78af6c079f25145bf26ba41b692cba26c9949339cb"
+                }
+              },
+              "parentCoord": {
+                "resolved": true,
+                "index": 0,
+                "slot": "0x2d92dc0",
+                "target": null
+              }
+            },
+            "nativeBasicTint": {
+              "supported": true,
+              "rgba": [
+                0.9929168820381165,
+                0.9999999403953552,
+                0.9999999403953552,
+                1
+              ],
+              "limitations": [],
+              "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
+              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+            }
+          }
+        ],
+        "textures": {
+          "lapis_eff_material_028_cloud_0000_cloud2": "/assets/presentations/resources/fb023c2c54d5146870d2b84e43ffc4fe0c52e488574cafaeb3604d3b26489035.png",
+          "lapis_eff_material_028_cloud_0007_cloud19": "/assets/presentations/resources/486008ab0f283f67d43b6c3f77e1f1dff535345847d7a22026dc7707d808fbf8.png",
+          "lapis_eff_material_028_cloud_0005_cloud17": "/assets/presentations/resources/a53ed79388cb0ac58fa32f6e626eb745db5346ebc67112ce1e032e27f82490b9.png"
+        },
+        "meshes": {},
+        "authoringSupplement": {
+          "authoringFree": true,
+          "corpusSha256": "da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7",
+          "supplementedAddNodes": 0,
+          "origin": "BMSLN authoring supplement; not decoded binary fields"
+        },
+        "inheritanceSupplement": {
+          "authoringFree": true,
+          "corpusSha256": "da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7",
+          "supplementedInheritanceNodes": 9,
+          "binaryControls": [
+            {
+              "node": 0,
+              "fields": [
+                "alphaRate",
+                "rotation"
+              ],
+              "remainingAuthoringFields": [
+                "alphaMode",
+                "colorRate",
+                "compatibility",
+                "matrix",
+                "scale",
+                "translation"
+              ]
+            },
+            {
+              "node": 1,
+              "fields": [
+                "alphaRate",
+                "rotation"
+              ],
+              "remainingAuthoringFields": [
+                "alphaMode",
+                "colorRate",
+                "compatibility",
+                "matrix",
+                "scale",
+                "translation"
+              ]
+            },
+            {
+              "node": 2,
+              "fields": [
+                "alphaRate",
+                "rotation"
+              ],
+              "remainingAuthoringFields": [
+                "alphaMode",
+                "colorRate",
+                "compatibility",
+                "matrix",
+                "scale",
+                "translation"
+              ]
+            },
+            {
+              "node": 3,
+              "fields": [
+                "alphaRate",
+                "rotation"
+              ],
+              "remainingAuthoringFields": [
+                "alphaMode",
+                "colorRate",
+                "compatibility",
+                "matrix",
+                "scale",
+                "translation"
+              ]
+            },
+            {
+              "node": 4,
+              "fields": [
+                "alphaMode",
+                "alphaRate"
+              ],
+              "remainingAuthoringFields": [
+                "colorRate",
+                "compatibility",
+                "matrix",
+                "rotation",
+                "scale",
+                "translation"
+              ]
+            },
+            {
+              "node": 5,
+              "fields": [
+                "alphaRate",
+                "rotation"
+              ],
+              "remainingAuthoringFields": [
+                "alphaMode",
+                "colorRate",
+                "compatibility",
+                "matrix",
+                "scale",
+                "translation"
+              ]
+            },
+            {
+              "node": 6,
+              "fields": [
+                "alphaMode",
+                "alphaRate"
+              ],
+              "remainingAuthoringFields": [
+                "colorRate",
+                "compatibility",
+                "matrix",
+                "rotation",
+                "scale",
+                "translation"
+              ]
+            },
+            {
+              "node": 7,
+              "fields": [
+                "alphaRate",
+                "rotation"
+              ],
+              "remainingAuthoringFields": [
+                "alphaMode",
+                "colorRate",
+                "compatibility",
+                "matrix",
+                "scale",
+                "translation"
+              ]
+            },
+            {
+              "node": 8,
+              "fields": [
+                "alphaMode",
+                "alphaRate"
+              ],
+              "remainingAuthoringFields": [
+                "colorRate",
+                "compatibility",
+                "matrix",
+                "rotation",
+                "scale",
+                "translation"
+              ]
+            }
+          ],
+          "origin": "Verified binary fields plus explicit matched authoring for unresolved controls; no compatibility defaults"
+        },
+        "appearanceReport": {
+          "nodes": 9,
+          "dormantAlphaCurves": [],
+          "dormantColorCurves": [],
+          "limitations": [
+            {
+              "node": 0,
+              "reason": "RGB random-range support is unverified without authoring"
+            },
+            {
+              "node": 1,
+              "reason": "RGB random-range support is unverified without authoring"
+            },
+            {
+              "node": 2,
+              "reason": "RGB random-range support is unverified without authoring"
+            },
+            {
+              "node": 3,
+              "reason": "RGB random-range support is unverified without authoring"
+            },
+            {
+              "node": 4,
+              "reason": "RGB random-range support is unverified without authoring"
+            },
+            {
+              "node": 4,
+              "reason": "color selector unresolved; legacy preview tint retained"
+            },
+            {
+              "node": 5,
+              "reason": "RGB random-range support is unverified without authoring"
+            },
+            {
+              "node": 6,
+              "reason": "RGB random-range support is unverified without authoring"
+            },
+            {
+              "node": 6,
+              "reason": "color selector unresolved; legacy preview tint retained"
+            },
+            {
+              "node": 7,
+              "reason": "RGB random-range support is unverified without authoring"
+            },
+            {
+              "node": 8,
+              "reason": "RGB random-range support is unverified without authoring"
+            },
+            {
+              "node": 8,
+              "reason": "color selector unresolved; legacy preview tint retained"
+            }
+          ],
+          "authoringComparison": null,
+          "particleColorModeOrigin": "Explicit matching BMSLN; binary selector unresolved"
+        },
+        "basicUvReport": {
+          "authoringComparison": null,
+          "supportedNodes": [],
+          "unsupportedNodes": [
+            {
+              "node": 4,
+              "reasons": [
+                "single-texture mapping/motion modes lack an authoring supplement"
+              ]
+            },
+            {
+              "node": 6,
+              "reasons": [
+                "single-texture mapping/motion modes lack an authoring supplement"
+              ]
+            },
+            {
+              "node": 8,
+              "reasons": [
+                "single-texture mapping/motion modes lack an authoring supplement"
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "members": [
+      {
+        "effect": 0,
+        "startFrame": 41,
+        "anchor": "target",
+        "layer": "front",
+        "scalePercent": 100,
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "rawGroupFields": [
+          "99999999",
+          "1",
+          "2",
+          "2",
+          "0",
+          "40"
+        ],
+        "placement": {
+          "rectangle": "target-unit",
+          "axisModes": [
+            2,
+            2
+          ],
+          "offset": [
+            0,
+            40
+          ]
+        }
+      }
+    ],
+    "audioGroupCoverage": "all-resolved-effect-groups-only",
+    "flatQuadColors": {
+      "profile": "native-flat-quad-rgb-v1",
+      "randomness": "reviewed-color-streams-v1",
+      "boundary": "Original ConstFlat RGB semantics; deterministic per-instance host seeds, not measured FFBE RNG ownership"
+    },
+    "drawOrder": {
+      "profile": "native-priority-order-v1",
+      "boundary": "Per member: emitter packets ordered by source SortPriority (if enabled) then node index; members in plan order. Full-Z sorting is not evaluated."
+    },
+    "approximations": {
+      "profile": "held-constant-unverified-curves-v1",
+      "curves": [
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 0,
+          "field": "GenerateShape_Basic_GenerateShapeType",
+          "value": "Point",
+          "corpusShare": 0.9887,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 1,
+          "field": "GenerateShape_Basic_GenerateShapeType",
+          "value": "Point",
+          "corpusShare": 0.9887,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 2,
+          "field": "GenerateShape_Basic_GenerateShapeType",
+          "value": "Point",
+          "corpusShare": 0.9887,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 3,
+          "field": "GenerateShape_Basic_GenerateShapeType",
+          "value": "Point",
+          "corpusShare": 0.9887,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 4,
+          "field": "GenerateShape_Basic_GenerateShapeType",
+          "value": "Point",
+          "corpusShare": 0.9545,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 5,
+          "field": "GenerateShape_Basic_GenerateShapeType",
+          "value": "Point",
+          "corpusShare": 0.9887,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 6,
+          "field": "GenerateShape_Basic_GenerateShapeType",
+          "value": "Point",
+          "corpusShare": 0.9545,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 7,
+          "field": "GenerateShape_Basic_GenerateShapeType",
+          "value": "Point",
+          "corpusShare": 0.9887,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 8,
+          "field": "GenerateShape_Basic_GenerateShapeType",
+          "value": "Point",
+          "corpusShare": 0.9545,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 0,
+          "field": "Basic_ParentNodeInfluence_TranslateParentNodeInfluenceType",
+          "value": "On",
+          "corpusShare": 0.9874,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 0,
+          "field": "Basic_ParentNodeInfluence_ScaleParentNodeInfluenceType",
+          "value": "On",
+          "corpusShare": 0.994,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 0,
+          "field": "Basic_ParentNodeInfluence_MatrixParentNodeInfluenceType",
+          "value": "On",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 0,
+          "field": "Basic_ParentNodeInfluence_AlphaParentNodeInfluenceType",
+          "value": "Multiply",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 0,
+          "field": "Basic_ParentNodeInfluence_ParentColorRate",
+          "value": "0",
+          "corpusShare": 0.9923,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 0,
+          "field": "Basic_Basic_Version1_6",
+          "value": "true",
+          "corpusShare": 0.9098,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 0,
+          "field": "Basic_Basic_Version1_5",
+          "value": "false",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 1,
+          "field": "Basic_ParentNodeInfluence_TranslateParentNodeInfluenceType",
+          "value": "On",
+          "corpusShare": 0.9874,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 1,
+          "field": "Basic_ParentNodeInfluence_ScaleParentNodeInfluenceType",
+          "value": "On",
+          "corpusShare": 0.994,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 1,
+          "field": "Basic_ParentNodeInfluence_MatrixParentNodeInfluenceType",
+          "value": "On",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 1,
+          "field": "Basic_ParentNodeInfluence_AlphaParentNodeInfluenceType",
+          "value": "Multiply",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 1,
+          "field": "Basic_ParentNodeInfluence_ParentColorRate",
+          "value": "0",
+          "corpusShare": 0.9923,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 1,
+          "field": "Basic_Basic_Version1_6",
+          "value": "true",
+          "corpusShare": 0.9098,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 1,
+          "field": "Basic_Basic_Version1_5",
+          "value": "false",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 2,
+          "field": "Basic_ParentNodeInfluence_TranslateParentNodeInfluenceType",
+          "value": "On",
+          "corpusShare": 0.9874,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 2,
+          "field": "Basic_ParentNodeInfluence_ScaleParentNodeInfluenceType",
+          "value": "On",
+          "corpusShare": 0.994,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 2,
+          "field": "Basic_ParentNodeInfluence_MatrixParentNodeInfluenceType",
+          "value": "On",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 2,
+          "field": "Basic_ParentNodeInfluence_AlphaParentNodeInfluenceType",
+          "value": "Multiply",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 2,
+          "field": "Basic_ParentNodeInfluence_ParentColorRate",
+          "value": "0",
+          "corpusShare": 0.9923,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 2,
+          "field": "Basic_Basic_Version1_6",
+          "value": "true",
+          "corpusShare": 0.9098,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 2,
+          "field": "Basic_Basic_Version1_5",
+          "value": "false",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 3,
+          "field": "Basic_ParentNodeInfluence_TranslateParentNodeInfluenceType",
+          "value": "On",
+          "corpusShare": 0.9874,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 3,
+          "field": "Basic_ParentNodeInfluence_ScaleParentNodeInfluenceType",
+          "value": "On",
+          "corpusShare": 0.994,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 3,
+          "field": "Basic_ParentNodeInfluence_MatrixParentNodeInfluenceType",
+          "value": "On",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 3,
+          "field": "Basic_ParentNodeInfluence_AlphaParentNodeInfluenceType",
+          "value": "Multiply",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 3,
+          "field": "Basic_ParentNodeInfluence_ParentColorRate",
+          "value": "0",
+          "corpusShare": 0.9923,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 3,
+          "field": "Basic_Basic_Version1_6",
+          "value": "true",
+          "corpusShare": 0.9098,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 3,
+          "field": "Basic_Basic_Version1_5",
+          "value": "false",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 4,
+          "field": "Basic_ParentNodeInfluence_TranslateParentNodeInfluenceType",
+          "value": "On",
+          "corpusShare": 0.9076,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 4,
+          "field": "Basic_ParentNodeInfluence_RotateParentNodeInfluenceType",
+          "value": "On",
+          "corpusShare": 0.9303,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 4,
+          "field": "Basic_ParentNodeInfluence_ScaleParentNodeInfluenceType",
+          "value": "On",
+          "corpusShare": 0.9595,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 4,
+          "field": "Basic_ParentNodeInfluence_MatrixParentNodeInfluenceType",
+          "value": "On",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 4,
+          "field": "Basic_ParentNodeInfluence_ParentColorRate",
+          "value": "0",
+          "corpusShare": 0.986,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 4,
+          "field": "Basic_Basic_Version1_6",
+          "value": "true",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 4,
+          "field": "Basic_Basic_Version1_5",
+          "value": "true",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 5,
+          "field": "Basic_ParentNodeInfluence_TranslateParentNodeInfluenceType",
+          "value": "On",
+          "corpusShare": 0.9874,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 5,
+          "field": "Basic_ParentNodeInfluence_ScaleParentNodeInfluenceType",
+          "value": "On",
+          "corpusShare": 0.994,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 5,
+          "field": "Basic_ParentNodeInfluence_MatrixParentNodeInfluenceType",
+          "value": "On",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 5,
+          "field": "Basic_ParentNodeInfluence_AlphaParentNodeInfluenceType",
+          "value": "Multiply",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 5,
+          "field": "Basic_ParentNodeInfluence_ParentColorRate",
+          "value": "0",
+          "corpusShare": 0.9923,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 5,
+          "field": "Basic_Basic_Version1_6",
+          "value": "true",
+          "corpusShare": 0.9098,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 5,
+          "field": "Basic_Basic_Version1_5",
+          "value": "false",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 6,
+          "field": "Basic_ParentNodeInfluence_TranslateParentNodeInfluenceType",
+          "value": "On",
+          "corpusShare": 0.9076,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 6,
+          "field": "Basic_ParentNodeInfluence_RotateParentNodeInfluenceType",
+          "value": "On",
+          "corpusShare": 0.9303,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 6,
+          "field": "Basic_ParentNodeInfluence_ScaleParentNodeInfluenceType",
+          "value": "On",
+          "corpusShare": 0.9595,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 6,
+          "field": "Basic_ParentNodeInfluence_MatrixParentNodeInfluenceType",
+          "value": "On",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 6,
+          "field": "Basic_ParentNodeInfluence_ParentColorRate",
+          "value": "0",
+          "corpusShare": 0.986,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 6,
+          "field": "Basic_Basic_Version1_6",
+          "value": "true",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 6,
+          "field": "Basic_Basic_Version1_5",
+          "value": "true",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 7,
+          "field": "Basic_ParentNodeInfluence_TranslateParentNodeInfluenceType",
+          "value": "On",
+          "corpusShare": 0.9874,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 7,
+          "field": "Basic_ParentNodeInfluence_ScaleParentNodeInfluenceType",
+          "value": "On",
+          "corpusShare": 0.994,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 7,
+          "field": "Basic_ParentNodeInfluence_MatrixParentNodeInfluenceType",
+          "value": "On",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 7,
+          "field": "Basic_ParentNodeInfluence_AlphaParentNodeInfluenceType",
+          "value": "Multiply",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 7,
+          "field": "Basic_ParentNodeInfluence_ParentColorRate",
+          "value": "0",
+          "corpusShare": 0.9923,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 7,
+          "field": "Basic_Basic_Version1_6",
+          "value": "true",
+          "corpusShare": 0.9098,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 7,
+          "field": "Basic_Basic_Version1_5",
+          "value": "false",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 8,
+          "field": "Basic_ParentNodeInfluence_TranslateParentNodeInfluenceType",
+          "value": "On",
+          "corpusShare": 0.9076,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 8,
+          "field": "Basic_ParentNodeInfluence_RotateParentNodeInfluenceType",
+          "value": "On",
+          "corpusShare": 0.9303,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 8,
+          "field": "Basic_ParentNodeInfluence_ScaleParentNodeInfluenceType",
+          "value": "On",
+          "corpusShare": 0.9595,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 8,
+          "field": "Basic_ParentNodeInfluence_MatrixParentNodeInfluenceType",
+          "value": "On",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 8,
+          "field": "Basic_ParentNodeInfluence_ParentColorRate",
+          "value": "0",
+          "corpusShare": 0.986,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 8,
+          "field": "Basic_Basic_Version1_6",
+          "value": "true",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 8,
+          "field": "Basic_Basic_Version1_5",
+          "value": "true",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 0,
+          "field": "Rotate_Basic_RotateType",
+          "value": "NewtonDynamics",
+          "corpusShare": 0.9435,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 0,
+          "field": "Scale_Basic_ScaleType",
+          "value": "NewtonDynamics",
+          "corpusShare": 0.8567,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 1,
+          "field": "Rotate_Basic_RotateType",
+          "value": "NewtonDynamics",
+          "corpusShare": 0.9435,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 1,
+          "field": "Scale_Basic_ScaleType",
+          "value": "NewtonDynamics",
+          "corpusShare": 0.8567,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 2,
+          "field": "Rotate_Basic_RotateType",
+          "value": "NewtonDynamics",
+          "corpusShare": 0.9435,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 2,
+          "field": "Scale_Basic_ScaleType",
+          "value": "NewtonDynamics",
+          "corpusShare": 0.8567,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 3,
+          "field": "Rotate_Basic_RotateType",
+          "value": "NewtonDynamics",
+          "corpusShare": 0.9435,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 3,
+          "field": "Scale_Basic_ScaleType",
+          "value": "NewtonDynamics",
+          "corpusShare": 0.8567,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 4,
+          "field": "Rotate_Basic_RotateType",
+          "value": "NewtonDynamics",
+          "corpusShare": 0.9924,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 4,
+          "field": "Scale_Basic_ScaleType",
+          "value": "NewtonDynamics",
+          "corpusShare": 0.8134,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 5,
+          "field": "Rotate_Basic_RotateType",
+          "value": "NewtonDynamics",
+          "corpusShare": 0.9435,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 5,
+          "field": "Scale_Basic_ScaleType",
+          "value": "NewtonDynamics",
+          "corpusShare": 0.8567,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 6,
+          "field": "Rotate_Basic_RotateType",
+          "value": "NewtonDynamics",
+          "corpusShare": 0.9924,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 6,
+          "field": "Scale_Basic_ScaleType",
+          "value": "NewtonDynamics",
+          "corpusShare": 0.8134,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 7,
+          "field": "Rotate_Basic_RotateType",
+          "value": "NewtonDynamics",
+          "corpusShare": 0.9435,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 7,
+          "field": "Scale_Basic_ScaleType",
+          "value": "NewtonDynamics",
+          "corpusShare": 0.8567,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 8,
+          "field": "Rotate_Basic_RotateType",
+          "value": "NewtonDynamics",
+          "corpusShare": 0.9924,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 8,
+          "field": "Scale_Basic_ScaleType",
+          "value": "NewtonDynamics",
+          "corpusShare": 0.8134,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 4,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.7187,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 4,
+          "field": "Texture1_Color_Scale_Rgb_MotionType",
+          "value": "Constant",
+          "corpusShare": 0.9596,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 4,
+          "field": "Texture1_Color_Scale_Alpha_MotionType",
+          "value": "Constant",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 4,
+          "field": "Texture1_Color_Scale_Alpha_Value_Initial",
+          "value": "1",
+          "corpusShare": 0.996,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 4,
+          "field": "Texture1_Color_Scale_Alpha_Value_Range",
+          "value": "0",
+          "corpusShare": 0.9993,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 6,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.7187,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 6,
+          "field": "Texture1_Color_Scale_Rgb_MotionType",
+          "value": "Constant",
+          "corpusShare": 0.9596,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 6,
+          "field": "Texture1_Color_Scale_Alpha_MotionType",
+          "value": "Constant",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 6,
+          "field": "Texture1_Color_Scale_Alpha_Value_Initial",
+          "value": "1",
+          "corpusShare": 0.996,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 6,
+          "field": "Texture1_Color_Scale_Alpha_Value_Range",
+          "value": "0",
+          "corpusShare": 0.9993,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 8,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.7187,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 8,
+          "field": "Texture1_Color_Scale_Rgb_MotionType",
+          "value": "Constant",
+          "corpusShare": 0.9596,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 8,
+          "field": "Texture1_Color_Scale_Alpha_MotionType",
+          "value": "Constant",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 8,
+          "field": "Texture1_Color_Scale_Alpha_Value_Initial",
+          "value": "1",
+          "corpusShare": 0.996,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "battle_generic_smoke2_purple.bmb",
+          "node": 8,
+          "field": "Texture1_Color_Scale_Alpha_Value_Range",
+          "value": "0",
+          "corpusShare": 0.9993,
+          "treatment": "authoring-free-corpus-default"
+        }
+      ],
+      "boundary": "Visual approximation: these source curves are not evaluated; the effect is not a native-fidelity reconstruction."
+    }
+  },
+  "audioSource": {
+    "schema": "ffbe-audio-source-v1",
+    "playbackSupported": true,
+    "bus": "skill-sfx",
+    "frameRate": 60,
+    "coverage": "all-resolved-effect-groups-only",
+    "timingBasis": "Reviewed composed effect-group offsets; native common-bank dispatch",
+    "events": [
+      {
+        "frame": 41,
+        "sourceGroupId": 7000520,
+        "sourceSoundId": 53,
+        "rawParameters": [
+          "1"
+        ],
+        "resource": {
+          "key": "SE:53",
+          "uri": "/assets/audio/combat/se_magic_dark_bio_1.wav",
+          "sha256": "966008493d62f2554b4979fc583d86cec849b924194b0c4d81d2c75e0111c4c9",
+          "format": "wav"
+        }
+      }
+    ],
+    "issues": [],
+    "sourceGroups": [
+      {
+        "group": 7000520,
+        "frame": 40,
+        "soundsRaw": "1:53:1"
+      }
+    ]
+  }
+}

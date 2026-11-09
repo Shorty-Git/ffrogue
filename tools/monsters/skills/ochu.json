@@ -1,0 +1,41 @@
+{
+  "schema": "enemy-skills-v1",
+  "key": "ochu",
+  "monsterId": 311001000,
+  "dictionaryId": 3110010,
+  "skills": [
+    {
+      "id": "ochu_dance",
+      "ffbeId": 150200,
+      "type": "MONSTER_SKILL",
+      "name": "Ochu Dance",
+      "scope": "all_enemies",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.2
+        },
+        {
+          "frame": 52,
+          "weight": 0.2
+        },
+        {
+          "frame": 82,
+          "weight": 0.2
+        },
+        {
+          "frame": 92,
+          "weight": 0.2
+        },
+        {
+          "frame": 102,
+          "weight": 0.2
+        }
+      ],
+      "scenePresentation": "ochu_ochu_dance",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    }
+  ]
+}

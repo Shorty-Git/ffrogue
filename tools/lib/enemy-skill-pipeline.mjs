@@ -7,9 +7,11 @@ import {assetInfo,resolveEffects,parseTimeline} from './character-pipeline.mjs';
 export function inspectEnemySkills(recipe,{assets='rawdata/assets'}={}){
  const database=path.join(assets,'static_data/ffbe-data.db'),db=new DatabaseSync(database,{readOnly:true});
  try{
-  const monster=db.prepare('SELECT * FROM monster WHERE monsterId=?').get(recipe.monsterId);
+  // skillMonsterId: a same-dictionary variant that owns the skill set (X-ATM092 506002006); the body stays recipe.monsterId.
+  const skillOwner=recipe.skillMonsterId??recipe.monsterId;
+  const monster=db.prepare('SELECT * FROM monster WHERE monsterId=?').get(skillOwner);
   if(!monster||monster.dictionaryId!==recipe.dictionaryId)throw Error('Original enemy ownership mismatch');
-  const sets=db.prepare('SELECT * FROM monster_skill_set WHERE monsterId=?').all(recipe.monsterId);
+  const sets=db.prepare('SELECT * FROM monster_skill_set WHERE monsterId=?').all(skillOwner);
   const ids=[...new Set(sets.flatMap(s=>(s.skillId??'').split(',').filter(Boolean).map(Number)))];
   const body=JSON.parse(fs.readFileSync(`public/assets/monsters/${recipe.key}/manifest.json`,'utf8'));
   if(String(body.unitId)!==recipe.spriteId)throw Error('Prepared enemy body mismatch');

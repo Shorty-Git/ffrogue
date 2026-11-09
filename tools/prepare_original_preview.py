@@ -175,9 +175,12 @@ if __name__ == '__main__':
             raise ValueError('Unsupported preview movement or target scope')
         if selected['scope'] in ['self', 'party'] and selected['moveType']!='stationary':
             raise ValueError('Self preview requires stationary movement')
+        # Monster recipes (tools/monsters, with monsterId) cast from the enemy side at the party.
+        enemy_caster = 'monsterId' in recipe
         presentation = {'movement': selected['moveType'], 'scope': selected['scope'],
                         'approachFrames': 18 if selected['moveType'] == 'dash' else 0,
-                        'returnFrames': 12, 'targetOffsetX': recipe['battle']['targetOffsetX'],
+                        'returnFrames': 12, 'targetOffsetX': recipe.get('battle', {}).get('targetOffsetX', 0),
+                        **({'caster': 'enemy'} if enemy_caster else {}),
                         'recipeSha256': hashlib.sha256(a.recipe.read_bytes()).hexdigest(),
                         'origin': 'Reviewed game recipe; preview timing and offsets are adaptations'}
     assets, effects, members = {}, [], []
@@ -365,9 +368,12 @@ if __name__ == '__main__':
                         'rectangle': rectangle_for_group(anchor_mode, presentation['scope']),
                         'axisModes': axes, 'offset': [int(fields[6]), int(fields[7])],
                     }
-    unit_assets = (a.unit_assets or root / 'public/assets/units' / a.unit).resolve()
-    if not any(unit_assets.is_relative_to(root / path) for path in ['tools/data', 'public/assets/units']):
-        raise ValueError('Prepared body must stay in offline staging or published unit assets')
+    default_body = root / 'public/assets/units' / a.unit
+    if not default_body.is_dir() and (root / 'public/assets/monsters' / a.unit).is_dir():
+        default_body = root / 'public/assets/monsters' / a.unit
+    unit_assets = (a.unit_assets or default_body).resolve()
+    if not any(unit_assets.is_relative_to(root / path) for path in ['tools/data', 'public/assets/units', 'public/assets/monsters']):
+        raise ValueError('Prepared body must stay in offline staging or published unit/monster assets')
     manifest = json.loads((unit_assets / 'manifest.json').read_text())
     if manifest['name'] != a.unit or str(manifest['unitId']) != str(receipt['unitId']):
         raise ValueError('Prepared body identity differs from the inspected original unit')
@@ -421,10 +427,11 @@ if __name__ == '__main__':
             'effects': effects, 'members': members, 'audioGroupsNotPlayed': audio_groups,
             'audioGroupCoverage': 'all-resolved-effect-groups-only',
             'actor': {'body': manifest['animations'][a.motion], 'idle': manifest['animations']['idle'],
-                      'move': manifest['animations']['move'], 'scale': 2,
+                      # Monster bodies have no move clip; their preview uses idle for travel.
+                      'move': manifest['animations'].get('move', manifest['animations']['idle']), 'scale': 2,
                       'bodyUrl': image(unit_assets / (a.motion + '.png')),
                       'idleUrl': image(unit_assets / 'idle.png'),
-                      'moveUrl': image(unit_assets / 'move.png')},
+                      'moveUrl': image(unit_assets / ('move.png' if (unit_assets / 'move.png').is_file() else 'idle.png'))},
             'rat': {'body': rat['animations']['idle'], 'scale': 2,
                     'url': image(root / 'public/assets/monsters/training_dummy/idle.png')},
             'backgrounds': {'reactor': image(root / 'public/assets/backgrounds/reactor_01.jpg'),

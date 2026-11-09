@@ -807,6 +807,8 @@ test('prepared boss charge deals no damage, burst hits each living hero once wit
  s.turnOrder=actors;s.cloud=actors[0];s.startRound=()=>{};s.time.delayedCall=(_ms,cb)=>{timers.push(cb);};
  s.runContext={state:{areas:[{arena:'reactor',name:'Mako Reactor',normals:1}],encounter:1,party:[{key:'unit0',stats:{defense:1}},{key:'unit1',stats:{defense:2}}]}};
  let attacks=0;const e={assetKey:'guard_scorpion',nameTag:'Guard Scorpion',isBoss:true,maxHp:1000,currentHp:500,actionCursor:1,statusEffects:[],executeAttack(_x,_y,impact,done){attacks++;impact();done();}};s.enemies=[e];
+ // Without a prepared scene the burst stays the labelled FFRogue attack (fallback path).
+ s.preparedScenes=undefined;
  s.combatState='ENEMY_TURN';s.executeEnemyTurn();while(timers.length)timers.shift()();
  assert.equal(e.actionCursor,2);assert.equal(attacks,0);assert.deepEqual(actors.map(a=>a.currentHp),[1000,1000,0]);assert.ok(messages.some(m=>m.includes('hits the party next!')));
  e.statusEffects=[{kind:'stop',phases:1,chance:1}];s.combatState='ENEMY_TURN';s.executeEnemyTurn();while(timers.length)timers.shift()();assert.equal(e.actionCursor,2);assert.equal(attacks,0);
@@ -815,6 +817,22 @@ test('prepared boss charge deals no damage, burst hits each living hero once wit
  // Encounter 1 damage = RUN_BALANCE.damage + damagePerEncounter (300+70) x burst 1.3 x overdrive 1.25, divided by defense.
  const {RUN_BALANCE}=loadModule('src/run/runBalance.mjs'),burst=(RUN_BALANCE.damage+RUN_BALANCE.damagePerEncounter)*1.3*1.25;
  assert.deepEqual(actors.map(a=>a.currentHp),[1000-Math.round(burst),1000-Math.round(burst/2),0]);assert.deepEqual(actors.map(a=>a.currentHp),[399,699,0]);
+});
+
+test('an original enemy skill splits the action damage over its source hit frames on every target',()=>{
+ const s=battle(),timers=[];s.events=new EventEmitter();
+ const actors=[1000,1000].map((hp,i)=>({unitKey:'unit'+i,x:0,y:0,maxHp:1000,currentHp:hp,limitGauge:0,get isDead(){return this.currentHp<=0;},applyDamage(n){this.currentHp=Math.max(0,this.currentHp-n);}}));
+ s.turnOrder=actors;s.time.delayedCall=(_ms,cb)=>{timers.push(cb);return {remove(){}};};s.playHeroHitFeedback=()=>{};
+ s.runContext={state:{areas:[{arena:'reactor',name:'Mako Reactor',normals:1}],encounter:1,party:[{key:'unit0',stats:{defense:1}},{key:'unit1',stats:{defense:2}}]}};
+ let scene;s.playPreparedScene=(key,caster,targets,done)=>{scene={key,targets:targets.length,done};};
+ const enemy={assetKey:'sweeper',x:0,setDepthBoost(){},playCastBody(){}};
+ const action={kind:'attack',name:'Double Barrel',multiplier:1,scope:'party',presentation:'sweeper_double_barrel',phase:'',
+  damageEvents:[{frame:10,weight:.5},{frame:20,weight:.5}]};
+ let completed=0;s.executeEnemySkill(enemy,action,actors,1,()=>completed++);
+ assert.deepEqual([scene.key,scene.targets],['sweeper_double_barrel',2]);
+ while(timers.length)timers.shift()();assert.equal(completed,0);scene.done();assert.equal(completed,1);
+ const {RUN_BALANCE}=loadModule('src/run/runBalance.mjs'),damage=RUN_BALANCE.damage+RUN_BALANCE.damagePerEncounter;
+ assert.deepEqual(actors.map(a=>a.currentHp),[1000-2*Math.round(damage*.5),1000-2*Math.round(damage/2*.5)]);
 });
 
 test('a lethal enemy hit consumes auto-revive at once, so the party is not defeated and the status is gone',()=>{

@@ -351,6 +351,19 @@ export class TargetDummy extends Phaser.GameObjects.Container {
     });
   }
 
+  /** Stationary cast of an original monster skill: play the attack body once, then return to idle. */
+  public playCastBody(): void {
+    const clip=this.manifest.animations[this.attackProfile?.clip??'atk']?this.attackProfile?.clip??'atk':'idle';
+    const meta=this.manifest.animations[clip];
+    if(!meta)return;
+    this.sprite.setOrigin(meta.pivotX,meta.pivotY);this.sprite.play(`${this.assetKey}_${clip}`);
+    const duration=meta.frames.reduce((n,f)=>n+f.durationMs,0);
+    this.scene.time.delayedCall(duration,()=>{
+      if(this.currentHp<=0)return;
+      const idle=this.manifest.animations.idle;this.sprite.setOrigin(idle.pivotX,idle.pivotY);this.sprite.play(`${this.assetKey}_idle`);
+    });
+  }
+
   /** Reviewed FFRogue attack timing over a real prepared body, not original AI/VFX. */
   private executePreparedAttack(targetX:number,targetY:number,onImpact:()=>void,onComplete:()=>void):void {
     const profile=this.attackProfile!,meta=this.manifest.animations[profile.clip];

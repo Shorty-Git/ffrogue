@@ -1,5 +1,6 @@
 // Reviewed FFRogue encounters; source identity is not a claim of original FFBE AI.
 import {IMPORTED_ENEMIES,IMPORTED_STAGES} from './importedStages.mjs';
+import {ENEMY_SKILLS} from './enemySkills.mjs';
 export const ENEMY_CONTENT = {
   microchu: {key:'microchu',name:'Microchu',spriteId:'1110310',monsterId:'111031000',dictionaryId:1110310,
     scale:2,attack:{clip:'atk',impactFrame:1,movement:'approach'},audio:[]},
@@ -7,16 +8,16 @@ export const ENEMY_CONTENT = {
     scale:1.4,attack:{clip:'atk',impactFrame:1,movement:'stationary'},audio:[],
     behavior:{phaseAt:.5,phaseName:'Wild Growth',phaseMultiplier:1.2,pattern:[
       {kind:'attack',name:'Vine Lash',multiplier:1,scope:'single'},
-      {kind:'prepare',name:'Roots gather strength',next:'Bramble Surge'},
-      {kind:'attack',name:'Bramble Surge',multiplier:1.15,scope:'party'}]}},
+      {kind:'prepare',name:'Roots gather strength',next:'Ochu Dance'},
+      {kind:'attack',name:'Bramble Surge',multiplier:1.15,scope:'party',skill:'ochu_dance'}]}},
   sweeper: {key:'sweeper',name:'Sweeper',spriteId:'2061310',monsterId:'206131000',dictionaryId:2061310,
     scale:2,attack:{clip:'atk',impactFrame:1,movement:'stationary'},audio:[]},
   guard_scorpion: {key:'guard_scorpion',name:'Guard Scorpion',spriteId:'4060810',monsterId:'406081000',dictionaryId:4060810,
     scale:1.9,attack:{clip:'atk',impactFrame:1,movement:'stationary'},audio:[],
     behavior:{phaseAt:.5,phaseName:'Reactor Overdrive',phaseMultiplier:1.25,pattern:[
-      {kind:'attack',name:'Arm Cannon',multiplier:1,scope:'single'},
-      {kind:'prepare',name:'Power banks charging',next:'Suppressive Burst'},
-      {kind:'attack',name:'Suppressive Burst',multiplier:1.3,scope:'party'}]}},
+      {kind:'attack',name:'Arm Cannon',multiplier:1,scope:'single',skill:'focused_fire'},
+      {kind:'prepare',name:'Power banks charging',next:'Tail Laser'},
+      {kind:'attack',name:'Suppressive Burst',multiplier:1.3,scope:'party',skill:'tail_laser'}]}},
   // Stages imported with tools/import_stage.mjs (enemy bodies, arena, music).
   ...IMPORTED_ENEMIES,
 };
@@ -44,7 +45,12 @@ export function stageForArea(area){
 /** Cursor advances only on executed actions: stop never skips a warning into a burst. */
 export function enemyAction(definition,cursor,hpRatio){
   if(!Number.isInteger(cursor)||cursor<0||!Number.isFinite(hpRatio))throw Error('Invalid enemy action state');
-  const b=definition.behavior,phase=!!b&&hpRatio<=b.phaseAt;
-  const action=b?b.pattern[cursor%b.pattern.length]:{kind:'attack',name:'Attack',multiplier:1,scope:'single'};
+  const b=definition.behavior,phase=!!b&&hpRatio<=b.phaseAt,skills=ENEMY_SKILLS[definition.key]??{};
+  // Without a reviewed pattern an enemy alternates its basic attack with each imported original skill.
+  const pattern=b?b.pattern:[{kind:'attack',name:'Attack',multiplier:1,scope:'single'},
+    ...Object.keys(skills).flatMap(id=>[{kind:'attack',skill:id},{kind:'attack',name:'Attack',multiplier:1,scope:'single'}])].slice(0,Math.max(1,Object.keys(skills).length*2));
+  const raw=pattern[cursor%pattern.length];
+  // A pattern step that names an imported original skill plays it; otherwise its FFRogue action stays.
+  const action=raw.skill&&skills[raw.skill]?{...raw,...skills[raw.skill],kind:'attack',multiplier:raw.multiplier??skills[raw.skill].multiplier}:raw;
   return {...action,phase:phase?b.phaseName:'',multiplier:(action.multiplier??0)*(phase?b.phaseMultiplier:1)};
 }

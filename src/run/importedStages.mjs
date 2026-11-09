@@ -61,7 +61,8 @@ export const IMPORTED_ENEMIES = {
           "kind": "attack",
           "name": "Ray-Bomb",
           "multiplier": 1.3,
-          "scope": "party"
+          "scope": "party",
+          "skill": "ray_bomb"
         }
       ]
     }

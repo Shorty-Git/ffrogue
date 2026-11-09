@@ -1,0 +1,98 @@
+{
+  "schema": "enemy-skills-v1",
+  "key": "sweeper",
+  "monsterId": 206131000,
+  "dictionaryId": 2061310,
+  "skills": [
+    {
+      "id": "machine_gun",
+      "ffbeId": 166940,
+      "type": "MONSTER_SKILL",
+      "name": "Machine Gun",
+      "scope": "single_enemy",
+      "moveType": "stationary",
+      "multiplier": 1.15,
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.16
+        },
+        {
+          "frame": 47,
+          "weight": 0.17
+        },
+        {
+          "frame": 52,
+          "weight": 0.17
+        },
+        {
+          "frame": 57,
+          "weight": 0.16
+        },
+        {
+          "frame": 62,
+          "weight": 0.17
+        },
+        {
+          "frame": 67,
+          "weight": 0.17
+        }
+      ],
+      "scenePresentation": "sweeper_machine_gun"
+    },
+    {
+      "id": "double_barrel",
+      "ffbeId": 166930,
+      "type": "MONSTER_SKILL",
+      "name": "Double Barrel",
+      "scope": "all_enemies",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.16
+        },
+        {
+          "frame": 47,
+          "weight": 0.17
+        },
+        {
+          "frame": 52,
+          "weight": 0.17
+        },
+        {
+          "frame": 57,
+          "weight": 0.16
+        },
+        {
+          "frame": 62,
+          "weight": 0.17
+        },
+        {
+          "frame": 67,
+          "weight": 0.17
+        }
+      ],
+      "scenePresentation": "sweeper_double_barrel",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    },
+    {
+      "id": "smoke_shot",
+      "ffbeId": 166920,
+      "type": "MONSTER_SKILL",
+      "name": "Smoke Shot",
+      "scope": "all_enemies",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 130,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "sweeper_smoke_shot",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value. Not reconstructed: original process(es) 6 beyond the damage."
+    }
+  ]
+}
