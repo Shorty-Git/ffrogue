@@ -57,10 +57,31 @@ unplayable for minutes and the cost grew with every import. It now prepares only
 skills and Limit Bursts plus every `presentation` the encounter's enemies reference
 (`ENEMY_CONTENT`/`ENEMY_SKILLS`). BootScene still loads all manifest JSONs (cheap).
 
+## Playtest round 2026-11-09 (developer feedback)
+
+- Enemy turns: an original monster skill ends after its last hit plus 400 ms
+  (`ENEMY_SKILL_SETTLE_MS`); the scene's decorative tail fades on its own, as for heroes. Average
+  enemy skill 4.0 s -> 1.7 s over the 28 imported monster skills; a real turn with Bite + Beak took
+  3.2 s in a browser run.
+- Basic attacks hit on the original frames: `character.battle.hitFrames` comes from the unit row
+  `attackFrames` (frame on the attack clip's 60 fps clock, damage share). import_character.mjs writes it
+  on every publish; `node tools/backfill_basic_hits.mjs [--check]` refreshed all 51 published
+  characters. Cloud of Darkness now hits with her beam (frame 75) instead of sprite frame 2.
+  Multi-hit rows split one damage roll by their shares. Tests: `tools/test_basic_hits.mjs`.
+- Screen surfaces: two more generic import rules (see Pipelines). Squall's Lion Heart darkening now
+  covers the whole canvas and its end flash is a battlefield flash instead of a white box. A dry run
+  over all 416 screen-API plans matched only Lion Heart.
+- Rarity: the original base rarity is the start-level floor (3★ Lv 1, 4★ Lv 2, 5★ Lv 3, 7★ Lv 5,
+  NV Lv 6); the weight table can only lift a hero above it. Summons and expedition unlocks are weighted
+  by base rarity (`SUMMON_WEIGHTS` 50/35/25/15/10/6 for Lv 1..6).
+- Summon roulette: "Summon a hero" plays a case-style strip of hero heads (real summon weights, Fate
+  Engine tier colours) that stops on the summoned hero, then the result card. Skip and reduced motion
+  land at once.
+
 ## Levels Lv 1-6 and Bond (2026-11-09)
 
-One power scale for every variant (3★=Lv1 … 7★=Lv5, NV=Lv6). Start levels come from one weight table,
-boss relics give +1 level, and the body follows the original forms. Cards and reels show the level
+One power scale for every variant (3★=Lv1 … 7★=Lv5, NV=Lv6). Start levels roll one weight table with
+the base rarity as the floor (see above), boss relics give +1 level, and the body follows the original forms. Cards and reels show the level
 (a star per level, NV at Lv 6). Run saves are version 3; v2 saves migrate. Design, the duplicate
 economy proposal (Bond) and variant import: `docs/progression-design.md`.
 
@@ -75,8 +96,8 @@ economy proposal (Bond) and variant import: `docs/progression-design.md`.
 - Crystals: 10 per won battle and 60 for a finished expedition. Each finished run settles once, keyed
   by seed and history length.
 - A won expedition unlocks one random locked hero, shown on the result screen.
-- Summon on the title screen: 100 crystals unlock one random locked hero. This is the gacha element;
-  there are no duplicates yet.
+- Summon on the title screen: 100 crystals summon one hero, weighted by base rarity; duplicates give
+  Bond. A case-style roulette shows the draw.
 - Power split stays with the run rules: start forms are drawn by rank weights (3★…7★/NV,
   `originalForms`), and higher ranks give `powerPerRank` stat growth. NV-only units (FFXVI) start at
   their NV base.
@@ -172,6 +193,9 @@ Generic rules added 2026-11-07 (no per-skill exceptions):
   colour, an alpha curve that rises from 0 to at least 0.8 and back, and an effective width >= 200
   units covers the visible battlefield (`unit-quad`) instead of showing as a hard-edged white box.
   Alpha, blend and timing stay source data. Matches only Cloud AC's Omnislash V5 node 62 today.
+  Particle form (2026-11-09): a plain white Particle (white texture and constant colour, same alpha
+  shape, <= 60 frames, >= 200 units on both axes) on any anchor gets `screen-particle` coverage
+  (Squall's Lion Heart front node 3, 360 x 320, 40 frames).
 - Original draw order (approximation imports): `tools/bmb_draw_priority.py` reads the header
   priority-sort flag (0x4d) and emitter SortPriority (Quad +508, Particle +408, Model +460;
   verified on 92 matched pairs) into `plan.drawOrder`; `PreparedSceneBridge.applyOriginalDrawOrder`
@@ -184,7 +208,10 @@ Generic rules added 2026-11-07 (no per-skill exceptions):
   (Holy hits at 450; the fixed 180 cut its late explosion). Recorded in plan.approximations.
 - Screen backdrops also cover uniform Basic Particles held on screen-anchored effects for
   ≥ 80 % of the longest life (`screen-particle`, e.g. Holy's fade). Colour/alpha curves do not
-  count as movement for any backdrop rule.
+  count as movement for any backdrop rule. Screen-sized form (2026-11-09): a static opaque Basic
+  Particle authored at >= 300 units on both axes on a screen-anchored effect is a backdrop whatever
+  its life (helper ControlNull nodes can outlive it); the texture may be a gradient (Lion Heart back
+  nodes 3 and 4). Tests: `tools/test_scene_flashes.py`.
 - Limit clips stay on screen: `tools/annotate_clip_extents.py` (also run by export_unit.py)
   stores `extentX` [left, right] (frame px from pivot, 2nd/98th percentile) on every
   `limit_*` clip; `BattleScene.approachX` first aligns the strike, then clamps the caster so

@@ -775,6 +775,16 @@ Legacy candidates expose types4/7, model/active-curve or missing-authoring gates
 Cross Slash is the nearest existing composed preview to review for real play.
 Next is a general multi-event gameplay schedule/menu capacity, not RGB polishing.
 
+## Status: automatic screen surfaces (2026-11-09)
+
+Every `ffbe-screen-api` publish runs `prepare_scene_flashes.py --screen-backdrops`. Current
+automatic rules (all keep colour/alpha/timing as source data; details in docs/current-state.md,
+Pipelines): static uniform unit-XY Model >= 640 wide; opaque constant-colour backdrop Quad; uniform
+Basic Particle held >= 80 % of the effect; screen-sized (>= 300 units) opaque Basic Particle, also
+with gradient textures; white impact-flash Quad (<= 30 frames) and white impact-flash Particle
+(<= 60 frames, any anchor). Checks: `tools/test_scene_flashes.py`; a dry run over all 416
+screen-API plans on 2026-11-09 added coverage only to Squall's Lion Heart (3 nodes).
+
 ## Product update: flash presentation and gameplay completion (2026-10-28)
 
 The current three Cloud visuals are accepted. Pixel-perfect polishing is not a

@@ -4,7 +4,7 @@ from pathlib import Path
 import tempfile
 import unittest
 from PIL import Image
-from prepare_scene_flashes import annotate, annotate_arena_surfaces, annotate_screen_backdrops
+from prepare_scene_flashes import annotate, annotate_arena_surfaces, annotate_screen_backdrops, annotate_white_flashes
 import copy
 
 
@@ -64,6 +64,39 @@ class FlashRoleTests(unittest.TestCase):
             offset=plan();offset['effects'][0]['nodes'][0]['staticVectors']['transform']['translation']['valueInitial']=[50,0,0]
             self.assertEqual(annotate_screen_backdrops(offset),0)
             Image.new('RGBA',(2,2),(0,0,0,128)).save(path);self.assertEqual(annotate_screen_backdrops(plan()),0)
+
+    def _particle_plan(self,path,size=360,anchor='screen',life=40,alpha_keys=(0,1,0),color=(1,1,1),combination='Basic'):
+        def channel(value):return {'valueInitial':value,'valueRange':[0,0,0],'speedInitial':[0,0,0],'speedRange':[0,0,0],'accelerationInitial':[0,0,0],'accelerationRange':[0,0,0]}
+        def node(index,type_id,parent,scale,**extra):
+            return {'index':index,'typeId':type_id,'parentIndex':parent,'vectorCurves':{},'lifeParameter':720 if type_id==0 else life,
+                'staticVectors':{'transform':{'translation':channel([0,0,0]),'rotation':channel([0,0,0]),'scale':channel(scale)}},**extra}
+        particle=node(1,3,0,[size,1,1],uniformScale=True,resourceBindings={'texture1':{'name':'tex'}},
+            materialControls={'textureCombination':{'name':combination}},appearance={'color':{'mode':'Constant','value':list(color)}},
+            alphaCurve={'keys':[{'value':v} for v in alpha_keys]})
+        return {'files':{'image':{'path':str(path),'sha256':hashlib.sha256(path.read_bytes()).hexdigest()}},
+            'members':[{'effect':0,'anchor':anchor,'scalePercent':100,'placement':{'rectangle':anchor}}],
+            'effects':[{'textures':{'tex':'image'},'meshes':{},'nodes':[node(0,0,None,[1,1,1]),particle]}]}
+
+    def test_screen_sized_opaque_particle_is_a_backdrop_even_when_a_helper_node_lives_longer(self):
+        with tempfile.TemporaryDirectory() as folder:
+            path=Path(folder)/'grad.png';im=Image.new('RGBA',(2,2),(0,0,0,255));im.putpixel((0,1),(200,200,200,255));im.save(path)
+            data=self._particle_plan(path,life=120,alpha_keys=());self.assertEqual(annotate_screen_backdrops(data),1)
+            self.assertEqual(data['effects'][0]['nodes'][1]['presentationCoverage']['primitive'],'screen-particle')
+            self.assertEqual(annotate_screen_backdrops(self._particle_plan(path,size=120,alpha_keys=())),0)
+            self.assertEqual(annotate_screen_backdrops(self._particle_plan(path,anchor='caster-unit',alpha_keys=())),0)
+            self.assertEqual(annotate_screen_backdrops(self._particle_plan(path,combination='Add',alpha_keys=())),0)
+            Image.new('RGBA',(2,2),(0,0,0,128)).save(path)
+            self.assertEqual(annotate_screen_backdrops(self._particle_plan(path,alpha_keys=())),0)
+
+    def test_white_flash_particle_covers_the_battlefield_for_any_anchor(self):
+        with tempfile.TemporaryDirectory() as folder:
+            path=Path(folder)/'white.png';Image.new('RGBA',(2,2),'white').save(path)
+            data=self._particle_plan(path,anchor='caster-unit');self.assertEqual(annotate_white_flashes(data),1)
+            self.assertIn('impact flash',data['effects'][0]['nodes'][1]['presentationCoverage']['origin'])
+            self.assertEqual(annotate_white_flashes(self._particle_plan(path,life=90)),0)
+            self.assertEqual(annotate_white_flashes(self._particle_plan(path,alpha_keys=(1,1))),0)
+            self.assertEqual(annotate_white_flashes(self._particle_plan(path,color=(0,0,0))),0)
+            self.assertEqual(annotate_white_flashes(self._particle_plan(path,size=100)),0)
 
 
 if __name__=='__main__':unittest.main()

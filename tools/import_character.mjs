@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
-import { inspectCharacter, readJson, writeJson, sha256 } from './lib/character-pipeline.mjs';
+import { inspectCharacter, readJson, writeJson, sha256, sourceBasicHits } from './lib/character-pipeline.mjs';
 import { sourceCommandMetadata } from './lib/source-command-metadata.mjs';
 
 const args = process.argv.slice(2);
@@ -56,6 +56,9 @@ if (args.includes('--publish-skills-only')) {
   run(value('--python') ?? process.env.FFROGUE_PYTHON ?? 'python',['tools/validate_character.py',destination]);
   writeJson(`${destination}/skills.json`,{...old,skills});
   character.provenance.recipeSha256=sha256(value('--recipe'));
+  // Original basic-attack hit frames follow the source unit row on every metadata publish.
+  const hits=sourceBasicHits(report.basicAttackRaw.frames,body.animations[character.battle.attackAnim]);
+  if(hits)character.battle.hitFrames=hits;else delete character.battle.hitFrames;
   writeJson(`${destination}/character.json`,character);
   console.log(`Published ${skills.length} checked commands; existing body/effect assets preserved.`);
   process.exit(0);
@@ -85,7 +88,9 @@ if(args.includes('--prepare-body-only')){
 if (report.portrait) fs.copyFileSync(report.portrait.file, path.join(output, 'portrait.png'));
 writeJson(path.join(output, 'skills.json'), { unitId: String(report.unit.seriesId), unitName: recipe.battle.heroName,
   game: recipe.game, skills });
-writeJson(path.join(output, 'character.json'), { schemaVersion: 1, key: recipe.key, battle: recipe.battle, scale: recipe.scale,
+const basicHits = sourceBasicHits(report.basicAttackRaw.frames, manifest.animations[recipe.battle.attackAnim]);
+writeJson(path.join(output, 'character.json'), { schemaVersion: 1, key: recipe.key,
+  battle: { ...recipe.battle, ...(basicHits ? { hitFrames: basicHits } : {}) }, scale: recipe.scale,
   ...(report.portrait ? { portrait: 'portrait.png' } : {}),
   provenance: { spriteUnitId: recipe.spriteUnitId, seriesId: report.unit.seriesId, recipeSha256: sha256(value('--recipe')),
     executionProfile: 'source-only' } });

@@ -9,3 +9,5 @@ export const MAX_LEVEL:number;
 export function levelOf(form:Pick<RunForm,'rarity'|'rank'>):number;
 export function levelLabel(level:number):string;
 export function formForLevel(character:RunCharacter,level:number):RunForm;
+export const SUMMON_WEIGHTS:Record<number,number>;
+export function summonWeight(form:Pick<RunForm,'rarity'|'rank'>):number;

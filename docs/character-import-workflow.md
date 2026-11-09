@@ -61,6 +61,11 @@ existing skills are skipped. These generic rules replaced single-skill blockers 
   BMB rectangle modes 0 and 5-9 follow the same mapping.
 - Source motion 3 (plain action) and 6 (dance) play in place. Motion 5 (lunge/jump strike) dashes when
   its moveType is 1 or 6 (6 is a leap to the target).
+- Basic attack hits (2026-11-09): import_character.mjs writes `battle.hitFrames` from the unit row
+  `attackFrames` ("frame:share:..." joined by "-", frames on the attack clip's 60 fps clock) via
+  `sourceBasicHits`; rows that end after the published attack clip are not written. Existing
+  characters: `node tools/backfill_basic_hits.mjs [--check]`. The legacy `hitFrameIndex` stays the
+  fallback for characters without the row.
 - Damage timing (2026-11-09): only Motion 1 adds the unit attack prefix (`composeEffectFrames`).
   Motions 2, 3, 5, 6 and 8 share the zero-offset hit clock (`ZERO_PREFIX_MOTIONS` in
   `tools/lib/source-damage-events.mjs`), also for non-damaging friendly markers. Before this, motions

@@ -11,5 +11,6 @@ export function lockedHeroes(profile:Profile,catalog:RunCatalog):string[];
 export function drawCatalog(profile:Profile,catalog:RunCatalog):RunCatalog;
 export function settleRun(profile:Profile,run:RunState,catalog:RunCatalog):{profile:Profile;crystals:number;unlocked:string|null};
 export const MAX_BOND:number;export const BOND_DRAW_WEIGHT:number;export const BOND_MIN_START_LEVEL:number;export const BOND_REFUND:number;
+export function summonPool(catalog:RunCatalog):{key:string;weight:number}[];
 export function summonHero(profile:Profile,catalog:RunCatalog,salt:string):{profile:Profile;unlocked:string|null;hero:string;bond:number;refund:number};
 export class ProfileStore{constructor(storage:Storage,catalog:RunCatalog);load():Profile;save(profile:Profile):Profile;}

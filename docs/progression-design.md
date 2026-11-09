@@ -85,6 +85,13 @@ Developer decision: implement levels up to 6 (NV) now. EX levels 7-9 and Brave S
   Reasons:
   - NV-only units (715 series) would otherwise always start at the top.
   - 3★-5★ units would be capped below the others.
+- Revised after the 2026-11-09 playtest (developer: "a base 5★ Cloud must not start at Lv 1, rarity
+  has to show"): the base rarity is now the start-level floor (`newMember`: max(roll, levelOf(base),
+  Bond floor)). A 5★ base unit starts at Lv 3 or higher, NV-only units always at Lv 6. Max level stays
+  6 for everyone, so low-rarity heroes still grow the furthest in a run. Rarity is balanced by
+  scarcity instead: summons and expedition unlocks weight heroes by base level (`SUMMON_WEIGHTS`
+  50/35/25/15/10/6), so an NV unit is about 8x rarer than a 3★ unit. Starter roster: Cloud, Aerith,
+  Barret, Squall and Delita start at Lv 3, Jack and Cloud of Darkness at Lv 1.
 - UI: cards and reels show "Lv N", and the Fate Engine tier follows the level. Stars and NV stay as
   flavour on the reel.
 

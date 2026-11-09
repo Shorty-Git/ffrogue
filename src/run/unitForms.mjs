@@ -8,6 +8,10 @@ export const rankLabel=form=>form.rank??form.rarity+'★';
 export const MAX_LEVEL=6;
 export const levelOf=form=>form.rank==='NV'?MAX_LEVEL:Math.max(1,Math.min(MAX_LEVEL-1,form.rarity-2));
 export const levelLabel=level=>'Lv '+level;
+/** Summon weight by a hero's base level (its original base rarity), so rarer variants are summoned
+ * less often: a 3★ base unit (Lv 1) ~8× as often as an NV unit (Lv 6). Colours are the Fate Engine tiers. */
+export const SUMMON_WEIGHTS={1:50,2:35,3:25,4:15,5:10,6:6};
+export const summonWeight=form=>SUMMON_WEIGHTS[levelOf(form)];
 /** Body at a level: the highest reviewed same-identity form at or below it, else the base form
  * (an NV-only unit at Lv 3 keeps its NV body; a 5★-max unit at Lv 6 keeps its 5★ body). */
 export function formForLevel(character,level){

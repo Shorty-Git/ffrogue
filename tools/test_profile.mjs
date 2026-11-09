@@ -1,7 +1,8 @@
 // Meta-progression rules (src/run/profile.mjs): starter roster, run settlement, summons.
 import assert from 'node:assert/strict';
-import {normalizeProfile,drawCatalog,lockedHeroes,settleRun,summonHero,SUMMON_COST,CRYSTALS_PER_BATTLE,CRYSTALS_PER_EXPEDITION} from '../src/run/profile.mjs';
-const hero = (key, canonical) => ({key, canonicalIdentity: canonical, skills: [{id: 's'}]});
+import {normalizeProfile,drawCatalog,lockedHeroes,settleRun,summonHero,summonPool,SUMMON_COST,CRYSTALS_PER_BATTLE,CRYSTALS_PER_EXPEDITION} from '../src/run/profile.mjs';
+// Base rarity drives summon weights; clive is an NV-only unit (rank NV).
+const hero = (key, canonical) => ({key, canonicalIdentity: canonical, skills: [{id: 's'}], rarity: key === 'clive' ? 7 : 5, ...(key === 'clive' ? {rank: 'NV'} : {})});
 const catalog = Object.fromEntries([['cloud', 'ff7:cloud'], ['cloud_ac', 'ff7:cloud'], ['aerith', 'ff7:aerith'], ['squall', 'ff8:squall'],
   ['tidus', 'ff10:tidus'], ['clive', 'ff16:clive']].map(([k, c]) => [k, hero(k, c)]));
 const fresh = normalizeProfile(null, catalog);
@@ -43,15 +44,28 @@ import {createRun,rollParty,chooseStartSkill} from '../src/run/runState.mjs';
 }
 {
   const skills = [{id: 'a', name: 'A'}, {id: 'b', name: 'B'}];
-  const cat = Object.fromEntries([['x', 'ff1:x'], ['y', 'ff2:y'], ['z', 'ff3:z']].map(([k, c]) => [k, {key: k, form: k, identity: k, unitId: k, rarity: 5,
+  // 3★ base units (base Lv 1), so the Bond floor is visible; z is a 5★ base unit (base Lv 3).
+  const cat = Object.fromEntries([['x', 'ff1:x'], ['y', 'ff2:y'], ['z', 'ff3:z']].map(([k, c]) => [k, {key: k, form: k, identity: k, unitId: k, rarity: k === 'z' ? 5 : 3,
     canonicalIdentity: c, skills, maxHp: 100, maxMp: 10}]));
   cat.x = {...cat.x, startSkillChoice: true, minStartLevel: 2};
   const rules = {awakeningMode: 'sequential', originalForms: {weights: {3: 1000000, 4: 1, 5: 1, 6: 1, 7: 1, NV: 1}, hpPerRank: .05, mpPerRank: .03, powerPerRank: .035, defensePerRank: .035}};
   const run = rollParty(createRun('bond-run', cat, undefined, rules), cat);
   assert.equal(run.party.find(m => m.key === 'x').level, 2, 'Bond 3 floor');
   assert.equal(run.party.find(m => m.key === 'y').level, 1);
+  assert.equal(run.party.find(m => m.key === 'z').level, 3, 'base rarity floor: a 5★ base unit never starts below Lv 3');
   const chosen = chooseStartSkill(run, 'x', 'b', cat);
   assert.deepEqual(chosen.party.find(m => m.key === 'x').skills, [{id: 'b', level: 1}]);
   assert.throws(() => chooseStartSkill(run, 'y', 'b', cat), /No starting skill choice/);
 }
 console.log('bond: ok');
+{
+  // Rarer base units are summoned less often: 5★ base (Lv 3) weight 25, NV (Lv 6) weight 6.
+  const pool = summonPool(catalog);
+  assert.equal(pool.find(e => e.key === 'cloud').weight, 25); assert.equal(pool.find(e => e.key === 'clive').weight, 6);
+  const counts = {};
+  for (let i = 0; i < 6000; i++) {const r = summonHero({...fresh, crystals: SUMMON_COST}, catalog, 'w' + i); counts[r.hero] = (counts[r.hero] ?? 0) + 1;}
+  const total = pool.reduce((s, e) => s + e.weight, 0);
+  for (const e of pool) assert.ok(Math.abs(counts[e.key] / 6000 - e.weight / total) < .02, JSON.stringify(counts));
+  assert.throws(() => summonPool({x: {key: 'x', canonicalIdentity: 'a', skills: [{id: 's'}]}}), /base rarity/);
+}
+console.log('summon weights: ok');

@@ -46,6 +46,8 @@ export type CombatState =
 
 type PlannedAction = ({ kind: 'attack'; config: UnitCombatConfig } | { kind: 'skill'; skill: SkillConfig })
   & { target: TargetDummy | null };
+/** Beat after an enemy skill's last hit before the next enemy acts (the scene tail keeps fading). */
+const ENEMY_SKILL_SETTLE_MS = 400;
 
 export class BattleScene extends Phaser.Scene {
   private runContext!:RunBattleContext;
@@ -1399,16 +1401,21 @@ export class BattleScene extends Phaser.Scene {
         duration: 360,
         ease: 'Cubic.easeInOut',
         onComplete: () => {
-          let hitTriggered = false;
-
+          // Original hits (unit row attackFrames) on the clip clock; legacy configs keep one hit at
+          // their reviewed sprite frame. Hits not reached by the clip's end land when it completes.
+          const hits = config.hitFrames ?? [{frame: -1, weight: 1}];
+          const landed = new Set<number>();
+          const isCritical = this.randomValue() < .15, base = this.randomBetween(300, 380);
+          const land = (index: number) => {
+            if (landed.has(index)) return;
+            landed.add(index);
+            if (this.enemies.every((e) => e.currentHp <= 0) || this.combatState === 'VICTORY') return;
+            const hitTarget = this.currentTarget && this.currentTarget.currentHp > 0 ? this.currentTarget : activeTarget;
+            this.applyHeroMeleeDamage(hero, hitTarget, hits[index].weight, base, isCritical);
+          };
+          const timers = hits.flatMap((hit, index) => hit.frame < 0 ? [] : [this.time.delayedCall(hit.frame * 1000 / 60, () => land(index))]);
           const onAnimUpdate = (_anim: Phaser.Animations.Animation, frame: Phaser.Animations.AnimationFrame) => {
-            if (!hitTriggered && Number(frame.textureFrame) === config.hitFrameIndex) {
-              hitTriggered = true;
-              const hitTarget = this.currentTarget && this.currentTarget.currentHp > 0
-                ? this.currentTarget
-                : activeTarget;
-              this.applyHeroMeleeDamage(hero, hitTarget);
-            }
+            if (!config.hitFrames && Number(frame.textureFrame) === config.hitFrameIndex) land(0);
           };
 
           hero.on(Phaser.Animations.Events.ANIMATION_UPDATE, onAnimUpdate);
@@ -1416,12 +1423,8 @@ export class BattleScene extends Phaser.Scene {
 
           hero.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
             hero.off(Phaser.Animations.Events.ANIMATION_UPDATE, onAnimUpdate);
-            if (!hitTriggered && !this.enemies.every((e) => e.currentHp <= 0) && this.combatState !== 'VICTORY') {
-              const hitTarget = this.currentTarget && this.currentTarget.currentHp > 0
-                ? this.currentTarget
-                : activeTarget;
-              this.applyHeroMeleeDamage(hero, hitTarget);
-            }
+            timers.forEach(timer => timer.remove(false));
+            hits.forEach((_, index) => land(index));
 
             hero.playAnimation('move');
             hero.setFacingLeft(false);
@@ -1451,12 +1454,11 @@ export class BattleScene extends Phaser.Scene {
     return roll * (skillDamageType(skill)==='holy' ? 1 : heroPhysicalMultiplier(hero.sourceBuffs,this.currentRound));
   }
 
-  private applyHeroMeleeDamage(hero: UnitActor, target: TargetDummy): void {
+  private applyHeroMeleeDamage(hero: UnitActor, target: TargetDummy, weight = 1, roll = this.randomBetween(300,380), isCrit = this.randomValue()<.15): void {
     if (this.combatState !== 'HERO_ATTACKING' || target.currentHp <= 0) return;
-    let baseDmg = this.randomBetween(300,380)*(this.runContext.state.party.find(m=>m.key===hero.unitKey)?.stats.attack??1);
-    const isCrit = this.randomValue()<.15;
+    let baseDmg = roll*weight*(this.runContext.state.party.find(m=>m.key===hero.unitKey)?.stats.attack??1);
 
-    baseDmg = Math.round(baseDmg * heroPhysicalMultiplier(hero.sourceBuffs,this.currentRound));
+    baseDmg = Math.max(1, Math.round(baseDmg * heroPhysicalMultiplier(hero.sourceBuffs,this.currentRound)));
     if (isCrit) baseDmg = Math.round(baseDmg * 1.5);
     this.basicImpactSound(hero,isCrit);
     target.applyDamage(baseDmg, isCrit, 'physical');
@@ -1637,9 +1639,11 @@ export class BattleScene extends Phaser.Scene {
   private executeEnemySkill(enemy:TargetDummy,action:EnemyAction,targets:UnitActor[],attackMultiplier:number,onComplete:()=>void):void{
     const profile=this.currentEncounter(),events=action.damageEvents!;
     const total=new Map<UnitActor,number>();
-    let sceneDone=false,hitsDone=false,closed=false;
+    // Like hero skills, the turn moves on after the last hit plus a short beat; the scene's
+    // decorative tail fades out on its own (or is replaced by the next source presentation).
+    let closed=false;
     const finish=()=>{
-      if(closed||!sceneDone||!hitsDone)return;
+      if(closed)return;
       closed=true;this.events.off('shutdown',cancel);
       this.events.emit('enemy-impact',{key:enemy.assetKey,action,impacts:[...total].map(([t,d])=>({unit:t.unitKey,damage:d})),round:this.currentRound});
       onComplete();
@@ -1649,7 +1653,7 @@ export class BattleScene extends Phaser.Scene {
     this.events.once('shutdown',cancel);
     enemy.setDepthBoost(true);
     enemy.playCastBody();
-    this.playPreparedScene(action.presentation!,enemy,targets,()=>{enemy.setDepthBoost(false);sceneDone=true;finish();});
+    this.playPreparedScene(action.presentation!,enemy,targets,()=>enemy.setDepthBoost(false));
     let remaining=events.length;
     events.forEach(event=>timers.push(this.time.delayedCall(event.frame*1000/60,()=>{
       if(closed)return;
@@ -1663,7 +1667,7 @@ export class BattleScene extends Phaser.Scene {
         if(target.isDead)this.tryAutoRevive(target);
         if(!target.isDead)target.limitGauge=gainFromDamage(target.limitGauge,dmg,target.maxHp);
       }
-      if(--remaining===0){hitsDone=true;finish();}
+      if(--remaining===0)timers.push(this.time.delayedCall(ENEMY_SKILL_SETTLE_MS,finish));
     })));
   }
 

@@ -65,6 +65,21 @@ export function parseTimeline(raw, separator = /[&,]/) {
   return (raw ?? '').split(separator).filter(Boolean).map(entry => ({ raw: entry, fields: entry.split(':') }));
 }
 
+/**
+ * Original basic-attack hits from the unit row (`attackFrames`, e.g. "15:60:3:2-36:40:3:2"): source
+ * frame on the attack clip's 60 fps clock and its damage share. Returns null for missing or malformed
+ * rows, and when the last hit lies beyond the published attack clip (the runtime keeps its old frame).
+ */
+export function sourceBasicHits(raw, clip) {
+  const entries = String(raw ?? '').split('-').filter(Boolean).map(entry => entry.split(':').map(Number));
+  if (!entries.length || entries.some(([frame, share]) => !Number.isInteger(frame) || frame < 0 || !(share > 0))) return null;
+  const total = entries.reduce((sum, [, share]) => sum + share, 0);
+  const hits = entries.map(([frame, share]) => ({ frame, weight: Math.round(share / total * 1000) / 1000 }));
+  const clipMs = clip?.frames?.reduce((sum, frame) => sum + frame.durationMs, 0);
+  if (clipMs !== undefined && Math.max(...hits.map(hit => hit.frame)) * 1000 / 60 > clipMs) return null;
+  return hits;
+}
+
 /** Report unresolved original spatial dispatch without guessing a target/caster fallback. */
 export function unresolvedEffectAnchors(skill) {
   return (skill.effects??[]).flatMap(branch=>(branch.groups??[])

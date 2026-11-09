@@ -7,6 +7,8 @@ export interface UnitCombatConfig {
   targetOffsetX: number;
   attackAnim: MotionType;
   hitFrameIndex: number;
+  /** Original basic-attack hits on the attack clip's 60 fps clock, with damage shares (sum 1). */
+  hitFrames?: {frame:number;weight:number}[];
 }
 
 export interface UnitActorConfig extends Partial<UnitCombatConfig> {
@@ -72,6 +74,7 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
       targetOffsetX: config?.targetOffsetX ?? 90,
       attackAnim: config?.attackAnim ?? 'atk',
       hitFrameIndex: config?.hitFrameIndex ?? 2,
+      ...(config?.hitFrames?.length ? {hitFrames: config.hitFrames} : {}),
     };
 
     this.registerAnimations();

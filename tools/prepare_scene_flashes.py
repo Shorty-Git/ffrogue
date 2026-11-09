@@ -153,6 +153,86 @@ def _backdrop_particle(effect, node, plan, longest):
                        f'life {node.get("lifeParameter")} of {longest} frames; fitted to the visible battlefield')
 
 
+SCREEN_PARTICLE_MIN = 300
+FLASH_MAX_LIFE = 60
+
+
+def _effective_size(node, nodes, members=None):
+    """Authored width/height including ControlNull ancestor scales and member scale percent."""
+    scale = node['staticVectors']['transform']['scale']['valueInitial']
+    width, height = scale[0], scale[0] if node.get('uniformScale') else scale[1]
+    parent = node.get('parentIndex')
+    while parent is not None:
+        ancestor = next((n for n in nodes if n.get('index') == parent), nodes[parent])
+        factor = ancestor['staticVectors']['transform']['scale']['valueInitial']
+        width, height = width * factor[0], height * factor[1]
+        parent = ancestor.get('parentIndex')
+    percent = min((m.get('scalePercent', 100) for m in members), default=100) / 100 if members else 1
+    return width * percent, height * percent
+
+
+def _texture_extrema(effect, node, plan):
+    source = plan['files'][effect['textures'][node['resourceBindings']['texture1']['name']]]
+    path = Path(source['path'])
+    if hashlib.sha256(path.read_bytes()).hexdigest() != source['sha256']:
+        raise ValueError('Screen surface texture identity changed')
+    with Image.open(path) as image:
+        return source['sha256'], image.convert('RGBA').getextrema()
+
+
+def _screen_sized_particle(effect, node, plan, nodes, members):
+    """A static, opaque Basic Particle authored at screen size on a screen-anchored effect is a
+    backdrop (Squall's Lion Heart: a black plane and a dark vertical-gradient plane, 360 units).
+    Its life may be short against helper ControlNull nodes, so size decides instead of life.
+    The texture may vary in colour (gradients); colour/alpha curves stay source data."""
+    binding = node.get('resourceBindings', {})
+    if node['typeId'] != 3 or not binding.get('texture1') or binding.get('texture2') or binding.get('model'):
+        return None
+    if node.get('materialControls', {}).get('textureCombination', {}).get('name') != 'Basic' or not _static_identity(node):
+        return None
+    parent = node.get('parentIndex')
+    while parent is not None:
+        ancestor = next((n for n in nodes if n.get('index') == parent), nodes[parent])
+        if ancestor['typeId'] != 0 or not _static_identity(ancestor):
+            return None
+        parent = ancestor.get('parentIndex')
+    width, height = _effective_size(node, nodes, members)
+    if min(width, height) < SCREEN_PARTICLE_MIN:
+        return None
+    sha, extrema = _texture_extrema(effect, node, plan)
+    if extrema[3] != (255, 255):
+        return None
+    return dict(region='arena', primitive='screen-particle', textureSha256=sha,
+                origin=f'Automatic screen backdrop: static opaque Basic Particle authored at screen size '
+                       f'({width:g} x {height:g} >= {SCREEN_PARTICLE_MIN}) on a screen-anchored effect; fitted to the visible battlefield')
+
+
+def _white_flash_particle(effect, node, plan, nodes):
+    """Particle form of the impact flash: plain white texture and colour, alpha curve rising from 0
+    to >= 0.8 and back, at most FLASH_MAX_LIFE frames, >= 200 units on both axes. Kept at source size
+    it shows as a hard-edged white box (Squall's Lion Heart front node 3, 360 x 320, 40 frames)."""
+    binding = node.get('resourceBindings', {})
+    if node['typeId'] != 3 or not binding.get('texture1') or binding.get('texture2') or binding.get('model'):
+        return None
+    if node.get('lifeParameter', 0) > FLASH_MAX_LIFE:
+        return None
+    color = node.get('appearance', {}).get('color', {})
+    if color.get('mode') != 'Constant' or any(channel < 0.95 for channel in color.get('value', [0])):
+        return None
+    keys = [key['value'] for key in (node.get('alphaCurve') or {}).get('keys', [])]
+    if len(keys) < 3 or keys[0] > 0.05 or keys[-1] > 0.05 or max(keys) < 0.8:
+        return None
+    width, height = _effective_size(node, nodes)
+    if min(width, height) < 200:
+        return None
+    sha, extrema = _texture_extrema(effect, node, plan)
+    if any(extreme != (255, 255) for extreme in extrema):
+        return None
+    return dict(region='arena', primitive='screen-particle', textureSha256=sha,
+                origin=f'Automatic impact flash: plain white Particle ({width:g} x {height:g}), life {node.get("lifeParameter")} frames, '
+                       'alpha rises and falls; fitted to the visible battlefield instead of a hard-edged box')
+
+
 def annotate_screen_backdrops(plan):
     """Generic rule: a static uniform unit-XY Model in a screen-anchored effect whose authored
     width covers the whole FFBE logical screen (640) is a full-screen backdrop (dimming/tint).
@@ -168,7 +248,8 @@ def annotate_screen_backdrops(plan):
         for node in nodes:
             if node.get('presentationCoverage'):
                 continue
-            quad = _opaque_backdrop_quad(effect, node, plan, nodes, longest) or _backdrop_particle(effect, node, plan, longest)
+            quad = (_opaque_backdrop_quad(effect, node, plan, nodes, longest) or _backdrop_particle(effect, node, plan, longest)
+                    or _screen_sized_particle(effect, node, plan, nodes, members))
             if quad:
                 node['presentationCoverage'] = quad
                 count += 1
@@ -237,7 +318,7 @@ def annotate_white_flashes(plan):
         for node in effect['nodes']:
             if node.get('presentationCoverage'):
                 continue
-            flash = _white_flash_quad(effect, node, plan, effect['nodes'])
+            flash = _white_flash_quad(effect, node, plan, effect['nodes']) or _white_flash_particle(effect, node, plan, effect['nodes'])
             if flash:
                 node['presentationCoverage'] = flash
                 count += 1

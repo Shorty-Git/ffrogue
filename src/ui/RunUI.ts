@@ -11,7 +11,7 @@ import {bindSlotLever} from './SlotLever';
 import {fateTier,fateTimeline,fateVerdict,tierRank,isShowTier,FATE_SOUND,type FateTier,type FateSound} from './fateEngine';
 import {startCrystalSparks} from './CrystalSparks';
 import {startTitleCrystal,titleCrystalMarkup} from './TitleCrystal';
-import {formAt,formForLevel,rankLabel,levelLabel,MAX_LEVEL} from '../run/unitForms.mjs';
+import {formAt,formForLevel,rankLabel,levelLabel,levelOf,MAX_LEVEL} from '../run/unitForms.mjs';
 const esc=(s:unknown)=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
 
 function bodyPreview(root:string,clip:AnimationMeta,classes:string,style:string){
@@ -180,9 +180,48 @@ export class RunUI{
  party(run:RunState){this.show(`${this.title('EXPEDITION PARTY','YOUR COMPANIONS',`Seed ${run.seed} · your companions for this journey`)}<div class="party-grid">${run.party.map(m=>this.member(m)).join('')}</div>${this.button('close','Return to battle')}`,'party');}
  result(run:RunState,earned?:{crystals:number;unlocked:string|null}){this.show(`${this.title(run.phase==='won'?'EXPEDITION COMPLETE':'THE CRYSTAL FALLS',run.phase==='won'?'A NEW LEGEND':'ANOTHER DAWN',run.phase==='won'?'Your companions endured the rift. Their journey is complete.':'The expedition has ended. A new seed begins a fresh story.')}<div class="party-grid">${run.party.map(m=>this.member(m)).join('')}</div><p class="muted">Seed ${esc(run.seed)} · ${run.history.filter((h:any)=>h.kind==='reward').length} rewards chosen</p>${earned?`<p class="profile-line"><span>+${earned.crystals} ◆ crystals</span></p>${earned.unlocked?this.heroCard(earned.unlocked,'A NEW HERO ANSWERS THE CALL'):''}`:''}${this.button('new','Return to title')}`,'result');}
  heroCard(key:string,label:string){const c=this.catalog[key];return `<article class="rpg-panel hero-unlock"><span class="eyebrow">${esc(label)}</span><span class="portrait-frame"><img class="portrait" src="${esc(c.portrait)}" alt="${esc(c.name)}"></span><strong>${esc(c.name)}</strong></article>`;}
- summoned(key:string,crystals:number,bond=0,refund=0){const name=esc(this.catalog[key].name);
+ /**
+  * Summon roulette (case style): a strip of hero heads, drawn with the real summon weights and edged in
+  * their Fate Engine tier colour, slows down under the marker and stops on the summoned hero. The hero is
+  * already decided and saved; this is presentation only. Skip lands at once; reduced motion skips the run.
+  */
+ summoned(key:string,crystals:number,bond=0,refund=0,pool:{key:string;weight:number}[]=[{key,weight:1}]){const name=esc(this.catalog[key].name);
   const text=refund?`${name} answers again at full Bond. The crystal returns ${refund} ◆.`:bond?`${name} answers again. Bond ${bond}: ${['','drawn more often by the Fate Engine','you choose the starting skill','never starts below Lv 2'][bond]}.`:`The crystal resonates. ${name} may now be drawn by the Fate Engine.`;
-  this.show(`${this.title('FATE ENGINE',bond||refund?'A BOND DEEPENS':'A HERO ANSWERS',text)}${this.heroCard(key,bond||refund?`BOND ${bond}`:'NEW HERO')}<p class="muted">◆ ${crystals} crystals left</p>${this.button('close','Return to title')}`,'result');}
+  const tierOf=(k:string)=>fateTier({rarity:this.catalog[k].rarity,level:levelOf(this.catalog[k])});
+  const total=pool.reduce((sum,entry)=>sum+entry.weight,0);
+  const randomKey=()=>{let roll=Math.random()*total;for(const entry of pool){roll-=entry.weight;if(roll<0)return entry.key;}return pool[0].key;};
+  const TILES=46,WINNER=40,tiles=Array.from({length:TILES},(_,i)=>i===WINNER?key:randomKey());
+  const tier=tierOf(key),start=levelOf(this.catalog[key]);
+  const tile=(k:string,i:number)=>`<li class="case-tile tier-${tierOf(k)}" ${i===WINNER?'data-winner':''}><img src="${esc(this.catalog[k].portrait)}" alt="" draggable="false"></li>`;
+  this.show(`<div class="summon-case"><div class="eyebrow">FATE ENGINE</div><h1>SUMMONING…</h1><div class="case-window"><ol class="case-strip">${tiles.map(tile).join('')}</ol><span class="case-marker" aria-hidden="true"></span></div>${this.button('summon-skip','Skip',true)}</div>
+   <div class="summon-result" hidden>${this.title('FATE ENGINE',bond||refund?'A BOND DEEPENS':'A HERO ANSWERS',text)}<div class="summon-hero tier-${tier}">${this.heroCard(key,bond||refund?`BOND ${bond}`:'NEW HERO')}<p class="summon-rank">${esc(rankLabel(this.catalog[key]))} base · starts at ${levelLabel(start)} or higher</p></div><p class="muted">◆ ${crystals} crystals left</p>${this.button('close','Return to title')}</div>`,'result');
+  const strip=this.root.querySelector<HTMLElement>('.case-strip')!,windowEl=this.root.querySelector<HTMLElement>('.case-window')!;
+  const winner=strip.querySelector<HTMLElement>('[data-winner]')!;
+  const step=winner.offsetWidth+parseFloat(getComputedStyle(strip).columnGap||'0');
+  const center=windowEl.clientWidth/2;
+  // Stop somewhere inside the winning head, not always dead centre (the case "almost" feeling).
+  const target=-(WINNER*step+winner.offsetWidth/2-center+(Math.random()-.5)*winner.offsetWidth*.6);
+  let landed=false,frame=0,lastTile=-1,lastTick=0;
+  const timers:number[]=[];
+  this.slotAudioCleanup=()=>{cancelAnimationFrame(frame);timers.forEach(clearTimeout);};
+  const reveal=()=>{const result=this.root.querySelector<HTMLElement>('.summon-result');if(!result)return;
+   this.root.querySelector('.summon-case')?.classList.add('is-done');result.hidden=false;result.querySelector<HTMLElement>('button')?.focus();};
+  const land=()=>{if(landed)return;landed=true;cancelAnimationFrame(frame);
+   strip.style.transition='none';strip.style.transform=`translateX(${target}px)`;
+   winner.classList.add('is-landed');windowEl.classList.add('tier-'+tier,'is-landed');
+   const show=isShowTier(tier);
+   this.onSample(FATE_SOUND[tier],show?.36:tierRank(tier)>=tierRank('gold')?.32:.3);
+   if(show){this.onSample(FATE_SOUND.fireworks,.28);if(tier==='nv')this.onSample(FATE_SOUND.awaken,.24);}
+   timers.push(window.setTimeout(reveal,show?1400:850));};
+  this.on('summon-skip',()=>{land();reveal();});
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){land();return;}
+  // One tick per head that passes the marker, like a case opening.
+  const tick=()=>{const x=new DOMMatrixReadOnly(getComputedStyle(strip).transform).m41,index=Math.floor((center-x)/step),now=performance.now();
+   if(index!==lastTile&&now-lastTick>28){lastTile=index;lastTick=now;this.onSound('select',1+Math.random()*.08);}
+   if(!landed)frame=requestAnimationFrame(tick);};
+  this.onSample(FATE_SOUND.slide,.3);
+  requestAnimationFrame(()=>{strip.style.transition='transform 6.4s cubic-bezier(.08,.72,.16,1)';strip.style.transform=`translateX(${target}px)`;frame=requestAnimationFrame(tick);});
+  strip.addEventListener('transitionend',land,{once:true});}
  dialog(title:string,text:string,accept='Confirm'){this.show(`${this.title('EXPEDITION',esc(title),text)}<div class="actions">${this.button('accept',accept)}${this.button('cancel','Cancel',true)}</div>`,'dialog');}
  error(message:string,discard=false){this.show(`${this.title('SAVE UNAVAILABLE','THE PATH IS CLOSED',message)}${this.button('reload','Reload saved journey')}${discard?this.button('discard','Discard incompatible save and return',true):''}`,'error');}
 }

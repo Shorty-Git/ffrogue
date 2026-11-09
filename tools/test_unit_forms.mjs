@@ -30,9 +30,10 @@ test('a level without a new body raises power only and needs no awakening presen
  const hp=m.stats.hp;r=bossReward(r);r.offers[0]={type:'evolve',member:'cloud',level:2};r=chooseReward(r,0,c);
  assert.equal(r.pendingAwakening,undefined);m=r.party.find(m=>m.key==='cloud');assert.equal(m.level,2);assert.equal(m.form,'cloud');assert.ok(m.stats.hp>hp);validateRun(r,c);
 });
-test('start levels follow one weight table for every hero and are stored once',()=>{
+test('start levels roll one weight table, never below the base rarity level, and are stored once',()=>{
  const rules=read('public/assets/run-rules.json'),keys=['3','4','5','6','7','NV'];
- const counts=[0,0,0,0,0,0];let total=0;
+ // The roll's distribution is visible on 3★ base units (base Lv 1); every hero keeps its base floor.
+ const counts=[0,0,0,0,0,0];let total=0,floored=0;
  for(let i=0;i<4000;i++){
   const seed='start-level-'+i,legacy=rollParty(createRun(seed,c),c),current=rollParty(createRun(seed,c,undefined,rules),c);
   assert.deepEqual(current.party.map(m=>[m.key,m.skills]),legacy.party.map(m=>[m.key,m.skills]));
@@ -42,9 +43,11 @@ test('start levels follow one weight table for every hero and are stored once',(
    assert.equal(m.form,formForLevel(character,m.level).form);
    assert.equal(m.stats.hp,1+(m.level-1)*rules.originalForms.hpPerRank);
    assert.equal(m.hp,Math.round(character.maxHp*m.stats.hp));
-   counts[m.level-1]++;total++;
+   assert.ok(m.level>=levelOf(character),`${m.key} started below its base level`);
+   if(levelOf(character)===1){counts[m.level-1]++;total++;}else floored++;
   }
  }
+ assert.ok(total>1000&&floored>1000,`${total} base-Lv1 and ${floored} higher-base heroes drawn`);
  const weights=keys.map(k=>rules.originalForms.weights[k]),sum=weights.reduce((a,b)=>a+b,0);
  counts.forEach((n,i)=>{const p=weights[i]/sum;assert.ok(Math.abs(n/total-p)<Math.max(.01,4*Math.sqrt(p*(1-p)/total)),JSON.stringify(counts));});
  console.log('Start levels Lv1..6 over',total,'heroes:',counts);

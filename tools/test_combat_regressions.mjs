@@ -830,7 +830,9 @@ test('an original enemy skill splits the action damage over its source hit frame
   damageEvents:[{frame:10,weight:.5},{frame:20,weight:.5}]};
  let completed=0;s.executeEnemySkill(enemy,action,actors,1,()=>completed++);
  assert.deepEqual([scene.key,scene.targets],['sweeper_double_barrel',2]);
- while(timers.length)timers.shift()();assert.equal(completed,0);scene.done();assert.equal(completed,1);
+ // Two hit timers, then the settle beat: the turn moves on without waiting for the scene's decorative tail.
+ timers.shift()();timers.shift()();assert.equal(completed,0);assert.equal(timers.length,1);
+ timers.shift()();assert.equal(completed,1);scene.done();assert.equal(completed,1);
  const {RUN_BALANCE}=loadModule('src/run/runBalance.mjs'),damage=RUN_BALANCE.damage+RUN_BALANCE.damagePerEncounter;
  assert.deepEqual(actors.map(a=>a.currentHp),[1000-2*Math.round(damage*.5),1000-2*Math.round(damage/2*.5)]);
 });

@@ -3,7 +3,7 @@ import type {UnitManifest} from '../types/manifest';
 import type {RunState,RunRules} from './runState.mjs';
 import {RunStore,createRun,variantAreas,rollParty,confirmParty,chooseStartSkill,completeBattle,chooseReward,encounters,acknowledgeAwakening} from './runState.mjs';
 import {runCatalog} from './catalog';
-import {ProfileStore,drawCatalog,lockedHeroes,settleRun,summonHero,SUMMON_COST,type Profile} from './profile.mjs';
+import {ProfileStore,drawCatalog,lockedHeroes,settleRun,summonHero,summonPool,SUMMON_COST,type Profile} from './profile.mjs';
 import {RunUI} from '../ui/RunUI';
 import {EncounterTransition} from '../ui/EncounterTransition';
 import {ALL_FATE_SOUNDS,fateSoundUrl,fateTier,fateTimeline} from '../ui/fateEngine';
@@ -230,6 +230,7 @@ export class GameFlow{
   this.ui.result(this.state!,settled.crystals||settled.unlocked?{crystals:settled.crystals,unlocked:settled.unlocked}:undefined);this.ui.on('new',()=>{this.store.clear();this.state=null;this.menu();});}
  private summon(){try{const result=summonHero(this.profile,this.catalog,crypto.getRandomValues(new Uint32Array(1))[0].toString(36));
   this.profile=this.profiles.save(result.profile);
-  this.audio.playUi('reward');this.ui.summoned(result.hero,this.profile.crystals,result.bond,result.refund);this.ui.on('close',()=>this.menu());}catch(error){this.fail(error);}}
+  // The roulette plays its own landing cue from the Fate Engine samples.
+  this.ui.summoned(result.hero,this.profile.crystals,result.bond,result.refund,summonPool(this.catalog));this.ui.on('close',()=>this.menu());}catch(error){this.fail(error);}}
  snapshot(){return {state:this.state,total:this.state?encounters(this.state.areas).length:0,busy:this.busy};}
 }

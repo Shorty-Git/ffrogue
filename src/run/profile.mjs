@@ -2,6 +2,7 @@
 // Pure functions over a JSON profile; GameFlow persists it under PROFILE_KEY. Runs themselves stay
 // self-contained (runState.mjs): the profile only narrows the roster pool before a draw.
 import {seedHash} from './runState.mjs';
+import {summonWeight} from './unitForms.mjs';
 export const PROFILE_KEY='ffrogue.profile.v1';
 /** Heroes every new profile starts with (the first reviewed roster). Missing keys are ignored. */
 export const STARTER_HEROES=['cloud','aerith','barret','squall','delita','jack','cloud_of_darkness'];
@@ -42,10 +43,22 @@ export function drawCatalog(p,catalog){
    ...(bond>=3?{minStartLevel:BOND_MIN_START_LEVEL}:{})}:character];
  }));
 }
+/** Summon weights by base rarity (unitForms SUMMON_WEIGHTS): a 3★ base unit is drawn ~8× as often as an NV unit. */
+export const summonPool=(catalog,keys=drawable(catalog))=>keys.map(key=>{
+ const weight=summonWeight(catalog[key]);
+ if(!(weight>0))throw Error(`Summon weight needs the base rarity of ${key}`);
+ return {key,weight};
+});
+function weightedPick(pool,salt){
+ const total=pool.reduce((sum,entry)=>sum+entry.weight,0);
+ let roll=seedHash(salt)%(total*1000)/1000;
+ for(const entry of pool){roll-=entry.weight;if(roll<0)return entry.key;}
+ return pool.at(-1).key;
+}
 function unlockRandom(p,catalog,salt){
  const locked=lockedHeroes(p,catalog);
  if(!locked.length)return null;
- const key=locked[seedHash(salt)%locked.length];
+ const key=weightedPick(summonPool(catalog,locked),salt);
  p.unlocked.push(key);
  return key;
 }
@@ -64,9 +77,8 @@ export function settleRun(input,run,catalog){
 export function summonHero(input,catalog,salt){
  const p=structuredClone(input);
  if(p.crystals<SUMMON_COST)throw Error('Not enough crystals');
- const pool=drawable(catalog);
  p.crystals-=SUMMON_COST;
- const key=pool[seedHash(salt)%pool.length];
+ const key=weightedPick(summonPool(catalog),salt);
  if(!p.unlocked.includes(key)){p.unlocked.push(key);return {profile:p,unlocked:key,hero:key,bond:0,refund:0};}
  const bond=p.bond[key]??0;
  if(bond>=MAX_BOND){p.crystals+=BOND_REFUND;return {profile:p,unlocked:null,hero:key,bond,refund:BOND_REFUND};}

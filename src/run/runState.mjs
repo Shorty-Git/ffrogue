@@ -53,8 +53,9 @@ export function createRun(seed,catalog,areas=courseAreas(seed),rules){
  for(const s of ['roster','skills','rewards','combat'])run.rng[s]=seedHash(seed+':'+s);
  return run;
 }
-/** Start levels share one table for every hero (run-rules weights by original rank: 3★..NV = Lv 1..6),
- * so a variant's original rarity never decides its power. Without a policy a hero starts at its base level. */
+/** Start-level roll: one table for every hero (run-rules weights by original rank: 3★..NV = Lv 1..6).
+ * newMember raises it to the hero's base level, so the original rarity sets the floor (developer
+ * decision 2026-11-09: a 5★ base unit never starts below Lv 3). Without a policy: the base level. */
 const LEVEL_KEYS=['3','4','5','6','7','NV'];
 function drawStartLevel(run,character){
  const policy=run.rules?.originalForms;
@@ -72,8 +73,9 @@ function formStats(policy,steps){
   attack:1+steps*policy.powerPerRank,magic:1+steps*policy.powerPerRank,defense:1+steps*policy.defensePerRank};
 }
 function newMember(run,key,catalog){
- // Bond 3 (profile.mjs) sets a start-level floor; the roll itself is unchanged.
- const character=catalog[key],level=Math.max(drawStartLevel(run,character),character.minStartLevel??1),form=formForLevel(character,level);
+ // The original base rarity is the start-level floor (3★ = Lv 1, 5★ = Lv 3, NV = Lv 6); Bond 3
+ // (profile.mjs) adds its own floor. The roll can only lift a hero above them.
+ const character=catalog[key],level=Math.max(drawStartLevel(run,character),levelOf(character),character.minStartLevel??1),form=formForLevel(character,level);
  const policy=run.rules?.originalForms;
  const stats=policy?formStats(policy,level-1):{attack:1,magic:1,defense:1,hp:1};
  return {key,identity:character.identity,canonicalIdentity:character.canonicalIdentity,level,
