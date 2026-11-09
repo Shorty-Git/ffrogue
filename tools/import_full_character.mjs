@@ -188,7 +188,7 @@ for (const row of db.prepare('select unitId,rare from unit where unitSeries=? an
 // 8. Roster: run identity, canonical character, published registry.
 // Existing reviewed entries keep their label and canonical identity unless the arguments name new ones.
 const existingUnit = runContent.units[key], canonical = arg('--canonical', existingUnit?.canonicalIdentity ?? `ff:${key}`);
-runContent.units[key] = {variantLabel: existingUnit?.variantLabel ?? `${arg('--game', 'FF')} · Base Unit`,
+runContent.units[key] = {variantLabel: existingUnit?.variantLabel ?? `${arg('--game', 'FF')} · ${arg('--variant', 'Base Unit')}`,
   identity: unit, unitId: unit, rarity: unitRow.rare,
   // NV-only units (late FFBE, e.g. FFXVI) start at their NV base; the Fate Engine shows them as NV.
   ...(unitRow.isNv ? {rank: 'NV'} : {}), canonicalIdentity: canonical};

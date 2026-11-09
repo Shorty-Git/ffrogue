@@ -22,6 +22,36 @@ assert.equal(won.profile.record.won, 1);
 assert.throws(() => summonHero({...won.profile, crystals: SUMMON_COST - 1}, catalog, 'x'), /Not enough/);
 const summoned = summonHero({...won.profile, crystals: SUMMON_COST}, catalog, 'x');
 assert.equal(summoned.profile.crystals, 0);
-assert.equal(lockedHeroes(summoned.profile, catalog).length, 1);
+assert.equal(lockedHeroes(summoned.profile, catalog).length, summoned.unlocked ? 1 : 2);
+assert.ok(summoned.unlocked || summoned.bond === 1, 'a summon unlocks a hero or deepens Bond');
 assert.equal(settleRun(fresh, {seed: 'c', phase: 'battle', history: []}, catalog).crystals, 0, 'only finished runs settle');
 console.log('profile: ok');
+// Bond: duplicates deepen Bond up to MAX_BOND, then refund; perks reach the draw catalog and the run.
+import {MAX_BOND,BOND_REFUND,BOND_MIN_START_LEVEL,drawCatalog as draw2} from '../src/run/profile.mjs';
+import {createRun,rollParty,chooseStartSkill} from '../src/run/runState.mjs';
+{
+  let p = {...normalizeProfile(null, catalog), unlocked: Object.keys(catalog), crystals: 100 * 10};
+  const seen = [];
+  for (let i = 0; i < 10; i++) { const r = summonHero(p, catalog, 'bond-' + i); p = r.profile; seen.push(r); }
+  assert.ok(seen.every(r => r.unlocked === null), 'everyone unlocked: only Bond or refunds');
+  assert.ok(Object.values(p.bond).every(n => n >= 1 && n <= MAX_BOND));
+  const refunds = seen.filter(r => r.refund).length;
+  assert.equal(p.crystals, refunds * BOND_REFUND);
+  const full = {...p, bond: {cloud: 3}}, d = draw2(full, catalog);
+  assert.equal(d.cloud.drawWeight, 1.5); assert.equal(d.cloud.startSkillChoice, true); assert.equal(d.cloud.minStartLevel, BOND_MIN_START_LEVEL);
+  assert.equal(d.aerith.drawWeight, undefined);
+}
+{
+  const skills = [{id: 'a', name: 'A'}, {id: 'b', name: 'B'}];
+  const cat = Object.fromEntries([['x', 'ff1:x'], ['y', 'ff2:y'], ['z', 'ff3:z']].map(([k, c]) => [k, {key: k, form: k, identity: k, unitId: k, rarity: 5,
+    canonicalIdentity: c, skills, maxHp: 100, maxMp: 10}]));
+  cat.x = {...cat.x, startSkillChoice: true, minStartLevel: 2};
+  const rules = {awakeningMode: 'sequential', originalForms: {weights: {3: 1000000, 4: 1, 5: 1, 6: 1, 7: 1, NV: 1}, hpPerRank: .05, mpPerRank: .03, powerPerRank: .035, defensePerRank: .035}};
+  const run = rollParty(createRun('bond-run', cat, undefined, rules), cat);
+  assert.equal(run.party.find(m => m.key === 'x').level, 2, 'Bond 3 floor');
+  assert.equal(run.party.find(m => m.key === 'y').level, 1);
+  const chosen = chooseStartSkill(run, 'x', 'b', cat);
+  assert.deepEqual(chosen.party.find(m => m.key === 'x').skills, [{id: 'b', level: 1}]);
+  assert.throws(() => chooseStartSkill(run, 'y', 'b', cat), /No starting skill choice/);
+}
+console.log('bond: ok');

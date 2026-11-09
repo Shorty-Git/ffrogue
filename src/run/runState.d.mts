@@ -2,7 +2,8 @@ import type {SkillConfig} from '../types/skills';
 export interface RunForm{form:string;unitId:string;rarity:number;rank?:'NV';identity:string;awakensFrom?:string;}
 export interface RunCharacter extends RunForm{canonicalIdentity:string;key:string;name:string;variantLabel?:string;maxHp:number;maxMp:number;skills:SkillConfig[];
   /** The form's Limit Burst (skill type LIMIT); used through the LB gauge, never offered as a skill. */
-  limitBurst?:SkillConfig;portrait:string;evolution?:RunForm;forms?:RunForm[];magicAvailable?:boolean;}
+  limitBurst?:SkillConfig;portrait:string;evolution?:RunForm;
+  /** Bond perks from profile.mjs drawCatalog (draw-time only). */bond?:number;drawWeight?:number;startSkillChoice?:boolean;minStartLevel?:number;forms?:RunForm[];magicAvailable?:boolean;}
 export type RunCatalog=Record<string,RunCharacter>;
 export interface RunMember extends RunForm{canonicalIdentity:string;key:string;
   /** FFRogue level 1–6 (unitForms.mjs MAX_LEVEL); the form is the body for it. */level:number;skills:{id:string;level:number}[];stats:{attack:number;magic:number;defense:number;hp:number;mp?:number};hp:number;mp:number;
@@ -25,6 +26,7 @@ export function migrateRun(run:unknown,catalog:RunCatalog):RunState;
 export function rollParty(run:RunState,catalog:RunCatalog):RunState;
 export function memberMaxMp(character:RunCharacter,member:RunMember):number;
 export function confirmParty(run:RunState):RunState;
+export function chooseStartSkill(run:RunState,key:string,skillId:string,catalog:RunCatalog):RunState;
 export function skillForRun(source:SkillConfig,member:RunMember):SkillConfig;
 export function rewardPool(run:RunState,catalog:RunCatalog):Reward[];
 export function completeBattle(run:RunState,catalog:RunCatalog,snapshot:{key:string;hp:number;mp:number;limit?:number}[],won:boolean):RunState;

@@ -1,0 +1,431 @@
+{
+  "schemaVersion": 1,
+  "key": "barret_remake",
+  "spriteUnitId": "207002105",
+  "game": "FFVII",
+  "battle": {
+    "maxHp": 3200,
+    "maxMp": 100,
+    "heroName": "BARRET (REMAKE)",
+    "heroRole": "VANGUARD",
+    "attackType": "melee",
+    "targetOffsetX": 90,
+    "attackAnim": "atk",
+    "hitFrameIndex": 2
+  },
+  "scale": 2.5,
+  "reviewNote": "Created by tools/import_full_character.mjs; battle values are provisional defaults for balancing.",
+  "skills": [
+    {
+      "id": "boiling_point",
+      "ffbeId": 512620,
+      "name": "Boiling Point",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 60,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 10,
+      "attackFrames": [
+        110,
+        120,
+        130,
+        140,
+        150,
+        160,
+        170,
+        180,
+        190,
+        200
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "barret_remake_boiling_point",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/barret_remake/skills/boiling_point/source/skill-source.json",
+        "sha256": "57475c0a03f0d397efae5c515b18e22bc5d8d19538cd358f6a86a850f9cf4259"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 110,
+          "weight": 0.055
+        },
+        {
+          "frame": 120,
+          "weight": 0.055
+        },
+        {
+          "frame": 130,
+          "weight": 0.055
+        },
+        {
+          "frame": 140,
+          "weight": 0.055
+        },
+        {
+          "frame": 150,
+          "weight": 0.055
+        },
+        {
+          "frame": 160,
+          "weight": 0.055
+        },
+        {
+          "frame": 170,
+          "weight": 0.055
+        },
+        {
+          "frame": 180,
+          "weight": 0.055
+        },
+        {
+          "frame": 190,
+          "weight": 0.06
+        },
+        {
+          "frame": 200,
+          "weight": 0.5
+        }
+      ]
+    },
+    {
+      "id": "burst_of_anger",
+      "ffbeId": 236220,
+      "name": "Burst of Anger",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 34,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 1,
+      "attackFrames": [
+        177
+      ],
+      "moveType": "stationary",
+      "motion": "atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "barret_remake_burst_of_anger",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/barret_remake/skills/burst_of_anger/source/skill-source.json",
+        "sha256": "2bbb436daace0bee98a71f3a1fbdb1dc326115518d680a915882aa6d9dafa6be"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 8,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 8 / move 4: stationary atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 177,
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "assault_blast",
+      "ffbeId": 236221,
+      "name": "Assault Blast",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 38,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 10,
+      "attackFrames": [
+        110,
+        120,
+        130,
+        140,
+        150,
+        160,
+        170,
+        180,
+        190,
+        200
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "barret_remake_assault_blast",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/barret_remake/skills/assault_blast/source/skill-source.json",
+        "sha256": "9bbdbcab8d97e0ab95e9e931adc94f38c754e9cae11f6f6a43fe7ccb52495ac8"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 110,
+          "weight": 0.055
+        },
+        {
+          "frame": 120,
+          "weight": 0.055
+        },
+        {
+          "frame": 130,
+          "weight": 0.055
+        },
+        {
+          "frame": 140,
+          "weight": 0.055
+        },
+        {
+          "frame": 150,
+          "weight": 0.055
+        },
+        {
+          "frame": 160,
+          "weight": 0.055
+        },
+        {
+          "frame": 170,
+          "weight": 0.055
+        },
+        {
+          "frame": 180,
+          "weight": 0.055
+        },
+        {
+          "frame": 190,
+          "weight": 0.06
+        },
+        {
+          "frame": 200,
+          "weight": 0.5
+        }
+      ]
+    },
+    {
+      "id": "overcharge_ffvii_remake",
+      "ffbeId": 236223,
+      "name": "Overcharge (FFVII REMAKE)",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 52,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 10,
+      "attackFrames": [
+        110,
+        120,
+        130,
+        140,
+        150,
+        160,
+        170,
+        180,
+        190,
+        200
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "barret_remake_overcharge_ffvii_remake",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/barret_remake/skills/overcharge_ffvii_remake/source/skill-source.json",
+        "sha256": "97186f8dcb643b2ce063a08a0ece5f85c95169ac0875d3ae711141f026d0c872"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 110,
+          "weight": 0.055
+        },
+        {
+          "frame": 120,
+          "weight": 0.055
+        },
+        {
+          "frame": 130,
+          "weight": 0.055
+        },
+        {
+          "frame": 140,
+          "weight": 0.055
+        },
+        {
+          "frame": 150,
+          "weight": 0.055
+        },
+        {
+          "frame": 160,
+          "weight": 0.055
+        },
+        {
+          "frame": 170,
+          "weight": 0.055
+        },
+        {
+          "frame": 180,
+          "weight": 0.055
+        },
+        {
+          "frame": 190,
+          "weight": 0.06
+        },
+        {
+          "frame": 200,
+          "weight": 0.5
+        }
+      ]
+    },
+    {
+      "id": "true_fire_in_the_hole",
+      "ffbeId": 207002105,
+      "name": "True Fire in the Hole",
+      "rarity": 5,
+      "level": 1,
+      "type": "LIMIT",
+      "mpCost": 0,
+      "scope": "single_enemy",
+      "damageMultiplier": 6,
+      "hitCount": 2,
+      "attackFrames": [
+        147,
+        157
+      ],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Limit Burst: Physical damage (6x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "barret_remake_true_fire_in_the_hole",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/barret_remake/skills/true_fire_in_the_hole/source/skill-source.json",
+        "sha256": "6c8382fef6e859657399b3034389d7672e3407d88d124ee481376db7106325cd"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "target",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "limit_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 1,
+          "sourceMoveType": 1,
+          "note": "Drafted from motion 1 / move 1: dash with limit_atk body (LB rows carry no motionType; reviewed adaptation)."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 147,
+          "weight": 0.5
+        },
+        {
+          "frame": 157,
+          "weight": 0.5
+        }
+      ]
+    }
+  ],
+  "portraitSource": "unit_icons/unit_icon_207002105.png"
+}

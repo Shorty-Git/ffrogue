@@ -1,0 +1,409 @@
+{
+  "schemaVersion": 1,
+  "key": "terra_magitek_armor",
+  "spriteUnitId": "206000113",
+  "game": "FFVI",
+  "battle": {
+    "maxHp": 3200,
+    "maxMp": 100,
+    "heroName": "MAGITEK TERRA",
+    "heroRole": "VANGUARD",
+    "attackType": "melee",
+    "targetOffsetX": 90,
+    "attackAnim": "atk",
+    "hitFrameIndex": 2
+  },
+  "scale": 2.5,
+  "reviewNote": "Created by tools/import_full_character.mjs; battle values are provisional defaults for balancing.",
+  "skills": [
+    {
+      "id": "bio_blaster",
+      "ffbeId": 201320,
+      "name": "Bio Blaster",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 12,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.6,
+      "hitCount": 1,
+      "attackFrames": [
+        130
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (1.6x) to all enemies",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "terra_magitek_armor_bio_blaster",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/terra_magitek_armor/skills/bio_blaster/source/skill-source.json",
+        "sha256": "8762df1ba9f5d67e4d940cf3401e447d962ca09a424ffd76cda21f2504ea3011"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 130,
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "fire_beam",
+      "ffbeId": 201260,
+      "name": "Fire Beam",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 8,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 1,
+      "attackFrames": [
+        80
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "terra_magitek_armor_fire_beam",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/terra_magitek_armor/skills/fire_beam/source/skill-source.json",
+        "sha256": "3265c9d81be835a5c6ff4151bd338607921d6041e880e1e52cf3d41741a5690a"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 80,
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "ice_beam",
+      "ffbeId": 201280,
+      "name": "Ice Beam",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 8,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 1,
+      "attackFrames": [
+        80
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "terra_magitek_armor_ice_beam",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/terra_magitek_armor/skills/ice_beam/source/skill-source.json",
+        "sha256": "da0df9bbe1e58b5f56c97f6e7222dde8680ddcd85f1a32355ad08e7d3f2c5f42"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 80,
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "thunder_beam",
+      "ffbeId": 201270,
+      "name": "Thunder Beam",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 8,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 1,
+      "attackFrames": [
+        80
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "terra_magitek_armor_thunder_beam",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/terra_magitek_armor/skills/thunder_beam/source/skill-source.json",
+        "sha256": "23d852e861a03a58333cc238d8b1344138b3bb3e21ab42d63a3e13760d0dc66d"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 80,
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "magitek_laser",
+      "ffbeId": 201300,
+      "name": "Magitek Laser",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 8,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 1,
+      "attackFrames": [
+        80
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "terra_magitek_armor_magitek_laser",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/terra_magitek_armor/skills/magitek_laser/source/skill-source.json",
+        "sha256": "8ff524f586056dfa0a6eb8105a69b0ff194d3254a524e258f208b50f249bd19b"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 80,
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "magitek_missile",
+      "ffbeId": 201330,
+      "name": "Magitek Missile",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 12,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 1,
+      "attackFrames": [
+        90
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "terra_magitek_armor_magitek_missile",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/terra_magitek_armor/skills/magitek_missile/source/skill-source.json",
+        "sha256": "22ffb5d4206f5ffe23941eb03360ad7abfab1770f0b64b1f5d86c07505f3b498"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 90,
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "laser_blaster",
+      "ffbeId": 206000113,
+      "name": "Laser Blaster",
+      "rarity": 5,
+      "level": 1,
+      "type": "LIMIT",
+      "mpCost": 0,
+      "scope": "single_enemy",
+      "damageMultiplier": 6,
+      "hitCount": 3,
+      "attackFrames": [
+        39,
+        59,
+        79
+      ],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Limit Burst: Physical damage (6x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "terra_magitek_armor_laser_blaster",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/terra_magitek_armor/skills/laser_blaster/source/skill-source.json",
+        "sha256": "c5569ec3ff7ecb930f91b1a38630a7f56696e93842ca8686169790ac0c513187"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "target",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "limit_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 1,
+          "sourceMoveType": 1,
+          "note": "Drafted from motion 1 / move 1: dash with limit_atk body (LB rows carry no motionType; reviewed adaptation)."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 39,
+          "weight": 0.3
+        },
+        {
+          "frame": 59,
+          "weight": 0.3
+        },
+        {
+          "frame": 79,
+          "weight": 0.4
+        }
+      ]
+    }
+  ],
+  "portraitSource": "unit_icons/unit_icon_206000113.png"
+}

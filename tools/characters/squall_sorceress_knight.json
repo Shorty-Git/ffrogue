@@ -1,0 +1,397 @@
+{
+  "schemaVersion": 1,
+  "key": "squall_sorceress_knight",
+  "spriteUnitId": "208002507",
+  "game": "FFVIII",
+  "battle": {
+    "maxHp": 3200,
+    "maxMp": 100,
+    "heroName": "KNIGHT SQUALL",
+    "heroRole": "VANGUARD",
+    "attackType": "melee",
+    "targetOffsetX": 90,
+    "attackAnim": "atk",
+    "hitFrameIndex": 2
+  },
+  "scale": 2.5,
+  "reviewNote": "Created by tools/import_full_character.mjs; battle values are provisional defaults for balancing.",
+  "skills": [
+    {
+      "id": "blasting_chain",
+      "ffbeId": 1212040,
+      "name": "Blasting Chain",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 60,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 8,
+      "attackFrames": [
+        70,
+        76,
+        82,
+        88,
+        94,
+        100,
+        106,
+        112
+      ],
+      "moveType": "stationary",
+      "motion": "atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "squall_sorceress_knight_blasting_chain",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/squall_sorceress_knight/skills/blasting_chain/source/skill-source.json",
+        "sha256": "38ace7343f3fd30259e4fef5daafbb3a1652cef2c678eb83ae04c9d6e3eaf068"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 8,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 8 / move 4: stationary atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 70,
+          "weight": 0.1
+        },
+        {
+          "frame": 76,
+          "weight": 0.1
+        },
+        {
+          "frame": 82,
+          "weight": 0.1
+        },
+        {
+          "frame": 88,
+          "weight": 0.1
+        },
+        {
+          "frame": 94,
+          "weight": 0.1
+        },
+        {
+          "frame": 100,
+          "weight": 0.1
+        },
+        {
+          "frame": 106,
+          "weight": 0.1
+        },
+        {
+          "frame": 112,
+          "weight": 0.3
+        }
+      ]
+    },
+    {
+      "id": "accelerator_edge",
+      "ffbeId": 1009010,
+      "name": "Accelerator Edge",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 60,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.6,
+      "hitCount": 9,
+      "attackFrames": [
+        42,
+        48,
+        54,
+        60,
+        66,
+        72,
+        78,
+        84,
+        90
+      ],
+      "moveType": "stationary",
+      "motion": "atk",
+      "desc": "Physical damage (1.6x) to all enemies",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "squall_sorceress_knight_accelerator_edge",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/squall_sorceress_knight/skills/accelerator_edge/source/skill-source.json",
+        "sha256": "ecff04256e6d84b73b3922d615e4c242184f161d2cc42a9f4e53b68c3493ae4b"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 8,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 8 / move 4: stationary atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.07
+        },
+        {
+          "frame": 48,
+          "weight": 0.07
+        },
+        {
+          "frame": 54,
+          "weight": 0.07
+        },
+        {
+          "frame": 60,
+          "weight": 0.07
+        },
+        {
+          "frame": 66,
+          "weight": 0.07
+        },
+        {
+          "frame": 72,
+          "weight": 0.07
+        },
+        {
+          "frame": 78,
+          "weight": 0.07
+        },
+        {
+          "frame": 84,
+          "weight": 0.07
+        },
+        {
+          "frame": 90,
+          "weight": 0.44
+        }
+      ]
+    },
+    {
+      "id": "light_barret",
+      "ffbeId": 226627,
+      "name": "Light Barret",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 30,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 10,
+      "attackFrames": [
+        110,
+        120,
+        130,
+        140,
+        150,
+        160,
+        170,
+        180,
+        190,
+        200
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "squall_sorceress_knight_light_barret",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/squall_sorceress_knight/skills/light_barret/source/skill-source.json",
+        "sha256": "ca98a204fec54798d56b2e3e644dbdcd0a6330c1c86d865ad1a3b548f2776c2a"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 110,
+          "weight": 0.03
+        },
+        {
+          "frame": 120,
+          "weight": 0.03
+        },
+        {
+          "frame": 130,
+          "weight": 0.03
+        },
+        {
+          "frame": 140,
+          "weight": 0.03
+        },
+        {
+          "frame": 150,
+          "weight": 0.03
+        },
+        {
+          "frame": 160,
+          "weight": 0.03
+        },
+        {
+          "frame": 170,
+          "weight": 0.03
+        },
+        {
+          "frame": 180,
+          "weight": 0.03
+        },
+        {
+          "frame": 190,
+          "weight": 0.03
+        },
+        {
+          "frame": 200,
+          "weight": 0.73
+        }
+      ]
+    },
+    {
+      "id": "lion_heart_sorceress_s_knight_squall",
+      "ffbeId": 208002507,
+      "name": "Lion Heart (Sorceress's Knight Squall)",
+      "rarity": 5,
+      "level": 1,
+      "type": "LIMIT",
+      "mpCost": 0,
+      "scope": "single_enemy",
+      "damageMultiplier": 6,
+      "hitCount": 9,
+      "attackFrames": [
+        34,
+        34,
+        34,
+        34,
+        34,
+        83,
+        95,
+        117,
+        222
+      ],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Limit Burst: Physical damage (6x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "squall_sorceress_knight_lion_heart_sorceress_s_knight_squall",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/squall_sorceress_knight/skills/lion_heart_sorceress_s_knight_squall/source/skill-source.json",
+        "sha256": "3506e46766c58d13452f37c68793e82a9bb8d92bda67cfb87212266b399ca6aa"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "target",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "limit_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 1,
+          "sourceMoveType": 1,
+          "note": "Drafted from motion 1 / move 1: dash with limit_atk body (LB rows carry no motionType; reviewed adaptation)."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 34,
+          "weight": 0.2
+        },
+        {
+          "frame": 34,
+          "weight": 0.2
+        },
+        {
+          "frame": 34,
+          "weight": 0.2
+        },
+        {
+          "frame": 34,
+          "weight": 0.2
+        },
+        {
+          "frame": 34,
+          "weight": 0.01
+        },
+        {
+          "frame": 83,
+          "weight": 0.01
+        },
+        {
+          "frame": 95,
+          "weight": 0.01
+        },
+        {
+          "frame": 117,
+          "weight": 0.01
+        },
+        {
+          "frame": 222,
+          "weight": 0.16
+        }
+      ]
+    }
+  ],
+  "portraitSource": "unit_icons/unit_icon_208002507.png"
+}

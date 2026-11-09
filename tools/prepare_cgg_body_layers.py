@@ -125,11 +125,23 @@ def prepare(tool, raw, prepared, output):
         poses.append(pose)
     selected = {}
     manifest.pop('bodyLayerIssues', None)
+    manifest.pop('omittedRawFrames', None)
     for clip, meta in manifest['animations'].items():
         meta.pop('bodyLayers', None)
         sequence = rows(raw / f'unit_{clip}_cgs_{unit}.csv')
-        if [row[3] for row in sequence] != [f['delayTicks'] for f in meta['frames']]:
-            raise ValueError(f'Clip timing differs for {clip}')
+        exported = [f['delayTicks'] for f in meta['frames']]
+        if [row[3] for row in sequence] != exported:
+            # The sprite exporter omits frames that render fully transparent (e.g. Terra NV's 100-tick
+            # vanish in limit_atk). The exported frames must then be an ordered subsequence of the raw
+            # sequence; the omitted rows are recorded, anything else still fails.
+            kept, at = [], 0
+            for index, row in enumerate(sequence):
+                if at < len(exported) and row[3] == exported[at]:
+                    kept.append(index); at += 1
+            if at != len(exported):
+                raise ValueError(f'Clip timing differs for {clip}')
+            manifest.setdefault('omittedRawFrames', {})[clip] = [i for i in range(len(sequence)) if i not in kept]
+            sequence = [sequence[i] for i in kept]
         frames = [poses[row[0]] for row in sequence]
         if any(part[3] == 1 and part[4] for pose in frames for part in pose):
             selected[clip] = frames

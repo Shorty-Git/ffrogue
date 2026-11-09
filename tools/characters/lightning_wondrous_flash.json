@@ -1,0 +1,559 @@
+{
+  "schemaVersion": 1,
+  "key": "lightning_wondrous_flash",
+  "spriteUnitId": "213001407",
+  "game": "FFXIII",
+  "battle": {
+    "maxHp": 3200,
+    "maxMp": 100,
+    "heroName": "FLASH LIGHTNING",
+    "heroRole": "VANGUARD",
+    "attackType": "melee",
+    "targetOffsetX": 90,
+    "attackAnim": "atk",
+    "hitFrameIndex": 2
+  },
+  "scale": 2.5,
+  "reviewNote": "Created by tools/import_full_character.mjs; battle values are provisional defaults for balancing.",
+  "skills": [
+    {
+      "id": "blitz_lightning",
+      "ffbeId": 1264080,
+      "name": "Blitz (Lightning)",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 60,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.6,
+      "hitCount": 9,
+      "attackFrames": [
+        42,
+        48,
+        54,
+        60,
+        66,
+        72,
+        78,
+        84,
+        90
+      ],
+      "moveType": "stationary",
+      "motion": "atk",
+      "desc": "Physical damage (1.6x) to all enemies",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "lightning_wondrous_flash_blitz_lightning",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/lightning_wondrous_flash/skills/blitz_lightning/source/skill-source.json",
+        "sha256": "7e6494681d2c2e636e6518c3a96ca6d9f78e181cd21dac74658dd75c1d0da65e"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 8,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 8 / move 4: stationary atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.07
+        },
+        {
+          "frame": 48,
+          "weight": 0.07
+        },
+        {
+          "frame": 54,
+          "weight": 0.07
+        },
+        {
+          "frame": 60,
+          "weight": 0.07
+        },
+        {
+          "frame": 66,
+          "weight": 0.07
+        },
+        {
+          "frame": 72,
+          "weight": 0.07
+        },
+        {
+          "frame": 78,
+          "weight": 0.07
+        },
+        {
+          "frame": 84,
+          "weight": 0.07
+        },
+        {
+          "frame": 90,
+          "weight": 0.44
+        }
+      ]
+    },
+    {
+      "id": "flamestrike_ii",
+      "ffbeId": 230388,
+      "name": "Flamestrike II",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 36,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 1,
+      "attackFrames": [
+        32
+      ],
+      "moveType": "stationary",
+      "motion": "atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "lightning_wondrous_flash_flamestrike_ii",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/lightning_wondrous_flash/skills/flamestrike_ii/source/skill-source.json",
+        "sha256": "9370ebc9076a0ea1205574d7257a0d2bedab1f7f528b32c37e5f14871083fa4d"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 8,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 8 / move 4: stationary atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 32,
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "froststrike_ii",
+      "ffbeId": 230389,
+      "name": "Froststrike II",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 36,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 1,
+      "attackFrames": [
+        32
+      ],
+      "moveType": "stationary",
+      "motion": "atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "lightning_wondrous_flash_froststrike_ii",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/lightning_wondrous_flash/skills/froststrike_ii/source/skill-source.json",
+        "sha256": "7d35400901c4ac9f5a1817a4e6794cc9e0cc8e2ad70328358f9b68e71e7ee925"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 8,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 8 / move 4: stationary atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 32,
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "aquastrike_ii",
+      "ffbeId": 230391,
+      "name": "Aquastrike II",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 36,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 1,
+      "attackFrames": [
+        32
+      ],
+      "moveType": "stationary",
+      "motion": "atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "lightning_wondrous_flash_aquastrike_ii",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/lightning_wondrous_flash/skills/aquastrike_ii/source/skill-source.json",
+        "sha256": "d4aab7df78fd0b840c75d45284ce83645c30810225727c62ec3400ce07ac9605"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 8,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 8 / move 4: stationary atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 32,
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "impulsestrike",
+      "ffbeId": 1264030,
+      "name": "Impulsestrike",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 60,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 8,
+      "attackFrames": [
+        70,
+        76,
+        82,
+        88,
+        94,
+        100,
+        106,
+        112
+      ],
+      "moveType": "stationary",
+      "motion": "atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "lightning_wondrous_flash_impulsestrike",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/lightning_wondrous_flash/skills/impulsestrike/source/skill-source.json",
+        "sha256": "8b230b3e61fb3e2b76ff8d9ff33fac7a9187f35ad9b3807755e907c741f4d780"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 8,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 8 / move 4: stationary atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 70,
+          "weight": 0.1
+        },
+        {
+          "frame": 76,
+          "weight": 0.1
+        },
+        {
+          "frame": 82,
+          "weight": 0.1
+        },
+        {
+          "frame": 88,
+          "weight": 0.1
+        },
+        {
+          "frame": 94,
+          "weight": 0.1
+        },
+        {
+          "frame": 100,
+          "weight": 0.1
+        },
+        {
+          "frame": 106,
+          "weight": 0.1
+        },
+        {
+          "frame": 112,
+          "weight": 0.3
+        }
+      ]
+    },
+    {
+      "id": "sparkstrike_ii",
+      "ffbeId": 230390,
+      "name": "Sparkstrike II",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 36,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 1,
+      "attackFrames": [
+        32
+      ],
+      "moveType": "stationary",
+      "motion": "atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "lightning_wondrous_flash_sparkstrike_ii",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/lightning_wondrous_flash/skills/sparkstrike_ii/source/skill-source.json",
+        "sha256": "e7d329ec2cc177bd91e943438d90d31e3b0ba1994abf9be99ee949f534ea5b29"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 8,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 8 / move 4: stationary atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 32,
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "curaga",
+      "ffbeId": 10160,
+      "name": "Curaga",
+      "rarity": 5,
+      "level": 1,
+      "type": "MAGIC",
+      "mpCost": 15,
+      "scope": "party",
+      "damageMultiplier": 1,
+      "hitCount": 0,
+      "attackFrames": [
+        120
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Restore 900 HP to all living allies (no revival).",
+      "execution": "prepared-friendly",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "lightning_wondrous_flash_curaga",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/lightning_wondrous_flash/skills/curaga/source/skill-source.json",
+        "sha256": "90899660b12930ce25d009076ab9e19f85af22055d69b9a0c91184c5837e3b07"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "allyTargeting": "living-allies",
+      "allyEvents": [
+        {
+          "frame": 120,
+          "effects": [
+            {
+              "kind": "heal",
+              "amount": 900
+            }
+          ]
+        }
+      ],
+      "friendlyTargetReview": {
+        "sourceTarget": "6",
+        "sourceRange": "2",
+        "note": "Original target 6 / range 2 (process 2); adapted to a fixed 900 HP heal on all living allies."
+      }
+    },
+    {
+      "id": "army_of_one_wondrous_flash_lightning",
+      "ffbeId": 213001407,
+      "name": "Army of One (Wondrous Flash Lightning)",
+      "rarity": 5,
+      "level": 1,
+      "type": "LIMIT",
+      "mpCost": 0,
+      "scope": "single_enemy",
+      "damageMultiplier": 6,
+      "hitCount": 5,
+      "attackFrames": [
+        293,
+        293,
+        293,
+        293,
+        293
+      ],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Limit Burst: Physical damage (6x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "lightning_wondrous_flash_army_of_one_wondrous_flash_lightning",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/lightning_wondrous_flash/skills/army_of_one_wondrous_flash_lightning/source/skill-source.json",
+        "sha256": "f06a82149555499a1e523dd90e15b33d59b2a118e93560547e5847d7032d684b"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "target",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "limit_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 1,
+          "sourceMoveType": 1,
+          "note": "Drafted from motion 1 / move 1: dash with limit_atk body (LB rows carry no motionType; reviewed adaptation)."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 293,
+          "weight": 0.2
+        },
+        {
+          "frame": 293,
+          "weight": 0.2
+        },
+        {
+          "frame": 293,
+          "weight": 0.2
+        },
+        {
+          "frame": 293,
+          "weight": 0.2
+        },
+        {
+          "frame": 293,
+          "weight": 0.2
+        }
+      ]
+    }
+  ],
+  "portraitSource": "unit_icons/unit_icon_213001407.png"
+}

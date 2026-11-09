@@ -1,0 +1,205 @@
+{
+  "schemaVersion": 1,
+  "key": "barret_avalanche",
+  "spriteUnitId": "207003207",
+  "game": "FFVII",
+  "battle": {
+    "maxHp": 3200,
+    "maxMp": 100,
+    "heroName": "AVALANCHE BARRET",
+    "heroRole": "VANGUARD",
+    "attackType": "melee",
+    "targetOffsetX": 90,
+    "attackAnim": "atk",
+    "hitFrameIndex": 2
+  },
+  "scale": 2.5,
+  "reviewNote": "Created by tools/import_full_character.mjs; battle values are provisional defaults for balancing.",
+  "skills": [
+    {
+      "id": "this_one_right_here_is_for_the_planet",
+      "ffbeId": 207003207,
+      "name": "This one right here is for the planet!",
+      "rarity": 5,
+      "level": 1,
+      "type": "LIMIT",
+      "mpCost": 0,
+      "scope": "single_enemy",
+      "damageMultiplier": 6,
+      "hitCount": 27,
+      "attackFrames": [
+        30,
+        36,
+        42,
+        48,
+        54,
+        60,
+        66,
+        72,
+        78,
+        84,
+        90,
+        96,
+        102,
+        108,
+        114,
+        120,
+        126,
+        132,
+        138,
+        144,
+        150,
+        156,
+        162,
+        168,
+        174,
+        180,
+        186
+      ],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Limit Burst: Physical damage (6x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "barret_avalanche_this_one_right_here_is_for_the_planet",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/barret_avalanche/skills/this_one_right_here_is_for_the_planet/source/skill-source.json",
+        "sha256": "fa1a3a2d2a90427a751fe055f12fda75fbddd4eb9e5873f23393e2d26232c14d"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "target",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "limit_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 1,
+          "sourceMoveType": 1,
+          "note": "Drafted from motion 1 / move 1: dash with limit_atk body (LB rows carry no motionType; reviewed adaptation)."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 30,
+          "weight": 0.02
+        },
+        {
+          "frame": 36,
+          "weight": 0.02
+        },
+        {
+          "frame": 42,
+          "weight": 0.02
+        },
+        {
+          "frame": 48,
+          "weight": 0.02
+        },
+        {
+          "frame": 54,
+          "weight": 0.02
+        },
+        {
+          "frame": 60,
+          "weight": 0.02
+        },
+        {
+          "frame": 66,
+          "weight": 0.02
+        },
+        {
+          "frame": 72,
+          "weight": 0.02
+        },
+        {
+          "frame": 78,
+          "weight": 0.02
+        },
+        {
+          "frame": 84,
+          "weight": 0.02
+        },
+        {
+          "frame": 90,
+          "weight": 0.02
+        },
+        {
+          "frame": 96,
+          "weight": 0.02
+        },
+        {
+          "frame": 102,
+          "weight": 0.02
+        },
+        {
+          "frame": 108,
+          "weight": 0.02
+        },
+        {
+          "frame": 114,
+          "weight": 0.02
+        },
+        {
+          "frame": 120,
+          "weight": 0.02
+        },
+        {
+          "frame": 126,
+          "weight": 0.02
+        },
+        {
+          "frame": 132,
+          "weight": 0.02
+        },
+        {
+          "frame": 138,
+          "weight": 0.02
+        },
+        {
+          "frame": 144,
+          "weight": 0.02
+        },
+        {
+          "frame": 150,
+          "weight": 0.02
+        },
+        {
+          "frame": 156,
+          "weight": 0.02
+        },
+        {
+          "frame": 162,
+          "weight": 0.02
+        },
+        {
+          "frame": 168,
+          "weight": 0.02
+        },
+        {
+          "frame": 174,
+          "weight": 0.02
+        },
+        {
+          "frame": 180,
+          "weight": 0.02
+        },
+        {
+          "frame": 186,
+          "weight": 0.48
+        }
+      ]
+    }
+  ],
+  "portraitSource": "unit_icons/unit_icon_207003207.png"
+}

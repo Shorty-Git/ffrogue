@@ -1,0 +1,609 @@
+{
+  "unitId": "215003107",
+  "unitName": "TRUE KING NOCTIS",
+  "game": "FFXV",
+  "skills": [
+    {
+      "id": "point_blank_warp_strike_true_king_noctis",
+      "ffbeId": 1336151,
+      "name": "Point-Blank Warp-Strike (True King Noctis)",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 60,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 3,
+      "attackFrames": [
+        20,
+        42,
+        78
+      ],
+      "moveType": "stationary",
+      "motion": "atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "noctis_true_king_point_blank_warp_strike_true_king_noctis",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/noctis_true_king/skills/point_blank_warp_strike_true_king_noctis/source/skill-source.json",
+        "sha256": "8f56a3cf357373c1c6c872f057a122576e31101c3aa5d743872d86507ae43754"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 8,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 8 / move 4: stationary atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 20,
+          "weight": 0.2
+        },
+        {
+          "frame": 42,
+          "weight": 0.2
+        },
+        {
+          "frame": 78,
+          "weight": 0.6
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 1336151,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 1336151,
+          "name": "Point-Blank Warp-Strike (True King Noctis)",
+          "rarity": 9,
+          "dispOrder": 1336151,
+          "cost": 100,
+          "6p90IFnC": null,
+          "target": "1",
+          "targetRange": "1",
+          "oL6zdpD0": 3,
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 1,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 4,
+          "processId": "1",
+          "PI18xnkD": "0",
+          "processParam": "0,0,0,0,0,0,20000,0",
+          "H4zD2IQ5": 0,
+          "motionType": 8,
+          "effectFrames": "66:7002090:1:1:0&20:1001690:1:1:0&20:5008010:1:1:0&42:1001690:1:1:0&42:5008010:1:1:0&78:1001690:1:1:0&78:5009920:1:4:0&78:5008010:1:1:0",
+          "attackFrames": "20:20:3:2-42:20:3:2-78:60:3:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000105,
+          "equipCondition": null,
+          "2QoE3PtB": 0,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": null,
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "spectral_gleam",
+      "ffbeId": 1336030,
+      "name": "Spectral Gleam",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 60,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 8,
+      "attackFrames": [
+        70,
+        76,
+        82,
+        88,
+        94,
+        100,
+        106,
+        112
+      ],
+      "moveType": "stationary",
+      "motion": "atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "noctis_true_king_spectral_gleam",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/noctis_true_king/skills/spectral_gleam/source/skill-source.json",
+        "sha256": "6c59d4bfcd6a322f014dde4d7aa88da8252fb414057066eace96f3f3b527620d"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 8,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 8 / move 4: stationary atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 70,
+          "weight": 0.1
+        },
+        {
+          "frame": 76,
+          "weight": 0.1
+        },
+        {
+          "frame": 82,
+          "weight": 0.1
+        },
+        {
+          "frame": 88,
+          "weight": 0.1
+        },
+        {
+          "frame": 94,
+          "weight": 0.1
+        },
+        {
+          "frame": 100,
+          "weight": 0.1
+        },
+        {
+          "frame": 106,
+          "weight": 0.1
+        },
+        {
+          "frame": 112,
+          "weight": 0.3
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 1336030,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 1336030,
+          "name": "Spectral Gleam",
+          "rarity": 10,
+          "dispOrder": 1336030,
+          "cost": 150,
+          "6p90IFnC": null,
+          "target": "1@1",
+          "targetRange": "1@1",
+          "oL6zdpD0": 3,
+          "element": "0,0,0,0,0,0,1,0",
+          "Isb1GDe2": 1,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 4,
+          "processId": "1@33",
+          "PI18xnkD": "0@0",
+          "processParam": "0,0,0,0,0,0,24000,0@0,0,0,0,0,0,-130,0,1,3",
+          "H4zD2IQ5": 0,
+          "motionType": 8,
+          "effectFrames": "40:5003680:2:4:0&40:60138000:1:1:0&40:5028082:2:1:0&40:5028091:1:1:0",
+          "attackFrames": "70:10:2:2-76:10:2:2-82:10:2:2-88:10:2:2-94:10:2:2-100:10:2:2-106:10:2:2-112:30:2:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000005,
+          "equipCondition": null,
+          "2QoE3PtB": 0,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": null,
+          "juA0Z4m7": null,
+          "5c3dU9nP": 1,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "armiger_strike",
+      "ffbeId": 1336080,
+      "name": "Armiger Strike",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 60,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.6,
+      "hitCount": 9,
+      "attackFrames": [
+        42,
+        48,
+        54,
+        60,
+        66,
+        72,
+        78,
+        84,
+        90
+      ],
+      "moveType": "stationary",
+      "motion": "atk",
+      "desc": "Physical damage (1.6x) to all enemies",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "noctis_true_king_armiger_strike",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/noctis_true_king/skills/armiger_strike/source/skill-source.json",
+        "sha256": "49a20b47b298086282a847e77daad9306dc41cce04629b40b35180468d324712"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 8,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 8 / move 4: stationary atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.07
+        },
+        {
+          "frame": 48,
+          "weight": 0.07
+        },
+        {
+          "frame": 54,
+          "weight": 0.07
+        },
+        {
+          "frame": 60,
+          "weight": 0.07
+        },
+        {
+          "frame": 66,
+          "weight": 0.07
+        },
+        {
+          "frame": 72,
+          "weight": 0.07
+        },
+        {
+          "frame": 78,
+          "weight": 0.07
+        },
+        {
+          "frame": 84,
+          "weight": 0.07
+        },
+        {
+          "frame": 90,
+          "weight": 0.44
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 1336080,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 1336080,
+          "name": "Armiger Strike",
+          "rarity": 10,
+          "dispOrder": 1336080,
+          "cost": 120,
+          "6p90IFnC": null,
+          "target": "1",
+          "targetRange": "2",
+          "oL6zdpD0": 3,
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 1,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 4,
+          "processId": "1",
+          "PI18xnkD": "0",
+          "processParam": "0,0,0,0,0,0,14000,0",
+          "H4zD2IQ5": 0,
+          "motionType": 8,
+          "effectFrames": "38:605023350:1:1:0",
+          "attackFrames": "42:7:2:2-48:7:2:2-54:7:2:2-60:7:2:2-66:7:2:2-72:7:2:2-78:7:2:2-84:7:2:2-90:44:2:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000019,
+          "equipCondition": null,
+          "2QoE3PtB": 0,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": null,
+          "juA0Z4m7": null,
+          "5c3dU9nP": 1,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "power_of_light",
+      "ffbeId": 215003107,
+      "name": "Power of Light!",
+      "rarity": 5,
+      "level": 1,
+      "type": "LIMIT",
+      "mpCost": 0,
+      "scope": "all_enemies",
+      "damageMultiplier": 3.5,
+      "hitCount": 12,
+      "attackFrames": [
+        125,
+        125,
+        72,
+        76,
+        81,
+        86,
+        92,
+        98,
+        104,
+        110,
+        118,
+        125
+      ],
+      "moveType": "stationary",
+      "motion": "atk",
+      "desc": "Limit Burst: Physical damage (3.5x) to all enemies",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "noctis_true_king_power_of_light",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/noctis_true_king/skills/power_of_light/source/skill-source.json",
+        "sha256": "f1bd2f0186d59c9f5d1797aee0946db43a4afeee2a14bc17a26c6000f95ed103"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "limit_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 1,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 1 / move 4: stationary limit_atk body (LB rows carry no motionType; reviewed adaptation)."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 72,
+          "weight": 0.016666666666666666
+        },
+        {
+          "frame": 76,
+          "weight": 0.016666666666666666
+        },
+        {
+          "frame": 81,
+          "weight": 0.016666666666666666
+        },
+        {
+          "frame": 86,
+          "weight": 0.016666666666666666
+        },
+        {
+          "frame": 92,
+          "weight": 0.016666666666666666
+        },
+        {
+          "frame": 98,
+          "weight": 0.016666666666666666
+        },
+        {
+          "frame": 104,
+          "weight": 0.016666666666666666
+        },
+        {
+          "frame": 110,
+          "weight": 0.016666666666666666
+        },
+        {
+          "frame": 118,
+          "weight": 0.016666666666666666
+        },
+        {
+          "frame": 125,
+          "weight": 0.3333333333333333
+        },
+        {
+          "frame": 125,
+          "weight": 0.3333333333333333
+        },
+        {
+          "frame": 125,
+          "weight": 0.18333333333333332
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "LIMIT",
+        "id": 215003107,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "limitBurstId": 215003107,
+          "name": "Power of Light!",
+          "limitBurstType": 1,
+          "target": "1@1@1@3",
+          "targetRange": "2@2@2@0",
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 1,
+          "J35nicFV": 0,
+          "skillType": 1,
+          "aR5i4ewA": 0,
+          "KosY4a18": 2,
+          "Af2Pc0Jz": 1,
+          "processId": "163@24@1@136",
+          "PI18xnkD": "0@0@0@0",
+          "processParam": "1&2,35,35,1,3,1@0,-80,0,0,3,1@0,0,0,0,0,0,35000,0@1336151,0,0,100000,3,1,111458,0",
+          "H4zD2IQ5": 0,
+          "fileInfo": "LB_LLM_lapis4new.usm",
+          "effectFrame": "12:7002090:1:2:0&0:5040240:1:4:0&0:5040245:1:4:0&0:8009680:1:2:0&0:8009681:1:1:0&76:5030910:1:1:0&125:5000341:1:1:0&125:5030832:1:1:0",
+          "attackFrames": "125:100:3:2@125:100:3:2@72:5:3:2-76:5:3:2-81:5:3:2-86:5:3:2-92:5:3:2-98:5:3:2-104:5:3:2-110:5:3:2-118:5:3:2-125:55:3:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000000,
+          "description": "Damage all enemies, and other effects",
+          "58bfqWsR": 1,
+          "6ZEyK95f": null,
+          "effectFrames": "12:7002090:1:2:0&0:5040240:1:4:0&0:5040245:1:4:0&0:8009680:1:2:0&0:8009681:1:1:0&76:5030910:1:1:0&125:5000341:1:1:0&125:5030832:1:1:0"
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    }
+  ]
+}

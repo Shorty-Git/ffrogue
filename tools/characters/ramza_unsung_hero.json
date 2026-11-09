@@ -1,0 +1,759 @@
+{
+  "schemaVersion": 1,
+  "key": "ramza_unsung_hero",
+  "spriteUnitId": "253001807",
+  "game": "FFT",
+  "battle": {
+    "maxHp": 3200,
+    "maxMp": 100,
+    "heroName": "UNSUNG RAMZA",
+    "heroRole": "VANGUARD",
+    "attackType": "melee",
+    "targetOffsetX": 90,
+    "attackAnim": "atk",
+    "hitFrameIndex": 2
+  },
+  "scale": 2.5,
+  "reviewNote": "Created by tools/import_full_character.mjs; battle values are provisional defaults for balancing.",
+  "skills": [
+    {
+      "id": "knight_house_s_blade",
+      "ffbeId": 1321080,
+      "name": "Knight House's Blade",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 60,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.6,
+      "hitCount": 9,
+      "attackFrames": [
+        42,
+        48,
+        54,
+        60,
+        66,
+        72,
+        78,
+        84,
+        90
+      ],
+      "moveType": "stationary",
+      "motion": "atk",
+      "desc": "Physical damage (1.6x) to all enemies",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "ramza_unsung_hero_knight_house_s_blade",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/ramza_unsung_hero/skills/knight_house_s_blade/source/skill-source.json",
+        "sha256": "44f6bb6f83d4f836c426830fccc64a4901d260f9e7d9abbdce985c86cd173dd6"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 8,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 8 / move 4: stationary atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.07
+        },
+        {
+          "frame": 48,
+          "weight": 0.07
+        },
+        {
+          "frame": 54,
+          "weight": 0.07
+        },
+        {
+          "frame": 60,
+          "weight": 0.07
+        },
+        {
+          "frame": 66,
+          "weight": 0.07
+        },
+        {
+          "frame": 72,
+          "weight": 0.07
+        },
+        {
+          "frame": 78,
+          "weight": 0.07
+        },
+        {
+          "frame": 84,
+          "weight": 0.07
+        },
+        {
+          "frame": 90,
+          "weight": 0.44
+        }
+      ]
+    },
+    {
+      "id": "holy",
+      "ffbeId": 10210,
+      "name": "Holy",
+      "rarity": 5,
+      "level": 1,
+      "type": "MAGIC",
+      "mpCost": 20,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 1,
+      "attackFrames": [
+        450
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Magic damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "ramza_unsung_hero_holy",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/ramza_unsung_hero/skills/holy/source/skill-source.json",
+        "sha256": "ac6ebc3b69f0c72e7e424db3f2c5bf83eb5f3a073c6095f115e1bc3f8b27e4e0"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 450,
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "fira",
+      "ffbeId": 20080,
+      "name": "Fira",
+      "rarity": 5,
+      "level": 1,
+      "type": "MAGIC",
+      "mpCost": 10,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.6,
+      "hitCount": 9,
+      "attackFrames": [
+        42,
+        48,
+        54,
+        60,
+        66,
+        72,
+        78,
+        84,
+        90
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Magic damage (1.6x) to all enemies",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "ramza_unsung_hero_fira",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/ramza_unsung_hero/skills/fira/source/skill-source.json",
+        "sha256": "608659adb4e2d0054487fcd42b9b6331394a3de1156a302a87b4dfe1caf7a0a6"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.07
+        },
+        {
+          "frame": 48,
+          "weight": 0.07
+        },
+        {
+          "frame": 54,
+          "weight": 0.07
+        },
+        {
+          "frame": 60,
+          "weight": 0.07
+        },
+        {
+          "frame": 66,
+          "weight": 0.07
+        },
+        {
+          "frame": 72,
+          "weight": 0.07
+        },
+        {
+          "frame": 78,
+          "weight": 0.07
+        },
+        {
+          "frame": 84,
+          "weight": 0.07
+        },
+        {
+          "frame": 90,
+          "weight": 0.44
+        }
+      ]
+    },
+    {
+      "id": "blizzara",
+      "ffbeId": 20090,
+      "name": "Blizzara",
+      "rarity": 5,
+      "level": 1,
+      "type": "MAGIC",
+      "mpCost": 10,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.6,
+      "hitCount": 9,
+      "attackFrames": [
+        42,
+        48,
+        54,
+        60,
+        66,
+        72,
+        78,
+        84,
+        90
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Magic damage (1.6x) to all enemies",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "ramza_unsung_hero_blizzara",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/ramza_unsung_hero/skills/blizzara/source/skill-source.json",
+        "sha256": "650f76601d20cf709aa041a96f7fa4ab501b58c796437b58ce522d1066e08889"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.07
+        },
+        {
+          "frame": 48,
+          "weight": 0.07
+        },
+        {
+          "frame": 54,
+          "weight": 0.07
+        },
+        {
+          "frame": 60,
+          "weight": 0.07
+        },
+        {
+          "frame": 66,
+          "weight": 0.07
+        },
+        {
+          "frame": 72,
+          "weight": 0.07
+        },
+        {
+          "frame": 78,
+          "weight": 0.07
+        },
+        {
+          "frame": 84,
+          "weight": 0.07
+        },
+        {
+          "frame": 90,
+          "weight": 0.44
+        }
+      ]
+    },
+    {
+      "id": "blizzaga",
+      "ffbeId": 20210,
+      "name": "Blizzaga",
+      "rarity": 5,
+      "level": 1,
+      "type": "MAGIC",
+      "mpCost": 20,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.6,
+      "hitCount": 8,
+      "attackFrames": [
+        42,
+        62,
+        82,
+        102,
+        122,
+        142,
+        162,
+        182
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Magic damage (1.6x) to all enemies",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "ramza_unsung_hero_blizzaga",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/ramza_unsung_hero/skills/blizzaga/source/skill-source.json",
+        "sha256": "52c3daeeb57a1d4c9a47e31dab0036c2532112ac3aeac45e6f38119be334a112"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.08
+        },
+        {
+          "frame": 62,
+          "weight": 0.08
+        },
+        {
+          "frame": 82,
+          "weight": 0.08
+        },
+        {
+          "frame": 102,
+          "weight": 0.08
+        },
+        {
+          "frame": 122,
+          "weight": 0.08
+        },
+        {
+          "frame": 142,
+          "weight": 0.08
+        },
+        {
+          "frame": 162,
+          "weight": 0.08
+        },
+        {
+          "frame": 182,
+          "weight": 0.44
+        }
+      ]
+    },
+    {
+      "id": "firaga",
+      "ffbeId": 20200,
+      "name": "Firaga",
+      "rarity": 5,
+      "level": 1,
+      "type": "MAGIC",
+      "mpCost": 20,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.6,
+      "hitCount": 8,
+      "attackFrames": [
+        42,
+        62,
+        82,
+        102,
+        122,
+        142,
+        162,
+        182
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Magic damage (1.6x) to all enemies",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "ramza_unsung_hero_firaga",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/ramza_unsung_hero/skills/firaga/source/skill-source.json",
+        "sha256": "5e9a4382be5904773f45f4bf05514ee0bf94f38910249c4a60348fe4b6fd324b"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.08
+        },
+        {
+          "frame": 62,
+          "weight": 0.08
+        },
+        {
+          "frame": 82,
+          "weight": 0.08
+        },
+        {
+          "frame": 102,
+          "weight": 0.08
+        },
+        {
+          "frame": 122,
+          "weight": 0.08
+        },
+        {
+          "frame": 142,
+          "weight": 0.08
+        },
+        {
+          "frame": 162,
+          "weight": 0.08
+        },
+        {
+          "frame": 182,
+          "weight": 0.44
+        }
+      ]
+    },
+    {
+      "id": "suppressive_sword",
+      "ffbeId": 1321030,
+      "name": "Suppressive Sword",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 60,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 8,
+      "attackFrames": [
+        70,
+        76,
+        82,
+        88,
+        94,
+        100,
+        106,
+        112
+      ],
+      "moveType": "stationary",
+      "motion": "atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "ramza_unsung_hero_suppressive_sword",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/ramza_unsung_hero/skills/suppressive_sword/source/skill-source.json",
+        "sha256": "2276cadd0baee41bb4e3c09c9ba568779066976781801c14d00f64e7a6a5eb68"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 8,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 8 / move 4: stationary atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 70,
+          "weight": 0.1
+        },
+        {
+          "frame": 76,
+          "weight": 0.1
+        },
+        {
+          "frame": 82,
+          "weight": 0.1
+        },
+        {
+          "frame": 88,
+          "weight": 0.1
+        },
+        {
+          "frame": 94,
+          "weight": 0.1
+        },
+        {
+          "frame": 100,
+          "weight": 0.1
+        },
+        {
+          "frame": 106,
+          "weight": 0.1
+        },
+        {
+          "frame": 112,
+          "weight": 0.3
+        }
+      ]
+    },
+    {
+      "id": "cheer",
+      "ffbeId": 200450,
+      "name": "Cheer",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 48,
+      "scope": "party",
+      "damageMultiplier": 1,
+      "hitCount": 0,
+      "attackFrames": [
+        120
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Boost physical damage of all allies by 30% for 3 rounds. No HP damage.",
+      "execution": "prepared-friendly",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "ramza_unsung_hero_cheer",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/ramza_unsung_hero/skills/cheer/source/skill-source.json",
+        "sha256": "a512792f4d38868d2fb95ec508dff00f1e49c96f0dea4ddc6e0e750030503f79"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "allyTargeting": "living-allies",
+      "allyEvents": [
+        {
+          "frame": 120,
+          "effects": [
+            {
+              "kind": "physical-boost",
+              "multiplier": 1.3,
+              "turns": 3
+            }
+          ]
+        }
+      ],
+      "friendlyTargetReview": {
+        "sourceTarget": "2",
+        "sourceRange": "2",
+        "note": "Original target 2 / range 2 (process 3); adapted to physical-boost x1.3 for 3 rounds on all living allies."
+      }
+    },
+    {
+      "id": "dark_veil_of_agony_begone",
+      "ffbeId": 253001807,
+      "name": "Dark veil of agony begone!",
+      "rarity": 5,
+      "level": 1,
+      "type": "LIMIT",
+      "mpCost": 0,
+      "scope": "all_enemies",
+      "damageMultiplier": 3.5,
+      "hitCount": 4,
+      "attackFrames": [
+        147,
+        147,
+        87,
+        147
+      ],
+      "moveType": "stationary",
+      "motion": "atk",
+      "desc": "Limit Burst: Physical damage (3.5x) to all enemies",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "ramza_unsung_hero_dark_veil_of_agony_begone",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/ramza_unsung_hero/skills/dark_veil_of_agony_begone/source/skill-source.json",
+        "sha256": "fb42f21c4116f8bf7eaf850f4de414bf3aa28e733616b0e640656b0574e5c755"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "limit_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 1,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 1 / move 4: stationary limit_atk body (LB rows carry no motionType; reviewed adaptation)."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 87,
+          "weight": 0.03333333333333333
+        },
+        {
+          "frame": 147,
+          "weight": 0.3333333333333333
+        },
+        {
+          "frame": 147,
+          "weight": 0.3333333333333333
+        },
+        {
+          "frame": 147,
+          "weight": 0.3
+        }
+      ]
+    }
+  ],
+  "portraitSource": "unit_icons/unit_icon_253001807.png"
+}

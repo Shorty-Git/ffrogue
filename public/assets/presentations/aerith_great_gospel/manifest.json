@@ -8,7 +8,7 @@
   "durationFrames": 670,
   "provenance": {
     "planFile": "tools/data/full-import/aerith/skills/great_gospel/source/plan.json",
-    "planSha256": "106b1b97ba4362e79a5def404455ac160e663114a6e2379bf22f6422075e8886",
+    "planSha256": "853565827ddbc7e2000012f9fa590f905feb737338377ec71acc01f93fcae2db",
     "playerSha256": "e4e4f09f03c649f80c0f5f3bfa4a383a4033680d33d473799cc2e4d7472a834e",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "a22e4b4ffc90a1ad812d96ced476e57b33b4432a9a3e405b9c0c7ae9fa26d87a"
@@ -45,7 +45,7 @@
     "name": "Great Gospel",
     "sourceId": 207000405,
     "unit": "aerith",
-    "sourceSha256": "18d0c13eef82fc62ec8927a5eb0ed7eaff480aaed1e9208c60acc45aa27c2a4e",
+    "sourceSha256": "45e7ea0c834132aa11b139e9babf3c863e887ebb1a4d393918219fa0d9217a0e",
     "seed": 1,
     "effectHorizon": 380,
     "endFrame": 210,
@@ -56,7 +56,7 @@
       "approachFrames": 0,
       "returnFrames": 12,
       "targetOffsetX": 200,
-      "recipeSha256": "cbac0d9e4a607f256a361ec271a35c2a331e203cf3417c70e72caede3b01255f",
+      "recipeSha256": "b52eb887f86441e7a8c98cbbc7fb590fab783dd5b0f232cfc4f32dd6d6f500c6",
       "origin": "Reviewed game recipe; preview timing and offsets are adaptations"
     },
     "fitScreenToArena": false,
@@ -43758,11 +43758,11 @@
   },
   "audioSource": {
     "schema": "ffbe-audio-source-v1",
-    "playbackSupported": false,
+    "playbackSupported": true,
     "bus": "skill-sfx",
     "frameRate": 60,
     "coverage": "all-resolved-effect-groups-only",
-    "timingBasis": "Serialized effect-group offsets; native sound dispatch not measured",
+    "timingBasis": "Reviewed composed effect-group offsets; native common-bank dispatch",
     "events": [
       {
         "frame": 0,
@@ -43771,7 +43771,12 @@
         "rawParameters": [
           "1"
         ],
-        "resource": null
+        "resource": {
+          "key": "SE:794",
+          "uri": "/assets/audio/combat/se_limitburst_aerith_1.wav",
+          "sha256": "6647956503ea6da398847f36fa0de7fdd255d432a9f3d386b8cd7e6a48065517",
+          "format": "wav"
+        }
       },
       {
         "frame": 30,
@@ -43780,7 +43785,12 @@
         "rawParameters": [
           "1"
         ],
-        "resource": null
+        "resource": {
+          "key": "SE:793",
+          "uri": "/assets/audio/combat/se_FF7_limit_gauge_1.wav",
+          "sha256": "27d80678fa7933f2ffc246b0514aa3bc1a24c640eacfc389bae59b3e3d2169eb",
+          "format": "wav"
+        }
       }
     ],
     "issues": [],

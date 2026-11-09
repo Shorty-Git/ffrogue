@@ -1,0 +1,749 @@
+{
+  "unitId": "205001807",
+  "unitName": "WAYFARER BARTZ",
+  "game": "FFV",
+  "skills": [
+    {
+      "id": "violent_gale",
+      "ffbeId": 1158080,
+      "name": "Violent Gale",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 60,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.6,
+      "hitCount": 9,
+      "attackFrames": [
+        42,
+        48,
+        54,
+        60,
+        66,
+        72,
+        78,
+        84,
+        90
+      ],
+      "moveType": "stationary",
+      "motion": "atk",
+      "desc": "Physical damage (1.6x) to all enemies",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "bartz_wayfarer_violent_gale",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/bartz_wayfarer/skills/violent_gale/source/skill-source.json",
+        "sha256": "0cc48c90638ce3957206f0f1ae70fe44bde0a77ef322190d2d46e0575e8ac96b"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 8,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 8 / move 4: stationary atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.07
+        },
+        {
+          "frame": 48,
+          "weight": 0.07
+        },
+        {
+          "frame": 54,
+          "weight": 0.07
+        },
+        {
+          "frame": 60,
+          "weight": 0.07
+        },
+        {
+          "frame": 66,
+          "weight": 0.07
+        },
+        {
+          "frame": 72,
+          "weight": 0.07
+        },
+        {
+          "frame": 78,
+          "weight": 0.07
+        },
+        {
+          "frame": 84,
+          "weight": 0.07
+        },
+        {
+          "frame": 90,
+          "weight": 0.44
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 1158080,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 1158080,
+          "name": "Violent Gale",
+          "rarity": 8,
+          "dispOrder": 1158080,
+          "cost": 100,
+          "6p90IFnC": null,
+          "target": "1",
+          "targetRange": "2",
+          "oL6zdpD0": 3,
+          "element": "0,0,0,0,1,0,0,0",
+          "Isb1GDe2": 1,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 4,
+          "processId": "1",
+          "PI18xnkD": "0",
+          "processParam": "0,0,0,0,0,0,15000,0",
+          "H4zD2IQ5": 0,
+          "motionType": 8,
+          "effectFrames": "38:5006266:1:2:0&40:61606700:1:1:0",
+          "attackFrames": "42:7:2:2-48:7:2:2-54:7:2:2-60:7:2:2-66:7:2:2-72:7:2:2-78:7:2:2-84:7:2:2-90:44:2:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000025,
+          "equipCondition": null,
+          "2QoE3PtB": 0,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": null,
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "crushing_blade",
+      "ffbeId": 1158030,
+      "name": "Crushing Blade",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 60,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 8,
+      "attackFrames": [
+        70,
+        76,
+        82,
+        88,
+        94,
+        100,
+        106,
+        112
+      ],
+      "moveType": "stationary",
+      "motion": "atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "bartz_wayfarer_crushing_blade",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/bartz_wayfarer/skills/crushing_blade/source/skill-source.json",
+        "sha256": "42efac104d08af92a6432417107343912a6d4bf52960f356777dd225bd6812ac"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 8,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 8 / move 4: stationary atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 70,
+          "weight": 0.1
+        },
+        {
+          "frame": 76,
+          "weight": 0.1
+        },
+        {
+          "frame": 82,
+          "weight": 0.1
+        },
+        {
+          "frame": 88,
+          "weight": 0.1
+        },
+        {
+          "frame": 94,
+          "weight": 0.1
+        },
+        {
+          "frame": 100,
+          "weight": 0.1
+        },
+        {
+          "frame": 106,
+          "weight": 0.1
+        },
+        {
+          "frame": 112,
+          "weight": 0.3
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 1158030,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 1158030,
+          "name": "Crushing Blade",
+          "rarity": 10,
+          "dispOrder": 1158030,
+          "cost": 150,
+          "6p90IFnC": null,
+          "target": "1@1",
+          "targetRange": "1@1",
+          "oL6zdpD0": 3,
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 1,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 4,
+          "processId": "1@33",
+          "PI18xnkD": "0@0",
+          "processParam": "0,0,0,0,0,0,17000,0@-130,0,-130,0,-130,0,-130,0,1,3",
+          "H4zD2IQ5": 0,
+          "motionType": 8,
+          "effectFrames": "40:60106000:1:1:0&40:3000563:2:1:0&40:3000562:1:1:0",
+          "attackFrames": "70:10:2:2-76:10:2:2-82:10:2:2-88:10:2:2-94:10:2:2-100:10:2:2-106:10:2:2-112:30:2:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000019,
+          "equipCondition": null,
+          "2QoE3PtB": 0,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": null,
+          "juA0Z4m7": null,
+          "5c3dU9nP": 1,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "wind_cutter_blade",
+      "ffbeId": 239543,
+      "name": "Wind Cutter Blade",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 60,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.6,
+      "hitCount": 16,
+      "attackFrames": [
+        80,
+        90,
+        100,
+        110,
+        120,
+        130,
+        140,
+        150,
+        160,
+        170,
+        180,
+        190,
+        200,
+        210,
+        220,
+        230
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (1.6x) to all enemies",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "bartz_wayfarer_wind_cutter_blade",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/bartz_wayfarer/skills/wind_cutter_blade/source/skill-source.json",
+        "sha256": "1b257499a5196fc5ee7d139c2b24bb01d30ce360abf1b0af05b6fd508fb4aaab"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 80,
+          "weight": 0.06
+        },
+        {
+          "frame": 90,
+          "weight": 0.06
+        },
+        {
+          "frame": 100,
+          "weight": 0.06
+        },
+        {
+          "frame": 110,
+          "weight": 0.06
+        },
+        {
+          "frame": 120,
+          "weight": 0.06
+        },
+        {
+          "frame": 130,
+          "weight": 0.06
+        },
+        {
+          "frame": 140,
+          "weight": 0.06
+        },
+        {
+          "frame": 150,
+          "weight": 0.06
+        },
+        {
+          "frame": 160,
+          "weight": 0.06
+        },
+        {
+          "frame": 170,
+          "weight": 0.06
+        },
+        {
+          "frame": 180,
+          "weight": 0.06
+        },
+        {
+          "frame": 190,
+          "weight": 0.06
+        },
+        {
+          "frame": 200,
+          "weight": 0.06
+        },
+        {
+          "frame": 210,
+          "weight": 0.06
+        },
+        {
+          "frame": 220,
+          "weight": 0.06
+        },
+        {
+          "frame": 230,
+          "weight": 0.1
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 239543,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 239543,
+          "name": "Wind Cutter Blade",
+          "rarity": 10,
+          "dispOrder": 12549,
+          "cost": 66,
+          "6p90IFnC": null,
+          "target": "1",
+          "targetRange": "2",
+          "oL6zdpD0": 3,
+          "element": "0,0,0,0,1,0,0,0",
+          "Isb1GDe2": 1,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 4,
+          "processId": "1",
+          "PI18xnkD": "0",
+          "processParam": "0,0,0,0,0,0,3900,0",
+          "H4zD2IQ5": 0,
+          "motionType": 2,
+          "effectFrames": "40:5041211:1:2:0&100:5041211:1:2:0&160:5041211:1:2:0",
+          "attackFrames": "80:6:2:2-90:6:2:2-100:6:2:2-110:6:2:2-120:6:2:2-130:6:2:2-140:6:2:2-150:6:2:2-160:6:2:2-170:6:2:2-180:6:2:2-190:6:2:2-200:6:2:2-210:6:2:2-220:6:2:2-230:10:2:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000025,
+          "equipCondition": null,
+          "2QoE3PtB": 0,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": "6",
+          "juA0Z4m7": null,
+          "5c3dU9nP": 1,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "rapid_twin_spellblade",
+      "ffbeId": 205001807,
+      "name": "Rapid Twin Spellblade",
+      "rarity": 5,
+      "level": 1,
+      "type": "LIMIT",
+      "mpCost": 0,
+      "scope": "single_enemy",
+      "damageMultiplier": 6,
+      "hitCount": 27,
+      "attackFrames": [
+        58,
+        58,
+        58,
+        58,
+        64,
+        70,
+        76,
+        82,
+        88,
+        94,
+        100,
+        111,
+        117,
+        123,
+        129,
+        135,
+        141,
+        147,
+        153,
+        164,
+        170,
+        176,
+        182,
+        188,
+        194,
+        200,
+        206
+      ],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Limit Burst: Physical damage (6x) to one enemy",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "bartz_wayfarer_rapid_twin_spellblade",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/bartz_wayfarer/skills/rapid_twin_spellblade/source/skill-source.json",
+        "sha256": "de21dd2c186fd8345f5ea53bfd48f91e99fd8b572de06586c8d3c87944a7a642"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "target",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "limit_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 1,
+          "sourceMoveType": 1,
+          "note": "Drafted from motion 1 / move 1: dash with limit_atk body (LB rows carry no motionType; reviewed adaptation)."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 58,
+          "weight": 0.25
+        },
+        {
+          "frame": 58,
+          "weight": 0.25
+        },
+        {
+          "frame": 58,
+          "weight": 0.25
+        },
+        {
+          "frame": 58,
+          "weight": 0.005
+        },
+        {
+          "frame": 64,
+          "weight": 0.005
+        },
+        {
+          "frame": 70,
+          "weight": 0.005
+        },
+        {
+          "frame": 76,
+          "weight": 0.005
+        },
+        {
+          "frame": 82,
+          "weight": 0.005
+        },
+        {
+          "frame": 88,
+          "weight": 0.005
+        },
+        {
+          "frame": 94,
+          "weight": 0.005
+        },
+        {
+          "frame": 100,
+          "weight": 0.005
+        },
+        {
+          "frame": 111,
+          "weight": 0.005
+        },
+        {
+          "frame": 117,
+          "weight": 0.005
+        },
+        {
+          "frame": 123,
+          "weight": 0.005
+        },
+        {
+          "frame": 129,
+          "weight": 0.005
+        },
+        {
+          "frame": 135,
+          "weight": 0.005
+        },
+        {
+          "frame": 141,
+          "weight": 0.005
+        },
+        {
+          "frame": 147,
+          "weight": 0.005
+        },
+        {
+          "frame": 153,
+          "weight": 0.005
+        },
+        {
+          "frame": 164,
+          "weight": 0.005
+        },
+        {
+          "frame": 170,
+          "weight": 0.005
+        },
+        {
+          "frame": 176,
+          "weight": 0.005
+        },
+        {
+          "frame": 182,
+          "weight": 0.005
+        },
+        {
+          "frame": 188,
+          "weight": 0.005
+        },
+        {
+          "frame": 194,
+          "weight": 0.005
+        },
+        {
+          "frame": 200,
+          "weight": 0.005
+        },
+        {
+          "frame": 206,
+          "weight": 0.135
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "LIMIT",
+        "id": 205001807,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "limitBurstId": 205001807,
+          "name": "Rapid Twin Spellblade",
+          "limitBurstType": 1,
+          "target": "1@1@1@1",
+          "targetRange": "1@1@1@1",
+          "element": "0,0,0,0,1,0,0,0",
+          "Isb1GDe2": 1,
+          "J35nicFV": 0,
+          "skillType": 1,
+          "aR5i4ewA": 0,
+          "KosY4a18": 2,
+          "Af2Pc0Jz": 1,
+          "processId": "163@33@24@1",
+          "PI18xnkD": "0@0@0@0",
+          "processParam": "2,35,35,1,3,1@0,0,0,0,-130,0,0,0,1,3@0,-80,0,0,3,1@0,0,0,0,0,0,25000,0",
+          "H4zD2IQ5": 0,
+          "fileInfo": "LB_LLF_lapis4.usm",
+          "effectFrame": "0:8009287:2:4:0&0:8009288:1:4:0&0:8009289:1:3:0&0:8009290:1:1:0&178:5001290:2:4:0&178:5027962:2:1:0&178:5027971:1:1:0&178:5030771:1:1:0&0:5040360:1:4:0&0:5040365:1:4:0",
+          "attackFrames": "58:100:2:2@58:100:2:2@58:100:2:2@58:2:2:2-64:2:2:2-70:2:2:2-76:2:2:2-82:2:2:2-88:2:2:2-94:2:2:2-100:2:2:2-111:2:2:2-117:2:2:2-123:2:2:2-129:2:2:2-135:2:2:2-141:2:2:2-147:2:2:2-153:2:2:2-164:2:2:2-170:2:2:2-176:2:2:2-182:2:2:2-188:2:2:2-194:2:2:2-200:2:2:2-206:54:2:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000000,
+          "description": "Reduce resistance to swords, wind resistance, and DEF and deal wind damage to one enemy",
+          "58bfqWsR": 1,
+          "6ZEyK95f": null,
+          "effectFrames": "0:8009287:2:4:0&0:8009288:1:4:0&0:8009289:1:3:0&0:8009290:1:1:0&178:5001290:2:4:0&178:5027962:2:1:0&178:5027971:1:1:0&178:5030771:1:1:0&0:5040360:1:4:0&0:5040365:1:4:0"
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    }
+  ]
+}

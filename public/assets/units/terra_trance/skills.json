@@ -1,0 +1,1225 @@
+{
+  "unitId": "206000125",
+  "unitName": "TRANCE TERRA",
+  "game": "FFVI",
+  "skills": [
+    {
+      "id": "cura",
+      "ffbeId": 10070,
+      "name": "Cura",
+      "rarity": 5,
+      "level": 1,
+      "type": "MAGIC",
+      "mpCost": 8,
+      "scope": "party",
+      "damageMultiplier": 1,
+      "hitCount": 0,
+      "attackFrames": [
+        100
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Restore 900 HP to all living allies (no revival).",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "terra_trance_cura",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/terra_trance/skills/cura/source/skill-source.json",
+        "sha256": "92d025d602e181dfb7ec367a153768880231751b2888aba94ebe99032e7f871f"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "allyTargeting": "living-allies",
+      "allyEvents": [
+        {
+          "frame": 100,
+          "effects": [
+            {
+              "kind": "heal",
+              "amount": 900
+            }
+          ]
+        }
+      ],
+      "friendlyTargetReview": {
+        "sourceTarget": "6",
+        "sourceRange": "2",
+        "note": "Original target 6 / range 2 (process 2); adapted to a fixed 900 HP heal on all living allies."
+      },
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "MAGIC",
+        "id": 10070,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "magicId": 10070,
+          "name": "Cura",
+          "rarity": 3,
+          "dispOrder": 7,
+          "cost": 7,
+          "target": "6",
+          "targetRange": "2",
+          "oL6zdpD0": 1,
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 2,
+          "J35nicFV": 0,
+          "magicType": 1,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 3,
+          "aR5i4ewA": 0,
+          "KosY4a18": 2,
+          "Af2Pc0Jz": 0,
+          "processId": "2",
+          "PI18xnkD": "0",
+          "processParam": "0,0,400,300,100",
+          "H4zD2IQ5": 1,
+          "effectFrames": "40:3000010:1:2:0&40:3000011:2:2:0",
+          "attackFrames": "100:100:2:2",
+          "7irj9hAb": "1,1,1,0",
+          "iconId": 700000004,
+          "equipCondition": null,
+          "AegvG91P": "1,1",
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": null,
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography",
+          "allyTargeting"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "fira",
+      "ffbeId": 20080,
+      "name": "Fira",
+      "rarity": 5,
+      "level": 1,
+      "type": "MAGIC",
+      "mpCost": 10,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.6,
+      "hitCount": 9,
+      "attackFrames": [
+        42,
+        48,
+        54,
+        60,
+        66,
+        72,
+        78,
+        84,
+        90
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Magic damage (1.6x) to all enemies",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "terra_trance_fira",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/terra_trance/skills/fira/source/skill-source.json",
+        "sha256": "d2be5a5cd284991bab8cf4e8633e5ba5def65f7b09fc563ffe70e09ee78c52af"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.07
+        },
+        {
+          "frame": 48,
+          "weight": 0.07
+        },
+        {
+          "frame": 54,
+          "weight": 0.07
+        },
+        {
+          "frame": 60,
+          "weight": 0.07
+        },
+        {
+          "frame": 66,
+          "weight": 0.07
+        },
+        {
+          "frame": 72,
+          "weight": 0.07
+        },
+        {
+          "frame": 78,
+          "weight": 0.07
+        },
+        {
+          "frame": 84,
+          "weight": 0.07
+        },
+        {
+          "frame": 90,
+          "weight": 0.44
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "MAGIC",
+        "id": 20080,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "magicId": 20080,
+          "name": "Fira",
+          "rarity": 3,
+          "dispOrder": 107,
+          "cost": 10,
+          "target": "1",
+          "targetRange": "2",
+          "oL6zdpD0": 3,
+          "element": "1,0,0,0,0,0,0,0",
+          "Isb1GDe2": 2,
+          "J35nicFV": 0,
+          "magicType": 2,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "KosY4a18": 2,
+          "Af2Pc0Jz": 0,
+          "processId": "15",
+          "PI18xnkD": "0",
+          "processParam": "0,0,0,0,0,1000,0",
+          "H4zD2IQ5": 2,
+          "effectFrames": "38:2000012:1:2:0&40:5041667:1:1:0",
+          "attackFrames": "42:7:2:2-48:7:2:2-54:7:2:2-60:7:2:2-66:7:2:2-72:7:2:2-78:7:2:2-84:7:2:2-90:44:2:2",
+          "7irj9hAb": "1,1,1,0",
+          "iconId": 700000021,
+          "equipCondition": null,
+          "AegvG91P": "1,0",
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": "2",
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "blizzara",
+      "ffbeId": 20090,
+      "name": "Blizzara",
+      "rarity": 5,
+      "level": 1,
+      "type": "MAGIC",
+      "mpCost": 10,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.6,
+      "hitCount": 9,
+      "attackFrames": [
+        42,
+        48,
+        54,
+        60,
+        66,
+        72,
+        78,
+        84,
+        90
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Magic damage (1.6x) to all enemies",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "terra_trance_blizzara",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/terra_trance/skills/blizzara/source/skill-source.json",
+        "sha256": "363d81218f8f77be9bc745310a7da2ab95ed6f1b5938718e086e6e29eafbdb97"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.07
+        },
+        {
+          "frame": 48,
+          "weight": 0.07
+        },
+        {
+          "frame": 54,
+          "weight": 0.07
+        },
+        {
+          "frame": 60,
+          "weight": 0.07
+        },
+        {
+          "frame": 66,
+          "weight": 0.07
+        },
+        {
+          "frame": 72,
+          "weight": 0.07
+        },
+        {
+          "frame": 78,
+          "weight": 0.07
+        },
+        {
+          "frame": 84,
+          "weight": 0.07
+        },
+        {
+          "frame": 90,
+          "weight": 0.44
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "MAGIC",
+        "id": 20090,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "magicId": 20090,
+          "name": "Blizzara",
+          "rarity": 3,
+          "dispOrder": 108,
+          "cost": 10,
+          "target": "1",
+          "targetRange": "2",
+          "oL6zdpD0": 3,
+          "element": "0,1,0,0,0,0,0,0",
+          "Isb1GDe2": 2,
+          "J35nicFV": 0,
+          "magicType": 2,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "KosY4a18": 2,
+          "Af2Pc0Jz": 0,
+          "processId": "15",
+          "PI18xnkD": "0",
+          "processParam": "0,0,0,0,0,1000,0",
+          "H4zD2IQ5": 2,
+          "effectFrames": "38:2000062:1:2:0&40:5041668:1:1:0",
+          "attackFrames": "42:7:2:2-48:7:2:2-54:7:2:2-60:7:2:2-66:7:2:2-72:7:2:2-78:7:2:2-84:7:2:2-90:44:2:2",
+          "7irj9hAb": "1,1,1,0",
+          "iconId": 700000022,
+          "equipCondition": null,
+          "AegvG91P": "1,0",
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": "3",
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "holy",
+      "ffbeId": 10210,
+      "name": "Holy",
+      "rarity": 5,
+      "level": 1,
+      "type": "MAGIC",
+      "mpCost": 20,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 1,
+      "attackFrames": [
+        450
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Magic damage (2.5x) to one enemy",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "terra_trance_holy",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/terra_trance/skills/holy/source/skill-source.json",
+        "sha256": "13f7d35571a9b8389bf5596e87a36593f530950bcdc7cc94713425326305d687"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 450,
+          "weight": 1
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "MAGIC",
+        "id": 10210,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "magicId": 10210,
+          "name": "Holy",
+          "rarity": 7,
+          "dispOrder": 23,
+          "cost": 0,
+          "target": "1",
+          "targetRange": "1",
+          "oL6zdpD0": 1,
+          "element": "0,0,0,0,0,0,1,0",
+          "Isb1GDe2": 2,
+          "J35nicFV": 0,
+          "magicType": 1,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "KosY4a18": 2,
+          "Af2Pc0Jz": 0,
+          "processId": "169",
+          "PI18xnkD": "0",
+          "processParam": "4,30,2,100",
+          "H4zD2IQ5": 3,
+          "effectFrames": "40:2000420:1:1:0&40:2000421:2:4:0",
+          "attackFrames": "450:100:2:2",
+          "7irj9hAb": "1,1,1,0",
+          "iconId": 700000005,
+          "equipCondition": null,
+          "AegvG91P": "1,0",
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": "8",
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "firaga",
+      "ffbeId": 20200,
+      "name": "Firaga",
+      "rarity": 5,
+      "level": 1,
+      "type": "MAGIC",
+      "mpCost": 20,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.6,
+      "hitCount": 8,
+      "attackFrames": [
+        42,
+        62,
+        82,
+        102,
+        122,
+        142,
+        162,
+        182
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Magic damage (1.6x) to all enemies",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "terra_trance_firaga",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/terra_trance/skills/firaga/source/skill-source.json",
+        "sha256": "eeee814cb2129ff3dd36b89c667707cf9405ea5fb3fec19c771361fab4087d99"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.08
+        },
+        {
+          "frame": 62,
+          "weight": 0.08
+        },
+        {
+          "frame": 82,
+          "weight": 0.08
+        },
+        {
+          "frame": 102,
+          "weight": 0.08
+        },
+        {
+          "frame": 122,
+          "weight": 0.08
+        },
+        {
+          "frame": 142,
+          "weight": 0.08
+        },
+        {
+          "frame": 162,
+          "weight": 0.08
+        },
+        {
+          "frame": 182,
+          "weight": 0.44
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "MAGIC",
+        "id": 20200,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "magicId": 20200,
+          "name": "Firaga",
+          "rarity": 6,
+          "dispOrder": 119,
+          "cost": 20,
+          "target": "1",
+          "targetRange": "2",
+          "oL6zdpD0": 3,
+          "element": "1,0,0,0,0,0,0,0",
+          "Isb1GDe2": 2,
+          "J35nicFV": 0,
+          "magicType": 2,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "KosY4a18": 2,
+          "Af2Pc0Jz": 0,
+          "processId": "15",
+          "PI18xnkD": "0",
+          "processParam": "0,0,0,0,0,2000,0",
+          "H4zD2IQ5": 2,
+          "effectFrames": "76:99999999:1:1:0&40:5041226:1:2:0&40:5041227:1:1:0",
+          "attackFrames": "42:8:2:2-62:8:2:2-82:8:2:2-102:8:2:2-122:8:2:2-142:8:2:2-162:8:2:2-182:44:2:2",
+          "7irj9hAb": "1,1,1,0",
+          "iconId": 700000021,
+          "equipCondition": null,
+          "AegvG91P": "1,0",
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": "2",
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "ultima",
+      "ffbeId": 20440,
+      "name": "Ultima",
+      "rarity": 5,
+      "level": 1,
+      "type": "MAGIC",
+      "mpCost": 60,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.6,
+      "hitCount": 1,
+      "attackFrames": [
+        365
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Magic damage (1.6x) to all enemies",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "terra_trance_ultima",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/terra_trance/skills/ultima/source/skill-source.json",
+        "sha256": "dfb4ee4a2984f6e7ac0208f584c980555a87ec43b02a2a1fd177bc422008e7fc"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 365,
+          "weight": 1
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "MAGIC",
+        "id": 20440,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "magicId": 20440,
+          "name": "Ultima",
+          "rarity": 8,
+          "dispOrder": 143,
+          "cost": 60,
+          "target": "1",
+          "targetRange": "2",
+          "oL6zdpD0": 3,
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 2,
+          "J35nicFV": 0,
+          "magicType": 2,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "KosY4a18": 2,
+          "Af2Pc0Jz": 0,
+          "processId": "70",
+          "PI18xnkD": "0",
+          "processParam": "0,0,2500,50",
+          "H4zD2IQ5": 3,
+          "effectFrames": "40:2000400:1:4:0&40:2000401:2:4:0",
+          "attackFrames": "365:100:2:2",
+          "7irj9hAb": "1,0,1,0",
+          "iconId": 700000037,
+          "equipCondition": null,
+          "AegvG91P": "1,0",
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": null,
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "magical_activation",
+      "ffbeId": 208240,
+      "name": "Magical Activation",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 25,
+      "scope": "party",
+      "damageMultiplier": 1,
+      "hitCount": 0,
+      "attackFrames": [
+        120
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Boost physical damage of all allies by 30% for 3 rounds. No HP damage.",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "terra_trance_magical_activation",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/terra_trance/skills/magical_activation/source/skill-source.json",
+        "sha256": "d378fe3f25a6403033f12e1a90ec45b2eb28652d728d8283842cc93087e9f6f0"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "allyTargeting": "living-allies",
+      "allyEvents": [
+        {
+          "frame": 120,
+          "effects": [
+            {
+              "kind": "physical-boost",
+              "multiplier": 1.3,
+              "turns": 3
+            }
+          ]
+        }
+      ],
+      "friendlyTargetReview": {
+        "sourceTarget": "3",
+        "sourceRange": "0",
+        "note": "Original target 3 / range 0 (process 3); adapted to physical-boost x1.3 for 3 rounds on all living allies."
+      },
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 208240,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 208240,
+          "name": "Magical Activation",
+          "rarity": 8,
+          "dispOrder": 881,
+          "cost": 25,
+          "6p90IFnC": null,
+          "target": "3",
+          "targetRange": "0",
+          "oL6zdpD0": 3,
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 4,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 4,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 4,
+          "processId": "3",
+          "PI18xnkD": "0",
+          "processParam": "0,0,80,80,3,1",
+          "H4zD2IQ5": 0,
+          "motionType": 2,
+          "effectFrames": "40:3000590:1:1:0&40:3000591:2:1:0",
+          "attackFrames": "120:100:2:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000077,
+          "equipCondition": null,
+          "2QoE3PtB": 0,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": "10",
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography",
+          "allyTargeting"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "curaga",
+      "ffbeId": 10160,
+      "name": "Curaga",
+      "rarity": 5,
+      "level": 1,
+      "type": "MAGIC",
+      "mpCost": 15,
+      "scope": "party",
+      "damageMultiplier": 1,
+      "hitCount": 0,
+      "attackFrames": [
+        120
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Restore 900 HP to all living allies (no revival).",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "terra_trance_curaga",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/terra_trance/skills/curaga/source/skill-source.json",
+        "sha256": "9735234fd768345967516ed58937040767ecf2c7cc04c9f858f421e41acf090e"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "allyTargeting": "living-allies",
+      "allyEvents": [
+        {
+          "frame": 120,
+          "effects": [
+            {
+              "kind": "heal",
+              "amount": 900
+            }
+          ]
+        }
+      ],
+      "friendlyTargetReview": {
+        "sourceTarget": "6",
+        "sourceRange": "2",
+        "note": "Original target 6 / range 2 (process 2); adapted to a fixed 900 HP heal on all living allies."
+      },
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "MAGIC",
+        "id": 10160,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "magicId": 10160,
+          "name": "Curaga",
+          "rarity": 6,
+          "dispOrder": 18,
+          "cost": 15,
+          "target": "6",
+          "targetRange": "2",
+          "oL6zdpD0": 1,
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 2,
+          "J35nicFV": 0,
+          "magicType": 1,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 3,
+          "aR5i4ewA": 0,
+          "KosY4a18": 2,
+          "Af2Pc0Jz": 0,
+          "processId": "2",
+          "PI18xnkD": "0",
+          "processParam": "0,0,1000,340,100",
+          "H4zD2IQ5": 2,
+          "effectFrames": "40:3000030:1:2:0&40:3000031:2:2:0",
+          "attackFrames": "120:100:2:2",
+          "7irj9hAb": "1,1,1,0",
+          "iconId": 700000004,
+          "equipCondition": null,
+          "AegvG91P": "1,1",
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": null,
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography",
+          "allyTargeting"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "riot_blade_trance",
+      "ffbeId": 206000125,
+      "name": "Riot Blade - Trance",
+      "rarity": 5,
+      "level": 1,
+      "type": "LIMIT",
+      "mpCost": 0,
+      "scope": "all_enemies",
+      "damageMultiplier": 3.5,
+      "hitCount": 7,
+      "attackFrames": [
+        49,
+        59,
+        73,
+        82,
+        98,
+        110,
+        152
+      ],
+      "moveType": "stationary",
+      "motion": "atk",
+      "desc": "Limit Burst: Physical damage (3.5x) to all enemies",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "terra_trance_riot_blade_trance",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/terra_trance/skills/riot_blade_trance/source/skill-source.json",
+        "sha256": "801681b03b01bf12a2bbc78cfab6fb28d3c8ca1135f5c8ac3ed84b68431ea304"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "limit_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 1,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 1 / move 4: stationary limit_atk body (LB rows carry no motionType; reviewed adaptation)."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 49,
+          "weight": 0.1
+        },
+        {
+          "frame": 59,
+          "weight": 0.1
+        },
+        {
+          "frame": 73,
+          "weight": 0.1
+        },
+        {
+          "frame": 82,
+          "weight": 0.1
+        },
+        {
+          "frame": 98,
+          "weight": 0.1
+        },
+        {
+          "frame": 110,
+          "weight": 0.1
+        },
+        {
+          "frame": 152,
+          "weight": 0.4
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "LIMIT",
+        "id": 206000125,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "limitBurstId": 206000125,
+          "name": "Riot Blade - Trance",
+          "limitBurstType": 1,
+          "target": "1",
+          "targetRange": "2",
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 2,
+          "J35nicFV": 0,
+          "skillType": 1,
+          "aR5i4ewA": 0,
+          "KosY4a18": 2,
+          "Af2Pc0Jz": 1,
+          "processId": "70",
+          "PI18xnkD": "0",
+          "processParam": "0,0,250,50",
+          "H4zD2IQ5": 0,
+          "fileInfo": null,
+          "effectFrame": "0:8002390:2:4:0&0:8002391:1:2:0",
+          "attackFrames": "49:10:3:2-59:10:3:2-73:10:3:2-82:10:3:2-98:10:3:2-110:10:3:2-152:40:3:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000000,
+          "description": "Deal partial unmitigated magic damage to all enemies",
+          "58bfqWsR": 1,
+          "6ZEyK95f": null,
+          "effectFrames": "0:8002390:2:4:0&0:8002391:1:2:0"
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    }
+  ]
+}

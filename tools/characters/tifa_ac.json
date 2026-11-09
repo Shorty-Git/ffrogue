@@ -1,0 +1,679 @@
+{
+  "schemaVersion": 1,
+  "key": "tifa_ac",
+  "spriteUnitId": "207001705",
+  "game": "FFVII",
+  "battle": {
+    "maxHp": 3200,
+    "maxMp": 100,
+    "heroName": "TIFA AC",
+    "heroRole": "VANGUARD",
+    "attackType": "melee",
+    "targetOffsetX": 90,
+    "attackAnim": "atk",
+    "hitFrameIndex": 2
+  },
+  "scale": 2.5,
+  "reviewNote": "Created by tools/import_full_character.mjs; battle values are provisional defaults for balancing.",
+  "skills": [
+    {
+      "id": "dolphin_blow_ffvii_ac",
+      "ffbeId": 233964,
+      "name": "Dolphin Blow (FFVII: AC)",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 40,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 10,
+      "attackFrames": [
+        110,
+        120,
+        130,
+        140,
+        150,
+        160,
+        170,
+        180,
+        190,
+        200
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "tifa_ac_dolphin_blow_ffvii_ac",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/tifa_ac/skills/dolphin_blow_ffvii_ac/source/skill-source.json",
+        "sha256": "0b9d76ece298e9a02f46172dbfb3b18500ee500babfc261983e3b193c052921a"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 110,
+          "weight": 0.03
+        },
+        {
+          "frame": 120,
+          "weight": 0.03
+        },
+        {
+          "frame": 130,
+          "weight": 0.03
+        },
+        {
+          "frame": 140,
+          "weight": 0.03
+        },
+        {
+          "frame": 150,
+          "weight": 0.03
+        },
+        {
+          "frame": 160,
+          "weight": 0.03
+        },
+        {
+          "frame": 170,
+          "weight": 0.03
+        },
+        {
+          "frame": 180,
+          "weight": 0.03
+        },
+        {
+          "frame": 190,
+          "weight": 0.03
+        },
+        {
+          "frame": 200,
+          "weight": 0.73
+        }
+      ]
+    },
+    {
+      "id": "beat_rush_ffvii_ac",
+      "ffbeId": 233960,
+      "name": "Beat Rush (FFVII: AC)",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 24,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 3,
+      "attackFrames": [
+        7,
+        15,
+        23
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "tifa_ac_beat_rush_ffvii_ac",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/tifa_ac/skills/beat_rush_ffvii_ac/source/skill-source.json",
+        "sha256": "1ff66353cf53ecf3832a815e7acdfca7abf6e111f613be4c65d44a42a3969d8b"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 1,
+          "note": "Drafted from motion 2 / move 1: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 7,
+          "weight": 0.33
+        },
+        {
+          "frame": 15,
+          "weight": 0.33
+        },
+        {
+          "frame": 23,
+          "weight": 0.34
+        }
+      ]
+    },
+    {
+      "id": "waterkick_ffvii_ac",
+      "ffbeId": 233962,
+      "name": "Waterkick (FFVII: AC)",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 45,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.6,
+      "hitCount": 1,
+      "attackFrames": [
+        23
+      ],
+      "moveType": "stationary",
+      "motion": "atk",
+      "desc": "Physical damage (1.6x) to all enemies",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "tifa_ac_waterkick_ffvii_ac",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/tifa_ac/skills/waterkick_ffvii_ac/source/skill-source.json",
+        "sha256": "3421b07fdd48ad951e1f803802dde5ce10cfc3bbf98cbf2f7dacc74af7d609e4"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 8,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 8 / move 4: stationary atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 23,
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "zangan_combination",
+      "ffbeId": 233966,
+      "name": "Zangan Combination+",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 52,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 10,
+      "attackFrames": [
+        110,
+        120,
+        130,
+        140,
+        150,
+        160,
+        170,
+        180,
+        190,
+        200
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "tifa_ac_zangan_combination",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/tifa_ac/skills/zangan_combination/source/skill-source.json",
+        "sha256": "434664726c8de5bc495d924b98371a9f1568204af704b6038cfc35b2e9d1d6dc"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 110,
+          "weight": 0.03
+        },
+        {
+          "frame": 120,
+          "weight": 0.03
+        },
+        {
+          "frame": 130,
+          "weight": 0.03
+        },
+        {
+          "frame": 140,
+          "weight": 0.03
+        },
+        {
+          "frame": 150,
+          "weight": 0.03
+        },
+        {
+          "frame": 160,
+          "weight": 0.03
+        },
+        {
+          "frame": 170,
+          "weight": 0.03
+        },
+        {
+          "frame": 180,
+          "weight": 0.03
+        },
+        {
+          "frame": 190,
+          "weight": 0.03
+        },
+        {
+          "frame": 200,
+          "weight": 0.73
+        }
+      ]
+    },
+    {
+      "id": "seventh_heaven",
+      "ffbeId": 511182,
+      "name": "Seventh Heaven+",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 60,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 21,
+      "attackFrames": [
+        110,
+        120,
+        130,
+        140,
+        150,
+        160,
+        170,
+        180,
+        190,
+        200,
+        200,
+        110,
+        120,
+        130,
+        140,
+        150,
+        160,
+        170,
+        180,
+        190,
+        200
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "tifa_ac_seventh_heaven",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/tifa_ac/skills/seventh_heaven/source/skill-source.json",
+        "sha256": "75c08dd6f0bf867ff182d9eb6333dc4c205e06a1d67716d11b09e61755b5f1a8"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 110,
+          "weight": 0.01
+        },
+        {
+          "frame": 110,
+          "weight": 0.01
+        },
+        {
+          "frame": 120,
+          "weight": 0.01
+        },
+        {
+          "frame": 120,
+          "weight": 0.01
+        },
+        {
+          "frame": 130,
+          "weight": 0.01
+        },
+        {
+          "frame": 130,
+          "weight": 0.01
+        },
+        {
+          "frame": 140,
+          "weight": 0.01
+        },
+        {
+          "frame": 140,
+          "weight": 0.01
+        },
+        {
+          "frame": 150,
+          "weight": 0.01
+        },
+        {
+          "frame": 150,
+          "weight": 0.01
+        },
+        {
+          "frame": 160,
+          "weight": 0.01
+        },
+        {
+          "frame": 160,
+          "weight": 0.01
+        },
+        {
+          "frame": 170,
+          "weight": 0.01
+        },
+        {
+          "frame": 170,
+          "weight": 0.01
+        },
+        {
+          "frame": 180,
+          "weight": 0.01
+        },
+        {
+          "frame": 180,
+          "weight": 0.01
+        },
+        {
+          "frame": 190,
+          "weight": 0.01
+        },
+        {
+          "frame": 190,
+          "weight": 0.01
+        },
+        {
+          "frame": 200,
+          "weight": 0.24333333333333335
+        },
+        {
+          "frame": 200,
+          "weight": 0.3333333333333333
+        },
+        {
+          "frame": 200,
+          "weight": 0.24333333333333335
+        }
+      ]
+    },
+    {
+      "id": "final_heaven",
+      "ffbeId": 233969,
+      "name": "Final Heaven+",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 60,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 10,
+      "attackFrames": [
+        110,
+        120,
+        130,
+        140,
+        150,
+        160,
+        170,
+        180,
+        190,
+        200
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "tifa_ac_final_heaven",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/tifa_ac/skills/final_heaven/source/skill-source.json",
+        "sha256": "0593eb1b80160e38629221ef34dc4db2f1b500c2d62771b5224136ff1ad31175"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 110,
+          "weight": 0.055
+        },
+        {
+          "frame": 120,
+          "weight": 0.055
+        },
+        {
+          "frame": 130,
+          "weight": 0.055
+        },
+        {
+          "frame": 140,
+          "weight": 0.055
+        },
+        {
+          "frame": 150,
+          "weight": 0.055
+        },
+        {
+          "frame": 160,
+          "weight": 0.055
+        },
+        {
+          "frame": 170,
+          "weight": 0.055
+        },
+        {
+          "frame": 180,
+          "weight": 0.055
+        },
+        {
+          "frame": 190,
+          "weight": 0.06
+        },
+        {
+          "frame": 200,
+          "weight": 0.5
+        }
+      ]
+    },
+    {
+      "id": "limit_combo_sublimation",
+      "ffbeId": 207001705,
+      "name": "Limit Combo: Sublimation",
+      "rarity": 5,
+      "level": 1,
+      "type": "LIMIT",
+      "mpCost": 0,
+      "scope": "single_enemy",
+      "damageMultiplier": 6,
+      "hitCount": 8,
+      "attackFrames": [
+        38,
+        55,
+        75,
+        84,
+        104,
+        112,
+        123,
+        229
+      ],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Limit Burst: Physical damage (6x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "tifa_ac_limit_combo_sublimation",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/tifa_ac/skills/limit_combo_sublimation/source/skill-source.json",
+        "sha256": "470eb21b1a05773b5d2b71d46b6040d758941080884248196e7b713ff13618b9"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "target",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "limit_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 1,
+          "sourceMoveType": 1,
+          "note": "Drafted from motion 1 / move 1: dash with limit_atk body (LB rows carry no motionType; reviewed adaptation)."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 38,
+          "weight": 0.1
+        },
+        {
+          "frame": 55,
+          "weight": 0.1
+        },
+        {
+          "frame": 75,
+          "weight": 0.1
+        },
+        {
+          "frame": 84,
+          "weight": 0.1
+        },
+        {
+          "frame": 104,
+          "weight": 0.1
+        },
+        {
+          "frame": 112,
+          "weight": 0.1
+        },
+        {
+          "frame": 123,
+          "weight": 0.1
+        },
+        {
+          "frame": 229,
+          "weight": 0.3
+        }
+      ]
+    }
+  ],
+  "portraitSource": "unit_icons/unit_icon_207001705.png"
+}

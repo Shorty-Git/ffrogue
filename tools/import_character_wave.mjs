@@ -10,7 +10,7 @@ const results = [];
 for (const c of wave.filter(c => !only || only.includes(c.key))) {
   const started = Date.now();
   const r = spawnSync('node', ['tools/import_full_character.mjs', '--key', c.key, '--unit', String(c.unit), '--name', c.name,
-    '--canonical', c.canonical, '--label', c.label, '--game', c.game], {encoding: 'utf8', maxBuffer: 256 << 20});
+    '--canonical', c.canonical, '--label', c.label, '--game', c.game, ...(c.variant ? ['--variant', c.variant] : [])], {encoding: 'utf8', maxBuffer: 256 << 20});
   const summary = (() => { try { return JSON.parse(fs.readFileSync(`tools/data/full-import/${c.key}/receipt.json`, 'utf8')).summary; } catch { return null; } })();
   results.push({key: c.key, status: r.status, minutes: +((Date.now() - started) / 60000).toFixed(1), imported: summary?.imported ?? [],
     failed: summary?.failed ?? [], error: r.status ? (r.stderr || r.stdout).slice(-600) : undefined});

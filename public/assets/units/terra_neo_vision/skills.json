@@ -1,0 +1,147 @@
+{
+  "unitId": "206002507",
+  "unitName": "TERRA NV",
+  "game": "FFVI",
+  "skills": [
+    {
+      "id": "maduin_s_liberation",
+      "ffbeId": 206002507,
+      "name": "Maduin's Liberation",
+      "rarity": 5,
+      "level": 1,
+      "type": "LIMIT",
+      "mpCost": 0,
+      "scope": "all_enemies",
+      "damageMultiplier": 3.5,
+      "hitCount": 8,
+      "attackFrames": [
+        42,
+        62,
+        82,
+        102,
+        122,
+        142,
+        162,
+        182
+      ],
+      "moveType": "stationary",
+      "motion": "atk",
+      "desc": "Limit Burst: Physical damage (3.5x) to all enemies",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "terra_neo_vision_maduin_s_liberation",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/terra_neo_vision/skills/maduin_s_liberation/source/skill-source.json",
+        "sha256": "b948f17a3c33cab1b6b73000d7594a92664c84bd2e0b16a44b1098c3b48ea8ca"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "limit_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 1,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 1 / move 4: stationary limit_atk body (LB rows carry no motionType; reviewed adaptation)."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.08
+        },
+        {
+          "frame": 62,
+          "weight": 0.08
+        },
+        {
+          "frame": 82,
+          "weight": 0.08
+        },
+        {
+          "frame": 102,
+          "weight": 0.08
+        },
+        {
+          "frame": 122,
+          "weight": 0.08
+        },
+        {
+          "frame": 142,
+          "weight": 0.08
+        },
+        {
+          "frame": 162,
+          "weight": 0.08
+        },
+        {
+          "frame": 182,
+          "weight": 0.44
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "LIMIT",
+        "id": 206002507,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "limitBurstId": 206002507,
+          "name": "Maduin's Liberation",
+          "limitBurstType": 1,
+          "target": "1@1@3",
+          "targetRange": "2@1@0",
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 2,
+          "J35nicFV": 0,
+          "skillType": 1,
+          "aR5i4ewA": 0,
+          "KosY4a18": 2,
+          "Af2Pc0Jz": 4,
+          "processId": "15@160@160",
+          "PI18xnkD": "0@0@0",
+          "processParam": "0,0,0,0,0,4050,0@200000004@200000004",
+          "H4zD2IQ5": 0,
+          "fileInfo": "LB_LLP_lapis2.usm",
+          "effectFrame": "0:8008405:2:4:0&0:8008406:2:3:0&0:8008407:1:3:0&0:5040200:1:4:0&0:5040205:1:4:0",
+          "attackFrames": "42:8:2:2-62:8:2:2-82:8:2:2-102:8:2:2-122:8:2:2-142:8:2:2-162:8:2:2-182:44:2:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000000,
+          "description": "Damage all enemies, and activate area effect that boosts LB damage",
+          "58bfqWsR": 1,
+          "6ZEyK95f": null,
+          "effectFrames": "0:8008405:2:4:0&0:8008406:2:3:0&0:8008407:1:3:0&0:5040200:1:4:0&0:5040205:1:4:0"
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    }
+  ]
+}

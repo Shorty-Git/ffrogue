@@ -1,0 +1,836 @@
+{
+  "unitId": "206000113",
+  "unitName": "MAGITEK TERRA",
+  "game": "FFVI",
+  "skills": [
+    {
+      "id": "bio_blaster",
+      "ffbeId": 201320,
+      "name": "Bio Blaster",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 12,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.6,
+      "hitCount": 1,
+      "attackFrames": [
+        130
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (1.6x) to all enemies",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "terra_magitek_armor_bio_blaster",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/terra_magitek_armor/skills/bio_blaster/source/skill-source.json",
+        "sha256": "8762df1ba9f5d67e4d940cf3401e447d962ca09a424ffd76cda21f2504ea3011"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 130,
+          "weight": 1
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 201320,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 201320,
+          "name": "Bio Blaster",
+          "rarity": 3,
+          "dispOrder": 159,
+          "cost": 12,
+          "6p90IFnC": null,
+          "target": "1@1",
+          "targetRange": "2@2",
+          "oL6zdpD0": 3,
+          "element": "0,0,0,0,0,0,0,1",
+          "Isb1GDe2": 2,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 4,
+          "processId": "15@6",
+          "PI18xnkD": "0@0",
+          "processParam": "0,0,0,0,0,130,0@50,0,0,0,0,0,0,0,1",
+          "H4zD2IQ5": 0,
+          "motionType": 2,
+          "effectFrames": "40:5000480:1:2:0",
+          "attackFrames": "130:100:3:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000024,
+          "equipCondition": null,
+          "2QoE3PtB": 0,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": "9,14",
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "fire_beam",
+      "ffbeId": 201260,
+      "name": "Fire Beam",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 8,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 1,
+      "attackFrames": [
+        80
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "terra_magitek_armor_fire_beam",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/terra_magitek_armor/skills/fire_beam/source/skill-source.json",
+        "sha256": "3265c9d81be835a5c6ff4151bd338607921d6041e880e1e52cf3d41741a5690a"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 80,
+          "weight": 1
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 201260,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 201260,
+          "name": "Fire Beam",
+          "rarity": 2,
+          "dispOrder": 153,
+          "cost": 3,
+          "6p90IFnC": null,
+          "target": "1",
+          "targetRange": "1",
+          "oL6zdpD0": 3,
+          "element": "1,0,0,0,0,0,0,0",
+          "Isb1GDe2": 2,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 4,
+          "processId": "15",
+          "PI18xnkD": "0",
+          "processParam": "0,0,0,0,0,120,0",
+          "H4zD2IQ5": 0,
+          "motionType": 2,
+          "effectFrames": "40:5000400:1:1:0",
+          "attackFrames": "80:100:3:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000021,
+          "equipCondition": null,
+          "2QoE3PtB": 0,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": "2",
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "ice_beam",
+      "ffbeId": 201280,
+      "name": "Ice Beam",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 8,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 1,
+      "attackFrames": [
+        80
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "terra_magitek_armor_ice_beam",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/terra_magitek_armor/skills/ice_beam/source/skill-source.json",
+        "sha256": "da0df9bbe1e58b5f56c97f6e7222dde8680ddcd85f1a32355ad08e7d3f2c5f42"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 80,
+          "weight": 1
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 201280,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 201280,
+          "name": "Ice Beam",
+          "rarity": 2,
+          "dispOrder": 155,
+          "cost": 3,
+          "6p90IFnC": null,
+          "target": "1",
+          "targetRange": "1",
+          "oL6zdpD0": 3,
+          "element": "0,1,0,0,0,0,0,0",
+          "Isb1GDe2": 2,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 4,
+          "processId": "15",
+          "PI18xnkD": "0",
+          "processParam": "0,0,0,0,0,120,0",
+          "H4zD2IQ5": 0,
+          "motionType": 2,
+          "effectFrames": "40:5000420:1:1:0",
+          "attackFrames": "80:100:3:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000022,
+          "equipCondition": null,
+          "2QoE3PtB": 0,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": "3",
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "thunder_beam",
+      "ffbeId": 201270,
+      "name": "Thunder Beam",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 8,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 1,
+      "attackFrames": [
+        80
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "terra_magitek_armor_thunder_beam",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/terra_magitek_armor/skills/thunder_beam/source/skill-source.json",
+        "sha256": "23d852e861a03a58333cc238d8b1344138b3bb3e21ab42d63a3e13760d0dc66d"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 80,
+          "weight": 1
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 201270,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 201270,
+          "name": "Thunder Beam",
+          "rarity": 2,
+          "dispOrder": 154,
+          "cost": 3,
+          "6p90IFnC": null,
+          "target": "1",
+          "targetRange": "1",
+          "oL6zdpD0": 3,
+          "element": "0,0,1,0,0,0,0,0",
+          "Isb1GDe2": 2,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 4,
+          "processId": "15",
+          "PI18xnkD": "0",
+          "processParam": "0,0,0,0,0,120,0",
+          "H4zD2IQ5": 0,
+          "motionType": 2,
+          "effectFrames": "40:5000410:1:1:0",
+          "attackFrames": "80:100:3:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000020,
+          "equipCondition": null,
+          "2QoE3PtB": 0,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": "4",
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "magitek_laser",
+      "ffbeId": 201300,
+      "name": "Magitek Laser",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 8,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 1,
+      "attackFrames": [
+        80
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "terra_magitek_armor_magitek_laser",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/terra_magitek_armor/skills/magitek_laser/source/skill-source.json",
+        "sha256": "8ff524f586056dfa0a6eb8105a69b0ff194d3254a524e258f208b50f249bd19b"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 80,
+          "weight": 1
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 201300,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 201300,
+          "name": "Magitek Laser",
+          "rarity": 4,
+          "dispOrder": 157,
+          "cost": 7,
+          "6p90IFnC": null,
+          "target": "1",
+          "targetRange": "1",
+          "oL6zdpD0": 3,
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 2,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 4,
+          "processId": "15",
+          "PI18xnkD": "0",
+          "processParam": "0,0,0,0,0,14000,0",
+          "H4zD2IQ5": 0,
+          "motionType": 2,
+          "effectFrames": "40:5000450:1:1:0",
+          "attackFrames": "80:100:3:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000019,
+          "equipCondition": null,
+          "2QoE3PtB": 0,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": null,
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "magitek_missile",
+      "ffbeId": 201330,
+      "name": "Magitek Missile",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 12,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 1,
+      "attackFrames": [
+        90
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "terra_magitek_armor_magitek_missile",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/terra_magitek_armor/skills/magitek_missile/source/skill-source.json",
+        "sha256": "22ffb5d4206f5ffe23941eb03360ad7abfab1770f0b64b1f5d86c07505f3b498"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 90,
+          "weight": 1
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 201330,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 201330,
+          "name": "Magitek Missile",
+          "rarity": 5,
+          "dispOrder": 160,
+          "cost": 12,
+          "6p90IFnC": null,
+          "target": "1",
+          "targetRange": "1",
+          "oL6zdpD0": 3,
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 2,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 4,
+          "processId": "15",
+          "PI18xnkD": "0",
+          "processParam": "0,0,0,0,0,140,0",
+          "H4zD2IQ5": 0,
+          "motionType": 2,
+          "effectFrames": "40:5000490:1:1:0",
+          "attackFrames": "90:100:3:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000019,
+          "equipCondition": null,
+          "2QoE3PtB": 0,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": null,
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "laser_blaster",
+      "ffbeId": 206000113,
+      "name": "Laser Blaster",
+      "rarity": 5,
+      "level": 1,
+      "type": "LIMIT",
+      "mpCost": 0,
+      "scope": "single_enemy",
+      "damageMultiplier": 6,
+      "hitCount": 3,
+      "attackFrames": [
+        39,
+        59,
+        79
+      ],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Limit Burst: Physical damage (6x) to one enemy",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "terra_magitek_armor_laser_blaster",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/terra_magitek_armor/skills/laser_blaster/source/skill-source.json",
+        "sha256": "c5569ec3ff7ecb930f91b1a38630a7f56696e93842ca8686169790ac0c513187"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "target",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "limit_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 1,
+          "sourceMoveType": 1,
+          "note": "Drafted from motion 1 / move 1: dash with limit_atk body (LB rows carry no motionType; reviewed adaptation)."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 39,
+          "weight": 0.3
+        },
+        {
+          "frame": 59,
+          "weight": 0.3
+        },
+        {
+          "frame": 79,
+          "weight": 0.4
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "LIMIT",
+        "id": 206000113,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "limitBurstId": 206000113,
+          "name": "Laser Blaster",
+          "limitBurstType": 1,
+          "target": "1",
+          "targetRange": "1",
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 1,
+          "J35nicFV": 0,
+          "skillType": 1,
+          "aR5i4ewA": 0,
+          "KosY4a18": 2,
+          "Af2Pc0Jz": 1,
+          "processId": "15",
+          "PI18xnkD": "0",
+          "processParam": "0,0,0,0,0,200,0",
+          "H4zD2IQ5": 0,
+          "fileInfo": null,
+          "effectFrame": "0:8001060:1:1:0&77:5002070:2:4:0",
+          "attackFrames": "39:30:3:2-59:30:3:2-79:40:3:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000000,
+          "description": "Damage one enemy",
+          "58bfqWsR": 1,
+          "6ZEyK95f": null,
+          "effectFrames": "0:8001060:1:1:0&77:5002070:2:4:0"
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    }
+  ]
+}

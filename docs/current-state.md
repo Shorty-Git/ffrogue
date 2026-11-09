@@ -8,8 +8,8 @@ Last consolidated: 2026-11-07.
 
 - Playable PC roguelike prototype: title → slot-machine team draw (3 heroes, rerolls) →
   expedition (2 areas, 4 encounters, Ochu and Guard Scorpion bosses) → rewards / awakening →
-  result. Saves locally. Roster since 2026-11-09: 26 characters with 161 Source skills and a Limit
-  Burst for every character (26) (`tools/import_character_wave.mjs`). The original seven (Cloud, Aerith, Barret, Cloud of Darkness,
+  result. Saves locally. Roster since 2026-11-09: 51 units (26 characters plus 25 variants, 47 drawable) with 253 Source skills and 49 Limit
+  Bursts (variants: `tools/characters/roster-variants.json`); before the variants: 26 characters, 161 skills, an LB each (`tools/import_character_wave.mjs`). The original seven (Cloud, Aerith, Barret, Cloud of Darkness,
   Cloud AC, Delita, Jack) plus Squall, Tifa and 18 wave characters (Warrior of Light … Cidolfus, FFI–FFXVI,
   FFT, Type-0). Awakened forms go up to 7★ / NV; FFXVI units are NV-only. New profiles unlock heroes
   gradually (see Meta-progression).
@@ -47,7 +47,7 @@ Last consolidated: 2026-11-07.
   scaled by skill level in `skillForRun`, described in the HUD by `skillDescription`. The last two
   are data model + battle handling only (2026-11-08); no published skill uses them yet.
 
-## Levels Lv 1-6 (2026-11-09)
+## Levels Lv 1-6 and Bond (2026-11-09)
 
 One power scale for every variant (3★=Lv1 … 7★=Lv5, NV=Lv6). Start levels come from one weight table,
 boss relics give +1 level, and the body follows the original forms. Cards and reels show the level

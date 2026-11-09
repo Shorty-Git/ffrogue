@@ -1,5 +1,5 @@
 import type {RunCatalog,RunState} from './runState.mjs';
-export interface Profile{version:1;unlocked:string[];crystals:number;record:{won:number;lost:number};settled:string[];}
+export interface Profile{version:1;unlocked:string[];crystals:number;record:{won:number;lost:number};settled:string[];bond:Record<string,number>;}
 export const PROFILE_KEY:string;
 export const STARTER_HEROES:string[];
 export const SUMMON_COST:number;
@@ -10,5 +10,6 @@ export function normalizeProfile(input:unknown,catalog:RunCatalog):Profile;
 export function lockedHeroes(profile:Profile,catalog:RunCatalog):string[];
 export function drawCatalog(profile:Profile,catalog:RunCatalog):RunCatalog;
 export function settleRun(profile:Profile,run:RunState,catalog:RunCatalog):{profile:Profile;crystals:number;unlocked:string|null};
-export function summonHero(profile:Profile,catalog:RunCatalog,salt:string):{profile:Profile;unlocked:string|null};
+export const MAX_BOND:number;export const BOND_DRAW_WEIGHT:number;export const BOND_MIN_START_LEVEL:number;export const BOND_REFUND:number;
+export function summonHero(profile:Profile,catalog:RunCatalog,salt:string):{profile:Profile;unlocked:string|null;hero:string;bond:number;refund:number};
 export class ProfileStore{constructor(storage:Storage,catalog:RunCatalog);load():Profile;save(profile:Profile):Profile;}

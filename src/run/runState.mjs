@@ -26,6 +26,15 @@ export function variantAreas(seed){
 export function nextRandom(run,stream){let x=run.rng[stream]>>>0;x=(x+0x6d2b79f5)>>>0;run.rng[stream]=x;let t=x;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return ((t^(t>>>14))>>>0)/4294967296;}
 const clone=value=>JSON.parse(JSON.stringify(value));
 const pick=(run,stream,values)=>{if(!values.length)throw Error('No valid content');return values[Math.floor(nextRandom(run,stream)*values.length)];};
+/** Hero draw: uniform unless a Bond perk sets drawWeight (profile.mjs drawCatalog); one RNG draw either way. */
+function pickHero(run,keys,catalog){
+ if(!keys.some(key=>catalog[key].drawWeight))return pick(run,'roster',keys);
+ if(!keys.length)throw Error('No valid content');
+ const weights=keys.map(key=>catalog[key].drawWeight??1),total=weights.reduce((a,b)=>a+b,0);
+ let roll=nextRandom(run,'roster')*total;
+ for(const [index,weight] of weights.entries()){roll-=weight;if(roll<0)return keys[index];}
+ return keys.at(-1);
+}
 function validFormPolicy(policy){
  if(policy===undefined)return true;
  return !!policy?.weights&&['3','4','5','6','7','NV'].every(rank=>Number.isFinite(policy.weights[rank])&&policy.weights[rank]>0)
@@ -63,7 +72,8 @@ function formStats(policy,steps){
   attack:1+steps*policy.powerPerRank,magic:1+steps*policy.powerPerRank,defense:1+steps*policy.defensePerRank};
 }
 function newMember(run,key,catalog){
- const character=catalog[key],level=drawStartLevel(run,character),form=formForLevel(character,level);
+ // Bond 3 (profile.mjs) sets a start-level floor; the roll itself is unchanged.
+ const character=catalog[key],level=Math.max(drawStartLevel(run,character),character.minStartLevel??1),form=formForLevel(character,level);
  const policy=run.rules?.originalForms;
  const stats=policy?formStats(policy,level-1):{attack:1,magic:1,defense:1,hp:1};
  return {key,identity:character.identity,canonicalIdentity:character.canonicalIdentity,level,
@@ -84,18 +94,26 @@ export function rollParty(input,catalog){
  const keys=[];
  const drawn=new Set();
  for(let i=0;i<3;i++){
-  const key=pick(run,'roster',pool.filter(key=>!drawn.has(identity(key))));
+  const key=pickHero(run,pool.filter(key=>!drawn.has(identity(key))),catalog);
   keys.push(key);
   drawn.add(identity(key));
  }
  if(reroll&&input.party.every(member=>drawn.has(member.canonicalIdentity))){
   // Treat a reshuffle of the same identities as a repeat, even across variants.
   const alternatives=pool.filter(key=>!drawn.has(identity(key)));
-  if(alternatives.length)keys[pick(run,'roster',[0,1,2])]=pick(run,'roster',alternatives);
+  if(alternatives.length)keys[pick(run,'roster',[0,1,2])]=pickHero(run,alternatives,catalog);
  }
  run.party=keys.map(key=>newMember(run,key,catalog));
  if(reroll)run.rerolls--;
  run.history.push({kind:reroll?'reroll':'initial-party',slot:null,party:keys,remaining:run.rerolls});
+ return run;
+}
+/** Bond 2 (profile.mjs startSkillChoice): before setting out, the starting skill may be chosen freely. */
+export function chooseStartSkill(input,key,skillId,catalog){
+ const run=clone(input),m=run.party.find(p=>p.key===key),c=catalog[key];
+ if(run.phase!=='setup'||!m||!c?.startSkillChoice||!c.skills.some(s=>s.id===skillId))throw Error('No starting skill choice');
+ m.skills=[{id:skillId,level:1}];
+ run.history.push({kind:'start-skill',member:key,skill:skillId});
  return run;
 }
 export function confirmParty(input){const run=clone(input);if(run.phase!=='setup'||run.party.length!==3||new Set(run.party.map(m=>m.canonicalIdentity)).size!==3||run.party.some(m=>!m.canonicalIdentity))throw Error('Roll three distinct canonical characters first');run.phase='battle';return run;}

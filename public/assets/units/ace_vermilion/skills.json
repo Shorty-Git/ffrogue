@@ -1,0 +1,897 @@
+{
+  "unitId": "254002307",
+  "unitName": "VERMILION ACE",
+  "game": "Type-0",
+  "skills": [
+    {
+      "id": "fira",
+      "ffbeId": 20080,
+      "name": "Fira",
+      "rarity": 5,
+      "level": 1,
+      "type": "MAGIC",
+      "mpCost": 10,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.6,
+      "hitCount": 9,
+      "attackFrames": [
+        42,
+        48,
+        54,
+        60,
+        66,
+        72,
+        78,
+        84,
+        90
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Magic damage (1.6x) to all enemies",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "ace_vermilion_fira",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/ace_vermilion/skills/fira/source/skill-source.json",
+        "sha256": "5c5c096104b7ccc9b0e01c82177bc7afb81e19e7ba7bc93b692b31f2b34aed02"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.07
+        },
+        {
+          "frame": 48,
+          "weight": 0.07
+        },
+        {
+          "frame": 54,
+          "weight": 0.07
+        },
+        {
+          "frame": 60,
+          "weight": 0.07
+        },
+        {
+          "frame": 66,
+          "weight": 0.07
+        },
+        {
+          "frame": 72,
+          "weight": 0.07
+        },
+        {
+          "frame": 78,
+          "weight": 0.07
+        },
+        {
+          "frame": 84,
+          "weight": 0.07
+        },
+        {
+          "frame": 90,
+          "weight": 0.44
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "MAGIC",
+        "id": 20080,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "magicId": 20080,
+          "name": "Fira",
+          "rarity": 3,
+          "dispOrder": 107,
+          "cost": 10,
+          "target": "1",
+          "targetRange": "2",
+          "oL6zdpD0": 3,
+          "element": "1,0,0,0,0,0,0,0",
+          "Isb1GDe2": 2,
+          "J35nicFV": 0,
+          "magicType": 2,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "KosY4a18": 2,
+          "Af2Pc0Jz": 0,
+          "processId": "15",
+          "PI18xnkD": "0",
+          "processParam": "0,0,0,0,0,1000,0",
+          "H4zD2IQ5": 2,
+          "effectFrames": "38:2000012:1:2:0&40:5041667:1:1:0",
+          "attackFrames": "42:7:2:2-48:7:2:2-54:7:2:2-60:7:2:2-66:7:2:2-72:7:2:2-78:7:2:2-84:7:2:2-90:44:2:2",
+          "7irj9hAb": "1,1,1,0",
+          "iconId": 700000021,
+          "equipCondition": null,
+          "AegvG91P": "1,0",
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": "2",
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "blizzara",
+      "ffbeId": 20090,
+      "name": "Blizzara",
+      "rarity": 5,
+      "level": 1,
+      "type": "MAGIC",
+      "mpCost": 10,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.6,
+      "hitCount": 9,
+      "attackFrames": [
+        42,
+        48,
+        54,
+        60,
+        66,
+        72,
+        78,
+        84,
+        90
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Magic damage (1.6x) to all enemies",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "ace_vermilion_blizzara",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/ace_vermilion/skills/blizzara/source/skill-source.json",
+        "sha256": "3aa2b5c0557c714758cac062df01c2ce9bf6a0a2eb7bc0591d01829666f26126"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.07
+        },
+        {
+          "frame": 48,
+          "weight": 0.07
+        },
+        {
+          "frame": 54,
+          "weight": 0.07
+        },
+        {
+          "frame": 60,
+          "weight": 0.07
+        },
+        {
+          "frame": 66,
+          "weight": 0.07
+        },
+        {
+          "frame": 72,
+          "weight": 0.07
+        },
+        {
+          "frame": 78,
+          "weight": 0.07
+        },
+        {
+          "frame": 84,
+          "weight": 0.07
+        },
+        {
+          "frame": 90,
+          "weight": 0.44
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "MAGIC",
+        "id": 20090,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "magicId": 20090,
+          "name": "Blizzara",
+          "rarity": 3,
+          "dispOrder": 108,
+          "cost": 10,
+          "target": "1",
+          "targetRange": "2",
+          "oL6zdpD0": 3,
+          "element": "0,1,0,0,0,0,0,0",
+          "Isb1GDe2": 2,
+          "J35nicFV": 0,
+          "magicType": 2,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "KosY4a18": 2,
+          "Af2Pc0Jz": 0,
+          "processId": "15",
+          "PI18xnkD": "0",
+          "processParam": "0,0,0,0,0,1000,0",
+          "H4zD2IQ5": 2,
+          "effectFrames": "38:2000062:1:2:0&40:5041668:1:1:0",
+          "attackFrames": "42:7:2:2-48:7:2:2-54:7:2:2-60:7:2:2-66:7:2:2-72:7:2:2-78:7:2:2-84:7:2:2-90:44:2:2",
+          "7irj9hAb": "1,1,1,0",
+          "iconId": 700000022,
+          "equipCondition": null,
+          "AegvG91P": "1,0",
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": "3",
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "blizzaga",
+      "ffbeId": 20210,
+      "name": "Blizzaga",
+      "rarity": 5,
+      "level": 1,
+      "type": "MAGIC",
+      "mpCost": 20,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.6,
+      "hitCount": 8,
+      "attackFrames": [
+        42,
+        62,
+        82,
+        102,
+        122,
+        142,
+        162,
+        182
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Magic damage (1.6x) to all enemies",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "ace_vermilion_blizzaga",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/ace_vermilion/skills/blizzaga/source/skill-source.json",
+        "sha256": "9bd8c9a609562432d9fe4a5c98409775f23a6df1f88c4d8c4d840979de836b5c"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.08
+        },
+        {
+          "frame": 62,
+          "weight": 0.08
+        },
+        {
+          "frame": 82,
+          "weight": 0.08
+        },
+        {
+          "frame": 102,
+          "weight": 0.08
+        },
+        {
+          "frame": 122,
+          "weight": 0.08
+        },
+        {
+          "frame": 142,
+          "weight": 0.08
+        },
+        {
+          "frame": 162,
+          "weight": 0.08
+        },
+        {
+          "frame": 182,
+          "weight": 0.44
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "MAGIC",
+        "id": 20210,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "magicId": 20210,
+          "name": "Blizzaga",
+          "rarity": 6,
+          "dispOrder": 120,
+          "cost": 20,
+          "target": "1",
+          "targetRange": "2",
+          "oL6zdpD0": 3,
+          "element": "0,1,0,0,0,0,0,0",
+          "Isb1GDe2": 2,
+          "J35nicFV": 0,
+          "magicType": 2,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "KosY4a18": 2,
+          "Af2Pc0Jz": 0,
+          "processId": "15",
+          "PI18xnkD": "0",
+          "processParam": "0,0,0,0,0,2000,0",
+          "H4zD2IQ5": 2,
+          "effectFrames": "76:99999999:1:1:0&40:5041228:1:2:0&40:5041229:1:1:0",
+          "attackFrames": "42:8:2:2-62:8:2:2-82:8:2:2-102:8:2:2-122:8:2:2-142:8:2:2-162:8:2:2-182:44:2:2",
+          "7irj9hAb": "1,1,1,0",
+          "iconId": 700000022,
+          "equipCondition": null,
+          "AegvG91P": "1,0",
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": "3",
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "aeroga",
+      "ffbeId": 20240,
+      "name": "Aeroga",
+      "rarity": 5,
+      "level": 1,
+      "type": "MAGIC",
+      "mpCost": 20,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.6,
+      "hitCount": 8,
+      "attackFrames": [
+        42,
+        62,
+        82,
+        102,
+        122,
+        142,
+        162,
+        182
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Magic damage (1.6x) to all enemies",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "ace_vermilion_aeroga",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/ace_vermilion/skills/aeroga/source/skill-source.json",
+        "sha256": "26368c5be24a0db789e0b8af2ffd4a96e514c397f00e9951c547327427778b33"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.08
+        },
+        {
+          "frame": 62,
+          "weight": 0.08
+        },
+        {
+          "frame": 82,
+          "weight": 0.08
+        },
+        {
+          "frame": 102,
+          "weight": 0.08
+        },
+        {
+          "frame": 122,
+          "weight": 0.08
+        },
+        {
+          "frame": 142,
+          "weight": 0.08
+        },
+        {
+          "frame": 162,
+          "weight": 0.08
+        },
+        {
+          "frame": 182,
+          "weight": 0.44
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "MAGIC",
+        "id": 20240,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "magicId": 20240,
+          "name": "Aeroga",
+          "rarity": 6,
+          "dispOrder": 123,
+          "cost": 20,
+          "target": "1",
+          "targetRange": "2",
+          "oL6zdpD0": 3,
+          "element": "0,0,0,0,1,0,0,0",
+          "Isb1GDe2": 2,
+          "J35nicFV": 0,
+          "magicType": 2,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "KosY4a18": 2,
+          "Af2Pc0Jz": 0,
+          "processId": "15",
+          "PI18xnkD": "0",
+          "processParam": "0,0,0,0,0,2000,0",
+          "H4zD2IQ5": 2,
+          "effectFrames": "76:99999999:1:4:0&40:5041234:1:2:0&40:5041235:1:1:0",
+          "attackFrames": "42:8:2:2-62:8:2:2-82:8:2:2-102:8:2:2-122:8:2:2-142:8:2:2-162:8:2:2-182:44:2:2",
+          "7irj9hAb": "1,1,1,0",
+          "iconId": 700000025,
+          "equipCondition": null,
+          "AegvG91P": "1,0",
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": "6",
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "aerora",
+      "ffbeId": 20120,
+      "name": "Aerora",
+      "rarity": 5,
+      "level": 1,
+      "type": "MAGIC",
+      "mpCost": 10,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.6,
+      "hitCount": 9,
+      "attackFrames": [
+        42,
+        48,
+        54,
+        60,
+        66,
+        72,
+        78,
+        84,
+        90
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Magic damage (1.6x) to all enemies",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "ace_vermilion_aerora",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/ace_vermilion/skills/aerora/source/skill-source.json",
+        "sha256": "c3e318cbd6b570953ba5eb661e8dad3c80cae2307d732cde238cad50401e9f6b"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.07
+        },
+        {
+          "frame": 48,
+          "weight": 0.07
+        },
+        {
+          "frame": 54,
+          "weight": 0.07
+        },
+        {
+          "frame": 60,
+          "weight": 0.07
+        },
+        {
+          "frame": 66,
+          "weight": 0.07
+        },
+        {
+          "frame": 72,
+          "weight": 0.07
+        },
+        {
+          "frame": 78,
+          "weight": 0.07
+        },
+        {
+          "frame": 84,
+          "weight": 0.07
+        },
+        {
+          "frame": 90,
+          "weight": 0.44
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "MAGIC",
+        "id": 20120,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "magicId": 20120,
+          "name": "Aerora",
+          "rarity": 4,
+          "dispOrder": 111,
+          "cost": 10,
+          "target": "1",
+          "targetRange": "2",
+          "oL6zdpD0": 3,
+          "element": "0,0,0,0,1,0,0,0",
+          "Isb1GDe2": 2,
+          "J35nicFV": 0,
+          "magicType": 2,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "KosY4a18": 2,
+          "Af2Pc0Jz": 0,
+          "processId": "15",
+          "PI18xnkD": "0",
+          "processParam": "0,0,0,0,0,1000,0",
+          "H4zD2IQ5": 2,
+          "effectFrames": "38:2000212:1:2:0&40:5041671:1:1:0",
+          "attackFrames": "42:7:2:2-48:7:2:2-54:7:2:2-60:7:2:2-66:7:2:2-72:7:2:2-78:7:2:2-84:7:2:2-90:44:2:2",
+          "7irj9hAb": "1,1,1,0",
+          "iconId": 700000025,
+          "equipCondition": null,
+          "AegvG91P": "1,0",
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": "6",
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "bullet_card",
+      "ffbeId": 254002307,
+      "name": "Bullet Card",
+      "rarity": 5,
+      "level": 1,
+      "type": "LIMIT",
+      "mpCost": 0,
+      "scope": "all_enemies",
+      "damageMultiplier": 3.5,
+      "hitCount": 4,
+      "attackFrames": [
+        200,
+        200,
+        200,
+        200
+      ],
+      "moveType": "stationary",
+      "motion": "atk",
+      "desc": "Limit Burst: Physical damage (3.5x) to all enemies",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "ace_vermilion_bullet_card",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/ace_vermilion/skills/bullet_card/source/skill-source.json",
+        "sha256": "0623ac75659b9b16a4f9891b5521ebbd495fab22185213f6a486d9b8de39dc9a"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "limit_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 1,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 1 / move 4: stationary limit_atk body (LB rows carry no motionType; reviewed adaptation)."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 200,
+          "weight": 0.25
+        },
+        {
+          "frame": 200,
+          "weight": 0.25
+        },
+        {
+          "frame": 200,
+          "weight": 0.25
+        },
+        {
+          "frame": 200,
+          "weight": 0.25
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "LIMIT",
+        "id": 254002307,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "limitBurstId": 254002307,
+          "name": "Bullet Card",
+          "limitBurstType": 1,
+          "target": "1@1@1@1",
+          "targetRange": "2@2@2@2",
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 1,
+          "J35nicFV": 0,
+          "skillType": 1,
+          "aR5i4ewA": 0,
+          "KosY4a18": 2,
+          "Af2Pc0Jz": 1,
+          "processId": "163@24@33@15",
+          "PI18xnkD": "0@0@0@0",
+          "processParam": "13,35,35,1,3,1@0,0,0,-80,3,1@0,0,0,0,0,0,-135,0,1,3@0,0,0,0,0,25000,0",
+          "H4zD2IQ5": 0,
+          "fileInfo": "LB_LLI_lapis4.usm",
+          "effectFrame": "0:5041893:2:4:0&252:5000970:2:4:0&0:8009458:2:4:0&0:8009459:1:1:0&252:5030841:1:1:0&252:5028082:2:1:0&252:5028091:1:1:0&0:5040430:1:4:0&0:5040435:1:4:0",
+          "attackFrames": "200:100:2:2@200:100:2:2@200:100:2:2@200:100:2:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000000,
+          "description": "Reduce SPR, light resistance, and resistance to throwing weapons, and damage all enemies",
+          "58bfqWsR": 1,
+          "6ZEyK95f": null,
+          "effectFrames": "0:5041893:2:4:0&252:5000970:2:4:0&0:8009458:2:4:0&0:8009459:1:1:0&252:5030841:1:1:0&252:5028082:2:1:0&252:5028091:1:1:0&0:5040430:1:4:0&0:5040435:1:4:0"
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    }
+  ]
+}

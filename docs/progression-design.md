@@ -1,6 +1,6 @@
 # Character variants and the level system (proposal, 2026-11-09)
 
-Status: the level scale is implemented up to Lv 6 (2026-11-09, see "Implemented"); duplicates/Bond are a proposal. Meta-progression v1 (`src/run/profile.mjs`) already exists and
+Status: the level scale is implemented up to Lv 6 (2026-11-09, see "Implemented"); Bond for duplicates and the first variant wave are implemented too. Meta-progression v1 (`src/run/profile.mjs`) already exists and
 stays compatible with it.
 
 ## Source facts (master data `ffbe-data.db`, checked 2026-11-09)
@@ -88,7 +88,7 @@ Developer decision: implement levels up to 6 (NV) now. EX levels 7-9 and Brave S
 - UI: cards and reels show "Lv N", and the Fate Engine tier follows the level. Stars and NV stay as
   flavour on the reel.
 
-## Proposal: duplicates as Bond, not power (economy)
+## Duplicates as Bond, not power (implemented 2026-11-09)
 
 Problem: if duplicates raise the start level, a long-time profile only draws Lv 6 heroes, and the slot
 machine loses its tension.
@@ -98,10 +98,25 @@ Proposal: duplicates give Bond to that hero, with capped steps:
 2. Bond 2: choose this hero's starting skill.
 3. Bond 3: start level is at least Lv 2 (one-time floor; it never rolls Lv 1).
 
-Further copies return crystals. The slot machine stays, and its start level is still rolled per run.
+Further copies return 40 crystals. The slot machine stays, and its start level is still rolled per run.
+Summons draw from the whole drawable roster: a locked hero is unlocked, an unlocked one gains Bond.
+Code: `src/run/profile.mjs` (`bond`, `drawCatalog` perks, `summonHero`) and `src/run/runState.mjs`
+(`pickHero` weights, `minStartLevel`, `chooseStartSkill`). Tests: `tools/test_profile.mjs`.
 Power mostly comes from inside the run (relics, skills, levels), as in a roguelike.
 
-## Variant import proposal
+## Variant import (first wave 2026-11-09)
+
+Developer decision: work on the main PC only; repo size is not a constraint now.
+`tools/characters/roster-variants.json` lists 25 variants found through the master data's explicit
+`unitCharacterId` (Brave Shift forms with `nvShiftOrder 1` excluded). Each variant keeps its
+character's canonical identity, so it never shares a party with another variant of the same character.
+Run: `node tools/import_character_wave.mjs --wave tools/characters/roster-variants.json`.
+Result: 51 units with 253 skills and 49 Limit Bursts, 47 of them drawable. Barret (Avalanche), Cecil
+(Red Wings), Ace (Wild Card) and Terra (NV) have only their LB so far. Variants without NV data in
+`unitCharacterId` (e.g. Cloud KH, Star Player Tidus) are not found yet. NV awakenings of variants
+(isNvSublimationUnit forms) are not prepared yet.
+
+Earlier notes:
 
 Import all variants of a character together when it is imported. Technical limits:
 - Size: about 10 MB per variant including forms. The 27 current characters add about 260 MB to git.
@@ -114,5 +129,5 @@ Import all variants of a character together when it is imported. Technical limit
 ## Open decisions for the developer
 
 1. Decided 2026-11-09: implement up to Lv 6 now; EX later.
-2. Duplicates: the Bond proposal above awaits confirmation.
-3. Variants: import all variants per character, or move generated assets out of git first?
+2. Decided: Bond as above (developer left it to Claude).
+3. Decided: import all variants per character; main PC only.

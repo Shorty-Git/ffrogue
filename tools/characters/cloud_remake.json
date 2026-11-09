@@ -1,0 +1,194 @@
+{
+  "schemaVersion": 1,
+  "key": "cloud_remake",
+  "spriteUnitId": "207002007",
+  "game": "FFVII",
+  "battle": {
+    "maxHp": 3200,
+    "maxMp": 100,
+    "heroName": "CLOUD (REMAKE)",
+    "heroRole": "VANGUARD",
+    "attackType": "melee",
+    "targetOffsetX": 90,
+    "attackAnim": "atk",
+    "hitFrameIndex": 2
+  },
+  "scale": 2.5,
+  "reviewNote": "Created by tools/import_full_character.mjs; battle values are provisional defaults for balancing.",
+  "skills": [
+    {
+      "id": "fire",
+      "ffbeId": 20010,
+      "name": "Fire",
+      "rarity": 5,
+      "level": 1,
+      "type": "MAGIC",
+      "mpCost": 8,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 3,
+      "attackFrames": [
+        80,
+        80,
+        42
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Magic damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "cloud_remake_fire",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/cloud_remake/skills/fire/source/skill-source.json",
+        "sha256": "635e87383b4d58e044a8c73edd8391186d98feac5058d1639b8d20c3b97f0805"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.3333333333333333
+        },
+        {
+          "frame": 80,
+          "weight": 0.3333333333333333
+        },
+        {
+          "frame": 80,
+          "weight": 0.3333333333333333
+        }
+      ]
+    },
+    {
+      "id": "ascension_ffvii_remake",
+      "ffbeId": 207002007,
+      "name": "Ascension (FFVII REMAKE)",
+      "rarity": 5,
+      "level": 1,
+      "type": "LIMIT",
+      "mpCost": 0,
+      "scope": "single_enemy",
+      "damageMultiplier": 6,
+      "hitCount": 12,
+      "attackFrames": [
+        21,
+        57,
+        64,
+        71,
+        78,
+        85,
+        92,
+        99,
+        106,
+        113,
+        120,
+        195
+      ],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Limit Burst: Physical damage (6x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "cloud_remake_ascension_ffvii_remake",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/cloud_remake/skills/ascension_ffvii_remake/source/skill-source.json",
+        "sha256": "1db609b00bb67c849b3e1c3e342ac7453a2191c3c580c7be8d36a8602fa44af6"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "target",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "limit_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 1,
+          "sourceMoveType": 1,
+          "note": "Drafted from motion 1 / move 1: dash with limit_atk body (LB rows carry no motionType; reviewed adaptation)."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 21,
+          "weight": 0.03
+        },
+        {
+          "frame": 57,
+          "weight": 0.03
+        },
+        {
+          "frame": 64,
+          "weight": 0.03
+        },
+        {
+          "frame": 71,
+          "weight": 0.03
+        },
+        {
+          "frame": 78,
+          "weight": 0.03
+        },
+        {
+          "frame": 85,
+          "weight": 0.03
+        },
+        {
+          "frame": 92,
+          "weight": 0.03
+        },
+        {
+          "frame": 99,
+          "weight": 0.03
+        },
+        {
+          "frame": 106,
+          "weight": 0.03
+        },
+        {
+          "frame": 113,
+          "weight": 0.03
+        },
+        {
+          "frame": 120,
+          "weight": 0.03
+        },
+        {
+          "frame": 195,
+          "weight": 0.67
+        }
+      ]
+    }
+  ],
+  "portraitSource": "unit_icons/unit_icon_207002007.png"
+}

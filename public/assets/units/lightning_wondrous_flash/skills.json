@@ -1,0 +1,1049 @@
+{
+  "unitId": "213001407",
+  "unitName": "FLASH LIGHTNING",
+  "game": "FFXIII",
+  "skills": [
+    {
+      "id": "blitz_lightning",
+      "ffbeId": 1264080,
+      "name": "Blitz (Lightning)",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 60,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.6,
+      "hitCount": 9,
+      "attackFrames": [
+        42,
+        48,
+        54,
+        60,
+        66,
+        72,
+        78,
+        84,
+        90
+      ],
+      "moveType": "stationary",
+      "motion": "atk",
+      "desc": "Physical damage (1.6x) to all enemies",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "lightning_wondrous_flash_blitz_lightning",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/lightning_wondrous_flash/skills/blitz_lightning/source/skill-source.json",
+        "sha256": "7e6494681d2c2e636e6518c3a96ca6d9f78e181cd21dac74658dd75c1d0da65e"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 8,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 8 / move 4: stationary atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.07
+        },
+        {
+          "frame": 48,
+          "weight": 0.07
+        },
+        {
+          "frame": 54,
+          "weight": 0.07
+        },
+        {
+          "frame": 60,
+          "weight": 0.07
+        },
+        {
+          "frame": 66,
+          "weight": 0.07
+        },
+        {
+          "frame": 72,
+          "weight": 0.07
+        },
+        {
+          "frame": 78,
+          "weight": 0.07
+        },
+        {
+          "frame": 84,
+          "weight": 0.07
+        },
+        {
+          "frame": 90,
+          "weight": 0.44
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 1264080,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 1264080,
+          "name": "Blitz (Lightning)",
+          "rarity": 10,
+          "dispOrder": 1264080,
+          "cost": 120,
+          "6p90IFnC": null,
+          "target": "1",
+          "targetRange": "2",
+          "oL6zdpD0": 3,
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 1,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 4,
+          "processId": "1",
+          "PI18xnkD": "0",
+          "processParam": "0,0,0,0,0,0,14000,0",
+          "H4zD2IQ5": 0,
+          "motionType": 8,
+          "effectFrames": "38:61606000:1:1:0",
+          "attackFrames": "42:7:2:2-48:7:2:2-54:7:2:2-60:7:2:2-66:7:2:2-72:7:2:2-78:7:2:2-84:7:2:2-90:44:2:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000019,
+          "equipCondition": null,
+          "2QoE3PtB": 0,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": null,
+          "juA0Z4m7": null,
+          "5c3dU9nP": 1,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "flamestrike_ii",
+      "ffbeId": 230388,
+      "name": "Flamestrike II",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 36,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 1,
+      "attackFrames": [
+        32
+      ],
+      "moveType": "stationary",
+      "motion": "atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "lightning_wondrous_flash_flamestrike_ii",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/lightning_wondrous_flash/skills/flamestrike_ii/source/skill-source.json",
+        "sha256": "9370ebc9076a0ea1205574d7257a0d2bedab1f7f528b32c37e5f14871083fa4d"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 8,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 8 / move 4: stationary atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 32,
+          "weight": 1
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 230388,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 230388,
+          "name": "Flamestrike II",
+          "rarity": 8,
+          "dispOrder": 5323,
+          "cost": 36,
+          "6p90IFnC": null,
+          "target": "1@1",
+          "targetRange": "1@1",
+          "oL6zdpD0": 3,
+          "element": "1,0,0,0,0,0,0,0",
+          "Isb1GDe2": 1,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 4,
+          "processId": "1@24",
+          "PI18xnkD": "0@0",
+          "processParam": "0,0,0,0,0,0,10000,0@-83,-83,-83,-83,4,1",
+          "H4zD2IQ5": 0,
+          "motionType": 8,
+          "effectFrames": "12:5033421:1:1:0&12:5030820:1:1:0",
+          "attackFrames": "32:100:3:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000021,
+          "equipCondition": null,
+          "2QoE3PtB": 0,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": "203340",
+          "n1eAG69i": "2,11",
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "froststrike_ii",
+      "ffbeId": 230389,
+      "name": "Froststrike II",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 36,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 1,
+      "attackFrames": [
+        32
+      ],
+      "moveType": "stationary",
+      "motion": "atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "lightning_wondrous_flash_froststrike_ii",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/lightning_wondrous_flash/skills/froststrike_ii/source/skill-source.json",
+        "sha256": "7d35400901c4ac9f5a1817a4e6794cc9e0cc8e2ad70328358f9b68e71e7ee925"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 8,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 8 / move 4: stationary atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 32,
+          "weight": 1
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 230389,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 230389,
+          "name": "Froststrike II",
+          "rarity": 8,
+          "dispOrder": 5324,
+          "cost": 36,
+          "6p90IFnC": null,
+          "target": "1@1",
+          "targetRange": "1@1",
+          "oL6zdpD0": 3,
+          "element": "0,1,0,0,0,0,0,0",
+          "Isb1GDe2": 1,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 4,
+          "processId": "1@24",
+          "PI18xnkD": "0@0",
+          "processParam": "0,0,0,0,0,0,10000,0@-83,-83,-83,-83,4,1",
+          "H4zD2IQ5": 0,
+          "motionType": 8,
+          "effectFrames": "12:5033423:1:1:0&12:5030770:1:1:0",
+          "attackFrames": "32:100:3:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000022,
+          "equipCondition": null,
+          "2QoE3PtB": 0,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": "203340",
+          "n1eAG69i": "3,11",
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "aquastrike_ii",
+      "ffbeId": 230391,
+      "name": "Aquastrike II",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 36,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 1,
+      "attackFrames": [
+        32
+      ],
+      "moveType": "stationary",
+      "motion": "atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "lightning_wondrous_flash_aquastrike_ii",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/lightning_wondrous_flash/skills/aquastrike_ii/source/skill-source.json",
+        "sha256": "d4aab7df78fd0b840c75d45284ce83645c30810225727c62ec3400ce07ac9605"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 8,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 8 / move 4: stationary atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 32,
+          "weight": 1
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 230391,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 230391,
+          "name": "Aquastrike II",
+          "rarity": 8,
+          "dispOrder": 5326,
+          "cost": 36,
+          "6p90IFnC": null,
+          "target": "1@1",
+          "targetRange": "1@1",
+          "oL6zdpD0": 3,
+          "element": "0,0,0,1,0,0,0,0",
+          "Isb1GDe2": 1,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 4,
+          "processId": "1@24",
+          "PI18xnkD": "0@0",
+          "processParam": "0,0,0,0,0,0,10000,0@-83,-83,-83,-83,4,1",
+          "H4zD2IQ5": 0,
+          "motionType": 8,
+          "effectFrames": "12:5033427:1:1:0&12:5030840:1:1:0",
+          "attackFrames": "32:100:3:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000023,
+          "equipCondition": null,
+          "2QoE3PtB": 0,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": "203340",
+          "n1eAG69i": "5,11",
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "impulsestrike",
+      "ffbeId": 1264030,
+      "name": "Impulsestrike",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 60,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 8,
+      "attackFrames": [
+        70,
+        76,
+        82,
+        88,
+        94,
+        100,
+        106,
+        112
+      ],
+      "moveType": "stationary",
+      "motion": "atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "lightning_wondrous_flash_impulsestrike",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/lightning_wondrous_flash/skills/impulsestrike/source/skill-source.json",
+        "sha256": "8b230b3e61fb3e2b76ff8d9ff33fac7a9187f35ad9b3807755e907c741f4d780"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 8,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 8 / move 4: stationary atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 70,
+          "weight": 0.1
+        },
+        {
+          "frame": 76,
+          "weight": 0.1
+        },
+        {
+          "frame": 82,
+          "weight": 0.1
+        },
+        {
+          "frame": 88,
+          "weight": 0.1
+        },
+        {
+          "frame": 94,
+          "weight": 0.1
+        },
+        {
+          "frame": 100,
+          "weight": 0.1
+        },
+        {
+          "frame": 106,
+          "weight": 0.1
+        },
+        {
+          "frame": 112,
+          "weight": 0.3
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 1264030,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 1264030,
+          "name": "Impulsestrike",
+          "rarity": 10,
+          "dispOrder": 1264030,
+          "cost": 150,
+          "6p90IFnC": null,
+          "target": "1@1",
+          "targetRange": "1@1",
+          "oL6zdpD0": 3,
+          "element": "0,0,1,0,0,0,0,0",
+          "Isb1GDe2": 1,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 4,
+          "processId": "1@33",
+          "PI18xnkD": "0@0",
+          "processParam": "0,0,0,0,0,0,24000,0@0,0,-130,0,0,0,0,0,1,3",
+          "H4zD2IQ5": 0,
+          "motionType": 8,
+          "effectFrames": "40:60106200:1:1:0&40:5028102:2:1:0&40:5028111:1:1:0",
+          "attackFrames": "70:10:2:2-76:10:2:2-82:10:2:2-88:10:2:2-94:10:2:2-100:10:2:2-106:10:2:2-112:30:2:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000020,
+          "equipCondition": null,
+          "2QoE3PtB": 0,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": null,
+          "juA0Z4m7": null,
+          "5c3dU9nP": 1,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "sparkstrike_ii",
+      "ffbeId": 230390,
+      "name": "Sparkstrike II",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 36,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 1,
+      "attackFrames": [
+        32
+      ],
+      "moveType": "stationary",
+      "motion": "atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "lightning_wondrous_flash_sparkstrike_ii",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/lightning_wondrous_flash/skills/sparkstrike_ii/source/skill-source.json",
+        "sha256": "e7d329ec2cc177bd91e943438d90d31e3b0ba1994abf9be99ee949f534ea5b29"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 8,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 8 / move 4: stationary atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 32,
+          "weight": 1
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 230390,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 230390,
+          "name": "Sparkstrike II",
+          "rarity": 8,
+          "dispOrder": 5325,
+          "cost": 36,
+          "6p90IFnC": null,
+          "target": "1@1",
+          "targetRange": "1@1",
+          "oL6zdpD0": 3,
+          "element": "0,0,1,0,0,0,0,0",
+          "Isb1GDe2": 1,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 4,
+          "processId": "1@24",
+          "PI18xnkD": "0@0",
+          "processParam": "0,0,0,0,0,0,10000,0@-83,-83,-83,-83,4,1",
+          "H4zD2IQ5": 0,
+          "motionType": 8,
+          "effectFrames": "12:5033425:1:1:0&12:5030810:1:1:0",
+          "attackFrames": "32:100:3:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000020,
+          "equipCondition": null,
+          "2QoE3PtB": 0,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": "203340",
+          "n1eAG69i": "4,11",
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "curaga",
+      "ffbeId": 10160,
+      "name": "Curaga",
+      "rarity": 5,
+      "level": 1,
+      "type": "MAGIC",
+      "mpCost": 15,
+      "scope": "party",
+      "damageMultiplier": 1,
+      "hitCount": 0,
+      "attackFrames": [
+        120
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Restore 900 HP to all living allies (no revival).",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "lightning_wondrous_flash_curaga",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/lightning_wondrous_flash/skills/curaga/source/skill-source.json",
+        "sha256": "90899660b12930ce25d009076ab9e19f85af22055d69b9a0c91184c5837e3b07"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "allyTargeting": "living-allies",
+      "allyEvents": [
+        {
+          "frame": 120,
+          "effects": [
+            {
+              "kind": "heal",
+              "amount": 900
+            }
+          ]
+        }
+      ],
+      "friendlyTargetReview": {
+        "sourceTarget": "6",
+        "sourceRange": "2",
+        "note": "Original target 6 / range 2 (process 2); adapted to a fixed 900 HP heal on all living allies."
+      },
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "MAGIC",
+        "id": 10160,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "magicId": 10160,
+          "name": "Curaga",
+          "rarity": 6,
+          "dispOrder": 18,
+          "cost": 15,
+          "target": "6",
+          "targetRange": "2",
+          "oL6zdpD0": 1,
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 2,
+          "J35nicFV": 0,
+          "magicType": 1,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 3,
+          "aR5i4ewA": 0,
+          "KosY4a18": 2,
+          "Af2Pc0Jz": 0,
+          "processId": "2",
+          "PI18xnkD": "0",
+          "processParam": "0,0,1000,340,100",
+          "H4zD2IQ5": 2,
+          "effectFrames": "40:3000030:1:2:0&40:3000031:2:2:0",
+          "attackFrames": "120:100:2:2",
+          "7irj9hAb": "1,1,1,0",
+          "iconId": 700000004,
+          "equipCondition": null,
+          "AegvG91P": "1,1",
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": null,
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography",
+          "allyTargeting"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "army_of_one_wondrous_flash_lightning",
+      "ffbeId": 213001407,
+      "name": "Army of One (Wondrous Flash Lightning)",
+      "rarity": 5,
+      "level": 1,
+      "type": "LIMIT",
+      "mpCost": 0,
+      "scope": "single_enemy",
+      "damageMultiplier": 6,
+      "hitCount": 5,
+      "attackFrames": [
+        293,
+        293,
+        293,
+        293,
+        293
+      ],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Limit Burst: Physical damage (6x) to one enemy",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "lightning_wondrous_flash_army_of_one_wondrous_flash_lightning",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/lightning_wondrous_flash/skills/army_of_one_wondrous_flash_lightning/source/skill-source.json",
+        "sha256": "f06a82149555499a1e523dd90e15b33d59b2a118e93560547e5847d7032d684b"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "target",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "limit_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 1,
+          "sourceMoveType": 1,
+          "note": "Drafted from motion 1 / move 1: dash with limit_atk body (LB rows carry no motionType; reviewed adaptation)."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 293,
+          "weight": 0.2
+        },
+        {
+          "frame": 293,
+          "weight": 0.2
+        },
+        {
+          "frame": 293,
+          "weight": 0.2
+        },
+        {
+          "frame": 293,
+          "weight": 0.2
+        },
+        {
+          "frame": 293,
+          "weight": 0.2
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "LIMIT",
+        "id": 213001407,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "limitBurstId": 213001407,
+          "name": "Army of One (Wondrous Flash Lightning)",
+          "limitBurstType": 1,
+          "target": "1@1@3@3@1",
+          "targetRange": "1@1@0@0@1",
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 1,
+          "J35nicFV": 0,
+          "skillType": 1,
+          "aR5i4ewA": 0,
+          "KosY4a18": 2,
+          "Af2Pc0Jz": 1,
+          "processId": "33@24@3@120@1",
+          "PI18xnkD": "0@0@0@0@0",
+          "processParam": "0,0,-145,0,0,0,0,0,1,3@0,-80,0,0,3,1@200,0,0,0,3,1,0@150,3,1,0@0,0,0,0,0,0,35000,0",
+          "H4zD2IQ5": 0,
+          "fileInfo": "LB_LLJ_lapis4.usm",
+          "effectFrame": "0:5041893:2:4:0&187:5002090:2:4:0&291:5001610:2:4:0&291:5030180:2:4:0&0:8009524:2:4:0&0:8009525:1:1:0&291:5030841:1:1:0&291:5028102:2:1:0&291:5028111:1:1:0&0:5040390:1:4:0&0:5040395:1:4:0&360:5037240:2:7:0&360:5037460:1:7:0",
+          "attackFrames": "293:100:2:2@293:100:2:2@293:100:2:2@293:100:2:2@293:100:2:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000000,
+          "description": "Damage one enemy, and other effects",
+          "58bfqWsR": 1,
+          "6ZEyK95f": null,
+          "effectFrames": "0:5041893:2:4:0&187:5002090:2:4:0&291:5001610:2:4:0&291:5030180:2:4:0&0:8009524:2:4:0&0:8009525:1:1:0&291:5030841:1:1:0&291:5028102:2:1:0&291:5028111:1:1:0&0:5040390:1:4:0&0:5040395:1:4:0&360:5037240:2:7:0&360:5037460:1:7:0"
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    }
+  ]
+}

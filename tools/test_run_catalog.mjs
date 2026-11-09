@@ -15,9 +15,9 @@ function fixture(){
  for(const f of content.forms)manifests[f.key]=read(`public/${f.assetPath}/manifest.json`);
  return {scene:{cache:{json:{get:k=>values[k]}}},values,manifests};
 }
-test('production run pool admits the 161 published Source contracts across 26 characters',()=>{
+test('production run pool admits the 253 published Source contracts across 47 drawable characters',()=>{
  const f=fixture(),catalog=runCatalog(f.scene,f.manifests);
- assert.equal(Object.keys(catalog).length,26);assert.equal(Object.values(catalog).flatMap(c=>c.skills).length,161);assert.equal(catalog.squall.skills.length,7);assert.equal(catalog.squall.limitBurst?.name,'Lion Heart');assert.deepEqual(catalog.squall.forms.map(f=>f.form),['squall_form6','squall_form7']);
+ assert.equal(Object.keys(catalog).length,47);assert.equal(Object.values(catalog).flatMap(c=>c.skills).length,253);assert.equal(catalog.squall.skills.length,7);assert.equal(catalog.squall.limitBurst?.name,'Lion Heart');assert.deepEqual(catalog.squall.forms.map(f=>f.form),['squall_form6','squall_form7']);
  assert.equal(catalog.barret.skills.length,4);assert.notEqual(catalog.cloud.identity,catalog.cloud_ac.identity);
  for(const c of Object.values(catalog))for(const s of c.skills){const copy=skillDescription(s);assert.ok(copy.includes(`${s.mpCost} MP`));assert.ok(copy.length>12);}
 });

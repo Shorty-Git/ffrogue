@@ -1,7 +1,7 @@
 import type Phaser from 'phaser';
 import type {UnitManifest} from '../types/manifest';
 import type {RunState,RunRules} from './runState.mjs';
-import {RunStore,createRun,variantAreas,rollParty,confirmParty,completeBattle,chooseReward,encounters,acknowledgeAwakening} from './runState.mjs';
+import {RunStore,createRun,variantAreas,rollParty,confirmParty,chooseStartSkill,completeBattle,chooseReward,encounters,acknowledgeAwakening} from './runState.mjs';
 import {runCatalog} from './catalog';
 import {ProfileStore,drawCatalog,lockedHeroes,settleRun,summonHero,SUMMON_COST,type Profile} from './profile.mjs';
 import {RunUI} from '../ui/RunUI';
@@ -74,7 +74,9 @@ export class GameFlow{
   if(this.state.pendingAwakening)this.commit(acknowledgeAwakening(this.state,this.state.pendingAwakening.id));
   if(this.state.phase==='setup')this.setup();else if(this.state.phase==='battle')this.battle();else if(this.state.phase==='rewards')this.battle();else this.result();}
  private setup(){void import('html2canvas').catch(()=>{});
-  this.audio.setMusic(HOME_MUSIC_RESOURCE,'home');ALL_FATE_SOUNDS.forEach(sound=>this.audio.warmSample(fateSoundUrl(sound)));this.ui.slots(this.state!,this.busy);this.ui.on('spin',()=>this.spin());this.ui.on('skip',()=>this.finishSpin());this.ui.on('menu',()=>this.menu());this.ui.on('confirm',()=>{if(this.busy||this.state?.phase!=='setup')return;this.commit(confirmParty(this.state!));this.battle('start');});}
+  this.audio.setMusic(HOME_MUSIC_RESOURCE,'home');ALL_FATE_SOUNDS.forEach(sound=>this.audio.warmSample(fateSoundUrl(sound)));const draw=drawCatalog(this.profile,this.catalog),choices=Object.fromEntries(this.state!.party.filter(m=>draw[m.key]?.startSkillChoice).map(m=>[m.key,draw[m.key].skills.map(s=>({id:s.id,name:s.name}))]));
+  this.ui.slots(this.state!,this.busy,choices);this.ui.on('spin',()=>this.spin());
+  for(const [key,skills] of Object.entries(choices))skills.forEach((skill,i)=>this.ui.on(`start-skill-${key}-${i}`,()=>{if(this.busy||this.state?.phase!=='setup')return;try{this.commit(chooseStartSkill(this.state,key,skill.id,draw));this.audio.playUi('select');this.setup();}catch(error){this.fail(error);}}));this.ui.on('skip',()=>this.finishSpin());this.ui.on('menu',()=>this.menu());this.ui.on('confirm',()=>{if(this.busy||this.state?.phase!=='setup')return;this.commit(confirmParty(this.state!));this.battle('start');});}
  private spin(){
   if(this.busy||this.state?.phase!=='setup'||(this.state.party.length>0&&this.state.rerolls===0))return;
   try{
@@ -227,7 +229,7 @@ export class GameFlow{
   const settled=settleRun(this.profile,this.state!,this.catalog);this.profile=this.profiles.save(settled.profile);
   this.ui.result(this.state!,settled.crystals||settled.unlocked?{crystals:settled.crystals,unlocked:settled.unlocked}:undefined);this.ui.on('new',()=>{this.store.clear();this.state=null;this.menu();});}
  private summon(){try{const result=summonHero(this.profile,this.catalog,crypto.getRandomValues(new Uint32Array(1))[0].toString(36));
-  this.profile=this.profiles.save(result.profile);if(!result.unlocked)return this.menu();
-  this.audio.playUi('reward');this.ui.summoned(result.unlocked,this.profile.crystals);this.ui.on('close',()=>this.menu());}catch(error){this.fail(error);}}
+  this.profile=this.profiles.save(result.profile);
+  this.audio.playUi('reward');this.ui.summoned(result.hero,this.profile.crystals,result.bond,result.refund);this.ui.on('close',()=>this.menu());}catch(error){this.fail(error);}}
  snapshot(){return {state:this.state,total:this.state?encounters(this.state.areas).length:0,busy:this.busy};}
 }

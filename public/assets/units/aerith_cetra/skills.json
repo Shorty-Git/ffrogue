@@ -1,0 +1,274 @@
+{
+  "unitId": "207001507",
+  "unitName": "CETRA AERITH",
+  "game": "FFVII",
+  "skills": [
+    {
+      "id": "holy",
+      "ffbeId": 10210,
+      "name": "Holy",
+      "rarity": 5,
+      "level": 1,
+      "type": "MAGIC",
+      "mpCost": 20,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 1,
+      "attackFrames": [
+        450
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Magic damage (2.5x) to one enemy",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "aerith_cetra_holy",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/aerith_cetra/skills/holy/source/skill-source.json",
+        "sha256": "c2d5d1982219cf8454dc2d148b7f3ed617582160109da9a26143c7a405bb8173"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 450,
+          "weight": 1
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "MAGIC",
+        "id": 10210,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "magicId": 10210,
+          "name": "Holy",
+          "rarity": 7,
+          "dispOrder": 23,
+          "cost": 0,
+          "target": "1",
+          "targetRange": "1",
+          "oL6zdpD0": 1,
+          "element": "0,0,0,0,0,0,1,0",
+          "Isb1GDe2": 2,
+          "J35nicFV": 0,
+          "magicType": 1,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "KosY4a18": 2,
+          "Af2Pc0Jz": 0,
+          "processId": "169",
+          "PI18xnkD": "0",
+          "processParam": "4,30,2,100",
+          "H4zD2IQ5": 3,
+          "effectFrames": "40:2000420:1:1:0&40:2000421:2:4:0",
+          "attackFrames": "450:100:2:2",
+          "7irj9hAb": "1,1,1,0",
+          "iconId": 700000005,
+          "equipCondition": null,
+          "AegvG91P": "1,0",
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": "8",
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "banishga",
+      "ffbeId": 10170,
+      "name": "Banishga",
+      "rarity": 5,
+      "level": 1,
+      "type": "MAGIC",
+      "mpCost": 30,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.6,
+      "hitCount": 8,
+      "attackFrames": [
+        42,
+        62,
+        82,
+        102,
+        122,
+        142,
+        162,
+        182
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Magic damage (1.6x) to all enemies",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "aerith_cetra_banishga",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/aerith_cetra/skills/banishga/source/skill-source.json",
+        "sha256": "25cc671b62c95097b0be7df97df7e86798b2c85536d48dbafe380ada1aa1d32d"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.08
+        },
+        {
+          "frame": 62,
+          "weight": 0.08
+        },
+        {
+          "frame": 82,
+          "weight": 0.08
+        },
+        {
+          "frame": 102,
+          "weight": 0.08
+        },
+        {
+          "frame": 122,
+          "weight": 0.08
+        },
+        {
+          "frame": 142,
+          "weight": 0.08
+        },
+        {
+          "frame": 162,
+          "weight": 0.08
+        },
+        {
+          "frame": 182,
+          "weight": 0.44
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "MAGIC",
+        "id": 10170,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "magicId": 10170,
+          "name": "Banishga",
+          "rarity": 6,
+          "dispOrder": 19,
+          "cost": 30,
+          "target": "1",
+          "targetRange": "2",
+          "oL6zdpD0": 1,
+          "element": "0,0,0,0,0,0,1,0",
+          "Isb1GDe2": 2,
+          "J35nicFV": 0,
+          "magicType": 1,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "KosY4a18": 2,
+          "Af2Pc0Jz": 0,
+          "processId": "103",
+          "PI18xnkD": "0",
+          "processParam": "100,99999,2000",
+          "H4zD2IQ5": 3,
+          "effectFrames": "76:99999999:1:4:0&40:5041363:2:2:0&40:5041362:1:2:0&40:5041361:2:1:0&40:5041360:1:1:0",
+          "attackFrames": "42:8:2:2-62:8:2:2-82:8:2:2-102:8:2:2-122:8:2:2-142:8:2:2-162:8:2:2-182:44:2:2",
+          "7irj9hAb": "1,1,1,0",
+          "iconId": 700000005,
+          "equipCondition": null,
+          "AegvG91P": "1,0",
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": "8",
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    }
+  ]
+}
