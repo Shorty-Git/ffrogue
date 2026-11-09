@@ -13,6 +13,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {sourceFriendlyBuffs} from './lib/source-buffs.mjs';
+import {basicRepeatFromSource} from '../src/effects/basicRepeat.mjs';
 import {DatabaseSync} from 'node:sqlite';
 import {createHash} from 'node:crypto';
 
@@ -101,6 +102,8 @@ const candidates = report.catalog.filter(skill => !skill.passive && ['ABILITY', 
 const DAMAGE_PROCESSES = new Set(['1', '15', '21', '25', '40', '43', '70', '103', '112', '126', '157', '169']);
 const roleOf = skill => {
   if (skill.kind === 'LIMIT') return 'damage';
+  // Barrage-type commands (process 42) repeat the basic attack: no scene, drafted directly below.
+  if (basicRepeatFromSource(skill.raw)) return 'barrage';
   const processes = String(skill.raw?.processId ?? '').split('@');
   if (processes.some(p => DAMAGE_PROCESSES.has(p))) return 'damage';
   // Pure stat buffs (3, optionally with 18/19 mitigation: Protect, Shell); statuses come from the source.
@@ -112,6 +115,7 @@ const DRAFT_OPTIONS = {damage: '', heal: '--heal 900', buff: '--source-buff', ra
 const decide = skill => {
   const role = roleOf(skill);
   if (!role) return `process ${skill.raw?.processId} is not a supported damage, heal or buff mechanic`;
+  if (role === 'barrage') return null;
   const range = String(skill.raw?.targetRange ?? skill.raw?.target ?? '').split('@')[0];
   if (role === 'damage' && skill.kind !== 'LIMIT' && !['1', '2'].includes(range)) return 'damage skill without an enemy target range';
   // Delayed or conditional damage (e.g. Tidus' Delay Attack) has no hit timeline to play.
@@ -125,13 +129,15 @@ const decide = skill => {
   return null;
 };
 const actives = candidates.filter(s => s.kind !== 'LIMIT').map(s => ({s, reason: decide(s)}));
-const chosen = actives.filter(x => !x.reason).sort((a, b) => coverage(b.s) - coverage(a.s)).slice(0, maxSkills).map(x => x.s);
+// Barrages carry no effect groups (coverage 0) and need no scene, so they sit outside the --max-skills cap.
+const barrages = actives.filter(x => !x.reason && roleOf(x.s) === 'barrage').map(x => x.s);
+const chosen = [...actives.filter(x => !x.reason && roleOf(x.s) !== 'barrage').sort((a, b) => coverage(b.s) - coverage(a.s)).slice(0, maxSkills).map(x => x.s), ...barrages];
 const limit = candidates.find(s => s.kind === 'LIMIT');
 if (limit && !decide(limit)) chosen.push(limit);
 for (const {s, reason} of actives) if (reason || !chosen.includes(s)) receipt.skills.push({ffbeId: s.id, name: s.name, status: 'not selected', reason: reason ?? `beyond --max-skills ${maxSkills}`});
 if (limit && decide(limit)) receipt.skills.push({ffbeId: limit.id, name: limit.name, status: 'not selected', reason: decide(limit)});
 // One entry per skill id: same-named variants (e.g. two "Fira" rows) would collide on the key.
-const batch = chosen.map(s => { const id = snake(s.name); return {s, id, presentation: `${key}_${id}`}; })
+const batch = chosen.filter(s => roleOf(s) !== 'barrage').map(s => { const id = snake(s.name); return {s, id, presentation: `${key}_${id}`}; })
   .filter((b, i, all) => all.findIndex(x => x.id === b.id) === i);
 fs.writeFileSync(`${work}/batch.txt`, batch.map(b => `${key} ${b.s.id} ${b.id} ${b.presentation} ${DRAFT_OPTIONS[roleOf(b.s)]}`.trimEnd()).join('\n') + '\n');
 console.log(`Selected ${batch.length}: ${batch.map(b => b.s.name).join(', ')}`);
@@ -158,6 +164,28 @@ const dropSkill = (id, presentation) => {
   writeJson('public/assets/content.json', registry);
 };
 for (const s of receipt.skills.filter(s => s.status === 'failed')) dropSkill(s.id, s.presentation);
+// Barrages: reviewed entries straight from the original fields; the report re-inspection below checks them.
+{
+  const current = readJson(recipeFile);
+  for (const s of barrages) {
+    const id = snake(s.name), r = basicRepeatFromSource(s.raw);
+    if (current.skills.some(x => x.id === id && x.ffbeId !== s.id)) { receipt.skills.push({ffbeId: s.id, name: s.name, status: 'failed', reason: 'skill id taken by another command'}); continue; }
+    const scope = r.targeting === 'target' ? 'single_enemy' : 'all_enemies';
+    // Per-hit power: the source percentage, held to 50-100 % of a basic attack (reviewed default; Barrage
+    // rows carry 1500, which is not a usable per-hit percentage).
+    const perHit = Math.round(Math.min(1, Math.max(.5, r.power / 100)) * 100) / 100;
+    const hits = r.minHits === r.maxHits ? `${r.minHits}` : `${r.minHits}-${r.maxHits}`;
+    const entry = {id, ffbeId: s.id, name: s.name, rarity: 5, level: 1, type: s.kind, mpCost: Math.max(8, Math.min(60, Number(s.raw.cost) || 20)),
+      scope, damageMultiplier: perHit, hitCount: r.maxHits, attackFrames: [], moveType: 'dash', motion: 'atk',
+      desc: `Strike ${hits} times with the basic attack (${Math.round(perHit * 100)}% each) on ${{target: 'the target', all: 'every enemy', random: 'random enemies'}[r.targeting]}.`,
+      execution: 'basic-attack-repeat', basicRepeat: {minHits: r.minHits, maxHits: r.maxHits, targeting: r.targeting},
+      importStatus: 'imported', requiresSourceScene: false,
+      reviewNote: `Original process 42 (${s.raw.processParam}, range ${s.raw.targetRange}): repeats the unit's basic attack with its original hit frames; per-hit power is a reviewed default.`};
+    current.skills = [...current.skills.filter(x => x.id !== id), entry];
+    receipt.skills.push({ffbeId: s.id, name: s.name, kind: s.kind, id, status: 'imported'});
+  }
+  writeJson(recipeFile, current);
+}
 // The character report names per-skill publication blockers; drop those skills too, with the reason.
 run('re-inspect', 'node', ['tools/import_character.mjs', '--recipe', recipeFile]);
 for (const selected of readJson(`tools/data/characters/${key}/report.json`).selected.filter(s => s.issues.length)) {

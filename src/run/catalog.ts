@@ -5,19 +5,21 @@ import type {UnitSkillsData,SkillConfig} from '../types/skills';
 import type {RunCatalog} from './runState.mjs';
 import {rankValue} from './unitForms.mjs';
 import {validateSceneAction} from '../effects/sceneProfile.mjs';
+import {validateBasicRepeat} from '../effects/basicRepeat.mjs';
 export interface RunContent{schemaVersion:1;units:Record<string,{identity:string;unitId:string;rarity:number;rank?:'NV';canonicalIdentity:string;variantLabel?:string}>;canonicalCharacters:Record<string,{label:string}>;
  forms:{key:string;identityKey:string;identity:string;unitId:string;rarity:number;rank?:'NV';assetPath:string;awakensFrom:string}[];}
 export function runCatalog(scene:Phaser.Scene,manifests:Record<string,UnitManifest>):RunCatalog{
  const registry=scene.cache.json.get('content_registry')as ContentRegistry,content=scene.cache.json.get('run_content')as RunContent,result:RunCatalog={};
  if(content?.schemaVersion!==1)throw Error('Prepared run content required');
  for(const key of registry.characters){const def=scene.cache.json.get('character_'+key)as CharacterDefinition,meta=content.units[key];
-  const published=((scene.cache.json.get('skills_'+key)as UnitSkillsData)?.skills??[]).filter(s=>s.importStatus==='imported'&&s.requiresSourceScene&&s.scenePresentation);
+  // Barrage-type commands repeat the basic attack and have no scene (src/effects/basicRepeat.mjs).
+  const published=((scene.cache.json.get('skills_'+key)as UnitSkillsData)?.skills??[]).filter(s=>s.importStatus==='imported'&&(s.requiresSourceScene&&s.scenePresentation||s.execution==='basic-attack-repeat'));
   // Limit Bursts use the LB gauge; they never enter starter draws, rewards or the three skill slots.
   const skills=published.filter(s=>s.type!=='LIMIT'),limitBurst=published.find(s=>s.type==='LIMIT');
   if(!skills.length)continue;
   if(!meta||meta.unitId!==String(manifests[key].unitId))throw Error('Run character form mismatch: '+key);
   if(!meta.canonicalIdentity||!content.canonicalCharacters?.[meta.canonicalIdentity])throw Error('Reviewed canonical character identity required: '+key);
-  published.forEach(s=>validateSceneAction(scene.cache.json.get('scene_'+s.scenePresentation+'_manifest'),s));
+  published.forEach(s=>s.execution==='basic-attack-repeat'?validateBasicRepeat(s):validateSceneAction(scene.cache.json.get('scene_'+s.scenePresentation+'_manifest'),s));
   result[key]={key,name:def.battle.heroName??key,variantLabel:meta.variantLabel,identity:meta.identity,canonicalIdentity:meta.canonicalIdentity,unitId:meta.unitId,rarity:meta.rarity,...(meta.rank?{rank:meta.rank}:{}),form:key,
    maxHp:def.battle.maxHp??3000,maxMp:def.battle.maxMp??100,skills,...(limitBurst?{limitBurst}:{}),magicAvailable:def.battle.attackType==='ranged',portrait:`/assets/units/${key}/${def.portrait??'portrait.png'}`};
   const candidates=content.forms.filter(f=>f.identityKey===key&&f.identity===meta.identity&&rankValue(f)>meta.rarity).sort((a,b)=>rankValue(a)-rankValue(b));
@@ -36,6 +38,7 @@ export function runCatalog(scene:Phaser.Scene,manifests:Record<string,UnitManife
 export function skillDescription(s:SkillConfig):string{
  const target={single_enemy:'One enemy',all_enemies:'All enemies',single_ally:'One ally',party:s.allyTargeting==='other-living-allies'?'Other living allies':s.allyTargeting==='fallen-ally'?'One fallen ally':s.allyTargeting==='fallen-allies'?'Fallen allies':'Living party',self:'Self'}[s.scope];
  const parts=[`${s.mpCost} MP`,target];
+ if(s.basicRepeat){const r=s.basicRepeat;parts.push(`${r.minHits===r.maxHits?r.minHits:r.minHits+'–'+r.maxHits} basic attacks · ${Number(s.damageMultiplier.toFixed(2))}× power each${r.targeting==='random'?' · random targets':''}`);}
  if(s.damageEvents)parts.push(`${Number(s.damageMultiplier.toFixed(2))}× ${s.damageType==='holy'?'magic':'physical'} power · ${s.damageEvents.length} hit${s.damageEvents.length===1?'':'s'}`);
  for(const e of s.allyEvents??[])for(const f of e.effects)parts.push(f.kind==='heal'?`Restore ${f.amount} HP (no revival)`
   :f.kind==='limit-fill'?`Limit gauge +${f.amount}`

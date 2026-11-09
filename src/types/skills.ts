@@ -90,7 +90,9 @@ export interface SkillConfig {
   supportEvents?: { frame: number; effects: EnemySkillEffect[] }[];
   /** Reviewed stationary friendly events; healing does not revive K.O. actors. */
   allyEvents?: { frame: number; effects: FriendlySkillEffect[] }[];
-
+  /** Barrage-type command (process 42): repeats the basic attack; no scene (src/effects/basicRepeat.mjs). */
+  execution?: string;
+  basicRepeat?: { minHits: number; maxHits: number; targeting: 'target' | 'all' | 'random' };
 }
 
 export interface UnitSkillsData {

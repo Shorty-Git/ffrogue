@@ -566,6 +566,31 @@
         "sourceRange": "1@1",
         "note": "Original target 2@2 / range 1@1 (process 3@18); adapted to physical guard -0.3 for 3 rounds (statuses from the original stat-buff processes 3@18 / 0,100,0,0,4,1@30,4,1,1) on all living allies."
       }
+    },
+    {
+      "id": "barrage",
+      "ffbeId": 200310,
+      "name": "Barrage",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 16,
+      "scope": "all_enemies",
+      "damageMultiplier": 1,
+      "hitCount": 4,
+      "attackFrames": [],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Strike 4 times with the basic attack (100% each) on random enemies.",
+      "execution": "basic-attack-repeat",
+      "basicRepeat": {
+        "minHits": 4,
+        "maxHits": 4,
+        "targeting": "random"
+      },
+      "importStatus": "imported",
+      "requiresSourceScene": false,
+      "reviewNote": "Original process 42 (0,0,4,4,1500,0, range 3): repeats the unit's basic attack with its original hit frames; per-hit power is a reviewed default."
     }
   ],
   "portraitSource": "unit_icons/unit_icon_203000803.png"

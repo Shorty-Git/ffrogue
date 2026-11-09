@@ -14,6 +14,8 @@ export function heroBodyClips(manifest, skills, attackClip='atk') {
  const required=['idle','move','dying','dead',attackClip];
  const optional=['win_before','win','standby','magic_standby','magic_atk'];
  for(const skill of skills.filter(s=>s.importStatus==='imported')){
+  // Barrage-type repeats play the basic attack clip, which is always required above.
+  if(skill.execution==='basic-attack-repeat')continue;
   if(!skill.actionChoreography)throw Error('Reviewed body choreography required: '+skill.id);
   required.push(...(skill.actionChoreography.body.phases??[]).map(p=>p.clip));
  }

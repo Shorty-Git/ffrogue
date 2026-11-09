@@ -15,6 +15,7 @@ import { createPreparedSceneBridge, type PreparedSceneBridge, type PreparedScene
 import { validateSceneManifest, validateSceneAction } from '../effects/sceneProfile.mjs';
 import { reviewedSkillEvents,skillDamageType } from '../effects/skillDamageTimeline.mjs';
 import { applyEnemyStatuses, isEnemyActionBlocked, ageEnemyStatuses, enemyAttackMultiplier } from '../effects/enemyStatus.mjs';
+import { validateBasicRepeat } from '../effects/basicRepeat.mjs';
 import { applyHeroBuffs, consumeAutoRevive, heroDamageTakenMultiplier, heroPhysicalMultiplier } from '../effects/heroBuffs.mjs';
 import {resolveEnemyInstant} from '../effects/enemyInstant.mjs';
 import {validateActionChoreography,actionTravel} from '../effects/actionChoreography.mjs';
@@ -767,6 +768,8 @@ export class BattleScene extends Phaser.Scene {
   }
 
   private canUseSourceSkill(skill: SkillConfig): boolean {
+    // Barrage-type commands need no scene: they replay the basic attack.
+    if (skill.execution === 'basic-attack-repeat') return skill.importStatus === 'imported' && this.enemies.some(enemy => enemy.currentHp > 0);
     return !this.sourceVisualError && skill.importStatus !== 'not-imported' && !!this.sourceSceneKey(skill,
       skill.scope === 'party' ? this.friendlySkillTargets(this.getActiveHero(),skill).length
         : skill.scope === 'all_enemies' ? this.enemies.filter(enemy => enemy.currentHp > 0).length : 1);
@@ -851,11 +854,14 @@ export class BattleScene extends Phaser.Scene {
     const sourceCount = skill.scope === 'party' ? this.friendlySkillTargets(hero,skill).length
       : skill.scope === 'all_enemies' ? this.enemies.filter(enemy => enemy.currentHp > 0).length : 1;
     try {
-      if (!reviewedSkillEvents(skill)?.length) throw Error('Reviewed gameplay events required');
-      validateSceneAction(this.cache.json.get(`scene_${skill.scenePresentation}_manifest`), skill);
-      validateActionChoreography(skill,undefined,hero.manifest.animations);
+      if (skill.execution === 'basic-attack-repeat') validateBasicRepeat(skill);
+      else {
+        if (!reviewedSkillEvents(skill)?.length) throw Error('Reviewed gameplay events required');
+        validateSceneAction(this.cache.json.get(`scene_${skill.scenePresentation}_manifest`), skill);
+        validateActionChoreography(skill,undefined,hero.manifest.animations);
+      }
     } catch { this.updateStatus('Skill import is incompatible. No MP was spent.'); return; }
-    const admittedSourceKey = this.sourceSceneKey(skill, sourceCount)!;
+    const admittedSourceKey = skill.execution === 'basic-attack-repeat' ? undefined : this.sourceSceneKey(skill, sourceCount)!;
     if (skill.hpCost && hero.currentHp<=skill.hpCost) {
       this.updateStatus(`Not enough HP to use ${skill.name}. The caster must survive the cost.`);
       return;
@@ -878,13 +884,16 @@ export class BattleScene extends Phaser.Scene {
     this.announceCombatAction(hero.unitKey,hero.heroName,skill.id,skill.name,'hero','skill','source');
     this.skillActors.add(hero);
     let finished = false;
-    this.startHeroAction(hero, skill.actionChoreography!.readiness==='magic-standby'?'magic_atk':'atk', () => this.executeGenericSkill(hero, skill, () => {
+    const perform = skill.execution === 'basic-attack-repeat'
+      ? (done: () => void) => this.executeBasicRepeat(hero, skill, done)
+      : (done: () => void) => this.executeGenericSkill(hero, skill, done, admittedSourceKey, ally);
+    this.startHeroAction(hero, skill.actionChoreography?.readiness==='magic-standby'?'magic_atk':'atk', () => perform(() => {
       if (finished) return;
       finished = true;
       this.activeSkillActions--;
       this.skillActors.delete(hero);
       this.concludeHeroSkill(hero);
-    }, admittedSourceKey,ally));
+    }));
   }
 
   /** Show one full magic readiness cycle before starting the cast timeline. */
@@ -1259,6 +1268,67 @@ export class BattleScene extends Phaser.Scene {
     }
     // Source admission happens before MP; never substitute body-only or baked effects.
     onComplete();
+  }
+
+  /**
+   * Barrage-type command (process 42, src/effects/basicRepeat.mjs): the hero repeats the basic attack
+   * N times (rolled from the original min..max). Every repetition plays the attack clip with the
+   * unit's original hit frames; 'random' picks a living enemy per repetition and moves there briefly,
+   * 'all' hits every living enemy on each hit. Damage per hit share uses the skill base roll.
+   */
+  private executeBasicRepeat(hero: UnitActor, skill: SkillConfig, onComplete: () => void): void {
+    const repeat = validateBasicRepeat(skill), config = hero.combatConfig;
+    const count = repeat.minHits + Math.floor(this.randomValue() * (repeat.maxHits - repeat.minHits + 1));
+    const hits = config.hitFrames ?? [{frame: -1, weight: 1}];
+    const living = () => this.enemies.filter(enemy => enemy.currentHp > 0);
+    const selected = () => this.currentTarget && this.currentTarget.currentHp > 0 ? this.currentTarget : this.autoRetarget() ?? undefined;
+    const pick = (): TargetDummy | undefined => {
+      const list = living();
+      if (!list.length) return undefined;
+      return repeat.targeting === 'random' ? list[Math.floor(this.randomValue() * list.length)] : selected() ?? list[0];
+    };
+    let repetition = 0;
+    this.updateStatus(`Action: ${hero.heroName} uses ${skill.name}!`);
+    hero.setDepthBoost(true);
+    const finish = () => {
+      hero.playAnimation('move');
+      hero.setFacingLeft(false);
+      this.tweens.add({targets: hero, x: hero.homeSlot.x, y: hero.homeSlot.y, duration: 380, ease: 'Cubic.easeInOut', onComplete: () => {
+        hero.setFacingLeft(true);
+        hero.setDepthBoost(false);
+        hero.playRestPose();
+        this.finishAfterImpacts(onComplete);
+      }});
+    };
+    const strike = () => {
+      const target = pick();
+      if (repetition >= count || !target || this.combatState !== 'HERO_ATTACKING') { finish(); return; }
+      repetition++;
+      hero.playAnimation('move');
+      this.tweens.add({targets: hero, x: target.x + config.targetOffsetX * BATTLE_ART_SCALE, y: target.y,
+        duration: repetition === 1 ? 360 : 150, ease: 'Cubic.easeInOut', onComplete: () => {
+          const roll = this.skillBaseDamage(hero, skill), landed = new Set<number>();
+          const land = (index: number) => {
+            if (landed.has(index)) return;
+            landed.add(index);
+            if (this.combatState !== 'HERO_ATTACKING') return;
+            const victims = repeat.targeting === 'all' ? living() : [target.currentHp > 0 ? target : pick()].filter((v): v is TargetDummy => !!v);
+            for (const victim of victims) {
+              victim.applyDamage(Math.max(1, Math.round(roll * skill.damageMultiplier * hits[index].weight)), false, 'physical');
+              this.handleTargetDamaged(victim);
+            }
+            if (victims.length) this.basicImpactSound(hero, false);
+          };
+          const timers = hits.flatMap((hit, index) => hit.frame < 0 ? [] : [this.time.delayedCall(hit.frame * 1000 / 60, () => land(index))]);
+          hero.playAnimation(config.attackAnim);
+          hero.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+            timers.forEach(timer => timer.remove(false));
+            hits.forEach((_, index) => land(index));
+            strike();
+          });
+        }});
+    };
+    strike();
   }
 
   /** Shared stationary area presentation; source hit metadata remains separate. */

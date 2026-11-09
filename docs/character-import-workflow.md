@@ -61,6 +61,9 @@ existing skills are skipped. These generic rules replaced single-skill blockers 
   BMB rectangle modes 0 and 5-9 follow the same mapping.
 - Source motion 3 (plain action) and 6 (dance) play in place. Motion 5 (lunge/jump strike) dashes when
   its moveType is 1 or 6 (6 is a leap to the target).
+- Barrage-type commands (process 42, 2026-11-10): no staging. import_full_character.mjs drafts
+  `execution: 'basic-attack-repeat'` entries with `basicRepeat` from the original fields
+  (src/effects/basicRepeat.mjs); the report checks them against the source row.
 - Basic attack hits (2026-11-09): import_character.mjs writes `battle.hitFrames` from the unit row
   `attackFrames` ("frame:share:..." joined by "-", frames on the attack clip's 60 fps clock) via
   `sourceBasicHits`; rows that end after the published attack clip are not written. Existing

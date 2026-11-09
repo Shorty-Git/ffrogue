@@ -1,6 +1,6 @@
 // Original evidence is immutable metadata; game balance remains in the reviewed recipe.
 export function sourceCommandMetadata(skill, source, origin) {
-  if (!skill.scenePresentation && skill.importStatus!=='not-imported') return {};
+  if (!skill.scenePresentation && skill.importStatus!=='not-imported' && skill.execution!=='basic-attack-repeat') return {};
   const databasePath = origin?.file ?? origin?.path;
   if (!source || source.id !== skill.ffbeId || !source.raw || typeof databasePath !== 'string'
     || !/^[a-f0-9]{64}$/.test(origin?.sha256 ?? ''))
@@ -14,7 +14,7 @@ export function sourceCommandMetadata(skill, source, origin) {
     gameplayReview: {
       policy: 'reviewed-roguelike', note: skill.reviewNote ?? '',
       ownedFields: ['mpCost', 'damageMultiplier','damageType', 'hitCount', 'scope', 'damageEvents', 'supportEvents','allyEvents','actionChoreography',
-        ...(skill.hpCost!==undefined?['hpCost']:[]),...(skill.allyTargeting?['allyTargeting']:[])],
+        ...(skill.hpCost!==undefined?['hpCost']:[]),...(skill.allyTargeting?['allyTargeting']:[]),...(skill.basicRepeat?['basicRepeat']:[])],
       boundary: 'Original process parameters and source markers do not execute as game balance rules',
     },
   };

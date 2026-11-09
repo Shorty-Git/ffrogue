@@ -6,6 +6,7 @@ import { validateSceneAction } from '../../src/effects/sceneProfile.mjs';
 import {sourceDamageEvents,ZERO_PREFIX_MOTIONS} from './source-damage-events.mjs';
 import {writeFileRetry} from './fs-retry.mjs';
 import {validateActionChoreography} from '../../src/effects/actionChoreography.mjs';
+import { basicRepeatFromSource, validateBasicRepeat } from '../../src/effects/basicRepeat.mjs';
 
 export const readJson = file => JSON.parse(fs.readFileSync(file, 'utf8'));
 export const writeJson = (file, data) => {
@@ -276,6 +277,14 @@ export function inspectCharacter(recipe, { assets = 'rawdata/assets', dump = 'ra
       if (skill.importStatus === 'not-imported') {
         if(skill.execution !== 'not-imported' || skill.scenePresentation || !skill.unavailableReason)
           issues.push('unavailable-command-must-not-have-an-execution-binding');
+      } else if (skill.execution === 'basic-attack-repeat') {
+        // Barrage-type commands repeat the basic attack (src/effects/basicRepeat.mjs); no scene to check.
+        try {
+          const reviewed = validateBasicRepeat(skill), original = basicRepeatFromSource(source?.raw);
+          if (!original || original.minHits !== reviewed.minHits || original.maxHits !== reviewed.maxHits || original.targeting !== reviewed.targeting)
+            throw Error('Original process-42 fields required');
+          if (skill.importStatus !== 'imported' || !skill.reviewNote || !tracks.includes('atk')) throw Error('Reviewed import with an attack clip required');
+        } catch (error) { issues.push(`basic-repeat-blocked: ${error.message}`); }
       } else {
         if (!tracks.includes(skill.motion) || !['atk','magic_atk'].includes(skill.motion)) issues.push('missing-or-unsupported-body-motion');
         if (skill.importStatus !== 'imported' || !skill.requiresSourceScene || !skill.scenePresentation || !skill.reviewNote)
@@ -353,7 +362,7 @@ export function inspectCharacter(recipe, { assets = 'rawdata/assets', dump = 'ra
         }catch(error){issues.push(`source-import-blocked: ${error.message}`);}
       }
       return { id: skill.id, ffbeId: skill.ffbeId, execution: skill.execution, issues,
-        visualStatus: skill.importStatus==='not-imported'?'not-imported':skill.scenePresentation?'source-scene':'not-imported',
+        visualStatus: skill.importStatus==='not-imported'?'not-imported':skill.scenePresentation?'source-scene':skill.execution==='basic-attack-repeat'?'basic-attack':'not-imported',
         sourceCost: source?.raw?.cost ?? null, gameplayCost: skill.mpCost };
     });
     const files = [path.join(dump, 'unit_animated', `unit_anime_${recipe.spriteUnitId}.png`),

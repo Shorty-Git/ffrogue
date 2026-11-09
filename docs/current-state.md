@@ -57,6 +57,19 @@ unplayable for minutes and the cost grew with every import. It now prepares only
 skills and Limit Bursts plus every `presentation` the encounter's enemies reference
 (`ENEMY_CONTENT`/`ENEMY_SKILLS`). BootScene still loads all manifest JSONs (cheap).
 
+## Barrage-type commands (process 42, 2026-11-10)
+
+- Process 42 ("0,0,minHits,maxHits,power%", no effect or hit frames) repeats the unit's basic attack.
+  New execution `basic-attack-repeat` (`src/effects/basicRepeat.mjs`, shared by importer and battle):
+  the hero dashes in and plays the attack clip N times (rolled from min..max) with the original
+  basic-attack hit frames; range 3 picks a random living enemy per repetition, 1 the target, 2 all.
+  No scene: `canUseSourceSkill`, `runCatalog`, `heroBodyClips` and the pipeline report admit it
+  explicitly; import_character keeps `execution` only for this type. Per-hit power is the source
+  percentage held to 50-100 % (Barrage rows carry 1500). The importer drafts these outside --max-skills.
+- Imported: Barrage (Bartz, Cloud of Darkness, Delita), Gale Barrage (Bartz), Lightning Flash (Jack);
+  the same wave also published Delita's Karma Blade. Roster: 372 skills. Browser check: Gale Barrage
+  and Lightning Flash land every repetition. Tests: `tools/test_basic_repeat.mjs`.
+
 ## Cooldown commands and periodic Null activations (2026-11-09)
 
 - Process 130 ("cast ability X, every a turns, first after b") is a wrapper. inspectCharacter already adds

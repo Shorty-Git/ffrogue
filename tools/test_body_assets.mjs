@@ -12,13 +12,14 @@ test('published choreography and combat states are admitted for every unit and b
   // Limit Burst bodies load only for units that publish a Limit Burst.
   assert.equal(clips.some(c=>c.startsWith('limit_')),data.some(s=>s.type==='LIMIT'&&s.importStatus==='imported'));
   skills+=data.filter(s=>s.importStatus==='imported'&&s.type!=='LIMIT').length;limits+=data.filter(s=>s.importStatus==='imported'&&s.type==='LIMIT').length;
-  for(const skill of data.filter(s=>s.importStatus==='imported'))for(const p of skill.actionChoreography.body.phases??[])assert.ok(clips.includes(p.clip));
+  // Barrage-type repeats play the always-required attack clip and have no choreography.
+  for(const skill of data.filter(s=>s.importStatus==='imported'&&s.execution!=='basic-attack-repeat'))for(const p of skill.actionChoreography.body.phases??[])assert.ok(clips.includes(p.clip));
   for(const f of run.forms.filter(f=>f.identityKey===key)){
    const form=read('public/'+f.assetPath+'/manifest.json'),a=bodyAssets({[f.key]:form},[{key:f.key,clips:heroBodyClips(form,data)}],run.forms);
    assert.ok(a.every(a=>a.texture.startsWith(f.key+'_')&&fs.existsSync('public/'+a.url)));
   }
  }
- assert.equal(skills,366);assert.equal(limits,49);
+ assert.equal(skills,372);assert.equal(limits,49);
 });
 test('reviewed CGG passes retain the published strip geometry',()=>{
  const run=read('public/assets/run-content.json');

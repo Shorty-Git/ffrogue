@@ -18,7 +18,10 @@ const dump = value('--dump') ?? 'rawdata/ffbe_asset_dump';
 const report = inspectCharacter(recipe, { assets, dump });
 const skills = recipe.skills.map(({ execution, sourcePresentation, ...skill }) => {
   const source = report.catalog.find(entry => entry.id === skill.ffbeId && entry.kind === skill.type);
-  return { ...skill, ...sourceCommandMetadata(skill, source, report.source) };
+  // Scene skills drop the importer-only execution label; scene-free basic-attack repeats keep it,
+  // because the battle picks their path from it (src/effects/basicRepeat.mjs).
+  return { ...skill, ...(execution === 'basic-attack-repeat' ? { execution } : {}),
+    ...sourceCommandMetadata({ ...skill, execution }, source, report.source) };
 });
 const work = `tools/data/characters/${recipe.key}`;
 writeJson(`${work}/report.json`, report);

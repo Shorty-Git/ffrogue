@@ -720,6 +720,85 @@
           "weight": 0.6
         }
       ]
+    },
+    {
+      "id": "karma_blade",
+      "ffbeId": 507260,
+      "name": "Karma Blade",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 50,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 1,
+      "attackFrames": [
+        82
+      ],
+      "moveType": "stationary",
+      "motion": "atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "delita_karma_blade",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/delita/skills/karma_blade/source/skill-source.json",
+        "sha256": "6724015188368c15ecc164d4a3afc9d923448fefd81549ba713ad434697fa778"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 8,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 8 / move 4: stationary atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 82,
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "barrage",
+      "ffbeId": 200310,
+      "name": "Barrage",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 16,
+      "scope": "all_enemies",
+      "damageMultiplier": 1,
+      "hitCount": 4,
+      "attackFrames": [],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Strike 4 times with the basic attack (100% each) on random enemies.",
+      "execution": "basic-attack-repeat",
+      "basicRepeat": {
+        "minHits": 4,
+        "maxHits": 4,
+        "targeting": "random"
+      },
+      "importStatus": "imported",
+      "requiresSourceScene": false,
+      "reviewNote": "Original process 42 (0,0,4,4,1500,0, range 3): repeats the unit's basic attack with its original hit frames; per-hit power is a reviewed default."
     }
   ],
   "portraitSource": "unit_icons/unit_icon_253000205.png"

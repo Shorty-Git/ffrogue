@@ -187,6 +187,56 @@
           "weight": 0.5
         }
       ]
+    },
+    {
+      "id": "barrage",
+      "ffbeId": 200310,
+      "name": "Barrage",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 16,
+      "scope": "all_enemies",
+      "damageMultiplier": 1,
+      "hitCount": 4,
+      "attackFrames": [],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Strike 4 times with the basic attack (100% each) on random enemies.",
+      "execution": "basic-attack-repeat",
+      "basicRepeat": {
+        "minHits": 4,
+        "maxHits": 4,
+        "targeting": "random"
+      },
+      "importStatus": "imported",
+      "requiresSourceScene": false,
+      "reviewNote": "Original process 42 (0,0,4,4,1500,0, range 3): repeats the unit's basic attack with its original hit frames; per-hit power is a reviewed default."
+    },
+    {
+      "id": "gale_barrage",
+      "ffbeId": 203870,
+      "name": "Gale Barrage",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 24,
+      "scope": "all_enemies",
+      "damageMultiplier": 0.8,
+      "hitCount": 5,
+      "attackFrames": [],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Strike 5 times with the basic attack (80% each) on random enemies.",
+      "execution": "basic-attack-repeat",
+      "basicRepeat": {
+        "minHits": 5,
+        "maxHits": 5,
+        "targeting": "random"
+      },
+      "importStatus": "imported",
+      "requiresSourceScene": false,
+      "reviewNote": "Original process 42 (0,0,5,5,80,0, range 3): repeats the unit's basic attack with its original hit frames; per-hit power is a reviewed default."
     }
   ],
   "portraitSource": "unit_icons/unit_icon_205000103.png"

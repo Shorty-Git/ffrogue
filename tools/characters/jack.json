@@ -270,6 +270,31 @@
           "weight": 1
         }
       ]
+    },
+    {
+      "id": "lightning_flash",
+      "ffbeId": 203040,
+      "name": "Lightning Flash",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 16,
+      "scope": "all_enemies",
+      "damageMultiplier": 0.8,
+      "hitCount": 4,
+      "attackFrames": [],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Strike 4 times with the basic attack (80% each) on random enemies.",
+      "execution": "basic-attack-repeat",
+      "basicRepeat": {
+        "minHits": 4,
+        "maxHits": 4,
+        "targeting": "random"
+      },
+      "importStatus": "imported",
+      "requiresSourceScene": false,
+      "reviewNote": "Original process 42 (0,0,4,4,80,0, range 3): repeats the unit's basic attack with its original hit frames; per-hit power is a reviewed default."
     }
   ],
   "portraitSource": "unit_icons/unit_icon_254000603.png"
