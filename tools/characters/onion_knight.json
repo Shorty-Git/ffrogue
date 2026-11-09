@@ -1,0 +1,279 @@
+{
+  "schemaVersion": 1,
+  "key": "onion_knight",
+  "spriteUnitId": "203000105",
+  "game": "FFIII",
+  "battle": {
+    "maxHp": 3200,
+    "maxMp": 100,
+    "heroName": "ONION KNIGHT",
+    "heroRole": "VANGUARD",
+    "attackType": "melee",
+    "targetOffsetX": 90,
+    "attackAnim": "atk",
+    "hitFrameIndex": 2
+  },
+  "scale": 2.5,
+  "reviewNote": "Created by tools/import_full_character.mjs; battle values are provisional defaults for balancing.",
+  "skills": [
+    {
+      "id": "full_speed_bladeblitz",
+      "ffbeId": 211420,
+      "name": "Full Speed Bladeblitz",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 25,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.6,
+      "hitCount": 12,
+      "attackFrames": [
+        42,
+        49,
+        56,
+        63,
+        70,
+        77,
+        84,
+        91,
+        98,
+        105,
+        112,
+        119
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (1.6x) to all enemies",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "onion_knight_full_speed_bladeblitz",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/onion_knight/skills/full_speed_bladeblitz/source/skill-source.json",
+        "sha256": "1a5bdb8b69419c7d637396156b800e69b518755eb14d2f9cf5f9ec1e1483e3c4"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.08
+        },
+        {
+          "frame": 49,
+          "weight": 0.08
+        },
+        {
+          "frame": 56,
+          "weight": 0.08
+        },
+        {
+          "frame": 63,
+          "weight": 0.08
+        },
+        {
+          "frame": 70,
+          "weight": 0.08
+        },
+        {
+          "frame": 77,
+          "weight": 0.08
+        },
+        {
+          "frame": 84,
+          "weight": 0.08
+        },
+        {
+          "frame": 91,
+          "weight": 0.08
+        },
+        {
+          "frame": 98,
+          "weight": 0.08
+        },
+        {
+          "frame": 105,
+          "weight": 0.08
+        },
+        {
+          "frame": 112,
+          "weight": 0.08
+        },
+        {
+          "frame": 119,
+          "weight": 0.12
+        }
+      ]
+    },
+    {
+      "id": "onion_chop",
+      "ffbeId": 507290,
+      "name": "Onion Chop",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 60,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.6,
+      "hitCount": 20,
+      "attackFrames": [
+        42,
+        47,
+        52,
+        57,
+        62,
+        67,
+        72,
+        77,
+        82,
+        87,
+        92,
+        97,
+        102,
+        107,
+        112,
+        117,
+        122,
+        127,
+        132,
+        137
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (1.6x) to all enemies",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "onion_knight_onion_chop",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/onion_knight/skills/onion_chop/source/skill-source.json",
+        "sha256": "2ce3ce26a5d21c1b54aed3a917cb87c6ac5e45b7d74e57aded74b78aa63567d3"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.05
+        },
+        {
+          "frame": 47,
+          "weight": 0.05
+        },
+        {
+          "frame": 52,
+          "weight": 0.05
+        },
+        {
+          "frame": 57,
+          "weight": 0.05
+        },
+        {
+          "frame": 62,
+          "weight": 0.05
+        },
+        {
+          "frame": 67,
+          "weight": 0.05
+        },
+        {
+          "frame": 72,
+          "weight": 0.05
+        },
+        {
+          "frame": 77,
+          "weight": 0.05
+        },
+        {
+          "frame": 82,
+          "weight": 0.05
+        },
+        {
+          "frame": 87,
+          "weight": 0.05
+        },
+        {
+          "frame": 92,
+          "weight": 0.05
+        },
+        {
+          "frame": 97,
+          "weight": 0.05
+        },
+        {
+          "frame": 102,
+          "weight": 0.05
+        },
+        {
+          "frame": 107,
+          "weight": 0.05
+        },
+        {
+          "frame": 112,
+          "weight": 0.05
+        },
+        {
+          "frame": 117,
+          "weight": 0.05
+        },
+        {
+          "frame": 122,
+          "weight": 0.05
+        },
+        {
+          "frame": 127,
+          "weight": 0.05
+        },
+        {
+          "frame": 132,
+          "weight": 0.05
+        },
+        {
+          "frame": 137,
+          "weight": 0.05
+        }
+      ]
+    }
+  ],
+  "portraitSource": "unit_icons/unit_icon_203000105.png"
+}

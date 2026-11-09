@@ -1,5 +1,31 @@
 # FFRogue - Skill Reconstruction Map
 
+## Generic source semantics for wave imports (2026-11-09)
+
+Status: approximation mode only (`--approximate-unverified`). Each rule is listed in `plan.approximations`.
+None of them is native placement proof. Details are in `docs/character-import-workflow.md`, section
+"Wave import".
+
+- Process branches. `@` in `effectFrames` holds one branch per process. The preview plays all branches
+  in parallel (`process-branch-played-in-parallel`).
+  Evidence: 2330 of 3581 branched abilities have exactly one branch per process.
+- Process 130 command references. `processParam` names the cast ability, which the catalog adds and
+  imports through the ordinary path. 3210 abilities use process 130, many of them NV-era commands.
+- Group anchor field values 0 and 5-9. Evidence: master-data statistics of the effect files at each
+  value.
+  - 7: buff auras on the caster (brave/bar-, 1706 uses).
+  - 6 and 9: drain/aspir flows to the caster.
+  - 5 and 8: moving strikes at the target.
+  - 0: full-screen backdrops.
+  BMB rectangle modes 0 and 5-9 use the same mapping.
+- BR3M stride 28 (emitter shapes without UV) is read next to stride 36.
+- Source motions 3 and 6 play in place. Motion 5 dashes for moveType 1 or 6.
+
+Still open:
+- jump (process 52);
+- support mechanics (raise, dispel, protect/shell, debuffs);
+- delayed or conditional damage without attack frames.
+
 ## Gameplay data model: auto-revive and Limit fill friendly effects (2026-11-08)
 
 Not a reconstruction step: no presentation, recipe or Source skill changed. Two reusable

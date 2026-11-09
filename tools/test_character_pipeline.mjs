@@ -223,7 +223,9 @@ test('shared composition agrees with the captured command and uses the latest un
   assert.deepEqual(composeEffectFrames('2:10:1&9:20:2', '4:30:1', 1),
     { effectFrames: '2:10:1&9:20:2&13:30:1', skillFrameOffset: 9 });
   assert.deepEqual(composeEffectFrames(null, '4:30:1', 2), { effectFrames: '4:30:1', skillFrameOffset: 0 });
-  for (const raw of ['4:30', '4:30:1@7:40:1', 'bad', '99999999999999999:30:1'])
+  // '@' separates per-process branches: every branch is shifted, unit effects lead the first one.
+  assert.equal(composeEffectFrames('2:10:1', '4:30:1@7:40:1', 1).effectFrames, '2:10:1&6:30:1@9:40:1');
+  for (const raw of ['4:30', 'bad', '99999999999999999:30:1'])
     assert.throws(() => composeEffectFrames('2:10:1', raw, 1));
 });
 

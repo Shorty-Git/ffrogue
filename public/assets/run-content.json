@@ -50,11 +50,147 @@
       "canonicalIdentity": "type0:jack"
     },
     "squall": {
-      "variantLabel": "FFVIII · Base Unit",
+      "variantLabel": "FF · Base Unit",
       "identity": "208000105",
       "unitId": "208000105",
       "rarity": 5,
-      "canonicalIdentity": "ff8:squall-leonhart"
+      "canonicalIdentity": "ff:squall"
+    },
+    "tifa": {
+      "variantLabel": "FFVII · Base Unit",
+      "identity": "207000305",
+      "unitId": "207000305",
+      "rarity": 5,
+      "canonicalIdentity": "ff7:tifa-lockhart"
+    },
+    "onion_knight": {
+      "variantLabel": "FFIII · Base Unit",
+      "identity": "203000105",
+      "unitId": "203000105",
+      "rarity": 5,
+      "canonicalIdentity": "ff3:onion-knight"
+    },
+    "cecil": {
+      "variantLabel": "FFIV · Base Unit",
+      "identity": "204000103",
+      "unitId": "204000103",
+      "rarity": 3,
+      "canonicalIdentity": "ff4:cecil-harvey"
+    },
+    "bartz": {
+      "variantLabel": "FFV · Base Unit",
+      "identity": "205000103",
+      "unitId": "205000103",
+      "rarity": 3,
+      "canonicalIdentity": "ff5:bartz-klauser"
+    },
+    "terra": {
+      "variantLabel": "FFVI · Base Unit",
+      "identity": "206000103",
+      "unitId": "206000103",
+      "rarity": 3,
+      "canonicalIdentity": "ff6:terra-branford"
+    },
+    "zidane": {
+      "variantLabel": "FFIX · Base Unit",
+      "identity": "209000103",
+      "unitId": "209000103",
+      "rarity": 3,
+      "canonicalIdentity": "ff9:zidane-tribal"
+    },
+    "tidus": {
+      "variantLabel": "FFX · Base Unit",
+      "identity": "210000105",
+      "unitId": "210000105",
+      "rarity": 5,
+      "canonicalIdentity": "ff10:tidus"
+    },
+    "vaan": {
+      "variantLabel": "FFXII · Base Unit",
+      "identity": "212000103",
+      "unitId": "212000103",
+      "rarity": 3,
+      "canonicalIdentity": "ff12:vaan"
+    },
+    "lightning": {
+      "variantLabel": "FFXIII · Base Unit",
+      "identity": "213000105",
+      "unitId": "213000105",
+      "rarity": 5,
+      "canonicalIdentity": "ff13:lightning"
+    },
+    "noctis": {
+      "variantLabel": "FFXV · Base Unit",
+      "identity": "215000105",
+      "unitId": "215000105",
+      "rarity": 5,
+      "canonicalIdentity": "ff15:noctis-lucis-caelum"
+    },
+    "ramza": {
+      "variantLabel": "FFT · Base Unit",
+      "identity": "253000105",
+      "unitId": "253000105",
+      "rarity": 5,
+      "canonicalIdentity": "fft:ramza-beoulve"
+    },
+    "ace": {
+      "variantLabel": "Type-0 · Base Unit",
+      "identity": "254000105",
+      "unitId": "254000105",
+      "rarity": 5,
+      "canonicalIdentity": "type0:ace"
+    },
+    "auron": {
+      "variantLabel": "FFX · Base Unit",
+      "identity": "210000605",
+      "unitId": "210000605",
+      "rarity": 5,
+      "canonicalIdentity": "ff10:auron"
+    },
+    "vivi": {
+      "variantLabel": "FFIX · Base Unit",
+      "identity": "209000203",
+      "unitId": "209000203",
+      "rarity": 3,
+      "canonicalIdentity": "ff9:vivi-ornitier"
+    },
+    "clive": {
+      "variantLabel": "FFXVI · Base Unit",
+      "identity": "216000107",
+      "unitId": "216000107",
+      "rarity": 7,
+      "rank": "NV",
+      "canonicalIdentity": "ff16:clive-rosfield"
+    },
+    "cidolfus": {
+      "variantLabel": "FFXVI · Base Unit",
+      "identity": "216000307",
+      "unitId": "216000307",
+      "rarity": 7,
+      "rank": "NV",
+      "canonicalIdentity": "ff16:cidolfus-telamon"
+    },
+    "jill": {
+      "variantLabel": "FFXVI · Base Unit",
+      "identity": "216000207",
+      "unitId": "216000207",
+      "rarity": 7,
+      "rank": "NV",
+      "canonicalIdentity": "ff16:jill-warrick"
+    },
+    "firion": {
+      "variantLabel": "FFII · Base Unit",
+      "identity": "202000103",
+      "unitId": "202000103",
+      "rarity": 3,
+      "canonicalIdentity": "ff2:firion"
+    },
+    "warrior_of_light": {
+      "variantLabel": "FFI · Base Unit",
+      "identity": "201000104",
+      "unitId": "201000104",
+      "rarity": 4,
+      "canonicalIdentity": "ff1:warrior-of-light"
     }
   },
   "forms": [
@@ -258,6 +394,461 @@
       }
     },
     {
+      "key": "firion_form4",
+      "identityKey": "firion",
+      "identity": "202000103",
+      "unitId": "202000104",
+      "rarity": 4,
+      "awakensFrom": "firion",
+      "assetPath": "assets/forms/firion_form4",
+      "source": {
+        "recipe": "tools/characters/firion_form4.json",
+        "manifestSha256": "a27ca14d506dfac08b202d44f4628d851dae63ce6a82cec1c14535fd6e5c408a"
+      }
+    },
+    {
+      "key": "firion_form5",
+      "identityKey": "firion",
+      "identity": "202000103",
+      "unitId": "202000105",
+      "rarity": 5,
+      "awakensFrom": "firion_form4",
+      "assetPath": "assets/forms/firion_form5",
+      "source": {
+        "recipe": "tools/characters/firion_form5.json",
+        "manifestSha256": "c58d611ae256711ce0febc6fd8524f69a9774fc8d4d0f9a209293e7c7ca9c684"
+      }
+    },
+    {
+      "key": "firion_form6",
+      "identityKey": "firion",
+      "identity": "202000103",
+      "unitId": "202000106",
+      "rarity": 6,
+      "awakensFrom": "firion_form5",
+      "assetPath": "assets/forms/firion_form6",
+      "source": {
+        "recipe": "tools/characters/firion_form6.json",
+        "manifestSha256": "cbad357a405401eb012955d597277fe27643825e8ead70602206e95fbb14c04b"
+      }
+    },
+    {
+      "key": "cecil_form4",
+      "identityKey": "cecil",
+      "identity": "204000103",
+      "unitId": "204000104",
+      "rarity": 4,
+      "awakensFrom": "cecil",
+      "assetPath": "assets/forms/cecil_form4",
+      "source": {
+        "recipe": "tools/characters/cecil_form4.json",
+        "manifestSha256": "84e0d45570e6f7d44fb319b641760c15114cd5f07278061808ce567d202276c2"
+      }
+    },
+    {
+      "key": "cecil_form5",
+      "identityKey": "cecil",
+      "identity": "204000103",
+      "unitId": "204000105",
+      "rarity": 5,
+      "awakensFrom": "cecil_form4",
+      "assetPath": "assets/forms/cecil_form5",
+      "source": {
+        "recipe": "tools/characters/cecil_form5.json",
+        "manifestSha256": "a6543386b1916f4b36b31a6c186b80fbad626476b9d1145f6cf638f2915cee26"
+      }
+    },
+    {
+      "key": "cecil_form6",
+      "identityKey": "cecil",
+      "identity": "204000103",
+      "unitId": "204000106",
+      "rarity": 6,
+      "awakensFrom": "cecil_form5",
+      "assetPath": "assets/forms/cecil_form6",
+      "source": {
+        "recipe": "tools/characters/cecil_form6.json",
+        "manifestSha256": "a4a3620e92880ff86914bce1dd1d2f05d0e330577964e317bad18c9b46145d60"
+      }
+    },
+    {
+      "key": "bartz_form4",
+      "identityKey": "bartz",
+      "identity": "205000103",
+      "unitId": "205000104",
+      "rarity": 4,
+      "awakensFrom": "bartz",
+      "assetPath": "assets/forms/bartz_form4",
+      "source": {
+        "recipe": "tools/characters/bartz_form4.json",
+        "manifestSha256": "43d55a5adead8536cc468c722a42840b8deec95cab3051624eb84c6c073ef6c6"
+      }
+    },
+    {
+      "key": "bartz_form5",
+      "identityKey": "bartz",
+      "identity": "205000103",
+      "unitId": "205000105",
+      "rarity": 5,
+      "awakensFrom": "bartz_form4",
+      "assetPath": "assets/forms/bartz_form5",
+      "source": {
+        "recipe": "tools/characters/bartz_form5.json",
+        "manifestSha256": "d136162c5ea8d8461840b0713ada3c201f7f5fc1595d6d661446aac92165fe59"
+      }
+    },
+    {
+      "key": "bartz_form6",
+      "identityKey": "bartz",
+      "identity": "205000103",
+      "unitId": "205000106",
+      "rarity": 6,
+      "awakensFrom": "bartz_form5",
+      "assetPath": "assets/forms/bartz_form6",
+      "source": {
+        "recipe": "tools/characters/bartz_form6.json",
+        "manifestSha256": "24abaf39e3a2611169a086680ab45799dbe373abb4bd078643cf5a7ea6487f2d"
+      }
+    },
+    {
+      "key": "terra_form4",
+      "identityKey": "terra",
+      "identity": "206000103",
+      "unitId": "206000104",
+      "rarity": 4,
+      "awakensFrom": "terra",
+      "assetPath": "assets/forms/terra_form4",
+      "source": {
+        "recipe": "tools/characters/terra_form4.json",
+        "manifestSha256": "bd1897e13dbb211ee950257e98d3da9dd31b7322735ee7139db41d3b975e1f33"
+      }
+    },
+    {
+      "key": "terra_form5",
+      "identityKey": "terra",
+      "identity": "206000103",
+      "unitId": "206000105",
+      "rarity": 5,
+      "awakensFrom": "terra_form4",
+      "assetPath": "assets/forms/terra_form5",
+      "source": {
+        "recipe": "tools/characters/terra_form5.json",
+        "manifestSha256": "9645c1dc9ebe51e5dfd240298e70da382a01100d7844154aed3fbc258bc7c160"
+      }
+    },
+    {
+      "key": "terra_form6",
+      "identityKey": "terra",
+      "identity": "206000103",
+      "unitId": "206000106",
+      "rarity": 6,
+      "awakensFrom": "terra_form5",
+      "assetPath": "assets/forms/terra_form6",
+      "source": {
+        "recipe": "tools/characters/terra_form6.json",
+        "manifestSha256": "c28069977db9bfae6496e7e030c037620e524cea5b6a192f1cf060fbfad0a1b1"
+      }
+    },
+    {
+      "key": "tifa_form6",
+      "identityKey": "tifa",
+      "identity": "207000305",
+      "unitId": "207000306",
+      "rarity": 6,
+      "awakensFrom": "tifa",
+      "assetPath": "assets/forms/tifa_form6",
+      "source": {
+        "recipe": "tools/characters/tifa_form6.json",
+        "manifestSha256": "346b1ca436404cdeefb66863c1b652309db1789898d970edd981d55f1266c25e"
+      }
+    },
+    {
+      "key": "tifa_form7",
+      "identityKey": "tifa",
+      "identity": "207000305",
+      "unitId": "207000307",
+      "rarity": 7,
+      "awakensFrom": "tifa_form6",
+      "assetPath": "assets/forms/tifa_form7",
+      "source": {
+        "recipe": "tools/characters/tifa_form7.json",
+        "manifestSha256": "22c550665f0350da27c91aebc8cf0125a0a238afc1aeb30a2f504ce357e536e6"
+      }
+    },
+    {
+      "key": "zidane_form4",
+      "identityKey": "zidane",
+      "identity": "209000103",
+      "unitId": "209000104",
+      "rarity": 4,
+      "awakensFrom": "zidane",
+      "assetPath": "assets/forms/zidane_form4",
+      "source": {
+        "recipe": "tools/characters/zidane_form4.json",
+        "manifestSha256": "f1460b288622685a84b2b4b775dcc98077d7f4fba5d4e5bf49592da9467f8416"
+      }
+    },
+    {
+      "key": "zidane_form5",
+      "identityKey": "zidane",
+      "identity": "209000103",
+      "unitId": "209000105",
+      "rarity": 5,
+      "awakensFrom": "zidane_form4",
+      "assetPath": "assets/forms/zidane_form5",
+      "source": {
+        "recipe": "tools/characters/zidane_form5.json",
+        "manifestSha256": "d75763c72d410a7b18d263d6b636e5b3652a25c3eb22e1e2fd628229a700da04"
+      }
+    },
+    {
+      "key": "zidane_form6",
+      "identityKey": "zidane",
+      "identity": "209000103",
+      "unitId": "209000106",
+      "rarity": 6,
+      "awakensFrom": "zidane_form5",
+      "assetPath": "assets/forms/zidane_form6",
+      "source": {
+        "recipe": "tools/characters/zidane_form6.json",
+        "manifestSha256": "6668468f99bc242c973d7bd0d754d129f7c33e773ea862591e9dbfdec7dfcebf"
+      }
+    },
+    {
+      "key": "tidus_form6",
+      "identityKey": "tidus",
+      "identity": "210000105",
+      "unitId": "210000106",
+      "rarity": 6,
+      "awakensFrom": "tidus",
+      "assetPath": "assets/forms/tidus_form6",
+      "source": {
+        "recipe": "tools/characters/tidus_form6.json",
+        "manifestSha256": "127a4d0df3d8a829cfeaa7747f820dd1b37fbad61abf17bbea04147cf44aa7cf"
+      }
+    },
+    {
+      "key": "tidus_form7",
+      "identityKey": "tidus",
+      "identity": "210000105",
+      "unitId": "210000107",
+      "rarity": 7,
+      "awakensFrom": "tidus_form6",
+      "assetPath": "assets/forms/tidus_form7",
+      "source": {
+        "recipe": "tools/characters/tidus_form7.json",
+        "manifestSha256": "e02b082c273e37d90b921763b88cb0986d29fe9fb6e6479a1d0256568018d885"
+      }
+    },
+    {
+      "key": "vaan_form4",
+      "identityKey": "vaan",
+      "identity": "212000103",
+      "unitId": "212000104",
+      "rarity": 4,
+      "awakensFrom": "vaan",
+      "assetPath": "assets/forms/vaan_form4",
+      "source": {
+        "recipe": "tools/characters/vaan_form4.json",
+        "manifestSha256": "a34fb6422ed472342b04e18e98c64635ae9aaaf123a224d8142bd8cd38c8e805"
+      }
+    },
+    {
+      "key": "vaan_form5",
+      "identityKey": "vaan",
+      "identity": "212000103",
+      "unitId": "212000105",
+      "rarity": 5,
+      "awakensFrom": "vaan_form4",
+      "assetPath": "assets/forms/vaan_form5",
+      "source": {
+        "recipe": "tools/characters/vaan_form5.json",
+        "manifestSha256": "4d566ca400cd8cc84d64ec6f61f84298a7e50d4fa14b64b5f056193eb6fa1c6c"
+      }
+    },
+    {
+      "key": "vaan_form6",
+      "identityKey": "vaan",
+      "identity": "212000103",
+      "unitId": "212000106",
+      "rarity": 6,
+      "awakensFrom": "vaan_form5",
+      "assetPath": "assets/forms/vaan_form6",
+      "source": {
+        "recipe": "tools/characters/vaan_form6.json",
+        "manifestSha256": "8f950162cc1b7254fbd6c2be104caceb98ea7ce7608f97a7f0fcd40e81022448"
+      }
+    },
+    {
+      "key": "lightning_form6",
+      "identityKey": "lightning",
+      "identity": "213000105",
+      "unitId": "213000106",
+      "rarity": 6,
+      "awakensFrom": "lightning",
+      "assetPath": "assets/forms/lightning_form6",
+      "source": {
+        "recipe": "tools/characters/lightning_form6.json",
+        "manifestSha256": "7c3f009cd8201390b0a2a23b1b51dd297b382b13d667816b686b96af8bd8d644"
+      }
+    },
+    {
+      "key": "lightning_form7",
+      "identityKey": "lightning",
+      "identity": "213000105",
+      "unitId": "213000107",
+      "rarity": 7,
+      "awakensFrom": "lightning_form6",
+      "assetPath": "assets/forms/lightning_form7",
+      "source": {
+        "recipe": "tools/characters/lightning_form7.json",
+        "manifestSha256": "ce998a4fe5fc979ee2ebdcaa46c04c0b22fa67d370cebad9e030d99e90f5aa5a"
+      }
+    },
+    {
+      "key": "noctis_form6",
+      "identityKey": "noctis",
+      "identity": "215000105",
+      "unitId": "215000106",
+      "rarity": 6,
+      "awakensFrom": "noctis",
+      "assetPath": "assets/forms/noctis_form6",
+      "source": {
+        "recipe": "tools/characters/noctis_form6.json",
+        "manifestSha256": "f8818223aa0d5a6b089e5380911a007369190d68069e29ae0e4a5f07c5efd904"
+      }
+    },
+    {
+      "key": "noctis_form7",
+      "identityKey": "noctis",
+      "identity": "215000105",
+      "unitId": "215000107",
+      "rarity": 7,
+      "awakensFrom": "noctis_form6",
+      "assetPath": "assets/forms/noctis_form7",
+      "source": {
+        "recipe": "tools/characters/noctis_form7.json",
+        "manifestSha256": "61227aedec250bfe79f0f8b0a6badca04dd245b308a63e236f43abc8a8a1cacb"
+      }
+    },
+    {
+      "key": "ramza_form6",
+      "identityKey": "ramza",
+      "identity": "253000105",
+      "unitId": "253000106",
+      "rarity": 6,
+      "awakensFrom": "ramza",
+      "assetPath": "assets/forms/ramza_form6",
+      "source": {
+        "recipe": "tools/characters/ramza_form6.json",
+        "manifestSha256": "a03be9e07ab5264b54d5c94b04e093da14491c9b2b6a37771d1e69649a3691b9"
+      }
+    },
+    {
+      "key": "ramza_form7",
+      "identityKey": "ramza",
+      "identity": "253000105",
+      "unitId": "253000107",
+      "rarity": 7,
+      "awakensFrom": "ramza_form6",
+      "assetPath": "assets/forms/ramza_form7",
+      "source": {
+        "recipe": "tools/characters/ramza_form7.json",
+        "manifestSha256": "4092931121413ea07f050c6508c8010776d0155d2885b2f2a0a93fcd0ce924a4"
+      }
+    },
+    {
+      "key": "ace_form6",
+      "identityKey": "ace",
+      "identity": "254000105",
+      "unitId": "254000106",
+      "rarity": 6,
+      "awakensFrom": "ace",
+      "assetPath": "assets/forms/ace_form6",
+      "source": {
+        "recipe": "tools/characters/ace_form6.json",
+        "manifestSha256": "9dba2f3a4ff5a4841eb745f568267797563c77ad39aa57b178668e3995bda4e7"
+      }
+    },
+    {
+      "key": "ace_form7",
+      "identityKey": "ace",
+      "identity": "254000105",
+      "unitId": "254000107",
+      "rarity": 7,
+      "awakensFrom": "ace_form6",
+      "assetPath": "assets/forms/ace_form7",
+      "source": {
+        "recipe": "tools/characters/ace_form7.json",
+        "manifestSha256": "0b06fa45fc4a03e7f45810a958de04897276a31d161bf42d5408740f8f0edb10"
+      }
+    },
+    {
+      "key": "auron_form6",
+      "identityKey": "auron",
+      "identity": "210000605",
+      "unitId": "210000606",
+      "rarity": 6,
+      "awakensFrom": "auron",
+      "assetPath": "assets/forms/auron_form6",
+      "source": {
+        "recipe": "tools/characters/auron_form6.json",
+        "manifestSha256": "abe52d42b3b04dcf158a0beb2e0a3d85cb26ce00fe00025da82ce073a9a5fc09"
+      }
+    },
+    {
+      "key": "auron_form7",
+      "identityKey": "auron",
+      "identity": "210000605",
+      "unitId": "210000607",
+      "rarity": 7,
+      "awakensFrom": "auron_form6",
+      "assetPath": "assets/forms/auron_form7",
+      "source": {
+        "recipe": "tools/characters/auron_form7.json",
+        "manifestSha256": "a1281b0a0cdee1fb55a75f9c52276cc60e808ac5f2d7ae4db1fbb4dd27771d59"
+      }
+    },
+    {
+      "key": "vivi_form4",
+      "identityKey": "vivi",
+      "identity": "209000203",
+      "unitId": "209000204",
+      "rarity": 4,
+      "awakensFrom": "vivi",
+      "assetPath": "assets/forms/vivi_form4",
+      "source": {
+        "recipe": "tools/characters/vivi_form4.json",
+        "manifestSha256": "8fab28f204265b01ef7bf694f100207d49777fd75a8598a534f6758649912f81"
+      }
+    },
+    {
+      "key": "vivi_form5",
+      "identityKey": "vivi",
+      "identity": "209000203",
+      "unitId": "209000205",
+      "rarity": 5,
+      "awakensFrom": "vivi_form4",
+      "assetPath": "assets/forms/vivi_form5",
+      "source": {
+        "recipe": "tools/characters/vivi_form5.json",
+        "manifestSha256": "4096e9752dc45b4d5377be31d4976c185ef8c718419731eb01878597c3f42c56"
+      }
+    },
+    {
+      "key": "vivi_form6",
+      "identityKey": "vivi",
+      "identity": "209000203",
+      "unitId": "209000206",
+      "rarity": 6,
+      "awakensFrom": "vivi_form5",
+      "assetPath": "assets/forms/vivi_form6",
+      "source": {
+        "recipe": "tools/characters/vivi_form6.json",
+        "manifestSha256": "739bec7b4e069a645b98e53c2c0be02f257a7ac1a2db2278538767606214af6b"
+      }
+    },
+    {
       "key": "squall_form6",
       "identityKey": "squall",
       "identity": "208000105",
@@ -282,6 +873,58 @@
         "recipe": "tools/characters/squall_form7.json",
         "manifestSha256": "5e550f7e90fd729da3f8cbb2e21b69731fc9bb869c50b77aa90d6cd3c05aef67"
       }
+    },
+    {
+      "key": "warrior_of_light_form5",
+      "identityKey": "warrior_of_light",
+      "identity": "201000104",
+      "unitId": "201000105",
+      "rarity": 5,
+      "awakensFrom": "warrior_of_light",
+      "assetPath": "assets/forms/warrior_of_light_form5",
+      "source": {
+        "recipe": "tools/characters/warrior_of_light_form5.json",
+        "manifestSha256": "a6c1f8882d9f320efe6fffdf3f29f0b2c61c3d31689490608296e3ff77a2d945"
+      }
+    },
+    {
+      "key": "warrior_of_light_form6",
+      "identityKey": "warrior_of_light",
+      "identity": "201000104",
+      "unitId": "201000106",
+      "rarity": 6,
+      "awakensFrom": "warrior_of_light_form5",
+      "assetPath": "assets/forms/warrior_of_light_form6",
+      "source": {
+        "recipe": "tools/characters/warrior_of_light_form6.json",
+        "manifestSha256": "c2523e1f8412fedb7f758a421fdcfbbe6be0f59af776535a175273097be5f607"
+      }
+    },
+    {
+      "key": "onion_knight_form6",
+      "identityKey": "onion_knight",
+      "identity": "203000105",
+      "unitId": "203000106",
+      "rarity": 6,
+      "awakensFrom": "onion_knight",
+      "assetPath": "assets/forms/onion_knight_form6",
+      "source": {
+        "recipe": "tools/characters/onion_knight_form6.json",
+        "manifestSha256": "976b0efe6a375ee24ef07821be08b1e68019ddef159a67ff2b1f84e9ed969491"
+      }
+    },
+    {
+      "key": "onion_knight_form7",
+      "identityKey": "onion_knight",
+      "identity": "203000105",
+      "unitId": "203000107",
+      "rarity": 7,
+      "awakensFrom": "onion_knight_form6",
+      "assetPath": "assets/forms/onion_knight_form7",
+      "source": {
+        "recipe": "tools/characters/onion_knight_form7.json",
+        "manifestSha256": "e4420ad5c5cd069caf3fd6e5a00574d74abaa46803fd04b072c58473c56b8646"
+      }
     }
   ],
   "canonicalCharacters": {
@@ -305,6 +948,66 @@
     },
     "ff8:squall-leonhart": {
       "label": "Squall Leonhart"
+    },
+    "ff7:tifa-lockhart": {
+      "label": "Tifa Lockhart"
+    },
+    "ff3:onion-knight": {
+      "label": "Onion Knight"
+    },
+    "ff4:cecil-harvey": {
+      "label": "Cecil Harvey"
+    },
+    "ff5:bartz-klauser": {
+      "label": "Bartz Klauser"
+    },
+    "ff6:terra-branford": {
+      "label": "Terra Branford"
+    },
+    "ff9:zidane-tribal": {
+      "label": "Zidane Tribal"
+    },
+    "ff10:tidus": {
+      "label": "Tidus"
+    },
+    "ff12:vaan": {
+      "label": "Vaan"
+    },
+    "ff13:lightning": {
+      "label": "Lightning"
+    },
+    "ff15:noctis-lucis-caelum": {
+      "label": "Noctis Lucis Caelum"
+    },
+    "fft:ramza-beoulve": {
+      "label": "Ramza Beoulve"
+    },
+    "type0:ace": {
+      "label": "Ace"
+    },
+    "ff10:auron": {
+      "label": "Auron"
+    },
+    "ff9:vivi-ornitier": {
+      "label": "Vivi Ornitier"
+    },
+    "ff16:clive-rosfield": {
+      "label": "Clive Rosfield"
+    },
+    "ff16:cidolfus-telamon": {
+      "label": "Cidolfus Telamon"
+    },
+    "ff16:jill-warrick": {
+      "label": "Jill Warrick"
+    },
+    "ff2:firion": {
+      "label": "Firion"
+    },
+    "ff:squall": {
+      "label": "Squall"
+    },
+    "ff1:warrior-of-light": {
+      "label": "Warrior of Light"
     }
   }
 }

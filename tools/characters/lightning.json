@@ -1,0 +1,731 @@
+{
+  "schemaVersion": 1,
+  "key": "lightning",
+  "spriteUnitId": "213000105",
+  "game": "FFXIII",
+  "battle": {
+    "maxHp": 3200,
+    "maxMp": 100,
+    "heroName": "LIGHTNING",
+    "heroRole": "VANGUARD",
+    "attackType": "melee",
+    "targetOffsetX": 90,
+    "attackAnim": "atk",
+    "hitFrameIndex": 2
+  },
+  "scale": 2.5,
+  "reviewNote": "Created by tools/import_full_character.mjs; battle values are provisional defaults for balancing.",
+  "skills": [
+    {
+      "id": "flamestrike",
+      "ffbeId": 202030,
+      "name": "Flamestrike",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 8,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 1,
+      "attackFrames": [
+        55
+      ],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "lightning_flamestrike",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/lightning/skills/flamestrike/source/skill-source.json",
+        "sha256": "b7e5fa58a62ee4c8eeb81e6a7b371796dc781bc67b5c0e04b225020a4465f7aa"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "target",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 1,
+          "sourceMoveType": 1,
+          "note": "Drafted from motion 1 / move 1: dash with atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 187,
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "froststrike",
+      "ffbeId": 202050,
+      "name": "Froststrike",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 8,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 1,
+      "attackFrames": [
+        125
+      ],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "lightning_froststrike",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/lightning/skills/froststrike/source/skill-source.json",
+        "sha256": "63a7397e4d4cbc5e181d77935ab96e654ef3fb317d2a2f6c7f9ed9e3e623f035"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "target",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 1,
+          "sourceMoveType": 1,
+          "note": "Drafted from motion 1 / move 1: dash with atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 257,
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "cura",
+      "ffbeId": 10070,
+      "name": "Cura",
+      "rarity": 5,
+      "level": 1,
+      "type": "MAGIC",
+      "mpCost": 8,
+      "scope": "party",
+      "damageMultiplier": 1,
+      "hitCount": 0,
+      "attackFrames": [
+        100
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Restore 900 HP to all living allies (no revival).",
+      "execution": "prepared-friendly",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "lightning_cura",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/lightning/skills/cura/source/skill-source.json",
+        "sha256": "6c37e1110747967bd6eef4c43cbcd90fdab479e65ec0e181a77c473561b79c0e"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "allyTargeting": "living-allies",
+      "allyEvents": [
+        {
+          "frame": 100,
+          "effects": [
+            {
+              "kind": "heal",
+              "amount": 900
+            }
+          ]
+        }
+      ],
+      "friendlyTargetReview": {
+        "sourceTarget": "6",
+        "sourceRange": "2",
+        "note": "Original target 6 / range 2 (process 2); adapted to a fixed 900 HP heal on all living allies."
+      }
+    },
+    {
+      "id": "crushing_blow",
+      "ffbeId": 202120,
+      "name": "Crushing Blow",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 45,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 4,
+      "attackFrames": [
+        42,
+        62,
+        92,
+        94
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "lightning_crushing_blow",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/lightning/skills/crushing_blow/source/skill-source.json",
+        "sha256": "e057cd27b7ec629ade3674c3f9e534267db9f3815c10b25a204dadd0c79713b4"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.2
+        },
+        {
+          "frame": 62,
+          "weight": 0.2
+        },
+        {
+          "frame": 92,
+          "weight": 0.3
+        },
+        {
+          "frame": 94,
+          "weight": 0.3
+        }
+      ]
+    },
+    {
+      "id": "ice_blitz",
+      "ffbeId": 202090,
+      "name": "Ice Blitz",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 20,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.6,
+      "hitCount": 1,
+      "attackFrames": [
+        110
+      ],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Physical damage (1.6x) to all enemies",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "lightning_ice_blitz",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/lightning/skills/ice_blitz/source/skill-source.json",
+        "sha256": "ce88175fc82368b19d7bc30a04f1f429b5ac193e98a317f6c7b4309f937968c0"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "target",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 1,
+          "sourceMoveType": 1,
+          "note": "Drafted from motion 1 / move 1: dash with atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 242,
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "aero_blitz",
+      "ffbeId": 202110,
+      "name": "Aero Blitz",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 20,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.6,
+      "hitCount": 1,
+      "attackFrames": [
+        70
+      ],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Physical damage (1.6x) to all enemies",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "lightning_aero_blitz",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/lightning/skills/aero_blitz/source/skill-source.json",
+        "sha256": "ee95199e905bc012c143cd3f39fdaf2ae7f41dad782a148cb1fb02524847db23"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "target",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 1,
+          "sourceMoveType": 1,
+          "note": "Drafted from motion 1 / move 1: dash with atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 202,
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "army_of_one",
+      "ffbeId": 213000105,
+      "name": "Army of One",
+      "rarity": 5,
+      "level": 1,
+      "type": "LIMIT",
+      "mpCost": 0,
+      "scope": "single_enemy",
+      "damageMultiplier": 6,
+      "hitCount": 12,
+      "attackFrames": [
+        39,
+        53,
+        67,
+        101,
+        133,
+        175,
+        185,
+        212,
+        246,
+        296,
+        306,
+        317
+      ],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Limit Burst: Physical damage (6x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "lightning_army_of_one",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/lightning/skills/army_of_one/source/skill-source.json",
+        "sha256": "50a2b88f82822c8370ce3213a84f5d0468151e33a92e8531fdd3d9ebb3b70208"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "target",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "limit_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 1,
+          "sourceMoveType": 1,
+          "note": "Drafted from motion 1 / move 1: dash with limit_atk body (LB rows carry no motionType; reviewed adaptation)."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 39,
+          "weight": 0.09
+        },
+        {
+          "frame": 53,
+          "weight": 0.08
+        },
+        {
+          "frame": 67,
+          "weight": 0.08
+        },
+        {
+          "frame": 101,
+          "weight": 0.08
+        },
+        {
+          "frame": 133,
+          "weight": 0.08
+        },
+        {
+          "frame": 175,
+          "weight": 0.08
+        },
+        {
+          "frame": 185,
+          "weight": 0.08
+        },
+        {
+          "frame": 212,
+          "weight": 0.08
+        },
+        {
+          "frame": 246,
+          "weight": 0.08
+        },
+        {
+          "frame": 296,
+          "weight": 0.09
+        },
+        {
+          "frame": 306,
+          "weight": 0.09
+        },
+        {
+          "frame": 317,
+          "weight": 0.09
+        }
+      ]
+    },
+    {
+      "id": "sparkstrike",
+      "ffbeId": 202020,
+      "name": "Sparkstrike",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 9,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 1,
+      "attackFrames": [
+        40
+      ],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "lightning_sparkstrike",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/lightning/skills/sparkstrike/source/skill-source.json",
+        "sha256": "23aec6599a16740eb09b3b3876d1f7a6d468ac9cd1b81031ee078e682f7de74c"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "target",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 1,
+          "sourceMoveType": 1,
+          "note": "Drafted from motion 1 / move 1: dash with atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 172,
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "thundaga",
+      "ffbeId": 20220,
+      "name": "Thundaga",
+      "rarity": 5,
+      "level": 1,
+      "type": "MAGIC",
+      "mpCost": 20,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.6,
+      "hitCount": 8,
+      "attackFrames": [
+        42,
+        62,
+        82,
+        102,
+        122,
+        142,
+        162,
+        182
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Magic damage (1.6x) to all enemies",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "lightning_thundaga",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/lightning/skills/thundaga/source/skill-source.json",
+        "sha256": "88c18296c296be39d85d78d122aa4782f870562ce4fc9d5074c492d9e019d0bb"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.08
+        },
+        {
+          "frame": 62,
+          "weight": 0.08
+        },
+        {
+          "frame": 82,
+          "weight": 0.08
+        },
+        {
+          "frame": 102,
+          "weight": 0.08
+        },
+        {
+          "frame": 122,
+          "weight": 0.08
+        },
+        {
+          "frame": 142,
+          "weight": 0.08
+        },
+        {
+          "frame": 162,
+          "weight": 0.08
+        },
+        {
+          "frame": 182,
+          "weight": 0.44
+        }
+      ]
+    },
+    {
+      "id": "galestrike",
+      "ffbeId": 202060,
+      "name": "Galestrike",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 8,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 1,
+      "attackFrames": [
+        70
+      ],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "lightning_galestrike",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/lightning/skills/galestrike/source/skill-source.json",
+        "sha256": "5e1fcace8778031e4760c909ea8f33bfd3a850c9271d3cff54074ed64ac6c6cf"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "target",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 1,
+          "sourceMoveType": 1,
+          "note": "Drafted from motion 1 / move 1: dash with atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 202,
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "electric_blitz",
+      "ffbeId": 202080,
+      "name": "Electric Blitz",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 23,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.6,
+      "hitCount": 1,
+      "attackFrames": [
+        30
+      ],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Physical damage (1.6x) to all enemies",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "lightning_electric_blitz",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/lightning/skills/electric_blitz/source/skill-source.json",
+        "sha256": "e1430141f20b1a9758c7ba9a4c2f312978148f74681e72371229aabbafdb1797"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "target",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 1,
+          "sourceMoveType": 1,
+          "note": "Drafted from motion 1 / move 1: dash with atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 162,
+          "weight": 1
+        }
+      ]
+    }
+  ],
+  "portraitSource": "unit_icons/unit_icon_213000105.png"
+}

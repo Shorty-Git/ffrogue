@@ -19,8 +19,12 @@ class CompositionTests(unittest.TestCase):
         self.assertEqual(result['effectFrames'], '4:5008050:1:1:0')
         self.assertEqual(result['skillFrameOffset'], 0)
 
+    def test_shifts_every_process_branch(self):
+        result = compose_effects('2:10:1', '4:30:1@7:40:1', 1)
+        self.assertEqual(result['effectFrames'], '2:10:1&6:30:1@9:40:1')
+
     def test_rejects_unimplemented_branch_and_missing_effects(self):
-        for raw in ['', '0', '2:100:1@4:200:1', '2:100:1,4:200:1']:
+        for raw in ['', '0', '2:100:1,4:200:1']:
             with self.subTest(raw=raw), self.assertRaises(ValueError):
                 compose_effects('2:1000520:1', raw, 1)
 

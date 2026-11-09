@@ -19,7 +19,8 @@ const scope = friendly ? 'party' : range === '2' ? 'all_enemies' : 'single_enemy
 // adaptation, as Omnislash), area LBs play limit_atk where the caster stands. They cost no MP.
 const limit = src.kind === 'LIMIT';
 const motion = raw.motionType ?? (limit ? 1 : 2), move = raw.moveType ?? (limit ? (scope === 'single_enemy' ? 1 : 4) : 4);
-const dash = motion === 1 && move === 1;
+// Motion 5 strikes leap or lunge to the target (move 1 or 6); 3 and 6 act in place.
+const dash = (motion === 1 && move === 1) || (motion === 5 && [1, 6].includes(move));
 const clip = !limit && (motion === 2 || src.kind === 'MAGIC') ? 'magic_atk' : 'atk';
 const bodyClip = limit ? 'limit_atk' : clip;
 const mult = Number(arg('--mult', limit ? (scope === 'all_enemies' ? 3.5 : 6) : scope === 'all_enemies' ? 1.6 : 2.5));

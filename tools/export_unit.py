@@ -86,7 +86,9 @@ def export_unit(unit_id, unit_name, input_dir="tools/test_output", output_base="
         
         frames_meta = []
         for idx, delay in enumerate(delays):
-            duration_ms = round(delay * (1000.0 / 60.0), 2)
+            # Some CGS tracks end with a 0-tick marker frame (e.g. Warrior of Light idle 201000104);
+            # it is held for the shortest displayable time, one tick. delayTicks keeps the raw value.
+            duration_ms = round(max(delay, 1) * (1000.0 / 60.0), 2)
             frames_meta.append({
                 "index": idx,
                 "delayTicks": delay,

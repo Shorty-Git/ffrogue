@@ -8,8 +8,11 @@ Last consolidated: 2026-11-07.
 
 - Playable PC roguelike prototype: title → slot-machine team draw (3 heroes, rerolls) →
   expedition (2 areas, 4 encounters, Ochu and Guard Scorpion bosses) → rewards / awakening →
-  result. Saves locally. Roster: Cloud, Aerith, Barret, Cloud of Darkness, Cloud AC, Delita,
-  Jack (+ awakened forms up to 7★ / NV).
+  result. Saves locally. Roster since 2026-11-09: 25 characters with 142 Source skills and 16 Limit
+  Bursts (`tools/import_character_wave.mjs`). The original seven (Cloud, Aerith, Barret, Cloud of Darkness,
+  Cloud AC, Delita, Jack) plus Squall, Tifa and 18 wave characters (Warrior of Light … Cidolfus, FFI–FFXVI,
+  FFT, Type-0). Awakened forms go up to 7★ / NV; FFXVI units are NV-only. New profiles unlock heroes
+  gradually (see Meta-progression).
 - Rewards (`src/run/runState.mjs`): learn skill, skill rank, stat, awakening (boss), Field Rest
   and Phoenix Down (`revive`, 2026-11-08). K.O. persists between battles; while a member is
   K.O., one revival offer (50% base HP, `REVIVE_HP_SHARE`) is guaranteed among the three, next
@@ -43,6 +46,25 @@ Last consolidated: 2026-11-07.
   and `limit-fill` (`amount` 1–100 on the Limit gauge). Validated in `reviewedSkillEvents`,
   scaled by skill level in `skillForRun`, described in the HUD by `skillDescription`. The last two
   are data model + battle handling only (2026-11-08); no published skill uses them yet.
+
+## Meta-progression v1 (2026-11-09)
+
+`src/run/profile.mjs` (tests: `tools/test_profile.mjs`) holds a profile in localStorage
+(`ffrogue.profile.v1`), separate from the run save:
+- Unlocked heroes: a new profile starts with the first reviewed roster (`STARTER_HEROES`: Cloud,
+  Aerith, Barret, Squall, Delita, Jack, Cloud of Darkness). The Fate Engine draws only unlocked heroes
+  (`drawCatalog`). Saved runs still validate against the full catalog. The profile is always topped up
+  to three canonical identities.
+- Crystals: 10 per won battle and 60 for a finished expedition. Each finished run settles once, keyed
+  by seed and history length.
+- A won expedition unlocks one random locked hero, shown on the result screen.
+- Summon on the title screen: 100 crystals unlock one random locked hero. This is the gacha element;
+  there are no duplicates yet.
+- Power split stays with the run rules: start forms are drawn by rank weights (3★…7★/NV,
+  `originalForms`), and higher ranks give `powerPerRank` stat growth. NV-only units (FFXVI) start at
+  their NV base.
+- Developer direction for later: more influence over starting heroes and their level between runs.
+  Candidates are duplicates raising a hero's minimum start rank, and a "favoured hero" slot.
 
 ## Balance (2026-11-08, overnight cloud session)
 

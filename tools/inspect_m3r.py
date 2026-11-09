@@ -54,7 +54,9 @@ def read_m3r(data):
             raise ValueError('Unterminated BR3M embedded texture name')
         texture_name = data[names:name_end].decode('utf-8')
     stride, vertex_count, base, index_count = struct.unpack_from('<4I', data, material + 32)
-    if stride != 36 or base != 0 or not 0 < vertex_count <= 65536 or index_count % 3:
+    # Stride 36: position, packed colour, normal, UV. Stride 28 (emitter shapes such as
+    # model_emitter_triangle_001): the same record without UV.
+    if stride not in (28, 36) or base != 0 or not 0 < vertex_count <= 65536 or index_count % 3:
         raise ValueError('Unverified BR3M vertex/index layout')
     # Both payload sections are padded to a multiple of 16 bytes in these files;
     # padding is relative to section length, not absolute file alignment.
@@ -65,7 +67,7 @@ def read_m3r(data):
     points = []
     for index in range(vertex_count):
         offset = vertices + index * stride
-        values = struct.unpack_from('<3fI5f', data, offset)
+        values = struct.unpack_from('<3fI5f', data, offset) if stride == 36 else struct.unpack_from('<3fI3f', data, offset) + (0.0, 0.0)
         if not all(math.isfinite(v) for v in values[:3] + values[4:]):
             raise ValueError('Non-finite BR3M vertex attribute')
         points.append({'position': list(values[:3]), 'colorBytes': list(data[offset + 12:offset + 16]),
@@ -74,6 +76,8 @@ def read_m3r(data):
     if any(index >= vertex_count for index in raw_indices):
         raise ValueError('Out-of-range BR3M vertex index')
     triangles = [list(raw_indices[i:i + 3]) for i in range(0, index_count, 3)]
+    if stride == 28:
+        material_metadata = {**material_metadata, 'vertexStride': 28, 'hasUv': False}
     return {'schemaVersion': 1, 'sourceSha256': hashlib.sha256(data).hexdigest(),
             'version': version, 'embeddedTextureName': texture_name,
             'nativeMaterial': material_metadata,

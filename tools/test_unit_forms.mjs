@@ -44,7 +44,7 @@ test('start form weights preserve the roster and normalize across available leve
   assert.equal(new Set(current.party.map(m=>m.canonicalIdentity)).size,3);
   for(const member of current.party){
    const character=c[member.key],form=[character,...character.forms].find(f=>f.form===member.form);
-   const steps=rankValue(form)-character.rarity;
+   const steps=rankValue(form)-rankValue(character);
    assert.equal(member.unitId,form.unitId);
    assert.equal(member.stats.hp,1+steps*rules.originalForms.hpPerRank);
    assert.equal(member.hp,Math.round(character.maxHp*member.stats.hp));
@@ -58,7 +58,8 @@ test('start form weights preserve the roster and normalize across available leve
   const ranks=Object.keys(values);
   const weights=rules.originalForms.pathWeights?.[ranks.join('/')]??ranks.map(rank=>rules.originalForms.weights[rank]);
   const weightTotal=weights.reduce((sum,w)=>sum+w,0);
-  ranks.forEach((rank,index)=>assert.ok(Math.abs(values[rank]/total-weights[index]/weightTotal)<(rank==='NV'?.008:.025)));
+  // Four standard errors: with 25+ characters, each sees only ~1400 draws.
+  ranks.forEach((rank,index)=>{const p=weights[index]/weightTotal;assert.ok(Math.abs(values[rank]/total-p)<Math.max(rank==='NV'?.008:.025,4*Math.sqrt(p*(1-p)/total)),JSON.stringify({ranks,values}));});
  }
  assert.ok(Math.abs(secondLevel/twoFormDraws-17/97)<.02);
  console.log('Seeded start form totals:',counts,'two-form Cloud:',[twoFormDraws-secondLevel,secondLevel]);
@@ -124,7 +125,7 @@ test('four draws preserve roster and skill sequences and measure exposure to rar
    assert.equal(after.rerolls,3-draw);
    for(const [label,run] of [['previous',before],['current',after]]){
     seen[label].higher||=run.party.some(m=>m.form!==c[m.key].form);
-    seen[label].nv||=run.party.some(m=>m.rank==='NV');
+    seen[label].nv||=run.party.some(m=>m.rank==='NV'&&m.form!==c[m.key].form); // NV-only base units are always NV
    }
   }
   for(const label of Object.keys(counts))for(const key of ['higher','nv'])counts[label][key]+=Number(seen[label][key]);

@@ -73,19 +73,24 @@ export function unresolvedEffectAnchors(skill) {
 }
 /** Native motion-1 composition: shift skill groups by the last unit-group start. */
 export function composeEffectFrames(unitFrames, skillFrames, motionType) {
+  // '@' separates per-process branches (same rule as tools/compose_skill_effects.py); empty entries drop.
   const entries = raw => {
-    if (typeof raw !== 'string' || !raw.length || raw.split('&').some(v => !/^\d+:\d+(?::-?\d+){1,3}$/.test(v)))
-      throw Error('Only ordinary single-branch effect timelines are supported');
-    const parsed = raw.split('&').map(v => v.split(':'));
+    const list = typeof raw === 'string' ? raw.split('&').filter(Boolean) : [];
+    if (!list.length || list.some(v => !/^-?\d+:\d+(?::-?\d+){1,3}$/.test(v)))
+      throw Error('Only ordinary effect timelines are supported');
+    const parsed = list.map(v => v.split(':'));
     if (parsed.some(v => v.some(field => !Number.isSafeInteger(Number(field))))) throw Error('Invalid effect timeline integer');
     return parsed;
   };
-  const skill = entries(skillFrames);
+  const skill = String(skillFrames ?? '').split('@').map(entries);
   if (motionType !== 1) return { effectFrames: skillFrames, skillFrameOffset: 0 };
   const unit = entries(unitFrames);
+  if (unit.some(v => Number(v[0]) < 0)) throw Error('Unit attack effects cannot start before frame 0');
+  if (String(unitFrames).includes('@')) throw Error('Unit attack timelines have no branches');
   const offset = Math.max(...unit.map(v => Number(v[0])));
-  return { effectFrames: [...unit, ...skill.map(v => [String(Number(v[0]) + offset), ...v.slice(1)])].map(v => v.join(':')).join('&'),
-    skillFrameOffset: offset };
+  const shifted = skill.map(branch => branch.map(v => [String(Number(v[0]) + offset), ...v.slice(1)]));
+  shifted[0] = [...unit, ...shifted[0]];
+  return { effectFrames: shifted.map(branch => branch.map(v => v.join(':')).join('&')).join('@'), skillFrameOffset: offset };
 }
 
 export function resolveEffects(db, root, raw) {
@@ -209,12 +214,19 @@ export function inspectCharacter(recipe, { assets = 'rawdata/assets', dump = 'ra
     }
     const catalog = [...byId.values()];
     for(const skill of catalog)if(String(skill.raw?.processId)==='130'){
-      const match=/^(\d+),(\d+),(\d+):(\d+)$/.exec(String(skill.raw.processParam));
+      // 'abilityId,count,a:b' plus optional trailing fields (3183 of 3210 rows end in ',0').
+      const match=/^(\d+) ?,(\d+),(\d+):(\d+)(?:[:,][-\d,]*)?$/.exec(String(skill.raw.processParam));
       if(match){
         const raw=db.prepare('SELECT * FROM ability WHERE abilityId=?').get(Number(match[1]));
         skill.commandReferences=raw?[{role:'referenced-ability',id:Number(match[1]),dispatchRaw:skill.raw.processParam,raw}]:[];
+        // Process 130 casts the referenced ability (NV-era commands such as Jill's Hailstorm). The cast
+        // ability joins the catalog as an active skill learned with its command, so the ordinary
+        // ability path (compose, stage, preview) imports what the command actually plays.
+        if(raw&&!byId.has(`ABILITY:${raw.abilityId}`))byId.set(`ABILITY:${raw.abilityId}`,{kind:'ABILITY',id:Number(raw.abilityId),
+          name:raw.name,passive:false,raw,learned:skill.learned,referencedBy:skill.id,effects:resolveEffects(db,assets,raw.effectFrames)});
       }
     }
+    catalog.push(...[...byId.values()].filter(skill=>skill.referencedBy&&!catalog.includes(skill)));
     const suffix = `_cgs_${recipe.spriteUnitId}.csv`;
     const csvDir = path.join(dump, 'unit_animated_csv');
     const names = fs.readdirSync(csvDir).filter(f => f.startsWith('unit_') && f.endsWith(suffix));

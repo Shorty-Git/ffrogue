@@ -4,7 +4,9 @@ export function validateActionChoreography(skill, durationFrames=Infinity, anima
   if(c?.schema!=='source-action-v1'||!['target','step','stationary'].includes(c.movement)
     ||!['prepared','move-cycle'].includes(c.travelTiming)||!['none','magic-standby'].includes(c.readiness)
     ||!['accepted-gameplay','user-original-observation','reviewed-adaptation'].includes(r?.basis)||typeof r.note!=='string'||!r.note.trim()
-    ||![1,2,8].includes(r.sourceMotionType)||![1,4].includes(r.sourceMoveType))
+    // Source motions: 1 physical, 2 magic, 3 plain action, 5 lunge/jump strike (move 6 = leap to target),
+    // 6 dance, 8 stationary attack. 3/5/6 are reviewed adaptations onto the atk body (docs).
+    ||![1,2,3,5,6,8].includes(r.sourceMotionType)||![1,4,6].includes(r.sourceMoveType))
     throw Error('Reviewed Source character choreography required; motion semantics are unresolved');
   if(c.commandPose!==undefined&&(!['standby','magic-standby'].includes(c.commandPose)
     ||animations&&!animations[c.commandPose==='standby'?'standby':'magic_standby']?.frames?.length))

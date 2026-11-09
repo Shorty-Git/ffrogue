@@ -71,14 +71,32 @@ const snake = name => name.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_
 const candidates = report.catalog.filter(skill => !skill.passive && ['ABILITY', 'MAGIC', 'LIMIT'].includes(skill.kind)
   && (wanted ? wanted.includes(skill.id) : true)
   && !recipe.skills.some(s => s.ffbeId === skill.id && s.type === skill.kind));
+// Original process IDs (first '@' process decides support kinds): damage processes become attacks,
+// 2 (cure) a party heal and 3 (stat up) a party physical boost through the reviewed friendly path.
+// Everything else (raise, dispel, libra, entrust, debuff-only, ...) waits for its own mechanic.
+const DAMAGE_PROCESSES = new Set(['1', '15', '21', '25', '40', '43', '70', '103', '112', '126', '157', '169']);
+const roleOf = skill => {
+  if (skill.kind === 'LIMIT') return 'damage';
+  const processes = String(skill.raw?.processId ?? '').split('@');
+  if (processes.some(p => DAMAGE_PROCESSES.has(p))) return 'damage';
+  // Pure stat-up (3 alone) only: protect/shell (3@18, 3@19) raise defence, which the friendly path does not model.
+  if (processes.length === 1 && processes[0] === '3') return 'buff';
+  return processes[0] === '2' ? 'heal' : null;
+};
+const DRAFT_OPTIONS = {damage: '', heal: '--heal 900', buff: '--buff 1.3'};
 const decide = skill => {
+  const role = roleOf(skill);
+  if (!role) return `process ${skill.raw?.processId} is not a supported damage, heal or buff mechanic`;
   const range = String(skill.raw?.targetRange ?? skill.raw?.target ?? '').split('@')[0];
-  if (skill.kind !== 'LIMIT' && !['1', '2'].includes(range)) return 'self/ally or no-target skill: needs a reviewed support mechanic';
+  if (role === 'damage' && skill.kind !== 'LIMIT' && !['1', '2'].includes(range)) return 'damage skill without an enemy target range';
+  // Delayed or conditional damage (e.g. Tidus' Delay Attack) has no hit timeline to play.
+  if (role === 'damage' && !skill.raw?.attackFrames) return 'damage process without attack frames (delayed or conditional damage)';
   // Source motions the action choreography supports: 1 physical, 2 magic/stationary, 8 stationary atk.
-  if (skill.kind === 'ABILITY' && ![1, 2, 8, undefined].includes(skill.raw?.motionType))
+  if (skill.kind === 'ABILITY' && ![1, 2, 3, 5, 6, 8, undefined].includes(skill.raw?.motionType))
     return `source motion ${skill.raw.motionType} has no reviewed choreography yet`;
   if (!members(skill).length) return 'no source effect groups';
-  if (coverage(skill) < .3) return `only ${Math.round(coverage(skill) * 100)}% of source effect files resolve`;
+  // Converted-file coverage is not a gate: the authoring-free path stages the original BMBs from the
+  // archives and fails visibly (receipt) when one is missing.
   return null;
 };
 const actives = candidates.filter(s => s.kind !== 'LIMIT').map(s => ({s, reason: decide(s)}));
@@ -87,8 +105,10 @@ const limit = candidates.find(s => s.kind === 'LIMIT');
 if (limit && !decide(limit)) chosen.push(limit);
 for (const {s, reason} of actives) if (reason || !chosen.includes(s)) receipt.skills.push({ffbeId: s.id, name: s.name, status: 'not selected', reason: reason ?? `beyond --max-skills ${maxSkills}`});
 if (limit && decide(limit)) receipt.skills.push({ffbeId: limit.id, name: limit.name, status: 'not selected', reason: decide(limit)});
-const batch = chosen.map(s => { const id = snake(s.name); return {s, id, presentation: `${key}_${id}`}; });
-fs.writeFileSync(`${work}/batch.txt`, batch.map(b => `${key} ${b.s.id} ${b.id} ${b.presentation}`).join('\n') + '\n');
+// One entry per skill id: same-named variants (e.g. two "Fira" rows) would collide on the key.
+const batch = chosen.map(s => { const id = snake(s.name); return {s, id, presentation: `${key}_${id}`}; })
+  .filter((b, i, all) => all.findIndex(x => x.id === b.id) === i);
+fs.writeFileSync(`${work}/batch.txt`, batch.map(b => `${key} ${b.s.id} ${b.id} ${b.presentation} ${DRAFT_OPTIONS[roleOf(b.s)]}`.trimEnd()).join('\n') + '\n');
 console.log(`Selected ${batch.length}: ${batch.map(b => b.s.name).join(', ')}`);
 if (planOnly) { writeJson(`${work}/receipt.json`, receipt); process.exit(0); }
 
@@ -148,7 +168,8 @@ for (const row of db.prepare('select unitId,rare from unit where unitSeries=? an
 
 // 8. Roster: run identity, canonical character, published registry.
 runContent.units[key] = {variantLabel: `${arg('--game', 'FF')} · Base Unit`, identity: unit, unitId: unit, rarity: unitRow.rare,
-  canonicalIdentity: arg('--canonical', `ff:${key}`)};
+  // NV-only units (late FFBE, e.g. FFXVI) start at their NV base; the Fate Engine shows them as NV.
+  ...(unitRow.isNv ? {rank: 'NV'} : {}), canonicalIdentity: arg('--canonical', `ff:${key}`)};
 runContent.canonicalCharacters[arg('--canonical', `ff:${key}`)] = {label: arg('--label', unitRow.unitName)};
 writeJson('public/assets/run-content.json', runContent);
 

@@ -1,0 +1,395 @@
+{
+  "unitId": "203000105",
+  "unitName": "ONION KNIGHT",
+  "game": "FFIII",
+  "skills": [
+    {
+      "id": "full_speed_bladeblitz",
+      "ffbeId": 211420,
+      "name": "Full Speed Bladeblitz",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 25,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.6,
+      "hitCount": 12,
+      "attackFrames": [
+        42,
+        49,
+        56,
+        63,
+        70,
+        77,
+        84,
+        91,
+        98,
+        105,
+        112,
+        119
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (1.6x) to all enemies",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "onion_knight_full_speed_bladeblitz",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/onion_knight/skills/full_speed_bladeblitz/source/skill-source.json",
+        "sha256": "1a5bdb8b69419c7d637396156b800e69b518755eb14d2f9cf5f9ec1e1483e3c4"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.08
+        },
+        {
+          "frame": 49,
+          "weight": 0.08
+        },
+        {
+          "frame": 56,
+          "weight": 0.08
+        },
+        {
+          "frame": 63,
+          "weight": 0.08
+        },
+        {
+          "frame": 70,
+          "weight": 0.08
+        },
+        {
+          "frame": 77,
+          "weight": 0.08
+        },
+        {
+          "frame": 84,
+          "weight": 0.08
+        },
+        {
+          "frame": 91,
+          "weight": 0.08
+        },
+        {
+          "frame": 98,
+          "weight": 0.08
+        },
+        {
+          "frame": 105,
+          "weight": 0.08
+        },
+        {
+          "frame": 112,
+          "weight": 0.08
+        },
+        {
+          "frame": 119,
+          "weight": 0.12
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 211420,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 211420,
+          "name": "Full Speed Bladeblitz",
+          "rarity": 8,
+          "dispOrder": 1200,
+          "cost": 25,
+          "6p90IFnC": null,
+          "target": "1",
+          "targetRange": "2",
+          "oL6zdpD0": 3,
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 1,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 4,
+          "processId": "1",
+          "PI18xnkD": "0",
+          "processParam": "0,0,0,0,0,0,220,0",
+          "H4zD2IQ5": 0,
+          "motionType": 2,
+          "effectFrames": "40:1001171:1:1:0&47:1001171:1:1:0&54:1001171:1:1:0&61:1001171:1:1:0&68:1001171:1:1:0&75:1001171:1:1:0&82:1001171:1:1:0&89:1001171:1:1:0&96:1001171:1:1:0&103:1001171:1:1:0&110:1001171:1:1:0&117:1001171:1:1:0",
+          "attackFrames": "42:8:2:2-49:8:2:2-56:8:2:2-63:8:2:2-70:8:2:2-77:8:2:2-84:8:2:2-91:8:2:2-98:8:2:2-105:8:2:2-112:8:2:2-119:12:2:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000054,
+          "equipCondition": null,
+          "2QoE3PtB": 0,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": null,
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    },
+    {
+      "id": "onion_chop",
+      "ffbeId": 507290,
+      "name": "Onion Chop",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 60,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.6,
+      "hitCount": 20,
+      "attackFrames": [
+        42,
+        47,
+        52,
+        57,
+        62,
+        67,
+        72,
+        77,
+        82,
+        87,
+        92,
+        97,
+        102,
+        107,
+        112,
+        117,
+        122,
+        127,
+        132,
+        137
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (1.6x) to all enemies",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "onion_knight_onion_chop",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/onion_knight/skills/onion_chop/source/skill-source.json",
+        "sha256": "2ce3ce26a5d21c1b54aed3a917cb87c6ac5e45b7d74e57aded74b78aa63567d3"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.05
+        },
+        {
+          "frame": 47,
+          "weight": 0.05
+        },
+        {
+          "frame": 52,
+          "weight": 0.05
+        },
+        {
+          "frame": 57,
+          "weight": 0.05
+        },
+        {
+          "frame": 62,
+          "weight": 0.05
+        },
+        {
+          "frame": 67,
+          "weight": 0.05
+        },
+        {
+          "frame": 72,
+          "weight": 0.05
+        },
+        {
+          "frame": 77,
+          "weight": 0.05
+        },
+        {
+          "frame": 82,
+          "weight": 0.05
+        },
+        {
+          "frame": 87,
+          "weight": 0.05
+        },
+        {
+          "frame": 92,
+          "weight": 0.05
+        },
+        {
+          "frame": 97,
+          "weight": 0.05
+        },
+        {
+          "frame": 102,
+          "weight": 0.05
+        },
+        {
+          "frame": 107,
+          "weight": 0.05
+        },
+        {
+          "frame": 112,
+          "weight": 0.05
+        },
+        {
+          "frame": 117,
+          "weight": 0.05
+        },
+        {
+          "frame": 122,
+          "weight": 0.05
+        },
+        {
+          "frame": 127,
+          "weight": 0.05
+        },
+        {
+          "frame": 132,
+          "weight": 0.05
+        },
+        {
+          "frame": 137,
+          "weight": 0.05
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "ABILITY",
+        "id": 507290,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "abilityId": 507290,
+          "name": "Onion Chop",
+          "rarity": 9,
+          "dispOrder": 10610,
+          "cost": 99,
+          "6p90IFnC": null,
+          "target": "1",
+          "targetRange": "2",
+          "oL6zdpD0": 3,
+          "element": "0,0,0,0,0,0,0,0",
+          "Isb1GDe2": 1,
+          "J35nicFV": 0,
+          "z1q8AIXD": 1,
+          "yjY4GK3X": 1,
+          "aR5i4ewA": 0,
+          "abilityType": 2,
+          "moveType": 4,
+          "processId": "1",
+          "PI18xnkD": "0",
+          "processParam": "0,0,0,0,0,0,1100,0",
+          "H4zD2IQ5": 0,
+          "motionType": 2,
+          "effectFrames": "0:5024131:1:1:0&0:5024132:1:1:0&40:5003690:2:4:0",
+          "attackFrames": "42:5:2:2-47:5:2:2-52:5:2:2-57:5:2:2-62:5:2:2-67:5:2:2-72:5:2:2-77:5:2:2-82:5:2:2-87:5:2:2-92:5:2:2-97:5:2:2-102:5:2:2-107:5:2:2-112:5:2:2-117:5:2:2-122:5:2:2-127:5:2:2-132:5:2:2-137:5:2:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000105,
+          "equipCondition": null,
+          "2QoE3PtB": 0,
+          "DQ87jGPz": 0,
+          "fwChg17k": 0,
+          "iUIxB65H": 0,
+          "58bfqWsR": 1,
+          "LNjKzg51": 0,
+          "alternateCost": null,
+          "6ZEyK95f": null,
+          "n1eAG69i": null,
+          "juA0Z4m7": null,
+          "5c3dU9nP": 0,
+          "U45hAmrX": 0
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
+    }
+  ]
+}

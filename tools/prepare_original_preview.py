@@ -39,6 +39,14 @@ def rectangle_for_group(anchor_mode, scope):
         # caster) show the caster reading. The host aligns the caster so the strike lands.
         bmb_channels.APPROXIMATED_CURVES.append({'placement': 'anchor-mode-3', 'scope': scope, 'treatment': 'caster-unit'})
         return 'caster-unit'
+    # Approximation mode: rarer modes read from their usage across all ability/magic rows
+    # (docs/skill-reconstruction-workflow.md): 6/7/9 are drain/absorb flows that end at the caster,
+    # 5 (charm dances) and 8 (entrust) land on the target, 0 (hymns) covers the screen.
+    approximated = {0: 'screen', 5: 'target-unit', 6: 'caster-unit', 7: 'caster-unit', 8: 'target-unit', 9: 'caster-unit'}
+    if anchor_mode in approximated and bmb_channels.APPROXIMATED_CURVES is not None:
+        bmb_channels.APPROXIMATED_CURVES.append({'placement': f'anchor-mode-{anchor_mode}', 'scope': scope,
+                                                 'treatment': approximated[anchor_mode]})
+        return approximated[anchor_mode]
     if anchor_mode not in (1, 2, 4):
         raise ValueError('Unsupported source effect rectangle mode: ' + str(anchor_mode))
     return {1: 'target-unit', 2: 'target-side', 4: 'screen'}[anchor_mode]
@@ -331,7 +339,11 @@ if __name__ == '__main__':
     audio_groups = []
     for branch in source['effects']:
         if branch.get('conditional'):
-            raise ValueError('Conditional branches not supported by this experiment')
+            if not a.approximate_unverified:
+                raise ValueError('Conditional branches not supported by this experiment')
+            # Approximation: '@' branches belong to the skill's parallel processes (one per process for most
+            # abilities); all of them play, as each process shows its own effect in the original.
+            bmb_channels.APPROXIMATED_CURVES.append({'branch': branch['branchIndex'], 'treatment': 'process-branch-played-in-parallel'})
         for group in branch['groups']:
             if not group['members'] and (group.get('status')!='sound-only-unreviewed' or not group.get('soundsRaw') or group.get('extraRaw')):
                 if not a.approximate_unverified:
@@ -341,13 +353,24 @@ if __name__ == '__main__':
                 continue
             if group.get('soundsRaw'):
                 audio_groups.append({'group': group['groupId'], 'frame': group['startFrame'], 'soundsRaw': group.get('soundsRaw')})
+            anchor = group['anchor']
+            if anchor == 'unknown' and a.approximate_unverified:
+                # Approximation from master-data statistics of the group anchor field (raw field 4):
+                # 7 = buff auras on the caster (brave/bar-), 6/9 = drain/aspir flows ending at the caster,
+                # 5/8 = moving strikes at the target, 0 = full-screen backdrops (bg_cosmo, hammer).
+                fields = str(group.get('raw', '')).split(':')
+                raw_anchor = fields[3] if len(fields) > 3 else None
+                mapped = {'0': 'screen', '5': 'target', '6': 'caster', '7': 'caster', '8': 'target', '9': 'caster'}.get(raw_anchor)
+                if mapped:
+                    bmb_channels.APPROXIMATED_CURVES.append({'group': group['groupId'], 'treatment': f'group-anchor-{raw_anchor}-as-{mapped}'})
+                    anchor = mapped
             for member in group['members']:
                 rotation = [float(v) for v in member['transform']] if member['transform'] else [0, 0, 0]
                 if len(rotation) != 3:
                     raise ValueError('Unknown member transform')
                 members.append({'effect': by_name[member['originalFile']],
                                 'startFrame': group['startFrame'] + member['frame'],
-                                'anchor': group['anchor'], 'layer': group['layer'],
+                                'anchor': anchor, 'layer': group['layer'],
                                 'scalePercent': member['scalePercent'], 'rotation': rotation,
                                 'rawGroupFields': member['groupFields']})
                 if group.get('compositionOrigin'):

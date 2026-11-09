@@ -37,6 +37,8 @@ const prefixCount = composition.skill.motionType === 1 ? composition.unit.effect
 for (const [index, group] of groups.entries()) {
   group.compositionOrigin = index < prefixCount ? 'unit-attack' : 'skill';
   if(!group.members?.length && group.status==='sound-only-unreviewed' && group.soundsRaw && !group.extraRaw) continue;
+  // Effect group 99999999 is the master data's 'no effect' placeholder for a process branch.
+  if(group.status==='missing-group' && /^-?\d+:99999999:/.test(group.raw)) continue;
   if (!group.members?.length || group.members.some(member => !member.originalFile)) {
     throw Error('Composed group lacks resolved original members: ' + group.raw);
   }

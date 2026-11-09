@@ -13,6 +13,8 @@ try {
   await page.goto('http://127.0.0.1:3001/tools/test-source-limit-burst.html' + (reserve ? '?reserve=' + reserve : ''));
   await page.waitForFunction(() => /Limit Bursts in this party/.test(document.getElementById('status').textContent), {}, {timeout: 120000});
   await page.evaluate(() => { document.querySelector('aside').remove(); const c = document.getElementById('game-container'); c.style.width = '100vw'; c.style.height = '100vh'; window.dispatchEvent(new Event('resize')); });
+  // Every prepared scene variant must exist before a command can fire (parties with many skills take seconds).
+  await page.evaluate(() => window.__ffrogueGame.scene.getScene('BattleScene').preparedScenes?.ready);
   await page.waitForTimeout(1500);
   const cdp = await page.context().newCDPSession(page), frames = [];
   cdp.on('Page.screencastFrame', async ({data, metadata, sessionId}) => {

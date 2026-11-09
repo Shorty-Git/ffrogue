@@ -17,13 +17,13 @@ while read -r CHAR SID ID KEY REST; do
   U=$(node -e "console.log(JSON.parse(require('fs').readFileSync('tools/characters/$CHAR.json')).spriteUnitId)")
   KIND=$(node -e "const r=JSON.parse(require('fs').readFileSync('tools/data/characters/$CHAR/report.json'));const s=r.catalog.find(s=>String(s.id)==='$SID');console.log(s?.kind??'ABILITY')")
   if [ "$KIND" = "ABILITY" ]; then
-    "$PY" tools/compose_skill_effects.py --unit-id "$U" --skill-id "$SID" --output "$D/composition.json" >/dev/null 2>&1 \
-      && node tools/resolve_composed_skill.mjs --composition "$D/composition.json" --report "tools/data/characters/$CHAR/report.json" --output "$D/composed-report.json" >/dev/null 2>&1 \
-      && "$PY" tools/stage_original_skill.py --report "$D/composed-report.json" --skill-id "$SID" --output "$D/source" >/dev/null 2>&1 \
-      || { echo "SKIP $ID: compose/stage failed"; continue; }
+    "$PY" tools/compose_skill_effects.py --unit-id "$U" --skill-id "$SID" --output "$D/composition.json" >"$D/compose.log" 2>&1 \
+      && node tools/resolve_composed_skill.mjs --composition "$D/composition.json" --report "tools/data/characters/$CHAR/report.json" --output "$D/composed-report.json" >>"$D/compose.log" 2>&1 \
+      && "$PY" tools/stage_original_skill.py --report "$D/composed-report.json" --skill-id "$SID" --output "$D/source" >>"$D/compose.log" 2>&1 \
+      || { echo "SKIP $ID: compose/stage: $(grep -m1 -E 'Error|error:' "$D/compose.log")"; continue; }
   else
-    "$PY" tools/stage_original_skill.py --report "tools/data/characters/$CHAR/report.json" --skill-id "$SID" --kind "$KIND" --output "$D/source" >/dev/null 2>&1 \
-      || { echo "SKIP $ID: stage failed"; continue; }
+    "$PY" tools/stage_original_skill.py --report "tools/data/characters/$CHAR/report.json" --skill-id "$SID" --kind "$KIND" --output "$D/source" >"$D/compose.log" 2>&1 \
+      || { echo "SKIP $ID: stage: $(grep -m1 -E 'Error|error:' "$D/compose.log")"; continue; }
   fi
   node tools/draft_skill_entry.mjs --character "$CHAR" --source "$D/source/skill-source.json" --id "$ID" --key "$KEY" $REST >/dev/null || { echo "SKIP $ID: draft failed"; continue; }
   CLIP=$(node -e "const r=JSON.parse(require('fs').readFileSync('tools/characters/$CHAR.json'));console.log(r.skills.find(s=>s.id==='$ID').motion)")

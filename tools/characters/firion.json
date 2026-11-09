@@ -1,0 +1,208 @@
+{
+  "schemaVersion": 1,
+  "key": "firion",
+  "spriteUnitId": "202000103",
+  "game": "FFII",
+  "battle": {
+    "maxHp": 3200,
+    "maxMp": 100,
+    "heroName": "FIRION",
+    "heroRole": "VANGUARD",
+    "attackType": "melee",
+    "targetOffsetX": 90,
+    "attackAnim": "atk",
+    "hitFrameIndex": 2
+  },
+  "scale": 2.5,
+  "reviewNote": "Created by tools/import_full_character.mjs; battle values are provisional defaults for balancing.",
+  "skills": [
+    {
+      "id": "lance",
+      "ffbeId": 200270,
+      "name": "Lance",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 10,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 2,
+      "attackFrames": [
+        120,
+        120
+      ],
+      "moveType": "stationary",
+      "motion": "magic_atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "firion_lance",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/firion/skills/lance/source/skill-source.json",
+        "sha256": "89e154d06be18abddf91d2d778c73dcf8741453d13672493cc9420a9399718c6"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 120,
+          "weight": 0.5
+        },
+        {
+          "frame": 120,
+          "weight": 0.5
+        }
+      ]
+    },
+    {
+      "id": "drain_blade",
+      "ffbeId": 200670,
+      "name": "Drain Blade",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 8,
+      "scope": "single_enemy",
+      "damageMultiplier": 2.5,
+      "hitCount": 1,
+      "attackFrames": [
+        1
+      ],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Physical damage (2.5x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "firion_drain_blade",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/firion/skills/drain_blade/source/skill-source.json",
+        "sha256": "fc78d910e1517223b7143bc8ebba5fe6b31f4886782ec3ec7b9662174b2de86c"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "target",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 1,
+          "sourceMoveType": 1,
+          "note": "Drafted from motion 1 / move 1: dash with atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 40,
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "counter_beacon",
+      "ffbeId": 202000103,
+      "name": "Counter Beacon",
+      "rarity": 5,
+      "level": 1,
+      "type": "LIMIT",
+      "mpCost": 0,
+      "scope": "single_enemy",
+      "damageMultiplier": 6,
+      "hitCount": 5,
+      "attackFrames": [
+        45,
+        66,
+        78,
+        90,
+        105
+      ],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Limit Burst: Physical damage (6x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "firion_counter_beacon",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/firion/skills/counter_beacon/source/skill-source.json",
+        "sha256": "9d62c8a65204beac0e2d9578c0dd5e2a7ef73410beedad2226118d2c107ea116"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "target",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "limit_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 1,
+          "sourceMoveType": 1,
+          "note": "Drafted from motion 1 / move 1: dash with limit_atk body (LB rows carry no motionType; reviewed adaptation)."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 45,
+          "weight": 0.15
+        },
+        {
+          "frame": 66,
+          "weight": 0.15
+        },
+        {
+          "frame": 78,
+          "weight": 0.15
+        },
+        {
+          "frame": 90,
+          "weight": 0.15
+        },
+        {
+          "frame": 105,
+          "weight": 0.4
+        }
+      ]
+    }
+  ],
+  "portraitSource": "unit_icons/unit_icon_202000103.png"
+}

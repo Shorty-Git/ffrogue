@@ -11,8 +11,8 @@ The tool chains the reviewed steps below and keeps each step's own checks:
 2. Inspection.
 3. Body publication (`import_character --publish --body-first`: the run catalog ignores a character
    without published skills, so the roster is unaffected meanwhile).
-4. Skill selection: active, damaging, source motion 1/2/8 (or LIMIT), at least 30 % resolvable
-   source effect files, sorted by coverage.
+4. Skill selection: active damage, heal (`--heal 900`) or buff (`--buff 1.3`) skills with source
+   motion 1/2/3/5/6/8 (or LIMIT), sorted by coverage (see "Wave import" below).
 5. `import_skill_batch.sh` (authoring-free path).
 6. Dropping every skill that failed or that the re-inspection still blocks: recipe entry,
    presentation and registry entry are removed, with the reason recorded.
@@ -34,6 +34,36 @@ Heart, all with original sounds, plus forms 6 and 7. Not imported:
 - Keen Edge: source motion 5 has no choreography.
 - Wind, Thunder and Light Barret: 85-91 % of effect files missing.
 - Lion's Might: a self buff with no reviewed mechanic.
+
+### Wave import and generic source semantics (2026-11-09)
+
+```powershell
+node tools/import_character_wave.mjs [--only key1,key2]
+```
+
+Runs the one-command import for each entry of `tools/characters/roster-wave.json` (19 characters
+FFI–FFXVI, FFT, Type-0) and writes `tools/data/full-import/wave-receipt.json`. Rerunning is safe:
+existing skills are skipped. These generic rules replaced single-skill blockers (each one is listed in
+`plan.approximations` under `--approximate-unverified`):
+- Process roles: damage is any of processes 1, 15, 21, 25, 40, 43, 70, 103, 112, 126, 157 and 169. Heal is
+  a first process of 2. Buff is exactly process 3.
+- Process 130 casts another ability (`processParam` = `abilityId,count,a:b[,…]`). The inspection adds
+  the cast ability to the catalog (`referencedBy`), and the ordinary ability path imports it.
+  Examples: Jill's Hailstorm and other NV-era commands.
+- `@` in `effectFrames` separates per-process branches. 2330 of 3581 branched abilities have exactly
+  one branch per process. Composition keeps and shifts every branch, and the preview plays them in
+  parallel (`process-branch-played-in-parallel`). Effect group 99999999 is the "no effect" placeholder.
+- Group anchor field values outside 1-4 come from master-data statistics of the effect files:
+  - 7: buff auras on the caster (brave/bar-);
+  - 6 and 9: drain/aspir flows ending at the caster;
+  - 5 and 8: moving strikes at the target;
+  - 0: full-screen backdrops.
+  BMB rectangle modes 0 and 5-9 follow the same mapping.
+- Source motion 3 (plain action) and 6 (dance) play in place. Motion 5 (lunge/jump strike) dashes when
+  its moveType is 1 or 6 (6 is a leap to the target).
+- Converted-file coverage is no longer a selection gate. The authoring-free path stages the original
+  BMBs, and a missing file fails visibly in the receipt.
+- `import_skill_batch.sh` keeps compose/stage errors in `<skill>/compose.log`.
 
 ## Original class-up admission
 

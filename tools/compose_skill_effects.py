@@ -9,24 +9,37 @@ import sqlite3
 from memorial.prepare_diagnostic import EXPECTED_NATIVE
 
 
-def parse_effects(raw):
+def parse_effects(raw, branches=False):
+    """'&' separates timeline entries. '@' separates per-process branches (branch i belongs to process i of
+    processId; 2330 of 3581 branched abilities have exactly one branch per process). Branches are only
+    accepted when the caller asks for them; empty entries (trailing '&') are dropped."""
     if not isinstance(raw, str) or not raw:
         raise ValueError('An explicit nonempty effect timeline is required')
-    entries = raw.split('&')
-    if any(not re.fullmatch(r'\d+:\d+(?::-?\d+){1,3}', entry) for entry in entries):
+    parts = raw.split('@')
+    if len(parts) > 1 and not branches:
         raise ValueError('Only ordinary single-branch 3-5 field effect entries are supported')
-    return [entry.split(':') for entry in entries]
+    parsed = []
+    for part in parts:
+        entries = [entry for entry in part.split('&') if entry]
+        if any(not re.fullmatch(r'-?\d+:\d+(?::-?\d+){1,3}', entry) for entry in entries):
+            raise ValueError('Only ordinary 3-5 field effect entries are supported')
+        parsed.append([entry.split(':') for entry in entries])
+    return parsed if branches else parsed[0]
 
 
 def compose_effects(unit_frames, skill_frames, motion_type):
-    skill = parse_effects(skill_frames)
+    skill = parse_effects(skill_frames, branches=True)
     if motion_type != 1:
         return {'effectFrames': skill_frames, 'skillFrameOffset': 0,
                 'rule': 'Source-only: native motion gate does not select attack composition'}
     unit = parse_effects(unit_frames)
+    if any(int(entry[0]) < 0 for entry in unit):
+        raise ValueError('Unit attack effects cannot start before frame 0')
     offset = max(int(entry[0]) for entry in unit)
-    shifted = [[str(int(entry[0]) + offset), *entry[1:]] for entry in skill]
-    return {'effectFrames': '&'.join(':'.join(entry) for entry in [*unit, *shifted]),
+    # Every process branch is shifted by the same unit offset; the unit effects lead the first branch.
+    shifted = [[[str(int(entry[0]) + offset), *entry[1:]] for entry in branch] for branch in skill]
+    shifted[0] = [*unit, *shifted[0]]
+    return {'effectFrames': '@'.join('&'.join(':'.join(entry) for entry in branch) for branch in shifted),
             'skillFrameOffset': offset,
             'rule': 'Motion 1: unit effects followed by skill effects shifted by latest unit effect start'}
 

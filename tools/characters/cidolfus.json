@@ -1,0 +1,304 @@
+{
+  "schemaVersion": 1,
+  "key": "cidolfus",
+  "spriteUnitId": "216000307",
+  "game": "FFXVI",
+  "battle": {
+    "maxHp": 3200,
+    "maxMp": 100,
+    "heroName": "CID",
+    "heroRole": "VANGUARD",
+    "attackType": "melee",
+    "targetOffsetX": 90,
+    "attackAnim": "atk",
+    "hitFrameIndex": 2
+  },
+  "scale": 2.5,
+  "reviewNote": "Created by tools/import_full_character.mjs; battle values are provisional defaults for balancing.",
+  "skills": [
+    {
+      "id": "rough_and_tumble",
+      "ffbeId": 1459070,
+      "name": "Rough-and-Tumble",
+      "rarity": 5,
+      "level": 1,
+      "type": "ABILITY",
+      "mpCost": 60,
+      "scope": "all_enemies",
+      "damageMultiplier": 1.6,
+      "hitCount": 9,
+      "attackFrames": [
+        42,
+        48,
+        54,
+        60,
+        66,
+        72,
+        78,
+        84,
+        90
+      ],
+      "moveType": "stationary",
+      "motion": "atk",
+      "desc": "Physical damage (1.6x) to all enemies",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "cidolfus_rough_and_tumble",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/cidolfus/skills/rough_and_tumble/source/skill-source.json",
+        "sha256": "ae799bf84bfade785b0fefa1fb96315e514abcfd4f2ec543a4c890b6bfef715a"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 8,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 8 / move 4: stationary atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.07
+        },
+        {
+          "frame": 48,
+          "weight": 0.07
+        },
+        {
+          "frame": 54,
+          "weight": 0.07
+        },
+        {
+          "frame": 60,
+          "weight": 0.07
+        },
+        {
+          "frame": 66,
+          "weight": 0.07
+        },
+        {
+          "frame": 72,
+          "weight": 0.07
+        },
+        {
+          "frame": 78,
+          "weight": 0.07
+        },
+        {
+          "frame": 84,
+          "weight": 0.07
+        },
+        {
+          "frame": 90,
+          "weight": 0.44
+        }
+      ]
+    },
+    {
+      "id": "ramuh_primed",
+      "ffbeId": 216000307,
+      "name": "Ramuh Primed",
+      "rarity": 5,
+      "level": 1,
+      "type": "LIMIT",
+      "mpCost": 0,
+      "scope": "single_enemy",
+      "damageMultiplier": 6,
+      "hitCount": 28,
+      "attackFrames": [
+        206,
+        206,
+        206,
+        206,
+        58,
+        64,
+        70,
+        76,
+        82,
+        88,
+        94,
+        100,
+        111,
+        117,
+        123,
+        129,
+        135,
+        141,
+        147,
+        153,
+        164,
+        170,
+        176,
+        182,
+        188,
+        194,
+        200,
+        206
+      ],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Limit Burst: Physical damage (6x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "cidolfus_ramuh_primed",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/cidolfus/skills/ramuh_primed/source/skill-source.json",
+        "sha256": "862b530e108515b750f789651b9ccbfc10db14abfa7fdf08d007b47ff2310621"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "target",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "limit_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 1,
+          "sourceMoveType": 1,
+          "note": "Drafted from motion 1 / move 1: dash with limit_atk body (LB rows carry no motionType; reviewed adaptation)."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 58,
+          "weight": 0.006
+        },
+        {
+          "frame": 64,
+          "weight": 0.006
+        },
+        {
+          "frame": 70,
+          "weight": 0.006
+        },
+        {
+          "frame": 76,
+          "weight": 0.006
+        },
+        {
+          "frame": 82,
+          "weight": 0.006
+        },
+        {
+          "frame": 88,
+          "weight": 0.006
+        },
+        {
+          "frame": 94,
+          "weight": 0.006
+        },
+        {
+          "frame": 100,
+          "weight": 0.006
+        },
+        {
+          "frame": 111,
+          "weight": 0.006
+        },
+        {
+          "frame": 117,
+          "weight": 0.006
+        },
+        {
+          "frame": 123,
+          "weight": 0.006
+        },
+        {
+          "frame": 129,
+          "weight": 0.006
+        },
+        {
+          "frame": 135,
+          "weight": 0.006
+        },
+        {
+          "frame": 141,
+          "weight": 0.006
+        },
+        {
+          "frame": 147,
+          "weight": 0.006
+        },
+        {
+          "frame": 153,
+          "weight": 0.006
+        },
+        {
+          "frame": 164,
+          "weight": 0.006
+        },
+        {
+          "frame": 170,
+          "weight": 0.006
+        },
+        {
+          "frame": 176,
+          "weight": 0.006
+        },
+        {
+          "frame": 182,
+          "weight": 0.006
+        },
+        {
+          "frame": 188,
+          "weight": 0.006
+        },
+        {
+          "frame": 194,
+          "weight": 0.024
+        },
+        {
+          "frame": 200,
+          "weight": 0.024
+        },
+        {
+          "frame": 206,
+          "weight": 0.2
+        },
+        {
+          "frame": 206,
+          "weight": 0.2
+        },
+        {
+          "frame": 206,
+          "weight": 0.2
+        },
+        {
+          "frame": 206,
+          "weight": 0.2
+        },
+        {
+          "frame": 206,
+          "weight": 0.026
+        }
+      ]
+    }
+  ],
+  "portraitSource": "unit_icons/unit_icon_216000307.png"
+}

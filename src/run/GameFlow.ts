@@ -3,6 +3,7 @@ import type {UnitManifest} from '../types/manifest';
 import type {RunState,RunRules} from './runState.mjs';
 import {RunStore,createRun,variantAreas,rollParty,confirmParty,completeBattle,chooseReward,encounters,acknowledgeAwakening} from './runState.mjs';
 import {runCatalog} from './catalog';
+import {ProfileStore,drawCatalog,lockedHeroes,settleRun,summonHero,SUMMON_COST,type Profile} from './profile.mjs';
 import {RunUI} from '../ui/RunUI';
 import {EncounterTransition} from '../ui/EncounterTransition';
 import {ALL_FATE_SOUNDS,fateSoundUrl,fateTier,fateTimeline} from '../ui/fateEngine';
@@ -22,14 +23,15 @@ export class GameFlow{
  private readonly audio:GameAudio;
  private battleCursor:BattleCursorProfile='felt';
  private entry?:EncounterTransition;
- readonly catalog;readonly store;readonly ui;state:RunState|null=null;private animationTimer?:ReturnType<typeof setTimeout>;private busy=false;
- constructor(readonly scene:Phaser.Scene,readonly manifests:Record<string,UnitManifest>){this.audio=new GameAudio(scene.sound);this.rules=(scene.cache.json.get('run_rules')as RunRules)??{awakeningMode:'sequential'};this.catalog=runCatalog(scene,manifests);this.store=new RunStore(window.localStorage,this.catalog);this.ui=new RunUI(this.catalog,manifests);this.ui.onError=error=>this.fail(error);this.ui.onSound=(event,rate)=>this.audio.playUi(event,rate);this.ui.onSample=(sound,gain)=>{this.audio.playSample(fateSoundUrl(sound),gain);};const resize=()=>{this.placeBattleToolbar();if(this.ui.root.classList.contains('victory-overlay'))this.ui.overBattle(this.rewardBounds());};window.addEventListener('resize',resize);scene.scale.on('resize',resize);this.menu();}
+ readonly catalog;readonly store;readonly ui;private readonly profiles;profile:Profile;state:RunState|null=null;private animationTimer?:ReturnType<typeof setTimeout>;private busy=false;
+ constructor(readonly scene:Phaser.Scene,readonly manifests:Record<string,UnitManifest>){this.audio=new GameAudio(scene.sound);this.rules=(scene.cache.json.get('run_rules')as RunRules)??{awakeningMode:'sequential'};this.catalog=runCatalog(scene,manifests);this.store=new RunStore(window.localStorage,this.catalog);this.profiles=new ProfileStore(window.localStorage,this.catalog);this.profile=this.profiles.load();this.ui=new RunUI(this.catalog,manifests);this.ui.onError=error=>this.fail(error);this.ui.onSound=(event,rate)=>this.audio.playUi(event,rate);this.ui.onSample=(sound,gain)=>{this.audio.playSample(fateSoundUrl(sound),gain);};const resize=()=>{this.placeBattleToolbar();if(this.ui.root.classList.contains('victory-overlay'))this.ui.overBattle(this.rewardBounds());};window.addEventListener('resize',resize);scene.scale.on('resize',resize);this.menu();}
  private closeEntry(){this.entry?.close();this.entry=undefined;}
  private fail(error:unknown){this.closeEntry();this.audio.setMusic(null);clearTimeout(this.animationTimer);this.busy=false;this.scene.scene.stop('BattleScene');this.ui.error(String(error));this.ui.on('reload',()=>location.reload());}
  private commit(next:RunState){this.store.save(next);this.state=next;}
  menu(){this.closeEntry();this.audio.setMusic(HOME_MUSIC_RESOURCE,'home');if(this.scene.scene.isActive('BattleScene'))this.scene.scene.stop('BattleScene');this.busy=false;clearTimeout(this.animationTimer);
-  try{this.state=this.store.load();this.ui.menu(!!this.state,null);this.audioControls();if(this.state?.phase==='battle'){const note=document.createElement('p');note.className='muted';note.textContent='Continue restarts the current encounter from its saved starting state.';this.ui.root.querySelector('.menu-panel')?.append(note);}}catch(error){this.ui.error(String(error),true);this.ui.on('reload',()=>location.reload());this.ui.on('discard',()=>{this.store.clear();this.state=null;this.menu();});return;}
+  try{this.state=this.store.load();const drawable=this.profile.unlocked.length+lockedHeroes(this.profile,this.catalog).length;this.ui.menu(!!this.state,null,{crystals:this.profile.crystals,unlocked:this.profile.unlocked.length,total:drawable,cost:SUMMON_COST,canSummon:this.profile.crystals>=SUMMON_COST});this.audioControls();if(this.state?.phase==='battle'){const note=document.createElement('p');note.className='muted';note.textContent='Continue restarts the current encounter from its saved starting state.';this.ui.root.querySelector('.menu-panel')?.append(note);}}catch(error){this.ui.error(String(error),true);this.ui.on('reload',()=>location.reload());this.ui.on('discard',()=>{this.store.clear();this.state=null;this.menu();});return;}
   this.ui.on('training',()=>this.training());
+  this.ui.on('summon',()=>this.summon());
   this.ui.on('continue',()=>this.route());this.ui.on('play',()=>{const seed=(this.ui.root.querySelector('#run-seed')as HTMLInputElement).value.trim()||new URLSearchParams(location.search).get('seed')||crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
    const start=()=>{try{this.commit(createRun(seed,this.catalog,new URLSearchParams(location.search).get("arenaVariants")==="1"?variantAreas(seed):undefined,this.rules));this.audio.clearRunPosition();this.setup();}catch(e){this.fail(e);}};
    if(this.state){this.ui.dialog('Begin a new expedition?','The saved expedition will be abandoned. Rerolls and upgrades belong only to that run.','Start new run');this.ui.on('accept',start);this.ui.on('cancel',()=>this.menu());}else start();});
@@ -80,7 +82,7 @@ export class GameFlow{
    const drawingState=originalForms&&!this.state.rules?.originalForms
     ?{...this.state,rules:{awakeningMode:this.state.rules?.awakeningMode??'sequential',originalForms}}
     :this.state;
-   this.commit(rollParty(drawingState,this.catalog));
+   this.commit(rollParty(drawingState,drawCatalog(this.profile,this.catalog)));
    this.busy=true;
    this.setup();
    this.audio.playUi('leverSeat');
@@ -220,6 +222,12 @@ export class GameFlow{
     try{this.commit(acknowledgeAwakening(this.state,notice.id));advance();}catch(error){this.fail(error);}
    });return;}
   advance();}catch(error){this.fail(error);}}
- private result(){this.audio.setMusic(null);this.ui.result(this.state!);this.ui.on('new',()=>{this.store.clear();this.state=null;this.menu();});}
+ private result(){this.audio.setMusic(null);
+  // Crystals and unlocks are settled once per finished run (keyed by seed and history), then shown.
+  const settled=settleRun(this.profile,this.state!,this.catalog);this.profile=this.profiles.save(settled.profile);
+  this.ui.result(this.state!,settled.crystals||settled.unlocked?{crystals:settled.crystals,unlocked:settled.unlocked}:undefined);this.ui.on('new',()=>{this.store.clear();this.state=null;this.menu();});}
+ private summon(){try{const result=summonHero(this.profile,this.catalog,crypto.getRandomValues(new Uint32Array(1))[0].toString(36));
+  this.profile=this.profiles.save(result.profile);if(!result.unlocked)return this.menu();
+  this.audio.playUi('reward');this.ui.summoned(result.unlocked,this.profile.crystals);this.ui.on('close',()=>this.menu());}catch(error){this.fail(error);}}
  snapshot(){return {state:this.state,total:this.state?encounters(this.state.areas).length:0,busy:this.busy};}
 }
