@@ -1,0 +1,42 @@
+{
+  "schema": "enemy-skills-v1",
+  "key": "kain",
+  "monsterId": 305261000,
+  "dictionaryId": 3052610,
+  "skills": [
+    {
+      "id": "darkness",
+      "ffbeId": 177400,
+      "type": "MONSTER_SKILL",
+      "name": "Darkness",
+      "scope": "all_enemies",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 80,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "kain_darkness",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    },
+    {
+      "id": "ice_spear",
+      "ffbeId": 177420,
+      "type": "MONSTER_SKILL",
+      "name": "Ice Spear",
+      "scope": "all_enemies",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 145,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "kain_ice_spear",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    }
+  ]
+}

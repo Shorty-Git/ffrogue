@@ -232,7 +232,7 @@ DONE (2026-11-08): raw-data audit plus a sixth source (Memorial download cache, 
 There is little byte duplication (2.2 of 30 GB), so the sources were not moved; source priority rules apply instead.
 Details: docs/asset_structure.md "Raw-data sources and duplicate audit". Cleanup (developer-approved):
 tools/data shrank from 92 to 37 GB; all 92 tests and tsc pass afterwards.
-Then, in order (scene transition DONE; one-command character importer DONE 2026-11-08 with Squall, see character-import-workflow.md top; one-command stage importer DONE with Dollet/FFVIII, see background-import-workflow.md top; original monster skills DONE 2026-11-09, see enemy-import-workflow.md top; NEXT: enemy support skills/debuffs, more stages) →
+Then, in order (scene transition DONE; one-command character importer DONE 2026-11-08 with Squall, see character-import-workflow.md top; one-command stage importer DONE with Dollet/FFVIII, see background-import-workflow.md top; original monster skills DONE 2026-11-09, see enemy-import-workflow.md top; six stages since 2026-11-09: Whisperwood, Mako Reactor, Dollet, Besaid, Altissia, Fabul; NEXT: enemy support skills/debuffs, jump, FFIX once its battle theme is downloaded, run twists) →
 complete character importer (one command: body, poses, all skills via import_skill_batch +
 admit_skill_audio + icons + LB + forms; test on a new character, e.g. Tifa AC) → stage importer
 (stage + SSPB animations + original music + world enemies/bosses with their skills, mainline FF I–XVI

@@ -512,6 +512,29 @@ Not imported yet:
 - enemy sounds;
 - original encounter formations.
 
+Stages 2026-11-09 (backgrounds identified visually from the event backgrounds 120000-122199; the master
+data has no event stage joins):
+
+| Stage | Series | Background | Normal / boss music | Enemies / boss |
+| --- | --- | --- | --- | --- |
+| Besaid | FFX | 120115 beach | Normal Battle 400829 / Challenge 400833 | Dingo, Condor, Water Flan / Kimahri |
+| Altissia | FFXV | 120157 tidal wave | Hunt or Be Hunted 400848 / Apocalypsis Aquarius 400919 | Magitek Infantry, Magitek Axeman / Leviathan |
+| Fabul | FFIV | 120061 ramparts | Battle 1 400807 / Battle 2 400863 | Baron Marine / Kain |
+
+FFIX (Alexandria, 120204) waits for its normal battle bank `la852_bgm_ff9_battle1`, which is not
+downloaded yet. Play it once in the Memorial client, then extract.
+
+Stage animation support added for these backgrounds (`prepare_stage_animation.py`, recorded in
+animation.json `approximations`):
+- Endless independent instance clocks (ssbpLib flag 8) run on absolute time. The prepared loop is the
+  common length of the parent and those instances, capped at 900 frames (30 s).
+- Part colour blending (Altissia) is not rendered; the texture colour is kept.
+- A second (front) layer is not prepared (`animation.omittedLayers`).
+
+Letterboxed backgrounds: `prepare_reviewed_arenas.py` measures symmetric black side bars
+(`contentWidth`, Besaid 0.72), and arena, floor and animation cover with the real content width
+(`arenaCoverScale`).
+
 First stage: Dollet (FFVIII). Arena 120173, "Don't Be Afraid" 400867 and "Force Your Way" 400868,
 G-Soldier 2058610, Elite Soldier 2058710, boss X-ATM092 5060020 (Galbadia variant). Bodies were
 checked in Training (screenshots); the WAVs are large (15-23 MB), so compress BGM before a web release.

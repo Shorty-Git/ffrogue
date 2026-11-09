@@ -1,0 +1,93 @@
+{
+  "schema": "stage-recipe-v1",
+  "key": "altissia",
+  "name": "Altissia",
+  "theme": "FINAL FANTASY XV",
+  "series": "FFXV",
+  "arena": {
+    "key": "altissia",
+    "battleBgId": 120157,
+    "title": "FFXV",
+    "label": "Altissia under the tidal wave",
+    "floor": [
+      0.62,
+      0.8
+    ],
+    "worldIdentity": "Reviewed visual identification: Altissia flooding during Leviathan (canal city, tidal wave); no original stage-to-world join"
+  },
+  "music": {
+    "normal": {
+      "resourceId": 400848,
+      "title": "Hunt or Be Hunted",
+      "game": "FFXV"
+    },
+    "boss": {
+      "resourceId": 400919,
+      "title": "Apocalypsis Aquarius",
+      "game": "FFXV"
+    }
+  },
+  "enemies": [
+    {
+      "key": "magitek_infantry",
+      "dictionaryId": 2061210,
+      "name": "Magitek Infantry",
+      "scale": 2,
+      "movement": "approach",
+      "monsterId": "206121000"
+    },
+    {
+      "key": "magitek_axeman",
+      "dictionaryId": 2251010,
+      "name": "Magitek Axeman",
+      "scale": 2,
+      "movement": "approach",
+      "monsterId": "225101000"
+    }
+  ],
+  "boss": {
+    "key": "leviathan",
+    "dictionaryId": 3082310,
+    "name": "Leviathan",
+    "scale": 1.1,
+    "movement": "stationary",
+    "behavior": {
+      "phaseAt": 0.5,
+      "phaseName": "Desperation",
+      "phaseMultiplier": 1.25,
+      "pattern": [
+        {
+          "kind": "attack",
+          "name": "Tidal Lash",
+          "multiplier": 1,
+          "scope": "single"
+        },
+        {
+          "kind": "prepare",
+          "name": "The sea rises behind Leviathan",
+          "next": "Tidal Wave"
+        },
+        {
+          "kind": "attack",
+          "name": "Tsunami",
+          "multiplier": 1.3,
+          "scope": "party",
+          "skill": "tidal_wave"
+        }
+      ]
+    },
+    "monsterId": "308231000"
+  },
+  "formations": [
+    [
+      "top",
+      "bottom"
+    ],
+    [
+      "center"
+    ]
+  ],
+  "difficulty": 1.55,
+  "normalFights": 1,
+  "rewardCategory": "altissia-relic"
+}

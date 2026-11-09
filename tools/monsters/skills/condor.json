@@ -1,0 +1,26 @@
+{
+  "schema": "enemy-skills-v1",
+  "key": "condor",
+  "monsterId": 102101000,
+  "dictionaryId": 1021010,
+  "skillMonsterId": 102101001,
+  "skills": [
+    {
+      "id": "beak",
+      "ffbeId": 852400,
+      "type": "MONSTER_SKILL",
+      "name": "Beak",
+      "scope": "single_enemy",
+      "moveType": "stationary",
+      "multiplier": 1.2,
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "condor_beak",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value. Not reconstructed: original process(es) 24 beyond the damage."
+    }
+  ]
+}

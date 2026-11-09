@@ -6,7 +6,7 @@ import fs from 'node:fs';
 import {createHash} from 'node:crypto';
 import {ENEMY_CONTENT,STAGE_CONTENT,stageForArea,enemyAction} from '../src/run/stageContent.mjs';
 import {runEncounter} from '../src/run/runBalance.mjs';
-import {createRun,validateRun,rollParty,confirmParty,variantAreas,encounters} from '../src/run/runState.mjs';
+import {createRun,validateRun,rollParty,confirmParty,variantAreas,encounters,PROTOTYPE_AREAS} from '../src/run/runState.mjs';
 const read=p=>JSON.parse(fs.readFileSync(p,'utf8'));
 const hash=p=>createHash('sha256').update(fs.readFileSync(p)).digest('hex');
 
@@ -43,7 +43,9 @@ test('two original-backed lineups use different arenas, bosses and declared futu
 
 test('encounter selection is pure, independent of upgrades, keeps old saved areas/RNG intact',()=>{
  const catalog=Object.fromEntries(['a','b','c'].map(key=>[key,{key,identity:key,canonicalIdentity:key,unitId:key,rarity:5,form:key,maxHp:100,maxMp:50,skills:[{id:key+'-skill'}]}]));
- let r=confirmParty(rollParty(createRun('stage-restore',catalog),catalog));
+ // Fixed course (forest, reactor): seeds pick two of all stages, so the route is given explicitly.
+ const areas=['whisperwood','mako_reactor'].map(id=>PROTOTYPE_AREAS.find(a=>a.stageId===id));
+ let r=confirmParty(rollParty(createRun('stage-restore',catalog,areas),catalog));
  const before=JSON.stringify(r);assert.equal(runEncounter(r).enemies[0].key,'microchu');assert.equal(JSON.stringify(r),before);
  r.encounter=1;assert.equal(runEncounter(r).enemies[0].key,'ochu');
  r.encounter=2;assert.deepEqual(runEncounter(r).enemies.map(e=>e.key),['sweeper','sweeper']);

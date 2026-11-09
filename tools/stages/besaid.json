@@ -1,0 +1,101 @@
+{
+  "schema": "stage-recipe-v1",
+  "key": "besaid",
+  "name": "Besaid",
+  "theme": "FINAL FANTASY X",
+  "series": "FFX",
+  "arena": {
+    "key": "besaid",
+    "battleBgId": 120115,
+    "title": "FFX",
+    "label": "Besaid beach",
+    "floor": [
+      0.6,
+      0.8
+    ],
+    "worldIdentity": "Reviewed visual identification: Besaid beach (palms, lagoon, rock arch); no original stage-to-world join"
+  },
+  "music": {
+    "normal": {
+      "resourceId": 400829,
+      "title": "Normal Battle",
+      "game": "FFX"
+    },
+    "boss": {
+      "resourceId": 400833,
+      "title": "Challenge",
+      "game": "FFX"
+    }
+  },
+  "enemies": [
+    {
+      "key": "dingo",
+      "dictionaryId": 1012110,
+      "name": "Dingo",
+      "scale": 2,
+      "movement": "approach",
+      "monsterId": "101211000"
+    },
+    {
+      "key": "condor",
+      "dictionaryId": 1021010,
+      "name": "Condor",
+      "scale": 2,
+      "movement": "approach",
+      "monsterId": "102101000"
+    },
+    {
+      "key": "water_flan",
+      "dictionaryId": 1032010,
+      "name": "Water Flan",
+      "scale": 2,
+      "movement": "stationary",
+      "monsterId": "103201000"
+    }
+  ],
+  "boss": {
+    "key": "kimahri",
+    "dictionaryId": 3251010,
+    "name": "Kimahri",
+    "scale": 2,
+    "movement": "approach",
+    "behavior": {
+      "phaseAt": 0.5,
+      "phaseName": "Desperation",
+      "phaseMultiplier": 1.25,
+      "pattern": [
+        {
+          "kind": "attack",
+          "name": "Lancet Strike",
+          "multiplier": 1,
+          "scope": "single",
+          "skill": "attack"
+        },
+        {
+          "kind": "prepare",
+          "name": "Kimahri gathers his strength",
+          "next": "Ronso Rage"
+        },
+        {
+          "kind": "attack",
+          "name": "Ronso Rage",
+          "multiplier": 1.3,
+          "scope": "party"
+        }
+      ]
+    },
+    "monsterId": "325101000"
+  },
+  "formations": [
+    [
+      "top",
+      "bottom"
+    ],
+    [
+      "center"
+    ]
+  ],
+  "difficulty": 1.15,
+  "normalFights": 1,
+  "rewardCategory": "besaid-relic"
+}

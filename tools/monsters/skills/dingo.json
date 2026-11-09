@@ -1,0 +1,26 @@
+{
+  "schema": "enemy-skills-v1",
+  "key": "dingo",
+  "monsterId": 101211000,
+  "dictionaryId": 1012110,
+  "skillMonsterId": 101211001,
+  "skills": [
+    {
+      "id": "bite",
+      "ffbeId": 850401,
+      "type": "MONSTER_SKILL",
+      "name": "Bite",
+      "scope": "single_enemy",
+      "moveType": "stationary",
+      "multiplier": 1.2,
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "dingo_bite",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value. Not reconstructed: original process(es) 139 beyond the damage."
+    }
+  ]
+}

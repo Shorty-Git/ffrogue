@@ -1,0 +1,26 @@
+{
+  "schema": "enemy-skills-v1",
+  "key": "water_flan",
+  "monsterId": 103201000,
+  "dictionaryId": 1032010,
+  "skillMonsterId": 103201001,
+  "skills": [
+    {
+      "id": "water",
+      "ffbeId": 800150,
+      "type": "MONSTER_SKILL",
+      "name": "Water",
+      "scope": "single_enemy",
+      "moveType": "stationary",
+      "multiplier": 1.2,
+      "damageEvents": [
+        {
+          "frame": 80,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "water_flan_water",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    }
+  ]
+}

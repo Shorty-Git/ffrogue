@@ -1,0 +1,25 @@
+{
+  "schema": "enemy-skills-v1",
+  "key": "kimahri",
+  "monsterId": 325101000,
+  "dictionaryId": 3251010,
+  "skills": [
+    {
+      "id": "attack",
+      "ffbeId": 855500,
+      "type": "MONSTER_SKILL",
+      "name": "Attack",
+      "scope": "single_enemy",
+      "moveType": "stationary",
+      "multiplier": 1.2,
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "kimahri_attack",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    }
+  ]
+}

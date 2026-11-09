@@ -1,5 +1,7 @@
 import Phaser from 'phaser';
 import reviewed from '../../public/assets/stages/reviewed.json';
+import {arenaCoverScale} from '../ui/battleLayout';
+import {BATTLE_ARENAS,type BattleArenaKey} from '../data/battleArenas';
 
 // Reviewed original animation layer, independent of encounter balance and music.
 export const STAGE_ANIMATIONS:Record<string,{key:string;root:string}>={
@@ -53,7 +55,8 @@ export class StageAnimation {
  private update(_time:number,delta:number):void {this.elapsed+=delta;this.draw(Math.floor(this.elapsed*this.data.fps/1000)%this.data.count);}
  private draw(frame:number):void {
   if(frame===this.frame)return;this.frame=frame;
-  const d=this.data,scale=Math.max(this.bounds.width/d.presentation.canvas[0],this.bounds.height/d.presentation.canvas[1]);
+  const d=this.data,scale=arenaCoverScale(this.bounds.width,this.bounds.height,{width:d.presentation.canvas[0],height:d.presentation.canvas[1],
+   contentWidth:(BATTLE_ARENAS[this.arena as BattleArenaKey] as {contentWidth?:number}|undefined)?.contentWidth});
   const x=this.bounds.x+this.bounds.width/2+(d.presentation.origin[0]-d.presentation.canvas[0]/2)*scale;
   const y=this.bounds.y+this.bounds.height/2+(d.presentation.origin[1]-d.presentation.canvas[1]/2)*scale;
   this.quads.forEach((q,i)=>{

@@ -1,0 +1,25 @@
+{
+  "schema": "enemy-skills-v1",
+  "key": "magitek_infantry",
+  "monsterId": 206121000,
+  "dictionaryId": 2061210,
+  "skills": [
+    {
+      "id": "thrust",
+      "ffbeId": 165120,
+      "type": "MONSTER_SKILL",
+      "name": "Thrust",
+      "scope": "single_enemy",
+      "moveType": "stationary",
+      "multiplier": 1.2,
+      "damageEvents": [
+        {
+          "frame": 45,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "magitek_infantry_thrust",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    }
+  ]
+}

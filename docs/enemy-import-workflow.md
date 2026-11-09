@@ -36,6 +36,19 @@ Imported (12):
 - Elite Soldier: Charge.
 - X-ATM092: Clash, Arm Crush+ (debuff not reconstructed), Ray-Bomb.
 
+Stage enemies 2026-11-09 (16 more):
+- Dingo: Bite
+- Condor: Beak
+- Water Flan: Water
+- Kimahri: Attack (his opener)
+- Magitek Infantry: Thrust
+- Magitek Axeman: Armed Attack, Wire Attack, Spin Kick
+- Leviathan: Sweep, Tidal Wave (boss burst), Blizzaga, Breath
+- Baron Marine: Watera, Hack
+- Kain: Darkness (boss burst), Ice Spear
+
+Jump (process 52) and support skills are skipped.
+
 Boss patterns now name the originals: Guard Scorpion → Focused Fire / Tail Laser, Ochu → Ochu Dance,
 X-ATM092 → Ray-Bomb. Arm Hook stays the single-target opener.
 

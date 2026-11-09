@@ -9,7 +9,7 @@ import { TargetDummy } from '../entities/TargetDummy';
 import { UnitManifest } from '../types/manifest';
 import { SkillConfig, UnitSkillsData } from '../types/skills';
 import { CharacterDefinition, ContentRegistry } from '../types/content';
-import { BATTLE_ART_SCALE, getBattleLayout } from '../ui/battleLayout';
+import { BATTLE_ART_SCALE, getBattleLayout, arenaCoverScale } from '../ui/battleLayout';
 import { BATTLE_ARENAS, BattleArenaKey } from '../data/battleArenas';
 import { createPreparedSceneBridge, type PreparedSceneBridge, type PreparedSceneHost ,casterStrikeOffset} from '../effects/PreparedSceneBridge.mjs';
 import { validateSceneManifest, validateSceneAction } from '../effects/sceneProfile.mjs';
@@ -480,7 +480,8 @@ export class BattleScene extends Phaser.Scene {
     const background = this.add.image(arena.x + arena.width / 2, arena.y + arena.height / 2, definition.texture)
       .setDepth(-100);
     // Cover the arena proportionally; source floor bounds use this same crop.
-    background.setScale(Math.max(arena.width / background.width, arena.height / background.height));
+    background.setScale(arenaCoverScale(arena.width, arena.height, {width: background.width, height: background.height,
+      contentWidth: (definition as {contentWidth?: number}).contentWidth}));
     background.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
     this.stageAnimation=StageAnimation.create(this,this.arenaKey,arena);
   }

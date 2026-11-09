@@ -1,0 +1,85 @@
+{
+  "schema": "stage-recipe-v1",
+  "key": "fabul",
+  "name": "Fabul",
+  "theme": "FINAL FANTASY IV",
+  "series": "FFIV",
+  "arena": {
+    "key": "fabul",
+    "battleBgId": 120061,
+    "title": "FFIV",
+    "label": "Castle ramparts (Fabul defense)",
+    "floor": [
+      0.54,
+      0.78
+    ],
+    "worldIdentity": "Reviewed thematic assembly: castle ramparts for the Baron assault on Fabul; no original stage-to-world join"
+  },
+  "music": {
+    "normal": {
+      "resourceId": 400807,
+      "title": "Battle 1",
+      "game": "FFIV"
+    },
+    "boss": {
+      "resourceId": 400863,
+      "title": "Battle 2",
+      "game": "FFIV"
+    }
+  },
+  "enemies": [
+    {
+      "key": "baron_marine",
+      "dictionaryId": 2057820,
+      "name": "Baron Marine",
+      "scale": 2,
+      "movement": "approach",
+      "monsterId": "205782000"
+    }
+  ],
+  "boss": {
+    "key": "kain",
+    "dictionaryId": 3052610,
+    "name": "Kain",
+    "scale": 2,
+    "movement": "approach",
+    "behavior": {
+      "phaseAt": 0.5,
+      "phaseName": "Desperation",
+      "phaseMultiplier": 1.25,
+      "pattern": [
+        {
+          "kind": "attack",
+          "name": "Lance Strike",
+          "multiplier": 1,
+          "scope": "single"
+        },
+        {
+          "kind": "prepare",
+          "name": "Kain leaps out of sight",
+          "next": "Darkness"
+        },
+        {
+          "kind": "attack",
+          "name": "Jump",
+          "multiplier": 1.3,
+          "scope": "party",
+          "skill": "darkness"
+        }
+      ]
+    },
+    "monsterId": "305261000"
+  },
+  "formations": [
+    [
+      "top",
+      "bottom"
+    ],
+    [
+      "center"
+    ]
+  ],
+  "difficulty": 1.25,
+  "normalFights": 1,
+  "rewardCategory": "fabul-relic"
+}

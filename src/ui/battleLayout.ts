@@ -4,6 +4,11 @@ import { BATTLE_ARENAS, BattleArena } from '../data/battleArenas';
 export const BATTLE_VIEW = { width: 1000, height: 1100 };
 export const BATTLE_ART_SCALE = 0.8;
 
+/** Cover scale of an arena picture; letterboxed backgrounds cover with their real content width. */
+export function arenaCoverScale(width: number, height: number, arena: {width: number; height: number; contentWidth?: number}) {
+  return Math.max(width / (arena.width * (arena.contentWidth ?? 1)), height / arena.height);
+}
+
 export function getBattleLayout(width: number, height: number, arena: BattleArena = BATTLE_ARENAS.forest) {
   const hudWidth = width;
   const arenaWidth = width;
@@ -12,7 +17,7 @@ export function getBattleLayout(width: number, height: number, arena: BattleAren
   const arenaTop = 48;
   const arenaHeight = partyTop - arenaTop;
   // Transform reviewed source floor bounds through the same cover crop as the image.
-  const backgroundScale = Math.max(arenaWidth / arena.width, arenaHeight / arena.height);
+  const backgroundScale = arenaCoverScale(arenaWidth, arenaHeight, arena);
   const cropY = (arena.height * backgroundScale - arenaHeight) / 2;
   const fieldTop = Math.round(arenaTop + arena.height * arena.floorTop * backgroundScale - cropY);
   const fieldBottom = Math.min(partyTop - 85,

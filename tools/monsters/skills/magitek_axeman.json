@@ -1,0 +1,63 @@
+{
+  "schema": "enemy-skills-v1",
+  "key": "magitek_axeman",
+  "monsterId": 225101000,
+  "dictionaryId": 2251010,
+  "skills": [
+    {
+      "id": "armed_attack",
+      "ffbeId": 216632,
+      "type": "MONSTER_SKILL",
+      "name": "Armed Attack",
+      "scope": "single_enemy",
+      "moveType": "stationary",
+      "multiplier": 1.2,
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "magitek_axeman_armed_attack",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    },
+    {
+      "id": "wire_attack",
+      "ffbeId": 216633,
+      "type": "MONSTER_SKILL",
+      "name": "Wire Attack",
+      "scope": "single_enemy",
+      "moveType": "stationary",
+      "multiplier": 1.2,
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "magitek_axeman_wire_attack",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value. Not reconstructed: original process(es) 10 beyond the damage."
+    },
+    {
+      "id": "spin_kick",
+      "ffbeId": 216634,
+      "type": "MONSTER_SKILL",
+      "name": "Spin Kick",
+      "scope": "all_enemies",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.5
+        },
+        {
+          "frame": 62,
+          "weight": 0.5
+        }
+      ],
+      "scenePresentation": "magitek_axeman_spin_kick",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    }
+  ]
+}

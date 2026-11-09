@@ -14,6 +14,18 @@ review = json.loads(Path('tools/stages/reviewed-arenas.json').read_text(encoding
 target = Path('public/assets/stages')
 
 
+def letterbox_content(image):
+    """Fraction of the width that is real picture: FFBE's narrow screen never shows the black side
+    bars some backgrounds carry, our wider arena would. Symmetric bars (as authored) are measured."""
+    grey = image.convert('L')
+    width, height = grey.size
+    def dark(x):
+        return sum(grey.getpixel((x, y)) for y in range(0, height, 8)) / len(range(0, height, 8)) < 20
+    left = next((x for x in range(width // 3) if not dark(x)), 0)
+    right = next((x for x in range(width // 3) if not dark(width - 1 - x)), 0)
+    return round((width - 2 * min(left, right)) / width, 4)
+
+
 def record(path):
     return {'file': path.name, 'bytes': path.stat().st_size,
             'sha256': hashlib.sha256(path.read_bytes()).hexdigest()}
@@ -44,12 +56,15 @@ with sqlite3.connect('file:rawdata/assets/static_data/ffbe-data.db?mode=ro', uri
             image = dump / row['fileInfo']
             with Image.open(image) as im:
                 width, height = im.size
+                content_width = letterbox_content(im)
             folder = Path(temp) / key
             folder.mkdir()
             shutil.copyfile(image, folder / image.name)
             animation = None
             if row['Dc5w1Yda']:
-                file, member = row['Dc5w1Yda'].split('#')
+                # 'file#back,...&file,front/anime,1': the back layer is prepared; a front overlay layer is not yet.
+                layers = row['Dc5w1Yda'].split('&')
+                file, member = layers[0].split('#')
                 _, root, x, y = member.split(',')
                 animation = prepare(dump / file, root, folder, [float(x), float(y)], [width, height])
             music = recipe.get('music')
@@ -61,7 +76,9 @@ with sqlite3.connect('file:rawdata/assets/static_data/ffbe-data.db?mode=ro', uri
             published[key] = {
                 **recipe, 'texture': f'arena_{key}', 'file': image.name, 'width': width, 'height': height,
                 'floorTop': recipe['floor'][0], 'floorBottom': recipe['floor'][1],
-                'animation': {'fps': animation['fps'], 'frames': animation['count']} if animation else None,
+                **({'contentWidth': content_width} if content_width < 0.97 else {}),
+                'animation': {'fps': animation['fps'], 'frames': animation['count'],
+                              **({'omittedLayers': len(row['Dc5w1Yda'].split('&')) - 1} if '&' in row['Dc5w1Yda'] else {})} if animation else None,
                 'image': record(image), 'musicAssignment': assignment,
                 'status': 'prepared', 'titleEvidence': 'reviewed-stage-candidates-v1',
             }
