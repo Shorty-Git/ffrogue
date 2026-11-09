@@ -44,7 +44,7 @@ Autonomous overnight session. Read `AGENTS.md`, `docs/current-state.md` (newest 
 ### 3. Battle placement across all arenas
 - The developer finds unit/enemy placement sometimes off (noticed in Altissia; placement was set by
   hand earlier). Analyse the backgrounds (`public/assets/backgrounds/`, arena list in
-  `src/ui/battleLayout.ts` / `BATTLE_ARENAS`) and find one layout (party right, enemies left, FFBE
+  `src/data/battleArenas.ts`, layout in `src/ui/battleLayout.ts`) and find one layout (party right, enemies left, FFBE
   style) that sits on the walkable ground in all arenas, with per-arena overrides only where needed.
 - Then re-check approach/strike distances (`targetOffsetX`, `approachX`, enemy approach) so melee
   skills still hit the target, and Limit Bursts stay on screen.
