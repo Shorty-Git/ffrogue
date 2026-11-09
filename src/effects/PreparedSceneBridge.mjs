@@ -102,7 +102,7 @@ export function createPreparedSceneBridge(scene, manifests) {
   const camera = new THREE.OrthographicCamera(-scene.scale.width/2,scene.scale.width/2,
     scene.scale.height/2,-scene.scale.height/2,.1,5000);
   camera.position.z = 1000;
-  const variants = new Map(), errors = [], externs = [];
+  const variants = new Map(), errors = [], externs = [], warmQueue = [];
   let active = null, disposed = false, paused = false;
   const update = (_time, delta) => {
     if (!active || paused) return;
@@ -134,10 +134,24 @@ export function createPreparedSceneBridge(scene, manifests) {
   for (const [name, depth] of [['back',-50],['front',1100]]) {
     const external = scene.add.extern().setDepth(depth);
     external.render = (_renderer, phaserCamera, matrix) => {
-      if (!active || disposed) return;
+      if (disposed) return;
+      // Idle frames warm one prepared variant each (shader compile, texture upload), so a skill's first
+      // frame does not stall (Squall's Flame Barret spiked to 250 ms on its first play).
+      if (!active && !(name === 'back' && warmQueue.length)) return;
       const gl = phaser.gl, previous = {framebuffer:gl.getParameter(gl.FRAMEBUFFER_BINDING),
         viewport:gl.getParameter(gl.VIEWPORT),scissor:gl.getParameter(gl.SCISSOR_BOX),
         scissorTest:gl.isEnabled(gl.SCISSOR_TEST)};
+      if (!active) {
+        try { renderer.resetState(); warmVariant(warmQueue.shift()); }
+        catch (error) { errors.push('warm-up: '+String(error.message)); }
+        finally {
+          renderer.resetState();
+          gl.bindFramebuffer(gl.FRAMEBUFFER,previous.framebuffer);
+          gl.viewport(...previous.viewport);gl.scissor(...previous.scissor);
+          if(previous.scissorTest)gl.enable(gl.SCISSOR_TEST);else gl.disable(gl.SCISSOR_TEST);
+        }
+        return;
+      }
       try {
         if (phaserCamera.zoom !== 1 || phaserCamera.rotation !== 0) throw Error('Prepared scene profile requires an unrotated unit-zoom camera');
         renderer.resetState();
@@ -166,6 +180,20 @@ export function createPreparedSceneBridge(scene, manifests) {
       }
     };
     externs.push(external);
+  }
+  function warmVariant(variant) {
+    if (!variant || disposed || ![...variants.values()].includes(variant)) return;
+    for (const layer of Object.values(variant.layers)) {
+      const hidden = [];
+      layer.scene.traverse(object => {
+        if (!object.visible) { hidden.push(object); object.visible = true; }
+        const material = object.material;
+        for (const texture of [material?.map, ...Object.values(material?.userData?.layers ?? {}).map(u => u?.value)])
+          if (texture?.isTexture && texture.image) renderer.initTexture(texture);
+      });
+      renderer.compile(layer.scene, camera);
+      for (const object of hidden) object.visible = false;
+    }
   }
   function disposeVariant(variant) {
     const geometries = new Set(), materials = new Set(), textures = new Set();
@@ -204,6 +232,7 @@ export function createPreparedSceneBridge(scene, manifests) {
         }
         if(disposed){disposeVariant(variant);return;}
         variants.set(manifest.key+'/'+count,variant);
+        warmQueue.push(variant);
       }
     }
   })().catch(error=>{errors.push(String(error.message));scene.events.emit('prepared-scene-error',String(error.message));});

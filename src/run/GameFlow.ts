@@ -11,7 +11,7 @@ import {captureEncounter} from '../ui/captureEncounter';
 import type {UnitActor} from '../entities/UnitActor';
 import type {BattleScene} from '../scenes/BattleScene';
 import {recommendMusic} from '../audio/musicProfiles.mjs';
-import {GameAudio,HOME_MUSIC_RESOURCE,battleCursorProfiles,type BattleCursorProfile,type UiSound} from '../audio/battleMusic';
+import {GameAudio,HOME_MUSIC_RESOURCE,VICTORY_FANFARE_RESOURCE,battleCursorProfiles,type BattleCursorProfile,type UiSound} from '../audio/battleMusic';
 import type {CombatCue} from '../audio/combatCues';
 import {runEncounter} from './runBalance.mjs';
 import {STAGE_CONTENT,ENEMY_CONTENT} from './stageContent.mjs';
@@ -224,7 +224,7 @@ export class GameFlow{
     try{this.commit(acknowledgeAwakening(this.state,notice.id));advance();}catch(error){this.fail(error);}
    });return;}
   advance();}catch(error){this.fail(error);}}
- private result(){this.audio.setMusic(null);
+ private result(){this.audio.setMusic(this.state?.phase==='won'?VICTORY_FANFARE_RESOURCE:null,'result');
   // Crystals and unlocks are settled once per finished run (keyed by seed and history), then shown.
   const settled=settleRun(this.profile,this.state!,this.catalog);this.profile=this.profiles.save(settled.profile);
   this.ui.result(this.state!,settled.crystals||settled.unlocked?{crystals:settled.crystals,unlocked:settled.unlocked}:undefined);this.ui.on('new',()=>{this.store.clear();this.state=null;this.menu();});}

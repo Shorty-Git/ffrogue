@@ -12,8 +12,13 @@ const tracks = new Map<number,{url:string;loopStart:number;loopEnd:number}>([
   [400993, { url: 'assets/audio/la993_guard_scorpion.ogg', loopStart: 13261697 / 44100, loopEnd: 16655233 / 44100 }],
   [4000711, { url: 'assets/audio/la00711_machine_battle.ogg', loopStart: 30046 / 44100, loopEnd: 11216606 / 44100 }],
   [4001101, { url: 'assets/audio/la01101_dead_end.ogg', loopStart: 9523 / 44100, loopEnd: 3117363 / 44100 }],
+  // FFBE battle-end fanfare (la009_battleend.acb, Memorial assetpack 3, SHA-256 f40e3c98...8405; vgmstream r2168,
+  // loop points from its HCA header): 3.8 s fanfare, then the victory loop.
+  [400009, { url: 'assets/audio/la009_battleend.wav', loopStart: 167696 / 44100, loopEnd: 829072 / 44100 }],
 ]);
 export const HOME_MUSIC_RESOURCE = 400003;
+/** Played on the result screen of a won expedition. */
+export const VICTORY_FANFARE_RESOURCE = 400009;
 
 const preferencesKey = 'ffrogue.audio.v1';
 const positionKey = 'ffrogue.music-position.v1';

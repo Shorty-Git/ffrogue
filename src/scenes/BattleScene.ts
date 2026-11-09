@@ -1026,10 +1026,12 @@ export class BattleScene extends Phaser.Scene {
     this.runContext.combatSound?.(cue,sourceFrame!==undefined);
   }
 
-  private basicImpactSound(hero:UnitActor,isCritical:boolean):void {
+  /** sourceFrame: an original hit frame. Such onsets are authored, so rapid multi-hit attacks (Cid's six
+   * hits) retire the oldest voice instead of dropping later hits at the two-voice limit. */
+  private basicImpactSound(hero:UnitActor,isCritical:boolean,sourceFrame?:number):void {
     const source=basicAttackCues[String(hero.manifest.unitId) as keyof typeof basicAttackCues];
     const cue=source&&'SE:'+source.cueId;
-    if(cue&&isCombatCue(cue))this.emitCombatSound(cue,'basic-impact');
+    if(cue&&isCombatCue(cue))this.emitCombatSound(cue,'basic-impact',sourceFrame);
     if(isCritical)this.emitCombatSound('System:69','critical-impact');
   }
 
@@ -1325,7 +1327,7 @@ export class BattleScene extends Phaser.Scene {
               victim.applyDamage(Math.max(1, Math.round(roll * skill.damageMultiplier * hits[index].weight)), false, 'physical');
               this.handleTargetDamaged(victim);
             }
-            if (victims.length) this.basicImpactSound(hero, false);
+            if (victims.length) this.basicImpactSound(hero, false, hits[index].frame >= 0 ? hits[index].frame : undefined);
           };
           const timers = hits.flatMap((hit, index) => hit.frame < 0 ? [] : [this.time.delayedCall(hit.frame * 1000 / 60, () => land(index))]);
           hero.playAnimation(config.attackAnim);
@@ -1489,7 +1491,7 @@ export class BattleScene extends Phaser.Scene {
             landed.add(index);
             if (this.enemies.every((e) => e.currentHp <= 0) || this.combatState === 'VICTORY') return;
             const hitTarget = this.currentTarget && this.currentTarget.currentHp > 0 ? this.currentTarget : activeTarget;
-            this.applyHeroMeleeDamage(hero, hitTarget, hits[index].weight, base, isCritical);
+            this.applyHeroMeleeDamage(hero, hitTarget, hits[index].weight, base, isCritical, hits[index].frame >= 0 ? hits[index].frame : undefined);
           };
           const timers = hits.flatMap((hit, index) => hit.frame < 0 ? [] : [this.time.delayedCall(hit.frame * 1000 / 60, () => land(index))]);
           const onAnimUpdate = (_anim: Phaser.Animations.Animation, frame: Phaser.Animations.AnimationFrame) => {
@@ -1532,14 +1534,14 @@ export class BattleScene extends Phaser.Scene {
     return roll * (skillDamageType(skill)==='holy' ? heroMagicMultiplier(hero.sourceBuffs,this.currentRound) : heroPhysicalMultiplier(hero.sourceBuffs,this.currentRound));
   }
 
-  private applyHeroMeleeDamage(hero: UnitActor, target: TargetDummy, weight = 1, roll = this.randomBetween(300,380), isCrit = this.randomValue()<.15): void {
+  private applyHeroMeleeDamage(hero: UnitActor, target: TargetDummy, weight = 1, roll = this.randomBetween(300,380), isCrit = this.randomValue()<.15, sourceFrame?: number): void {
     if (this.combatState !== 'HERO_ATTACKING' || target.currentHp <= 0) return;
     if (this.blindMiss(hero, target)) return;
     let baseDmg = roll*weight*(this.runContext.state.party.find(m=>m.key===hero.unitKey)?.stats.attack??1);
 
     baseDmg = Math.max(1, Math.round(baseDmg * heroPhysicalMultiplier(hero.sourceBuffs,this.currentRound)));
     if (isCrit) baseDmg = Math.round(baseDmg * 1.5);
-    this.basicImpactSound(hero,isCrit);
+    this.basicImpactSound(hero,isCrit,sourceFrame);
     target.applyDamage(baseDmg, isCrit, 'physical');
     this.handleTargetDamaged(target);
   }

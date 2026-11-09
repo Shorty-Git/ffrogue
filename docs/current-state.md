@@ -166,6 +166,23 @@ economy proposal (Bond) and variant import: `docs/progression-design.md`.
 - Developer direction for later: more influence over starting heroes and their level between runs.
   Candidates are duplicates raising a hero's minimum start rank, and a "favoured hero" slot.
 
+## Playtest round 2026-11-10 (developer feedback)
+
+- Great Gospel showed a dark box: screen-sized particle rule now starts at 200 units and also accepts
+  one-axis gradient textures (rows uniform, premultiplied, tolerance 8). Dry run over 416 plans:
+  Great Gospel nodes 28/30/32 and Terra's Riot Blade Lotus node 24; both republished.
+- Cid's basic attack (6 original hits) lost hit sounds at the two-voice limit: basic hits with an
+  original frame are now authored onsets (the oldest voice is retired instead of dropping new hits).
+- FPS: prepared scenes are warmed (shader compile, texture upload) one variant per idle frame
+  (`PreparedSceneBridge.warmVariant`). Squall's Flame Barret first play: max frame 250 ms -> 55 ms.
+  Flame Barret itself still runs ~18 ms/frame (other Squall skills 6 ms).
+- Elements: `node tools/export_elements.mjs [--check]` writes `src/run/elements.mjs` from the original
+  database (monster resistances for 16 enemies, 8 enemy skill elements, 18 hero resistances). Hero skill
+  elements are already published (`originalCommand.raw.element`, 154 of 362 damage skills). Gameplay
+  use is not implemented yet.
+- Victory fanfare: FFBE `la009_battleend` (resource 400009, intro + loop) plays on a won expedition's
+  result screen. Test: `tools/test_victory_fanfare.mjs`.
+
 ## Balance check after the 2026-11-09/10 features
 
 Target: the developer-approved feel of 2026-11-08 (simulated ~99.5 % run wins, ~51 % party HP after

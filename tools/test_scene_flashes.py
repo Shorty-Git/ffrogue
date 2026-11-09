@@ -85,7 +85,10 @@ class FlashRoleTests(unittest.TestCase):
             self.assertEqual(annotate_screen_backdrops(self._particle_plan(path,size=120,alpha_keys=())),0)
             self.assertEqual(annotate_screen_backdrops(self._particle_plan(path,anchor='caster-unit',alpha_keys=())),0)
             self.assertEqual(annotate_screen_backdrops(self._particle_plan(path,combination='Add',alpha_keys=())),0)
+            # A uniform translucent plane is a one-axis gradient too (accepted); a pattern across a row is not.
             Image.new('RGBA',(2,2),(0,0,0,128)).save(path)
+            self.assertEqual(annotate_screen_backdrops(self._particle_plan(path,alpha_keys=())),1)
+            im=Image.new('RGBA',(2,2),(0,0,0,0));im.putpixel((1,0),(255,255,255,255));im.save(path)
             self.assertEqual(annotate_screen_backdrops(self._particle_plan(path,alpha_keys=())),0)
 
     def test_white_flash_particle_covers_the_battlefield_for_any_anchor(self):

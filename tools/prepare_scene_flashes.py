@@ -153,7 +153,7 @@ def _backdrop_particle(effect, node, plan, longest):
                        f'life {node.get("lifeParameter")} of {longest} frames; fitted to the visible battlefield')
 
 
-SCREEN_PARTICLE_MIN = 300
+SCREEN_PARTICLE_MIN = 200
 FLASH_MAX_LIFE = 60
 
 
@@ -180,6 +180,18 @@ def _texture_extrema(effect, node, plan):
         return source['sha256'], image.convert('RGBA').getextrema()
 
 
+def _rows_uniform(effect, node, plan):
+    source = plan['files'][effect['textures'][node['resourceBindings']['texture1']['name']]]
+    with Image.open(source['path']) as image:
+        rgba = image.convert('RGBA')
+        width, height = rgba.size
+        pixels = rgba.load()
+        # Premultiplied: colour under fully transparent texels is invisible; small compression noise is allowed.
+        visible = lambda p: (p[0] * p[3] // 255, p[1] * p[3] // 255, p[2] * p[3] // 255, p[3])
+        return all(max(abs(a - b) for x in range(width) for a, b in zip(visible(pixels[x, y]), visible(pixels[0, y]))) <= 8
+                   for y in range(height))
+
+
 def _screen_sized_particle(effect, node, plan, nodes, members):
     """A static, opaque Basic Particle authored at screen size on a screen-anchored effect is a
     backdrop (Squall's Lion Heart: a black plane and a dark vertical-gradient plane, 360 units).
@@ -200,10 +212,12 @@ def _screen_sized_particle(effect, node, plan, nodes, members):
     if min(width, height) < SCREEN_PARTICLE_MIN:
         return None
     sha, extrema = _texture_extrema(effect, node, plan)
-    if extrema[3] != (255, 255):
+    # Opaque planes, or one-axis gradients (every row uniform, e.g. Great Gospel's top-down darkening):
+    # both read the same when stretched across the canvas. Patterned textures stay at source size.
+    if extrema[3] != (255, 255) and not _rows_uniform(effect, node, plan):
         return None
     return dict(region='arena', primitive='screen-particle', textureSha256=sha,
-                origin=f'Automatic screen backdrop: static opaque Basic Particle authored at screen size '
+                origin=f'Automatic screen backdrop: static Basic Particle (opaque or one-axis gradient) authored at screen size '
                        f'({width:g} x {height:g} >= {SCREEN_PARTICLE_MIN}) on a screen-anchored effect; fitted to the visible battlefield')
 
 
