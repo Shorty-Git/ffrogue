@@ -4,7 +4,8 @@
 // in a few lines (marked below). It plays every run with a simple greedy policy, so the
 // numbers describe pacing trends, not how a skilled player fares.
 //
-// Usage: node tools/simulate_run_balance.mjs [--runs 400] [--seed-prefix sim] [--json out.json]
+// Usage: node tools/simulate_run_balance.mjs [--runs 400] [--seed-prefix sim] [--json out.json] [--roster all|starters]
+// --roster starters draws only a fresh profile's starter heroes (src/run/profile.mjs), as a new player does.
 import fs from 'node:fs';
 import {runCatalog} from '../src/run/catalog.ts';
 import {createRun,rollParty,confirmParty,completeBattle,chooseReward,acknowledgeAwakening,encounters,skillForRun,memberMaxMp,nextRandom} from '../src/run/runState.mjs';
@@ -12,13 +13,14 @@ import {runEncounter} from '../src/run/runBalance.mjs';
 import {ENEMY_CONTENT,enemyAction} from '../src/run/stageContent.mjs';
 import * as limit from '../src/run/limitGauge.mjs';
 import {applyEnemyStatuses,statusDamageMultiplier,enemyAttackMultiplier,isEnemyActionBlocked,ageEnemyStatuses} from '../src/effects/enemyStatus.mjs';
-import {applyHeroBuffs,heroPhysicalMultiplier} from '../src/effects/heroBuffs.mjs';
+import {applyHeroBuffs,heroPhysicalMultiplier,heroMagicMultiplier,heroDamageTakenMultiplier,cleanseHeroDebuffs} from '../src/effects/heroBuffs.mjs';
+import {drawCatalog,newProfile} from '../src/run/profile.mjs';
 import {resolveEnemyInstant} from '../src/effects/enemyInstant.mjs';
 import {skillDamageType} from '../src/effects/skillDamageTimeline.mjs';
 import {enemyTargetIndex} from '../src/run/enemyTargeting.mjs';
 
 const args=process.argv.slice(2),flag=(name,fallback)=>{const i=args.indexOf('--'+name);return i<0?fallback:args[i+1];};
-const RUNS=Number(flag('runs',400)),PREFIX=flag('seed-prefix','sim'),JSON_OUT=flag('json',null);
+const RUNS=Number(flag('runs',400)),PREFIX=flag('seed-prefix','sim'),JSON_OUT=flag('json',null),ROSTER=flag('roster','all');
 const read=p=>JSON.parse(fs.readFileSync(p,'utf8'));
 
 function loadCatalog(){
@@ -43,11 +45,11 @@ function attackDamage(run,hero,round){
  if(nextRandom(run,'combat')<.15)dmg=Math.round(dmg*1.5);
  return dmg;
 }
-const skillBase=(run,hero,skill,round)=>between(run,300,380)*(skillDamageType(skill)==='holy'?1:heroPhysicalMultiplier(hero.buffs,round));
+const skillBase=(run,hero,skill,round)=>between(run,300,380)*(skillDamageType(skill)==='holy'?heroMagicMultiplier(hero.buffs,round):heroPhysicalMultiplier(hero.buffs,round));
 const hit=(enemy,amount,type)=>{const d=Math.round(amount*statusDamageMultiplier(enemy.statuses,type));enemy.hp=Math.max(0,enemy.hp-d);return d;};
 // ---------------------------------------------------------------------------------------
 
-const expected=(hero,skill)=>skill.damageMultiplier*340*(skillDamageType(skill)==='holy'?1:1);
+const expected=(hero,skill)=>skill.damageMultiplier*340*(skill.basicRepeat?(skill.basicRepeat.minHits+skill.basicRepeat.maxHits)/2:1);
 const isHeal=s=>s.allyEvents?.some(e=>e.effects.some(f=>f.kind==='heal'));
 const isBuff=s=>s.allyEvents?.some(e=>e.effects.some(f=>f.kind==='physical-boost'));
 const isDebuff=s=>s.supportEvents?.some(e=>e.effects.some(f=>!['execute-or-damage'].includes(f.kind)));
@@ -68,7 +70,7 @@ function chooseAction(state,hero){
  let best={skill:null,target,value:attack};
  if(attack<target.hp){
   for(const s of usable){
-   if(!s.damageEvents&&!s.supportEvents?.some(e=>e.effects.some(f=>f.kind==='execute-or-damage')))continue;
+   if(!s.damageEvents&&!s.basicRepeat&&!s.supportEvents?.some(e=>e.effects.some(f=>f.kind==='execute-or-damage')))continue;
    const value=s.scope==='all_enemies'?(s.damageEvents?expected(hero,s)*living.length:700*living.length):expected(hero,s);
    if(value>best.value)best={skill:s,target,value};
   }
@@ -85,10 +87,16 @@ function resolveHeroAction(run,state,hero,action){
  if(s.allyEvents){
   const targets=s.scope==='self'?[hero]:heroes.filter(h=>h.hp>0);
   for(const e of s.allyEvents)for(const f of e.effects)for(const t of targets){
-   if(f.kind==='heal')t.hp=Math.min(t.maxHp,t.hp+f.amount);else t.buffs=applyHeroBuffs(t.buffs,[f],round);
+   if(f.kind==='heal')t.hp=Math.min(t.maxHp,t.hp+f.amount);
+   else if(f.kind==='cleanse')t.buffs=cleanseHeroDebuffs(t.buffs);
+   else if(f.kind!=='raise'&&f.kind!=='limit-fill')t.buffs=applyHeroBuffs(t.buffs,[f],round);
   }
  }
  const targets=s.scope==='all_enemies'?living:s.scope==='single_enemy'?[action.target]:[];
+ // Barrage-type repeats (BattleScene.executeBasicRepeat): N basic attacks, random living target each.
+ if(s.basicRepeat){const r=s.basicRepeat,count=r.minHits+Math.floor(nextRandom(run,'combat')*(r.maxHits-r.minHits+1));
+  for(let k=0;k<count;k++){const pool=enemies.filter(e=>e.hp>0);if(!pool.length)break;const base=skillBase(run,hero,s,round);
+   for(const t of r.targeting==='all'?pool:[r.targeting==='random'?pool[Math.floor(nextRandom(run,'combat')*pool.length)]:(action.target.hp>0?action.target:pool[0])])hit(t,base*s.damageMultiplier,'physical');}}
  if(s.damageEvents){const base=skillBase(run,hero,s,round);for(const e of s.damageEvents)for(const t of targets)if(t.hp>0)hit(t,base*s.damageMultiplier*e.weight,skillDamageType(s));}
  for(const e of s.supportEvents??[])for(const t of targets){
   if(t.hp<=0)continue;
@@ -118,8 +126,9 @@ function fight(run){
    if(action.kind==='prepare')continue;
    const pick=heroes[enemyTargetIndex(heroes.map(h=>({alive:h.hp>0,hp:h.hp,maxHp:h.maxHp})),()=>nextRandom(run,'combat'))];
    for(const t of action.scope==='party'?alive:[pick]){
-    const dmg=Math.round(profile.damage*action.multiplier*mult/(t.member.stats.defense??1));
+    const dmg=Math.round(profile.damage*action.multiplier*mult/(t.member.stats.defense??1)*heroDamageTakenMultiplier(t.buffs,state.round,action.damageType??'physical'));
     t.hp=Math.max(0,t.hp-dmg);if(t.hp>0)t.limit=limit.gainFromDamage(t.limit,dmg,t.maxHp);
+    if(t.hp>0&&action.heroEffects){const applied=action.heroEffects.filter(e=>nextRandom(run,'combat')<(e.chance??1)).map(({chance:_c,...e})=>e);if(applied.length)t.buffs=applyHeroBuffs(t.buffs,applied,state.round);}
    }
   }
   if(heroes.every(h=>h.hp<=0))break;
@@ -147,22 +156,27 @@ function chooseOffer(run){
 
 const total=encounters(createRun('x',catalog).areas).length;
 const perEncounter=Array.from({length:total},()=>({fights:0,won:0,rounds:0,hpLost:0,hpLeft:0,mpLeft:0,kos:0,limitBursts:0,enemyHp:0}));
-let wins=0,limitUses=0;const runLengths=[];
+let wins=0,limitUses=0;const runLengths=[],byLevel={};
+const drawPool=ROSTER==='starters'?drawCatalog(newProfile(catalog),catalog):catalog;
 for(let i=0;i<RUNS;i++){
- let run=confirmParty(rollParty(createRun(`${PREFIX}-${i}`,catalog,undefined,rules),catalog));
+ let run=confirmParty(rollParty(createRun(`${PREFIX}-${i}`,catalog,undefined,rules),drawPool));
+ const levelSum=run.party.reduce((sum,m)=>sum+m.level,0);let lastHp=0;
  while(run.phase==='battle'){
   const index=run.encounter,result=fight(run),row=perEncounter[index];
   row.fights++;row.won+=result.won;row.rounds+=result.rounds;row.hpLost+=result.hpLost;row.hpLeft+=result.hpLeft;row.mpLeft+=result.mpLeft;row.kos+=result.kos;row.limitBursts+=result.limitBursts;row.enemyHp+=result.enemyHp;
-  limitUses+=result.limitBursts;
+  limitUses+=result.limitBursts;lastHp=result.hpLeft;
   run=completeBattle(run,catalog,result.snapshot,result.won);
   if(run.phase!=='rewards')break;
   run=chooseOffer(run);if(run.pendingAwakening)run=acknowledgeAwakening(run,run.pendingAwakening.id);
  }
  if(run.phase==='won')wins++;runLengths.push(run.encounter);
+ const bucket=byLevel[levelSum]??={runs:0,wins:0,finalHp:0};bucket.runs++;if(run.phase==='won'){bucket.wins++;bucket.finalHp+=lastHp;}
 }
 const f=(n,d=1)=>Number.isFinite(n)?n.toFixed(d):'-';
 const rows=perEncounter.map((r,i)=>({encounter:i+1,fights:r.fights,winRate:r.won/r.fights,avgRounds:r.rounds/r.fights,avgEnemyHp:r.enemyHp/r.fights,avgHpLost:r.hpLost/r.fights,partyHpLeft:r.hpLeft/r.fights,partyMpLeft:r.mpLeft/r.fights,kosPerFight:r.kos/r.fights,limitBurstsPerFight:r.limitBursts/r.fights}));
 console.log(`Runs: ${RUNS}  run win rate: ${f(100*wins/RUNS)}%  Limit Bursts per run: ${f(limitUses/RUNS,2)}`);
 console.log('enc  fights  win%  rounds  enemyHP  hpLost  partyHP%  partyMP%  KO/fight  LB/fight');
 for(const r of rows)console.log([r.encounter,r.fights,f(100*r.winRate),f(r.avgRounds,2),f(r.avgEnemyHp,0),f(r.avgHpLost,0),f(100*r.partyHpLeft),f(100*r.partyMpLeft),f(r.kosPerFight,2),f(r.limitBurstsPerFight,2)].map(v=>String(v).padStart(7)).join(' '));
+console.log('team start level (sum of 3)  runs  win%  party HP% after final fight');
+for(const [sum,b] of Object.entries(byLevel).sort((a,b)=>a[0]-b[0]))console.log(String(sum).padStart(10),String(b.runs).padStart(13),f(100*b.wins/b.runs).padStart(6),f(b.wins?100*b.finalHp/b.wins:NaN).padStart(9));
 if(JSON_OUT)fs.writeFileSync(JSON_OUT,JSON.stringify({runs:RUNS,winRate:wins/RUNS,limitBurstsPerRun:limitUses/RUNS,encounters:rows},null,1));

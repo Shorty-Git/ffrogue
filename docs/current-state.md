@@ -166,6 +166,20 @@ economy proposal (Bond) and variant import: `docs/progression-design.md`.
 - Developer direction for later: more influence over starting heroes and their level between runs.
   Candidates are duplicates raising a hero's minimum start rank, and a "favoured hero" slot.
 
+## Balance check after the 2026-11-09/10 features
+
+Target: the developer-approved feel of 2026-11-08 (simulated ~99.5 % run wins, ~51 % party HP after
+the final boss). Before this check the simulator gave 100 % wins and 62-64 % HP left: the new skills
+(Protect/Shell, Barrage, Esuna, more damage skills) made runs easier. The start level matters little
+(level sum 5 vs 18: 70 % vs 67 % HP left; one level is +3.5 % power/defence, +5 % HP).
+- `RUN_BALANCE.damage` 300 -> 390, `damagePerEncounter` 70 -> 95.
+- Result (300 runs each): full roster 99.7 % wins, 51.4 % HP after the final fight; starter roster
+  (`--roster starters`) 100 %, 53.2 %.
+- Simulator now mirrors Protect/Shell, breaks/blind from enemy skills, cleanse, magic break and
+  Barrage repeats, and prints a breakdown by team start level.
+- Open: Limit Bursts per run are 5.2 (1.5 on 2026-11-08; every character has one now). Left as is
+  until playtested.
+
 ## Balance (2026-11-08, overnight cloud session)
 
 Evidence tool: `node tools/simulate_run_balance.mjs [--runs 400] [--json out.json]` plays
