@@ -57,6 +57,21 @@ unplayable for minutes and the cost grew with every import. It now prepares only
 skills and Limit Bursts plus every `presentation` the encounter's enemies reference
 (`ENEMY_CONTENT`/`ENEMY_SKILLS`). BootScene still loads all manifest JSONs (cheap).
 
+## Protect, Shell and source-derived stat buffs (2026-11-09)
+
+- New hero status `guard` ({damageType: physical|magical, reduction, turns}; `src/effects/heroBuffs.mjs`
+  `heroDamageTakenMultiplier`). Enemy damage of that type is reduced; guards of both types stack.
+  Badges use the original DEF-up / SPR-up icons (`export_status_icons.py`: guard-physical,
+  guard-magical); floating text PROTECT / SHELL. Level scaling: +0.05 reduction and +1 turn per level.
+- Enemy skills carry `damageType` from their original damage process (15 magical, 1 physical;
+  import_enemy_skills.mjs): 11 magical, 17 physical. Basic and FFRogue enemy actions are physical.
+- Friendly stat buffs come from the source (`tools/lib/source-buffs.mjs`): process 3 "ATK,DEF,MAG,SPR"
+  plus 18/19 mitigation. ATK or MAG -> physical-boost x1.3, DEF or 18 -> physical guard 0.3, SPR or
+  19 -> magical guard 0.3, 3 rounds (reviewed defaults; FFBE percentages are not copied). The importer
+  drafts them with `--source-buff`; `node tools/refresh_source_buffs.mjs [--check]` re-derived the 8
+  earlier physical-boost-only drafts (Cheer x3 and Embolden gained Protect; Focus x2, Meditate and
+  Magical Activation gained Shell). Tests: `tools/test_guard_buffs.mjs`.
+
 ## Playtest round 2026-11-09 (developer feedback)
 
 - Enemy turns: an original monster skill ends after its last hit plus 400 ms

@@ -125,6 +125,7 @@ export function skillForRun(source,member){
  for(const e of skill.allyEvents??[])for(const f of e.effects)if(f.kind==='heal')f.amount=Math.round(f.amount*boost*member.stats.magic);
   else if(f.kind==='limit-fill')f.amount=Math.min(LB_MAX,f.amount+10*(level-1));
   else if(f.kind==='raise')f.hpFraction=Math.min(1,Math.round((f.hpFraction+.1*(level-1))*100)/100);
+  else if(f.kind==='guard'){f.reduction=Math.min(.6,Math.round((f.reduction+.05*(level-1))*100)/100);f.turns=Math.min(9,f.turns+level-1);}
   else if(f.kind==='auto-revive'){f.hpFraction=Math.min(1,Math.round((f.hpFraction+.1*(level-1))*100)/100);f.turns=Math.min(9,f.turns+level-1);}
   else {f.multiplier=Math.min(3,f.multiplier+.1*(level-1));f.turns=Math.min(9,f.turns+level-1);}
  for(const e of skill.supportEvents??[])for(const f of e.effects)if(f.kind==='execute-or-damage')f.fallbackDamage=Math.min(99999,Math.round(f.fallbackDamage*boost*member.stats.attack));

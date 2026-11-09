@@ -482,7 +482,7 @@
       ],
       "moveType": "stationary",
       "motion": "magic_atk",
-      "desc": "Boost physical damage of all allies by 30% for 3 rounds. No HP damage.",
+      "desc": "Damage +30%, magical damage taken -30% for all allies for 3 rounds.",
       "execution": "prepared-friendly",
       "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
       "scenePresentation": "terra_trance_magical_activation",
@@ -522,6 +522,12 @@
               "kind": "physical-boost",
               "multiplier": 1.3,
               "turns": 3
+            },
+            {
+              "kind": "guard",
+              "damageType": "magical",
+              "reduction": 0.3,
+              "turns": 3
             }
           ]
         }
@@ -529,7 +535,7 @@
       "friendlyTargetReview": {
         "sourceTarget": "3",
         "sourceRange": "0",
-        "note": "Original target 3 / range 0 (process 3); adapted to physical-boost x1.3 for 3 rounds on all living allies."
+        "note": "Original target 3 / range 0 (process 3); statuses from the original stat-buff processes (0,0,80,80,3,1): physical-boost x1.3 + magical guard -0.3 for 3 rounds on all living allies."
       }
     },
     {

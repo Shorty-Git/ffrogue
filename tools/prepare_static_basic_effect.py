@@ -18,7 +18,7 @@ from original_basic_material import attach_basic_material
 
 def compile_effect(request_file,apk,output,authoring,seed,shader_package):
     root=Path.cwd().resolve();output=output.resolve()
-    if not output.is_relative_to(root/'tools/data'):raise ValueError('Control output must remain ignored')
+    if not output.is_relative_to((root/'tools/data').resolve()):raise ValueError('Control output must remain ignored')
     if len(seed)!=4 or any(not 0<=word<=0xffffffff for word in seed) or not any(seed):
         raise ValueError('Four explicit nonzero-state uint32 reference seed words required')
     request=json.loads(request_file.read_text(encoding='utf-8'))

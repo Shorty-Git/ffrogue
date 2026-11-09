@@ -52,6 +52,9 @@ export function reviewedSkillEvents(skill,durationFrames=Infinity){
         }else if(e.kind==='auto-revive'){
           if(!Number.isFinite(e.hpFraction)||e.hpFraction<=0||e.hpFraction>1
             ||!Number.isInteger(e.turns)||e.turns<1||e.turns>9)throw Error('Invalid reviewed auto-revive');
+        }else if(e.kind==='guard'){
+          if(!['physical','magical'].includes(e.damageType)||!Number.isFinite(e.reduction)||e.reduction<=0||e.reduction>=1
+            ||!Number.isInteger(e.turns)||e.turns<1||e.turns>9)throw Error('Invalid reviewed guard');
         }else if(e.kind!=='physical-boost'||!Number.isFinite(e.multiplier)||e.multiplier<=1||e.multiplier>3
           ||!Number.isInteger(e.turns)||e.turns<1||e.turns>9)throw Error('Unsupported friendly status');
       }

@@ -40,6 +40,7 @@ export function skillDescription(s:SkillConfig):string{
  for(const e of s.allyEvents??[])for(const f of e.effects)parts.push(f.kind==='heal'?`Restore ${f.amount} HP (no revival)`
   :f.kind==='limit-fill'?`Limit gauge +${f.amount}`
   :f.kind==='raise'?`Revive with ${Math.round(f.hpFraction*100)}% HP`
+  :f.kind==='guard'?`${f.damageType==='physical'?'Physical':'Magical'} damage taken -${Math.round(f.reduction*100)}% for ${f.turns} rounds`
   :f.kind==='auto-revive'?`Auto-revive with ${Math.round(f.hpFraction*100)}% HP if K.O. within ${f.turns} rounds`
   :`Physical power +${Math.round((f.multiplier-1)*100)}% for ${f.turns} rounds`);
  for(const e of s.supportEvents??[])for(const f of e.effects){

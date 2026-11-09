@@ -4,6 +4,8 @@ import type {StatusBadge} from './CombatHud';
 const STATUS_UI: Record<string, string> = {
   'physical-boost': 'ATK up',
   'auto-revive': 'Reraise',
+  'guard-physical': 'Protect',
+  'guard-magical': 'Shell',
   'attack-down': 'ATK down',
   'physical-weakness': 'Armor break',
   'magic-weakness': 'Magic weak',
@@ -18,9 +20,9 @@ export function statusBadge(kind: string, turns: number): StatusBadge | null {
 }
 
 /** Hero buffs expire after `expiresAfterRound`; the badge counts the rounds still covered. */
-export function heroStatusBadges(buffs: {kind: string; expiresAfterRound: number}[] = [], round: number): StatusBadge[] {
+export function heroStatusBadges(buffs: {kind: string; damageType?: string; expiresAfterRound: number}[] = [], round: number): StatusBadge[] {
   return buffs.filter(b => b.expiresAfterRound >= round)
-    .map(b => statusBadge(b.kind, b.expiresAfterRound - round + 1)).filter((b): b is StatusBadge => !!b);
+    .map(b => statusBadge(b.kind === 'guard' ? `guard-${b.damageType}` : b.kind, b.expiresAfterRound - round + 1)).filter((b): b is StatusBadge => !!b);
 }
 
 /** Enemy statuses count down in enemy phases. */

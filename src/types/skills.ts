@@ -25,13 +25,16 @@ export interface HeroBuffEffect {kind:'physical-boost';multiplier:number;turns:n
 export interface AutoReviveEffect {kind:'auto-revive';hpFraction:number;turns:number;}
 /** Adds a bounded amount to the recipient's Limit gauge (heroes without a Limit Burst have none). */
 export interface LimitFillEffect {kind:'limit-fill';amount:number;}
-export type HeroStatusEffect = HeroBuffEffect | AutoReviveEffect;
+/** Protect/Shell-style guard: enemy damage of `damageType` is reduced by `reduction` (0-1) for `turns` rounds. */
+export interface GuardEffect {kind:'guard';damageType:'physical'|'magical';reduction:number;turns:number;}
+export type HeroStatusEffect = HeroBuffEffect | AutoReviveEffect | GuardEffect;
 /** Revives a K.O. recipient with hpFraction of max HP; only on skills that target fallen allies. */
 export interface RaiseEffect {kind:'raise';hpFraction:number;}
 export type FriendlySkillEffect = HeroStatusEffect | LimitFillEffect | RaiseEffect | {kind:'heal';amount:number};
 export type ActiveHeroBuff =
   | {kind:'physical-boost';multiplier:number;expiresAfterRound:number}
-  | {kind:'auto-revive';hpFraction:number;expiresAfterRound:number};
+  | {kind:'auto-revive';hpFraction:number;expiresAfterRound:number}
+  | {kind:'guard';damageType:'physical'|'magical';reduction:number;expiresAfterRound:number};
 export interface ActionChoreography {
   schema:'source-action-v1';
   movement:'target'|'step'|'stationary';

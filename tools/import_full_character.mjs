@@ -12,6 +12,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
+import {sourceFriendlyBuffs} from './lib/source-buffs.mjs';
 import {DatabaseSync} from 'node:sqlite';
 import {createHash} from 'node:crypto';
 
@@ -95,19 +96,19 @@ const candidates = report.catalog.filter(skill => !skill.passive && ['ABILITY', 
   // Same-named rows (e.g. two "Agile Edge" ids) would reuse an existing skill's id and presentation key.
   && !recipe.skills.some(s => s.id === snake(skill.name)));
 // Original process IDs (first '@' process decides support kinds): damage processes become attacks,
-// 2 (cure) a party heal and 3 (stat up) a party physical boost through the reviewed friendly path.
+// 2 (cure) a party heal and 3/18/19 (stat up, mitigation) boost/Protect/Shell statuses through the friendly path.
 // 4 (raise) revives fallen allies. Everything else (dispel, libra, entrust, debuff-only, ...) waits for its own mechanic.
 const DAMAGE_PROCESSES = new Set(['1', '15', '21', '25', '40', '43', '70', '103', '112', '126', '157', '169']);
 const roleOf = skill => {
   if (skill.kind === 'LIMIT') return 'damage';
   const processes = String(skill.raw?.processId ?? '').split('@');
   if (processes.some(p => DAMAGE_PROCESSES.has(p))) return 'damage';
-  // Pure stat-up (3 alone) only: protect/shell (3@18, 3@19) raise defence, which the friendly path does not model.
-  if (processes.length === 1 && processes[0] === '3') return 'buff';
+  // Pure stat buffs (3, optionally with 18/19 mitigation: Protect, Shell); statuses come from the source.
+  if (sourceFriendlyBuffs(skill.raw)) return 'buff';
   if (processes[0] === '4') return 'raise';
   return processes[0] === '2' ? 'heal' : null;
 };
-const DRAFT_OPTIONS = {damage: '', heal: '--heal 900', buff: '--buff 1.3', raise: '--raise 0.5'};
+const DRAFT_OPTIONS = {damage: '', heal: '--heal 900', buff: '--source-buff', raise: '--raise 0.5'};
 const decide = skill => {
   const role = roleOf(skill);
   if (!role) return `process ${skill.raw?.processId} is not a supported damage, heal or buff mechanic`;

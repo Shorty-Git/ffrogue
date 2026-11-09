@@ -174,7 +174,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
     destination = (root / args.output).resolve()
-    if not destination.is_relative_to(root / 'tools/data'):
+    if not destination.is_relative_to((root / 'tools/data').resolve()):
         raise ValueError('Receipt must stay inside tools/data')
     result = audit(root)
     destination.parent.mkdir(parents=True, exist_ok=True)

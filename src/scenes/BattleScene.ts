@@ -15,7 +15,7 @@ import { createPreparedSceneBridge, type PreparedSceneBridge, type PreparedScene
 import { validateSceneManifest, validateSceneAction } from '../effects/sceneProfile.mjs';
 import { reviewedSkillEvents,skillDamageType } from '../effects/skillDamageTimeline.mjs';
 import { applyEnemyStatuses, isEnemyActionBlocked, ageEnemyStatuses, enemyAttackMultiplier } from '../effects/enemyStatus.mjs';
-import { applyHeroBuffs, consumeAutoRevive, heroPhysicalMultiplier } from '../effects/heroBuffs.mjs';
+import { applyHeroBuffs, consumeAutoRevive, heroDamageTakenMultiplier, heroPhysicalMultiplier } from '../effects/heroBuffs.mjs';
 import {resolveEnemyInstant} from '../effects/enemyInstant.mjs';
 import {validateActionChoreography,actionTravel} from '../effects/actionChoreography.mjs';
 import type {RunBattleContext} from '../run/battleContext';
@@ -1112,7 +1112,7 @@ export class BattleScene extends Phaser.Scene {
                     }
                   } else {
                     ally.sourceBuffs=applyHeroBuffs(ally.sourceBuffs,[effect],this.currentRound);
-                    this.floatCombatText(ally.x,ally.y-100,effect.kind==='auto-revive'?'AUTO-REVIVE':'PHYSICAL BOOST','#f9e2af');
+                    this.floatCombatText(ally.x,ally.y-100,effect.kind==='auto-revive'?'AUTO-REVIVE':effect.kind==='guard'?(effect.damageType==='physical'?'PROTECT':'SHELL'):'PHYSICAL BOOST','#f9e2af');
                   }
                 }
               }
@@ -1613,7 +1613,7 @@ export class BattleScene extends Phaser.Scene {
           const impacts:{unit:string;damage:number}[]=[];
           for(const target of targets){
             const defense=this.runContext.state.party.find(m=>m.key===target.unitKey)?.stats.defense??1;
-            const dmg=Math.round(profile.damage*(action?.multiplier??1)*attackMultiplier/defense);
+            const dmg=Math.round(profile.damage*(action?.multiplier??1)*attackMultiplier/defense*heroDamageTakenMultiplier(target.sourceBuffs,this.currentRound,action?.damageType??'physical'));
             target.applyDamage(dmg);
             this.playHeroHitFeedback(target,enemy.x,dmg/Math.max(1,target.maxHp));
             if(target.isDead)this.tryAutoRevive(target);
@@ -1660,7 +1660,7 @@ export class BattleScene extends Phaser.Scene {
       for(const target of targets){
         if(target.isDead)continue;
         const defense=this.runContext.state.party.find(m=>m.key===target.unitKey)?.stats.defense??1;
-        const dmg=Math.max(1,Math.round(profile.damage*action.multiplier*attackMultiplier/defense*event.weight));
+        const dmg=Math.max(1,Math.round(profile.damage*action.multiplier*attackMultiplier/defense*event.weight*heroDamageTakenMultiplier(target.sourceBuffs,this.currentRound,action.damageType??'physical')));
         target.applyDamage(dmg);
         total.set(target,(total.get(target)??0)+dmg);
         this.playHeroHitFeedback(target,enemy.x,dmg/Math.max(1,target.maxHp));

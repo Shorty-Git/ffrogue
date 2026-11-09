@@ -12,7 +12,8 @@ export const ENEMY_SKILLS = {
           "frame": 110,
           "weight": 1
         }
-      ]
+      ],
+      "damageType": "magical"
     },
     "hack": {
       "name": "Hack",
@@ -25,7 +26,8 @@ export const ENEMY_SKILLS = {
           "frame": 42,
           "weight": 1
         }
-      ]
+      ],
+      "damageType": "physical"
     }
   },
   "condor": {
@@ -40,7 +42,8 @@ export const ENEMY_SKILLS = {
           "frame": 42,
           "weight": 1
         }
-      ]
+      ],
+      "damageType": "physical"
     }
   },
   "dingo": {
@@ -55,7 +58,8 @@ export const ENEMY_SKILLS = {
           "frame": 42,
           "weight": 1
         }
-      ]
+      ],
+      "damageType": "physical"
     }
   },
   "elite_soldier": {
@@ -70,7 +74,8 @@ export const ENEMY_SKILLS = {
           "frame": 42,
           "weight": 1
         }
-      ]
+      ],
+      "damageType": "physical"
     }
   },
   "guard_scorpion": {
@@ -85,7 +90,8 @@ export const ENEMY_SKILLS = {
           "frame": 80,
           "weight": 1
         }
-      ]
+      ],
+      "damageType": "magical"
     },
     "focused_fire": {
       "name": "Focused Fire",
@@ -118,7 +124,8 @@ export const ENEMY_SKILLS = {
           "frame": 67,
           "weight": 0.17
         }
-      ]
+      ],
+      "damageType": "physical"
     },
     "scorpion_tail": {
       "name": "Scorpion Tail",
@@ -139,7 +146,8 @@ export const ENEMY_SKILLS = {
           "frame": 62,
           "weight": 0.34
         }
-      ]
+      ],
+      "damageType": "physical"
     }
   },
   "g_soldier": {
@@ -154,7 +162,8 @@ export const ENEMY_SKILLS = {
           "frame": 80,
           "weight": 1
         }
-      ]
+      ],
+      "damageType": "magical"
     }
   },
   "kain": {
@@ -169,7 +178,8 @@ export const ENEMY_SKILLS = {
           "frame": 80,
           "weight": 1
         }
-      ]
+      ],
+      "damageType": "magical"
     },
     "ice_spear": {
       "name": "Ice Spear",
@@ -182,7 +192,8 @@ export const ENEMY_SKILLS = {
           "frame": 145,
           "weight": 1
         }
-      ]
+      ],
+      "damageType": "magical"
     }
   },
   "kimahri": {
@@ -197,7 +208,8 @@ export const ENEMY_SKILLS = {
           "frame": 42,
           "weight": 1
         }
-      ]
+      ],
+      "damageType": "physical"
     }
   },
   "leviathan": {
@@ -212,7 +224,8 @@ export const ENEMY_SKILLS = {
           "frame": 42,
           "weight": 1
         }
-      ]
+      ],
+      "damageType": "physical"
     },
     "tidal_wave": {
       "name": "Tidal Wave",
@@ -269,7 +282,8 @@ export const ENEMY_SKILLS = {
           "frame": 265,
           "weight": 0.12
         }
-      ]
+      ],
+      "damageType": "magical"
     },
     "blizzaga": {
       "name": "Blizzaga",
@@ -310,7 +324,8 @@ export const ENEMY_SKILLS = {
           "frame": 182,
           "weight": 0.3
         }
-      ]
+      ],
+      "damageType": "magical"
     },
     "breath": {
       "name": "Breath",
@@ -323,7 +338,8 @@ export const ENEMY_SKILLS = {
           "frame": 80,
           "weight": 1
         }
-      ]
+      ],
+      "damageType": "magical"
     }
   },
   "magitek_axeman": {
@@ -338,7 +354,8 @@ export const ENEMY_SKILLS = {
           "frame": 42,
           "weight": 1
         }
-      ]
+      ],
+      "damageType": "physical"
     },
     "wire_attack": {
       "name": "Wire Attack",
@@ -351,7 +368,8 @@ export const ENEMY_SKILLS = {
           "frame": 42,
           "weight": 1
         }
-      ]
+      ],
+      "damageType": "physical"
     },
     "spin_kick": {
       "name": "Spin Kick",
@@ -368,7 +386,8 @@ export const ENEMY_SKILLS = {
           "frame": 62,
           "weight": 0.5
         }
-      ]
+      ],
+      "damageType": "physical"
     }
   },
   "magitek_infantry": {
@@ -383,7 +402,8 @@ export const ENEMY_SKILLS = {
           "frame": 45,
           "weight": 1
         }
-      ]
+      ],
+      "damageType": "physical"
     }
   },
   "ochu": {
@@ -414,7 +434,8 @@ export const ENEMY_SKILLS = {
           "frame": 102,
           "weight": 0.2
         }
-      ]
+      ],
+      "damageType": "magical"
     }
   },
   "sweeper": {
@@ -449,7 +470,8 @@ export const ENEMY_SKILLS = {
           "frame": 67,
           "weight": 0.17
         }
-      ]
+      ],
+      "damageType": "physical"
     },
     "double_barrel": {
       "name": "Double Barrel",
@@ -482,7 +504,8 @@ export const ENEMY_SKILLS = {
           "frame": 67,
           "weight": 0.17
         }
-      ]
+      ],
+      "damageType": "physical"
     },
     "smoke_shot": {
       "name": "Smoke Shot",
@@ -495,7 +518,8 @@ export const ENEMY_SKILLS = {
           "frame": 130,
           "weight": 1
         }
-      ]
+      ],
+      "damageType": "physical"
     }
   },
   "water_flan": {
@@ -510,7 +534,8 @@ export const ENEMY_SKILLS = {
           "frame": 80,
           "weight": 1
         }
-      ]
+      ],
+      "damageType": "magical"
     }
   },
   "x_atm092": {
@@ -525,7 +550,8 @@ export const ENEMY_SKILLS = {
           "frame": 42,
           "weight": 1
         }
-      ]
+      ],
+      "damageType": "physical"
     },
     "arm_crush_plus": {
       "name": "Arm Crush+",
@@ -550,7 +576,8 @@ export const ENEMY_SKILLS = {
           "frame": 56,
           "weight": 0.25
         }
-      ]
+      ],
+      "damageType": "physical"
     },
     "ray_bomb": {
       "name": "Ray-Bomb",
@@ -563,7 +590,8 @@ export const ENEMY_SKILLS = {
           "frame": 120,
           "weight": 1
         }
-      ]
+      ],
+      "damageType": "magical"
     }
   }
 };

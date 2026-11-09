@@ -25,7 +25,7 @@ def select_identical_original(rows, read):
 def stage(report_path, skill_id, kind, index, output, reader_path):
     root = Path.cwd().resolve()
     output = output.resolve()
-    if not output.is_relative_to(root / 'tools/data'):
+    if not output.is_relative_to((root / 'tools/data').resolve()):
         raise ValueError('Output must stay inside tools/data')
     report = json.loads(report_path.read_text(encoding='utf-8'))
     matches = [s for s in report['catalog'] if s['kind'] == kind and s['id'] == skill_id]

@@ -22,7 +22,7 @@ def verify(file):
 
 def preserve(output):
     root = Path.cwd().resolve()
-    if not output.resolve().is_relative_to(root / 'tools/data') or output.exists():
+    if not output.resolve().is_relative_to((root / 'tools/data').resolve()) or output.exists():
         raise ValueError('Use a new archive path inside ignored tools/data')
     files = set()
 

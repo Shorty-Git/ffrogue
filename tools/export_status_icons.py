@@ -12,6 +12,8 @@ CELL, COLUMNS = 34, 9  # 32 px icon plus 2 px gap, measured from the alpha runs 
 GRID = {
     'physical-boost': ('rawdata/assets/ui/battle/state_icon_up.png', 0),   # ATK up
     'auto-revive': ('rawdata/assets/ui/battle/state_icon_up.png', 24),     # Reraise (figure with golden aura)
+    'guard-physical': ('rawdata/assets/ui/battle/state_icon_up.png', 1),   # DEF up (shield): Protect
+    'guard-magical': ('rawdata/assets/ui/battle/state_icon_up.png', 3),    # SPR up (hat): Shell
 }
 SINGLE = {
     'attack-down': 'rawdata/assets/icons/ailments/break_atk.png',
