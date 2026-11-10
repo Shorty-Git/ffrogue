@@ -18,6 +18,7 @@ import {drawCatalog,newProfile} from '../src/run/profile.mjs';
 import {resolveEnemyInstant} from '../src/effects/enemyInstant.mjs';
 import {skillDamageType} from '../src/effects/skillDamageTimeline.mjs';
 import {enemyTargetIndex} from '../src/run/enemyTargeting.mjs';
+import {enemyElementMultiplier,heroElementMultiplier,heroAttackElements,skillElements} from '../src/run/elementRules.mjs';
 
 const args=process.argv.slice(2),flag=(name,fallback)=>{const i=args.indexOf('--'+name);return i<0?fallback:args[i+1];};
 const RUNS=Number(flag('runs',400)),PREFIX=flag('seed-prefix','sim'),JSON_OUT=flag('json',null),ROSTER=flag('roster','all');
@@ -46,10 +47,12 @@ function attackDamage(run,hero,round){
  return dmg;
 }
 const skillBase=(run,hero,skill,round)=>between(run,300,380)*(skillDamageType(skill)==='holy'?heroMagicMultiplier(hero.buffs,round):heroPhysicalMultiplier(hero.buffs,round));
-const hit=(enemy,amount,type)=>{const d=Math.round(amount*statusDamageMultiplier(enemy.statuses,type));enemy.hp=Math.max(0,enemy.hp-d);return d;};
+// TargetDummy.applyDamage: statuses and the enemy's original element resistances (src/run/elementRules.mjs).
+const hit=(enemy,amount,type,elements=[])=>{const d=Math.round(amount*statusDamageMultiplier(enemy.statuses,type)*enemyElementMultiplier(enemy.key,elements));enemy.hp=Math.max(0,enemy.hp-d);return d;};
+const heroElements=(hero,s)=>{const own=s?skillElements(s):[];return own.length||(s&&!s.basicRepeat)?own:heroAttackElements(hero.member);};
 // ---------------------------------------------------------------------------------------
 
-const expected=(hero,skill)=>skill.damageMultiplier*340*(skill.basicRepeat?(skill.basicRepeat.minHits+skill.basicRepeat.maxHits)/2:1);
+const expected=(hero,skill,target)=>skill.damageMultiplier*340*(skill.basicRepeat?(skill.basicRepeat.minHits+skill.basicRepeat.maxHits)/2:1)*(target?enemyElementMultiplier(target.key,heroElements(hero,skill)):1);
 const isHeal=s=>s.allyEvents?.some(e=>e.effects.some(f=>f.kind==='heal'));
 const isBuff=s=>s.allyEvents?.some(e=>e.effects.some(f=>f.kind==='physical-boost'));
 const isDebuff=s=>s.supportEvents?.some(e=>e.effects.some(f=>!['execute-or-damage'].includes(f.kind)));
@@ -66,12 +69,12 @@ function chooseAction(state,hero){
  if(buff&&totalHp>2500&&heroPhysicalMultiplier(hero.buffs,round)===1)return {skill:buff};
  const debuff=usable.find(s=>isDebuff(s)&&!s.damageEvents);
  if(debuff&&target.boss&&!target.statuses.length)return {skill:debuff,target};
- const attack=340*hero.member.stats.attack*heroPhysicalMultiplier(hero.buffs,round)*1.075;
+ const attack=340*hero.member.stats.attack*heroPhysicalMultiplier(hero.buffs,round)*1.075*enemyElementMultiplier(target.key,heroElements(hero));
  let best={skill:null,target,value:attack};
  if(attack<target.hp){
   for(const s of usable){
    if(!s.damageEvents&&!s.basicRepeat&&!s.supportEvents?.some(e=>e.effects.some(f=>f.kind==='execute-or-damage')))continue;
-   const value=s.scope==='all_enemies'?(s.damageEvents?expected(hero,s)*living.length:700*living.length):expected(hero,s);
+   const value=s.scope==='all_enemies'?(s.damageEvents?living.reduce((sum,e)=>sum+expected(hero,s,e),0):700*living.length):expected(hero,s,target);
    if(value>best.value)best={skill:s,target,value};
   }
  }
@@ -81,7 +84,7 @@ function chooseAction(state,hero){
 function resolveHeroAction(run,state,hero,action){
  const {enemies,heroes,round}=state,living=enemies.filter(e=>e.hp>0);
  const s=action.skill;
- if(!s){hit(action.target,attackDamage(run,hero,round),'physical');hero.limit=limit.gainFromAction(hero.limit);state.stats.attacks++;return;}
+ if(!s){hit(action.target,attackDamage(run,hero,round),'physical',heroElements(hero));hero.limit=limit.gainFromAction(hero.limit);state.stats.attacks++;return;}
  if(s.type==='LIMIT'){hero.limit=0;state.stats.limitBursts++;}
  else{hero.mp-=s.mpCost;if(s.hpCost)hero.hp-=s.hpCost;state.stats.skills++;}
  if(s.allyEvents){
@@ -96,8 +99,8 @@ function resolveHeroAction(run,state,hero,action){
  // Barrage-type repeats (BattleScene.executeBasicRepeat): N basic attacks, random living target each.
  if(s.basicRepeat){const r=s.basicRepeat,count=r.minHits+Math.floor(nextRandom(run,'combat')*(r.maxHits-r.minHits+1));
   for(let k=0;k<count;k++){const pool=enemies.filter(e=>e.hp>0);if(!pool.length)break;const base=skillBase(run,hero,s,round);
-   for(const t of r.targeting==='all'?pool:[r.targeting==='random'?pool[Math.floor(nextRandom(run,'combat')*pool.length)]:(action.target.hp>0?action.target:pool[0])])hit(t,base*s.damageMultiplier,'physical');}}
- if(s.damageEvents){const base=skillBase(run,hero,s,round);for(const e of s.damageEvents)for(const t of targets)if(t.hp>0)hit(t,base*s.damageMultiplier*e.weight,skillDamageType(s));}
+   for(const t of r.targeting==='all'?pool:[r.targeting==='random'?pool[Math.floor(nextRandom(run,'combat')*pool.length)]:(action.target.hp>0?action.target:pool[0])])hit(t,base*s.damageMultiplier,'physical',heroElements(hero,s));}}
+ if(s.damageEvents){const base=skillBase(run,hero,s,round);for(const e of s.damageEvents)for(const t of targets)if(t.hp>0)hit(t,base*s.damageMultiplier*e.weight,skillDamageType(s),heroElements(hero,s));}
  for(const e of s.supportEvents??[])for(const t of targets){
   if(t.hp<=0)continue;
   for(const f of e.effects)if(f.kind==='execute-or-damage'){const o=resolveEnemyInstant(f,{currentHp:t.hp,isBoss:t.boss},()=>nextRandom(run,'combat'));t.hp=Math.max(0,t.hp-o.amount);}
@@ -126,7 +129,7 @@ function fight(run){
    if(action.kind==='prepare')continue;
    const pick=heroes[enemyTargetIndex(heroes.map(h=>({alive:h.hp>0,hp:h.hp,maxHp:h.maxHp})),()=>nextRandom(run,'combat'))];
    for(const t of action.scope==='party'?alive:[pick]){
-    const dmg=Math.round(profile.damage*action.multiplier*mult/(t.member.stats.defense??1)*heroDamageTakenMultiplier(t.buffs,state.round,action.damageType??'physical'));
+    const dmg=Math.round(profile.damage*action.multiplier*mult/(t.member.stats.defense??1)*heroDamageTakenMultiplier(t.buffs,state.round,action.damageType??'physical')*heroElementMultiplier(t.key,action.elements));
     t.hp=Math.max(0,t.hp-dmg);if(t.hp>0)t.limit=limit.gainFromDamage(t.limit,dmg,t.maxHp);
     if(t.hp>0&&action.heroEffects){const applied=action.heroEffects.filter(e=>nextRandom(run,'combat')<(e.chance??1)).map(({chance:_c,...e})=>e);if(applied.length)t.buffs=applyHeroBuffs(t.buffs,applied,state.round);}
    }

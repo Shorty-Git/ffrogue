@@ -1,6 +1,7 @@
 // Reviewed FFRogue encounters; source identity is not a claim of original FFBE AI.
 import {IMPORTED_ENEMIES,IMPORTED_STAGES} from './importedStages.mjs';
 import {ENEMY_SKILLS} from './enemySkills.mjs';
+import {enemySkillElements} from './elementRules.mjs';
 export const ENEMY_CONTENT = {
   microchu: {key:'microchu',name:'Microchu',spriteId:'1110310',monsterId:'111031000',dictionaryId:1110310,
     scale:2,attack:{clip:'atk',impactFrame:1,movement:'approach'},audio:[]},
@@ -52,5 +53,7 @@ export function enemyAction(definition,cursor,hpRatio){
   const raw=pattern[cursor%pattern.length];
   // A pattern step that names an imported original skill plays it; otherwise its FFRogue action stays.
   const action=raw.skill&&skills[raw.skill]?{...raw,...skills[raw.skill],kind:'attack',multiplier:raw.multiplier??skills[raw.skill].multiplier}:raw;
-  return {...action,phase:phase?b.phaseName:'',multiplier:(action.multiplier??0)*(phase?b.phaseMultiplier:1)};
+  // Original element of an imported monster skill (src/run/elements.mjs); FFRogue actions have none.
+  const elements=raw.skill&&skills[raw.skill]?enemySkillElements(definition.key,raw.skill):[];
+  return {...action,phase:phase?b.phaseName:'',multiplier:(action.multiplier??0)*(phase?b.phaseMultiplier:1),...(elements.length?{elements}:{})};
 }

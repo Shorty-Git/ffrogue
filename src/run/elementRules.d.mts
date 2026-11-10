@@ -1,0 +1,17 @@
+import type {Element} from './elements.mjs';
+export type {Element};
+export const ELEMENT_MIN:number;
+export const ELEMENT_MAX:number;
+export const ELEMENT_LABELS:Record<Element,string>;
+export const ELEMENT_GLYPHS:Record<Element,string>;
+export function parseElementFlags(raw:unknown):Element[];
+export function skillElements(skill:{elements?:string[];originalCommand?:{raw?:Record<string,unknown>}}|undefined):Element[];
+export function enemySkillElements(enemyKey:string,skillId:string|undefined):Element[];
+export function elementMultiplier(elements:readonly string[]|undefined,resist?:Partial<Record<Element,number>>):number;
+export function enemyElementMultiplier(enemyKey:string,elements:readonly string[]|undefined):number;
+export function heroElementMultiplier(heroKey:string,elements:readonly string[]|undefined):number;
+export function elementTag(multiplier:number):'weak'|'resist'|null;
+export function enemyAffinities(enemyKey:string):{weak:Element[];resist:Element[]};
+export function heroAffinities(heroKey:string):{weak:Element[];resist:Element[]};
+export function elementNames(elements:readonly string[]|undefined):string;
+export function heroAttackElements(member:unknown):Element[];

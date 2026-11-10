@@ -86,3 +86,12 @@
 .bond-choice{margin:.6em auto;padding:.6em 1em;max-width:44em;text-align:center}
 .bond-skills{display:flex;flex-wrap:wrap;justify-content:center;gap:.4em;margin-top:.4em}
 .bond-skills .rpg-button{min-height:0;padding:.35em .8em;font-size:.9em}
+
+/* Element chips (src/ui/elementChips.ts): small tinted labels for weaknesses, resistances and skill elements. */
+.el-chip{display:inline-block;font:700 .72em/1.35 var(--rpg-type,system-ui);font-style:normal;letter-spacing:.04em;text-transform:uppercase;
+  padding:0 .42em;border-radius:3px;border:1px solid currentColor;background:#06122699;color:#dfeaf6;white-space:nowrap;text-shadow:0 1px 1px #000}
+.el-chip.el-fire{color:#ff9a6a}.el-chip.el-ice{color:#9fe3ff}.el-chip.el-lightning{color:#f4e26a}.el-chip.el-water{color:#6fb4ff}
+.el-chip.el-wind{color:#8ff0b0}.el-chip.el-earth{color:#d6b07a}.el-chip.el-light{color:#fff4c8}.el-chip.el-dark{color:#c39cff}
+.el-chip.is-resist{opacity:.62;text-decoration:line-through;text-decoration-thickness:1px}
+.element-row{display:flex;flex-wrap:wrap;gap:3px;align-items:center;padding:0 .55em;margin-top:2px}
+.element-row em{font-style:normal;font-size:.72em;letter-spacing:.06em;text-transform:uppercase;color:#b9c8da;text-shadow:0 1px 2px #000}

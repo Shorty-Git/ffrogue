@@ -109,7 +109,8 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
    * Applies damage to this hero with white flash, horizontal shake, floating red number,
    * and transitions to 'dead' animation if HP drops to 0.
    */
-  public applyDamage(damage: number): void {
+  /** tag: element outcome of the hit (src/run/elementRules.mjs), shown next to the number. */
+  public applyDamage(damage: number, tag: 'weak' | 'resist' | null = null): void {
     if (this.isDead) return;
 
     this.currentHp = Math.max(0, this.currentHp - damage);
@@ -134,7 +135,7 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
     });
 
     // 3. Floating Damage Popup
-    this.spawnDamagePopup(damage);
+    this.spawnDamagePopup(damage, tag);
 
     // 4. Check Death
     if (this.currentHp <= 0) {
@@ -145,15 +146,15 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
     }
   }
 
-  private spawnDamagePopup(damage: number): void {
+  private spawnDamagePopup(damage: number, tag: 'weak' | 'resist' | null = null): void {
     const px = this.x + Phaser.Math.Between(-10, 10);
     const py = this.y - 70;
 
-    const popup = this.scene.add.text(px, py, `-${damage}`, {
+    const popup = this.scene.add.text(px, py, `-${damage}${tag === 'weak' ? ' WEAK' : tag === 'resist' ? ' RESIST' : ''}`, {
       fontFamily: 'monospace',
       fontSize: '20px',
-      color: '#f87171',
-      stroke: '#450a0a',
+      color: tag === 'weak' ? '#fb923c' : tag === 'resist' ? '#94a3b8' : '#f87171',
+      stroke: tag === 'resist' ? '#1e293b' : '#450a0a',
       strokeThickness: 3,
       fontStyle: 'bold',
     }).setOrigin(0.5);

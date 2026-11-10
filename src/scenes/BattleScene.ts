@@ -27,6 +27,7 @@ import {rpgPanel} from '../ui/rpgPanel';
 import {runEncounter} from '../run/runBalance.mjs';
 import {ENEMY_CONTENT,enemyAction,type EnemyAction} from '../run/stageContent.mjs';
 import {ENEMY_SKILLS} from '../run/enemySkills.mjs';
+import {elementTag,enemyAffinities,heroAttackElements,heroElementMultiplier,skillElements,type Element} from '../run/elementRules.mjs';
 import {ActionBanner,type CombatActionNotice} from '../ui/ActionBanner';
 import {bodyAssets,heroBodyClips,type BodyAsset} from '../data/bodyAssets.mjs';
 import {queueBodyAssets,missingBodyAssets,setBodySampling} from './bodyLoading';
@@ -442,7 +443,7 @@ export class BattleScene extends Phaser.Scene {
       const status=intent?[intent.name,intent.next,intent.phase].filter(Boolean).join(' · '):'';
       const selectable=this.combatState==='PLAYER_TURN'&&scope!=='single_ally';
       return [{id,name:enemy.nameTag,hp:enemy.currentHp,maxHp:enemy.maxHp,boss:enemy.isBoss,status,selectable,
-        statuses:enemyStatusBadges(enemy.statusEffects),
+        statuses:enemyStatusBadges(enemy.statusEffects),affinity:enemyAffinities(enemy.assetKey),
         targeted:selectable&&enemy===this.currentTarget,marked:this.ribbonMarks.includes(enemy),...placement(enemy.sprite)}];
     });
     const skills=hero?(this.unitSkills[hero.unitKey]??[]).slice(0,3):[];
@@ -1238,7 +1239,7 @@ export class BattleScene extends Phaser.Scene {
         actionBase ??= rolled;
         const dmg = Math.round(actionBase * skill.damageMultiplier * weight);
         const isCrit = skill.damageMultiplier >= 3.0;
-        hitTarget.applyDamage(dmg, isCrit, skillDamageType(skill));
+        hitTarget.applyDamage(dmg, isCrit, skillDamageType(skill), false, this.actionElements(hero, skill));
 
         if (isCrit) {
           this.showCritPopup(hitTarget.x, hitTarget.y - 105);
@@ -1265,7 +1266,7 @@ export class BattleScene extends Phaser.Scene {
         const dmg = Math.round(actionBase * skill.damageMultiplier * weight);
 
         living.forEach((e) => {
-          e.applyDamage(dmg, skill.damageMultiplier >= 3.0, skillDamageType(skill));
+          e.applyDamage(dmg, skill.damageMultiplier >= 3.0, skillDamageType(skill), false, this.actionElements(hero, skill));
           this.handleTargetDamaged(e);
         });
       }
@@ -1324,7 +1325,7 @@ export class BattleScene extends Phaser.Scene {
             const victims = repeat.targeting === 'all' ? living() : [target.currentHp > 0 ? target : pick()].filter((v): v is TargetDummy => !!v);
             for (const victim of victims) {
               if (this.blindMiss(hero, victim)) continue;
-              victim.applyDamage(Math.max(1, Math.round(roll * skill.damageMultiplier * hits[index].weight)), false, 'physical');
+              victim.applyDamage(Math.max(1, Math.round(roll * skill.damageMultiplier * hits[index].weight)), false, 'physical', false, this.actionElements(hero, skill));
               this.handleTargetDamaged(victim);
             }
             if (victims.length) this.basicImpactSound(hero, false, hits[index].frame >= 0 ? hits[index].frame : undefined);
@@ -1355,7 +1356,7 @@ export class BattleScene extends Phaser.Scene {
       const damage = Math.round(actionBase * skill.damageMultiplier * weight);
       for (const enemy of targets) {
         if (enemy.currentHp <= 0) continue;
-        enemy.applyDamage(damage, false, skillDamageType(skill), true);
+        enemy.applyDamage(damage, false, skillDamageType(skill), true, this.actionElements(hero, skill));
         this.handleTargetDamaged(enemy);
       }
       
@@ -1528,6 +1529,14 @@ export class BattleScene extends Phaser.Scene {
     }
   }
 
+  /** Elements of a hero action: a skill's own original element, otherwise (basic attacks, Barrage
+   * repeats) the elements of the hero's weapon. */
+  private actionElements(hero: UnitActor, skill?: SkillConfig): Element[] {
+    const own = skill ? skillElements(skill) : [];
+    if (own.length || (skill && !skill.basicRepeat)) return own;
+    return heroAttackElements(this.runContext.state.party.find(m => m.key === hero.unitKey));
+  }
+
   /** Skill base roll; run attack/magic ranks are already folded into skill multipliers. */
   private skillBaseDamage(hero: UnitActor, skill: SkillConfig): number {
     const roll = this.randomBetween(300, 380);
@@ -1542,7 +1551,7 @@ export class BattleScene extends Phaser.Scene {
     baseDmg = Math.max(1, Math.round(baseDmg * heroPhysicalMultiplier(hero.sourceBuffs,this.currentRound)));
     if (isCrit) baseDmg = Math.round(baseDmg * 1.5);
     this.basicImpactSound(hero,isCrit,sourceFrame);
-    target.applyDamage(baseDmg, isCrit, 'physical');
+    target.applyDamage(baseDmg, isCrit, 'physical', false, this.actionElements(hero));
     this.handleTargetDamaged(target);
   }
 
@@ -1602,7 +1611,7 @@ export class BattleScene extends Phaser.Scene {
         if (this.combatState === 'HERO_ATTACKING' && target.currentHp > 0) {
           const actor=this.getActiveHero();
           if(actor)this.basicImpactSound(actor,isCrit);
-          target.applyDamage(damage, isCrit, 'physical');
+          target.applyDamage(damage, isCrit, 'physical', false, actor ? this.actionElements(actor) : []);
           this.handleTargetDamaged(target);
         }
         this.resolvePendingImpact();
@@ -1701,8 +1710,9 @@ export class BattleScene extends Phaser.Scene {
           const impacts:{unit:string;damage:number}[]=[];
           for(const target of targets){
             const defense=this.runContext.state.party.find(m=>m.key===target.unitKey)?.stats.defense??1;
-            const dmg=Math.round(profile.damage*(action?.multiplier??1)*attackMultiplier/defense*heroDamageTakenMultiplier(target.sourceBuffs,this.currentRound,action?.damageType??'physical'));
-            target.applyDamage(dmg);
+            const element=heroElementMultiplier(target.unitKey,action?.elements);
+            const dmg=Math.round(profile.damage*(action?.multiplier??1)*attackMultiplier/defense*heroDamageTakenMultiplier(target.sourceBuffs,this.currentRound,action?.damageType??'physical')*element);
+            target.applyDamage(dmg,elementTag(element));
             this.playHeroHitFeedback(target,enemy.x,dmg/Math.max(1,target.maxHp));
             if(target.isDead)this.tryAutoRevive(target);
             if(!target.isDead)target.limitGauge=gainFromDamage(target.limitGauge,dmg,target.maxHp);
@@ -1749,8 +1759,9 @@ export class BattleScene extends Phaser.Scene {
       for(const target of targets){
         if(target.isDead)continue;
         const defense=this.runContext.state.party.find(m=>m.key===target.unitKey)?.stats.defense??1;
-        const dmg=Math.max(1,Math.round(profile.damage*action.multiplier*attackMultiplier/defense*event.weight*heroDamageTakenMultiplier(target.sourceBuffs,this.currentRound,action.damageType??'physical')));
-        target.applyDamage(dmg);
+        const element=heroElementMultiplier(target.unitKey,action.elements);
+        const dmg=Math.max(1,Math.round(profile.damage*action.multiplier*attackMultiplier/defense*event.weight*heroDamageTakenMultiplier(target.sourceBuffs,this.currentRound,action.damageType??'physical')*element));
+        target.applyDamage(dmg,elementTag(element));
         total.set(target,(total.get(target)??0)+dmg);
         this.playHeroHitFeedback(target,enemy.x,dmg/Math.max(1,target.maxHp));
         if(target.isDead)this.tryAutoRevive(target);

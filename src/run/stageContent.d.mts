@@ -6,7 +6,9 @@ export interface EnemyAction{kind:'attack'|'prepare';name:string;multiplier:numb
  /** Enemy debuffs from the original skill (stat breaks, blind), applied to each hit hero. */
  heroEffects?:import('../types/skills').HeroDebuffEffect[];
  /** Pattern step that plays this imported original skill (src/run/enemySkills.mjs) when present. */
- skill?:string;}
+ skill?:string;
+ /** Original elements of the imported skill (src/run/elements.mjs ENEMY_SKILL_ELEMENTS). */
+ elements?:import('./elements.mjs').Element[];}
 export interface EnemyDefinition{key:string;name:string;spriteId:string;monsterId:string;dictionaryId:number;scale:number;
  attack:{clip:string;impactFrame:number;movement:'stationary'|'approach'};audio:unknown[];
  behavior?:{phaseAt:number;phaseName:string;phaseMultiplier:number;pattern:Omit<EnemyAction,'phase'>[]};}

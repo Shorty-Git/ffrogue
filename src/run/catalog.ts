@@ -6,6 +6,7 @@ import type {RunCatalog} from './runState.mjs';
 import {rankValue} from './unitForms.mjs';
 import {validateSceneAction} from '../effects/sceneProfile.mjs';
 import {validateBasicRepeat} from '../effects/basicRepeat.mjs';
+import {skillElements,elementNames} from './elementRules.mjs';
 export interface RunContent{schemaVersion:1;units:Record<string,{identity:string;unitId:string;rarity:number;rank?:'NV';canonicalIdentity:string;variantLabel?:string}>;canonicalCharacters:Record<string,{label:string}>;
  forms:{key:string;identityKey:string;identity:string;unitId:string;rarity:number;rank?:'NV';assetPath:string;awakensFrom:string}[];}
 export function runCatalog(scene:Phaser.Scene,manifests:Record<string,UnitManifest>):RunCatalog{
@@ -40,6 +41,8 @@ export function skillDescription(s:SkillConfig):string{
  const parts=[`${s.mpCost} MP`,target];
  if(s.basicRepeat){const r=s.basicRepeat;parts.push(`${r.minHits===r.maxHits?r.minHits:r.minHits+'–'+r.maxHits} basic attacks · ${Number(s.damageMultiplier.toFixed(2))}× power each${r.targeting==='random'?' · random targets':''}`);}
  if(s.damageEvents)parts.push(`${Number(s.damageMultiplier.toFixed(2))}× ${s.damageType==='holy'?'magic':'physical'} power · ${s.damageEvents.length} hit${s.damageEvents.length===1?'':'s'}`);
+ const elements=skillElements(s);
+ if(elements.length&&(s.damageEvents||s.basicRepeat))parts.push(`${elementNames(elements)} element`);
  for(const e of s.allyEvents??[])for(const f of e.effects)parts.push(f.kind==='heal'?`Restore ${f.amount} HP (no revival)`
   :f.kind==='limit-fill'?`Limit gauge +${f.amount}`
   :f.kind==='raise'?`Revive with ${Math.round(f.hpFraction*100)}% HP`

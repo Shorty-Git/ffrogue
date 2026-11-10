@@ -1,5 +1,6 @@
 import type { EnemyStatusEffect } from '../types/skills';
 import { statusDamageMultiplier } from '../effects/enemyStatus.mjs';
+import { elementTag, enemyElementMultiplier } from '../run/elementRules.mjs';
 import Phaser from 'phaser';
 import { UnitManifest } from '../types/manifest';
 import { BATTLE_ART_SCALE } from '../ui/battleLayout';
@@ -186,11 +187,15 @@ export class TargetDummy extends Phaser.GameObjects.Container {
 
   /**
    * Applies damage and displays its number; quiet presentations omit impact motion and tint.
+   * elements: the action's elements; the enemy's original resistances scale the damage
+   * (src/run/elementRules.mjs) and the number is tagged WEAK / RESIST.
    */
-  public applyDamage(damage: number, isCritical = false, damageType: 'physical' | 'holy' | 'unmitigated' = 'physical', quiet = false): void {
-    if (this.currentHp <= 0) return;
+  public applyDamage(damage: number, isCritical = false, damageType: 'physical' | 'holy' | 'unmitigated' = 'physical', quiet = false, elements: readonly string[] = []): number {
+    if (this.currentHp <= 0) return 0;
 
-    damage = Math.round(damage * statusDamageMultiplier(this.statusEffects, damageType));
+    const elementFactor = damageType === 'unmitigated' ? 1 : enemyElementMultiplier(this.assetKey, elements);
+    const scaled = Math.round(damage * statusDamageMultiplier(this.statusEffects, damageType) * elementFactor);
+    damage = damage > 0 ? Math.max(1, scaled) : scaled;
     this.currentHp = Math.max(0, this.currentHp - damage);
 
     if (!quiet) {
@@ -212,13 +217,16 @@ export class TargetDummy extends Phaser.GameObjects.Container {
     }
 
     // 3. Floating Damage Number
-    this.spawnDamagePopup(damage, isCritical, damageType);
+    this.spawnDamagePopup(damage, isCritical, damageType, elementTag(elementFactor));
+    return damage;
 
   }
 
-  private spawnDamagePopup(damage: number, isCritical: boolean, damageType: 'physical' | 'holy' | 'unmitigated'): void {
+  private spawnDamagePopup(damage: number, isCritical: boolean, damageType: 'physical' | 'holy' | 'unmitigated', tag: 'weak' | 'resist' | null = null): void {
     const startX = this.x + Phaser.Math.Between(-14, 14);
-    const startY = this.y - 70;
+    // Small enemies: start low and rise less, so the DOM name plate above them never covers the number.
+    const small = this.sprite.displayHeight < 200;
+    const startY = this.y - (small ? 18 : 70), rise = small ? 26 : 45;
 
     let color = '#ffffff';
     let stroke = '#0f172a';
@@ -232,6 +240,9 @@ export class TargetDummy extends Phaser.GameObjects.Container {
       color = '#67e8f9'; // Bright Cyan
       stroke = '#0e7490';
     }
+    // Element tag: weaknesses glow orange, resisted hits turn steel grey.
+    if (tag === 'weak') { color = isCritical ? color : '#fb923c'; stroke = '#7c2d12'; label += ' WEAK'; }
+    else if (tag === 'resist') { color = '#94a3b8'; stroke = '#1e293b'; label += ' RESIST'; }
 
     const dmgText = this.scene.add.text(startX, startY, label, {
       fontFamily: 'Arial, Helvetica, sans-serif',
@@ -263,7 +274,7 @@ export class TargetDummy extends Phaser.GameObjects.Container {
     this.scene.tweens.add({
       targets: dmgText,
       x: driftX,
-      y: startY - 45,
+      y: startY - rise,
       duration: 500,
       ease: 'Cubic.easeOut',
       onComplete: () => {

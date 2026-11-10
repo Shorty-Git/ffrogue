@@ -1,4 +1,6 @@
 import {UI_PARTS as UI,gauge,gaugeRow,limitRow,formatValue as number,captureGauges,animateGauges} from './ffbeGauge';
+import {elementChips,affinityText} from './elementChips';
+import type {Element} from '../run/elementRules.mjs';
 
 type HeroState = 'active' | 'ready' | 'acted' | 'ko';
 /** Active buff/debuff: original FFBE status icon and remaining rounds (src/ui/statusIcons.ts). */
@@ -11,6 +13,7 @@ type Command = {name:string; icon:'attack'|'magic'|'ability'|'limit'; iconUrl?:s
   /** The hero's Limit Burst; `ready` once the LB gauge is full. */ limit?:boolean; ready?:boolean};
 type ArenaActor = {id:number; name:string; hp?:number; maxHp?:number; status?:string; statuses?:StatusBadge[]; boss?:boolean; marked:boolean; selectable:boolean;
   /** Current enemy target: drawn with the crystal target cursor. */ targeted:boolean;
+  /** Original element weaknesses / resistances (enemies only). */ affinity?:{weak:Element[];resist:Element[]};
   x:number; y:number; width:number; height:number};
 export type CombatHudState = {
   area:string; phase:string; message:string; pending:boolean; party:PartyEntry[]; commands:(Command|null)[]; actors:ArenaActor[];
@@ -108,9 +111,10 @@ export class CombatHud {
       const position=`left:${actor.x}%;top:${actor.y}%;width:${actor.width}%;height:${actor.height}%`;
       const plate=actor.hp===undefined?'':`<span class="arena-health ${actor.boss?'is-boss':''}">
         <span class="enemy-head"><strong>${escapeHtml(actor.name)}</strong><span>${number(actor.hp)} / ${number(actor.maxHp!)}</span></span>
-        ${gauge('enemy',actor.hp,actor.maxHp!,'HP',`enemy-${actor.id}`)}${statusRow(actor.statuses)}${actor.status?`<small>${escapeHtml(actor.status)}</small>`:''}</span>`;
+        ${gauge('enemy',actor.hp,actor.maxHp!,'HP',`enemy-${actor.id}`)}${statusRow(actor.statuses)}${actor.affinity&&(actor.affinity.weak.length||actor.affinity.resist.length)?`<span class="element-row">${actor.affinity.weak.length?'<em>Weak</em>'+elementChips(actor.affinity.weak,'weak'):''}${elementChips(actor.affinity.resist,'resist')}</span>`:''}${actor.status?`<small>${escapeHtml(actor.status)}</small>`:''}</span>`;
+      const tip=[actor.name,actor.affinity?affinityText(actor.affinity):'',actor.status??''].filter(Boolean).join(' · ');
       return `<div class="arena-actor ${actor.marked?'is-marked':''} ${actor.targeted?'is-targeted':''}" style="${position}">${plate}${actor.targeted?TARGET_CURSOR:''}
-        ${actor.selectable?`<button type="button" class="arena-hit" ${attrs('target',actor.id)} aria-label="Target ${escapeHtml(actor.name)}" aria-pressed="${actor.targeted}"></button>`:''}</div>`;
+        ${actor.selectable?`<button type="button" class="arena-hit" ${attrs('target',actor.id)} aria-label="Target ${escapeHtml(actor.name)}" title="${escapeHtml(tip)}" aria-pressed="${actor.targeted}"></button>`:''}</div>`;
     }).join('');
 
     const shown=captureGauges(this.root);

@@ -4,6 +4,31 @@ Single entry point for any developer or AI picking up the project. Read this fir
 `docs/vision.md` (goals), `AGENTS.md` (rules) and the specialised docs linked below.
 Last consolidated: 2026-11-07.
 
+## Cloud night 2026-11-10 (docs/cloud-night-brief.md)
+
+Branch `claude/night-2026-11-10`, one commit per brief task. Checks before every commit:
+`node --test tools/test_*.mjs` (35 files fail before and after on the cloud machine: they need ignored raw
+data or pin hashes of local-only files; no new failures), `npx tsc --noEmit -p .`, `npx vite build`.
+
+### 1. Elements in combat
+- `src/run/elementRules.mjs` (shared by BattleScene and the simulator): resistance r % scales damage by
+  `1 - r/100`, held to 0.25-2.0 (`ELEMENT_MIN/MAX`); FFBE absorb (r > 100) is the 0.25 floor, never healing;
+  several elements average their multipliers. Hero skill elements: `originalCommand.raw.element` (first `@`
+  branch). Enemy skills: `enemyAction` adds `elements` from `ENEMY_SKILL_ELEMENTS`; heroes take them through
+  `HERO_ELEMENT_RESIST`. Basic attacks and Barrage repeats use `heroAttackElements(member)` (the weapon, task 3).
+  Unmitigated damage (execute fallbacks) ignores elements.
+- Readability: damage numbers tagged `WEAK` (orange) / `RESIST` (steel grey) on enemies and heroes; enemy
+  name plates show weakness chips and struck-through resist chips (`src/ui/elementChips.ts`), the enemy hover
+  tooltip names them; `skillDescription` adds "Fire element". Small enemies' damage numbers now start low
+  and rise less, so the DOM name plate no longer hides them.
+- Simulator mirrors the rule (enemy resistances, hero resistances, element-aware greedy choice).
+  400 runs: full roster 99.8 % -> 100 % wins, 50.1 % -> 51.8 % party HP after the final fight;
+  starters 99.8 % -> 100 %, 52.3 % -> 54.8 %.
+- Tests: `tools/test_elements.mjs`. Browser check (headless, dev server): Microchu plate "WEAK FIRE EARTH
+  ~~WATER~~", a fire hit of 400 showed "600 WEAK", hero popups "-300 WEAK" / "-120 RESIST".
+- Data finding: Sephiroth's reviewed pattern never uses his imported Firaga/Blizzaga (only Heartless Angel
+  carries an element).
+
 ## Product state
 
 - Playable PC roguelike prototype: title → slot-machine team draw (3 heroes, rerolls) →
