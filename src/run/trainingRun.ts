@@ -5,7 +5,7 @@ import type {BattleArenaKey} from '../data/battleArenas';
 import type {CharacterDefinition,ContentRegistry} from '../types/content';
 import type {SkillConfig,UnitSkillsData} from '../types/skills';
 import {partyReserve} from '../data/partyReserve.mjs';
-import {ENEMY_CONTENT} from './stageContent.mjs';
+import {ENEMY_CONTENT,STAGE_CONTENT} from './stageContent.mjs';
 import {LB_MAX} from './limitGauge.mjs';
 
 // Fixed training encounters for the arena gallery and the Source review pages.
@@ -45,7 +45,9 @@ function opponentEncounter(opponent:TrainingOpponent){
     {slot:'top' as const,hp:TRAINING_HP,key:'training_dummy',nameTag:'DUMMY A',isBoss:false},
     {slot:'bottom' as const,hp:TRAINING_HP,key:'training_dummy',nameTag:'DUMMY B',isBoss:false}]};
   const enemy=ENEMY_CONTENT[opponent];
-  return {boss:false,enemies:[{slot:'center' as const,hp:TRAINING_HP,key:enemy.key,nameTag:enemy.name.toUpperCase(),isBoss:false}]};
+  // Elites and bosses keep their battle presentation (size, plate) in training.
+  const elite=Object.values(STAGE_CONTENT).some(s=>s.bossId===enemy.key);
+  return {boss:elite,enemies:[{slot:'center' as const,hp:TRAINING_HP,key:enemy.key,nameTag:enemy.name.toUpperCase(),isBoss:elite}]};
 }
 export interface TrainingRun{context:RunBattleContext;settled:{won:boolean;party:{key:string;hp:number;mp:number}[]}[]}
 const sourceFirst=(a:SkillConfig,b:SkillConfig)=>Number(!!b.scenePresentation)-Number(!!a.scenePresentation);

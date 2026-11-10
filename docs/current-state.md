@@ -128,6 +128,16 @@ Last consolidated: 2026-11-07; newest section: cloud night 2026-11-10.
     reviewed English names in `nameOverrides` (garuda.json: Aerial Blast, Aero Burst, Wind Emit, Garuda Flap,
     Skyfall). The stale `garuda_` presentation and its registry/audio entries were removed.
   - Checked: arenas, the elites' pattern moves in training fights, 359 node tests.
+- Playtest round 4 (2026-11-11 night):
+  - Stage cards: art at 140 % width, centred, so arenas with dark side bars (Chaos Shrine, Lhusu Mines, Deling)
+    fill the card.
+  - Reward and skill-swap screens: "Show my party" swaps the cards for a compact party list (level, weapon,
+    skills, Limit Burst) and back.
+  - Training: elites/bosses spawn as bosses (plate tag, boss presentation).
+  - Not changed: enemy size. Big bodies (Garuda, frames ~305 x 358 with pivot at mid-body) are limited by the
+    space below their slot (the HUD); raising the recipe scale has no effect. Needs a placement rule for big
+    bosses (e.g. slot higher or feet-based fit), not done yet. Cloud/Barret Limit gauge oddity at LB start:
+    not reproduced, waiting for a screenshot.
 - Web (alpha) build: `npm run build:web` = normal build + `tools/web_audio.py dist` (music WAVs > 1 MB ->
   Ogg Vorbis q0.6, frame count checked, references in the built JS rewritten; public/ keeps the WAVs).
   Python needs `soundfile` (set FFROGUE_PYTHON if the PATH python lacks it). Result 2026-11-11: dist 1.2 GB,
