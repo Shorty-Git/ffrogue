@@ -11,10 +11,10 @@ export const BATTLE_ARENAS = {
     width: 960, height: 1024, floorTop: 0.54, floorBottom: 0.76,
   },
   ...reviewed,
-  // Per-arena placement override (2026-11-10 review of all arenas): Altissia's walkable ground is the stone
-  // quay right of centre; the default enemy slots stood over the tidal wave.
-  // Layer cells (house, wave) end where FFBE's narrow screen crops them; show only that central part.
-  altissia: { ...reviewed.altissia, enemyShiftX: 0.18, contentWidth: 0.7 },
+  // Altissia: layer cells (house, wave) end where FFBE's narrow screen crops them; show only that central part.
+  // Enemies stand in the shared slots, out on the water (developer playtest 2026-11-11; the quay shift of
+  // 2026-11-10 pushed them into the party).
+  altissia: { ...reviewed.altissia, contentWidth: 0.7 },
 } as const;
 
 export type BattleArenaKey = keyof typeof BATTLE_ARENAS;

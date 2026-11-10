@@ -6,7 +6,7 @@ import fs from 'node:fs';
 import {createHash} from 'node:crypto';
 import {ENEMY_CONTENT,STAGE_CONTENT,stageForArea,enemyAction} from '../src/run/stageContent.mjs';
 import {runEncounter} from '../src/run/runBalance.mjs';
-import {createRun,validateRun,rollParty,confirmParty,variantAreas,encounters,PROTOTYPE_AREAS,FINAL_STAGES,courseAreas,routeOptions,chooseRoute} from '../src/run/runState.mjs';
+import {createRun,validateRun,rollParty,confirmParty,variantAreas,encounters,PROTOTYPE_AREAS,FINAL_STAGES,courseAreas,routeOptions,chooseRoute,stageFamily} from '../src/run/runState.mjs';
 const read=p=>JSON.parse(fs.readFileSync(p,'utf8'));
 const hash=p=>createHash('sha256').update(fs.readFileSync(p)).digest('hex');
 
@@ -74,7 +74,7 @@ test('each seed picks two stages by difficulty, then the final boss room, with s
   const areas=variantAreas(seed);
   assert.deepEqual(areas,variantAreas(seed));
   assert.equal(areas.length,3);assert.equal(areas[2].stageId,'nibelheim');assert.equal(areas[2].final,true);
-  assert.equal(new Set(areas.slice(0,2).map(a=>a.stageId)).size,2);assert.ok(!areas.slice(0,2).some(a=>a.stageId==='nibelheim'||a.final));
+  assert.equal(new Set(areas.slice(0,2).map(a=>stageFamily(a.stageId))).size,2);assert.ok(!areas.slice(0,2).some(a=>a.stageId==='nibelheim'||a.final));
   const difficulty=areas.slice(0,2).map(a=>STAGE_CONTENT[a.stageId].difficulty);
   assert.ok(difficulty[0]<=difficulty[1]);
   const fights=encounters(areas);
@@ -85,7 +85,8 @@ test('each seed picks two stages by difficulty, then the final boss room, with s
  }
  // Every stage appears: route stages by seed, Nibelheim as the default final room; other final rooms
  // (Vector) only when the player picks them (see the route/boss choice test below).
- assert.deepEqual(stages,new Set(Object.keys(STAGE_CONTENT).filter(id=>id==='nibelheim'||!FINAL_STAGES.includes(id))));
+ // Whisperwood is retired from runs (2026-11-11); the reactor family never appears twice in one course.
+ assert.deepEqual(stages,new Set(Object.keys(STAGE_CONTENT).filter(id=>id!=='whisperwood'&&(id==='nibelheim'||!FINAL_STAGES.includes(id)))));
  assert.deepEqual(variants,new Set(['reactor','reactor_05']));
 });
 
@@ -112,7 +113,8 @@ test('the player picks the final boss room and, before each seeded area, one of 
  run=chooseRoute(run,first.options[1].stageId);assert.equal(run.areas[0].stageId,first.options[1].stageId);assert.equal(routeOptions(run),null);
  assert.throws(()=>chooseRoute({...run,routes:[]},'vector'),/route option/);
  run.encounter=encounters(run.areas).findIndex(f=>f.area===1);
- const second=routeOptions(run);assert.equal(second.area,1);assert.ok(second.options.every(o=>o.stageId!==run.routes[0]),'a chosen stage is not offered again');
+ const second=routeOptions(run);assert.equal(second.area,1);assert.ok(second.options.every(o=>stageFamily(o.stageId)!==stageFamily(run.routes[0])),'a chosen stage (or its family) is not offered again');
+ for(let i=0;i<40;i++){const r={phase:'battle',seed:'fam-'+i,encounter:0,areas:courseAreas('fam-'+i)};const o=routeOptions(r).options.map(a=>stageFamily(a.stageId));assert.equal(new Set(o).size,o.length);assert.ok(!o.includes('whisperwood'));}
  run=chooseRoute(run,second.options[0].stageId);
  run.encounter=encounters(run.areas).findIndex(f=>f.area===2);assert.equal(routeOptions(run),null,'the final room is fixed');
  void catalog;

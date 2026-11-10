@@ -24,6 +24,7 @@ export function variantAreas(seed:string):AreaConfig[];
 export const COURSE_LENGTH:number;
 export function courseAreas(seed:string,finalStage?:string):AreaConfig[];
 export function seedHash(value:unknown):number;
+export function stageFamily(stageId:string):string;
 export function nextRandom(run:RunState,stream:string):number;
 export type EncounterKind='normal'|'elite'|'boss';
 export const ENCOUNTER_LABELS:Record<EncounterKind,string>;

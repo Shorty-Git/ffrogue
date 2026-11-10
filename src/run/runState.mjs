@@ -20,13 +20,20 @@ export const COURSE_LENGTH=2;
  * it when the journey starts (Nibelheim / Sephiroth, Vector / Kefka); Nibelheim stays the default. */
 export const FINAL_STAGE='nibelheim';
 export const FINAL_STAGES=['nibelheim','vector','big_bridge','castle_exdeath'];
-const routePool=()=>Object.values(STAGE_CONTENT).filter(s=>!FINAL_STAGES.includes(s.id));
+// Route pool (2026-11-11 playtest): Whisperwood (static, not a mainline FF place) is retired from runs; the two
+// Mako Reactors share sweepers, so they count as one family and never both appear in one run.
+const RETIRED_STAGES=new Set(['whisperwood']);
+const STAGE_FAMILY={reactor_05:'mako_reactor'};
+export const stageFamily=id=>STAGE_FAMILY[id]??id;
+const routePool=()=>Object.values(STAGE_CONTENT).filter(s=>!FINAL_STAGES.includes(s.id)&&!RETIRED_STAGES.has(s.id));
+/** Seed-ordered stages, one per family. */
+const distinctFamilies=stages=>{const seen=new Set();return stages.filter(s=>{const f=stageFamily(s.id);if(seen.has(f))return false;seen.add(f);return true;});};
 const areaOf=stage=>({stageId:stage.id,name:stage.name,arena:stage.arena,normals:stage.normalFights});
 /** Run structure: each seeded area ends in an elite fight, the final area in the boss fight. */
 export function courseAreas(seed,finalStage=FINAL_STAGE){
  if(!FINAL_STAGES.includes(finalStage))throw Error('Unknown final boss room: '+finalStage);
  const pool=routePool();
- const picked=[...pool].sort((a,b)=>seedHash(seed+':course:'+a.id)-seedHash(seed+':course:'+b.id)).slice(0,COURSE_LENGTH);
+ const picked=distinctFamilies([...pool].sort((a,b)=>seedHash(seed+':course:'+a.id)-seedHash(seed+':course:'+b.id))).slice(0,COURSE_LENGTH);
  const final=STAGE_CONTENT[finalStage];
  return [...picked.sort((a,b)=>a.difficulty-b.difficulty||a.id.localeCompare(b.id)).map(areaOf),
   ...(final?[{stageId:final.id,name:final.name,arena:final.arena,normals:final.normalFights,final:true}]:[])];
@@ -38,9 +45,9 @@ export function routeOptions(run){
  if(!run||!['battle'].includes(run.phase))return null;
  const fight=encounters(run.areas)[run.encounter];
  if(!fight||fight.wave!==0||run.areas[fight.area].final||run.routes?.[fight.area])return null;
- const taken=new Set((run.routes??[]).filter(Boolean));
- const options=routePool().filter(s=>!taken.has(s.id))
-  .sort((a,b)=>seedHash(run.seed+':route:'+fight.area+':'+a.id)-seedHash(run.seed+':route:'+fight.area+':'+b.id)).slice(0,ROUTE_CHOICES);
+ const taken=new Set((run.routes??[]).filter(Boolean).map(stageFamily));
+ const options=distinctFamilies(routePool().filter(s=>!taken.has(stageFamily(s.id)))
+  .sort((a,b)=>seedHash(run.seed+':route:'+fight.area+':'+a.id)-seedHash(run.seed+':route:'+fight.area+':'+b.id))).slice(0,ROUTE_CHOICES);
  return options.length>1?{area:fight.area,options:options.map(areaOf)}:null;
 }
 export function chooseRoute(input,stageId){
