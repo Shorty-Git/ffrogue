@@ -1,0 +1,150 @@
+{
+  "schema": "enemy-skills-v1",
+  "key": "edea",
+  "monsterId": 305741000,
+  "dictionaryId": 3057410,
+  "skills": [
+    {
+      "id": "firaga",
+      "ffbeId": 218281,
+      "type": "MONSTER_SKILL",
+      "name": "Firaga",
+      "scope": "single_enemy",
+      "damageType": "magical",
+      "moveType": "stationary",
+      "multiplier": 1.2,
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "edea_firaga",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    },
+    {
+      "id": "blizzaga",
+      "ffbeId": 218282,
+      "type": "MONSTER_SKILL",
+      "name": "Blizzaga",
+      "scope": "single_enemy",
+      "damageType": "magical",
+      "moveType": "stationary",
+      "multiplier": 1.2,
+      "damageEvents": [
+        {
+          "frame": 112,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "edea_blizzaga",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    },
+    {
+      "id": "thundaga",
+      "ffbeId": 218283,
+      "type": "MONSTER_SKILL",
+      "name": "Thundaga",
+      "scope": "single_enemy",
+      "damageType": "magical",
+      "moveType": "stationary",
+      "multiplier": 1.2,
+      "damageEvents": [
+        {
+          "frame": 80,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "edea_thundaga",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    },
+    {
+      "id": "astral_punch",
+      "ffbeId": 218285,
+      "type": "MONSTER_SKILL",
+      "name": "Astral Punch",
+      "scope": "single_enemy",
+      "damageType": "physical",
+      "moveType": "stationary",
+      "multiplier": 1.2,
+      "damageEvents": [
+        {
+          "frame": 52,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "edea_astral_punch",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    },
+    {
+      "id": "maelstrom",
+      "ffbeId": 218286,
+      "type": "MONSTER_SKILL",
+      "name": "Maelstrom",
+      "scope": "all_enemies",
+      "damageType": "magical",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 52,
+          "weight": 0.07
+        },
+        {
+          "frame": 56,
+          "weight": 0.07
+        },
+        {
+          "frame": 60,
+          "weight": 0.07
+        },
+        {
+          "frame": 64,
+          "weight": 0.07
+        },
+        {
+          "frame": 68,
+          "weight": 0.07
+        },
+        {
+          "frame": 72,
+          "weight": 0.07
+        },
+        {
+          "frame": 76,
+          "weight": 0.07
+        },
+        {
+          "frame": 80,
+          "weight": 0.07
+        },
+        {
+          "frame": 84,
+          "weight": 0.07
+        },
+        {
+          "frame": 88,
+          "weight": 0.07
+        },
+        {
+          "frame": 90,
+          "weight": 0.07
+        },
+        {
+          "frame": 92,
+          "weight": 0.07
+        },
+        {
+          "frame": 94,
+          "weight": 0.07
+        },
+        {
+          "frame": 96,
+          "weight": 0.09
+        }
+      ],
+      "scenePresentation": "edea_maelstrom",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value. Not reconstructed: original process(es) 6 beyond the damage."
+    }
+  ]
+}

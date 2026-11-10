@@ -1,0 +1,70 @@
+{
+  "schema": "enemy-skills-v1",
+  "key": "garland",
+  "monsterId": 225601000,
+  "dictionaryId": 2256010,
+  "skills": [
+    {
+      "id": "power_break",
+      "ffbeId": 191500,
+      "type": "MONSTER_SKILL",
+      "name": "Power Break",
+      "scope": "single_enemy",
+      "damageType": "physical",
+      "heroEffects": [
+        {
+          "kind": "break",
+          "stat": "attack",
+          "amount": 0.4,
+          "turns": 3
+        }
+      ],
+      "moveType": "stationary",
+      "multiplier": 1.2,
+      "damageEvents": [
+        {
+          "frame": 40,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "garland_power_break",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value. Not reconstructed: original process(es) 24 beyond the damage."
+    },
+    {
+      "id": "sweep",
+      "ffbeId": 195910,
+      "type": "MONSTER_SKILL",
+      "name": "Sweep",
+      "scope": "all_enemies",
+      "damageType": "physical",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "garland_sweep",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    },
+    {
+      "id": "darkga",
+      "ffbeId": 198390,
+      "type": "MONSTER_SKILL",
+      "name": "Darkga",
+      "scope": "all_enemies",
+      "damageType": "magical",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 230,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "garland_darkga",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    }
+  ]
+}

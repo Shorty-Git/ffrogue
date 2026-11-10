@@ -1,0 +1,152 @@
+{
+  "schema": "stage-recipe-v1",
+  "key": "chaos_shrine",
+  "name": "Chaos Shrine",
+  "theme": "FINAL FANTASY",
+  "series": "FFI",
+  "arena": {
+    "key": "chaos_shrine",
+    "battleBgId": 121104,
+    "title": "FFI",
+    "label": "Chaos Shrine",
+    "floor": [
+      0.58,
+      0.84
+    ],
+    "worldIdentity": "Reviewed visual identification (2026-11-11): misty ruined shrine with blue torches (battle_bg_2008_17) read as FFI's Chaos Shrine; the original Chaos description places him there, Garland is the former knight of Cornelia and Lich the Fiend of Earth. No original stage-to-world join."
+  },
+  "music": {
+    "normal": {
+      "resourceId": 4001501,
+      "title": "Battle (Pixel Remaster)",
+      "game": "FFI"
+    },
+    "boss": {
+      "resourceId": 4001502,
+      "title": "Boss Battle (Pixel Remaster)",
+      "game": "FFI"
+    }
+  },
+  "enemies": [
+    {
+      "key": "garland",
+      "dictionaryId": 2256010,
+      "name": "Garland",
+      "scale": 1.5,
+      "movement": "approach",
+      "monsterId": "225601000"
+    },
+    {
+      "key": "lich",
+      "dictionaryId": 4120711,
+      "name": "Lich",
+      "scale": 1.6,
+      "movement": "stationary",
+      "monsterId": "412071100"
+    }
+  ],
+  "boss": {
+    "key": "chaos",
+    "dictionaryId": 4051810,
+    "name": "Chaos",
+    "scale": 2,
+    "movement": "stationary",
+    "note": "FFBE boss Chaos (dictionary 4051810, Chaos Shrine); final boss with his original moves (import_enemy_skills.mjs). Flare is left out: its red cloud particle uses an unsupported texture combination and shows as a square.",
+    "behavior": {
+      "phaseAt": 0.5,
+      "phaseName": "Wrath of Chaos",
+      "phaseMultiplier": 1.3,
+      "pattern": [
+        {
+          "kind": "attack",
+          "name": "Dread Strike",
+          "multiplier": 1.1,
+          "scope": "single",
+          "skill": "dread_strike"
+        },
+        {
+          "kind": "prepare",
+          "name": "Chaos calls the four elements",
+          "next": "Firaga"
+        },
+        {
+          "kind": "attack",
+          "name": "Firaga",
+          "multiplier": 1.2,
+          "scope": "party",
+          "skill": "firaga"
+        },
+        {
+          "kind": "attack",
+          "name": "Thunder",
+          "multiplier": 1.1,
+          "scope": "single",
+          "skill": "thunder"
+        },
+        {
+          "kind": "prepare",
+          "name": "The tides rise",
+          "next": "Tsunami"
+        },
+        {
+          "kind": "attack",
+          "name": "Tsunami",
+          "multiplier": 1.3,
+          "scope": "party",
+          "skill": "tsunami"
+        },
+        {
+          "kind": "attack",
+          "name": "Blizzard",
+          "multiplier": 1.1,
+          "scope": "single",
+          "skill": "blizzard"
+        },
+        {
+          "kind": "prepare",
+          "name": "The earth heaves",
+          "next": "Earthquake"
+        },
+        {
+          "kind": "attack",
+          "name": "Earthquake",
+          "multiplier": 1.3,
+          "scope": "party",
+          "skill": "earthquake"
+        },
+        {
+          "kind": "attack",
+          "name": "Dread Strike",
+          "multiplier": 1.1,
+          "scope": "single",
+          "skill": "dread_strike"
+        },
+        {
+          "kind": "prepare",
+          "name": "Chaos gathers all that is dark",
+          "next": "Ultimate Chaos"
+        },
+        {
+          "kind": "attack",
+          "name": "Ultimate Chaos",
+          "multiplier": 1.6,
+          "scope": "party",
+          "skill": "ultimate_chaos"
+        }
+      ]
+    },
+    "monsterId": "405181000"
+  },
+  "formations": [
+    [
+      "top",
+      "bottom"
+    ],
+    [
+      "center"
+    ]
+  ],
+  "difficulty": 1.4,
+  "normalFights": 1,
+  "rewardCategory": "chaos-shrine-relic"
+}

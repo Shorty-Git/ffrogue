@@ -1,0 +1,392 @@
+{
+  "schema": "enemy-skills-v1",
+  "key": "chaos",
+  "monsterId": 405181000,
+  "dictionaryId": 4051810,
+  "skills": [
+    {
+      "id": "blizzaga",
+      "ffbeId": 216510,
+      "type": "MONSTER_SKILL",
+      "name": "Blizzaga",
+      "scope": "all_enemies",
+      "damageType": "magical",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 150,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "chaos_blizzaga",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    },
+    {
+      "id": "blizzard",
+      "ffbeId": 216511,
+      "type": "MONSTER_SKILL",
+      "name": "Blizzard",
+      "scope": "single_enemy",
+      "damageType": "magical",
+      "moveType": "stationary",
+      "multiplier": 1.2,
+      "damageEvents": [
+        {
+          "frame": 130,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "chaos_blizzard",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    },
+    {
+      "id": "thunder",
+      "ffbeId": 216512,
+      "type": "MONSTER_SKILL",
+      "name": "Thunder",
+      "scope": "single_enemy",
+      "damageType": "magical",
+      "moveType": "stationary",
+      "multiplier": 1.2,
+      "damageEvents": [
+        {
+          "frame": 70,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "chaos_thunder",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    },
+    {
+      "id": "thundaga",
+      "ffbeId": 216513,
+      "type": "MONSTER_SKILL",
+      "name": "Thundaga",
+      "scope": "all_enemies",
+      "damageType": "magical",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 70,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "chaos_thundaga",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    },
+    {
+      "id": "fire",
+      "ffbeId": 216515,
+      "type": "MONSTER_SKILL",
+      "name": "Fire",
+      "scope": "single_enemy",
+      "damageType": "magical",
+      "moveType": "stationary",
+      "multiplier": 1.2,
+      "damageEvents": [
+        {
+          "frame": 80,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "chaos_fire",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    },
+    {
+      "id": "firaga",
+      "ffbeId": 216516,
+      "type": "MONSTER_SKILL",
+      "name": "Firaga",
+      "scope": "all_enemies",
+      "damageType": "magical",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 150,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "chaos_firaga",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    },
+    {
+      "id": "flare",
+      "ffbeId": 216517,
+      "type": "MONSTER_SKILL",
+      "name": "Flare",
+      "scope": "single_enemy",
+      "damageType": "magical",
+      "moveType": "stationary",
+      "multiplier": 1.2,
+      "damageEvents": [
+        {
+          "frame": 240,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "chaos_flare",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    },
+    {
+      "id": "dread_strike",
+      "ffbeId": 216518,
+      "type": "MONSTER_SKILL",
+      "name": "Dread Strike",
+      "scope": "single_enemy",
+      "damageType": "physical",
+      "moveType": "stationary",
+      "multiplier": 1.2,
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.33
+        },
+        {
+          "frame": 62,
+          "weight": 0.33
+        },
+        {
+          "frame": 82,
+          "weight": 0.34
+        }
+      ],
+      "scenePresentation": "chaos_dread_strike",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value. Not reconstructed: original process(es) 88, 6 beyond the damage."
+    },
+    {
+      "id": "blaze",
+      "ffbeId": 216519,
+      "type": "MONSTER_SKILL",
+      "name": "Blaze",
+      "scope": "all_enemies",
+      "damageType": "magical",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 210,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "chaos_blaze",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    },
+    {
+      "id": "tsunami",
+      "ffbeId": 216520,
+      "type": "MONSTER_SKILL",
+      "name": "Tsunami",
+      "scope": "all_enemies",
+      "damageType": "magical",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 133,
+          "weight": 0.08
+        },
+        {
+          "frame": 145,
+          "weight": 0.08
+        },
+        {
+          "frame": 157,
+          "weight": 0.08
+        },
+        {
+          "frame": 169,
+          "weight": 0.08
+        },
+        {
+          "frame": 181,
+          "weight": 0.08
+        },
+        {
+          "frame": 193,
+          "weight": 0.08
+        },
+        {
+          "frame": 205,
+          "weight": 0.08
+        },
+        {
+          "frame": 217,
+          "weight": 0.08
+        },
+        {
+          "frame": 229,
+          "weight": 0.08
+        },
+        {
+          "frame": 241,
+          "weight": 0.08
+        },
+        {
+          "frame": 253,
+          "weight": 0.08
+        },
+        {
+          "frame": 265,
+          "weight": 0.12
+        }
+      ],
+      "scenePresentation": "chaos_tsunami",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    },
+    {
+      "id": "cyclone",
+      "ffbeId": 216521,
+      "type": "MONSTER_SKILL",
+      "name": "Cyclone",
+      "scope": "all_enemies",
+      "damageType": "magical",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 80,
+          "weight": 0.12
+        },
+        {
+          "frame": 92,
+          "weight": 0.08
+        },
+        {
+          "frame": 104,
+          "weight": 0.08
+        },
+        {
+          "frame": 116,
+          "weight": 0.08
+        },
+        {
+          "frame": 128,
+          "weight": 0.08
+        },
+        {
+          "frame": 140,
+          "weight": 0.08
+        },
+        {
+          "frame": 152,
+          "weight": 0.08
+        },
+        {
+          "frame": 164,
+          "weight": 0.08
+        },
+        {
+          "frame": 176,
+          "weight": 0.08
+        },
+        {
+          "frame": 188,
+          "weight": 0.08
+        },
+        {
+          "frame": 200,
+          "weight": 0.08
+        },
+        {
+          "frame": 212,
+          "weight": 0.08
+        }
+      ],
+      "scenePresentation": "chaos_cyclone",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    },
+    {
+      "id": "earthquake",
+      "ffbeId": 216522,
+      "type": "MONSTER_SKILL",
+      "name": "Earthquake",
+      "scope": "all_enemies",
+      "damageType": "magical",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 160,
+          "weight": 0.12
+        },
+        {
+          "frame": 182,
+          "weight": 0.13
+        },
+        {
+          "frame": 203,
+          "weight": 0.12
+        },
+        {
+          "frame": 225,
+          "weight": 0.13
+        },
+        {
+          "frame": 248,
+          "weight": 0.12
+        },
+        {
+          "frame": 271,
+          "weight": 0.13
+        },
+        {
+          "frame": 293,
+          "weight": 0.12
+        },
+        {
+          "frame": 316,
+          "weight": 0.13
+        }
+      ],
+      "scenePresentation": "chaos_earthquake",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    },
+    {
+      "id": "ultimate_chaos",
+      "ffbeId": 216525,
+      "type": "MONSTER_SKILL",
+      "name": "Ultimate Chaos",
+      "scope": "all_enemies",
+      "damageType": "magical",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 120,
+          "weight": 0.3333333333333333
+        },
+        {
+          "frame": 120,
+          "weight": 0.3333333333333333
+        },
+        {
+          "frame": 316,
+          "weight": 0.3333333333333333
+        }
+      ],
+      "scenePresentation": "chaos_ultimate_chaos",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value. Not reconstructed: original process(es) 59, 10 beyond the damage."
+    },
+    {
+      "id": "grand_chaos",
+      "ffbeId": 216526,
+      "type": "MONSTER_SKILL",
+      "name": "Grand Chaos",
+      "scope": "all_enemies",
+      "damageType": "physical",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "chaos_grand_chaos",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    }
+  ]
+}

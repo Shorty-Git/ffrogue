@@ -102,7 +102,7 @@ test('music recommendations separate normal, boss and special roles',()=>{
 });
 
 test('the player picks the final boss room and, before each seeded area, one of two routes',()=>{
- assert.deepEqual(FINAL_STAGES,['nibelheim','vector','big_bridge','castle_exdeath']);
+ assert.deepEqual(FINAL_STAGES,['nibelheim','vector','big_bridge','castle_exdeath','deling_city','chaos_shrine']);
  const kefka=courseAreas('pick-1','vector');assert.equal(kefka.at(-1).stageId,'vector');assert.equal(kefka.at(-1).final,true);
  assert.ok(kefka.slice(0,2).every(a=>!FINAL_STAGES.includes(a.stageId)));assert.throws(()=>courseAreas('x','besaid'),/final boss room/);
  const catalog=JSON.parse(JSON.stringify({}));

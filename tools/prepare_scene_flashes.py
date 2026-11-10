@@ -221,6 +221,47 @@ def _screen_sized_quad(effect, node, plan, nodes, members):
                        'on a screen-anchored effect; fitted to the visible battlefield')
 
 
+SCREEN_MODEL_MIN = 500
+
+
+def _screen_sized_model(effect, node, plan, nodes, members):
+    """A static unit-XY rectangle Model authored at screen size (>= SCREEN_QUAD_MIN on both axes) on a
+    screen-anchored effect is a full-screen layer whatever its texture (2026-11-11: enemy skills such as
+    Edea's Maelstrom, Chaos's Earthquake and Ultimate Chaos use cloud/aura "board wall" models of
+    500-700 x 800 units). At source size they show as a box with a hard edge across the arena; stretched,
+    the pattern reads as the same layer. Colour/alpha curves, UV scroll and blend stay source data."""
+    binding = node.get('resourceBindings') or {}
+    if node['typeId'] != 6 or not binding.get('model') or not binding.get('texture1') or binding.get('texture2'):
+        return None
+    mesh = effect['meshes'].get(binding['model']['name'])
+    if not mesh or mesh['triangleCount'] != 2:
+        return None
+    if sorted(v['position'] for v in mesh['vertices']) != sorted([[x, y, 0] for x in [-.5, .5] for y in [-.5, .5]]):
+        return None
+    # Fixed frame: no transform curves or randomness and no rotation; a constant offset is fine (the
+    # coverage replaces the placement).
+    transform = node.get('staticVectors', {}).get('transform', {})
+    if any(curve.get('keys') for name, curve in node.get('vectorCurves', {}).items() if name.startswith(('translation', 'rotation', 'scale'))):
+        return None
+    if any(any(value) for channel in transform.values() for key, value in channel.items() if key != 'valueInitial'):
+        return None
+    if transform.get('rotation', {}).get('valueInitial', [0, 0, 0]) != [0, 0, 0]:
+        return None
+    parent = node.get('parentIndex')
+    while parent is not None:
+        ancestor = next((n for n in nodes if n.get('index') == parent), nodes[parent])
+        if ancestor['typeId'] != 0 or ancestor['staticVectors']['transform']['scale']['valueInitial'] != [1, 1, 1]:
+            return None
+        parent = ancestor.get('parentIndex')
+    width, height = _effective_size(node, nodes, members)
+    if min(width, height) < SCREEN_MODEL_MIN:
+        return None
+    sha, _ = _texture_extrema(effect, node, plan)
+    return dict(region='arena', primitive='unit-xy-model', textureSha256=sha, modelSha256=mesh['sourceSha256'],
+                origin=f'Automatic screen layer: static unit-XY Model authored at screen size ({width:g} x {height:g} >= {SCREEN_MODEL_MIN}) '
+                       'on a screen-anchored effect; fitted to the visible battlefield')
+
+
 def _screen_sized_particle(effect, node, plan, nodes, members):
     """A static, opaque Basic Particle authored at screen size on a screen-anchored effect is a
     backdrop (Squall's Lion Heart: a black plane and a dark vertical-gradient plane, 360 units).
@@ -293,7 +334,8 @@ def annotate_screen_backdrops(plan):
                 continue
             quad = (_opaque_backdrop_quad(effect, node, plan, nodes, longest) or _backdrop_particle(effect, node, plan, longest)
                     or _screen_sized_particle(effect, node, plan, nodes, members)
-                    or _screen_sized_quad(effect, node, plan, nodes, members))
+                    or _screen_sized_quad(effect, node, plan, nodes, members)
+                    or _screen_sized_model(effect, node, plan, nodes, members))
             if quad:
                 node['presentationCoverage'] = quad
                 count += 1
@@ -355,6 +397,22 @@ def _white_flash_quad(effect, node, plan, nodes):
                        'alpha rises and falls; fitted to the visible battlefield instead of a hard-edged box')
 
 
+def annotate_screen_models(plan):
+    """_screen_sized_model for every effect, whatever its anchor: a screen-sized wall anchored on the
+    target side (Chaos's Ultimate Chaos) otherwise covers only that side and cuts the arena in two."""
+    count = 0
+    for index, effect in enumerate(plan['effects']):
+        members = [m for m in plan['members'] if m['effect'] == index]
+        for node in effect['nodes']:
+            if node.get('presentationCoverage'):
+                continue
+            model = _screen_sized_model(effect, node, plan, effect['nodes'], members)
+            if model:
+                node['presentationCoverage'] = model
+                count += 1
+    return count
+
+
 def annotate_white_flashes(plan):
     """Generic rule for every effect, whatever its anchor (see _white_flash_quad)."""
     count = 0
@@ -379,5 +437,5 @@ if __name__ == '__main__':
     plan = json.loads(args.plan.read_text(encoding='utf-8'))
     count = (0 if args.skip_particles else annotate(plan))+annotate_arena_surfaces(plan,args.arena_surfaces)
     if args.screen_backdrops:
-        count += annotate_screen_backdrops(plan) + annotate_white_flashes(plan)
+        count += annotate_screen_backdrops(plan) + annotate_screen_models(plan) + annotate_white_flashes(plan)
     print(json.dumps(dict(plan=plan, flashPlanes=count)))

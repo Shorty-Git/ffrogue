@@ -375,6 +375,232 @@ export const IMPORTED_ENEMIES = {
       ]
     }
   },
+  "garland": {
+    "key": "garland",
+    "name": "Garland",
+    "spriteId": "2256010",
+    "monsterId": "225601000",
+    "dictionaryId": 2256010,
+    "scale": 1.5,
+    "attack": {
+      "clip": "atk",
+      "impactFrame": 1,
+      "movement": "approach"
+    },
+    "audio": []
+  },
+  "lich": {
+    "key": "lich",
+    "name": "Lich",
+    "spriteId": "4120711",
+    "monsterId": "412071100",
+    "dictionaryId": 4120711,
+    "scale": 1.6,
+    "attack": {
+      "clip": "atk",
+      "impactFrame": 1,
+      "movement": "stationary"
+    },
+    "audio": []
+  },
+  "chaos": {
+    "key": "chaos",
+    "name": "Chaos",
+    "spriteId": "4051810",
+    "monsterId": "405181000",
+    "dictionaryId": 4051810,
+    "scale": 2,
+    "attack": {
+      "clip": "atk",
+      "impactFrame": 1,
+      "movement": "stationary"
+    },
+    "audio": [],
+    "behavior": {
+      "phaseAt": 0.5,
+      "phaseName": "Wrath of Chaos",
+      "phaseMultiplier": 1.3,
+      "pattern": [
+        {
+          "kind": "attack",
+          "name": "Dread Strike",
+          "multiplier": 1.1,
+          "scope": "single",
+          "skill": "dread_strike"
+        },
+        {
+          "kind": "prepare",
+          "name": "Chaos calls the four elements",
+          "next": "Firaga"
+        },
+        {
+          "kind": "attack",
+          "name": "Firaga",
+          "multiplier": 1.2,
+          "scope": "party",
+          "skill": "firaga"
+        },
+        {
+          "kind": "attack",
+          "name": "Thunder",
+          "multiplier": 1.1,
+          "scope": "single",
+          "skill": "thunder"
+        },
+        {
+          "kind": "prepare",
+          "name": "The tides rise",
+          "next": "Tsunami"
+        },
+        {
+          "kind": "attack",
+          "name": "Tsunami",
+          "multiplier": 1.3,
+          "scope": "party",
+          "skill": "tsunami"
+        },
+        {
+          "kind": "attack",
+          "name": "Blizzard",
+          "multiplier": 1.1,
+          "scope": "single",
+          "skill": "blizzard"
+        },
+        {
+          "kind": "prepare",
+          "name": "The earth heaves",
+          "next": "Earthquake"
+        },
+        {
+          "kind": "attack",
+          "name": "Earthquake",
+          "multiplier": 1.3,
+          "scope": "party",
+          "skill": "earthquake"
+        },
+        {
+          "kind": "attack",
+          "name": "Dread Strike",
+          "multiplier": 1.1,
+          "scope": "single",
+          "skill": "dread_strike"
+        },
+        {
+          "kind": "prepare",
+          "name": "Chaos gathers all that is dark",
+          "next": "Ultimate Chaos"
+        },
+        {
+          "kind": "attack",
+          "name": "Ultimate Chaos",
+          "multiplier": 1.6,
+          "scope": "party",
+          "skill": "ultimate_chaos"
+        }
+      ]
+    }
+  },
+  "raijin": {
+    "key": "raijin",
+    "name": "Raijin",
+    "spriteId": "2251810",
+    "monsterId": "225181000",
+    "dictionaryId": 2251810,
+    "scale": 1.5,
+    "attack": {
+      "clip": "atk",
+      "impactFrame": 1,
+      "movement": "approach"
+    },
+    "audio": []
+  },
+  "fujin": {
+    "key": "fujin",
+    "name": "Fujin",
+    "spriteId": "2251710",
+    "monsterId": "225171000",
+    "dictionaryId": 2251710,
+    "scale": 1.5,
+    "attack": {
+      "clip": "atk",
+      "impactFrame": 1,
+      "movement": "approach"
+    },
+    "audio": []
+  },
+  "edea": {
+    "key": "edea",
+    "name": "Edea",
+    "spriteId": "3057410",
+    "monsterId": "305741000",
+    "dictionaryId": 3057410,
+    "scale": 2,
+    "attack": {
+      "clip": "atk",
+      "impactFrame": 1,
+      "movement": "stationary"
+    },
+    "audio": [],
+    "behavior": {
+      "phaseAt": 0.5,
+      "phaseName": "Sorceress unleashed",
+      "phaseMultiplier": 1.3,
+      "pattern": [
+        {
+          "kind": "attack",
+          "name": "Thundaga",
+          "multiplier": 1.1,
+          "scope": "single",
+          "skill": "thundaga"
+        },
+        {
+          "kind": "prepare",
+          "name": "Edea gathers the sorceress power",
+          "next": "Maelstrom"
+        },
+        {
+          "kind": "attack",
+          "name": "Maelstrom",
+          "multiplier": 1.3,
+          "scope": "party",
+          "skill": "maelstrom"
+        },
+        {
+          "kind": "attack",
+          "name": "Astral Punch",
+          "multiplier": 1.2,
+          "scope": "single",
+          "skill": "astral_punch"
+        },
+        {
+          "kind": "attack",
+          "name": "Firaga",
+          "multiplier": 1.1,
+          "scope": "single",
+          "skill": "firaga"
+        },
+        {
+          "kind": "prepare",
+          "name": "The air grows cold",
+          "next": "Maelstrom"
+        },
+        {
+          "kind": "attack",
+          "name": "Maelstrom",
+          "multiplier": 1.4,
+          "scope": "party",
+          "skill": "maelstrom"
+        },
+        {
+          "kind": "attack",
+          "name": "Thundaga",
+          "multiplier": 1.1,
+          "scope": "single",
+          "skill": "thundaga"
+        }
+      ]
+    }
+  },
   "g_soldier": {
     "key": "g_soldier",
     "name": "G-Soldier",
@@ -915,6 +1141,76 @@ export const IMPORTED_STAGES = {
       "musicResourceId": 400898,
       "musicSeries": "FFV",
       "bossMusicResourceId": 400900,
+      "musicAssignment": "Original series battle and boss themes (tools/import_stage.mjs)",
+      "soundCues": []
+    }
+  },
+  "chaos_shrine": {
+    "id": "chaos_shrine",
+    "name": "Chaos Shrine",
+    "theme": "FINAL FANTASY",
+    "arena": "chaos_shrine",
+    "source": {
+      "battleBgId": 121104,
+      "file": "battle_bg_2008_17.jpg",
+      "worldIdentity": "Reviewed visual identification (2026-11-11): misty ruined shrine with blue torches (battle_bg_2008_17) read as FFI's Chaos Shrine; the original Chaos description places him there, Garland is the former knight of Cornelia and Lich the Fiend of Earth. No original stage-to-world join."
+    },
+    "enemyPool": [
+      "garland",
+      "lich"
+    ],
+    "formations": [
+      [
+        "top",
+        "bottom"
+      ],
+      [
+        "center"
+      ]
+    ],
+    "bossId": "chaos",
+    "difficulty": 1.4,
+    "rewardCategory": "chaos-shrine-relic",
+    "normalFights": 1,
+    "audio": {
+      "musicResourceId": 4001501,
+      "musicSeries": "FFI",
+      "bossMusicResourceId": 4001502,
+      "musicAssignment": "Original series battle and boss themes (tools/import_stage.mjs)",
+      "soundCues": []
+    }
+  },
+  "deling_city": {
+    "id": "deling_city",
+    "name": "Deling City",
+    "theme": "FINAL FANTASY VIII",
+    "arena": "deling_city",
+    "source": {
+      "battleBgId": 121504,
+      "file": "battle_bg_2016_13.jpg",
+      "worldIdentity": "Reviewed visual identification (2026-11-11): moonlit stone rooftop (battle_bg_2016_13, the FFVIII crossover set that also holds Dollet) read as Deling City on the night of the sorceress parade. Edea, Raijin and Fujin are FFVIII characters per their original descriptions; no original stage-to-world join."
+    },
+    "enemyPool": [
+      "raijin",
+      "fujin"
+    ],
+    "formations": [
+      [
+        "top",
+        "bottom"
+      ],
+      [
+        "center"
+      ]
+    ],
+    "bossId": "edea",
+    "difficulty": 1.4,
+    "rewardCategory": "deling-relic",
+    "normalFights": 1,
+    "audio": {
+      "musicResourceId": 400867,
+      "musicSeries": "FFVIII",
+      "bossMusicResourceId": 400969,
       "musicAssignment": "Original series battle and boss themes (tools/import_stage.mjs)",
       "soundCues": []
     }

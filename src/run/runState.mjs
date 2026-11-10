@@ -19,7 +19,7 @@ export const COURSE_LENGTH=2;
 /** Developer decision 2026-11-10: every run ends in a final boss room. Since 2026-11-11 the player picks
  * it when the journey starts (Nibelheim / Sephiroth, Vector / Kefka); Nibelheim stays the default. */
 export const FINAL_STAGE='nibelheim';
-export const FINAL_STAGES=['nibelheim','vector','big_bridge','castle_exdeath'];
+export const FINAL_STAGES=['nibelheim','vector','big_bridge','castle_exdeath','deling_city','chaos_shrine'];
 // Route pool (2026-11-11 playtest): Whisperwood (static, not a mainline FF place) is retired from runs; the two
 // Mako Reactors share sweepers, so they count as one family and never both appear in one run.
 const RETIRED_STAGES=new Set(['whisperwood']);

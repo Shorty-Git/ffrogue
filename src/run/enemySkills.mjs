@@ -103,6 +103,336 @@ export const ENEMY_SKILLS = {
       ]
     }
   },
+  "chaos": {
+    "blizzaga": {
+      "name": "Blizzaga",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "chaos_blizzaga",
+      "damageEvents": [
+        {
+          "frame": 150,
+          "weight": 1
+        }
+      ],
+      "damageType": "magical"
+    },
+    "blizzard": {
+      "name": "Blizzard",
+      "scope": "single",
+      "multiplier": 1.2,
+      "origin": "source",
+      "presentation": "chaos_blizzard",
+      "damageEvents": [
+        {
+          "frame": 130,
+          "weight": 1
+        }
+      ],
+      "damageType": "magical"
+    },
+    "thunder": {
+      "name": "Thunder",
+      "scope": "single",
+      "multiplier": 1.2,
+      "origin": "source",
+      "presentation": "chaos_thunder",
+      "damageEvents": [
+        {
+          "frame": 70,
+          "weight": 1
+        }
+      ],
+      "damageType": "magical"
+    },
+    "thundaga": {
+      "name": "Thundaga",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "chaos_thundaga",
+      "damageEvents": [
+        {
+          "frame": 70,
+          "weight": 1
+        }
+      ],
+      "damageType": "magical"
+    },
+    "fire": {
+      "name": "Fire",
+      "scope": "single",
+      "multiplier": 1.2,
+      "origin": "source",
+      "presentation": "chaos_fire",
+      "damageEvents": [
+        {
+          "frame": 80,
+          "weight": 1
+        }
+      ],
+      "damageType": "magical"
+    },
+    "firaga": {
+      "name": "Firaga",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "chaos_firaga",
+      "damageEvents": [
+        {
+          "frame": 150,
+          "weight": 1
+        }
+      ],
+      "damageType": "magical"
+    },
+    "flare": {
+      "name": "Flare",
+      "scope": "single",
+      "multiplier": 1.2,
+      "origin": "source",
+      "presentation": "chaos_flare",
+      "damageEvents": [
+        {
+          "frame": 240,
+          "weight": 1
+        }
+      ],
+      "damageType": "magical"
+    },
+    "dread_strike": {
+      "name": "Dread Strike",
+      "scope": "single",
+      "multiplier": 1.2,
+      "origin": "source",
+      "presentation": "chaos_dread_strike",
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.33
+        },
+        {
+          "frame": 62,
+          "weight": 0.33
+        },
+        {
+          "frame": 82,
+          "weight": 0.34
+        }
+      ],
+      "damageType": "physical"
+    },
+    "blaze": {
+      "name": "Blaze",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "chaos_blaze",
+      "damageEvents": [
+        {
+          "frame": 210,
+          "weight": 1
+        }
+      ],
+      "damageType": "magical"
+    },
+    "tsunami": {
+      "name": "Tsunami",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "chaos_tsunami",
+      "damageEvents": [
+        {
+          "frame": 133,
+          "weight": 0.08
+        },
+        {
+          "frame": 145,
+          "weight": 0.08
+        },
+        {
+          "frame": 157,
+          "weight": 0.08
+        },
+        {
+          "frame": 169,
+          "weight": 0.08
+        },
+        {
+          "frame": 181,
+          "weight": 0.08
+        },
+        {
+          "frame": 193,
+          "weight": 0.08
+        },
+        {
+          "frame": 205,
+          "weight": 0.08
+        },
+        {
+          "frame": 217,
+          "weight": 0.08
+        },
+        {
+          "frame": 229,
+          "weight": 0.08
+        },
+        {
+          "frame": 241,
+          "weight": 0.08
+        },
+        {
+          "frame": 253,
+          "weight": 0.08
+        },
+        {
+          "frame": 265,
+          "weight": 0.12
+        }
+      ],
+      "damageType": "magical"
+    },
+    "cyclone": {
+      "name": "Cyclone",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "chaos_cyclone",
+      "damageEvents": [
+        {
+          "frame": 80,
+          "weight": 0.12
+        },
+        {
+          "frame": 92,
+          "weight": 0.08
+        },
+        {
+          "frame": 104,
+          "weight": 0.08
+        },
+        {
+          "frame": 116,
+          "weight": 0.08
+        },
+        {
+          "frame": 128,
+          "weight": 0.08
+        },
+        {
+          "frame": 140,
+          "weight": 0.08
+        },
+        {
+          "frame": 152,
+          "weight": 0.08
+        },
+        {
+          "frame": 164,
+          "weight": 0.08
+        },
+        {
+          "frame": 176,
+          "weight": 0.08
+        },
+        {
+          "frame": 188,
+          "weight": 0.08
+        },
+        {
+          "frame": 200,
+          "weight": 0.08
+        },
+        {
+          "frame": 212,
+          "weight": 0.08
+        }
+      ],
+      "damageType": "magical"
+    },
+    "earthquake": {
+      "name": "Earthquake",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "chaos_earthquake",
+      "damageEvents": [
+        {
+          "frame": 160,
+          "weight": 0.12
+        },
+        {
+          "frame": 182,
+          "weight": 0.13
+        },
+        {
+          "frame": 203,
+          "weight": 0.12
+        },
+        {
+          "frame": 225,
+          "weight": 0.13
+        },
+        {
+          "frame": 248,
+          "weight": 0.12
+        },
+        {
+          "frame": 271,
+          "weight": 0.13
+        },
+        {
+          "frame": 293,
+          "weight": 0.12
+        },
+        {
+          "frame": 316,
+          "weight": 0.13
+        }
+      ],
+      "damageType": "magical"
+    },
+    "ultimate_chaos": {
+      "name": "Ultimate Chaos",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "chaos_ultimate_chaos",
+      "damageEvents": [
+        {
+          "frame": 120,
+          "weight": 0.3333333333333333
+        },
+        {
+          "frame": 120,
+          "weight": 0.3333333333333333
+        },
+        {
+          "frame": 316,
+          "weight": 0.3333333333333333
+        }
+      ],
+      "damageType": "magical"
+    },
+    "grand_chaos": {
+      "name": "Grand Chaos",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "chaos_grand_chaos",
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 1
+        }
+      ],
+      "damageType": "physical"
+    }
+  },
   "condor": {
     "beak": {
       "name": "Beak",
@@ -141,6 +471,130 @@ export const ENEMY_SKILLS = {
         }
       ],
       "damageType": "physical"
+    }
+  },
+  "edea": {
+    "firaga": {
+      "name": "Firaga",
+      "scope": "single",
+      "multiplier": 1.2,
+      "origin": "source",
+      "presentation": "edea_firaga",
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 1
+        }
+      ],
+      "damageType": "magical"
+    },
+    "blizzaga": {
+      "name": "Blizzaga",
+      "scope": "single",
+      "multiplier": 1.2,
+      "origin": "source",
+      "presentation": "edea_blizzaga",
+      "damageEvents": [
+        {
+          "frame": 112,
+          "weight": 1
+        }
+      ],
+      "damageType": "magical"
+    },
+    "thundaga": {
+      "name": "Thundaga",
+      "scope": "single",
+      "multiplier": 1.2,
+      "origin": "source",
+      "presentation": "edea_thundaga",
+      "damageEvents": [
+        {
+          "frame": 80,
+          "weight": 1
+        }
+      ],
+      "damageType": "magical"
+    },
+    "astral_punch": {
+      "name": "Astral Punch",
+      "scope": "single",
+      "multiplier": 1.2,
+      "origin": "source",
+      "presentation": "edea_astral_punch",
+      "damageEvents": [
+        {
+          "frame": 52,
+          "weight": 1
+        }
+      ],
+      "damageType": "physical"
+    },
+    "maelstrom": {
+      "name": "Maelstrom",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "edea_maelstrom",
+      "damageEvents": [
+        {
+          "frame": 52,
+          "weight": 0.07
+        },
+        {
+          "frame": 56,
+          "weight": 0.07
+        },
+        {
+          "frame": 60,
+          "weight": 0.07
+        },
+        {
+          "frame": 64,
+          "weight": 0.07
+        },
+        {
+          "frame": 68,
+          "weight": 0.07
+        },
+        {
+          "frame": 72,
+          "weight": 0.07
+        },
+        {
+          "frame": 76,
+          "weight": 0.07
+        },
+        {
+          "frame": 80,
+          "weight": 0.07
+        },
+        {
+          "frame": 84,
+          "weight": 0.07
+        },
+        {
+          "frame": 88,
+          "weight": 0.07
+        },
+        {
+          "frame": 90,
+          "weight": 0.07
+        },
+        {
+          "frame": 92,
+          "weight": 0.07
+        },
+        {
+          "frame": 94,
+          "weight": 0.07
+        },
+        {
+          "frame": 96,
+          "weight": 0.09
+        }
+      ],
+      "damageType": "magical"
     }
   },
   "elite_soldier": {
@@ -229,6 +683,120 @@ export const ENEMY_SKILLS = {
         }
       ],
       "damageType": "physical"
+    }
+  },
+  "fujin": {
+    "zan": {
+      "name": "Zan",
+      "scope": "single",
+      "multiplier": 1.2,
+      "origin": "source",
+      "presentation": "fujin_zan",
+      "damageEvents": [
+        {
+          "frame": 50,
+          "weight": 0.35
+        },
+        {
+          "frame": 52,
+          "weight": 0.3
+        },
+        {
+          "frame": 54,
+          "weight": 0.35
+        }
+      ],
+      "damageType": "physical"
+    },
+    "metsu": {
+      "name": "Metsu",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "fujin_metsu",
+      "damageEvents": [
+        {
+          "frame": 82,
+          "weight": 0.1
+        },
+        {
+          "frame": 84,
+          "weight": 0.2
+        },
+        {
+          "frame": 86,
+          "weight": 0.1
+        },
+        {
+          "frame": 88,
+          "weight": 0.2
+        },
+        {
+          "frame": 90,
+          "weight": 0.1
+        },
+        {
+          "frame": 92,
+          "weight": 0.2
+        },
+        {
+          "frame": 94,
+          "weight": 0.1
+        }
+      ],
+      "damageType": "physical"
+    }
+  },
+  "garland": {
+    "power_break": {
+      "name": "Power Break",
+      "scope": "single",
+      "multiplier": 1.2,
+      "origin": "source",
+      "presentation": "garland_power_break",
+      "damageEvents": [
+        {
+          "frame": 40,
+          "weight": 1
+        }
+      ],
+      "damageType": "physical",
+      "heroEffects": [
+        {
+          "kind": "break",
+          "stat": "attack",
+          "amount": 0.4,
+          "turns": 3
+        }
+      ]
+    },
+    "sweep": {
+      "name": "Sweep",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "garland_sweep",
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 1
+        }
+      ],
+      "damageType": "physical"
+    },
+    "darkga": {
+      "name": "Darkga",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "garland_darkga",
+      "damageEvents": [
+        {
+          "frame": 230,
+          "weight": 1
+        }
+      ],
+      "damageType": "magical"
     }
   },
   "gilgamesh": {
@@ -915,6 +1483,40 @@ export const ENEMY_SKILLS = {
         }
       ],
       "damageType": "magical"
+    }
+  },
+  "raijin": {
+    "fist": {
+      "name": "Fist",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "raijin_fist",
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 1
+        }
+      ],
+      "damageType": "physical"
+    },
+    "raijin_special": {
+      "name": "Raijin Special",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "raijin_raijin_special",
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.5
+        },
+        {
+          "frame": 82,
+          "weight": 0.5
+        }
+      ],
+      "damageType": "physical"
     }
   },
   "sephiroth": {

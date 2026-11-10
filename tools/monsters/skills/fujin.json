@@ -1,0 +1,76 @@
+{
+  "schema": "enemy-skills-v1",
+  "key": "fujin",
+  "monsterId": 225171000,
+  "dictionaryId": 2251710,
+  "skills": [
+    {
+      "id": "zan",
+      "ffbeId": 218102,
+      "type": "MONSTER_SKILL",
+      "name": "Zan",
+      "scope": "single_enemy",
+      "damageType": "physical",
+      "moveType": "stationary",
+      "multiplier": 1.2,
+      "damageEvents": [
+        {
+          "frame": 50,
+          "weight": 0.35
+        },
+        {
+          "frame": 52,
+          "weight": 0.3
+        },
+        {
+          "frame": 54,
+          "weight": 0.35
+        }
+      ],
+      "scenePresentation": "fujin_zan",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    },
+    {
+      "id": "metsu",
+      "ffbeId": 218103,
+      "type": "MONSTER_SKILL",
+      "name": "Metsu",
+      "scope": "all_enemies",
+      "damageType": "physical",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 82,
+          "weight": 0.1
+        },
+        {
+          "frame": 84,
+          "weight": 0.2
+        },
+        {
+          "frame": 86,
+          "weight": 0.1
+        },
+        {
+          "frame": 88,
+          "weight": 0.2
+        },
+        {
+          "frame": 90,
+          "weight": 0.1
+        },
+        {
+          "frame": 92,
+          "weight": 0.2
+        },
+        {
+          "frame": 94,
+          "weight": 0.1
+        }
+      ],
+      "scenePresentation": "fujin_metsu",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    }
+  ]
+}

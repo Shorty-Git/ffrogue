@@ -282,3 +282,7 @@
 .start-row p b{color:#fff;margin-right:.35em}
 .start-row .skill-icon{width:1.2em;height:1.2em;vertical-align:-.2em;margin-right:.3em}
 .start-row .start-lb b{color:#ffcf9a}
+.path-grid.is-six{grid-template-columns:repeat(3,minmax(0,1fr));max-width:1040px;margin-inline:auto;gap:14px}
+.path-grid.is-six .path-art{height:110px}
+@media(max-width:820px){.path-grid.is-six{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.path-grid.is-six .path-silhouette,.path-grid.is-quad .path-silhouette{left:auto;right:10%;transform:none}

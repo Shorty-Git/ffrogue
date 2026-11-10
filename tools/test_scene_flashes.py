@@ -4,7 +4,7 @@ from pathlib import Path
 import tempfile
 import unittest
 from PIL import Image
-from prepare_scene_flashes import annotate, annotate_arena_surfaces, annotate_screen_backdrops, annotate_white_flashes
+from prepare_scene_flashes import annotate, annotate_arena_surfaces, annotate_screen_backdrops, annotate_white_flashes, annotate_screen_models
 import copy
 
 
@@ -120,6 +120,26 @@ class ScreenQuadTests(unittest.TestCase):
             self.assertEqual(data['effects'][0]['nodes'][1]['presentationCoverage']['primitive'],'unit-quad')
             self.assertEqual(annotate_screen_backdrops(plan(size=200)),0)
             self.assertEqual(annotate_screen_backdrops(plan(curves={'scaleValue':{'keys':[[0,1]]}})),0)
+
+
+
+class ScreenModelTests(unittest.TestCase):
+    def test_screen_sized_wall_model_covers_the_arena_on_any_anchor_but_rotated_or_small_ones_do_not(self):
+        with tempfile.TemporaryDirectory() as folder:
+            path=Path(folder)/'cloud.png';im=Image.new('RGBA',(2,2),(0,0,0,0));im.putpixel((1,0),(120,40,40,255));im.save(path)
+            def channel(value):return {'valueInitial':value,'valueRange':[0,0,0],'speedInitial':[0,0,0],'speedRange':[0,0,0],'accelerationInitial':[0,0,0],'accelerationRange':[0,0,0]}
+            mesh={'triangleCount':2,'sourceSha256':'m','vertices':[{'position':[x,y,0],'colorBytes':[255,255,255,255]} for x in [-.5,.5] for y in [-.5,.5]]}
+            def plan(size=700,rotation=0,anchor='target-group'):
+                wall={'index':0,'typeId':6,'parentIndex':None,'vectorCurves':{},'lifeParameter':120,
+                    'staticVectors':{'transform':{'translation':channel([60,0,0]),'rotation':channel([0,0,rotation]),'scale':channel([size,800,1])}},
+                    'resourceBindings':{'texture1':{'name':'cloud'},'model':{'name':'wall'}}}
+                return {'files':{'image':{'path':str(path),'sha256':hashlib.sha256(path.read_bytes()).hexdigest()}},
+                    'members':[{'effect':0,'anchor':anchor,'scalePercent':100,'placement':{'rectangle':'target-side'}}],
+                    'effects':[{'textures':{'cloud':'image'},'meshes':{'wall':mesh},'nodes':[wall]}]}
+            data=plan();self.assertEqual(annotate_screen_models(data),1)
+            self.assertEqual(data['effects'][0]['nodes'][0]['presentationCoverage']['primitive'],'unit-xy-model')
+            self.assertEqual(annotate_screen_models(plan(size=300)),0)
+            self.assertEqual(annotate_screen_models(plan(rotation=20)),0)
 
 
 if __name__=='__main__':unittest.main()

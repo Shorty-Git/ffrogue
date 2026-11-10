@@ -1,0 +1,48 @@
+{
+  "schema": "enemy-skills-v1",
+  "key": "raijin",
+  "monsterId": 225181000,
+  "dictionaryId": 2251810,
+  "skills": [
+    {
+      "id": "fist",
+      "ffbeId": 218100,
+      "type": "MONSTER_SKILL",
+      "name": "Fist",
+      "scope": "all_enemies",
+      "damageType": "physical",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "raijin_fist",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    },
+    {
+      "id": "raijin_special",
+      "ffbeId": 218101,
+      "type": "MONSTER_SKILL",
+      "name": "Raijin Special",
+      "scope": "all_enemies",
+      "damageType": "physical",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.5
+        },
+        {
+          "frame": 82,
+          "weight": 0.5
+        }
+      ],
+      "scenePresentation": "raijin_raijin_special",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    }
+  ]
+}

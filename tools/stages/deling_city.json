@@ -1,0 +1,128 @@
+{
+  "schema": "stage-recipe-v1",
+  "key": "deling_city",
+  "name": "Deling City",
+  "theme": "FINAL FANTASY VIII",
+  "series": "FFVIII",
+  "arena": {
+    "key": "deling_city",
+    "battleBgId": 121504,
+    "title": "FFVIII",
+    "label": "Deling City",
+    "floor": [
+      0.58,
+      0.84
+    ],
+    "worldIdentity": "Reviewed visual identification (2026-11-11): moonlit stone rooftop (battle_bg_2016_13, the FFVIII crossover set that also holds Dollet) read as Deling City on the night of the sorceress parade. Edea, Raijin and Fujin are FFVIII characters per their original descriptions; no original stage-to-world join."
+  },
+  "music": {
+    "normal": {
+      "resourceId": 400867,
+      "title": "Don't Be Afraid",
+      "game": "FFVIII"
+    },
+    "boss": {
+      "resourceId": 400969,
+      "title": "Premonition",
+      "game": "FFVIII"
+    }
+  },
+  "enemies": [
+    {
+      "key": "raijin",
+      "dictionaryId": 2251810,
+      "name": "Raijin",
+      "scale": 1.5,
+      "movement": "approach",
+      "monsterId": "225181000"
+    },
+    {
+      "key": "fujin",
+      "dictionaryId": 2251710,
+      "name": "Fujin",
+      "scale": 1.5,
+      "movement": "approach",
+      "monsterId": "225171000"
+    }
+  ],
+  "boss": {
+    "key": "edea",
+    "dictionaryId": 3057410,
+    "name": "Edea",
+    "scale": 2,
+    "movement": "stationary",
+    "note": "FFBE trial boss Edea (dictionary 3057410); final boss. Firaga, Blizzaga, Thundaga, Astral Punch and Maelstrom are her original moves (import_enemy_skills.mjs). Blizzaga is left out (its sky backdrop still shows as a box).",
+    "behavior": {
+      "phaseAt": 0.5,
+      "phaseName": "Sorceress unleashed",
+      "phaseMultiplier": 1.3,
+      "pattern": [
+        {
+          "kind": "attack",
+          "name": "Thundaga",
+          "multiplier": 1.1,
+          "scope": "single",
+          "skill": "thundaga"
+        },
+        {
+          "kind": "prepare",
+          "name": "Edea gathers the sorceress power",
+          "next": "Maelstrom"
+        },
+        {
+          "kind": "attack",
+          "name": "Maelstrom",
+          "multiplier": 1.3,
+          "scope": "party",
+          "skill": "maelstrom"
+        },
+        {
+          "kind": "attack",
+          "name": "Astral Punch",
+          "multiplier": 1.2,
+          "scope": "single",
+          "skill": "astral_punch"
+        },
+        {
+          "kind": "attack",
+          "name": "Firaga",
+          "multiplier": 1.1,
+          "scope": "single",
+          "skill": "firaga"
+        },
+        {
+          "kind": "prepare",
+          "name": "The air grows cold",
+          "next": "Maelstrom"
+        },
+        {
+          "kind": "attack",
+          "name": "Maelstrom",
+          "multiplier": 1.4,
+          "scope": "party",
+          "skill": "maelstrom"
+        },
+        {
+          "kind": "attack",
+          "name": "Thundaga",
+          "multiplier": 1.1,
+          "scope": "single",
+          "skill": "thundaga"
+        }
+      ]
+    },
+    "monsterId": "305741000"
+  },
+  "formations": [
+    [
+      "top",
+      "bottom"
+    ],
+    [
+      "center"
+    ]
+  ],
+  "difficulty": 1.4,
+  "normalFights": 1,
+  "rewardCategory": "deling-relic"
+}

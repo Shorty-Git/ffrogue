@@ -93,6 +93,20 @@ Last consolidated: 2026-11-07; newest section: cloud night 2026-11-10.
   - Skill elements (already part of the damage: elementRules actionElements -> enemy resistances) show as chips
     on skill reward cards and in the battle command tooltip.
   - Big Bridge now uses battle_bg_2005_03 (120063, bridge deck with pillars); 2005_01 stays Fabul's rampart.
+- Six final bosses (FINAL_STAGES adds deling_city, chaos_shrine; boss choice shows 3 x 2 cards):
+  - Deling City (FFVIII, battle_bg 121504 `battle_bg_2016_13`, moonlit rooftop): Raijin (Fist, Raijin Special),
+    Fujin (Zan, Metsu); boss Edea 3057410 with Thundaga, Firaga, Astral Punch, Maelstrom. Music Don't Be
+    Afraid (400867) / Premonition (400969). Blizzaga left out (sky backdrop box).
+  - Chaos Shrine (FFI, 121104 `battle_bg_2008_17`, misty ruined shrine): Garland (Power Break, Sweep,
+    Darkga), Lich (no damaging source moves); boss Chaos 4051810 with Dread Strike, Firaga, Thunder, Tsunami,
+    Blizzard, Earthquake, Ultimate Chaos (14 imported). Music FFI PR Battle (4001501) / Boss (4001502).
+    Flare left out: its red cloud particle (textureCombination "Unknown") renders as a square.
+  - New generic rule `_screen_sized_model` / `annotate_screen_models` (prepare_scene_flashes.py): a static,
+    unrotated unit-XY rectangle Model of >= 500 units on both axes is a screen layer whatever its texture,
+    anchor (target-side included) or constant offset. Fixed the hard edges of Chaos's Earthquake and
+    Ultimate Chaos (republished). Already published hero scenes were not republished with it.
+  - Checked: arenas, every boss move in the patterns in a training fight (screenshots), 359 node tests,
+    7 Python flash tests. Not checked: full runs against Edea or Chaos (balance).
 - Web (alpha) build: `npm run build:web` = normal build + `tools/web_audio.py dist` (music WAVs > 1 MB ->
   Ogg Vorbis q0.6, frame count checked, references in the built JS rewritten; public/ keeps the WAVs).
   Python needs `soundfile` (set FFROGUE_PYTHON if the PATH python lacks it). Result 2026-11-11: dist 1.2 GB,
