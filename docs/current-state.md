@@ -33,6 +33,13 @@ Last consolidated: 2026-11-07; newest section: cloud night 2026-11-10.
   band and only moves up to keep the feet 70 px above the HUD. Enemies keep the shared staggered slots
   (2026-11-10), so new arenas get both automatically. Regression test over all arenas in
   test_combat_regressions.mjs; Lion Heart still lands on the target.
+- Web (alpha) build: `npm run build:web` = normal build + `tools/web_audio.py dist` (music WAVs > 1 MB ->
+  Ogg Vorbis q0.6, frame count checked, references in the built JS rewritten; public/ keeps the WAVs).
+  Python needs `soundfile` (set FFROGUE_PYTHON if the PATH python lacks it). Result 2026-11-11: dist 1.2 GB,
+  6,179 files, largest file 10.6 MB (presentation manifests), music 332 -> 41 MB. Checked with
+  `vite preview` (launch config ffrogue-dist, port 4173): all 21 referenced audio files 200 and decodable,
+  headless boss choice -> slot -> route -> first battle without page errors or 4xx. Fits Cloudflare Pages
+  limits (25 MiB per file, 20k files); GitHub Pages (1 GB) does not. Not deployed yet.
 
 ## Cloud night 2026-11-10 (docs/cloud-night-brief.md)
 

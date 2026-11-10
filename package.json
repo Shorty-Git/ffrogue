@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
+    "build:web": "node tools/build_web.mjs",
     "typecheck": "tsc --noEmit",
     "import:effects": "node tools/import_effect.mjs --preset all",
     "character:import": "node tools/import_character.mjs",

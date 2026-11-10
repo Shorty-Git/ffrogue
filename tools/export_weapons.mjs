@@ -61,6 +61,9 @@ for (const key of read('public/assets/content.json').characters) {
     }
     const weapon = byId.get(r.equipId);
     weapon.signatureOf = [...new Set([...(weapon.signatureOf ?? []), key])];
+    // Every variant of the same character shares it (run-content canonicalIdentity, e.g. ff7:cloud-strife).
+    const canonical = read('public/assets/run-content.json').units[key]?.canonicalIdentity;
+    if (canonical) weapon.signatureFor = [...new Set([...(weapon.signatureFor ?? []), canonical])];
   }
 }
 fs.mkdirSync('public/assets/items', {recursive: true});
