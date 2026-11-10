@@ -142,12 +142,21 @@ export class RunUI{
   panel.innerHTML=`<span class="eyebrow">YOUR PARTY · WEAPONS AND SKILLS</span><div class="start-list">${run.party.map(m=>this.memberLine(m)).join('')}</div>`;
   button.before(panel);
   button.onclick=()=>{const on=this.root.classList.toggle('is-peeking');button.setAttribute('aria-pressed',String(on));button.textContent=on?'Back to rewards':'Show my party';this.onSound(on?'back':'confirm');};}
- /** Favourite Final Fantasy (2026-11-11): one card per game with the heroes it grants. */
- favorite(choices:{game:string;label:string;heroes:string[]}[]){
-  const card=(c:{game:string;label:string;heroes:string[]},i:number)=>`<button class="rpg-panel favorite-card" data-action="favorite-${esc(c.game)}" style="--card-index:${i}">
+ /** Favourite Final Fantasies (2026-11-11): click up to three games in order (1st, 2nd, 3rd); a second click
+  * removes one. Each card shows the heroes it grants; the confirm button starts with the ranked list. */
+ favorite(choices:{game:string;label:string;heroes:string[]}[],max:number,done:(games:string[])=>void){
+  const card=(c:{game:string;label:string;heroes:string[]},i:number)=>`<button type="button" class="rpg-panel favorite-card" data-game="${esc(c.game)}" aria-pressed="false" style="--card-index:${i}">
+   <span class="favorite-rank" aria-hidden="true"></span>
    <span class="favorite-heads">${c.heroes.slice(0,4).map(k=>`<img src="${esc(this.catalog[k].portrait)}" alt="" draggable="false">`).join('')}</span>
-   <strong>${esc(c.label.replace('FINAL FANTASY','FF').trim()||c.label)}</strong><small>${c.heroes.map(k=>esc(this.catalog[k].name)).filter((n,j,a)=>a.indexOf(n)===j).join(', ')}</small></button>`;
-  this.show(`${this.title('BEFORE YOU BEGIN','YOUR FAVOURITE FINAL FANTASY','Its heroes answer your call first. Every other hero joins through victories and summons.')}<div class="favorite-grid">${choices.map(card).join('')}</div>`,'favorite');
+   <strong>${esc(c.label.replace('FINAL FANTASY','FF'))}</strong><small>${c.heroes.map(k=>esc(this.catalog[k].name)).filter((n,j,a)=>a.indexOf(n)===j).join(', ')}</small></button>`;
+  this.show(`${this.title('BEFORE YOU BEGIN','YOUR FAVOURITE FINAL FANTASIES',`Pick up to ${max} in order. Their heroes answer your call first; everyone else joins through victories and summons.`)}<div class="favorite-grid">${choices.map(card).join('')}</div><div class="actions"><button class="rpg-button" data-action="favorite-done" disabled>Choose at least one</button></div>`,'favorite');
+  const picked:string[]=[],confirm=this.root.querySelector<HTMLButtonElement>('[data-action=favorite-done]')!;
+  const refresh=()=>{this.root.querySelectorAll<HTMLElement>('.favorite-card').forEach(c=>{const rank=picked.indexOf(c.dataset.game!);
+    c.setAttribute('aria-pressed',String(rank>=0));c.querySelector('.favorite-rank')!.textContent=rank>=0?String(rank+1):'';c.classList.toggle('is-full',rank<0&&picked.length>=max);});
+   confirm.disabled=!picked.length;confirm.textContent=picked.length?`Begin with ${picked.length===1?'this game':'these '+picked.length+' games'}`:'Choose at least one';};
+  this.root.querySelectorAll<HTMLButtonElement>('.favorite-card').forEach(c=>c.onclick=()=>{const g=c.dataset.game!,at=picked.indexOf(g);
+   if(at>=0)picked.splice(at,1);else if(picked.length<max)picked.push(g);else return;this.onSound(at>=0?'back':'confirm');refresh();});
+  confirm.onclick=()=>{if(!picked.length)return;this.onSound('confirm');try{done([...picked]);}catch(error){this.onError(error);}};
  }
  /** How to play (2026-11-11): shown once before the first journey and from the title screen. */
  guide(action:string,label:string){

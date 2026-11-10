@@ -1,12 +1,13 @@
 import type {RunCatalog,RunState} from './runState.mjs';
-export interface Profile{version:1;unlocked:string[];crystals:number;record:{won:number;lost:number};settled:string[];bond:Record<string,number>;bosses:string[];favorite?:string;}
+export interface Profile{version:1;unlocked:string[];crystals:number;record:{won:number;lost:number};settled:string[];bond:Record<string,number>;bosses:string[];favorite?:string;favorites?:string[];}
 export const PROFILE_KEY:string;
 export const STARTER_HEROES:string[];
 export const SUMMON_COST:number;
 export const FAVORITE_GAMES:[string,string][];export const FAVORITE_MIN_IDENTITIES:number;
 export function favoriteHeroes(catalog:RunCatalog,game:string):string[];
 export function favoriteChoices(catalog:RunCatalog):{game:string;label:string;heroes:string[]}[];
-export function chooseFavorite(profile:Profile,catalog:RunCatalog,game:string):Profile;
+export const MAX_FAVORITES:number;
+export function chooseFavorite(profile:Profile,catalog:RunCatalog,games:string|string[]):Profile;
 export const CRYSTALS_PER_BATTLE:number;
 export const CRYSTALS_PER_EXPEDITION:number;
 export function newProfile(catalog:RunCatalog):Profile;

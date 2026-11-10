@@ -138,8 +138,9 @@ Last consolidated: 2026-11-07; newest section: cloud night 2026-11-10.
     space below their slot (the HUD); raising the recipe scale has no effect. Needs a placement rule for big
     bosses (e.g. slot higher or feet-based fit), not done yet. Cloud/Barret Limit gauge oddity at LB start:
     not reproduced, waiting for a screenshot.
-- Favourite Final Fantasy (profile.mjs `chooseFavorite`, RunUI.favorite): asked once per profile on the first
-  Begin (before How to Play). The game grants its heroes' base forms up to 5★ (only-7★ heroes: the lowest form);
+- Favourite Final Fantasies (profile.mjs `chooseFavorite`, RunUI.favorite): asked once per profile on the first
+  Begin (before How to Play); up to MAX_FAVORITES = 3 games, ranked 1st-3rd (stored as `profile.favorites`,
+  `favorite` = the first). Each game grants its heroes' base forms up to 5★ (only-7★ heroes: the lowest form);
   the roster is topped up across games (cloud, squall, delita, jack, ...) to at least 4 different heroes. A fresh
   profile starts from that set instead of the 7 default starters; a profile with finished runs keeps everything
   and gains the game's heroes. Stored as `profile.favorite`. Checked in the browser (FFIX: Zidane, Vivi, Cloud,

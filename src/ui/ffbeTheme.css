@@ -299,3 +299,7 @@
 .favorite-heads img{width:40px;height:40px;image-rendering:pixelated;border:1px solid #8fb0d066;background:#06122680}
 .favorite-card strong{font-family:var(--rpg-display);letter-spacing:.08em;color:#ffe3a8;font-size:1rem}
 .favorite-card small{color:#a9c3dc;font-size:.75rem;line-height:1.3}
+.favorite-card{position:relative}
+.favorite-card[aria-pressed=true]{box-shadow:0 0 0 2px #e8c77d,0 0 16px #e8c77d66}
+.favorite-card.is-full{opacity:.55}
+.favorite-rank:not(:empty){position:absolute;top:8px;left:8px;width:26px;height:26px;display:grid;place-items:center;border-radius:50%;border:1px solid #c9a95c;background:radial-gradient(#1d4377,#0a1a35);font:700 .95rem/1 var(--rpg-display);color:#ffe3a8}

@@ -26,17 +26,20 @@ export function favoriteHeroes(catalog,game){
 }
 /** Games with at least one drawable hero, with the heroes a pick would grant. */
 export function favoriteChoices(catalog){return FAVORITE_GAMES.map(([game,label])=>({game,label,heroes:favoriteHeroes(catalog,game)})).filter(c=>c.heroes.length);}
-/** Records the favourite. A fresh profile (no finished run) starts from that game's heroes, topped up from the
- * starters; a profile with progress keeps everything and gains the game's heroes. */
-export function chooseFavorite(input,catalog,game){
- const p=structuredClone(input),heroes=favoriteHeroes(catalog,game);
- if(!heroes.length)throw Error('Unknown favourite game: '+game);
+/** Up to MAX_FAVORITES favourite games, ranked (2026-11-11: several games, so a game needs no three heroes of
+ * its own). A fresh profile (no finished run) starts from their heroes, topped up across games; a profile with
+ * progress keeps everything and gains them. */
+export const MAX_FAVORITES=3;
+export function chooseFavorite(input,catalog,choice){
+ const games=[...new Set(Array.isArray(choice)?choice:[choice])];
+ if(!games.length||games.length>MAX_FAVORITES)throw Error('Choose one to '+MAX_FAVORITES+' favourite games');
+ const p=structuredClone(input),heroes=[...new Set(games.flatMap(game=>{const h=favoriteHeroes(catalog,game);if(!h.length)throw Error('Unknown favourite game: '+game);return h;}))];
  const fresh=p.record.won+p.record.lost===0;
  const unlocked=fresh?[...heroes]:[...new Set([...p.unlocked,...heroes])];
  // Top-up mixes games (one hero per series first) so no single game fills every favourite roster.
  for(const key of FAVORITE_FILL){if(!catalog[key]||unlocked.includes(key)||unlocked.some(k=>catalog[k]&&catalog[k].canonicalIdentity===catalog[key].canonicalIdentity))continue;
   if(new Set(unlocked.filter(k=>catalog[k]).map(k=>catalog[k].canonicalIdentity)).size>=FAVORITE_MIN_IDENTITIES)break;unlocked.push(key);}
- p.unlocked=unlocked;p.favorite=game;p.bond=Object.fromEntries(Object.entries(p.bond).filter(([key])=>unlocked.includes(key)));
+ p.unlocked=unlocked;p.favorite=games[0];p.favorites=games;p.bond=Object.fromEntries(Object.entries(p.bond).filter(([key])=>unlocked.includes(key)));
  return normalizeProfile(p,catalog);
 }
 /** Crystals per battle won, and the bonus for finishing an expedition. */
@@ -58,6 +61,7 @@ export function normalizeProfile(input,catalog){
  p.settled=Array.isArray(p.settled)?p.settled.slice(-20):[];
  p.bond=Object.fromEntries(Object.entries(p.bond??{}).filter(([key,n])=>p.unlocked.includes(key)&&Number.isInteger(n)&&n>0).map(([key,n])=>[key,Math.min(MAX_BOND,n)]));
  p.favorite=typeof p.favorite==='string'?p.favorite:undefined;if(p.favorite===undefined)delete p.favorite;
+ if(Array.isArray(p.favorites))p.favorites=p.favorites.filter(g=>typeof g==='string').slice(0,MAX_FAVORITES);else if(p.favorite)p.favorites=[p.favorite];else delete p.favorites;
  // Final boss rooms already won: their boss is shown on the boss choice (2026-11-11), unknown ones as ???.
  p.bosses=[...new Set((Array.isArray(p.bosses)?p.bosses:[]).filter(id=>typeof id==='string'))];
  // Top up from the starters, then from the whole roster, until the Fate Engine can draw three heroes.

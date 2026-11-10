@@ -37,7 +37,9 @@ assert.equal(settleRun(fresh, {seed: 'c', phase: 'battle', history: []}, catalog
  assert.ok(!fav.unlocked.includes('tidus'),'other games stay locked');assert.ok(new Set(fav.unlocked.map(k=>catalog[k].canonicalIdentity)).size>=3);
  const kept=chooseFavorite({...won.profile},catalog,'ff10');assert.ok(won.profile.unlocked.every(k=>kept.unlocked.includes(k)));assert.ok(kept.unlocked.includes('tidus'));
  assert.ok(favoriteChoices(catalog).some(c=>c.game==='ff16'&&c.heroes.includes('clive')),'a 7-star-only game grants its lowest form');
- assert.throws(()=>chooseFavorite(fresh,catalog,'ff99'));}
+ assert.throws(()=>chooseFavorite(fresh,catalog,'ff99'));
+ const multi=chooseFavorite(fresh,catalog,['ff10','ff8']);assert.deepEqual(multi.favorites,['ff10','ff8']);assert.ok(['tidus','squall'].every(k=>multi.unlocked.includes(k)));
+ assert.throws(()=>chooseFavorite(fresh,catalog,['ff7','ff8','ff10','ff16']),/favourite games/);}
 console.log('profile: ok');
 // Bond: duplicates deepen Bond up to MAX_BOND, then refund; perks reach the draw catalog and the run.
 import {MAX_BOND,BOND_REFUND,BOND_MIN_START_LEVEL,drawCatalog as draw2} from '../src/run/profile.mjs';
