@@ -33,6 +33,21 @@ Last consolidated: 2026-11-07; newest section: cloud night 2026-11-10.
   band and only moves up to keep the feet 70 px above the HUD. Enemies keep the shared staggered slots
   (2026-11-10), so new arenas get both automatically. Regression test over all arenas in
   test_combat_regressions.mjs; Lion Heart still lands on the target.
+- First-impression pass (fresh profile walked headless, every screen captured):
+  - Altissia showed the hard right edge of its house/wave layer cells (FFBE crops the 960 canvas to a narrow
+    phone view; our wide arena showed past it). `contentWidth: 0.7` in battleArenas.ts crops to the central
+    part; the seam is gone.
+  - Enemy plates: name and HP stay on one line (plate grows to max-content; long names wrapped HP to 3 lines).
+  - Skill copy (`skillDescription`, catalog.ts) rewritten in plain words: target, element, "power N×" relative to
+    a basic attack (1×), hits, effects with rounds ("Target takes +15% physical damage for 3 rounds"); chances
+    only below 100%. `node --experimental-strip-types tools/print_skill_copy.mjs [hero]` prints all copy.
+  - Command hover: a tooltip card above the button (name, cost, one effect per line) instead of the small
+    prompt line; disabled skills say why (not enough MP, nobody to revive).
+  - Boss choice titled "Face your nemesis" (was the slot machine's "Choose your fate"). A final boss is a
+    mystery (veiled arena, glowing black silhouette, ???, no elements) until its room is won once
+    (`profile.bosses`, settleRun); the route lead names the room only when known.
+  - How to Play: five steps, shown once before the first journey (localStorage `ffrogue.guide.v1`) and from
+    the title screen.
 - Web (alpha) build: `npm run build:web` = normal build + `tools/web_audio.py dist` (music WAVs > 1 MB ->
   Ogg Vorbis q0.6, frame count checked, references in the built JS rewritten; public/ keeps the WAVs).
   Python needs `soundfile` (set FFROGUE_PYTHON if the PATH python lacks it). Result 2026-11-11: dist 1.2 GB,

@@ -37,22 +37,30 @@ export function runCatalog(scene:Phaser.Scene,manifests:Record<string,UnitManife
  return result;
 }
 export function skillDescription(s:SkillConfig):string{
- const target={single_enemy:'One enemy',all_enemies:'All enemies',single_ally:'One ally',party:s.allyTargeting==='other-living-allies'?'Other living allies':s.allyTargeting==='fallen-ally'?'One fallen ally':s.allyTargeting==='fallen-allies'?'Fallen allies':'Living party',self:'Self'}[s.scope];
- const parts=[`${s.mpCost} MP`,target];
- if(s.basicRepeat){const r=s.basicRepeat;parts.push(`${r.minHits===r.maxHits?r.minHits:r.minHits+'–'+r.maxHits} basic attacks · ${Number(s.damageMultiplier.toFixed(2))}× power each${r.targeting==='random'?' · random targets':''}`);}
- if(s.damageEvents)parts.push(`${Number(s.damageMultiplier.toFixed(2))}× ${s.damageType==='holy'?'magic':'physical'} power · ${s.damageEvents.length} hit${s.damageEvents.length===1?'':'s'}`);
- const elements=skillElements(s);
- if(elements.length&&(s.damageEvents||s.basicRepeat))parts.push(`${elementNames(elements)} element`);
- for(const e of s.allyEvents??[])for(const f of e.effects)parts.push(f.kind==='heal'?`Restore ${f.amount} HP (no revival)`
-  :f.kind==='limit-fill'?`Limit gauge +${f.amount}`
-  :f.kind==='raise'?`Revive with ${Math.round(f.hpFraction*100)}% HP`
-  :f.kind==='cleanse'?'Remove breaks and blind'
-  :f.kind==='guard'?`${f.damageType==='physical'?'Physical':'Magical'} damage taken -${Math.round(f.reduction*100)}% for ${f.turns} rounds`
-  :f.kind==='auto-revive'?`Auto-revive with ${Math.round(f.hpFraction*100)}% HP if K.O. within ${f.turns} rounds`
-  :`Physical power +${Math.round((f.multiplier-1)*100)}% for ${f.turns} rounds`);
+ // Plain player-facing copy (2026-11-11 first-impression pass): what it hits, how hard, what it leaves behind.
+ const target={single_enemy:'one enemy',all_enemies:'all enemies',single_ally:'one ally',party:s.allyTargeting==='other-living-allies'?'the other allies':s.allyTargeting==='fallen-ally'?'one fallen ally':s.allyTargeting==='fallen-allies'?'fallen allies':'the party',self:'yourself'}[s.scope];
+ // Power is relative to a basic attack (1×); magic and physical skills share the scale.
+ const power=Number(s.damageMultiplier.toFixed(2));
+ const elements=skillElements(s),element=elements.length?` ${elementNames(elements)}`:'';
+ const rounds=(n:number)=>`${n} round${n===1?'':'s'}`;
+ const parts=[`${s.mpCost} MP`];
+ if(s.basicRepeat){const r=s.basicRepeat;parts.push(`${r.minHits===r.maxHits?r.minHits:r.minHits+'–'+r.maxHits}${element} weapon strikes at ${r.targeting==='random'?'random enemies':target} (power ${power}× each)`);}
+ else if(s.damageEvents){const hits=s.damageEvents.length;parts.push(`${element.trim()||'Hits'}${element?' damage to':''} ${target}, power ${power}×${hits>1?` over ${hits} hits`:''}`);}
+ else parts.push(target[0].toUpperCase()+target.slice(1));
+ for(const e of s.allyEvents??[])for(const f of e.effects)parts.push(f.kind==='heal'?`Heals ${f.amount} HP`
+  :f.kind==='limit-fill'?`Limit gauge +${f.amount}%`
+  :f.kind==='raise'?`Revives with ${Math.round(f.hpFraction*100)}% HP`
+  :f.kind==='cleanse'?'Cures blind and stat breaks'
+  :f.kind==='guard'?`Takes ${Math.round(f.reduction*100)}% less ${f.damageType==='physical'?'physical':'magic'} damage for ${rounds(f.turns)}`
+  :f.kind==='auto-revive'?`Revives with ${Math.round(f.hpFraction*100)}% HP if knocked out within ${rounds(f.turns)}`
+  :`Attack +${Math.round((f.multiplier-1)*100)}% for ${rounds(f.turns)}`);
  for(const e of s.supportEvents??[])for(const f of e.effects){
-  if(f.kind==='execute-or-damage')parts.push(`${Math.round(f.chance*100)}% instant KO; otherwise ${f.fallbackDamage} unmitigated damage${f.bossImmune?' · bosses resist KO':''}`);
-  else parts.push(`${f.kind.replaceAll('-',' ')} ${f.multiplier?Math.round(Math.abs(f.multiplier-1)*100)+'% ':''}(${Math.round(f.chance*100)}% chance, ${f.phases} enemy phases)`);
+  const chance=f.chance<1?` (${Math.round(f.chance*100)}% chance)`:'';
+  if(f.kind==='execute-or-damage'){parts.push(`${Math.round(f.chance*100)}% chance to defeat instantly${f.bossImmune?' (not bosses)':''}, otherwise ${f.fallbackDamage} damage`);continue;}
+  const pct=f.multiplier?Math.round(Math.abs(f.multiplier-1)*100):0;
+  parts.push(({'physical-weakness':`Target takes +${pct}% physical damage`,'magic-weakness':`Target takes +${pct}% magic damage`,'attack-down':`Target deals ${pct}% less damage`,
+   silence:'Silences the target (no magic)',stop:'Stops the target (cannot act)'} as Record<string,string>)[f.kind]??f.kind.replaceAll('-',' '));
+  parts[parts.length-1]+=` for ${rounds(f.phases)}${chance}`;
  }
- if(s.hpCost)parts.push(`Caster cost: ${s.hpCost} HP; must survive`);return parts.join(' • ');
+ if(s.hpCost)parts.push(`Also costs ${s.hpCost} HP (needs more HP than that)`);return parts.join(' · ');
 }

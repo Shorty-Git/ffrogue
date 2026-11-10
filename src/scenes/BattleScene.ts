@@ -1,6 +1,6 @@
 import {skillIconUrl} from '../ui/skillIcons';
 import {heroStatusBadges,enemyStatusBadges} from '../ui/statusIcons';
-import {LB_MAX,LB_PER_ACTION,gainFromAction,gainFromDamage,gainFromSupport,isFull} from '../run/limitGauge.mjs';
+import {LB_MAX,gainFromAction,gainFromDamage,gainFromSupport,isFull} from '../run/limitGauge.mjs';
 import {enemyTargetIndex} from '../run/enemyTargeting.mjs';
 import {CombatHud} from '../ui/CombatHud';
 import Phaser from 'phaser';
@@ -472,14 +472,14 @@ export class BattleScene extends Phaser.Scene {
           ...((w=>w?{weapon:{glyph:WEAPON_GLYPHS[w.category]??'⚔',name:w.name,tip:weaponSummary(w),elements:w.elements}}:{})(this.memberOf(member)?.weapon)),
           ...(this.limitBursts[member.unitKey]?{limit:{value:member.limitGauge,max:LB_MAX}}:{})};
       }),
-      commands:[{name:'Attack',icon:'attack',cost:'0 MP',description:'Physical damage to the target · 15% critical chance · no cost',disabled:!available,selected:plan?.kind==='attack'},
+      commands:[{name:'Attack',icon:'attack',cost:'0 MP',description:'Free weapon strike on one enemy, power 1× · 15% chance of a critical hit',disabled:!available,selected:plan?.kind==='attack'},
         ...[0,1,2].map(i=>{
           const action=skills[i];if(!action)return null;
-          return {name:action.name,icon:(action.motion==='magic_atk'?'magic':'ability') as 'magic'|'ability',iconUrl:skillIconUrl(action),cost:`${action.mpCost} MP${action.hpCost?' · '+action.hpCost+' HP':''}`,description:skillDescription(action)+(hero&&hero.currentMp<action.mpCost?` • Not enough MP (${hero.currentMp}/${action.mpCost})`:''),
+          return {name:action.name,icon:(action.motion==='magic_atk'?'magic':'ability') as 'magic'|'ability',iconUrl:skillIconUrl(action),cost:`${action.mpCost} MP${action.hpCost?' · '+action.hpCost+' HP':''}`,description:skillDescription(action)+(hero&&hero.currentMp<action.mpCost?` · Not enough MP (${hero.currentMp}/${action.mpCost})`:hero&&action.scope==='party'&&!this.friendlySkillTargets(hero,action).length?(action.allyTargeting?.startsWith('fallen')?' · Nobody to revive right now':' · No valid target right now'):''),
             disabled:!available||!hero||hero.currentMp<action.mpCost||!!action.hpCost&&hero.currentHp<=action.hpCost||!this.canUseSourceSkill(action),selected:skill===action};
         }),
         ...(hero&&this.limitBursts[hero.unitKey]?[(()=>{const lb=this.limitBursts[hero.unitKey],ready=isFull(hero.limitGauge);
-          return {name:lb.name,icon:'limit' as const,cost:ready?'Limit ready':`Limit ${hero.limitGauge}%`,description:skillDescription(lb)+(ready?'':` • Limit gauge ${hero.limitGauge}/${LB_MAX}: +${LB_PER_ACTION} per action, damage taken also fills it; it carries to the next battle`),
+          return {name:lb.name,icon:'limit' as const,cost:ready?'Limit ready':`Limit ${hero.limitGauge}%`,description:skillDescription(lb)+(ready?'':` · Gauge ${hero.limitGauge}%: fills as this hero acts and takes damage, and carries over between battles`),
             disabled:!available||!ready||!this.canUseSourceSkill(lb),selected:skill===lb,limit:true,ready};})()]:[])],
     });
   }

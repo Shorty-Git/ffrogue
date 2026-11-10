@@ -228,3 +228,17 @@
 .path-row small{min-width:84px;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:#9fb7cf}
 .path-row .el-chip{font-size:.78rem;padding:.2em .6em}
 .path-body .card-choose{margin-top:4px}
+/* Mystery final boss (until beaten once): veiled arena, black silhouette, ??? title. */
+.path-card.is-mystery .path-art .eyebrow{z-index:3}
+.path-card.is-mystery .path-art::after{content:'';position:absolute;inset:0;background:linear-gradient(#04091a99,#04091a99),radial-gradient(ellipse at 50% 70%,#0000 0,#04091acc 75%);backdrop-filter:saturate(.3)}
+.path-silhouette{position:absolute;z-index:2;left:50%;bottom:8%;height:80%;transform:translateX(-50%);background-repeat:no-repeat;image-rendering:pixelated;
+  filter:brightness(0) drop-shadow(0 0 6px #9fd0ffcc) drop-shadow(0 0 14px #5a8fd0aa)}
+.path-card.is-mystery h2{letter-spacing:.3em;color:#cfe0f5}
+/* How to play (2026-11-11). */
+.guide-steps{list-style:none;margin:18px auto 6px;padding:0;display:grid;gap:10px;max-width:720px;text-align:left}
+.guide-steps li{display:flex;gap:16px;align-items:flex-start;padding:14px 18px;animation:path-card-in .35s ease-out both;animation-delay:calc(var(--card-index)*70ms)}
+.guide-steps h2{margin:0 0 4px;font-size:1.05rem;letter-spacing:.06em;color:#ffe3a8}
+.guide-steps p{margin:0;color:#c6d8ea;line-height:1.45;font-size:.95rem}
+.guide-number{flex:none;width:34px;height:34px;display:grid;place-items:center;border:1px solid #c9a95c;border-radius:50%;font:600 1.05rem/1 var(--rpg-display);color:#ffe3a8;background:radial-gradient(#1d4377,#0a1a35)}
+@keyframes path-card-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.guide-steps li{animation:none}}

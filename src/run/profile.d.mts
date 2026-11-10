@@ -1,5 +1,5 @@
 import type {RunCatalog,RunState} from './runState.mjs';
-export interface Profile{version:1;unlocked:string[];crystals:number;record:{won:number;lost:number};settled:string[];bond:Record<string,number>;}
+export interface Profile{version:1;unlocked:string[];crystals:number;record:{won:number;lost:number};settled:string[];bond:Record<string,number>;bosses:string[];}
 export const PROFILE_KEY:string;
 export const STARTER_HEROES:string[];
 export const SUMMON_COST:number;

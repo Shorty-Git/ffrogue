@@ -20,6 +20,11 @@ const won = settleRun(lost.profile, {seed: 'b', phase: 'won', history: [reward, 
 assert.equal(won.crystals, 4 * CRYSTALS_PER_BATTLE + CRYSTALS_PER_EXPEDITION);
 assert.ok(won.unlocked && won.profile.unlocked.includes(won.unlocked));
 assert.equal(won.profile.record.won, 1);
+// Final bosses stay a mystery until their room is won once (lost runs reveal nothing).
+assert.deepEqual(fresh.bosses, []);
+assert.deepEqual(settleRun(fresh, {seed: 'm', phase: 'lost', history: [reward], areas: [{stageId: 'dollet'}, {stageId: 'vector'}]}, catalog).profile.bosses, []);
+assert.deepEqual(settleRun(fresh, {seed: 'n', phase: 'won', history: [reward], areas: [{stageId: 'dollet'}, {stageId: 'vector'}]}, catalog).profile.bosses, ['vector']);
+assert.deepEqual(normalizeProfile({version: 1, unlocked: ['cloud'], bosses: ['nibelheim', 3, 'nibelheim']}, catalog).bosses, ['nibelheim']);
 assert.throws(() => summonHero({...won.profile, crystals: SUMMON_COST - 1}, catalog, 'x'), /Not enough/);
 const summoned = summonHero({...won.profile, crystals: SUMMON_COST}, catalog, 'x');
 assert.equal(summoned.profile.crystals, 0);

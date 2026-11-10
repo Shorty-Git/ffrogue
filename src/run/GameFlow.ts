@@ -19,6 +19,10 @@ import type {PathCard} from '../ui/RunUI';
 import {createTrainingRun,type TrainingOpponent} from './trainingRun';
 import {renderTrainingSetup,type TrainingSelection} from '../ui/TrainingSetup';
 import {BATTLE_ARENAS,type BattleArenaKey} from '../data/battleArenas';
+
+const GUIDE_SEEN='ffrogue.guide.v1';
+const readFlag=(key:string)=>{try{return window.localStorage.getItem(key)==='1';}catch{return false;}};
+const writeFlag=(key:string)=>{try{window.localStorage.setItem(key,'1');}catch{/* private mode: the guide may show again */}};
 export class GameFlow{
  readonly rules:RunRules;
  private readonly audio:GameAudio;
@@ -34,10 +38,13 @@ export class GameFlow{
   this.ui.on('training',()=>this.training());
   this.ui.on('heroes',()=>{this.ui.heroes(this.profile);this.ui.on('menu',()=>this.menu());});
   this.ui.on('summon',()=>this.summon());
+  this.ui.on('guide',()=>{this.ui.guide('menu','Back to title');this.ui.on('menu',()=>this.menu());});
   this.ui.on('continue',()=>this.route());this.ui.on('play',()=>{const seed=(this.ui.root.querySelector('#run-seed')as HTMLInputElement).value.trim()||new URLSearchParams(location.search).get('seed')||crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
    // The journey starts with the choice of the final boss room (2026-11-11).
    const begin=(finalStage:string)=>{try{this.commit(createRun(seed,this.catalog,new URLSearchParams(location.search).get("arenaVariants")==="1"?variantAreas(seed):courseAreas(seed,finalStage),this.rules));this.audio.clearRunPosition();this.setup();}catch(e){this.fail(e);}};
-   const start=()=>this.chooseFinalBoss(begin);
+   const boss=()=>this.chooseFinalBoss(begin);
+   // First journey on this browser: the short guide comes first (once).
+   const start=()=>{if(readFlag(GUIDE_SEEN))boss();else{this.ui.guide('guide-done',"Let's go");this.ui.on('guide-done',()=>{writeFlag(GUIDE_SEEN);boss();});}};
    if(this.state){this.ui.dialog('Begin a new expedition?','The saved expedition will be abandoned. Rerolls and upgrades belong only to that run.','Start new run');this.ui.on('accept',start);this.ui.on('cancel',()=>this.menu());}else start();});
  }
  /** Training grounds: free party, form and skill choice against endurance opponents; never saved. */
@@ -105,9 +112,16 @@ export class GameFlow{
   return {id:stage.id,image,eyebrow,title,lines,weak:profile.weak as PathCard['weak'],attack:profile.attack as PathCard['attack']};
  }
  private chooseFinalBoss(begin:(finalStage:string)=>void){
-  const cards=FINAL_STAGES.map(id=>STAGE_CONTENT[id]).filter(Boolean).map(stage=>this.stageCard(stage,stage.theme,ENEMY_CONTENT[stage.bossId]?.name??stage.bossId,
-   [`Final boss room: ${stage.name}`,`Before it: two areas of your choice.`]));
-  this.ui.pathChoice('NEW JOURNEY','CHOOSE YOUR FATE','Pick the final boss of this expedition.',cards,'menu');
+  // A final boss stays a mystery (???, veiled arena, no elements) until the player has beaten it once.
+  const cards=FINAL_STAGES.map(id=>STAGE_CONTENT[id]).filter(Boolean).map(stage=>{
+   const known=this.profile.bosses.includes(stage.id);
+   const card=this.stageCard(stage,stage.theme,known?ENEMY_CONTENT[stage.bossId]?.name??stage.bossId:'???',
+    known?[`Final boss room: ${stage.name}`]:['An unknown foe awaits at the end.','Defeat it once to reveal it.']);
+   const idle=this.manifests[stage.bossId]?.animations.idle;
+   return known?card:{...card,weak:[],attack:[],mystery:true,
+    silhouette:idle&&{url:`assets/monsters/${stage.bossId}/${idle.file}`,frames:idle.frameCount,index:idle.frames[0].index,width:idle.frameWidth,height:idle.frameHeight}};
+  });
+  this.ui.pathChoice('NEW JOURNEY','FACE YOUR NEMESIS','Pick the final boss. Two areas of your choice lead there.',cards,'menu');
   for(const card of cards)this.ui.on('path-'+card.id,()=>begin(card.id));
   this.ui.on('menu',()=>this.menu());
  }
@@ -115,7 +129,7 @@ export class GameFlow{
   const state=this.state!,cards=route.options.map(o=>STAGE_CONTENT[o.stageId!]).map(stage=>this.stageCard(stage,stage.theme,stage.name,
    [`Enemies: ${[...new Set(stage.enemyPool)].map(k=>ENEMY_CONTENT[k]?.name??k).join(', ')}`,`Elite: ${ENEMY_CONTENT[stage.bossId]?.name??stage.bossId}`]));
   const final=state.areas.at(-1);
-  this.ui.pathChoice(`AREA ${route.area+1} OF ${state.areas.length}`,'CHOOSE YOUR PATH',`Where does the journey lead next? ${final?.name??''} awaits at the end.`,cards);
+  this.ui.pathChoice(`AREA ${route.area+1} OF ${state.areas.length}`,'CHOOSE YOUR PATH',`Where does the journey lead next? ${final&&this.profile.bosses.includes(final.stageId??'')?final.name+' awaits at the end.':'The final boss awaits at the end.'}`,cards);
   for(const card of cards)this.ui.on('path-'+card.id,()=>{try{this.commit(chooseRoute(state,card.id));next();}catch(e){this.fail(e);}});
  }
  private battle(entryKind?:'start'|'area'|'cut'){if(!this.state||this.entry)return;

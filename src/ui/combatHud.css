@@ -100,13 +100,13 @@ body:has(#run-ui:not([data-phase=battle]):not([data-phase=rewards]):not([data-ph
 
 /* Arena: enemy HP plates, click areas, target cursor. */
 .arena-actor{position:absolute;min-width:40px;min-height:40px;transform:translate(-50%,-50%)}
-.arena-health{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);display:grid;width:clamp(120px,19cqw,190px);margin-bottom:.15em;
+.arena-health{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);display:grid;width:max-content;min-width:clamp(120px,19cqw,190px);margin-bottom:.15em;
   font-size:clamp(10px,1.45cqw,14px);pointer-events:none;padding:.15em 0 .1em;
   background:url(/assets/ui/battle/enemy_status_glow.png) center bottom/100% 1.6em no-repeat,linear-gradient(90deg,#06122600,#061226d9 14%,#061226d9 86%,#06122600)}
-.arena-health.is-boss{width:clamp(150px,25cqw,250px)}
+.arena-health.is-boss{min-width:clamp(150px,25cqw,250px)}
 .enemy-head{display:flex;justify-content:space-between;align-items:baseline;gap:.5em;padding:0 .55em;text-shadow:0 1px 2px #000,0 0 4px #000,0 0 8px #000}
 .enemy-head strong{font:600 1em/1.25 var(--rpg-display);letter-spacing:.05em;white-space:nowrap}
-.enemy-head span{font-size:.85em;color:#dfeaf6;font-variant-numeric:tabular-nums}
+.enemy-head span{font-size:.85em;white-space:nowrap;color:#dfeaf6;font-variant-numeric:tabular-nums}
 .arena-health.is-boss .enemy-head strong{color:#ffe3a8}
 .arena-actor.is-targeted .enemy-head strong{color:#fff;text-shadow:0 0 6px #9fd0ff,0 1px 2px #000}
 .arena-health small{padding:0 .55em;font-size:.8em;color:#ffd99a;text-shadow:0 1px 2px #000,0 0 4px #000}
@@ -156,3 +156,13 @@ body[data-battle-entrance] .combat-ui{animation:battle-hud-rise .5s cubic-bezier
 .party-card .status-badge{cursor:help}
 @media(max-width:600px){.party-weapon{display:none}}
 .arena-health.is-inside{bottom:auto;top:14cqh;margin-bottom:0}
+/* Command tooltip card (2026-11-11): replaces the one-line hint in the prompt ribbon. */
+.command-tip{position:absolute;z-index:6;pointer-events:none;padding:.55em .8em .6em;border:1px solid #c9a95c;border-radius:6px;
+  background:linear-gradient(180deg,#10284bf2,#071630f2);box-shadow:0 6px 18px #000a,inset 0 0 0 1px #ffffff14;color:#e4eef8;font-size:clamp(12px,1.5cqw,15px);line-height:1.35}
+.command-tip[hidden]{display:none}
+.command-tip header{display:flex;justify-content:space-between;align-items:baseline;gap:1em;margin-bottom:.3em;padding-bottom:.25em;border-bottom:1px solid #8fb0d040}
+.command-tip header strong{font:600 1.05em/1.2 var(--rpg-display);color:#ffe3a8;letter-spacing:.04em}
+.command-tip header span{font-size:.85em;color:#9fd0ff;white-space:nowrap}
+.command-tip ul{margin:0;padding:0;list-style:none}
+.command-tip li{padding-left:1em;position:relative}
+.command-tip li::before{content:'◆';position:absolute;left:0;top:.2em;font-size:.6em;color:#e8c46a}

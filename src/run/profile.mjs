@@ -15,7 +15,7 @@ export const CRYSTALS_PER_BATTLE=10,CRYSTALS_PER_EXPEDITION=60;
 export const MAX_BOND=3,BOND_DRAW_WEIGHT=1.5,BOND_MIN_START_LEVEL=2,BOND_REFUND=40;
 const drawable=catalog=>Object.keys(catalog).filter(key=>catalog[key].canonicalIdentity&&catalog[key].skills.length);
 export function newProfile(catalog){
- return {version:1,unlocked:STARTER_HEROES.filter(key=>catalog[key]),crystals:0,record:{won:0,lost:0},settled:[],bond:{}};
+ return {version:1,unlocked:STARTER_HEROES.filter(key=>catalog[key]),crystals:0,record:{won:0,lost:0},settled:[],bond:{},bosses:[]};
 }
 /** Unknown keys (characters removed from the build) are dropped; never fewer than three identities. */
 export function normalizeProfile(input,catalog){
@@ -25,6 +25,8 @@ export function normalizeProfile(input,catalog){
  p.record={won:p.record?.won|0,lost:p.record?.lost|0};
  p.settled=Array.isArray(p.settled)?p.settled.slice(-20):[];
  p.bond=Object.fromEntries(Object.entries(p.bond??{}).filter(([key,n])=>p.unlocked.includes(key)&&Number.isInteger(n)&&n>0).map(([key,n])=>[key,Math.min(MAX_BOND,n)]));
+ // Final boss rooms already won: their boss is shown on the boss choice (2026-11-11), unknown ones as ???.
+ p.bosses=[...new Set((Array.isArray(p.bosses)?p.bosses:[]).filter(id=>typeof id==='string'))];
  // Top up from the starters, then from the whole roster, until the Fate Engine can draw three heroes.
  for(const key of [...STARTER_HEROES,...drawable(catalog)]){
   if(identities(p,catalog)>=3)break;
@@ -69,6 +71,7 @@ export function settleRun(input,run,catalog){
  const battles=run.history.filter(h=>h.kind==='reward').length,won=run.phase==='won';
  const crystals=battles*CRYSTALS_PER_BATTLE+(won?CRYSTALS_PER_EXPEDITION:0);
  p.crystals+=crystals;p.record[won?'won':'lost']++;p.settled.push(id);p.settled=p.settled.slice(-20);
+ const finalRoom=run.areas?.at(-1)?.stageId;if(won&&finalRoom&&!p.bosses.includes(finalRoom))p.bosses.push(finalRoom);
  const unlocked=won?unlockRandom(p,catalog,id+':unlock'):null;
  return {profile:p,crystals,unlocked};
 }

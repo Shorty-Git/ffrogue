@@ -80,8 +80,21 @@ export class CombatHud {
     // Hints belong to command selection; once every command is locked (enemy turn, victory) the battle message wins.
     const selecting=this.state.commands.some(command=>command&&!command.disabled);
     const command=this.hinted===undefined||!selecting?undefined:this.state.commands[this.hinted];
-    line.classList.toggle('is-hint',!!command);
-    line.textContent=command?`${command.name} · ${command.description}`:this.state.message;
+    line.textContent=this.state.message;
+    // Hovered/focused command: a readable card right above its button (name, cost, one effect per line).
+    const tip=this.root.querySelector<HTMLElement>('.command-tip');
+    const button=command?this.root.querySelectorAll<HTMLElement>('.ribbon-commands > .command')[this.hinted!]:undefined;
+    if(!tip)return;
+    if(!command||!button){tip.hidden=true;return;}
+    // The cost sits in the header, so a leading "N MP" part of the description is dropped.
+    const lines=command.description.split(' · ').map(part=>part.trim()).filter((part,i)=>part&&!(i===0&&/^\d+ MP$/.test(part)));
+    tip.innerHTML=`<header><strong>${escapeHtml(command.name)}</strong><span>${escapeHtml(command.cost)}</span></header><ul>${lines.map(l=>`<li>${escapeHtml(l)}</li>`).join('')}</ul>`;
+    tip.hidden=false;
+    const root=this.root.getBoundingClientRect(),b=button.getBoundingClientRect();
+    const width=Math.min(root.width-16,340),center=b.left+b.width/2-root.left;
+    tip.style.width=width+'px';
+    tip.style.left=Math.max(8,Math.min(root.width-width-8,center-width/2))+'px';
+    tip.style.bottom=(root.bottom-b.top+8)+'px';
   }
 
   render(state:CombatHudState):void {
@@ -126,7 +139,7 @@ export class CombatHud {
     this.root.innerHTML=`<div class="combat-caption"><strong>${escapeHtml(state.area)}</strong><span>${escapeHtml(state.phase)}</span>${state.wards?.length?`<span class="caption-wards" title="Party wards: ${escapeHtml(state.wards.join(', '))} damage taken -50%">Ward ${elementChips(state.wards)}</span>`:''}</div>
       ${actors}<div class="combat-dock"><div class="combat-party">${party}</div><div class="ribbon-commands" style="--commands:${state.commands.length}">${commands}</div>
       <div class="ribbon-prompt"><span role="status">${escapeHtml(state.message)}</span>${state.pending?`<button type="button" class="prompt-cancel" ${attrs('clear',0)}>Cancel <kbd>Esc</kbd></button>`:''}</div>
-      <p class="ribbon-keys" aria-hidden="true"><kbd>1</kbd>–<kbd>${state.commands.length}</kbd> command · <kbd>←</kbd><kbd>→</kbd> target · <kbd>Esc</kbd> cancel · hover a command for details</p></div>`;
+      <p class="ribbon-keys" aria-hidden="true"><kbd>1</kbd>–<kbd>${state.commands.length}</kbd> command · <kbd>←</kbd><kbd>→</kbd> target · <kbd>Esc</kbd> cancel · hover a command for details</p></div><div class="command-tip" role="tooltip" hidden></div>`;
     this.showPrompt();
     animateGauges(this.root,shown);
     if(focus)this.root.querySelector<HTMLElement>(`[data-focus="${focus}"]:not(:disabled)`)?.focus({preventScroll:true});
