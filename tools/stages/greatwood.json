@@ -1,0 +1,120 @@
+{
+  "schema": "stage-recipe-v1",
+  "key": "greatwood",
+  "name": "Greatwood",
+  "theme": "FINAL FANTASY XVI",
+  "series": "FFXVI",
+  "arena": {
+    "key": "greatwood",
+    "battleBgId": 122105,
+    "title": "FFXVI",
+    "label": "The Greatwood",
+    "floor": [
+      0.6,
+      0.85
+    ],
+    "worldIdentity": "Reviewed visual identification (2026-11-11): realistic forest clearing (battle_bg_2018_05, the FFXVI crossover set) read as Valisthea's Greatwood; the original Worgen and Vampire Thorn descriptions place them in the Greatwood, Garuda is the Eikon of Wind. No original stage-to-world join."
+  },
+  "music": {
+    "normal": {
+      "resourceId": 4002304,
+      "title": "Find the Flame",
+      "game": "FFXVI"
+    },
+    "boss": {
+      "resourceId": 4002303,
+      "title": "Control",
+      "game": "FFXVI"
+    }
+  },
+  "enemies": [
+    {
+      "key": "worgen",
+      "dictionaryId": 1012410,
+      "name": "Worgen",
+      "scale": 1.6,
+      "movement": "approach",
+      "monsterId": "101241000"
+    },
+    {
+      "key": "vampire_thorn",
+      "dictionaryId": 1111910,
+      "name": "Vampire Thorn",
+      "scale": 1.6,
+      "movement": "stationary",
+      "monsterId": "111191000"
+    }
+  ],
+  "boss": {
+    "key": "garuda",
+    "dictionaryId": 4021010,
+    "name": "Garuda",
+    "scale": 1.8,
+    "movement": "stationary",
+    "note": "FFBE Garuda, Eikon of Wind (dictionary 4021010); elite of the Greatwood route. Garuda Flap, Tornado and Aerial Blast are her original moves (English names reviewed for Japanese-only source rows).",
+    "behavior": {
+      "phaseAt": 0.5,
+      "phaseName": "Eikon of Wind",
+      "phaseMultiplier": 1.25,
+      "pattern": [
+        {
+          "kind": "attack",
+          "name": "Garuda Flap",
+          "multiplier": 1,
+          "scope": "single",
+          "skill": "garuda_flap"
+        },
+        {
+          "kind": "prepare",
+          "name": "The wind howls",
+          "next": "Tornado"
+        },
+        {
+          "kind": "attack",
+          "name": "Tornado",
+          "multiplier": 1.2,
+          "scope": "party",
+          "skill": "tornado"
+        },
+        {
+          "kind": "attack",
+          "name": "Garuda Flap",
+          "multiplier": 1.1,
+          "scope": "single",
+          "skill": "garuda_flap"
+        },
+        {
+          "kind": "prepare",
+          "name": "Garuda takes to the sky",
+          "next": "Aerial Blast"
+        },
+        {
+          "kind": "attack",
+          "name": "Aerial Blast",
+          "multiplier": 1.3,
+          "scope": "party",
+          "skill": "aerial_blast"
+        },
+        {
+          "kind": "attack",
+          "name": "Attack",
+          "multiplier": 1,
+          "scope": "single"
+        }
+      ]
+    },
+    "monsterId": "402101000"
+  },
+  "formations": [
+    [
+      "top",
+      "bottom"
+    ],
+    [
+      "center"
+    ]
+  ],
+  "difficulty": 1.4,
+  "normalFights": 1,
+  "rewardCategory": "greatwood-relic"
+}

@@ -80,6 +80,36 @@ export const ENEMY_SKILLS = {
       "damageType": "physical"
     }
   },
+  "ba_gamnan": {
+    "water_spout": {
+      "name": "Water Spout",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "ba_gamnan_water_spout",
+      "damageEvents": [
+        {
+          "frame": 110,
+          "weight": 1
+        }
+      ],
+      "damageType": "physical"
+    },
+    "kick": {
+      "name": "Kick",
+      "scope": "single",
+      "multiplier": 1.2,
+      "origin": "source",
+      "presentation": "ba_gamnan_kick",
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 1
+        }
+      ],
+      "damageType": "physical"
+    }
+  },
   "beatrix": {
     "lightning_slash": {
       "name": "Lightning Slash",
@@ -929,6 +959,184 @@ export const ENEMY_SKILLS = {
         }
       ],
       "damageType": "magical"
+    }
+  },
+  "garuda": {
+    "tornado": {
+      "name": "Tornado",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "garuda_tornado",
+      "damageEvents": [
+        {
+          "frame": 80,
+          "weight": 0.12
+        },
+        {
+          "frame": 92,
+          "weight": 0.08
+        },
+        {
+          "frame": 104,
+          "weight": 0.08
+        },
+        {
+          "frame": 116,
+          "weight": 0.08
+        },
+        {
+          "frame": 128,
+          "weight": 0.08
+        },
+        {
+          "frame": 140,
+          "weight": 0.08
+        },
+        {
+          "frame": 152,
+          "weight": 0.08
+        },
+        {
+          "frame": 164,
+          "weight": 0.08
+        },
+        {
+          "frame": 176,
+          "weight": 0.08
+        },
+        {
+          "frame": 188,
+          "weight": 0.08
+        },
+        {
+          "frame": 200,
+          "weight": 0.08
+        },
+        {
+          "frame": 212,
+          "weight": 0.08
+        }
+      ],
+      "damageType": "magical"
+    },
+    "double_swing": {
+      "name": "Double Swing",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "garuda_double_swing",
+      "damageEvents": [
+        {
+          "frame": 45,
+          "weight": 0.5
+        },
+        {
+          "frame": 55,
+          "weight": 0.5
+        }
+      ],
+      "damageType": "physical"
+    },
+    "sweeping_spin": {
+      "name": "Sweeping Spin",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "garuda_sweeping_spin",
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 1
+        }
+      ],
+      "damageType": "physical"
+    },
+    "aerial_blast": {
+      "name": "Aerial Blast",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "garuda_aerial_blast",
+      "damageEvents": [
+        {
+          "frame": 190,
+          "weight": 1
+        }
+      ],
+      "damageType": "magical"
+    },
+    "aero_burst": {
+      "name": "Aero Burst",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "garuda_aero_burst",
+      "damageEvents": [
+        {
+          "frame": 45,
+          "weight": 0.2
+        },
+        {
+          "frame": 65,
+          "weight": 0.2
+        },
+        {
+          "frame": 85,
+          "weight": 0.2
+        },
+        {
+          "frame": 105,
+          "weight": 0.2
+        },
+        {
+          "frame": 125,
+          "weight": 0.2
+        }
+      ],
+      "damageType": "magical"
+    },
+    "wind_emit": {
+      "name": "Wind Emit",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "garuda_wind_emit",
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 1
+        }
+      ],
+      "damageType": "magical"
+    },
+    "garuda_flap": {
+      "name": "Garuda Flap",
+      "scope": "single",
+      "multiplier": 1.2,
+      "origin": "source",
+      "presentation": "garuda_garuda_flap",
+      "damageEvents": [
+        {
+          "frame": 100,
+          "weight": 1
+        }
+      ],
+      "damageType": "physical"
+    },
+    "skyfall": {
+      "name": "Skyfall",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "garuda_skyfall",
+      "damageEvents": [
+        {
+          "frame": 40,
+          "weight": 1
+        }
+      ],
+      "damageType": "physical"
     }
   },
   "gilgamesh": {
@@ -1903,6 +2111,22 @@ export const ENEMY_SKILLS = {
       "damageType": "magical"
     }
   },
+  "skeleton": {
+    "blizzard": {
+      "name": "Blizzard",
+      "scope": "single",
+      "multiplier": 1.2,
+      "origin": "source",
+      "presentation": "skeleton_blizzard",
+      "damageEvents": [
+        {
+          "frame": 130,
+          "weight": 1
+        }
+      ],
+      "damageType": "magical"
+    }
+  },
   "sweeper": {
     "machine_gun": {
       "name": "Machine Gun",
@@ -1994,6 +2218,30 @@ export const ENEMY_SKILLS = {
       ]
     }
   },
+  "vampire_thorn": {
+    "vine_whip": {
+      "name": "Vine Whip",
+      "scope": "single",
+      "multiplier": 1.2,
+      "origin": "source",
+      "presentation": "vampire_thorn_vine_whip",
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.3
+        },
+        {
+          "frame": 62,
+          "weight": 0.3
+        },
+        {
+          "frame": 82,
+          "weight": 0.4
+        }
+      ],
+      "damageType": "physical"
+    }
+  },
   "water_flan": {
     "water": {
       "name": "Water",
@@ -2008,6 +2256,22 @@ export const ENEMY_SKILLS = {
         }
       ],
       "damageType": "magical"
+    }
+  },
+  "worgen": {
+    "bite": {
+      "name": "Bite",
+      "scope": "single",
+      "multiplier": 1.2,
+      "origin": "source",
+      "presentation": "worgen_bite",
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 1
+        }
+      ],
+      "damageType": "physical"
     }
   },
   "x_atm092": {

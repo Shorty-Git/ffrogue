@@ -1,0 +1,26 @@
+{
+  "schema": "enemy-skills-v1",
+  "key": "worgen",
+  "monsterId": 101241000,
+  "dictionaryId": 1012410,
+  "skills": [
+    {
+      "id": "bite",
+      "ffbeId": 150220,
+      "type": "MONSTER_SKILL",
+      "name": "Bite",
+      "scope": "single_enemy",
+      "damageType": "physical",
+      "moveType": "stationary",
+      "multiplier": 1.2,
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "worgen_bite",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    }
+  ]
+}

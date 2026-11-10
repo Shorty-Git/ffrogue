@@ -870,6 +870,174 @@ export const IMPORTED_ENEMIES = {
       ]
     }
   },
+  "worgen": {
+    "key": "worgen",
+    "name": "Worgen",
+    "spriteId": "1012410",
+    "monsterId": "101241000",
+    "dictionaryId": 1012410,
+    "scale": 1.6,
+    "attack": {
+      "clip": "atk",
+      "impactFrame": 1,
+      "movement": "approach"
+    },
+    "audio": []
+  },
+  "vampire_thorn": {
+    "key": "vampire_thorn",
+    "name": "Vampire Thorn",
+    "spriteId": "1111910",
+    "monsterId": "111191000",
+    "dictionaryId": 1111910,
+    "scale": 1.6,
+    "attack": {
+      "clip": "atk",
+      "impactFrame": 1,
+      "movement": "stationary"
+    },
+    "audio": []
+  },
+  "garuda": {
+    "key": "garuda",
+    "name": "Garuda",
+    "spriteId": "4021010",
+    "monsterId": "402101000",
+    "dictionaryId": 4021010,
+    "scale": 1.8,
+    "attack": {
+      "clip": "atk",
+      "impactFrame": 1,
+      "movement": "stationary"
+    },
+    "audio": [],
+    "behavior": {
+      "phaseAt": 0.5,
+      "phaseName": "Eikon of Wind",
+      "phaseMultiplier": 1.25,
+      "pattern": [
+        {
+          "kind": "attack",
+          "name": "Garuda Flap",
+          "multiplier": 1,
+          "scope": "single",
+          "skill": "garuda_flap"
+        },
+        {
+          "kind": "prepare",
+          "name": "The wind howls",
+          "next": "Tornado"
+        },
+        {
+          "kind": "attack",
+          "name": "Tornado",
+          "multiplier": 1.2,
+          "scope": "party",
+          "skill": "tornado"
+        },
+        {
+          "kind": "attack",
+          "name": "Garuda Flap",
+          "multiplier": 1.1,
+          "scope": "single",
+          "skill": "garuda_flap"
+        },
+        {
+          "kind": "prepare",
+          "name": "Garuda takes to the sky",
+          "next": "Aerial Blast"
+        },
+        {
+          "kind": "attack",
+          "name": "Aerial Blast",
+          "multiplier": 1.3,
+          "scope": "party",
+          "skill": "aerial_blast"
+        },
+        {
+          "kind": "attack",
+          "name": "Attack",
+          "multiplier": 1,
+          "scope": "single"
+        }
+      ]
+    }
+  },
+  "skeleton": {
+    "key": "skeleton",
+    "name": "Skeleton",
+    "spriteId": "2122210",
+    "monsterId": "212221000",
+    "dictionaryId": 2122210,
+    "scale": 1.5,
+    "attack": {
+      "clip": "atk",
+      "impactFrame": 1,
+      "movement": "approach"
+    },
+    "audio": []
+  },
+  "skull_defender": {
+    "key": "skull_defender",
+    "name": "Skull Defender",
+    "spriteId": "2122110",
+    "monsterId": "212211000",
+    "dictionaryId": 2122110,
+    "scale": 1.5,
+    "attack": {
+      "clip": "atk",
+      "impactFrame": 1,
+      "movement": "approach"
+    },
+    "audio": []
+  },
+  "ba_gamnan": {
+    "key": "ba_gamnan",
+    "name": "Ba'Gamnan",
+    "spriteId": "3013510",
+    "monsterId": "301351000",
+    "dictionaryId": 3013510,
+    "scale": 1.7,
+    "attack": {
+      "clip": "atk",
+      "impactFrame": 1,
+      "movement": "approach"
+    },
+    "audio": [],
+    "behavior": {
+      "phaseAt": 0.5,
+      "phaseName": "Bounty hunt",
+      "phaseMultiplier": 1.25,
+      "pattern": [
+        {
+          "kind": "attack",
+          "name": "Kick",
+          "multiplier": 1,
+          "scope": "single",
+          "skill": "kick"
+        },
+        {
+          "kind": "prepare",
+          "name": "Ba'Gamnan grins",
+          "next": "Water Spout"
+        },
+        {
+          "kind": "attack",
+          "name": "Water Spout",
+          "multiplier": 1.2,
+          "scope": "party",
+          "skill": "water_spout"
+        },
+        {
+          "kind": "attack",
+          "name": "Kick",
+          "multiplier": 1.1,
+          "scope": "single",
+          "skill": "kick"
+        }
+      ]
+    }
+  },
   "ghirofelgo": {
     "key": "ghirofelgo",
     "name": "Ghirofelgo",
@@ -1499,6 +1667,76 @@ export const IMPORTED_STAGES = {
       "musicResourceId": 400807,
       "musicSeries": "FFIV",
       "bossMusicResourceId": 400863,
+      "musicAssignment": "Original series battle and boss themes (tools/import_stage.mjs)",
+      "soundCues": []
+    }
+  },
+  "greatwood": {
+    "id": "greatwood",
+    "name": "Greatwood",
+    "theme": "FINAL FANTASY XVI",
+    "arena": "greatwood",
+    "source": {
+      "battleBgId": 122105,
+      "file": "battle_bg_2018_05.jpg",
+      "worldIdentity": "Reviewed visual identification (2026-11-11): realistic forest clearing (battle_bg_2018_05, the FFXVI crossover set) read as Valisthea's Greatwood; the original Worgen and Vampire Thorn descriptions place them in the Greatwood, Garuda is the Eikon of Wind. No original stage-to-world join."
+    },
+    "enemyPool": [
+      "worgen",
+      "vampire_thorn"
+    ],
+    "formations": [
+      [
+        "top",
+        "bottom"
+      ],
+      [
+        "center"
+      ]
+    ],
+    "bossId": "garuda",
+    "difficulty": 1.4,
+    "rewardCategory": "greatwood-relic",
+    "normalFights": 1,
+    "audio": {
+      "musicResourceId": 4002304,
+      "musicSeries": "FFXVI",
+      "bossMusicResourceId": 4002303,
+      "musicAssignment": "Original series battle and boss themes (tools/import_stage.mjs)",
+      "soundCues": []
+    }
+  },
+  "lhusu_mines": {
+    "id": "lhusu_mines",
+    "name": "Lhusu Mines",
+    "theme": "FINAL FANTASY XII",
+    "arena": "lhusu_mines",
+    "source": {
+      "battleBgId": 120124,
+      "file": "battle_bg_2011_04.jpg",
+      "worldIdentity": "Reviewed visual identification (2026-11-11): rocky mine cavern (battle_bg_2011_04) read as Bhujerba's Lhusu Mines; the original Skeleton, Skull Defender descriptions place them in the Lhusu Mines and Ba'Gamnan is the Ivalice headhunter. The 2011 crossover set's own game is not verified; no original stage-to-world join."
+    },
+    "enemyPool": [
+      "skeleton",
+      "skull_defender"
+    ],
+    "formations": [
+      [
+        "top",
+        "bottom"
+      ],
+      [
+        "center"
+      ]
+    ],
+    "bossId": "ba_gamnan",
+    "difficulty": 1.3,
+    "rewardCategory": "lhusu-relic",
+    "normalFights": 1,
+    "audio": {
+      "musicResourceId": 400837,
+      "musicSeries": "FFXII",
+      "bossMusicResourceId": 400836,
       "musicAssignment": "Original series battle and boss themes (tools/import_stage.mjs)",
       "soundCues": []
     }

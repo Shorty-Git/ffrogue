@@ -61,7 +61,10 @@ for (const key of keys) {
     const ignored = processes.filter(p => !DAMAGE_PROCESSES.has(p));
     // Original damage process: 15 is magical damage, 1 physical (Protect/Shell guards read this).
     const damageType = processes.includes('15') && !processes.includes('1') ? 'magical' : 'physical';
-    const id = snake(skill.name), presentation = `${key}_${id}`;
+    // Display name: a reviewed English override (recipe.nameOverrides, keyed by FFBE skill id) wins; source
+    // names without Latin letters (Japanese-only rows) fall back to an id from the FFBE skill id, never ''.
+    const name = recipe.nameOverrides?.[skill.id] ?? skill.name;
+    const id = snake(name) || `skill_${skill.id}`, presentation = `${key}_${id}`;
     if (recipe.skills.some(s => s.ffbeId === skill.id) && fs.existsSync(`public/assets/presentations/${presentation}`)) {
       const present = recipe.skills.find(s => s.ffbeId === skill.id), heroEffects = heroEffectsOf(raw);
       present.damageType = damageType;
@@ -77,7 +80,7 @@ for (const key of keys) {
     if (!hits.length) { fail('no source hit frames'); continue; }
     const range = String(raw.targetRange).split('@')[0];
     const heroEffects = heroEffectsOf(raw);
-    const entry = {id, ffbeId: skill.id, type: 'MONSTER_SKILL', name: skill.name, scope: range === '2' ? 'all_enemies' : 'single_enemy', damageType,
+    const entry = {id, ffbeId: skill.id, type: 'MONSTER_SKILL', name, scope: range === '2' ? 'all_enemies' : 'single_enemy', damageType,
       ...(heroEffects.length ? {heroEffects} : {}),
       moveType: 'stationary', multiplier: range === '2' ? 0.9 : 1.2,
       damageEvents: hits.map(([frame, weight]) => ({frame, weight: weight / (100 * groups)})).sort((a, b) => a.frame - b.frame),

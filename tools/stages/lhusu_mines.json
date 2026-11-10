@@ -1,0 +1,102 @@
+{
+  "schema": "stage-recipe-v1",
+  "key": "lhusu_mines",
+  "name": "Lhusu Mines",
+  "theme": "FINAL FANTASY XII",
+  "series": "FFXII",
+  "arena": {
+    "key": "lhusu_mines",
+    "battleBgId": 120124,
+    "title": "FFXII",
+    "label": "Lhusu Mines",
+    "floor": [
+      0.6,
+      0.85
+    ],
+    "worldIdentity": "Reviewed visual identification (2026-11-11): rocky mine cavern (battle_bg_2011_04) read as Bhujerba's Lhusu Mines; the original Skeleton, Skull Defender descriptions place them in the Lhusu Mines and Ba'Gamnan is the Ivalice headhunter. The 2011 crossover set's own game is not verified; no original stage-to-world join."
+  },
+  "music": {
+    "normal": {
+      "resourceId": 400837,
+      "title": "Clash of Swords",
+      "game": "FFXII"
+    },
+    "boss": {
+      "resourceId": 400836,
+      "title": "Boss Battle",
+      "game": "FFXII"
+    }
+  },
+  "enemies": [
+    {
+      "key": "skeleton",
+      "dictionaryId": 2122210,
+      "name": "Skeleton",
+      "scale": 1.5,
+      "movement": "approach",
+      "monsterId": "212221000"
+    },
+    {
+      "key": "skull_defender",
+      "dictionaryId": 2122110,
+      "name": "Skull Defender",
+      "scale": 1.5,
+      "movement": "approach",
+      "monsterId": "212211000"
+    }
+  ],
+  "boss": {
+    "key": "ba_gamnan",
+    "dictionaryId": 3013510,
+    "name": "Ba'Gamnan",
+    "scale": 1.7,
+    "movement": "approach",
+    "note": "FFBE Ba'Gamnan (dictionary 3013510); elite of the Lhusu Mines route. Kick and Water Spout are his original moves.",
+    "behavior": {
+      "phaseAt": 0.5,
+      "phaseName": "Bounty hunt",
+      "phaseMultiplier": 1.25,
+      "pattern": [
+        {
+          "kind": "attack",
+          "name": "Kick",
+          "multiplier": 1,
+          "scope": "single",
+          "skill": "kick"
+        },
+        {
+          "kind": "prepare",
+          "name": "Ba'Gamnan grins",
+          "next": "Water Spout"
+        },
+        {
+          "kind": "attack",
+          "name": "Water Spout",
+          "multiplier": 1.2,
+          "scope": "party",
+          "skill": "water_spout"
+        },
+        {
+          "kind": "attack",
+          "name": "Kick",
+          "multiplier": 1.1,
+          "scope": "single",
+          "skill": "kick"
+        }
+      ]
+    },
+    "monsterId": "301351000"
+  },
+  "formations": [
+    [
+      "top",
+      "bottom"
+    ],
+    [
+      "center"
+    ]
+  ],
+  "difficulty": 1.3,
+  "normalFights": 1,
+  "rewardCategory": "lhusu-relic"
+}

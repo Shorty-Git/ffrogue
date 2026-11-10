@@ -1,0 +1,26 @@
+{
+  "schema": "enemy-skills-v1",
+  "key": "skeleton",
+  "monsterId": 212221000,
+  "dictionaryId": 2122210,
+  "skills": [
+    {
+      "id": "blizzard",
+      "ffbeId": 800050,
+      "type": "MONSTER_SKILL",
+      "name": "Blizzard",
+      "scope": "single_enemy",
+      "damageType": "magical",
+      "moveType": "stationary",
+      "multiplier": 1.2,
+      "damageEvents": [
+        {
+          "frame": 130,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "skeleton_blizzard",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    }
+  ]
+}

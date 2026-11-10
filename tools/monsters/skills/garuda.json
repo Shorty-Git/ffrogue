@@ -1,0 +1,223 @@
+{
+  "schema": "enemy-skills-v1",
+  "key": "garuda",
+  "monsterId": 402101000,
+  "dictionaryId": 4021010,
+  "skills": [
+    {
+      "id": "tornado",
+      "ffbeId": 800204,
+      "type": "MONSTER_SKILL",
+      "name": "Tornado",
+      "scope": "all_enemies",
+      "damageType": "magical",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 80,
+          "weight": 0.12
+        },
+        {
+          "frame": 92,
+          "weight": 0.08
+        },
+        {
+          "frame": 104,
+          "weight": 0.08
+        },
+        {
+          "frame": 116,
+          "weight": 0.08
+        },
+        {
+          "frame": 128,
+          "weight": 0.08
+        },
+        {
+          "frame": 140,
+          "weight": 0.08
+        },
+        {
+          "frame": 152,
+          "weight": 0.08
+        },
+        {
+          "frame": 164,
+          "weight": 0.08
+        },
+        {
+          "frame": 176,
+          "weight": 0.08
+        },
+        {
+          "frame": 188,
+          "weight": 0.08
+        },
+        {
+          "frame": 200,
+          "weight": 0.08
+        },
+        {
+          "frame": 212,
+          "weight": 0.08
+        }
+      ],
+      "scenePresentation": "garuda_tornado",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value. Not reconstructed: original process(es) 33 beyond the damage."
+    },
+    {
+      "id": "double_swing",
+      "ffbeId": 855525,
+      "type": "MONSTER_SKILL",
+      "name": "Double Swing",
+      "scope": "all_enemies",
+      "damageType": "physical",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 45,
+          "weight": 0.5
+        },
+        {
+          "frame": 55,
+          "weight": 0.5
+        }
+      ],
+      "scenePresentation": "garuda_double_swing",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    },
+    {
+      "id": "sweeping_spin",
+      "ffbeId": 854630,
+      "type": "MONSTER_SKILL",
+      "name": "Sweeping Spin",
+      "scope": "all_enemies",
+      "damageType": "physical",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "garuda_sweeping_spin",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    },
+    {
+      "id": "aerial_blast",
+      "ffbeId": 224923,
+      "type": "MONSTER_SKILL",
+      "name": "Aerial Blast",
+      "scope": "all_enemies",
+      "damageType": "magical",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 190,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "garuda_aerial_blast",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    },
+    {
+      "id": "aero_burst",
+      "ffbeId": 224845,
+      "type": "MONSTER_SKILL",
+      "name": "Aero Burst",
+      "scope": "all_enemies",
+      "damageType": "magical",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 45,
+          "weight": 0.2
+        },
+        {
+          "frame": 65,
+          "weight": 0.2
+        },
+        {
+          "frame": 85,
+          "weight": 0.2
+        },
+        {
+          "frame": 105,
+          "weight": 0.2
+        },
+        {
+          "frame": 125,
+          "weight": 0.2
+        }
+      ],
+      "scenePresentation": "garuda_aero_burst",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    },
+    {
+      "id": "wind_emit",
+      "ffbeId": 224844,
+      "type": "MONSTER_SKILL",
+      "name": "Wind Emit",
+      "scope": "all_enemies",
+      "damageType": "magical",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "garuda_wind_emit",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    },
+    {
+      "id": "garuda_flap",
+      "ffbeId": 224848,
+      "type": "MONSTER_SKILL",
+      "name": "Garuda Flap",
+      "scope": "single_enemy",
+      "damageType": "physical",
+      "moveType": "stationary",
+      "multiplier": 1.2,
+      "damageEvents": [
+        {
+          "frame": 100,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "garuda_garuda_flap",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    },
+    {
+      "id": "skyfall",
+      "ffbeId": 224843,
+      "type": "MONSTER_SKILL",
+      "name": "Skyfall",
+      "scope": "all_enemies",
+      "damageType": "physical",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 40,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "garuda_skyfall",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    }
+  ],
+  "nameOverrides": {
+    "224843": "Skyfall",
+    "224844": "Wind Emit",
+    "224845": "Aero Burst",
+    "224848": "Garuda Flap",
+    "224923": "Aerial Blast"
+  }
+}

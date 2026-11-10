@@ -1,0 +1,44 @@
+{
+  "schema": "enemy-skills-v1",
+  "key": "ba_gamnan",
+  "monsterId": 301351000,
+  "dictionaryId": 3013510,
+  "skills": [
+    {
+      "id": "water_spout",
+      "ffbeId": 222263,
+      "type": "MONSTER_SKILL",
+      "name": "Water Spout",
+      "scope": "all_enemies",
+      "damageType": "physical",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 110,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "ba_gamnan_water_spout",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    },
+    {
+      "id": "kick",
+      "ffbeId": 854527,
+      "type": "MONSTER_SKILL",
+      "name": "Kick",
+      "scope": "single_enemy",
+      "damageType": "physical",
+      "moveType": "stationary",
+      "multiplier": 1.2,
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "ba_gamnan_kick",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    }
+  ]
+}

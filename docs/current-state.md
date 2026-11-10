@@ -116,6 +116,18 @@ Last consolidated: 2026-11-07; newest section: cloud night 2026-11-10.
     elite Milvus Velocycle (Machine Gun, Triple Beam, Hexa-Beam). Music Blinded by Light / Saber's Edge
     (400804 / 400805).
   - Checked: both arenas with enemies, every elite move in a training fight, 359 node tests.
+- Two more route stages:
+  - Lhusu Mines (FFXII, battle_bg 120124 `battle_bg_2011_04`, rocky mine cavern; the 2011 set's game is not
+    verified): Skeleton (Blizzard), Skull Defender; elite Ba'Gamnan (Kick, Water Spout). Music Clash of
+    Swords / Boss Battle (400837 / 400836).
+  - Greatwood (FFXVI, 122105 `battle_bg_2018_05`, forest): Worgen (Bite), Vampire Thorn (Vine Whip); elite
+    Garuda (Garuda Flap, Tornado, Aerial Blast; 8 moves imported). Music Find the Flame / Control
+    (4002304 / 4002303).
+  - import_enemy_skills.mjs: Japanese-only skill names used to give an empty id (Garuda's five moves
+    overwrote one presentation `garuda_`). Ids now fall back to `skill_<ffbeId>`, and a recipe may set
+    reviewed English names in `nameOverrides` (garuda.json: Aerial Blast, Aero Burst, Wind Emit, Garuda Flap,
+    Skyfall). The stale `garuda_` presentation and its registry/audio entries were removed.
+  - Checked: arenas, the elites' pattern moves in training fights, 359 node tests.
 - Web (alpha) build: `npm run build:web` = normal build + `tools/web_audio.py dist` (music WAVs > 1 MB ->
   Ogg Vorbis q0.6, frame count checked, references in the built JS rewritten; public/ keeps the WAVs).
   Python needs `soundfile` (set FFROGUE_PYTHON if the PATH python lacks it). Result 2026-11-11: dist 1.2 GB,
