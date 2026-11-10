@@ -7,6 +7,38 @@ export const PROFILE_KEY='ffrogue.profile.v1';
 /** Heroes every new profile starts with (the first reviewed roster). Missing keys are ignored. */
 export const STARTER_HEROES=['cloud','aerith','barret','squall','delita','jack','cloud_of_darkness'];
 export const SUMMON_COST=100;
+/** Favourite game (2026-11-11): the player's favourite Final Fantasy shapes the starting roster. Keys are the
+ * canonicalIdentity prefixes of run-content.json, in series order. */
+export const FAVORITE_GAMES=[['ff1','FINAL FANTASY I'],['ff2','FINAL FANTASY II'],['ff3','FINAL FANTASY III'],['ff4','FINAL FANTASY IV'],
+ ['ff5','FINAL FANTASY V'],['ff6','FINAL FANTASY VI'],['ff7','FINAL FANTASY VII'],['ff8','FINAL FANTASY VIII'],['ff9','FINAL FANTASY IX'],
+ ['ff10','FINAL FANTASY X'],['ff12','FINAL FANTASY XII'],['ff13','FINAL FANTASY XIII'],['ff15','FINAL FANTASY XV'],['ff16','FINAL FANTASY XVI'],
+ ['type0','FINAL FANTASY TYPE-0'],['fft','FINAL FANTASY TACTICS']];
+/** A favourite roster always offers at least this many different heroes, topped up from STARTER_HEROES. */
+export const FAVORITE_MIN_IDENTITIES=4;
+const FAVORITE_FILL=['cloud','squall','delita','jack','cloud_of_darkness','aerith','barret'];
+const gameOf=character=>String(character.canonicalIdentity??'').split(':')[0];
+/** Heroes a favourite game grants: every base form up to 5 stars; a hero with only higher forms gets its lowest. */
+export function favoriteHeroes(catalog,game){
+ const keys=drawable(catalog).filter(key=>gameOf(catalog[key])===game);
+ const byIdentity=new Map();for(const key of keys)(byIdentity.get(catalog[key].canonicalIdentity)??byIdentity.set(catalog[key].canonicalIdentity,[]).get(catalog[key].canonicalIdentity)).push(key);
+ return [...byIdentity.values()].flatMap(list=>{const low=list.filter(key=>(catalog[key].rarity??5)<=5);
+  return low.length?low:[list.reduce((a,b)=>(catalog[a].rarity??9)<=(catalog[b].rarity??9)?a:b)];});
+}
+/** Games with at least one drawable hero, with the heroes a pick would grant. */
+export function favoriteChoices(catalog){return FAVORITE_GAMES.map(([game,label])=>({game,label,heroes:favoriteHeroes(catalog,game)})).filter(c=>c.heroes.length);}
+/** Records the favourite. A fresh profile (no finished run) starts from that game's heroes, topped up from the
+ * starters; a profile with progress keeps everything and gains the game's heroes. */
+export function chooseFavorite(input,catalog,game){
+ const p=structuredClone(input),heroes=favoriteHeroes(catalog,game);
+ if(!heroes.length)throw Error('Unknown favourite game: '+game);
+ const fresh=p.record.won+p.record.lost===0;
+ const unlocked=fresh?[...heroes]:[...new Set([...p.unlocked,...heroes])];
+ // Top-up mixes games (one hero per series first) so no single game fills every favourite roster.
+ for(const key of FAVORITE_FILL){if(!catalog[key]||unlocked.includes(key)||unlocked.some(k=>catalog[k]&&catalog[k].canonicalIdentity===catalog[key].canonicalIdentity))continue;
+  if(new Set(unlocked.filter(k=>catalog[k]).map(k=>catalog[k].canonicalIdentity)).size>=FAVORITE_MIN_IDENTITIES)break;unlocked.push(key);}
+ p.unlocked=unlocked;p.favorite=game;p.bond=Object.fromEntries(Object.entries(p.bond).filter(([key])=>unlocked.includes(key)));
+ return normalizeProfile(p,catalog);
+}
 /** Crystals per battle won, and the bonus for finishing an expedition. */
 export const CRYSTALS_PER_BATTLE=10,CRYSTALS_PER_EXPEDITION=60;
 /** Duplicates give Bond (docs/progression-design.md), capped so the Fate Engine keeps its tension:
@@ -25,6 +57,7 @@ export function normalizeProfile(input,catalog){
  p.record={won:p.record?.won|0,lost:p.record?.lost|0};
  p.settled=Array.isArray(p.settled)?p.settled.slice(-20):[];
  p.bond=Object.fromEntries(Object.entries(p.bond??{}).filter(([key,n])=>p.unlocked.includes(key)&&Number.isInteger(n)&&n>0).map(([key,n])=>[key,Math.min(MAX_BOND,n)]));
+ p.favorite=typeof p.favorite==='string'?p.favorite:undefined;if(p.favorite===undefined)delete p.favorite;
  // Final boss rooms already won: their boss is shown on the boss choice (2026-11-11), unknown ones as ???.
  p.bosses=[...new Set((Array.isArray(p.bosses)?p.bosses:[]).filter(id=>typeof id==='string'))];
  // Top up from the starters, then from the whole roster, until the Fate Engine can draw three heroes.

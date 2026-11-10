@@ -138,6 +138,12 @@ Last consolidated: 2026-11-07; newest section: cloud night 2026-11-10.
     space below their slot (the HUD); raising the recipe scale has no effect. Needs a placement rule for big
     bosses (e.g. slot higher or feet-based fit), not done yet. Cloud/Barret Limit gauge oddity at LB start:
     not reproduced, waiting for a screenshot.
+- Favourite Final Fantasy (profile.mjs `chooseFavorite`, RunUI.favorite): asked once per profile on the first
+  Begin (before How to Play). The game grants its heroes' base forms up to 5★ (only-7★ heroes: the lowest form);
+  the roster is topped up across games (cloud, squall, delita, jack, ...) to at least 4 different heroes. A fresh
+  profile starts from that set instead of the 7 default starters; a profile with finished runs keeps everything
+  and gains the game's heroes. Stored as `profile.favorite`. Checked in the browser (FFIX: Zidane, Vivi, Cloud,
+  Squall) and in tools/test_profile.mjs.
 - Web (alpha) build: `npm run build:web` = normal build + `tools/web_audio.py dist` (music WAVs > 1 MB ->
   Ogg Vorbis q0.6, frame count checked, references in the built JS rewritten; public/ keeps the WAVs).
   Python needs `soundfile` (set FFROGUE_PYTHON if the PATH python lacks it). Result 2026-11-11: dist 1.2 GB,

@@ -3,7 +3,7 @@ import type {UnitManifest} from '../types/manifest';
 import type {RunState,RunRules} from './runState.mjs';
 import {RunStore,createRun,variantAreas,courseAreas,FINAL_STAGES,routeOptions,chooseRoute,rollParty,confirmParty,chooseStartSkill,completeBattle,chooseReward,encounters,acknowledgeAwakening} from './runState.mjs';
 import {runCatalog} from './catalog';
-import {ProfileStore,drawCatalog,lockedHeroes,settleRun,summonHero,summonPool,SUMMON_COST,type Profile} from './profile.mjs';
+import {ProfileStore,chooseFavorite,favoriteChoices,drawCatalog,lockedHeroes,settleRun,summonHero,summonPool,SUMMON_COST,type Profile} from './profile.mjs';
 import {RunUI} from '../ui/RunUI';
 import {EncounterTransition} from '../ui/EncounterTransition';
 import {ALL_FATE_SOUNDS,fateSoundUrl,fateTier,fateTimeline} from '../ui/fateEngine';
@@ -44,7 +44,11 @@ export class GameFlow{
    const begin=(finalStage:string)=>{try{this.commit(createRun(seed,this.catalog,new URLSearchParams(location.search).get("arenaVariants")==="1"?variantAreas(seed):courseAreas(seed,finalStage),this.rules));this.audio.clearRunPosition();this.setup();}catch(e){this.fail(e);}};
    const boss=()=>this.chooseFinalBoss(begin);
    // First journey on this browser: the short guide comes first (once).
-   const start=()=>{if(readFlag(GUIDE_SEEN))boss();else{this.ui.guide('guide-done',"Let's go");this.ui.on('guide-done',()=>{writeFlag(GUIDE_SEEN);boss();});}};
+   const guide=()=>{if(readFlag(GUIDE_SEEN))boss();else{this.ui.guide('guide-done',"Let's go");this.ui.on('guide-done',()=>{writeFlag(GUIDE_SEEN);boss();});}};
+   // Once per profile: the favourite Final Fantasy picks the starting heroes (2026-11-11).
+   const start=()=>{if(this.profile.favorite){guide();return;}
+    const choices=favoriteChoices(this.catalog);this.ui.favorite(choices);
+    for(const c of choices)this.ui.on('favorite-'+c.game,()=>{try{this.profile=this.profiles.save(chooseFavorite(this.profile,this.catalog,c.game));guide();}catch(e){this.fail(e);}});};
    if(this.state){this.ui.dialog('Begin a new expedition?','The saved expedition will be abandoned. Rerolls and upgrades belong only to that run.','Start new run');this.ui.on('accept',start);this.ui.on('cancel',()=>this.menu());}else start();});
  }
  /** Training grounds: free party, form and skill choice against endurance opponents; never saved. */

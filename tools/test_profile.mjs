@@ -31,6 +31,13 @@ assert.equal(summoned.profile.crystals, 0);
 assert.equal(lockedHeroes(summoned.profile, catalog).length, summoned.unlocked ? 1 : 2);
 assert.ok(summoned.unlocked || summoned.bond === 1, 'a summon unlocks a hero or deepens Bond');
 assert.equal(settleRun(fresh, {seed: 'c', phase: 'battle', history: []}, catalog).crystals, 0, 'only finished runs settle');
+// Favourite game: a fresh profile starts from that game's heroes plus mixed top-ups; progress is kept.
+{const {chooseFavorite,favoriteChoices}=await import('../src/run/profile.mjs');
+ const fav=chooseFavorite(fresh,catalog,'ff8');assert.equal(fav.favorite,'ff8');assert.ok(fav.unlocked.includes('squall'));
+ assert.ok(!fav.unlocked.includes('tidus'),'other games stay locked');assert.ok(new Set(fav.unlocked.map(k=>catalog[k].canonicalIdentity)).size>=3);
+ const kept=chooseFavorite({...won.profile},catalog,'ff10');assert.ok(won.profile.unlocked.every(k=>kept.unlocked.includes(k)));assert.ok(kept.unlocked.includes('tidus'));
+ assert.ok(favoriteChoices(catalog).some(c=>c.game==='ff16'&&c.heroes.includes('clive')),'a 7-star-only game grants its lowest form');
+ assert.throws(()=>chooseFavorite(fresh,catalog,'ff99'));}
 console.log('profile: ok');
 // Bond: duplicates deepen Bond up to MAX_BOND, then refund; perks reach the draw catalog and the run.
 import {MAX_BOND,BOND_REFUND,BOND_MIN_START_LEVEL,drawCatalog as draw2} from '../src/run/profile.mjs';

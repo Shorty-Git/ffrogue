@@ -291,3 +291,11 @@
 #run-ui .peek-party{display:none;max-width:860px;margin:8px auto 0;padding:12px 14px;text-align:left;max-height:70vh;overflow:auto}
 #run-ui.is-peeking .peek-party{display:block}
 #run-ui.is-peeking .rpg-shell>*:not(.peek-party):not(.reward-peek):not(.actions),#run-ui.is-peeking .actions>*:not(.reward-peek){display:none}
+/* Favourite Final Fantasy choice (first journey). */
+.favorite-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;margin-top:14px}
+.favorite-card{display:grid;gap:4px;justify-items:center;padding:12px 10px;cursor:pointer;color:inherit;font:inherit;text-align:center;transition:transform .15s,filter .15s}
+.favorite-card:hover,.favorite-card:focus-visible{transform:translateY(-3px);filter:brightness(1.15)}
+.favorite-heads{display:flex;gap:4px;min-height:44px}
+.favorite-heads img{width:40px;height:40px;image-rendering:pixelated;border:1px solid #8fb0d066;background:#06122680}
+.favorite-card strong{font-family:var(--rpg-display);letter-spacing:.08em;color:#ffe3a8;font-size:1rem}
+.favorite-card small{color:#a9c3dc;font-size:.75rem;line-height:1.3}
