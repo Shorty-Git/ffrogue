@@ -10,7 +10,7 @@ const statusRow=(statuses?:StatusBadge[])=>statuses?.length?`<span class="status
 type PartyEntry = {name:string; portrait?:string; hp:number; maxHp:number; mp:number; maxMp:number; status:string; state:HeroState;
   active:boolean; disabled:boolean; target?:number; limit?:{value:number;max:number}; statuses?:StatusBadge[];
   /** Equipped weapon: category glyph, name, effect tooltip and elements. */ weapon?:{glyph:string;icon?:string;name:string;tip:string;elements:Element[]}};
-type Command = {name:string; icon:'attack'|'magic'|'ability'|'limit'; iconUrl?:string; cost:string; description:string; disabled:boolean; selected:boolean;
+type Command = {name:string; icon:'attack'|'magic'|'ability'|'limit'; iconUrl?:string; elements?:Element[]; cost:string; description:string; disabled:boolean; selected:boolean;
   /** The hero's Limit Burst; `ready` once the LB gauge is full. */ limit?:boolean; ready?:boolean};
 type ArenaActor = {id:number; name:string; hp?:number; maxHp?:number; status?:string; statuses?:StatusBadge[]; boss?:boolean; rank?:string; marked:boolean; selectable:boolean;
   /** Current enemy target: drawn with the crystal target cursor. */ targeted:boolean;
@@ -89,7 +89,7 @@ export class CombatHud {
     if(!command||!button){tip.hidden=true;return;}
     // The cost sits in the header, so a leading "N MP" part of the description is dropped.
     const lines=command.description.split(' · ').map(part=>part.trim()).filter((part,i)=>part&&!(i===0&&/^\d+ MP$/.test(part)));
-    tip.innerHTML=`<header><strong>${escapeHtml(command.name)}</strong><span>${escapeHtml(command.cost)}</span></header><ul>${lines.map(l=>`<li>${escapeHtml(l)}</li>`).join('')}</ul>`;
+    tip.innerHTML=`<header><strong>${escapeHtml(command.name)}</strong>${command.elements?.length?elementChips(command.elements):''}<span>${escapeHtml(command.cost)}</span></header><ul>${lines.map(l=>`<li>${escapeHtml(l)}</li>`).join('')}</ul>`;
     tip.hidden=false;
     const root=this.root.getBoundingClientRect(),b=button.getBoundingClientRect();
     const width=Math.min(root.width-16,340),center=b.left+b.width/2-root.left;

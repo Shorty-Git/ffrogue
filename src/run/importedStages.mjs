@@ -855,9 +855,9 @@ export const IMPORTED_STAGES = {
     "theme": "FINAL FANTASY V",
     "arena": "big_bridge",
     "source": {
-      "battleBgId": 120061,
-      "file": "battle_bg_2005_01.jpg",
-      "worldIdentity": "Reviewed visual identification (2026-11-11): castle rampart with towers (battle_bg_2005_01) read as FFV's Big Bridge; the original Flying Killer, Little Chariot and Gilgamesh (4050410) descriptions place them on the Big Bridge. No original stage-to-world join."
+      "battleBgId": 120063,
+      "file": "battle_bg_2005_03.jpg",
+      "worldIdentity": "Reviewed visual identification (2026-11-11): stone bridge deck with pillars under open sky (battle_bg_2005_03) read as FFV's Big Bridge (2005_01, the rampart, is already Fabul); the original Flying Killer, Little Chariot and Gilgamesh (4050410) descriptions place them on the Big Bridge. No original stage-to-world join."
     },
     "enemyPool": [
       "flying_killer",

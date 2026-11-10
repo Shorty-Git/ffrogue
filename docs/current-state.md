@@ -50,7 +50,8 @@ Last consolidated: 2026-11-07; newest section: cloud night 2026-11-10.
     the title screen.
 - Two new FFV final boss rooms (FINAL_STAGES now nibelheim, vector, big_bridge, castle_exdeath; boss choice
   shows four cards as 2x2):
-  - Big Bridge (`tools/stages/big_bridge.json`, battle_bg 120061 `battle_bg_2005_01`, castle rampart):
+  - Big Bridge (`tools/stages/big_bridge.json`, battle_bg 120063 `battle_bg_2005_03`, bridge deck; first import
+    reused Fabul's 120061 by mistake):
     Flying Killer, Little Chariot (Mustard Bomb); boss Gilgamesh 4050410 (the FFV Big Bridge entry, not the
     Type-0 3053910) with his original Wind Slash, Goblin Punch, Electric Shock. Music FFV Battle 2 (400816)
     and Clash on the Big Bridge (400817).
@@ -89,6 +90,9 @@ Last consolidated: 2026-11-07; newest section: cloud night 2026-11-10.
     Legendary 6★, Mythic 7★+); the separate Details popups are gone. Fate Engine "Starting skills &
     effects" is a compact list. Training grounds: three hero dropdown slots instead of the full roster grid.
   - Not reproduced: Limit gauge covering its LIMIT logo (30/81/100 % checked headless).
+  - Skill elements (already part of the damage: elementRules actionElements -> enemy resistances) show as chips
+    on skill reward cards and in the battle command tooltip.
+  - Big Bridge now uses battle_bg_2005_03 (120063, bridge deck with pillars); 2005_01 stays Fabul's rampart.
 - Web (alpha) build: `npm run build:web` = normal build + `tools/web_audio.py dist` (music WAVs > 1 MB ->
   Ogg Vorbis q0.6, frame count checked, references in the built JS rewritten; public/ keeps the WAVs).
   Python needs `soundfile` (set FFROGUE_PYTHON if the PATH python lacks it). Result 2026-11-11: dist 1.2 GB,

@@ -25,7 +25,7 @@ import {skillDescription} from '../run/catalog';
 import {runEncounter} from '../run/runBalance.mjs';
 import {ENEMY_CONTENT,enemyAction,type EnemyAction} from '../run/stageContent.mjs';
 import {ENEMY_SKILLS} from '../run/enemySkills.mjs';
-import {actionElements as actionElementsOf,elementTag,enemyAffinities,heroElementMultiplier,type Element} from '../run/elementRules.mjs';
+import {actionElements as actionElementsOf,skillElements,elementTag,enemyAffinities,heroElementMultiplier,type Element} from '../run/elementRules.mjs';
 import {memberPower,WEAPON_GLYPHS,weaponSummary} from '../run/weapons.mjs';
 import {ActionBanner,type CombatActionNotice} from '../ui/ActionBanner';
 import {bodyAssets,heroBodyClips,type BodyAsset} from '../data/bodyAssets.mjs';
@@ -473,7 +473,7 @@ export class BattleScene extends Phaser.Scene {
       commands:[{name:'Attack',icon:'attack',cost:'0 MP',description:'Free weapon strike on one enemy, power 1× · 15% chance of a critical hit',disabled:!available,selected:plan?.kind==='attack'},
         ...[0,1,2].map(i=>{
           const action=skills[i];if(!action)return null;
-          return {name:action.name,icon:(action.motion==='magic_atk'?'magic':'ability') as 'magic'|'ability',iconUrl:skillIconUrl(action),cost:`${action.mpCost} MP${action.hpCost?' · '+action.hpCost+' HP':''}`,description:skillDescription(action)+(hero&&hero.currentMp<action.mpCost?` · Not enough MP (${hero.currentMp}/${action.mpCost})`:hero&&action.scope==='party'&&!this.friendlySkillTargets(hero,action).length?(action.allyTargeting?.startsWith('fallen')?' · Nobody to revive right now':' · No valid target right now'):''),
+          return {name:action.name,icon:(action.motion==='magic_atk'?'magic':'ability') as 'magic'|'ability',iconUrl:skillIconUrl(action),elements:skillElements(action) as Element[],cost:`${action.mpCost} MP${action.hpCost?' · '+action.hpCost+' HP':''}`,description:skillDescription(action)+(hero&&hero.currentMp<action.mpCost?` · Not enough MP (${hero.currentMp}/${action.mpCost})`:hero&&action.scope==='party'&&!this.friendlySkillTargets(hero,action).length?(action.allyTargeting?.startsWith('fallen')?' · Nobody to revive right now':' · No valid target right now'):''),
             disabled:!available||!hero||hero.currentMp<action.mpCost||!!action.hpCost&&hero.currentHp<=action.hpCost||!this.canUseSourceSkill(action),selected:skill===action};
         }),
         ...(hero&&this.limitBursts[hero.unitKey]?[(()=>{const lb=this.limitBursts[hero.unitKey],ready=isFull(hero.limitGauge);
