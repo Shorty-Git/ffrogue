@@ -9,6 +9,8 @@ export const RUN_VERSION=4;
 export const SAVE_KEY='ffrogue.run.v1';
 /** Share of base max HP a 'revive' reward restores. */
 export const REVIVE_HP_SHARE=.5;
+/** Share of max HP / MP living members recover when the run enters a new area (camp). */
+export const AREA_CAMP={hp:.3,mp:.3};
 export const PROTOTYPE_AREAS=Object.values(STAGE_CONTENT).map(s=>({stageId:s.id,name:s.name,arena:s.arena,normals:s.normalFights}));
 export const FULL_AREAS=[{name:'Whisperwood',arena:'forest',normals:5},{name:'Mako Outskirts',arena:'reactor',normals:5},{name:'Final Rift',arena:'forest',normals:5}];
 export function seedHash(value){let h=2166136261;for(const c of String(value)){h^=c.charCodeAt(0);h=Math.imul(h,16777619);}return h>>>0;}
@@ -253,6 +255,11 @@ export function chooseReward(input,index,catalog,replace){
  else if(r.type==='rest'){for(const a of run.party)if(a.hp>0){const c=catalog[a.key];a.hp=Math.min(Math.round(c.maxHp*a.stats.hp),a.hp+Math.round(c.maxHp*.4));a.mp=Math.min(memberMaxMp(c,a),a.mp+Math.round(c.maxMp*.4));}}
  else throw Error('Unknown reward');
  run.history.push({kind:'reward',encounter:run.encounter,reward:r,replace:replace??null});run.encounter++;run.offers=[];
+ // Camp between areas (cloud night 2026-11-10): entering a new area restores a share of base HP and
+ // max MP to living members; K.O. stays K.O. No RNG.
+ const list=encounters(run.areas);
+ if(list[run.encounter]&&list[run.encounter].area!==list[run.encounter-1].area)for(const a of run.party)if(a.hp>0){const c=catalog[a.key];
+  a.hp=Math.min(Math.round(c.maxHp*a.stats.hp),a.hp+Math.round(c.maxHp*a.stats.hp*AREA_CAMP.hp));a.mp=Math.min(memberMaxMp(c,a),a.mp+Math.round(memberMaxMp(c,a)*AREA_CAMP.mp));}
  run.phase=run.encounter===encounters(run.areas).length?'won':'battle';return run;
 }
 /** Presentation acknowledgement never reapplies a reward or consumes RNG. */

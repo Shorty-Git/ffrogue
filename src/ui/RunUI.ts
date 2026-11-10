@@ -1,5 +1,5 @@
 import type {RunCatalog,RunMember,RunState,Reward,AwakeningNotice} from '../run/runState.mjs';
-import {skillForRun,memberMaxMp,REVIVE_HP_SHARE,upcomingStage,COURSE_LENGTH} from '../run/runState.mjs';
+import {skillForRun,memberMaxMp,REVIVE_HP_SHARE,upcomingStage,COURSE_LENGTH,encounters,AREA_CAMP} from '../run/runState.mjs';
 import {ELEMENT_LABELS,WARD_RESIST} from '../run/elementRules.mjs';
 import {elementChip,elementChips} from './elementChips';
 import {WEAPON_ELEMENT_RULE,WEAPON_GLYPHS,weaponSummary,type RunWeapon} from '../run/weapons.mjs';
@@ -180,7 +180,7 @@ export class RunUI{
  rewardArt(r:Reward,m:RunMember){const c=this.catalog[m.key],skill=(r.type==='learn'||r.type==='skill')?c.skills.find(s=>s.id===r.skill):undefined,icon=skill&&skillIconUrl(skill);
   const weapon=r.type==='weapon'&&r.weapon?`<span class="weapon-badge" aria-hidden="true">${WEAPON_GLYPHS[r.weapon.category]??'⚔'}</span>`:'';
   return `<span class="reward-portrait ${icon||weapon?'has-skill':''}"><img src="${esc(c.portrait)}" alt="${esc(c.name)}">${icon?`<img class="skill-badge" src="${esc(icon)}" alt="">`:''}${weapon}</span>`;}
- rewards(run:RunState){this.show(`${this.title('VICTORY','THE SPOILS OF FATE','Choose one reward for your expedition.')}<div class="reward-grid">${run.offers.map((r,i)=>{const t=this.rewardText(r,run),m=run.party.find(m=>m.key===r.member);return `<article class="reward-option" style="--card-index:${i}"><button class="rpg-panel reward-card" data-action="reward-${i}" title="${esc(t.title+' — '+t.detail)}"><span class="eyebrow">${t.tag}</span>${m?this.rewardArt(r,m):r.type==='ward'?`<span class="reward-portrait crystal-icon ward-icon">${elementChip(r.element!)}</span>`:'<span class="reward-portrait crystal-icon">✦</span>'}<h2>${esc(t.title)}</h2><p>${esc(t.detail)}</p><span class="card-choose">CHOOSE →</span></button><details class="reward-details"><summary>Details</summary><div class="reward-explanation rpg-panel"><h2>${esc(t.title)}</h2><p>${esc(t.detail)}</p>${this.button('reward-info-close-'+i,'Close details',true)}</div></details></article>`;}).join('')}</div>`,'rewards');
+ rewards(run:RunState){this.show(`${this.title('VICTORY','THE SPOILS OF FATE','Choose one reward for your expedition.')}${campNote(run)?`<p class="camp-note">${esc(campNote(run)!)}</p>`:''}<div class="reward-grid">${run.offers.map((r,i)=>{const t=this.rewardText(r,run),m=run.party.find(m=>m.key===r.member);return `<article class="reward-option" style="--card-index:${i}"><button class="rpg-panel reward-card" data-action="reward-${i}" title="${esc(t.title+' — '+t.detail)}"><span class="eyebrow">${t.tag}</span>${m?this.rewardArt(r,m):r.type==='ward'?`<span class="reward-portrait crystal-icon ward-icon">${elementChip(r.element!)}</span>`:'<span class="reward-portrait crystal-icon">✦</span>'}<h2>${esc(t.title)}</h2><p>${esc(t.detail)}</p><span class="card-choose">CHOOSE →</span></button><details class="reward-details"><summary>Details</summary><div class="reward-explanation rpg-panel"><h2>${esc(t.title)}</h2><p>${esc(t.detail)}</p>${this.button('reward-info-close-'+i,'Close details',true)}</div></details></article>`;}).join('')}</div>`,'rewards');
   for(let i=0;i<3;i++)this.on('reward-info-close-'+i,()=>{this.root.querySelectorAll<HTMLDetailsElement>('.reward-details').forEach(d=>d.open=false);});
  }
 
@@ -240,3 +240,8 @@ export class RunUI{
 
 /** Equipped weapon line for hero cards: category glyph, name, rarity and element chips; tooltip holds the effect. */
 export function weaponLine(w:RunWeapon){return `<p class="weapon-line" title="${esc(weaponSummary(w))}"><span class="weapon-glyph" aria-hidden="true">${WEAPON_GLYPHS[w.category]??'⚔'}</span><span>${esc(w.name)}</span><small>${'★'.repeat(w.rarity)}</small>${elementChips(w.elements)}</p>`;}
+
+/** After an area's closing fight: the next area starts with a camp (runState.mjs AREA_CAMP). */
+function campNote(run:RunState){const list=encounters(run.areas),now=list[run.encounter],next=list[run.encounter+1];
+ if(!now||!next||next.area===now.area)return null;
+ return `Area cleared · camp before ${next.name}: living allies recover ${Math.round(AREA_CAMP.hp*100)}% HP and ${Math.round(AREA_CAMP.mp*100)}% MP.`;}

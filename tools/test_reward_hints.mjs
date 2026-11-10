@@ -77,3 +77,17 @@ test('a won fight offers one skill, one upgrade and one weapon card, relics take
     assert.deepEqual(fallen.offers.slice(1).map(o => o.type), ['evolve', 'revive']);
   }
 });
+
+test('entering a new area camps: living members recover HP and MP, K.O. stays K.O.', async () => {
+  const {AREA_CAMP, memberMaxMp} = await import('../src/run/runState.mjs');
+  let run = confirmParty(rollParty(createRun('camp-2', catalog), catalog));
+  run = chooseReward(completeBattle(run, catalog, snapshot(run), true), 0, catalog);
+  const low = run.party.map((m, i) => ({key: m.key, hp: i === 2 ? 0 : 100, mp: 0}));
+  run = completeBattle(run, catalog, low, true);
+  assert.ok(['learn', 'skill'].includes(run.offers[0].type), 'the skill card never touches HP/MP');
+  run = chooseReward(run, 0, catalog, run.party[0].skills.length === 3 ? run.party[0].skills[0].id : undefined);
+  const [a, , ko] = run.party, c = catalog[a.key];
+  assert.equal(a.hp, Math.min(Math.round(c.maxHp * a.stats.hp), 100 + Math.round(c.maxHp * a.stats.hp * AREA_CAMP.hp)));
+  assert.equal(a.mp, Math.round(memberMaxMp(c, a) * AREA_CAMP.mp));
+  assert.equal(ko.hp, 0);
+});

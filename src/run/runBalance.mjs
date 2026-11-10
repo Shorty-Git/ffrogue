@@ -1,6 +1,6 @@
 import {encounters} from './runState.mjs';
 import {stageForArea,ENEMY_CONTENT} from './stageContent.mjs';
-export const RUN_BALANCE={normalHp:2000,bossHp:5000,bossHpPerArea:2200,damage:350,damagePerEncounter:85};
+export const RUN_BALANCE={normalHp:2000,bossHp:5000,bossHpPerArea:2200,damage:390,damagePerEncounter:30};
 export function runEncounter(run){const e=encounters(run.areas)[run.encounter];if(!e)throw Error('No current encounter');
  const stage=stageForArea(run.areas[e.area]);
  const hp=e.boss?RUN_BALANCE.bossHp+e.area*RUN_BALANCE.bossHpPerArea:Math.round(RUN_BALANCE.normalHp*stage.difficulty);

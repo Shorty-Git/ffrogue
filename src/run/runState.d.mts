@@ -47,3 +47,4 @@ export const REWARD_WEIGHTS:{learnOnWeakness:number;ward:number;weapon:number;we
 export type RewardKind='skill'|'upgrade'|'weapon';
 export const REWARD_KINDS:RewardKind[];
 export function rewardKind(reward:Reward):RewardKind;
+export const AREA_CAMP:{hp:number;mp:number};

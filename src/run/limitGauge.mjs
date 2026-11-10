@@ -7,7 +7,7 @@
 export const LB_MAX = 100;
 export const LB_PER_ACTION = 15;
 /** Losing a whole max-HP bar would add this much; any hit adds at least 1. */
-export const LB_PER_FULL_HP_LOST = 60;
+export const LB_PER_FULL_HP_LOST = 45;
 
 const clamp = value => Math.max(0, Math.min(LB_MAX, Math.round(value)));
 export const gainFromAction = gauge => clamp(gauge + LB_PER_ACTION);
