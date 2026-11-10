@@ -1,3 +1,4 @@
+import {setWeaponData} from '../run/weapons.mjs';
 import {setSkillIcons} from '../ui/skillIcons';
 import Phaser from 'phaser';
 import { BATTLE_ARENAS } from '../data/battleArenas';
@@ -74,6 +75,8 @@ export class PreloadScene extends Phaser.Scene {
 
   create(): void {
     setSkillIcons(this.cache.json.get('skill_icons'));
+    // Weapon rewards (src/run/weapons.mjs) need the curated pool before any run save is validated.
+    setWeaponData(this.cache.json.get('weapons'));
     if(new URLSearchParams(location.search).get('gallery')==='arenas'){
       openArenaGallery(this,this.manifests);
       return;

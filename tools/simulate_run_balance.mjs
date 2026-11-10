@@ -5,7 +5,7 @@
 // numbers describe pacing trends, not how a skilled player fares.
 //
 // Usage: node tools/simulate_run_balance.mjs [--runs 400] [--seed-prefix sim] [--json out.json] [--roster all|starters] [--ablate a,b]
-// --ablate switches mechanics off to measure their weight: elements, guard, boost, break, blind, cleanse, debuff, lb, heal, raise.
+// --ablate switches mechanics off to measure their weight: elements, guard, boost, break, blind, cleanse, debuff, lb, heal, raise, weapons.
 // --roster starters draws only a fresh profile's starter heroes (src/run/profile.mjs), as a new player does.
 import fs from 'node:fs';
 import {runCatalog} from '../src/run/catalog.ts';
@@ -19,7 +19,8 @@ import {drawCatalog,newProfile} from '../src/run/profile.mjs';
 import {resolveEnemyInstant} from '../src/effects/enemyInstant.mjs';
 import {skillDamageType} from '../src/effects/skillDamageTimeline.mjs';
 import {enemyTargetIndex} from '../src/run/enemyTargeting.mjs';
-import {enemyElementMultiplier,heroElementMultiplier,heroAttackElements,skillElements} from '../src/run/elementRules.mjs';
+import {enemyElementMultiplier,heroElementMultiplier,actionElements} from '../src/run/elementRules.mjs';
+import {setWeaponData,memberPower} from '../src/run/weapons.mjs';
 
 const args=process.argv.slice(2),flag=(name,fallback)=>{const i=args.indexOf('--'+name);return i<0?fallback:args[i+1];};
 const RUNS=Number(flag('runs',400)),PREFIX=flag('seed-prefix','sim'),JSON_OUT=flag('json',null),ROSTER=flag('roster','all');
@@ -39,13 +40,14 @@ function loadCatalog(){
  return runCatalog({cache:{json:{get:k=>values[k]}}},manifests);
 }
 const catalog=loadCatalog(),rules=read('public/assets/run-rules.json');
+if(on('weapons'))setWeaponData(read('public/assets/items/weapons.json'));
 
 // --- BattleScene formulas (src/scenes/BattleScene.ts: skillBaseDamage, applyHeroMeleeDamage, enemy turn) ---
 const between=(run,min,max)=>min+Math.floor(nextRandom(run,'combat')*(max-min+1));
 function attackDamage(run,hero,round){
  // BattleScene.blindMiss: a blind hero's basic hit misses with BLIND_MISS_CHANCE.
  if(isHeroBlind(hero.buffs,round)&&nextRandom(run,'combat')<BLIND_MISS_CHANCE)return 0;
- let dmg=between(run,300,380)*hero.member.stats.attack;
+ let dmg=between(run,300,380)*memberPower(hero.member,'attack');
  dmg=Math.round(dmg*heroPhysicalMultiplier(hero.buffs,round));
  if(nextRandom(run,'combat')<.15)dmg=Math.round(dmg*1.5);
  return dmg;
@@ -53,7 +55,7 @@ function attackDamage(run,hero,round){
 const skillBase=(run,hero,skill,round)=>between(run,300,380)*(skillDamageType(skill)==='holy'?heroMagicMultiplier(hero.buffs,round):heroPhysicalMultiplier(hero.buffs,round));
 // TargetDummy.applyDamage: statuses and the enemy's original element resistances (src/run/elementRules.mjs).
 const hit=(enemy,amount,type,elements=[])=>{const d=Math.round(amount*statusDamageMultiplier(enemy.statuses,type)*(on('elements')?enemyElementMultiplier(enemy.key,elements):1));enemy.hp=Math.max(0,enemy.hp-d);return d;};
-const heroElements=(hero,s)=>{const own=s?skillElements(s):[];return own.length||(s&&!s.basicRepeat)?own:heroAttackElements(hero.member);};
+const heroElements=(hero,s)=>actionElements(s,hero.member);
 // ---------------------------------------------------------------------------------------
 
 const expected=(hero,skill,target)=>skill.damageMultiplier*340*(skill.basicRepeat?(skill.basicRepeat.minHits+skill.basicRepeat.maxHits)/2:1)*(target&&on('elements')?enemyElementMultiplier(target.key,heroElements(hero,skill)):1);
@@ -83,7 +85,7 @@ function chooseAction(state,hero){
  if(buff&&totalHp>2500&&heroPhysicalMultiplier(hero.buffs,round)<=1)return {skill:buff};
  const debuff=on('debuff')&&usable.find(s=>isDebuff(s)&&!s.damageEvents);
  if(debuff&&target.boss&&!target.statuses.length)return {skill:debuff,target};
- const attack=340*hero.member.stats.attack*heroPhysicalMultiplier(hero.buffs,round)*1.075*(on('elements')?enemyElementMultiplier(target.key,heroElements(hero)):1);
+ const attack=340*memberPower(hero.member,'attack')*heroPhysicalMultiplier(hero.buffs,round)*1.075*(on('elements')?enemyElementMultiplier(target.key,heroElements(hero)):1);
  let best={skill:null,target,value:attack};
  if(attack<target.hp){
   for(const s of usable){
@@ -146,7 +148,7 @@ function fight(run){
    if(action.kind==='prepare')continue;
    const pick=heroes[enemyTargetIndex(heroes.map(h=>({alive:h.hp>0,hp:h.hp,maxHp:h.maxHp})),()=>nextRandom(run,'combat'))];
    for(const t of action.scope==='party'?alive:[pick]){
-    const dmg=Math.round(profile.damage*action.multiplier*mult/(t.member.stats.defense??1)*heroDamageTakenMultiplier(t.buffs,state.round,action.damageType??'physical')*(on('elements')?heroElementMultiplier(t.key,action.elements,run.wards):1));
+    const dmg=Math.round(profile.damage*action.multiplier*mult/(t.member.stats.defense??1)*heroDamageTakenMultiplier(t.buffs,state.round,action.damageType??'physical')*(on('elements')?heroElementMultiplier(t.key,action.elements,run.wards,t.member.weapon):1));
     t.hp=Math.max(0,t.hp-dmg);if(t.hp>0)t.limit=limit.gainFromDamage(t.limit,dmg,t.maxHp);
     if(t.hp>0&&action.heroEffects){const applied=action.heroEffects.filter(e=>nextRandom(run,'combat')<(e.chance??1)&&on(e.kind)).map(({chance:_c,...e})=>e);if(applied.length)t.buffs=applyHeroBuffs(t.buffs,applied,state.round);}
    }
@@ -168,6 +170,7 @@ function chooseOffer(run){
   if(r.type==='learn')return m.skills.length<3?60:20;
   if(r.type==='skill')return 40;
   if(r.type==='ward')return 30;
+  if(r.type==='weapon')return m.weapon?(r.weapon.attack>m.weapon.attack?28:4):32;
   return r.stat==='attack'?35:r.stat==='hp'?25:15;};
  let best=0;run.offers.forEach((r,i)=>{if(score(r)>score(run.offers[best]))best=i;});
  const r=run.offers[best],m=run.party.find(m=>m.key===r.member);

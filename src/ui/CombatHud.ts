@@ -8,7 +8,8 @@ export type StatusBadge = {icon:string; label:string; turns:number};
 const statusRow=(statuses?:StatusBadge[])=>statuses?.length?`<span class="status-row">${statuses.map(s=>
   `<span class="status-badge" title="${escapeHtml(s.label)} · ${s.turns} round${s.turns===1?'':'s'}"><img src="${escapeHtml(s.icon)}" alt="${escapeHtml(s.label)}" draggable="false"><b>${s.turns}</b></span>`).join('')}</span>`:'';
 type PartyEntry = {name:string; portrait?:string; hp:number; maxHp:number; mp:number; maxMp:number; status:string; state:HeroState;
-  active:boolean; disabled:boolean; target?:number; limit?:{value:number;max:number}; statuses?:StatusBadge[]};
+  active:boolean; disabled:boolean; target?:number; limit?:{value:number;max:number}; statuses?:StatusBadge[];
+  /** Equipped weapon: category glyph, name, effect tooltip and elements. */ weapon?:{glyph:string;name:string;tip:string;elements:Element[]}};
 type Command = {name:string; icon:'attack'|'magic'|'ability'|'limit'; iconUrl?:string; cost:string; description:string; disabled:boolean; selected:boolean;
   /** The hero's Limit Burst; `ready` once the LB gauge is full. */ limit?:boolean; ready?:boolean};
 type ArenaActor = {id:number; name:string; hp?:number; maxHp?:number; status?:string; statuses?:StatusBadge[]; boss?:boolean; marked:boolean; selectable:boolean;
@@ -95,6 +96,7 @@ export class CombatHud {
       <span class="portrait-frame">${hero.portrait?`<img src="${escapeHtml(hero.portrait)}" alt="" draggable="false">`:''}</span>
       <span class="party-info">
         <span class="party-head"><strong>${escapeHtml(hero.name)}</strong><small>${escapeHtml(hero.status)}</small></span>
+        ${hero.weapon?`<span class="party-weapon" title="${escapeHtml(hero.weapon.name+' · '+hero.weapon.tip)}"><i aria-hidden="true">${hero.weapon.glyph}</i>${escapeHtml(hero.weapon.name)}${elementChips(hero.weapon.elements)}</span>`:''}
         ${statusRow(hero.statuses)}
         ${gaugeRow('hp',hero.hp,hero.maxHp,`hero-${i}-hp`)}
         ${gaugeRow('mp',hero.mp,hero.maxMp,`hero-${i}-mp`)}

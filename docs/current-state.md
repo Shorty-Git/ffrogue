@@ -51,6 +51,27 @@ data or pin hashes of local-only files; no new failures), `npx tsc --noEmit -p .
   Ablations now: no LB 81.8 % wins / 29.8 % HP; no heal 99.8 % / 42.0 %; no elements 46.0 %; no guard 46.6 %.
 - Tests: `tools/test_reward_hints.mjs`. Browser check: reward screen shows the Dark Ward card.
 
+### 3. Weapons (new reward type)
+- `src/run/weapons.mjs`: curated pool from `public/assets/items/weapons.json` (loaded in BootScene, set in
+  PreloadScene before any save is validated): per category and rarity 3-7 the strongest weapon without
+  element plus per element and rarity the strongest elemental weapon = 115 of 984. Rarity tiers per area
+  index (`WEAPON_TIERS` [3-4], [4-6], [5-7]).
+- Rule (FFRogue, not FFBE equipment): one slot per hero (`member.weapon`, stored whole in the save). Original
+  ATK/MAG / 600 become an additive bonus on the attack/magic multipliers (`memberPower`), held to
+  min(25 %, 3 % x rarity). Weapon elements apply to basic attacks, Barrage repeats and physical skills
+  without an own element (`actionElements`); weapon element resistances add to the wielder's. Ailment
+  chances are not used yet.
+- Reward pool: one weapon candidate per hero from the next area's tier, picked by seed hash (no RNG draw,
+  so the pool is recomputable for save validation); half the heroes look first at weapons hitting a
+  weakness of the next stage. Weights: weapon x1, weapon on a weakness x2.
+- UI: reward card "WEAPON" (portrait + category glyph badge, bonus summary, replaced weapon), weapon line
+  with glyph and element chips on hero cards and on the battle HUD party card (tooltip = effect).
+- Saves: `RUN_VERSION` 3 -> 4; v3 saves migrate unchanged (weapons and wards are optional fields).
+- Simulator: weapons in the reward choice and damage; `--ablate weapons`. 400 runs: full roster 99.8 % /
+  48.4 % HP after the final fight (without weapons 100 % / 47.3 %), starters 99.5 % / 52.9 %.
+- Tests: `tools/test_weapons.mjs`; test_unit_forms and test_combat_regressions follow the constants.
+  Browser check: reward screen with two weapon cards, HUD shows "Thunder Spear (FFII) THUNDER".
+
 ## Product state
 
 - Playable PC roguelike prototype: title → slot-machine team draw (3 heroes, rerolls) →

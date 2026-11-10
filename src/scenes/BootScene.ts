@@ -11,6 +11,7 @@ export class BootScene extends Phaser.Scene {
     this.load.json('content_registry', 'assets/content.json');
     this.load.json('run_content', 'assets/run-content.json');
     this.load.json('run_rules', 'assets/run-rules.json');
+    this.load.json('weapons', 'assets/items/weapons.json');
     this.load.json('victory_pose_gates', 'assets/victory-poses.json');
   }
 

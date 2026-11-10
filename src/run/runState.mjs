@@ -2,9 +2,10 @@
 import {STAGE_CONTENT,stageForArea,stageElementProfile} from './stageContent.mjs';
 import {ELEMENTS} from './elements.mjs';
 import {skillElements} from './elementRules.mjs';
+import {memberPower,validWeapon,weaponsForTier} from './weapons.mjs';
 import {awakeningPath,formAt,formForLevel,levelOf,MAX_LEVEL} from './unitForms.mjs';
 import {carriedLimit,LB_MAX} from './limitGauge.mjs';
-export const RUN_VERSION=3;
+export const RUN_VERSION=4;
 export const SAVE_KEY='ffrogue.run.v1';
 /** Share of base max HP a 'revive' reward restores. */
 export const REVIVE_HP_SHARE=.5;
@@ -123,15 +124,15 @@ export function chooseStartSkill(input,key,skillId,catalog){
 export function confirmParty(input){const run=clone(input);if(run.phase!=='setup'||run.party.length!==3||new Set(run.party.map(m=>m.canonicalIdentity)).size!==3||run.party.some(m=>!m.canonicalIdentity))throw Error('Roll three distinct canonical characters first');run.phase='battle';return run;}
 export function skillForRun(source,member){
  const skill=clone(source),level=member.skills.find(s=>s.id===source.id)?.level??1,boost=1+.2*(level-1);
- skill.damageMultiplier*=boost*(skill.damageType==='holy'?member.stats.magic:member.stats.attack);
- for(const e of skill.allyEvents??[])for(const f of e.effects)if(f.kind==='heal')f.amount=Math.round(f.amount*boost*member.stats.magic);
+ skill.damageMultiplier*=boost*memberPower(member,skill.damageType==='holy'?'magic':'attack');
+ for(const e of skill.allyEvents??[])for(const f of e.effects)if(f.kind==='heal')f.amount=Math.round(f.amount*boost*memberPower(member,'magic'));
   else if(f.kind==='limit-fill')f.amount=Math.min(LB_MAX,f.amount+10*(level-1));
   else if(f.kind==='raise')f.hpFraction=Math.min(1,Math.round((f.hpFraction+.1*(level-1))*100)/100);
   else if(f.kind==='cleanse'){/* no strength to scale */}
   else if(f.kind==='guard'){f.reduction=Math.min(.6,Math.round((f.reduction+.05*(level-1))*100)/100);f.turns=Math.min(9,f.turns+level-1);}
   else if(f.kind==='auto-revive'){f.hpFraction=Math.min(1,Math.round((f.hpFraction+.1*(level-1))*100)/100);f.turns=Math.min(9,f.turns+level-1);}
   else {f.multiplier=Math.min(3,f.multiplier+.1*(level-1));f.turns=Math.min(9,f.turns+level-1);}
- for(const e of skill.supportEvents??[])for(const f of e.effects)if(f.kind==='execute-or-damage')f.fallbackDamage=Math.min(99999,Math.round(f.fallbackDamage*boost*member.stats.attack));
+ for(const e of skill.supportEvents??[])for(const f of e.effects)if(f.kind==='execute-or-damage')f.fallbackDamage=Math.min(99999,Math.round(f.fallbackDamage*boost*memberPower(member,'attack')));
   else f.phases=Math.min(9,f.phases+level-1);
  return skill;
 }
@@ -142,9 +143,10 @@ export function upcomingStage(run){
 }
 /** Reward weights (one RNG draw per pick either way): skills whose element hits a weakness of the
  * next stage's enemies and wards against elements they use are offered more often. */
-export const REWARD_WEIGHTS={learnOnWeakness:3,ward:2,default:1};
+export const REWARD_WEIGHTS={learnOnWeakness:3,ward:2,weapon:1,weaponOnWeakness:2,default:1};
 function rewardWeight(run,catalog,reward,profile){
  if(reward.type==='ward')return REWARD_WEIGHTS.ward;
+ if(reward.type==='weapon')return reward.weapon.elements.some(e=>profile.weak.includes(e))?REWARD_WEIGHTS.weaponOnWeakness:REWARD_WEIGHTS.weapon;
  if(reward.type==='learn'){const skill=catalog[reward.member]?.skills.find(s=>s.id===reward.skill);
   if(skill&&skillElements(skill).some(e=>profile.weak.includes(e)))return REWARD_WEIGHTS.learnOnWeakness;}
  return REWARD_WEIGHTS.default;
@@ -166,6 +168,16 @@ export function rewardPool(run,catalog){
   if(e.boss&&m.level<MAX_LEVEL)pool.push({type:'evolve',member:m.key,level:m.level+1});
   // K.O. persists between battles; only an explicit revival reward brings a member back.
   if(m.hp<=0)pool.push({type:'revive',member:m.key});
+ }
+ // Weapons: one candidate per hero from the next area's rarity tier, chosen by seed hash (no RNG draw),
+ // so the pool can be recomputed for save validation. Half the heroes look first at weapons whose
+ // element hits a weakness of the next stage.
+ const next=encounters(run.areas)[run.encounter+1]??e,profile=stageElementProfile(upcomingStage(run));
+ for(const m of run.party){
+  const candidates=weaponsForTier(next.area).filter(w=>w.id!==m.weapon?.id);if(!candidates.length)continue;
+  const h=seedHash(`${run.seed}:${run.encounter}:${m.key}:weapon`),weak=candidates.filter(w=>w.elements.some(x=>profile.weak.includes(x)));
+  const list=h%2===0&&weak.length?weak:candidates;
+  pool.push({type:'weapon',member:m.key,weapon:list[(h>>>1)%list.length]});
  }
  // Ward relics: elements the next stage's enemies really attack with, once per run each.
  for(const element of stageElementProfile(upcomingStage(run)).attack)if(!(run.wards??[]).includes(element))pool.push({type:'ward',element});
@@ -214,6 +226,7 @@ export function chooseReward(input,index,catalog,replace){
   if(m.hp>0){m.hp+=Math.round(character.maxHp*m.stats.hp)-oldHp;m.mp+=memberMaxMp(character,m)-oldMp;}}
  else if(r.type==='revive'){if(m.hp>0)throw Error('Revival needs a K.O. member');
   m.hp=Math.max(1,Math.round(catalog[m.key].maxHp*m.stats.hp*REVIVE_HP_SHARE));}
+ else if(r.type==='weapon'){if(!validWeapon(r.weapon))throw Error('Invalid weapon');m.weapon=clone(r.weapon);}
  else if(r.type==='ward'){if(!ELEMENTS.includes(r.element)||(run.wards??[]).includes(r.element))throw Error('Invalid ward');run.wards=[...(run.wards??[]),r.element];}
  else if(r.type==='rest'){for(const a of run.party)if(a.hp>0){const c=catalog[a.key];a.hp=Math.min(Math.round(c.maxHp*a.stats.hp),a.hp+Math.round(c.maxHp*.4));a.mp=Math.min(memberMaxMp(c,a),a.mp+Math.round(c.maxMp*.4));}}
  else throw Error('Unknown reward');
@@ -238,6 +251,8 @@ export function migrateRun(input,catalog){
  const obsolete=['stance','meleeStance','rangedStance','stanceSwitch'];
  const hasLegacy=row=>row&&typeof row==='object'&&obsolete.some(key=>Object.hasOwn(row,key));
  const legacy=hasLegacy(input)||(Array.isArray(input?.party)&&input.party.some(hasLegacy));
+ // v3 -> v4 (2026-11-10): weapons and wards are optional fields; nothing to convert.
+ if(input?.version===3&&!legacy)return validateRun({...clone(input),version:RUN_VERSION},catalog);
  if(input?.version===2&&!legacy)return validateRun(upgradeToLevels(clone(input),catalog),catalog);
  if(input?.version!==1&&!legacy)return validateRun(input,catalog);
  const run=clone(input);
@@ -275,6 +290,7 @@ export function validateRun(run,catalog){
    ||['attack','magic','defense','hp'].some(k=>!Number.isFinite(m.stats?.[k])||m.stats[k]<1||m.stats[k]>3.2)
    ||(m.stats.mp!==undefined&&(!Number.isFinite(m.stats.mp)||m.stats.mp<1||m.stats.mp>3.2))
    ||(m.limit!==undefined&&(!Number.isInteger(m.limit)||m.limit<1||m.limit>LB_MAX||!c.limitBurst))
+   ||(m.weapon!==undefined&&!validWeapon(m.weapon))
    ||!Number.isFinite(m.hp)||m.hp<0||m.hp>Math.ceil(c.maxHp*m.stats.hp)||!Number.isFinite(m.mp)||m.mp<0||m.mp>memberMaxMp(c,m))throw Error('Unsupported saved party/skill/form');}
  if(run.phase==='rewards'&&(run.offers.length!==3||run.offers.some(r=>!rewardPool(run,catalog).some(p=>JSON.stringify(p)===JSON.stringify(r)))))throw Error('Invalid saved rewards');
  if(run.phase==='won'?run.encounter!==encounters(run.areas).length:run.encounter>=encounters(run.areas).length)throw Error('Invalid encounter checkpoint');

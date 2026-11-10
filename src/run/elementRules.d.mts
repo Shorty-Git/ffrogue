@@ -10,8 +10,9 @@ export function enemySkillElements(enemyKey:string,skillId:string|undefined):Ele
 export function elementMultiplier(elements:readonly string[]|undefined,resist?:Partial<Record<Element,number>>):number;
 export function enemyElementMultiplier(enemyKey:string,elements:readonly string[]|undefined):number;
 export const WARD_RESIST:number;
-export function heroResistances(heroKey:string,wards?:readonly string[]):Partial<Record<Element,number>>;
-export function heroElementMultiplier(heroKey:string,elements:readonly string[]|undefined,wards?:readonly string[]):number;
+export function heroResistances(heroKey:string,wards?:readonly string[],weapon?:{resist?:Partial<Record<Element,number>>}):Partial<Record<Element,number>>;
+export function heroElementMultiplier(heroKey:string,elements:readonly string[]|undefined,wards?:readonly string[],weapon?:{resist?:Partial<Record<Element,number>>}):number;
+export function actionElements(skill:Parameters<typeof skillElements>[0]&{basicRepeat?:unknown;damageEvents?:unknown;damageType?:string}|undefined,member:unknown):Element[];
 export function elementTag(multiplier:number):'weak'|'resist'|null;
 export function enemyAffinities(enemyKey:string):{weak:Element[];resist:Element[]};
 export function heroAffinities(heroKey:string):{weak:Element[];resist:Element[]};

@@ -7,9 +7,11 @@ export interface RunCharacter extends RunForm{canonicalIdentity:string;key:strin
 export type RunCatalog=Record<string,RunCharacter>;
 export interface RunMember extends RunForm{canonicalIdentity:string;key:string;
   /** FFRogue level 1–6 (unitForms.mjs MAX_LEVEL); the form is the body for it. */level:number;skills:{id:string;level:number}[];stats:{attack:number;magic:number;defense:number;hp:number;mp?:number};hp:number;mp:number;
-  /** Limit gauge carried from the previous battle (1–100); absent when empty. */limit?:number;}
+  /** Limit gauge carried from the previous battle (1–100); absent when empty. */limit?:number;
+  /** Equipped weapon (src/run/weapons.mjs), stored whole. */weapon?:import('./weapons.mjs').RunWeapon;}
 export interface AreaConfig{stageId?:string;name:string;arena:string;normals:number;}
-export interface Reward{type:'learn'|'skill'|'stat'|'evolve'|'rest'|'revive'|'ward';
+export interface Reward{type:'learn'|'skill'|'stat'|'evolve'|'rest'|'revive'|'ward'|'weapon';
+  /** weapon: the offered weapon. */weapon?:import('./weapons.mjs').RunWeapon;
   /** ward: the element the party relic protects against. */element?:import('./elements.mjs').Element;member?:string;skill?:string;stat?:'attack'|'magic'|'defense'|'hp';form?:string;level?:number;}
 export interface AwakeningNotice{id:string;member:string;encounter:number;from:{form:string;unitId:string;rarity:number};to:{form:string;unitId:string;rarity:number};}
 export interface FormPolicy{weights:Record<string,number>;pathWeights?:Record<string,number[]>;hpPerRank:number;mpPerRank:number;powerPerRank:number;defensePerRank:number;}
@@ -37,4 +39,4 @@ export function acknowledgeAwakening(run:RunState,id:string):RunState;
 export function validateRun(run:unknown,catalog:RunCatalog):RunState;
 export class RunStore{constructor(storage:Pick<Storage,'getItem'|'setItem'|'removeItem'>,catalog:RunCatalog);load():RunState|null;save(run:RunState):RunState;clear():void;}
 export function upcomingStage(run:RunState):import('./stageContent.mjs').StageDefinition;
-export const REWARD_WEIGHTS:{learnOnWeakness:number;ward:number;default:number};
+export const REWARD_WEIGHTS:{learnOnWeakness:number;ward:number;weapon:number;weaponOnWeakness:number;default:number};

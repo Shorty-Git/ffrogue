@@ -32,12 +32,13 @@ export function elementMultiplier(elements,resist={}){
 export const enemyElementMultiplier=(enemyKey,elements)=>elementMultiplier(elements,ENEMY_ELEMENT_RESIST[enemyKey]);
 /** Party ward relic (reward 'ward'): +WARD_RESIST percent resistance to one element for the run. */
 export const WARD_RESIST=50;
-export function heroResistances(heroKey,wards=[]){
+export function heroResistances(heroKey,wards=[],weapon){
  const resist={...(HERO_ELEMENT_RESIST[heroKey]??{})};
+ for(const [e,v] of Object.entries(weapon?.resist??{}))if(ELEMENTS.includes(e))resist[e]=(resist[e]??0)+v;
  for(const e of wards??[])if(ELEMENTS.includes(e))resist[e]=(resist[e]??0)+WARD_RESIST;
  return resist;
 }
-export const heroElementMultiplier=(heroKey,elements,wards=[])=>elementMultiplier(elements,heroResistances(heroKey,wards));
+export const heroElementMultiplier=(heroKey,elements,wards=[],weapon)=>elementMultiplier(elements,heroResistances(heroKey,wards,weapon));
 /** 'weak' | 'resist' | null for a final multiplier (presentation tag). */
 export function elementTag(multiplier){return multiplier>1.001?'weak':multiplier<.999?'resist':null;}
 /** Weak / resisted elements of an enemy, sorted by strength (for name plate tooltips and rewards). */
@@ -52,3 +53,11 @@ export function heroAffinities(heroKey){
 export const elementNames=elements=>(elements??[]).map(e=>ELEMENT_LABELS[e]??e).join(' / ');
 /** Elements of a hero's basic attacks (and Barrage repeats): those of the equipped weapon. */
 export function heroAttackElements(member){return (member?.weapon?.elements??[]).filter(e=>ELEMENTS.includes(e));}
+/** Elements of a hero action: the skill's own element; basic attacks (no skill), Barrage repeats and
+ * physical damage skills without an own element take the weapon's elements. */
+export function actionElements(skill,member){
+ const own=skill?skillElements(skill):[];
+ if(own.length)return own;
+ if(!skill||skill.basicRepeat||(skill.damageEvents&&skill.damageType!=='holy'))return heroAttackElements(member);
+ return [];
+}

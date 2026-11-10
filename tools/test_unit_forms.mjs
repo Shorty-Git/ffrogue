@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';
-import {createRun,rollParty,confirmParty,completeBattle,chooseReward,acknowledgeAwakening,validateRun,RunStore,SAVE_KEY} from '../src/run/runState.mjs';
+import {createRun,rollParty,confirmParty,completeBattle,chooseReward,acknowledgeAwakening,validateRun,RunStore,SAVE_KEY,RUN_VERSION} from '../src/run/runState.mjs';
 import {runCatalog}from '../src/run/catalog.ts';
 import {formForLevel,levelOf,MAX_LEVEL}from '../src/run/unitForms.mjs';
 const read=p=>JSON.parse(fs.readFileSync(p,'utf8'));
@@ -58,7 +58,7 @@ test('maximum level heroes get other boss rewards and old v2 saves gain levels',
  const rewards=bossReward(r);assert.ok(rewards.offers.every(o=>o.member!=='cloud'||o.type!=='evolve'));
  const old=JSON.parse(JSON.stringify(party('sequential')));old.version=2;for(const p of old.party)delete p.level;
  let raw=JSON.stringify(old);const store=new RunStore({getItem:k=>k===SAVE_KEY?raw:null,setItem:(_k,v)=>{raw=v;}},c);
- const loaded=store.load();assert.equal(loaded.version,3);for(const p of loaded.party)assert.equal(p.level,levelOf(p));
+ const loaded=store.load();assert.equal(loaded.version,RUN_VERSION);for(const p of loaded.party)assert.equal(p.level,levelOf(p));
 });
 test('star and NV bodies have complete Source clips; shifted forms and unknown policies stay excluded',()=>{
  assert.equal(c.cloud.forms.at(-1).unitId,'207000117');assert.equal(c.aerith.forms.at(-1).unitId,'207000407');

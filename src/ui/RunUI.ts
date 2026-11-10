@@ -1,7 +1,8 @@
 import type {RunCatalog,RunMember,RunState,Reward,AwakeningNotice} from '../run/runState.mjs';
 import {skillForRun,memberMaxMp,REVIVE_HP_SHARE,upcomingStage} from '../run/runState.mjs';
 import {ELEMENT_LABELS,WARD_RESIST} from '../run/elementRules.mjs';
-import {elementChip} from './elementChips';
+import {elementChip,elementChips} from './elementChips';
+import {WEAPON_ELEMENT_RULE,WEAPON_GLYPHS,weaponSummary,type RunWeapon} from '../run/weapons.mjs';
 import {gaugeRow} from './ffbeGauge';
 import {skillIconUrl} from './skillIcons';
 const skillIcon=(skill:Parameters<typeof skillIconUrl>[0])=>{const url=skillIconUrl(skill);return url?`<img class="skill-icon" src="${esc(url)}" alt="" draggable="false">`:'';};
@@ -115,7 +116,7 @@ export class RunUI{
   const scale=Math.min(1.4,145/a.frameWidth,150/a.frameHeight);
   const preview=bodyPreview('/assets/'+path,a,'pixel-sprite',`width:${a.frameWidth*scale}px;height:${a.frameHeight*scale}px;background-size:${a.frameWidth*a.frameCount*scale}px ${a.frameHeight*scale}px;background-position:${-a.frames[0].index*a.frameWidth*scale}px 0`);
   return `<div class="pixel-stage">${preview.html}</div>`;}
- member(m:RunMember){const c=this.catalog[m.key];return `<article class="rpg-panel member-card"><header class="member-head"><span class="portrait-frame"><img class="portrait" src="${esc(c.portrait)}" alt="${esc(c.name)}"></span><span class="member-title"><strong>${esc(c.name)}</strong><span class="stars">${levelLabel(m.level)}</span></span></header>${this.sprite(m)}<div class="member-gauges">${gaugeRow('hp',m.hp,Math.round(c.maxHp*m.stats.hp))}${gaugeRow('mp',m.mp,memberMaxMp(c,m))}</div>${m.skills.map(a=>{const s=skillForRun(c.skills.find(s=>s.id===a.id)!,m);return `<div class="skill-copy"><b>${skillIcon(s)}${esc(s.name)}${a.level>1?' +'+(a.level-1):''}</b><p>${esc(skillDescription(s))}</p></div>`;}).join('')}</article>`;}
+ member(m:RunMember){const c=this.catalog[m.key];return `<article class="rpg-panel member-card"><header class="member-head"><span class="portrait-frame"><img class="portrait" src="${esc(c.portrait)}" alt="${esc(c.name)}"></span><span class="member-title"><strong>${esc(c.name)}</strong><span class="stars">${levelLabel(m.level)}</span></span></header>${this.sprite(m)}<div class="member-gauges">${gaugeRow('hp',m.hp,Math.round(c.maxHp*m.stats.hp))}${gaugeRow('mp',m.mp,memberMaxMp(c,m))}</div>${m.weapon?weaponLine(m.weapon):''}${m.skills.map(a=>{const s=skillForRun(c.skills.find(s=>s.id===a.id)!,m);return `<div class="skill-copy"><b>${skillIcon(s)}${esc(s.name)}${a.level>1?' +'+(a.level-1):''}</b><p>${esc(skillDescription(s))}</p></div>`;}).join('')}</article>`;}
  title(kicker:string,title:string,subtitle:string){return `<div class="eyebrow">${esc(kicker)}</div><h1>${title}</h1><p class="lead">${esc(subtitle)}</p>`;}
  menu(hasSave:boolean,error:string|null,meta?:{crystals:number;unlocked:number;total:number;cost:number;canSummon:boolean}){const canStart=new Set(Object.values(this.catalog).map(c=>c.canonicalIdentity).filter(Boolean)).size>=3;this.show(`${this.title('A CRYSTAL-BOUND ROGUELIKE','FINAL FANTASY<br><em>ROGUE</em>','Three heroes from across the worlds. One expedition. A new fate every run.')}<div class="crystal-stage" aria-hidden="true">${titleCrystalMarkup()}<span class="crystal-sparks"></span></div><div class="rpg-panel menu-panel"><label class="seed-label">FATE SEED <input id="run-seed" maxlength="64" placeholder="Leave empty for a random fate" autocomplete="off"></label>${hasSave?this.button('continue','Continue the journey'):''}${this.button('play',hasSave?'Begin a new journey':'Begin the journey',false,!canStart)}${this.button('training','Training grounds',true,!canStart)}${!canStart?'<p class="muted">Three reviewed, distinct characters are required to begin.</p>':''}${meta?`<div class="profile-line"><span>◆ ${meta.crystals} crystals</span><span>Heroes ${meta.unlocked}/${meta.total}</span></div>${this.button('summon',`Summon a hero · ${meta.cost} ◆`,true,!meta.canSummon)}`:''}${error?`<p role="alert" class="error">${esc(error)}</p>`:''}<p class="muted">Short expedition · 2 areas · 4 battles<br>One free draw from the Fate Engine, then three rerolls</p></div><footer>Your journey is saved on this device</footer>`,'menu');{const stopSparks=startCrystalSparks(this.root.querySelector<HTMLElement>('.crystal-sparks')!),stopCrystal=startTitleCrystal(this.root.querySelector<HTMLElement>('.crystal-stage')!);this.crystalCleanup=()=>{stopSparks();stopCrystal();};}}
  slots(run:RunState,busy:boolean,choices:Record<string,{id:string;name:string}[]>={}){
@@ -165,6 +166,8 @@ export class RunUI{
  }
  rewardText(r:Reward,run:RunState){const m=run.party.find(m=>m.key===r.member),c=m?this.catalog[m.key]:null;
   if(r.type==='revive')return {title:'Phoenix Down',detail:`Revive ${c!.name} from K.O. with ${Math.round(REVIVE_HP_SHARE*100)}% base HP.`,tag:'REVIVAL'};
+  if(r.type==='weapon'){const w=r.weapon!,old=m!.weapon;
+   return {title:w.name,detail:`${c!.name} equips this ${w.category} (${'★'.repeat(w.rarity)}): ${weaponSummary(w)||'no bonus'}.${old?` Replaces ${old.name} (${weaponSummary(old)||'no bonus'}).`:''}${w.elements.length?' '+WEAPON_ELEMENT_RULE:''}`,tag:'WEAPON'};}
   if(r.type==='ward'){const name=ELEMENT_LABELS[r.element!],stage=upcomingStage(run);
    return {title:`${name} Ward`,detail:`Party relic: every ally takes ${WARD_RESIST}% less ${name} damage for the rest of the run. ${stage.name}'s enemies attack with ${name}.`,tag:'PARTY RELIC'};}
   if(r.type==='rest')return {title:'Field Rest',detail:'Restore 40% base HP and 40% maximum MP to living allies. Does not revive.',tag:'PARTY RECOVERY'};
@@ -175,7 +178,8 @@ export class RunUI{
  }
  /** Portrait of the rewarded member; skill rewards add the skill's original icon as a badge. */
  rewardArt(r:Reward,m:RunMember){const c=this.catalog[m.key],skill=(r.type==='learn'||r.type==='skill')?c.skills.find(s=>s.id===r.skill):undefined,icon=skill&&skillIconUrl(skill);
-  return `<span class="reward-portrait ${icon?'has-skill':''}"><img src="${esc(c.portrait)}" alt="${esc(c.name)}">${icon?`<img class="skill-badge" src="${esc(icon)}" alt="">`:''}</span>`;}
+  const weapon=r.type==='weapon'&&r.weapon?`<span class="weapon-badge" aria-hidden="true">${WEAPON_GLYPHS[r.weapon.category]??'⚔'}</span>`:'';
+  return `<span class="reward-portrait ${icon||weapon?'has-skill':''}"><img src="${esc(c.portrait)}" alt="${esc(c.name)}">${icon?`<img class="skill-badge" src="${esc(icon)}" alt="">`:''}${weapon}</span>`;}
  rewards(run:RunState){this.show(`${this.title('VICTORY','THE SPOILS OF FATE','Choose one reward for your expedition.')}<div class="reward-grid">${run.offers.map((r,i)=>{const t=this.rewardText(r,run),m=run.party.find(m=>m.key===r.member);return `<article class="reward-option" style="--card-index:${i}"><button class="rpg-panel reward-card" data-action="reward-${i}"><span class="eyebrow">${t.tag}</span>${m?this.rewardArt(r,m):r.type==='ward'?`<span class="reward-portrait crystal-icon ward-icon">${elementChip(r.element!)}</span>`:'<span class="reward-portrait crystal-icon">✦</span>'}<h2>${esc(t.title)}</h2><p>${esc(t.detail)}</p><span class="card-choose">CHOOSE →</span></button><details class="reward-details"><summary>Details</summary><div class="reward-explanation rpg-panel"><h2>${esc(t.title)}</h2><p>${esc(t.detail)}</p>${this.button('reward-info-close-'+i,'Close details',true)}</div></details></article>`;}).join('')}</div>`,'rewards');
   for(let i=0;i<3;i++)this.on('reward-info-close-'+i,()=>{this.root.querySelectorAll<HTMLDetailsElement>('.reward-details').forEach(d=>d.open=false);});
  }
@@ -229,3 +233,6 @@ export class RunUI{
  dialog(title:string,text:string,accept='Confirm'){this.show(`${this.title('EXPEDITION',esc(title),text)}<div class="actions">${this.button('accept',accept)}${this.button('cancel','Cancel',true)}</div>`,'dialog');}
  error(message:string,discard=false){this.show(`${this.title('SAVE UNAVAILABLE','THE PATH IS CLOSED',message)}${this.button('reload','Reload saved journey')}${discard?this.button('discard','Discard incompatible save and return',true):''}`,'error');}
 }
+
+/** Equipped weapon line for hero cards: category glyph, name, rarity and element chips; tooltip holds the effect. */
+export function weaponLine(w:RunWeapon){return `<p class="weapon-line" title="${esc(weaponSummary(w))}"><span class="weapon-glyph" aria-hidden="true">${WEAPON_GLYPHS[w.category]??'⚔'}</span><span>${esc(w.name)}</span><small>${'★'.repeat(w.rarity)}</small>${elementChips(w.elements)}</p>`;}
