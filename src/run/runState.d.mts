@@ -17,12 +17,12 @@ export interface Reward{type:'learn'|'skill'|'stat'|'evolve'|'rest'|'revive'|'wa
 export interface AwakeningNotice{id:string;member:string;encounter:number;from:{form:string;unitId:string;rarity:number};to:{form:string;unitId:string;rarity:number};}
 export interface FormPolicy{weights:Record<string,number>;pathWeights?:Record<string,number[]>;hpPerRank:number;mpPerRank:number;powerPerRank:number;defensePerRank:number;}
 export interface RunRules{awakeningMode:'sequential'|'highest-reviewed';originalForms?:FormPolicy;}
-export interface RunState{version:number;seed:string;phase:'setup'|'battle'|'rewards'|'won'|'lost';party:RunMember[];rerolls:number;encounter:number;offers:Reward[];history:unknown[];areas:AreaConfig[];rng:Record<string,number>;pendingAwakening?:AwakeningNotice;rules?:RunRules;
+export interface RunState{version:number;seed:string;phase:'setup'|'battle'|'rewards'|'won'|'lost';party:RunMember[];rerolls:number;encounter:number;offers:Reward[];history:unknown[];areas:AreaConfig[];routes?:(string|null)[];rng:Record<string,number>;pendingAwakening?:AwakeningNotice;rules?:RunRules;
   /** Party ward relics: +50 % resistance to each listed element (src/run/elementRules.mjs). */wards?:import('./elements.mjs').Element[];}
 export const RUN_VERSION:number;export const SAVE_KEY:string;export const REVIVE_HP_SHARE:number;export const PROTOTYPE_AREAS:AreaConfig[];export const FULL_AREAS:AreaConfig[];
 export function variantAreas(seed:string):AreaConfig[];
 export const COURSE_LENGTH:number;
-export function courseAreas(seed:string):AreaConfig[];
+export function courseAreas(seed:string,finalStage?:string):AreaConfig[];
 export function seedHash(value:unknown):number;
 export function nextRandom(run:RunState,stream:string):number;
 export type EncounterKind='normal'|'elite'|'boss';
@@ -48,3 +48,7 @@ export type RewardKind='skill'|'upgrade'|'weapon';
 export const REWARD_KINDS:RewardKind[];
 export function rewardKind(reward:Reward):RewardKind;
 export const AREA_CAMP:{hp:number;mp:number};
+export const FINAL_STAGES:string[];
+export const ROUTE_CHOICES:number;
+export function routeOptions(run:RunState|null|undefined):{area:number;options:AreaConfig[]}|null;
+export function chooseRoute(run:RunState,stageId:string):RunState;

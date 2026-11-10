@@ -427,6 +427,127 @@ export const IMPORTED_ENEMIES = {
         }
       ]
     }
+  },
+  "magitek_armor": {
+    "key": "magitek_armor",
+    "name": "Magitek Armor",
+    "spriteId": "2060010",
+    "monsterId": "206001000",
+    "dictionaryId": 2060010,
+    "scale": 1.5,
+    "attack": {
+      "clip": "atk",
+      "impactFrame": 1,
+      "movement": "stationary"
+    },
+    "audio": []
+  },
+  "guardian": {
+    "key": "guardian",
+    "name": "Guardian",
+    "spriteId": "2062210",
+    "monsterId": "206221000",
+    "dictionaryId": 2062210,
+    "scale": 1.5,
+    "attack": {
+      "clip": "atk",
+      "impactFrame": 1,
+      "movement": "stationary"
+    },
+    "audio": []
+  },
+  "kefka": {
+    "key": "kefka",
+    "name": "Kefka",
+    "spriteId": "3050810",
+    "monsterId": "305081000",
+    "dictionaryId": 3050810,
+    "scale": 2,
+    "attack": {
+      "clip": "atk",
+      "impactFrame": 1,
+      "movement": "approach"
+    },
+    "audio": [],
+    "behavior": {
+      "phaseAt": 0.5,
+      "phaseName": "God of Magic",
+      "phaseMultiplier": 1.3,
+      "pattern": [
+        {
+          "kind": "attack",
+          "name": "Attack",
+          "multiplier": 1,
+          "scope": "single"
+        },
+        {
+          "kind": "prepare",
+          "name": "Kefka cackles",
+          "next": "Firaga"
+        },
+        {
+          "kind": "attack",
+          "name": "Firaga",
+          "multiplier": 1.2,
+          "scope": "party",
+          "skill": "firaga"
+        },
+        {
+          "kind": "attack",
+          "name": "Attack",
+          "multiplier": 1,
+          "scope": "single"
+        },
+        {
+          "kind": "prepare",
+          "name": "Lightning crackles",
+          "next": "Thundaga"
+        },
+        {
+          "kind": "attack",
+          "name": "Thundaga",
+          "multiplier": 1.2,
+          "scope": "party",
+          "skill": "thundaga"
+        },
+        {
+          "kind": "attack",
+          "name": "Attack",
+          "multiplier": 1,
+          "scope": "single"
+        },
+        {
+          "kind": "prepare",
+          "name": "The air freezes",
+          "next": "Blizzaga"
+        },
+        {
+          "kind": "attack",
+          "name": "Blizzaga",
+          "multiplier": 1.2,
+          "scope": "party",
+          "skill": "blizzaga"
+        },
+        {
+          "kind": "attack",
+          "name": "Attack",
+          "multiplier": 1,
+          "scope": "single"
+        },
+        {
+          "kind": "prepare",
+          "name": "Kefka laughs wildly",
+          "next": "Banishga"
+        },
+        {
+          "kind": "attack",
+          "name": "Banishga",
+          "multiplier": 1.5,
+          "scope": "party",
+          "skill": "banishga"
+        }
+      ]
+    }
   }
 };
 export const IMPORTED_STAGES = {
@@ -635,6 +756,41 @@ export const IMPORTED_STAGES = {
       "musicResourceId": 400842,
       "musicSeries": "FFVII",
       "bossMusicResourceId": 4000711,
+      "musicAssignment": "Original series battle and boss themes (tools/import_stage.mjs)",
+      "soundCues": []
+    }
+  },
+  "vector": {
+    "id": "vector",
+    "name": "Vector",
+    "theme": "FINAL FANTASY VI",
+    "arena": "vector",
+    "source": {
+      "battleBgId": 120071,
+      "file": "battle_bg_2006_01.jpg",
+      "worldIdentity": "Reviewed visual identification (2026-11-11): steampunk machine hall (battle_bg_2006_01) read as FFVI's Magitek Research Facility in Vector; no original stage-to-world join. Kefka is a reviewed FFRogue assembly from the FFBE trial boss."
+    },
+    "enemyPool": [
+      "magitek_armor",
+      "guardian"
+    ],
+    "formations": [
+      [
+        "top",
+        "bottom"
+      ],
+      [
+        "center"
+      ]
+    ],
+    "bossId": "kefka",
+    "difficulty": 1.4,
+    "rewardCategory": "vector-relic",
+    "normalFights": 1,
+    "audio": {
+      "musicResourceId": 4001609,
+      "musicSeries": "FFVI",
+      "bossMusicResourceId": 4001612,
       "musicAssignment": "Original series battle and boss themes (tools/import_stage.mjs)",
       "soundCues": []
     }

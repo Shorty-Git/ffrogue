@@ -1,0 +1,26 @@
+{
+  "schema": "enemy-skills-v1",
+  "key": "magitek_armor",
+  "monsterId": 206001000,
+  "dictionaryId": 2060010,
+  "skills": [
+    {
+      "id": "magitek_laser",
+      "ffbeId": 150190,
+      "type": "MONSTER_SKILL",
+      "name": "Magitek Laser",
+      "scope": "single_enemy",
+      "damageType": "magical",
+      "moveType": "stationary",
+      "multiplier": 1.2,
+      "damageEvents": [
+        {
+          "frame": 80,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "magitek_armor_magitek_laser",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 import type Phaser from 'phaser';
 import type {UnitManifest} from '../types/manifest';
 import type {RunState,RunRules} from './runState.mjs';
-import {RunStore,createRun,variantAreas,rollParty,confirmParty,chooseStartSkill,completeBattle,chooseReward,encounters,acknowledgeAwakening} from './runState.mjs';
+import {RunStore,createRun,variantAreas,courseAreas,FINAL_STAGES,routeOptions,chooseRoute,rollParty,confirmParty,chooseStartSkill,completeBattle,chooseReward,encounters,acknowledgeAwakening} from './runState.mjs';
 import {runCatalog} from './catalog';
 import {ProfileStore,drawCatalog,lockedHeroes,settleRun,summonHero,summonPool,SUMMON_COST,type Profile} from './profile.mjs';
 import {RunUI} from '../ui/RunUI';
@@ -14,7 +14,8 @@ import {recommendMusic} from '../audio/musicProfiles.mjs';
 import {GameAudio,HOME_MUSIC_RESOURCE,VICTORY_FANFARE_RESOURCE,battleCursorProfiles,type BattleCursorProfile,type UiSound} from '../audio/battleMusic';
 import type {CombatCue} from '../audio/combatCues';
 import {runEncounter} from './runBalance.mjs';
-import {STAGE_CONTENT,ENEMY_CONTENT} from './stageContent.mjs';
+import {STAGE_CONTENT,ENEMY_CONTENT,stageElementProfile,type StageDefinition} from './stageContent.mjs';
+import type {PathCard} from '../ui/RunUI';
 import {createTrainingRun,type TrainingOpponent} from './trainingRun';
 import {renderTrainingSetup,type TrainingSelection} from '../ui/TrainingSetup';
 import {BATTLE_ARENAS,type BattleArenaKey} from '../data/battleArenas';
@@ -34,7 +35,9 @@ export class GameFlow{
   this.ui.on('heroes',()=>{this.ui.heroes(this.profile);this.ui.on('menu',()=>this.menu());});
   this.ui.on('summon',()=>this.summon());
   this.ui.on('continue',()=>this.route());this.ui.on('play',()=>{const seed=(this.ui.root.querySelector('#run-seed')as HTMLInputElement).value.trim()||new URLSearchParams(location.search).get('seed')||crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
-   const start=()=>{try{this.commit(createRun(seed,this.catalog,new URLSearchParams(location.search).get("arenaVariants")==="1"?variantAreas(seed):undefined,this.rules));this.audio.clearRunPosition();this.setup();}catch(e){this.fail(e);}};
+   // The journey starts with the choice of the final boss room (2026-11-11).
+   const begin=(finalStage:string)=>{try{this.commit(createRun(seed,this.catalog,new URLSearchParams(location.search).get("arenaVariants")==="1"?variantAreas(seed):courseAreas(seed,finalStage),this.rules));this.audio.clearRunPosition();this.setup();}catch(e){this.fail(e);}};
+   const start=()=>this.chooseFinalBoss(begin);
    if(this.state){this.ui.dialog('Begin a new expedition?','The saved expedition will be abandoned. Rerolls and upgrades belong only to that run.','Start new run');this.ui.on('accept',start);this.ui.on('cancel',()=>this.menu());}else start();});
  }
  /** Training grounds: free party, form and skill choice against endurance opponents; never saved. */
@@ -96,7 +99,29 @@ export class GameFlow{
  }
  private finishSpin(){if(!this.busy)return;
   clearTimeout(this.animationTimer);this.busy=false;if(this.state?.phase==='setup')this.setup();}
+ private stageCard(stage:StageDefinition,eyebrow:string,title:string,lines:string[]):PathCard{
+  const arena=BATTLE_ARENAS[stage.arena as BattleArenaKey] as {file:string}&Record<string,unknown>,profile=stageElementProfile(stage);
+  const image='status' in arena?`assets/stages/${stage.arena}/${arena.file}`:`assets/backgrounds/${arena.file}`;
+  return {id:stage.id,image,eyebrow,title,lines,weak:profile.weak as PathCard['weak'],attack:profile.attack as PathCard['attack']};
+ }
+ private chooseFinalBoss(begin:(finalStage:string)=>void){
+  const cards=FINAL_STAGES.map(id=>STAGE_CONTENT[id]).filter(Boolean).map(stage=>this.stageCard(stage,stage.theme,ENEMY_CONTENT[stage.bossId]?.name??stage.bossId,
+   [`Final boss room: ${stage.name}`,`Before it: two areas of your choice.`]));
+  this.ui.pathChoice('NEW JOURNEY','CHOOSE YOUR FATE','Pick the final boss of this expedition.',cards,'menu');
+  for(const card of cards)this.ui.on('path-'+card.id,()=>begin(card.id));
+  this.ui.on('menu',()=>this.menu());
+ }
+ private chooseNextArea(route:{area:number;options:{stageId?:string}[]},next:()=>void){
+  const state=this.state!,cards=route.options.map(o=>STAGE_CONTENT[o.stageId!]).map(stage=>this.stageCard(stage,stage.theme,stage.name,
+   [`Enemies: ${[...new Set(stage.enemyPool)].map(k=>ENEMY_CONTENT[k]?.name??k).join(', ')}`,`Elite: ${ENEMY_CONTENT[stage.bossId]?.name??stage.bossId}`]));
+  const final=state.areas.at(-1);
+  this.ui.pathChoice(`AREA ${route.area+1} OF ${state.areas.length}`,'CHOOSE YOUR PATH',`Where does the journey lead next? ${final?.name??''} awaits at the end.`,cards);
+  for(const card of cards)this.ui.on('path-'+card.id,()=>{try{this.commit(chooseRoute(state,card.id));next();}catch(e){this.fail(e);}});
+ }
  private battle(entryKind?:'start'|'area'|'cut'){if(!this.state||this.entry)return;
+  // Before each seeded area the player picks where to go next (2026-11-11).
+  const route=routeOptions(this.state);
+  if(route){this.chooseNextArea(route,()=>this.battle(entryKind));return;}
   const state=this.state;
   this.audio.warmCombat();
   const encounter=runEncounter(state);

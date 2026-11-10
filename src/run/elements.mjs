@@ -80,6 +80,22 @@ export const ENEMY_ELEMENT_RESIST = {
   "lightning": -50,
   "water": -50,
   "earth": 50
+ },
+ "magitek_armor": {
+  "lightning": -50
+ },
+ "guardian": {
+  "lightning": -50
+ },
+ "kefka": {
+  "fire": 200,
+  "ice": 200,
+  "lightning": 200,
+  "water": 200,
+  "wind": 200,
+  "earth": 200,
+  "light": 200,
+  "dark": 200
  }
 };
 export const ENEMY_SKILL_ELEMENTS = {
@@ -99,6 +115,47 @@ export const ENEMY_SKILL_ELEMENTS = {
   ],
   "ice_spear": [
    "ice"
+  ]
+ },
+ "kefka": {
+  "firaga": [
+   "fire"
+  ],
+  "blizzaga": [
+   "ice"
+  ],
+  "thundaga": [
+   "lightning"
+  ],
+  "aeroga": [
+   "wind"
+  ],
+  "stonga": [
+   "earth"
+  ],
+  "banishga": [
+   "light"
+  ],
+  "bioga": [
+   "dark"
+  ],
+  "blizzaga_fake": [
+   "ice"
+  ],
+  "thundaga_fake": [
+   "lightning"
+  ],
+  "waterga_fake": [
+   "water"
+  ],
+  "aeroga_fake": [
+   "wind"
+  ],
+  "stonga_fake": [
+   "earth"
+  ],
+  "banishga_fake": [
+   "light"
   ]
  },
  "leviathan": {

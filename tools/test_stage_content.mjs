@@ -6,7 +6,7 @@ import fs from 'node:fs';
 import {createHash} from 'node:crypto';
 import {ENEMY_CONTENT,STAGE_CONTENT,stageForArea,enemyAction} from '../src/run/stageContent.mjs';
 import {runEncounter} from '../src/run/runBalance.mjs';
-import {createRun,validateRun,rollParty,confirmParty,variantAreas,encounters,PROTOTYPE_AREAS} from '../src/run/runState.mjs';
+import {createRun,validateRun,rollParty,confirmParty,variantAreas,encounters,PROTOTYPE_AREAS,FINAL_STAGES,courseAreas,routeOptions,chooseRoute} from '../src/run/runState.mjs';
 const read=p=>JSON.parse(fs.readFileSync(p,'utf8'));
 const hash=p=>createHash('sha256').update(fs.readFileSync(p)).digest('hex');
 
@@ -83,7 +83,9 @@ test('each seed picks two stages by difficulty, then the final boss room, with s
   areas.forEach(a=>stages.add(a.stageId));
   for(const a of areas)if(a.stageId==='mako_reactor')variants.add(a.arena);
  }
- assert.deepEqual(stages,new Set(Object.keys(STAGE_CONTENT)));
+ // Every stage appears: route stages by seed, Nibelheim as the default final room; other final rooms
+ // (Vector) only when the player picks them (see the route/boss choice test below).
+ assert.deepEqual(stages,new Set(Object.keys(STAGE_CONTENT).filter(id=>id==='nibelheim'||!FINAL_STAGES.includes(id))));
  assert.deepEqual(variants,new Set(['reactor','reactor_05']));
 });
 
@@ -96,4 +98,22 @@ test('music recommendations separate normal, boss and special roles',()=>{
  assert.equal(recommendMusic('FFVIII','boss',400868),400868);
  assert.equal(recommendMusic('FFVIII','event'),4001101);
  assert.equal(recommendMusic('FFVII','area'),null);
+});
+
+test('the player picks the final boss room and, before each seeded area, one of two routes',()=>{
+ assert.deepEqual(FINAL_STAGES,['nibelheim','vector']);
+ const kefka=courseAreas('pick-1','vector');assert.equal(kefka.at(-1).stageId,'vector');assert.equal(kefka.at(-1).final,true);
+ assert.ok(kefka.slice(0,2).every(a=>!FINAL_STAGES.includes(a.stageId)));assert.throws(()=>courseAreas('x','besaid'),/final boss room/);
+ const catalog=JSON.parse(JSON.stringify({}));
+ let run={phase:'battle',seed:'pick-1',encounter:0,areas:kefka};
+ const first=routeOptions(run);assert.equal(first.area,0);assert.equal(first.options.length,2);
+ assert.deepEqual(routeOptions(run),first,'same options for the same save');
+ assert.ok(first.options.every(o=>!FINAL_STAGES.includes(o.stageId)));
+ run=chooseRoute(run,first.options[1].stageId);assert.equal(run.areas[0].stageId,first.options[1].stageId);assert.equal(routeOptions(run),null);
+ assert.throws(()=>chooseRoute({...run,routes:[]},'vector'),/route option/);
+ run.encounter=encounters(run.areas).findIndex(f=>f.area===1);
+ const second=routeOptions(run);assert.equal(second.area,1);assert.ok(second.options.every(o=>o.stageId!==run.routes[0]),'a chosen stage is not offered again');
+ run=chooseRoute(run,second.options[0].stageId);
+ run.encounter=encounters(run.areas).findIndex(f=>f.area===2);assert.equal(routeOptions(run),null,'the final room is fixed');
+ void catalog;
 });

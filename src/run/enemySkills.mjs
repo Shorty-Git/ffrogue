@@ -136,6 +136,36 @@ export const ENEMY_SKILLS = {
       "damageType": "physical"
     }
   },
+  "guardian": {
+    "paralyze_arm": {
+      "name": "Paralyze Arm",
+      "scope": "single",
+      "multiplier": 1.2,
+      "origin": "source",
+      "presentation": "guardian_paralyze_arm",
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 1
+        }
+      ],
+      "damageType": "physical"
+    },
+    "sweep": {
+      "name": "Sweep",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "guardian_sweep",
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 1
+        }
+      ],
+      "damageType": "physical"
+    }
+  },
   "guard_scorpion": {
     "tail_laser": {
       "name": "Tail Laser",
@@ -248,6 +278,226 @@ export const ENEMY_SKILLS = {
       "damageEvents": [
         {
           "frame": 145,
+          "weight": 1
+        }
+      ],
+      "damageType": "magical"
+    }
+  },
+  "kefka": {
+    "firaga": {
+      "name": "Firaga",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "kefka_firaga",
+      "damageEvents": [
+        {
+          "frame": 150,
+          "weight": 1
+        }
+      ],
+      "damageType": "magical"
+    },
+    "blizzaga": {
+      "name": "Blizzaga",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "kefka_blizzaga",
+      "damageEvents": [
+        {
+          "frame": 150,
+          "weight": 1
+        }
+      ],
+      "damageType": "magical"
+    },
+    "thundaga": {
+      "name": "Thundaga",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "kefka_thundaga",
+      "damageEvents": [
+        {
+          "frame": 70,
+          "weight": 1
+        }
+      ],
+      "damageType": "magical"
+    },
+    "aeroga": {
+      "name": "Aeroga",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "kefka_aeroga",
+      "damageEvents": [
+        {
+          "frame": 110,
+          "weight": 1
+        }
+      ],
+      "damageType": "magical"
+    },
+    "stonga": {
+      "name": "Stonga",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "kefka_stonga",
+      "damageEvents": [
+        {
+          "frame": 180,
+          "weight": 1
+        }
+      ],
+      "damageType": "magical"
+    },
+    "banishga": {
+      "name": "Banishga",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "kefka_banishga",
+      "damageEvents": [
+        {
+          "frame": 65,
+          "weight": 1
+        }
+      ],
+      "damageType": "magical"
+    },
+    "bioga": {
+      "name": "Bioga",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "kefka_bioga",
+      "damageEvents": [
+        {
+          "frame": 210,
+          "weight": 1
+        }
+      ],
+      "damageType": "magical"
+    },
+    "blizzaga_fake": {
+      "name": "Blizzaga Fake",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "kefka_blizzaga_fake",
+      "damageEvents": [
+        {
+          "frame": 150,
+          "weight": 1
+        }
+      ],
+      "damageType": "magical"
+    },
+    "thundaga_fake": {
+      "name": "Thundaga Fake",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "kefka_thundaga_fake",
+      "damageEvents": [
+        {
+          "frame": 70,
+          "weight": 1
+        }
+      ],
+      "damageType": "magical"
+    },
+    "waterga_fake": {
+      "name": "Waterga Fake",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "kefka_waterga_fake",
+      "damageEvents": [
+        {
+          "frame": 110,
+          "weight": 1
+        }
+      ],
+      "damageType": "magical"
+    },
+    "aeroga_fake": {
+      "name": "Aeroga Fake",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "kefka_aeroga_fake",
+      "damageEvents": [
+        {
+          "frame": 110,
+          "weight": 1
+        }
+      ],
+      "damageType": "magical"
+    },
+    "stonga_fake": {
+      "name": "Stonga Fake",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "kefka_stonga_fake",
+      "damageEvents": [
+        {
+          "frame": 180,
+          "weight": 1
+        }
+      ],
+      "damageType": "magical"
+    },
+    "banishga_fake": {
+      "name": "Banishga Fake",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "kefka_banishga_fake",
+      "damageEvents": [
+        {
+          "frame": 65,
+          "weight": 1
+        }
+      ],
+      "damageType": "magical"
+    },
+    "he_s_losing_his_temper": {
+      "name": "He's losing his temper!",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "kefka_he_s_losing_his_temper",
+      "damageEvents": [
+        {
+          "frame": 0,
+          "weight": 0.33
+        },
+        {
+          "frame": 5,
+          "weight": 0.33
+        },
+        {
+          "frame": 10,
+          "weight": 0.34
+        }
+      ],
+      "damageType": "physical"
+    },
+    "his_magic_power_is_raging": {
+      "name": "His magic power is raging!",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "kefka_his_magic_power_is_raging",
+      "damageEvents": [
+        {
+          "frame": 305,
           "weight": 1
         }
       ],
@@ -391,6 +641,22 @@ export const ENEMY_SKILLS = {
       "multiplier": 0.9,
       "origin": "source",
       "presentation": "leviathan_breath",
+      "damageEvents": [
+        {
+          "frame": 80,
+          "weight": 1
+        }
+      ],
+      "damageType": "magical"
+    }
+  },
+  "magitek_armor": {
+    "magitek_laser": {
+      "name": "Magitek Laser",
+      "scope": "single",
+      "multiplier": 1.2,
+      "origin": "source",
+      "presentation": "magitek_armor_magitek_laser",
       "damageEvents": [
         {
           "frame": 80,

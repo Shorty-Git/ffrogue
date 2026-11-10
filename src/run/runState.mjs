@@ -16,16 +16,39 @@ export const FULL_AREAS=[{name:'Whisperwood',arena:'forest',normals:5},{name:'Ma
 export function seedHash(value){let h=2166136261;for(const c of String(value)){h^=c.charCodeAt(0);h=Math.imul(h,16777619);}return h>>>0;}
 /** Seeded areas before the final one; the seed picks which stages and the route climbs in difficulty. */
 export const COURSE_LENGTH=2;
-/** Developer decision 2026-11-10: every run ends in the final boss room, Nibelheim (Sephiroth). */
+/** Developer decision 2026-11-10: every run ends in a final boss room. Since 2026-11-11 the player picks
+ * it when the journey starts (Nibelheim / Sephiroth, Vector / Kefka); Nibelheim stays the default. */
 export const FINAL_STAGE='nibelheim';
+export const FINAL_STAGES=['nibelheim','vector'];
+const routePool=()=>Object.values(STAGE_CONTENT).filter(s=>!FINAL_STAGES.includes(s.id));
+const areaOf=stage=>({stageId:stage.id,name:stage.name,arena:stage.arena,normals:stage.normalFights});
 /** Run structure: each seeded area ends in an elite fight, the final area in the boss fight. */
-export function courseAreas(seed){
- const pool=Object.values(STAGE_CONTENT).filter(s=>s.id!==FINAL_STAGE);
+export function courseAreas(seed,finalStage=FINAL_STAGE){
+ if(!FINAL_STAGES.includes(finalStage))throw Error('Unknown final boss room: '+finalStage);
+ const pool=routePool();
  const picked=[...pool].sort((a,b)=>seedHash(seed+':course:'+a.id)-seedHash(seed+':course:'+b.id)).slice(0,COURSE_LENGTH);
- const final=STAGE_CONTENT[FINAL_STAGE];
- return [...picked.sort((a,b)=>a.difficulty-b.difficulty||a.id.localeCompare(b.id))
-  .map(s=>({stageId:s.id,name:s.name,arena:s.arena,normals:s.normalFights})),
+ const final=STAGE_CONTENT[finalStage];
+ return [...picked.sort((a,b)=>a.difficulty-b.difficulty||a.id.localeCompare(b.id)).map(areaOf),
   ...(final?[{stageId:final.id,name:final.name,arena:final.arena,normals:final.normalFights,final:true}]:[])];
+}
+/** Route choice (2026-11-11): before each seeded area the player picks one of ROUTE_CHOICES stages
+ * (seeded per run and area, never a stage chosen earlier). The pick replaces the planned area. */
+export const ROUTE_CHOICES=2;
+export function routeOptions(run){
+ if(!run||!['battle'].includes(run.phase))return null;
+ const fight=encounters(run.areas)[run.encounter];
+ if(!fight||fight.wave!==0||run.areas[fight.area].final||run.routes?.[fight.area])return null;
+ const taken=new Set((run.routes??[]).filter(Boolean));
+ const options=routePool().filter(s=>!taken.has(s.id))
+  .sort((a,b)=>seedHash(run.seed+':route:'+fight.area+':'+a.id)-seedHash(run.seed+':route:'+fight.area+':'+b.id)).slice(0,ROUTE_CHOICES);
+ return options.length>1?{area:fight.area,options:options.map(areaOf)}:null;
+}
+export function chooseRoute(input,stageId){
+ const run=clone(input),choice=routeOptions(run);
+ const area=choice?.options.find(a=>a.stageId===stageId);
+ if(!area)throw Error('Not a route option: '+stageId);
+ run.areas[choice.area]=area;run.routes=[...(run.routes??[])];run.routes[choice.area]=stageId;
+ return run;
 }
 export function variantAreas(seed){
  return courseAreas(seed).map(area=>{
@@ -308,6 +331,7 @@ export function validateRun(run,catalog){
  run.areas.forEach(stageForArea);
  if(run.rules&&(!['sequential','highest-reviewed'].includes(run.rules.awakeningMode)||!validFormPolicy(run.rules.originalForms)))throw Error('Unsupported saved run rules');
  if(run.wards!==undefined&&(!Array.isArray(run.wards)||run.wards.some(e=>!ELEMENTS.includes(e))||new Set(run.wards).size!==run.wards.length))throw Error('Invalid saved wards');
+ if(run.routes!==undefined&&(!Array.isArray(run.routes)||run.routes.length>run.areas.length||run.routes.some((id,i)=>id!=null&&(typeof id!=='string'||run.areas[i]?.stageId!==id))))throw Error('Invalid saved route');
  if(Object.hasOwn(run.rng,'forms')&&(!Number.isInteger(run.rng.forms)||run.rng.forms<0||run.rng.forms>0xffffffff))throw Error('Invalid saved form RNG');
  if(run.pendingAwakening){const p=run.pendingAwakening,c=catalog[p.member],m=run.party.find(m=>m.key===p.member),last=run.history.at(-1);
   const from=c&&formAt(c,p.from?.form),to=c&&formAt(c,p.to?.form);

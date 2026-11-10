@@ -17,6 +17,9 @@ import {startTitleCrystal,titleCrystalMarkup} from './TitleCrystal';
 import {formAt,formForLevel,rankLabel,levelLabel,levelOf,MAX_LEVEL} from '../run/unitForms.mjs';
 import type {Profile} from '../run/profile.mjs';
 import {skillElements} from '../run/elementRules.mjs';
+import type {Element} from '../run/elementRules.mjs';
+/** One option of a path choice (final boss or next area). */
+export interface PathCard{id:string;image:string;eyebrow:string;title:string;lines:string[];weak:Element[];attack:Element[];}
 const esc=(s:unknown)=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
 
 function bodyPreview(root:string,clip:AnimationMeta,classes:string,style:string){
@@ -131,6 +134,17 @@ export class RunUI{
  member(m:RunMember){const c=this.catalog[m.key];return `<article class="rpg-panel member-card"><header class="member-head"><span class="portrait-frame"><img class="portrait" src="${esc(c.portrait)}" alt="${esc(c.name)}"></span><span class="member-title"><strong>${esc(c.name)}</strong><span class="stars">${levelLabel(m.level)}</span></span></header>${this.sprite(m)}<div class="member-gauges">${gaugeRow('hp',m.hp,Math.round(c.maxHp*m.stats.hp))}${gaugeRow('mp',m.mp,memberMaxMp(c,m))}</div>${m.weapon?weaponLine(m.weapon):''}${m.skills.map(a=>{const s=skillForRun(c.skills.find(s=>s.id===a.id)!,m);return `<div class="skill-copy"><b>${skillIcon(s)}${esc(s.name)}${a.level>1?' +'+(a.level-1):''}</b><p>${esc(skillDescription(s))}</p></div>`;}).join('')}</article>`;}
  title(kicker:string,title:string,subtitle:string){return `<div class="eyebrow">${esc(kicker)}</div><h1>${title}</h1><p class="lead">${esc(subtitle)}</p>`;}
  menu(hasSave:boolean,error:string|null,meta?:{crystals:number;unlocked:number;total:number;cost:number;canSummon:boolean}){const canStart=new Set(Object.values(this.catalog).map(c=>c.canonicalIdentity).filter(Boolean)).size>=3;this.show(`<h1 class="title-logo">FINAL FANTASY<br><em>ROGUE</em></h1><div class="crystal-stage" aria-hidden="true">${titleCrystalMarkup()}<span class="crystal-sparks"></span></div><div class="rpg-panel menu-panel">${hasSave?this.button('continue','Continue'):''}${this.button('play',hasSave?'New Journey':'Begin',false,!canStart)}${this.button('heroes','Heroes',true)}${this.button('training','Training Grounds',true,!canStart)}${meta?`<div class="profile-line"><span title="Crystals: 10 per battle won, 60 per expedition">◆ ${meta.crystals}</span><span title="Unlocked heroes the Fate Engine can draw">Heroes ${meta.unlocked}/${meta.total}</span></div>${this.button('summon',`Summon · ${meta.cost} ◆`,true,!meta.canSummon)}`:''}${!canStart?'<p class="muted">Three distinct heroes are required to begin.</p>':''}${error?`<p role="alert" class="error">${esc(error)}</p>`:''}<details class="seed-details"><summary>Fate seed</summary><input id="run-seed" maxlength="64" placeholder="Random" autocomplete="off" aria-label="Fate seed"></details></div>`,'menu');{const stopSparks=startCrystalSparks(this.root.querySelector<HTMLElement>('.crystal-sparks')!),stopCrystal=startTitleCrystal(this.root.querySelector<HTMLElement>('.crystal-stage')!);this.crystalCleanup=()=>{stopSparks();stopCrystal();};}}
+ /** Path choice (2026-11-11): the final boss at the journey start, the next area before each seeded area.
+  * Cards show the arena, who fights there, the enemies' weaknesses and the elements they attack with. */
+ pathChoice(eyebrow:string,title:string,lead:string,cards:PathCard[],back?:string){
+  const card=(c:PathCard,i:number)=>`<button class="rpg-panel path-card" data-action="path-${esc(c.id)}" style="--card-index:${i}">
+   <span class="path-art" style="background-image:url('${esc(c.image)}')"><span class="eyebrow">${esc(c.eyebrow)}</span></span>
+   <span class="path-body"><h2>${esc(c.title)}</h2>${c.lines.map(l=>`<p>${esc(l)}</p>`).join('')}
+   ${c.weak.length?`<span class="path-row"><small>Weak to</small>${elementChips(c.weak,'weak')}</span>`:''}
+   ${c.attack.length?`<span class="path-row"><small>Attacks with</small>${elementChips(c.attack)}</span>`:''}
+   <span class="card-choose">CHOOSE →</span></span></button>`;
+  this.show(`${this.title(eyebrow,title,lead)}<div class="path-grid">${cards.map(card).join('')}</div>${back?`<div class="actions">${this.button(back,'Back',true)}</div>`:''}`,'path');
+ }
  /** Heroes collection: every drawable hero; locked ones as silhouettes. Hover/focus shows the details. */
  heroes(profile:Profile){
   const keys=Object.keys(this.catalog).filter(k=>this.catalog[k].canonicalIdentity&&this.catalog[k].skills.length)

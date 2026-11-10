@@ -1,0 +1,44 @@
+{
+  "schema": "enemy-skills-v1",
+  "key": "guardian",
+  "monsterId": 206221000,
+  "dictionaryId": 2062210,
+  "skills": [
+    {
+      "id": "paralyze_arm",
+      "ffbeId": 216370,
+      "type": "MONSTER_SKILL",
+      "name": "Paralyze Arm",
+      "scope": "single_enemy",
+      "damageType": "physical",
+      "moveType": "stationary",
+      "multiplier": 1.2,
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "guardian_paralyze_arm",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value. Not reconstructed: original process(es) 6 beyond the damage."
+    },
+    {
+      "id": "sweep",
+      "ffbeId": 216371,
+      "type": "MONSTER_SKILL",
+      "name": "Sweep",
+      "scope": "all_enemies",
+      "damageType": "physical",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "guardian_sweep",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    }
+  ]
+}
