@@ -908,4 +908,16 @@ test('action banner preserves shared hero/enemy FIFO, ignores repeated notices a
  banner.clear();const count=texts.length;while(timers.length)timers.shift()();assert.equal(texts.length,count);assert.equal(banner.queue.length,0);
 });
 
+test('one party chevron for every arena: same columns, even step, feet above the HUD',()=>{
+ const {getBattleLayout,PARTY_FEET_MARGIN}=loadModule('src/ui/battleLayout.ts'),{BATTLE_ARENAS}=loadModule('src/data/battleArenas.ts');
+ const shapes=new Set();
+ for(const [key,arena] of Object.entries(BATTLE_ARENAS)){
+  const {party,partyTop}=getBattleLayout(1000,1100,arena),{cloud:front,aerith:upper,barret:lower}=party;
+  assert.equal(upper.x,lower.x,key+': back column');assert.ok(front.x<upper.x,key+': front hero nearer the enemies');
+  assert.equal(front.y-upper.y,lower.y-front.y,key+': even step');assert.ok(lower.y<=partyTop-PARTY_FEET_MARGIN,key+': feet above the HUD');
+  shapes.add(JSON.stringify([front.x,upper.x,front.y-upper.y]));
+ }
+ assert.equal(shapes.size,1,'same formation shape in every arena');
+});
+
 console.log(`${passed} combat regression checks passed.`);

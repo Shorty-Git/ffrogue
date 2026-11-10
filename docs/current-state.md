@@ -27,6 +27,12 @@ Last consolidated: 2026-11-07; newest section: cloud night 2026-11-10.
   strongest reviewed form animated on its idle frame timings (locked heroes as silhouettes), origin,
   a level bar (start level from base rarity, gold, up to Lv 6), base rarity, awakening path, Bond, skills
   with element chips and the Limit Burst. Tooltips on tiles replaced by the panel.
+- Party formation (`src/ui/battleLayout.ts`): one fixed chevron for every arena instead of fractions of each
+  arena's floor band (spacing used to stretch per arena and was uneven). Front hero x 0.71, back heroes
+  x 0.82, the same vertical step (0.15 x arena height) above and below; the formation centres on the floor
+  band and only moves up to keep the feet 70 px above the HUD. Enemies keep the shared staggered slots
+  (2026-11-10), so new arenas get both automatically. Regression test over all arenas in
+  test_combat_regressions.mjs; Lion Heart still lands on the target.
 
 ## Cloud night 2026-11-10 (docs/cloud-night-brief.md)
 
