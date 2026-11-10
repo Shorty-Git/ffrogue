@@ -9,7 +9,7 @@ const statusRow=(statuses?:StatusBadge[])=>statuses?.length?`<span class="status
   `<span class="status-badge" title="${escapeHtml(s.label)} · ${s.turns} round${s.turns===1?'':'s'}"><img src="${escapeHtml(s.icon)}" alt="${escapeHtml(s.label)}" draggable="false"><b>${s.turns}</b></span>`).join('')}</span>`:'';
 type PartyEntry = {name:string; portrait?:string; hp:number; maxHp:number; mp:number; maxMp:number; status:string; state:HeroState;
   active:boolean; disabled:boolean; target?:number; limit?:{value:number;max:number}; statuses?:StatusBadge[];
-  /** Equipped weapon: category glyph, name, effect tooltip and elements. */ weapon?:{glyph:string;name:string;tip:string;elements:Element[]}};
+  /** Equipped weapon: category glyph, name, effect tooltip and elements. */ weapon?:{glyph:string;icon?:string;name:string;tip:string;elements:Element[]}};
 type Command = {name:string; icon:'attack'|'magic'|'ability'|'limit'; iconUrl?:string; cost:string; description:string; disabled:boolean; selected:boolean;
   /** The hero's Limit Burst; `ready` once the LB gauge is full. */ limit?:boolean; ready?:boolean};
 type ArenaActor = {id:number; name:string; hp?:number; maxHp?:number; status?:string; statuses?:StatusBadge[]; boss?:boolean; rank?:string; marked:boolean; selectable:boolean;
@@ -50,7 +50,8 @@ export class CombatHud {
       if(next!==this.hinted){this.hinted=next;this.showPrompt();}
     };
     this.root.addEventListener('pointerover',hint);
-    this.root.addEventListener('focusin',hint);
+    // Keyboard focus shows the card too, but not the programmatic focus a re-render restores.
+    this.root.addEventListener('focusin',event=>{if((event.target as HTMLElement).matches?.(':focus-visible'))hint(event);});
     this.root.addEventListener('pointerleave',()=>{if(this.hinted!==undefined){this.hinted=undefined;this.showPrompt();}});
     this.root.addEventListener('focusout',event=>{if(!this.root.contains(event.relatedTarget as Node|null))hint(event);});
     document.body.append(this.root);
@@ -109,7 +110,7 @@ export class CombatHud {
         ${attrs(hero.target===undefined?'hero':'target',hero.target??i)} ${hero.disabled?'disabled':''} aria-pressed="${hero.active}" title="${escapeHtml(`${hero.name} · HP ${hero.hp}/${hero.maxHp} · MP ${hero.mp}/${hero.maxMp}${hero.limit?` · Limit ${hero.limit.value}/${hero.limit.max}`:''} · ${hero.status}`)}">
       <span class="portrait-frame">${hero.portrait?`<img src="${escapeHtml(hero.portrait)}" alt="" draggable="false">`:''}</span>
       <span class="party-info">
-        <span class="party-head"><strong>${escapeHtml(hero.name)}</strong>${hero.weapon?`<span class="party-weapon" title="${escapeHtml(hero.weapon.name+' · '+hero.weapon.tip)}"><i aria-hidden="true">${hero.weapon.glyph}</i>${elementChips(hero.weapon.elements)}</span>`:''}<small>${escapeHtml(hero.status)}</small></span>
+        <span class="party-head"><strong>${escapeHtml(hero.name)}</strong>${hero.weapon?`<span class="party-weapon" title="${escapeHtml(hero.weapon.name+' · '+hero.weapon.tip)}">${hero.weapon.icon?`<img class="party-weapon-icon" src="${escapeHtml(hero.weapon.icon)}" alt="">`:`<i aria-hidden="true">${hero.weapon.glyph}</i>`}${elementChips(hero.weapon.elements)}</span>`:''}<small>${escapeHtml(hero.status)}</small></span>
         ${statusRow(hero.statuses)}
         ${gaugeRow('hp',hero.hp,hero.maxHp,`hero-${i}-hp`)}
         ${gaugeRow('mp',hero.mp,hero.maxMp,`hero-${i}-mp`)}

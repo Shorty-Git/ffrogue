@@ -260,3 +260,25 @@
 @media (prefers-reduced-motion:reduce){.guide-steps li{animation:none}}
 .path-grid.is-quad{grid-template-columns:repeat(2,minmax(0,1fr));max-width:860px;margin-inline:auto}
 .path-grid.is-quad .path-art{height:120px}
+/* Reward cards (2026-11-11 playtest): one line per effect, rarity badge, a little more room. */
+#run-ui .reward-card{min-height:250px;padding:16px 18px 14px}
+#run-ui .reward-lines{margin:0;padding:0;list-style:none;display:grid;gap:3px;font-size:.92rem;line-height:1.35;color:#d7e4f2;text-align:left}
+#run-ui .reward-lines li{padding-left:.95em;position:relative}
+#run-ui .reward-lines li::before{content:'◆';position:absolute;left:0;top:.28em;font-size:.55em;color:#e8c46a}
+#run-ui .reward-lines li:first-child{color:#9fd0ff;font-weight:600}
+.rarity-badge{align-self:flex-start;display:inline-flex;align-items:center;gap:.5em;padding:1px 8px 1px 6px;border-radius:3px;font-size:.82rem;letter-spacing:.06em;border:1px solid}
+.rarity-badge em{font-style:normal;font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
+.rarity-badge.is-bronze{color:#e3b38a;border-color:#a8724a;background:#3a24168a}
+.rarity-badge.is-silver{color:#e6eef6;border-color:#9fb3c8;background:#33435a8a}
+.rarity-badge.is-gold{color:#ffe08a;border-color:#d4a23f;background:#4a37108a;box-shadow:0 0 8px #d4a23f55}
+.rarity-badge.is-rainbow{color:#fff;border-color:#c79be0;background:linear-gradient(90deg,#e0576b66,#e8c46a66,#5fd3a066,#5a8fd066,#b07be066);box-shadow:0 0 10px #c79be066}
+.rarity-badge.is-prism{color:#fff;border-color:#fff;background:linear-gradient(90deg,#ff7a9a88,#ffe08a88,#7affc888,#7ab8ff88,#d08aff88);box-shadow:0 0 14px #ffffff77;text-shadow:0 0 4px #000}
+/* Fate Engine "Starting skills & effects": compact rows instead of full member cards. */
+.start-list{display:grid;gap:8px;margin-top:10px;text-align:left}
+.start-row{display:flex;gap:12px;align-items:flex-start;padding:8px 10px;border:1px solid #456a8e55;border-radius:4px;background:#06122680}
+.start-row .portrait-frame{flex:none;width:44px;font-size:10px}
+.start-row strong{font-family:var(--rpg-display);letter-spacing:.06em}
+.start-row p{margin:3px 0 0;font-size:.86rem;color:#c6d8ea;line-height:1.35}
+.start-row p b{color:#fff;margin-right:.35em}
+.start-row .skill-icon{width:1.2em;height:1.2em;vertical-align:-.2em;margin-right:.3em}
+.start-row .start-lb b{color:#ffcf9a}

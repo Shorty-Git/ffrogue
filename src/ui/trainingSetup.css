@@ -21,3 +21,12 @@
 /* The global run-UI input style (seed field) must not stretch checkboxes. */
 #run-ui .training-setup input[type=checkbox]{appearance:auto;width:16px;height:16px;min-width:0;margin:0;padding:0;flex:none;border:0;background:none;box-shadow:none;accent-color:#e8c77d}
 .training-skills label{justify-content:flex-start}
+/* Slot layout (2026-11-11): three hero dropdowns side by side. */
+.training-grid{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.training-slot{padding:12px;opacity:.75}
+.training-slot.is-chosen{opacity:1;box-shadow:0 0 0 2px #e8c77d,0 0 16px #e8c77d55}
+.training-slot .training-pick{display:grid;gap:4px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#e0c48a}
+.training-slot .training-pick select{width:100%;font-size:14px;text-transform:none;letter-spacing:0}
+.training-head{display:flex;align-items:center;gap:10px;margin:10px 0 6px;flex-wrap:wrap}
+.training-head .portrait{width:40px;height:40px}
+.training-head small{color:#a9c3dc;font-size:11px;flex:1}

@@ -467,7 +467,7 @@ export class BattleScene extends Phaser.Scene {
           active:member===hero&&available,disabled:target===undefined&&(this.combatState!=='PLAYER_TURN'||member.isDead||member.hasActed||scope==='single_ally'),
           state,target,hp:member.currentHp,maxHp:member.maxHp,mp:member.currentMp,maxMp:member.maxMp,
           statuses:member.isDead?[]:heroStatusBadges(member.sourceBuffs,this.currentRound),
-          ...((w=>w?{weapon:{glyph:WEAPON_GLYPHS[w.category]??'⚔',name:w.name,tip:weaponSummary(w),elements:w.elements}}:{})(this.memberOf(member)?.weapon)),
+          ...((w=>w?{weapon:{glyph:WEAPON_GLYPHS[w.category]??'⚔',icon:w.icon,name:w.name,tip:weaponSummary(w),elements:w.elements}}:{})(this.memberOf(member)?.weapon)),
           ...(this.limitBursts[member.unitKey]?{limit:{value:member.limitGauge,max:LB_MAX}}:{})};
       }),
       commands:[{name:'Attack',icon:'attack',cost:'0 MP',description:'Free weapon strike on one enemy, power 1× · 15% chance of a critical hit',disabled:!available,selected:plan?.kind==='attack'},
@@ -1682,7 +1682,7 @@ export class BattleScene extends Phaser.Scene {
       const definition=ENEMY_CONTENT[enemy.assetKey];
       const action=definition?enemyAction(definition,enemy.actionCursor,enemy.currentHp/enemy.maxHp):null;
       if(action?.kind==='prepare'){
-        this.announceCombatAction(enemy.assetKey,enemy.nameTag,action.name,action.next??action.name,'enemy','prepare','ffrogue');
+        this.announceCombatAction(enemy.assetKey,enemy.nameTag,action.name,`${action.next??action.name} next turn!`,'enemy','prepare','ffrogue');
         enemy.actionCursor++;
         this.updateStatus(`${enemy.nameTag}: ${action.name}. ${action.next} hits the party next!`);
         this.events.emit('enemy-action',{key:enemy.assetKey,action,cursor:enemy.actionCursor,round:this.currentRound});
@@ -1821,7 +1821,7 @@ export class BattleScene extends Phaser.Scene {
     if(!revive||!hero.isDead)return false;
     hero.sourceBuffs=revive.buffs;
     hero.revive(Math.max(1,Math.round(hero.maxHp*revive.hpFraction)));
-    this.floatCombatText(hero.x,hero.y-100,'REVIVED','#f9e2af');
+    this.floatCombatText(hero.x,hero.y-100,'RERAISE!','#f9e2af');this.updateStatus(`${hero.heroName} falls, but Reraise brings them back!`);
     this.events.emit('hero-revived',{unit:hero.unitKey,hp:hero.currentHp,round:this.currentRound});
     return true;
   }

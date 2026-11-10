@@ -909,7 +909,7 @@ test('action banner preserves shared hero/enemy FIFO, ignores repeated notices a
   root:chain,bar:chain,actor:{setText(s){texts.push(s);return this;}},label:{width:400,setText(s){texts.push(s);return this;},setScale(){}}});
  const first={sequence:1,actorName:'Cloud',abilityName:'Blade Beam',side:'hero',kind:'skill',origin:'source'};
  banner.enqueue(first);banner.enqueue(first);banner.enqueue({sequence:2,actorName:'Ochu',abilityName:'Bramble Surge',side:'enemy',kind:'prepare',origin:'ffrogue'});
- assert.deepEqual(texts,['Cloud','Blade Beam']);assert.equal(banner.queue.length,1);timers.shift()();timers.shift()();assert.deepEqual(texts,['Cloud','Blade Beam','Ochu prepares','Bramble Surge']);
+ assert.deepEqual(texts,['Cloud','Blade Beam']);assert.equal(banner.queue.length,1);timers.shift()();timers.shift()();assert.deepEqual(texts,['Cloud','Blade Beam','Ochu is charging up','Bramble Surge']);
  banner.clear();const count=texts.length;while(timers.length)timers.shift()();assert.equal(texts.length,count);assert.equal(banner.queue.length,0);
 });
 

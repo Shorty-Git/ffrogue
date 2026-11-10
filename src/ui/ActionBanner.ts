@@ -44,7 +44,7 @@ export class ActionBanner {
     const texture=TEXTURES[notice.side];
     if(this.scene.textures.exists(texture))this.bar.setTexture(texture).setDisplaySize(this.scene.scale.width,74).setAlpha(1);
     else this.bar.setTint(notice.side==='enemy'?0x6a1d24:0x163a7a).setAlpha(.92);
-    this.actor.setText(notice.kind==='prepare'?`${notice.actorName} prepares`:notice.actorName);
+    this.actor.setText(notice.kind==='prepare'?`${notice.actorName} is charging up`:notice.actorName);
     this.label.setText(notice.abilityName);
     this.label.setScale(Math.min(1,(this.scene.scale.width-90)/Math.max(1,this.label.width)));
     const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;

@@ -70,6 +70,25 @@ Last consolidated: 2026-11-07; newest section: cloud night 2026-11-10.
 - New hero reveal (run result "A new hero answers the call" and the Summon): the card shows the full idle body
   animated on its original frame timings, first as a glowing black silhouette with ???, then a light burst,
   colour and the name (RunUI.heroCard + revealHeroes; Bond duplicates are shown at once).
+- Playtest round 3 (2026-11-11 evening):
+  - Summon roulette widened the page to 2,773 px (the 46-head strip sized its flex parents); the case window
+    now has a fixed width with `contain:inline-size`.
+  - Heroes panel jittered between locked/open heroes (panel height changed under the pointer); fixed height
+    with its own scroll.
+  - Routes: Whisperwood retired from runs; Mako Reactor and Mako Reactor 05 (same sweepers) form one family
+    (`stageFamily`), never both in a run or in one choice. Altissia enemies stand in the shared slots on
+    the water (enemyShiftX removed).
+  - Overkill: a K.O. during a hero action keeps the enemy on the field for the action's remaining hits (numbers
+    still show, HP stays 0); it fades when the action ends (`settleDefeats`, triggerVictory). Hits no longer
+    retarget to the next enemy (Barrage with random targets still spreads by design).
+  - Enemy telegraphs read "<enemy> is charging up · <move> next turn!" (they looked like a move that did
+    nothing); Reraise revives show RERAISE! and a status line.
+  - HUD: weapon icon next to the hero name; command tooltip only on hover or keyboard focus (a re-render's
+    programmatic focus no longer opens it).
+  - Rewards: cards 1060 px wide, one line per effect, rarity badge (Common 1-3★, Rare 4★, Epic 5★,
+    Legendary 6★, Mythic 7★+); the separate Details popups are gone. Fate Engine "Starting skills &
+    effects" is a compact list. Training grounds: three hero dropdown slots instead of the full roster grid.
+  - Not reproduced: Limit gauge covering its LIMIT logo (30/81/100 % checked headless).
 - Web (alpha) build: `npm run build:web` = normal build + `tools/web_audio.py dist` (music WAVs > 1 MB ->
   Ogg Vorbis q0.6, frame count checked, references in the built JS rewritten; public/ keeps the WAVs).
   Python needs `soundfile` (set FFROGUE_PYTHON if the PATH python lacks it). Result 2026-11-11: dist 1.2 GB,
