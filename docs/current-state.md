@@ -2,7 +2,7 @@
 
 Single entry point for any developer or AI picking up the project. Read this first, then
 `docs/vision.md` (goals), `AGENTS.md` (rules) and the specialised docs linked below.
-Last consolidated: 2026-11-07.
+Last consolidated: 2026-11-07; newest section: cloud night 2026-11-10.
 
 ## Cloud night 2026-11-10 (docs/cloud-night-brief.md)
 
@@ -153,11 +153,26 @@ data or pin hashes of local-only files; no new failures), `npx tsc --noEmit -p .
   landed (3100 -> ~2700 HP). Limit Burst clamping (`approachX`) is unchanged; a Limit Burst in Altissia was
   not captured on screen in the cloud check (not verified visually).
 
+### 8. (optional) Flame Barret cost, analysis only
+- Static comparison of Squall's Barret plans: Flame Barret's first effect has four particle emitters the
+  others lack (nodes 2, 3, 4, 6: generation every 1-1.5 frames for 20-25 frames, life 30-50), i.e. about 55
+  live particles at scale 10-26 (Thunder/Wind Barret: 1-2 particles at scale 1-2 there). Node and texture
+  counts are otherwise similar and Flame Barret uses no lightning layer. Hypothesis: GPU fill rate
+  (large overlapping blended flame quads), not bridge/JS work. Not measured: the cloud browser has no real
+  GPU. Next step on the developer PC: in `PreparedSceneBridge` hide fx 0 nodes 2/3/4 for one play and
+  compare ms/frame; if confirmed, a bridge-side cap (e.g. particle quad size relative to the arena) is the
+  candidate, the frozen player stays untouched. Nothing changed.
+
+### Not done / open after the night
+- Sephiroth's Firaga/Blizzaga are imported but not in his reviewed pattern (needs `tools/import_stage.mjs`
+  with local data). Weapon ailment chances are not used. Fate Engine levels are measured, not listened to.
+  A Limit Burst in the moved Altissia layout was not captured on screen. Push happens once at the end.
+
 ## Product state
 
 - Playable PC roguelike prototype: title → slot-machine team draw (3 heroes, rerolls) →
-  expedition (2 areas, 4 encounters, Ochu and Guard Scorpion bosses) → rewards / awakening →
-  result. Saves locally. Roster since 2026-11-09: 51 units (26 characters plus 25 variants, 49 drawable) with 346 Source skills and 49 Limit
+  expedition (since 2026-11-10: two seeded areas ending in elites, then Nibelheim with boss Sephiroth;
+  6 fights) → rewards (skill / upgrade / weapon) / awakening → result. Saves locally. Roster since 2026-11-09: 51 units (26 characters plus 25 variants, 49 drawable) with 346 Source skills and 49 Limit
   Bursts (253 before the pipeline-gate fixes of 2026-11-09 evening: zero-prefix motions 3/5/6, `@` branches,
   empty 99999999 rows, raise) (variants: `tools/characters/roster-variants.json`); before the variants: 26 characters, 161 skills, an LB each (`tools/import_character_wave.mjs`). The original seven (Cloud, Aerith, Barret, Cloud of Darkness,
   Cloud AC, Delita, Jack) plus Squall, Tifa and 18 wave characters (Warrior of Light … Cidolfus, FFI–FFXVI,

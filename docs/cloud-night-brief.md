@@ -122,3 +122,18 @@ into the final report as open, with notes on where to continue.
 - Update `docs/current-state.md` (new top section) and this brief's status.
 - One final push of the branch, then a short German report: what changed, measured numbers, what was
   tested (and what not), open questions.
+
+## Status (end of the night, branch claude/night-2026-11-10)
+
+| Task | Status | Commit |
+| --- | --- | --- |
+| 1. Elements in combat | done | Elements in combat ... |
+| 2. Balance: buffs, debuffs, elements, rewards | done (wards, weighted offers, LB 25 -> 15) | Balance: slower Limit gauge ... |
+| 3. Weapons | done (curated 115 of 984, save v4) | Weapons as run rewards ... |
+| 4. Run structure, skill swap, reward mix, UI | done (normal -> elite -> Nibelheim/Sephiroth, one card per kind) | Run structure ... |
+| 5. Balance whole system | done (camp between areas; 100 % / 52 % full roster, 99.3 % / 54.5 % starters) | Balance 6-fight runs ... |
+| 6. UI polish | done (title, Heroes, sound settings, Fate mix, awakening banner, tooltips) | UI: short title ...; UI polish ... |
+| 7. Battle placement | done (staggered pair, Altissia override) | Battle placement ... |
+| 8. Flame Barret | analysis only (hypothesis: particle overdraw, needs GPU measurement) | docs |
+
+Details, numbers and checks: `docs/current-state.md`, section "Cloud night 2026-11-10".
