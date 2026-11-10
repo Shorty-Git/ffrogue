@@ -140,7 +140,7 @@ Last consolidated: 2026-11-07; newest section: cloud night 2026-11-10.
     not reproduced, waiting for a screenshot.
 - Favourite Final Fantasies (profile.mjs `chooseFavorite`, RunUI.favorite): asked once per profile on the first
   Begin (before How to Play); up to MAX_FAVORITES = 3 games, ranked 1st-3rd (stored as `profile.favorites`,
-  `favorite` = the first). Each game grants its heroes' base forms up to 5★ (only-7★ heroes: the lowest form);
+  `favorite` = the first). Each game grants one variant per character, its lowest-rarity form (cloud, not cloud_ac);
   the roster is topped up across games (cloud, squall, delita, jack, ...) to at least 4 different heroes. A fresh
   profile starts from that set instead of the 7 default starters; a profile with finished runs keeps everything
   and gains the game's heroes. Stored as `profile.favorite`. Checked in the browser (FFIX: Zidane, Vivi, Cloud,

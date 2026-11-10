@@ -17,12 +17,16 @@ export const FAVORITE_GAMES=[['ff1','FINAL FANTASY I'],['ff2','FINAL FANTASY II'
 export const FAVORITE_MIN_IDENTITIES=4;
 const FAVORITE_FILL=['cloud','squall','delita','jack','cloud_of_darkness','aerith','barret'];
 const gameOf=character=>String(character.canonicalIdentity??'').split(':')[0];
-/** Heroes a favourite game grants: every base form up to 5 stars; a hero with only higher forms gets its lowest. */
+/** Heroes a favourite game grants: one variant per character, its lowest-rarity form (ties: the plainest key,
+ * e.g. cloud before cloud_ac). Other variants stay to be won or summoned (2026-11-11). */
 export function favoriteHeroes(catalog,game){
- const keys=drawable(catalog).filter(key=>gameOf(catalog[key])===game);
- const byIdentity=new Map();for(const key of keys)(byIdentity.get(catalog[key].canonicalIdentity)??byIdentity.set(catalog[key].canonicalIdentity,[]).get(catalog[key].canonicalIdentity)).push(key);
- return [...byIdentity.values()].flatMap(list=>{const low=list.filter(key=>(catalog[key].rarity??5)<=5);
-  return low.length?low:[list.reduce((a,b)=>(catalog[a].rarity??9)<=(catalog[b].rarity??9)?a:b)];});
+ const byIdentity=new Map();
+ for(const key of drawable(catalog).filter(key=>gameOf(catalog[key])===game)){
+  const best=byIdentity.get(catalog[key].canonicalIdentity);
+  const better=(a,b)=>(catalog[a].rarity??9)-(catalog[b].rarity??9)||a.length-b.length||a.localeCompare(b);
+  if(!best||better(key,best)<0)byIdentity.set(catalog[key].canonicalIdentity,key);
+ }
+ return [...byIdentity.values()];
 }
 /** Games with at least one drawable hero, with the heroes a pick would grant. */
 export function favoriteChoices(catalog){return FAVORITE_GAMES.map(([game,label])=>({game,label,heroes:favoriteHeroes(catalog,game)})).filter(c=>c.heroes.length);}

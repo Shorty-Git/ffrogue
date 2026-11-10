@@ -34,6 +34,7 @@ assert.equal(settleRun(fresh, {seed: 'c', phase: 'battle', history: []}, catalog
 // Favourite game: a fresh profile starts from that game's heroes plus mixed top-ups; progress is kept.
 {const {chooseFavorite,favoriteChoices}=await import('../src/run/profile.mjs');
  const fav=chooseFavorite(fresh,catalog,'ff8');assert.equal(fav.favorite,'ff8');assert.ok(fav.unlocked.includes('squall'));
+ const seven=chooseFavorite(fresh,catalog,'ff7');assert.ok(seven.unlocked.includes('cloud')&&!seven.unlocked.includes('cloud_ac'),'one variant per character');
  assert.ok(!fav.unlocked.includes('tidus'),'other games stay locked');assert.ok(new Set(fav.unlocked.map(k=>catalog[k].canonicalIdentity)).size>=3);
  const kept=chooseFavorite({...won.profile},catalog,'ff10');assert.ok(won.profile.unlocked.every(k=>kept.unlocked.includes(k)));assert.ok(kept.unlocked.includes('tidus'));
  assert.ok(favoriteChoices(catalog).some(c=>c.game==='ff16'&&c.heroes.includes('clive')),'a 7-star-only game grants its lowest form');
