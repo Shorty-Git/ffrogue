@@ -157,6 +157,11 @@ Last consolidated: 2026-11-07; newest section: cloud night 2026-11-10.
   `npx.cmd wrangler pages deploy dist --project-name ffrogue --branch main` (only changed files upload).
   Do not run `wrangler pages project create` again (wrangler 4.160 tries to convert the repo to Workers and edits
   package.json; the project exists). Deploy only on the developer's go; live smoke test passed.
+  Password gate: functions/_middleware.js (HTTP Basic, any user name, secret SITE_PASSWORD set by the developer
+  with `npx.cmd wrangler pages secret put SITE_PASSWORD --project-name ffrogue`; fails closed without it), only on
+  `/` and `/index.html` via public/_routes.json (asset requests stay outside the free Functions quota); robots.txt
+  and a noindex meta keep search engines out. Every deployment keeps its own URL: delete unprotected ones
+  (`wrangler pages deployment delete <id> --project-name ffrogue`); the first, open one was deleted 2026-11-10.
 
 ## Cloud night 2026-11-10 (docs/cloud-night-brief.md)
 
