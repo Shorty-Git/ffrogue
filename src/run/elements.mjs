@@ -74,6 +74,12 @@ export const ENEMY_ELEMENT_RESIST = {
   "wind": 100,
   "earth": 100,
   "dark": 100
+ },
+ "air_buster": {
+  "fire": 50,
+  "lightning": -50,
+  "water": -50,
+  "earth": 50
  }
 };
 export const ENEMY_SKILL_ELEMENTS = {

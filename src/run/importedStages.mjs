@@ -373,6 +373,60 @@ export const IMPORTED_ENEMIES = {
         }
       ]
     }
+  },
+  "sweeper": {
+    "key": "sweeper",
+    "name": "Sweeper",
+    "spriteId": "2061310",
+    "monsterId": "206131000",
+    "dictionaryId": 2061310,
+    "scale": 2,
+    "attack": {
+      "clip": "atk",
+      "impactFrame": 1,
+      "movement": "approach"
+    },
+    "audio": []
+  },
+  "air_buster": {
+    "key": "air_buster",
+    "name": "Air Buster",
+    "spriteId": "4060910",
+    "monsterId": "406091000",
+    "dictionaryId": 4060910,
+    "scale": 1.5,
+    "attack": {
+      "clip": "atk",
+      "impactFrame": 1,
+      "movement": "stationary"
+    },
+    "audio": [],
+    "behavior": {
+      "phaseAt": 0.5,
+      "phaseName": "Overdrive",
+      "phaseMultiplier": 1.25,
+      "pattern": [
+        {
+          "kind": "attack",
+          "name": "Moon Energy",
+          "multiplier": 1.1,
+          "scope": "single",
+          "skill": "moon_energy"
+        },
+        {
+          "kind": "prepare",
+          "name": "Turret swings round",
+          "next": "Rear Gun"
+        },
+        {
+          "kind": "attack",
+          "name": "Rear Gun",
+          "multiplier": 1.2,
+          "scope": "party",
+          "skill": "rear_gun"
+        }
+      ]
+    }
   }
 };
 export const IMPORTED_STAGES = {
@@ -547,6 +601,40 @@ export const IMPORTED_STAGES = {
       "musicResourceId": 400842,
       "musicSeries": "FFVII",
       "bossMusicResourceId": 4002203,
+      "musicAssignment": "Original series battle and boss themes (tools/import_stage.mjs)",
+      "soundCues": []
+    }
+  },
+  "reactor_05": {
+    "id": "reactor_05",
+    "name": "Mako Reactor 05",
+    "theme": "FINAL FANTASY VII",
+    "arena": "reactor_05",
+    "source": {
+      "battleBgId": 120141,
+      "file": "battle_bg_2013_01.jpg",
+      "worldIdentity": "Reviewed original reactor05 image (tools/stages/mainline-candidates.json priority 3); original Air Buster description mentions Shinra mako reactors. Reviewed FFRogue assembly."
+    },
+    "enemyPool": [
+      "sweeper"
+    ],
+    "formations": [
+      [
+        "top",
+        "bottom"
+      ],
+      [
+        "center"
+      ]
+    ],
+    "bossId": "air_buster",
+    "difficulty": 1.2,
+    "rewardCategory": "reactor-relic",
+    "normalFights": 1,
+    "audio": {
+      "musicResourceId": 400842,
+      "musicSeries": "FFVII",
+      "bossMusicResourceId": 4000711,
       "musicAssignment": "Original series battle and boss themes (tools/import_stage.mjs)",
       "soundCues": []
     }

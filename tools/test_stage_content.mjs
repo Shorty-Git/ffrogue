@@ -87,7 +87,7 @@ test('each seed picks two stages, ordered by difficulty, with seeded reactor var
 test('music recommendations separate normal, boss and special roles',()=>{
  assert.equal(recommendMusic('FFVII','normal'),400842);
  assert.equal(recommendMusic('FFVII','boss',400993),400993);
- assert.equal(recommendMusic('FFVII','boss',4000711),400842);
+ assert.equal(recommendMusic('FFVII','boss',4000711),4000711); // Air Buster (reactor_05) uses it as its boss theme since 2026-11-10
  assert.equal(recommendMusic('FFVIII','normal'),400867);
  assert.equal(recommendMusic('FFVIII','boss'),400867);
  assert.equal(recommendMusic('FFVIII','boss',400868),400868);

@@ -1,0 +1,64 @@
+{
+  "schema": "enemy-skills-v1",
+  "key": "air_buster",
+  "monsterId": 406091000,
+  "dictionaryId": 4060910,
+  "skills": [
+    {
+      "id": "rear_gun",
+      "ffbeId": 167010,
+      "type": "MONSTER_SKILL",
+      "name": "Rear Gun",
+      "scope": "all_enemies",
+      "damageType": "physical",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.16
+        },
+        {
+          "frame": 47,
+          "weight": 0.17
+        },
+        {
+          "frame": 52,
+          "weight": 0.17
+        },
+        {
+          "frame": 57,
+          "weight": 0.16
+        },
+        {
+          "frame": 62,
+          "weight": 0.17
+        },
+        {
+          "frame": 67,
+          "weight": 0.17
+        }
+      ],
+      "scenePresentation": "air_buster_rear_gun",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    },
+    {
+      "id": "moon_energy",
+      "ffbeId": 167030,
+      "type": "MONSTER_SKILL",
+      "name": "Moon Energy",
+      "scope": "single_enemy",
+      "damageType": "magical",
+      "moveType": "stationary",
+      "multiplier": 1.2,
+      "damageEvents": [
+        {
+          "frame": 150,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "air_buster_moon_energy",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    }
+  ]
+}

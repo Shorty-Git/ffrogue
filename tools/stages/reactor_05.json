@@ -1,0 +1,87 @@
+{
+  "schema": "stage-recipe-v1",
+  "key": "reactor_05",
+  "name": "Mako Reactor 05",
+  "theme": "FINAL FANTASY VII",
+  "series": "FFVII",
+  "arena": {
+    "key": "reactor_05",
+    "battleBgId": 120141,
+    "title": "FFVII",
+    "label": "Mako Reactor 05",
+    "floor": [
+      0.54,
+      0.76
+    ],
+    "worldIdentity": "Reviewed original reactor05 image (tools/stages/mainline-candidates.json priority 3); original Air Buster description mentions Shinra mako reactors. Reviewed FFRogue assembly."
+  },
+  "music": {
+    "normal": {
+      "resourceId": 400842,
+      "title": "Let the Battles Begin!",
+      "game": "FFVII"
+    },
+    "boss": {
+      "resourceId": 4000711,
+      "title": "Kikaitou no Kessen",
+      "game": "FFVII Remake"
+    }
+  },
+  "enemies": [
+    {
+      "key": "sweeper",
+      "dictionaryId": 2061310,
+      "name": "Sweeper",
+      "scale": 2,
+      "movement": "approach",
+      "monsterId": "206131000"
+    }
+  ],
+  "boss": {
+    "key": "air_buster",
+    "dictionaryId": 4060910,
+    "name": "Air Buster",
+    "scale": 1.5,
+    "movement": "stationary",
+    "note": "Elite enemy (mid-run boss). Original moves imported by import_enemy_skills.mjs.",
+    "behavior": {
+      "phaseAt": 0.5,
+      "phaseName": "Overdrive",
+      "phaseMultiplier": 1.25,
+      "pattern": [
+        {
+          "kind": "attack",
+          "name": "Moon Energy",
+          "multiplier": 1.1,
+          "scope": "single",
+          "skill": "moon_energy"
+        },
+        {
+          "kind": "prepare",
+          "name": "Turret swings round",
+          "next": "Rear Gun"
+        },
+        {
+          "kind": "attack",
+          "name": "Rear Gun",
+          "multiplier": 1.2,
+          "scope": "party",
+          "skill": "rear_gun"
+        }
+      ]
+    },
+    "monsterId": "406091000"
+  },
+  "formations": [
+    [
+      "top",
+      "bottom"
+    ],
+    [
+      "center"
+    ]
+  ],
+  "difficulty": 1.2,
+  "normalFights": 1,
+  "rewardCategory": "reactor-relic"
+}

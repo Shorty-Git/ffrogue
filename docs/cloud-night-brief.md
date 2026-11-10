@@ -17,6 +17,22 @@ Autonomous overnight session. Read `AGENTS.md`, `docs/current-state.md` (newest 
   `npx tsc --noEmit -p .`, `npx vite build`. Python tests that need raw data may skip.
 - In-game strings and code in English; write the final report for the developer in German.
 
+## Developer decisions for this night (2026-11-10)
+
+- **Run structure:** normal enemies -> elite enemies -> a final boss. Rename the current stage bosses
+  (Guard Scorpion, Ochu, X-ATM092, Leviathan, Kain, Air Buster, ...) to **elite** enemies. Every run
+  ends in the **final boss room**: the Nibelheim stage (Shinra Mansion: its normal fights, then
+  Sephiroth) is always the last area. The earlier areas stay seeded from the other stages. Terms in the
+  UI: normal, elite, boss. Sephiroth must be the hardest fight of the run.
+- **Skill swap:** when a hero with three skills takes a new skill, the player chooses which one to drop
+  (or declines). `chooseReward` already accepts a `replace` id (the simulator uses it); the reward UI
+  does not offer it yet.
+- **Reward structure:** decide (with the simulator and readability in mind) whether a won fight offers
+  one of each kind (skill / upgrade / weapon), more or fewer cards. Treat it as part of balancing.
+- **UI pass:** with skills, upgrades, awakenings, weapons, elements and statuses the reward screen and
+  the battle HUD are getting crowded. Improve layout and readability (tiefblau/silver style, PC
+  portrait). Screenshots before/after, outside git.
+
 ## Tasks (in this order)
 
 ### 1. Elements in combat
@@ -53,12 +69,18 @@ Autonomous overnight session. Read `AGENTS.md`, `docs/current-state.md` (newest 
 - Show the equipped weapon on the hero card/HUD, include it in saves (run version bump + migration),
   the simulator and tests. Keep the reward screen readable.
 
-### 4. Balance the whole system
+### 4. Run structure, skill swap, rewards, UI
+- Implement the decisions above (run structure with final boss room, elite naming, skill swap in the
+  reward UI, reward card mix) and the UI pass. Run saves need a version bump and migration if the
+  structure changes; keep old saves loadable or clearly reset them.
+
+### 5. Balance the whole system
 - After elements and weapons exist, rerun the balance targets from task 2 with everything active,
   including the new stage Nibelheim (FFVII, boss Sephiroth with Octaslash / Quad Strike / Heartless
-  Angel; 19 enemies now). Sephiroth should feel like the strongest boss.
+  Angel; 20 enemies now, incl. new stage Mako Reactor 05 with elite Air Buster). Sephiroth should feel
+  like the strongest boss.
 
-### 5. Battle placement across all arenas
+### 6. Battle placement across all arenas
 - The developer finds unit/enemy placement sometimes off (noticed in Altissia; placement was set by
   hand earlier). Analyse the backgrounds (`public/assets/backgrounds/`, arena list in
   `src/data/battleArenas.ts`, layout in `src/ui/battleLayout.ts`) and find one layout (party right, enemies left, FFBE
@@ -68,7 +90,7 @@ Autonomous overnight session. Read `AGENTS.md`, `docs/current-state.md` (newest 
 - Prove it with headless screenshots of every arena (Playwright is available via npx) and keep them
   out of git; describe the result in the report.
 
-### 6. Optional, if time is left
+### 7. Optional, if time is left
 - Squall's Flame Barret runs ~18 ms/frame (others 6 ms): find what makes it expensive in the bridge or
   lightning layer, without changing the frozen player.
 

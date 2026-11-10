@@ -173,6 +173,9 @@ economy proposal (Bond) and variant import: `docs/progression-design.md`.
   3254710) with 7 original moves (Double Strike, Quad Strike, Draw Slash, Octaslash, Heartless Angel,
   Firaga, Blizzaga). Pattern announces every party attack (test convention). Known: Heartless Angel's
   feather storm shows a hard right edge (effect pipeline, local fix needed).
+- New stage Mako Reactor 05 (FFVII, bg 120141; Sweeper; elite Air Buster with Rear Gun and Moon Energy;
+  boss music Kikaitou no Kessen 4000711). 20 enemies in total.
+- Developer direction: normal -> elite -> final boss; Nibelheim/Sephiroth ends every run (cloud brief).
 - Further trial boss candidates in the DB: Safer-Sephiroth (Super Nova, Flare), Gilgamesh, Kefka,
   Exdeath, Ultima Weapon, summons (Bahamut, Ifrit, Shiva, Odin). Each needs a reviewed arena/music.
 - `public/assets/items/weapons.json`: 984 original weapons (tools/export_weapons.mjs); gameplay is
