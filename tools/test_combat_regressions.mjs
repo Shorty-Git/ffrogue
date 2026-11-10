@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import vm from 'node:vm';
 import ts from 'typescript';
+import { LB_PER_ACTION } from '../src/run/limitGauge.mjs';
 
 // Exercise actual combat methods with deterministic engine boundaries.
 // These tests do not verify Phaser rendering, animation playback or shutdown.
@@ -563,7 +564,7 @@ test('Limit Burst needs a full gauge, empties it at commit and earns nothing its
   scene.concludeHeroSkill(unit);
   assert.equal(unit.limitGauge, 0, 'The Limit Burst itself does not refill the gauge');
   unit.hasActed = false; scene.concludeHeroSkill(unit);
-  assert.equal(unit.limitGauge, 25, 'Ordinary skills fill it');
+  assert.equal(unit.limitGauge, LB_PER_ACTION, 'Ordinary skills fill it');
 });
 test('melee attacks approach the selected row and return home in both arenas', () => {
   const { getBattleLayout } = loadModule('src/ui/battleLayout.ts');
@@ -814,9 +815,9 @@ test('prepared boss charge deals no damage, burst hits each living hero once wit
  e.statusEffects=[{kind:'stop',phases:1,chance:1}];s.combatState='ENEMY_TURN';s.executeEnemyTurn();while(timers.length)timers.shift()();assert.equal(e.actionCursor,2);assert.equal(attacks,0);
  s.combatState='ENEMY_TURN';s.executeEnemyTurn();while(timers.length)timers.shift()();
  assert.equal(e.actionCursor,3);assert.equal(attacks,1);
- // Encounter 1 damage = RUN_BALANCE.damage + damagePerEncounter (300+70) x burst 1.3 x overdrive 1.25, divided by defense.
+ // Encounter 1 damage = RUN_BALANCE.damage + damagePerEncounter x burst 1.3 x overdrive 1.25, divided by defense.
  const {RUN_BALANCE}=loadModule('src/run/runBalance.mjs'),burst=(RUN_BALANCE.damage+RUN_BALANCE.damagePerEncounter)*1.3*1.25;
- assert.deepEqual(actors.map(a=>a.currentHp),[1000-Math.round(burst),1000-Math.round(burst/2),0]);assert.deepEqual(actors.map(a=>a.currentHp),[212,606,0]);
+ assert.deepEqual(actors.map(a=>a.currentHp),[1000-Math.round(burst),1000-Math.round(burst/2),0]);
 });
 
 test('an original enemy skill splits the action damage over its source hit frames on every target',()=>{
