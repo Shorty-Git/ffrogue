@@ -65,18 +65,21 @@ test('boss warning and party burst stay ordered across stopped phases; low HP ch
  assert.equal(enemyAction(ENEMY_CONTENT.sweeper,99,.1).phase,'');
 });
 
-test('each seed picks two stages, ordered by difficulty, with seeded reactor variants',()=>{
+// Run structure since 2026-11-10: two seeded areas (normal fight, then elite) and always the final
+// Nibelheim area (normal fight, then the boss Sephiroth).
+test('each seed picks two stages by difficulty, then the final boss room, with seeded reactor variants',()=>{
  const variants=new Set(),stages=new Set();
  for(let i=0;i<64;i++){
   const seed='arena-'+i;
   const areas=variantAreas(seed);
   assert.deepEqual(areas,variantAreas(seed));
-  assert.equal(new Set(areas.map(a=>a.stageId)).size,2);
-  const difficulty=areas.map(a=>STAGE_CONTENT[a.stageId].difficulty);
+  assert.equal(areas.length,3);assert.equal(areas[2].stageId,'nibelheim');assert.equal(areas[2].final,true);
+  assert.equal(new Set(areas.slice(0,2).map(a=>a.stageId)).size,2);assert.ok(!areas.slice(0,2).some(a=>a.stageId==='nibelheim'||a.final));
+  const difficulty=areas.slice(0,2).map(a=>STAGE_CONTENT[a.stageId].difficulty);
   assert.ok(difficulty[0]<=difficulty[1]);
   const fights=encounters(areas);
-  assert.equal(fights.length,4);
-  assert.deepEqual(fights.map(fight=>fight.boss),[false,true,false,true]);
+  assert.equal(fights.length,6);
+  assert.deepEqual(fights.map(fight=>fight.kind),['normal','elite','normal','elite','normal','boss']);
   areas.forEach(a=>stages.add(a.stageId));
   for(const a of areas)if(a.stageId==='mako_reactor')variants.add(a.arena);
  }
