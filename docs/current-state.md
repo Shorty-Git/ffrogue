@@ -107,6 +107,15 @@ Last consolidated: 2026-11-07; newest section: cloud night 2026-11-10.
     Ultimate Chaos (republished). Already published hero scenes were not republished with it.
   - Checked: arenas, every boss move in the patterns in a training fight (screenshots), 359 node tests,
     7 Python flash tests. Not checked: full runs against Edea or Chaos (balance).
+- Two new route stages (games that had none):
+  - Alexandria (FFIX, battle_bg 120105 `battle_bg_2009_05`, ruined castle terrace at night): Black Mage
+    Type B (Thundara, Fira) and Type C (Hit, Fira, Blizzara, Thundara); elite Beatrix with her original
+    Lightning Slash and Shock (Stock Break left out: boxes; an FFRogue party sweep takes its slot). Music
+    FFIX Battle 1 / Battle 2 (400852 / 400853).
+  - Cocoon (FFXIII, 120022 `battle_bg_2001_02`, crystalline Sanctum hall): PSICOM Enforcer, Pantheron;
+    elite Milvus Velocycle (Machine Gun, Triple Beam, Hexa-Beam). Music Blinded by Light / Saber's Edge
+    (400804 / 400805).
+  - Checked: both arenas with enemies, every elite move in a training fight, 359 node tests.
 - Web (alpha) build: `npm run build:web` = normal build + `tools/web_audio.py dist` (music WAVs > 1 MB ->
   Ogg Vorbis q0.6, frame count checked, references in the built JS rewritten; public/ keeps the WAVs).
   Python needs `soundfile` (set FFROGUE_PYTHON if the PATH python lacks it). Result 2026-11-11: dist 1.2 GB,

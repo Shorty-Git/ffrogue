@@ -80,6 +80,138 @@ export const ENEMY_SKILLS = {
       "damageType": "physical"
     }
   },
+  "beatrix": {
+    "lightning_slash": {
+      "name": "Lightning Slash",
+      "scope": "single",
+      "multiplier": 1.2,
+      "origin": "source",
+      "presentation": "beatrix_lightning_slash",
+      "damageEvents": [
+        {
+          "frame": 95,
+          "weight": 1
+        }
+      ],
+      "damageType": "magical"
+    },
+    "stock_break": {
+      "name": "Stock Break",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "beatrix_stock_break",
+      "damageEvents": [
+        {
+          "frame": 365,
+          "weight": 1
+        }
+      ],
+      "damageType": "physical"
+    },
+    "shock": {
+      "name": "Shock",
+      "scope": "single",
+      "multiplier": 1.2,
+      "origin": "source",
+      "presentation": "beatrix_shock",
+      "damageEvents": [
+        {
+          "frame": 70,
+          "weight": 1
+        }
+      ],
+      "damageType": "physical"
+    }
+  },
+  "black_mage_b": {
+    "thundara": {
+      "name": "Thundara",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "black_mage_b_thundara",
+      "damageEvents": [
+        {
+          "frame": 80,
+          "weight": 1
+        }
+      ],
+      "damageType": "magical"
+    },
+    "fira": {
+      "name": "Fira",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "black_mage_b_fira",
+      "damageEvents": [
+        {
+          "frame": 95,
+          "weight": 1
+        }
+      ],
+      "damageType": "magical"
+    }
+  },
+  "black_mage_c": {
+    "hit": {
+      "name": "Hit",
+      "scope": "single",
+      "multiplier": 1.2,
+      "origin": "source",
+      "presentation": "black_mage_c_hit",
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 1
+        }
+      ],
+      "damageType": "physical"
+    },
+    "fira": {
+      "name": "Fira",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "black_mage_c_fira",
+      "damageEvents": [
+        {
+          "frame": 95,
+          "weight": 1
+        }
+      ],
+      "damageType": "magical"
+    },
+    "blizzara": {
+      "name": "Blizzara",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "black_mage_c_blizzara",
+      "damageEvents": [
+        {
+          "frame": 145,
+          "weight": 1
+        }
+      ],
+      "damageType": "magical"
+    },
+    "thundara": {
+      "name": "Thundara",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "black_mage_c_thundara",
+      "damageEvents": [
+        {
+          "frame": 80,
+          "weight": 1
+        }
+      ],
+      "damageType": "magical"
+    }
+  },
   "blind_wolf": {
     "tusk": {
       "name": "Tusk",
@@ -1448,6 +1580,86 @@ export const ENEMY_SKILLS = {
         {
           "frame": 45,
           "weight": 1
+        }
+      ],
+      "damageType": "physical"
+    }
+  },
+  "milvus_velocycle": {
+    "machine_gun": {
+      "name": "Machine Gun",
+      "scope": "single",
+      "multiplier": 1.2,
+      "origin": "source",
+      "presentation": "milvus_velocycle_machine_gun",
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.16
+        },
+        {
+          "frame": 47,
+          "weight": 0.17
+        },
+        {
+          "frame": 52,
+          "weight": 0.17
+        },
+        {
+          "frame": 57,
+          "weight": 0.16
+        },
+        {
+          "frame": 62,
+          "weight": 0.17
+        },
+        {
+          "frame": 67,
+          "weight": 0.17
+        }
+      ],
+      "damageType": "physical"
+    },
+    "triple_beam": {
+      "name": "Triple Beam",
+      "scope": "single",
+      "multiplier": 1.2,
+      "origin": "source",
+      "presentation": "milvus_velocycle_triple_beam",
+      "damageEvents": [
+        {
+          "frame": 60,
+          "weight": 0.3
+        },
+        {
+          "frame": 70,
+          "weight": 0.3
+        },
+        {
+          "frame": 80,
+          "weight": 0.4
+        }
+      ],
+      "damageType": "physical"
+    },
+    "hexa_beam": {
+      "name": "Hexa-Beam",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "milvus_velocycle_hexa_beam",
+      "damageEvents": [
+        {
+          "frame": 60,
+          "weight": 0.3
+        },
+        {
+          "frame": 70,
+          "weight": 0.3
+        },
+        {
+          "frame": 80,
+          "weight": 0.4
         }
       ],
       "damageType": "physical"

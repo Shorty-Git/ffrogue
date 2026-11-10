@@ -1,0 +1,101 @@
+{
+  "schema": "stage-recipe-v1",
+  "key": "alexandria",
+  "name": "Alexandria",
+  "theme": "FINAL FANTASY IX",
+  "series": "FFIX",
+  "arena": {
+    "key": "alexandria",
+    "battleBgId": 120105,
+    "title": "FFIX",
+    "label": "Alexandria Castle",
+    "floor": [
+      0.58,
+      0.84
+    ],
+    "worldIdentity": "Reviewed visual identification (2026-11-11): ruined castle terrace at night with blue wisps (battle_bg_2009_05, the FFIX crossover set) read as Alexandria Castle. The original Black Mage Type B/C and Beatrix descriptions name the kingdom of Alexandria on Gaia; no original stage-to-world join."
+  },
+  "music": {
+    "normal": {
+      "resourceId": 400852,
+      "title": "Battle 1",
+      "game": "FFIX"
+    },
+    "boss": {
+      "resourceId": 400853,
+      "title": "Battle 2",
+      "game": "FFIX"
+    }
+  },
+  "enemies": [
+    {
+      "key": "black_mage_b",
+      "dictionaryId": 2056510,
+      "name": "Black Mage Type B",
+      "scale": 1.6,
+      "movement": "stationary",
+      "monsterId": "205651000"
+    },
+    {
+      "key": "black_mage_c",
+      "dictionaryId": 2056410,
+      "name": "Black Mage Type C",
+      "scale": 1.6,
+      "movement": "stationary",
+      "monsterId": "205641000"
+    }
+  ],
+  "boss": {
+    "key": "beatrix",
+    "dictionaryId": 2056610,
+    "name": "Beatrix",
+    "scale": 1.8,
+    "movement": "approach",
+    "note": "FFBE Beatrix (dictionary 2056610); elite of the Alexandria route. Lightning Slash and Shock are her original moves; Stock Break is left out (white planes on drifting helpers and an unsupported cloud combination show as boxes), its slot is an FFRogue party sweep with her attack clip.",
+    "behavior": {
+      "phaseAt": 0.5,
+      "phaseName": "Seiken",
+      "phaseMultiplier": 1.25,
+      "pattern": [
+        {
+          "kind": "attack",
+          "name": "Lightning Slash",
+          "multiplier": 1,
+          "scope": "single",
+          "skill": "lightning_slash"
+        },
+        {
+          "kind": "prepare",
+          "name": "Beatrix raises Save the Queen",
+          "next": "Sword Sweep"
+        },
+        {
+          "kind": "attack",
+          "name": "Sword Sweep",
+          "multiplier": 1.2,
+          "scope": "party"
+        },
+        {
+          "kind": "attack",
+          "name": "Shock",
+          "multiplier": 1.2,
+          "scope": "single",
+          "skill": "shock"
+        }
+      ]
+    },
+    "monsterId": "205661000"
+  },
+  "formations": [
+    [
+      "top",
+      "bottom"
+    ],
+    [
+      "center"
+    ]
+  ],
+  "difficulty": 1.35,
+  "normalFights": 1,
+  "rewardCategory": "alexandria-relic"
+}

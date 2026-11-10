@@ -1,0 +1,62 @@
+{
+  "schema": "enemy-skills-v1",
+  "key": "beatrix",
+  "monsterId": 205661000,
+  "dictionaryId": 2056610,
+  "skills": [
+    {
+      "id": "lightning_slash",
+      "ffbeId": 170200,
+      "type": "MONSTER_SKILL",
+      "name": "Lightning Slash",
+      "scope": "single_enemy",
+      "damageType": "magical",
+      "moveType": "stationary",
+      "multiplier": 1.2,
+      "damageEvents": [
+        {
+          "frame": 95,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "beatrix_lightning_slash",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    },
+    {
+      "id": "stock_break",
+      "ffbeId": 170240,
+      "type": "MONSTER_SKILL",
+      "name": "Stock Break",
+      "scope": "all_enemies",
+      "damageType": "physical",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 365,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "beatrix_stock_break",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    },
+    {
+      "id": "shock",
+      "ffbeId": 170230,
+      "type": "MONSTER_SKILL",
+      "name": "Shock",
+      "scope": "single_enemy",
+      "damageType": "physical",
+      "moveType": "stationary",
+      "multiplier": 1.2,
+      "damageEvents": [
+        {
+          "frame": 70,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "beatrix_shock",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value. Not reconstructed: original process(es) 6 beyond the damage."
+    }
+  ]
+}

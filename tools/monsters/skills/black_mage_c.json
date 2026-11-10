@@ -1,0 +1,80 @@
+{
+  "schema": "enemy-skills-v1",
+  "key": "black_mage_c",
+  "monsterId": 205641000,
+  "dictionaryId": 2056410,
+  "skills": [
+    {
+      "id": "hit",
+      "ffbeId": 170160,
+      "type": "MONSTER_SKILL",
+      "name": "Hit",
+      "scope": "single_enemy",
+      "damageType": "physical",
+      "moveType": "stationary",
+      "multiplier": 1.2,
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "black_mage_c_hit",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    },
+    {
+      "id": "fira",
+      "ffbeId": 120080,
+      "type": "MONSTER_SKILL",
+      "name": "Fira",
+      "scope": "all_enemies",
+      "damageType": "magical",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 95,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "black_mage_c_fira",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    },
+    {
+      "id": "blizzara",
+      "ffbeId": 120090,
+      "type": "MONSTER_SKILL",
+      "name": "Blizzara",
+      "scope": "all_enemies",
+      "damageType": "magical",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 145,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "black_mage_c_blizzara",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    },
+    {
+      "id": "thundara",
+      "ffbeId": 120100,
+      "type": "MONSTER_SKILL",
+      "name": "Thundara",
+      "scope": "all_enemies",
+      "damageType": "magical",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 80,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "black_mage_c_thundara",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    }
+  ]
+}

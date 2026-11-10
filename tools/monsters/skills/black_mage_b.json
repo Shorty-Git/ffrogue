@@ -1,0 +1,44 @@
+{
+  "schema": "enemy-skills-v1",
+  "key": "black_mage_b",
+  "monsterId": 205651000,
+  "dictionaryId": 2056510,
+  "skills": [
+    {
+      "id": "thundara",
+      "ffbeId": 120100,
+      "type": "MONSTER_SKILL",
+      "name": "Thundara",
+      "scope": "all_enemies",
+      "damageType": "magical",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 80,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "black_mage_b_thundara",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    },
+    {
+      "id": "fira",
+      "ffbeId": 120080,
+      "type": "MONSTER_SKILL",
+      "name": "Fira",
+      "scope": "all_enemies",
+      "damageType": "magical",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 95,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "black_mage_b_fira",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    }
+  ]
+}

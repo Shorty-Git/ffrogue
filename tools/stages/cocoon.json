@@ -1,0 +1,102 @@
+{
+  "schema": "stage-recipe-v1",
+  "key": "cocoon",
+  "name": "Cocoon",
+  "theme": "FINAL FANTASY XIII",
+  "series": "FFXIII",
+  "arena": {
+    "key": "cocoon",
+    "battleBgId": 120022,
+    "title": "FFXIII",
+    "label": "Cocoon",
+    "floor": [
+      0.58,
+      0.84
+    ],
+    "worldIdentity": "Reviewed visual identification (2026-11-11): blue crystalline tech hall (battle_bg_2001_02, the FFXIII crossover set) read as a Sanctum facility in Cocoon. The original PSICOM Enforcer, Pantheron and Milvus Velocycle descriptions place them in Cocoon; no original stage-to-world join."
+  },
+  "music": {
+    "normal": {
+      "resourceId": 400804,
+      "title": "Blinded by Light",
+      "game": "FFXIII"
+    },
+    "boss": {
+      "resourceId": 400805,
+      "title": "Saber's Edge",
+      "game": "FFXIII"
+    }
+  },
+  "enemies": [
+    {
+      "key": "psicom_enforcer",
+      "dictionaryId": 2050910,
+      "name": "PSICOM Enforcer",
+      "scale": 1.5,
+      "movement": "approach",
+      "monsterId": "205091000"
+    },
+    {
+      "key": "pantheron",
+      "dictionaryId": 2010510,
+      "name": "Pantheron",
+      "scale": 1.5,
+      "movement": "approach",
+      "monsterId": "201051000"
+    }
+  ],
+  "boss": {
+    "key": "milvus_velocycle",
+    "dictionaryId": 3061210,
+    "name": "Milvus Velocycle",
+    "scale": 1.7,
+    "movement": "stationary",
+    "note": "FFBE Milvus Velocycle (dictionary 3061210); elite of the Cocoon route. Machine Gun, Triple Beam and Hexa-Beam are its original moves.",
+    "behavior": {
+      "phaseAt": 0.5,
+      "phaseName": "Overdrive",
+      "phaseMultiplier": 1.25,
+      "pattern": [
+        {
+          "kind": "attack",
+          "name": "Machine Gun",
+          "multiplier": 1,
+          "scope": "single",
+          "skill": "machine_gun"
+        },
+        {
+          "kind": "prepare",
+          "name": "Targeting systems lock on",
+          "next": "Hexa-Beam"
+        },
+        {
+          "kind": "attack",
+          "name": "Hexa-Beam",
+          "multiplier": 1.2,
+          "scope": "party",
+          "skill": "hexa_beam"
+        },
+        {
+          "kind": "attack",
+          "name": "Triple Beam",
+          "multiplier": 1.1,
+          "scope": "single",
+          "skill": "triple_beam"
+        }
+      ]
+    },
+    "monsterId": "306121000"
+  },
+  "formations": [
+    [
+      "top",
+      "bottom"
+    ],
+    [
+      "center"
+    ]
+  ],
+  "difficulty": 1.35,
+  "normalFights": 1,
+  "rewardCategory": "cocoon-relic"
+}

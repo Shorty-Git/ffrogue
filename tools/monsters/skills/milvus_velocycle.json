@@ -1,0 +1,98 @@
+{
+  "schema": "enemy-skills-v1",
+  "key": "milvus_velocycle",
+  "monsterId": 306121000,
+  "dictionaryId": 3061210,
+  "skills": [
+    {
+      "id": "machine_gun",
+      "ffbeId": 212820,
+      "type": "MONSTER_SKILL",
+      "name": "Machine Gun",
+      "scope": "single_enemy",
+      "damageType": "physical",
+      "moveType": "stationary",
+      "multiplier": 1.2,
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.16
+        },
+        {
+          "frame": 47,
+          "weight": 0.17
+        },
+        {
+          "frame": 52,
+          "weight": 0.17
+        },
+        {
+          "frame": 57,
+          "weight": 0.16
+        },
+        {
+          "frame": 62,
+          "weight": 0.17
+        },
+        {
+          "frame": 67,
+          "weight": 0.17
+        }
+      ],
+      "scenePresentation": "milvus_velocycle_machine_gun",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    },
+    {
+      "id": "triple_beam",
+      "ffbeId": 212830,
+      "type": "MONSTER_SKILL",
+      "name": "Triple Beam",
+      "scope": "single_enemy",
+      "damageType": "physical",
+      "moveType": "stationary",
+      "multiplier": 1.2,
+      "damageEvents": [
+        {
+          "frame": 60,
+          "weight": 0.3
+        },
+        {
+          "frame": 70,
+          "weight": 0.3
+        },
+        {
+          "frame": 80,
+          "weight": 0.4
+        }
+      ],
+      "scenePresentation": "milvus_velocycle_triple_beam",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    },
+    {
+      "id": "hexa_beam",
+      "ffbeId": 212840,
+      "type": "MONSTER_SKILL",
+      "name": "Hexa-Beam",
+      "scope": "all_enemies",
+      "damageType": "physical",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 60,
+          "weight": 0.3
+        },
+        {
+          "frame": 70,
+          "weight": 0.3
+        },
+        {
+          "frame": 80,
+          "weight": 0.4
+        }
+      ],
+      "scenePresentation": "milvus_velocycle_hexa_beam",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    }
+  ]
+}
