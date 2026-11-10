@@ -181,3 +181,34 @@
 #run-ui .reward-card.is-signature{outline:2px solid #f0c96a;outline-offset:-2px;box-shadow:0 0 26px #f0c96aaa,inset 0 0 26px #f0c96a33;background:linear-gradient(145deg,#2a2412,#0b1a33 60%)}
 #run-ui .reward-card.is-signature .eyebrow{color:#ffe08a;text-shadow:0 0 8px #f0c96a99}
 @media(max-width:620px){#run-ui.victory-overlay .reward-grid{grid-template-columns:1fr}#run-ui .reward-card{min-height:0}}
+
+/* Heroes collection with detail panel (2026-11-11): the grid slides left, the panel shows the strongest
+   form animated, origin, level range, Bond, skills and Limit Burst. */
+.run-overlay[data-phase=heroes] .rpg-shell{width:min(100%,1180px)!important}
+.heroes-layout{display:grid;grid-template-columns:1fr 0fr;gap:0;align-items:start;transition:grid-template-columns .4s cubic-bezier(.2,.8,.2,1),gap .4s}
+.heroes-layout.has-detail{grid-template-columns:1fr minmax(300px,360px);gap:18px}
+.heroes-layout .hero-grid{min-width:0}
+.hero-detail{min-width:0;overflow:hidden;opacity:0;transform:translateX(24px);transition:opacity .35s .1s,transform .4s cubic-bezier(.2,.8,.2,1);padding:16px 18px;text-align:left;position:sticky;top:12px}
+.has-detail .hero-detail{opacity:1;transform:none}
+.hero-detail h2{margin:4px 0 0;font:600 1.5rem/1.15 var(--rpg-display,Georgia,serif);letter-spacing:.04em}
+.hero-origin{margin:2px 0 12px;color:#9fc0de;font-size:.85rem}
+.hero-detail-stage{position:relative;height:230px;display:grid;place-items:end center;margin:-4px -6px 8px;border-bottom:1px solid #456a8e66;background:radial-gradient(ellipse at 50% 85%,#2c5d9a66,transparent 65%)}
+.hero-detail-halo{position:absolute;left:50%;bottom:10px;width:150px;height:22px;transform:translateX(-50%);border-radius:50%;background:radial-gradient(#000a,transparent 70%)}
+.hero-detail-stage .pixel-sprite{position:relative;margin-bottom:14px}
+.hero-detail-stage.is-locked .pixel-sprite{filter:brightness(0) drop-shadow(0 0 6px #4a7fb5)}
+.hero-levels{display:grid;gap:5px;margin:0 0 12px}
+.hero-levels>span,.hero-detail b{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:#e0c48a}
+.level-pips{display:flex;gap:4px}
+.level-pips i{flex:1;font-style:normal;text-align:center;font-size:.78rem;padding:3px 0;border:1px solid #456a8e;border-radius:3px;color:#6f8aa6;background:#06152c}
+.level-pips i.reach{color:#e8f2ff;border-color:#7fb0e0;background:linear-gradient(#1d4f8a,#0c2a52)}
+.level-pips i.start{box-shadow:0 0 0 1px #f0d28e,0 0 8px #f0d28e88;color:#ffe08a}
+.hero-levels small{color:#b6cce4;font-size:.8rem}
+.hero-facts{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin:0 0 12px;font-size:.86rem}
+.hero-facts dt{color:#9fb7cf}.hero-facts dd{margin:0;color:#e8f2ff}
+.hero-skills{list-style:none;margin:6px 0 10px;padding:0;display:grid;gap:5px;max-height:220px;overflow:auto}
+.hero-skills li{display:flex;align-items:center;gap:7px;font-size:.86rem}
+.hero-skills .skill-icon{width:22px;height:22px}
+.hero-skills .el-chip{font-size:.66rem;padding:.1em .45em}
+.hero-lb{margin:4px 0 0;color:#ffe08a}
+.hero-tile.is-selected{outline:2px solid #f0d28e;outline-offset:1px}
+@media(max-width:760px){.heroes-layout,.heroes-layout.has-detail{grid-template-columns:1fr}.hero-detail{position:static;order:-1}}

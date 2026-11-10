@@ -23,6 +23,10 @@ Last consolidated: 2026-11-07; newest section: cloud night 2026-11-10.
 - Load lags: the scene warm-up of 2026-11-10 compiled up to 21 variants during the player's first turn
   (frames up to 637 ms). It now runs only while the transition veil covers the screen; during play no
   frame over 50 ms in the first 9 s (before: 10 frames over 100 ms).
+- Heroes collection: hover/focus/click selects a hero; the grid slides left and a detail panel shows the
+  strongest reviewed form animated on its idle frame timings (locked heroes as silhouettes), origin,
+  a level bar (start level from base rarity, gold, up to Lv 6), base rarity, awakening path, Bond, skills
+  with element chips and the Limit Burst. Tooltips on tiles replaced by the panel.
 
 ## Cloud night 2026-11-10 (docs/cloud-night-brief.md)
 

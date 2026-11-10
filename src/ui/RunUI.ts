@@ -69,7 +69,7 @@ export class RunUI{
  }
  onError:(error:unknown)=>void=error=>{throw error;};
  constructor(readonly catalog:RunCatalog,readonly manifests:Record<string,UnitManifest>){document.querySelector('#run-ui')?.remove();this.root=document.createElement('section');this.root.id='run-ui';document.body.append(this.root);this.root.addEventListener('keydown',event=>{if(event.key!=='Tab')return;this.root.addEventListener('focusin',()=>this.onSound('select'),{once:true,signal:AbortSignal.timeout(120)});});}
- show(html:string,phase:string){this.slotAudioCleanup?.();this.slotAudioCleanup=undefined;this.leverCleanup?.();this.leverCleanup=undefined;this.crystalCleanup?.();this.crystalCleanup=undefined;this.root.className='run-overlay';this.root.removeAttribute('style');this.root.removeAttribute('role');this.root.removeAttribute('aria-modal');this.root.removeAttribute('aria-label');this.root.dataset.phase=phase;this.root.innerHTML=`<main class="rpg-shell">${html}</main>`;this.root.querySelector<HTMLElement>('button')?.focus();}
+ show(html:string,phase:string){this.heroAnimation?.();this.heroAnimation=undefined;this.slotAudioCleanup?.();this.slotAudioCleanup=undefined;this.leverCleanup?.();this.leverCleanup=undefined;this.crystalCleanup?.();this.crystalCleanup=undefined;this.root.className='run-overlay';this.root.removeAttribute('style');this.root.removeAttribute('role');this.root.removeAttribute('aria-modal');this.root.removeAttribute('aria-label');this.root.dataset.phase=phase;this.root.innerHTML=`<main class="rpg-shell">${html}</main>`;this.root.querySelector<HTMLElement>('button')?.focus();}
  hide(){this.slotAudioCleanup?.();this.slotAudioCleanup=undefined;this.leverCleanup?.();this.leverCleanup=undefined;this.crystalCleanup?.();this.crystalCleanup=undefined;this.root.innerHTML='';this.root.className='';this.root.removeAttribute('style');this.root.removeAttribute('role');this.root.removeAttribute('aria-modal');this.root.removeAttribute('aria-label');this.root.dataset.phase='battle';}
  overBattle(bounds:RewardStageBounds){
   this.root.classList.add('victory-overlay');this.root.setAttribute('role','dialog');this.root.setAttribute('aria-modal','true');this.root.setAttribute('aria-label','Battle rewards');
@@ -136,19 +136,42 @@ export class RunUI{
   const keys=Object.keys(this.catalog).filter(k=>this.catalog[k].canonicalIdentity&&this.catalog[k].skills.length)
    .sort((a,b)=>(this.catalog[a].variantLabel??'').localeCompare(this.catalog[b].variantLabel??'')||this.catalog[a].name.localeCompare(this.catalog[b].name));
   const unlocked=new Set(profile.unlocked);
-  const tile=(key:string)=>{const c=this.catalog[key],open=unlocked.has(key),base=levelOf(c),bond=profile.bond?.[key]??0;
-   const skills=c.skills.map(sk=>{const el=skillElements(sk);return `<li>${skillIcon(sk)}<span>${esc(sk.name)}</span>${elementChips(el)}</li>`;}).join('');
-   const tip=open?`<span class="hero-tip" role="tooltip"><strong>${esc(c.name)}</strong><em>${esc(c.variantLabel??'')}</em>
-     <dl><dt>Base rarity</dt><dd>${esc(rankLabel(c))}</dd><dt>Start level</dt><dd>Lv ${base}–${MAX_LEVEL} (rarity sets the floor)</dd><dt>Max level</dt><dd>Lv ${MAX_LEVEL}${c.forms?.length?' · awakens '+c.forms.map(f=>rankLabel(f)).join(' → '):''}</dd><dt>Bond</dt><dd>${bond?'◆'.repeat(bond)+` (${bond}/3)`:'None yet'}</dd></dl>
-     <b>Skills</b><ul>${skills}</ul>${c.limitBurst?`<b>Limit Burst</b><p>${esc(c.limitBurst.name)}</p>`:''}</span>`
-    :`<span class="hero-tip" role="tooltip"><strong>Locked</strong><em>${esc(c.variantLabel??'')}</em><p>Win an expedition or summon on the title screen to unlock.</p></span>`;
-   return `<button type="button" class="hero-tile ${open?'':'is-locked'}" aria-label="${esc(open?c.name:'Locked hero')}"><img src="${esc(c.portrait)}" alt="" draggable="false"><span class="hero-name">${esc(open?c.name:'???')}</span>${open&&bond?`<span class="hero-bond">${'◆'.repeat(bond)}</span>`:''}${tip}</button>`;};
-  this.show(`${this.title('COLLECTION','HEROES',`${keys.filter(k=>unlocked.has(k)).length} of ${keys.length} heroes answer the call. Hover a hero for details.`)}<div class="hero-grid">${keys.map(tile).join('')}</div><div class="actions">${this.button('menu','Back to title',true)}</div>`,'heroes');
-  // Keep tooltips on screen: tiles near an edge anchor their tooltip to that edge.
-  const place=(event:Event)=>{const tile=(event.target as HTMLElement).closest<HTMLElement>('.hero-tile');if(!tile)return;const r=tile.getBoundingClientRect(),half=Math.min(290,innerWidth*.8)/2;
-   tile.classList.toggle('tip-left',r.left+r.width/2-half<8);tile.classList.toggle('tip-right',r.left+r.width/2+half>innerWidth-8);tile.classList.toggle('tip-below',r.top<330);};
-  this.root.querySelector('.hero-grid')?.addEventListener('pointerover',place);this.root.querySelector('.hero-grid')?.addEventListener('focusin',place);
+  const tile=(key:string)=>{const c=this.catalog[key],open=unlocked.has(key),bond=profile.bond?.[key]??0;
+   return `<button type="button" class="hero-tile ${open?'':'is-locked'}" data-hero="${esc(key)}" aria-label="${esc(open?c.name:'Locked hero')}"><img src="${esc(c.portrait)}" alt="" draggable="false"><span class="hero-name">${esc(open?c.name:'???')}</span>${open&&bond?`<span class="hero-bond">${'◆'.repeat(bond)}</span>`:''}</button>`;};
+  this.show(`${this.title('COLLECTION','HEROES',`${keys.filter(k=>unlocked.has(k)).length} of ${keys.length} heroes answer the call. Select a hero for details.`)}<div class="heroes-layout"><div class="hero-grid">${keys.map(tile).join('')}</div><aside class="rpg-panel hero-detail" aria-live="polite"></aside></div><div class="actions">${this.button('menu','Back to title',true)}</div>`,'heroes');
+  // Detail panel (2026-11-11): the grid slides left and the panel shows the hero's strongest form,
+  // animated, with origin, level range, awakenings, Bond, skills and Limit Burst.
+  const layout=this.root.querySelector<HTMLElement>('.heroes-layout')!,panel=this.root.querySelector<HTMLElement>('.hero-detail')!;
+  let shown='';
+  const select=(key:string)=>{
+   if(key===shown)return;shown=key;this.heroAnimation?.();
+   const c=this.catalog[key],open=unlocked.has(key),base=levelOf(c),bond=profile.bond?.[key]??0;
+   const forms=c.forms??[],top=forms.at(-1),formKey=top?.form??key,manifest=this.manifests[formKey]??this.manifests[key];
+   const clip=manifest.animations.idle,path=formKey===key?`units/${key}`:`forms/${formKey}`;
+   const scale=Math.min(3,210/clip.frameWidth,200/clip.frameHeight);
+   const preview=bodyPreview('/assets/'+path,clip,'pixel-sprite hero-detail-sprite',`width:${clip.frameWidth*scale}px;height:${clip.frameHeight*scale}px;background-size:${clip.frameWidth*clip.frameCount*scale}px ${clip.frameHeight*scale}px;background-position:${-clip.frames[0].index*clip.frameWidth*scale}px 0`);
+   const pips=Array.from({length:MAX_LEVEL},(_,i)=>`<i class="${i+1<base?'below':'reach'}${i+1===base?' start':''}">${i+1}</i>`).join('');
+   const skills=c.skills.map(sk=>`<li>${skillIcon(sk)}<span>${esc(sk.name)}</span>${elementChips(skillElements(sk))}</li>`).join('');
+   panel.innerHTML=`<div class="hero-detail-stage ${open?'':'is-locked'}"><div class="hero-detail-halo"></div>${preview.html}</div>
+    <h2>${esc(open?c.name:'???')}</h2><p class="hero-origin">${esc(c.variantLabel??'')}</p>
+    <div class="hero-levels" title="Start level Lv ${base}–${MAX_LEVEL}: the original base rarity sets the floor. Awakening in a run raises it up to Lv ${MAX_LEVEL}."><span>Levels</span><div class="level-pips">${pips}</div><small>Starts at Lv ${base}${base<MAX_LEVEL?` or higher · max Lv ${MAX_LEVEL}`:' (maximum)'}</small></div>
+    <dl class="hero-facts"><dt>Base rarity</dt><dd>${esc(rankLabel(c))}</dd><dt>Strongest form</dt><dd>${esc(top?rankLabel(top):rankLabel(c))}${forms.length?` · awakens ${forms.map(f=>rankLabel(f)).join(' → ')}`:''}</dd><dt>Bond</dt><dd>${bond?'◆'.repeat(bond)+` (${bond}/3)`:'None yet'}</dd></dl>
+    ${open?`<b>Skills</b><ul class="hero-skills">${skills}</ul>${c.limitBurst?`<b>Limit Burst</b><p class="hero-lb">${esc(c.limitBurst.name)}</p>`:''}`:'<p class="muted">Win an expedition or summon on the title screen to unlock this hero.</p>'}`;
+   layout.classList.add('has-detail');
+   this.root.querySelectorAll('.hero-tile').forEach(t=>t.classList.toggle('is-selected',(t as HTMLElement).dataset.hero===key));
+   // Idle animation on the original frame timings.
+   const layers=Array.from(panel.querySelectorAll<HTMLElement>('.hero-detail-sprite,.hero-detail-sprite .body-emission'));
+   let frame=0,timer=0;
+   const step=()=>{const f=clip.frames[frame%clip.frames.length];layers.forEach(l=>l.style.backgroundPosition=`${-f.index*clip.frameWidth*scale}px 0`);frame++;timer=window.setTimeout(step,Math.max(30,f.durationMs));};
+   if(clip.frames.length>1&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches)step();
+   this.heroAnimation=()=>clearTimeout(timer);
+  };
+  const grid=this.root.querySelector<HTMLElement>('.hero-grid')!;
+  const pick=(event:Event)=>{const t=(event.target as HTMLElement).closest<HTMLElement>('.hero-tile');if(t?.dataset.hero)select(t.dataset.hero);};
+  grid.addEventListener('pointerover',pick);grid.addEventListener('focusin',pick);grid.addEventListener('click',pick);
+  const first=keys.find(k=>unlocked.has(k));if(first)select(first);
  }
+ private heroAnimation?:()=>void;
  slots(run:RunState,busy:boolean,choices:Record<string,{id:string;name:string}[]>={}){
   const hasTeam=run.party.length>0;
   const exhausted=hasTeam&&run.rerolls===0;
