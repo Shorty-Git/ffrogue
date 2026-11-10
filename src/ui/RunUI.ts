@@ -11,7 +11,7 @@ import {rewardPopupLayout} from './rewardLayout.mjs';
 import type {RewardStageBounds} from './rewardLayout.mjs';
 import type {AnimationMeta,UnitManifest} from '../types/manifest';
 import {bindSlotLever} from './SlotLever';
-import {fateTier,fateTimeline,fateVerdict,tierRank,isShowTier,FATE_SOUND,type FateTier,type FateSound} from './fateEngine';
+import {fateTier,fateTimeline,fateVerdict,isShowTier,FATE_SOUND,FATE_GAIN,FATE_TAIL_FADE,type FateTier,type FateSound} from './fateEngine';
 import {startCrystalSparks} from './CrystalSparks';
 import {startTitleCrystal,titleCrystalMarkup} from './TitleCrystal';
 import {formAt,formForLevel,rankLabel,levelLabel,levelOf,MAX_LEVEL} from '../run/unitForms.mjs';
@@ -32,25 +32,32 @@ export class RunUI{
  readonly root:HTMLElement;
  onSound:(event:import('../audio/battleMusic').UiSound,rate?:number)=>void|(()=>void)=()=>{};
  /** Original one-shot samples (FFBE summon cues) for the Fate Engine. */
- onSample:(sound:FateSound,gain:number)=>void=()=>{};
+ onSample:(sound:FateSound,gain:number)=>(fade?:number)=>void=()=>()=>{};
  private slotAudioCleanup?:()=>void;
  private leverCleanup?:()=>void;
  private crystalCleanup?:()=>void;
- awakening(notice:AwakeningNotice,complete:()=>void):void {
+ /** anchor: the awakening hero's screen box. With it the moment plays as a compact banner over that hero
+  * in the live arena (cloud night 2026-11-10); without it (no battle view) as the centred panel. */
+ awakening(notice:AwakeningNotice,complete:()=>void,anchor?:{left:number;right:number;top:number;bottom:number}):void {
   const character=this.catalog[notice.member];
   const fromLabel=rankLabel(formAt(character,notice.from.form)!);
   const toLabel=rankLabel(formAt(character,notice.to.form)!);
   const paths:string[]=[];
   const forms=[notice.from,notice.to].map(f=>this.manifests[f.form].animations.idle);
-  const scale=Math.min(3,300/Math.max(...forms.map(a=>a.frameWidth)),210/Math.max(...forms.map(a=>a.frameHeight)));
+  const scale=anchor?Math.min(2,200/Math.max(...forms.map(a=>a.frameWidth)),118/Math.max(...forms.map(a=>a.frameHeight))):Math.min(3,300/Math.max(...forms.map(a=>a.frameWidth)),210/Math.max(...forms.map(a=>a.frameHeight)));
   const body=(form:string,index:number)=>{
    const a=forms[index],root=`/assets/${form===notice.member?'units/'+notice.member:'forms/'+form}`;
-   const preview=bodyPreview(root,a,'awakening-body',`width:${a.frameWidth*scale}px;height:${a.frameHeight*scale}px;left:calc(50% - ${a.pivotX*a.frameWidth*scale}px);bottom:${44-(1-a.pivotY)*a.frameHeight*scale}px;background-size:${a.frameWidth*a.frameCount*scale}px ${a.frameHeight*scale}px;background-position:${-a.frames[0].index*a.frameWidth*scale}px 0`);
+   const preview=bodyPreview(root,a,'awakening-body',`width:${a.frameWidth*scale}px;height:${a.frameHeight*scale}px;left:calc(50% - ${a.pivotX*a.frameWidth*scale}px);bottom:${(anchor?16:44)-(1-a.pivotY)*a.frameHeight*scale}px;background-size:${a.frameWidth*a.frameCount*scale}px ${a.frameHeight*scale}px;background-position:${-a.frames[0].index*a.frameWidth*scale}px 0`);
    paths.push(...preview.paths);
    return `<div class="awakening-form ${index?'new':'old'}" data-form="${esc(form)}">${preview.html}</div>`;
   };
   this.show(`<div class="awakening-sequence rpg-panel"><div class="eyebrow">A NEW LIGHT AWAKENS</div><h1>${esc(this.catalog[notice.member].name)}</h1><div class="awakening-stage"><div class="awakening-halo"></div><div class="awakening-rings"></div>${Array.from({length:12},(_,i)=>`<i class="awakening-spark" style="--spark-angle:${i*30}deg;--spark-delay:${i%4*60}ms" aria-hidden="true">✦</i>`).join('')}${body(notice.from.form,0)}${body(notice.to.form,1)}</div><p class="awakening-stars" aria-label="${fromLabel} to ${toLabel}">${fromLabel} <span>→</span> <strong>${toLabel}</strong></p><p class="lead">${toLabel} original form unlocked</p></div><div class="actions">${this.button('awakening-skip','Skip animation',true)}</div>`,'awakening');
-  this.root.classList.add('awakening-overlay');this.root.setAttribute('role','dialog');this.root.setAttribute('aria-modal','true');this.root.setAttribute('aria-label','Character awakening');
+  this.root.classList.add('awakening-overlay');
+  if(anchor){const width=Math.min(270,innerWidth-16),height=262;
+   this.root.classList.add('awakening-inline');
+   this.root.style.setProperty('--aw-left',Math.max(8,Math.min(innerWidth-width-8,(anchor.left+anchor.right)/2-width/2))+'px');
+   this.root.style.setProperty('--aw-top',Math.max(8,Math.min(innerHeight-height-8,anchor.top-height+20))+'px');
+   this.root.style.setProperty('--aw-width',width+'px');}this.root.setAttribute('role','dialog');this.root.setAttribute('aria-modal','true');this.root.setAttribute('aria-label','Character awakening');
   let finished=false;const done=()=>{if(finished||this.root.dataset.phase!=='awakening')return;finished=true;complete();};
   this.on('awakening-skip',done);
   const sequence=this.root.querySelector<HTMLElement>('.awakening-sequence')!;
@@ -88,23 +95,26 @@ export class RunUI{
   const at=(seconds:number,action:()=>void)=>timers.push(window.setTimeout(action,seconds*1000));
   let stopRolling:void|(()=>void);
   this.slotAudioCleanup=()=>{timers.forEach(clearTimeout);stopRolling?.();};
-  this.onSample(FATE_SOUND.slide,.3);
+  this.onSample(FATE_SOUND.slide,FATE_GAIN.slide);
+  let previousCue:((fade?:number)=>void)|undefined,previousShow=false;
   at(.12,()=>{stopRolling=this.onSound('rolling');});
   reels.forEach((_reel,index)=>at(stops[index],()=>{
    if(index===reels.length-1)stopRolling?.();
    this.onSound('reelStop',[.92,1,1.09][index]);
-   const tier=tiers[index],rank=tierRank(tier);
+   const tier=tiers[index];
    const show=isShowTier(tier);
-   this.onSample(FATE_SOUND[tier],show?.36:rank>=tierRank('gold')?.32:.3);
+   // The previous reel's cue fades out instead of stacking; a 7★/NV celebration keeps its tail.
+   if(!previousShow)previousCue?.(FATE_TAIL_FADE);
+   previousCue=this.onSample(FATE_SOUND[tier],FATE_GAIN[tier]);previousShow=show;
    // The full show (flash, shake, fireworks) belongs to 7★ and NV only.
    if(show){
     machine.dataset.flash='';void machine.offsetWidth;machine.dataset.flash=tier;
-    this.onSample(FATE_SOUND.fireworks,.28);if(tier==='nv')this.onSample(FATE_SOUND.awaken,.24);
+    this.onSample(FATE_SOUND.fireworks,FATE_GAIN.fireworks);if(tier==='nv')this.onSample(FATE_SOUND.awaken,FATE_GAIN.awaken);
     if(shake&&!reduced)machine.animate([{transform:'translate(0,0)'},{transform:'translate(-8px,4px)'},
      {transform:'translate(5px,-3px)'},{transform:'translate(-2px,0)'},{transform:'translate(0,0)'}],{duration:260,easing:'ease-out'});
    }
   }));
-  at(Math.max(stops[stops.length-1]??0,end-.35),()=>this.onSample(FATE_SOUND.verdict,.3));
+  at(Math.max(stops[stops.length-1]??0,end-.35),()=>{if(!previousShow)previousCue?.(FATE_TAIL_FADE);this.onSample(FATE_SOUND.verdict,FATE_GAIN.verdict);});
   this.root.querySelector('.slot-lever.is-returning .lever-arm')?.addEventListener('animationend',()=>this.onSound('leverReturn'),{once:true});
  }
  button(action:string,label:string,secondary=false,disabled=false){return `<button class="rpg-button ${secondary?'secondary':''}" data-action="${action}" ${disabled?'disabled':''}>${label}</button>`;}
@@ -156,7 +166,8 @@ export class RunUI{
    const character=member&&this.catalog[member.key];
    const skill=character?.skills.find(s=>s.id===member.skills[0].id);
    const tier=member?tiers[i]:undefined,stop=timeline.stops[i]??1;
-   return `<div class="reel ${tier?'tier-'+tier:''} ${busy?'is-spinning':''} ${busy&&timeline.teases[i]?'is-tease':''}" ${tier?`data-tier="${tier}"`:''} style="--stop-duration:${stop}s">
+   const tip=member&&character&&!busy?`${character.name} · ${character.variantLabel??''} · ${levelLabel(member.level)}${skill?` · Starting skill: ${skill.name} (${skillDescription(skillForRun(skill,member))})`:''}${character.limitBurst?` · Limit Burst: ${character.limitBurst.name}`:''}`:'';
+   return `<div class="reel ${tier?'tier-'+tier:''} ${busy?'is-spinning':''} ${busy&&timeline.teases[i]?'is-tease':''}" ${tier?`data-tier="${tier}"`:''} style="--stop-duration:${stop}s" ${tip?`title="${esc(tip)}"`:''}>
     <span class="slot-number">${String(i+1).padStart(2,'0')}</span>
     <div class="reel-window">${tape}<span class="fate-burst" aria-hidden="true"></span><div class="final-symbol">${member?this.sprite(member,true):'<span class="unknown-crystal">◆</span>'}</div></div>
     <div class="reel-result">
@@ -182,7 +193,7 @@ export class RunUI{
    </div>
    <div class="actions"><button class="rpg-button secondary" data-action="lever-skip" hidden>Skip animation</button>${hasTeam?this.button('confirm','Set out',false,busy):''}${busy?this.button('skip','Skip animation',true):this.button('menu','Back to title',true)}</div>
    ${/* Always reserve the panel so the centred layout never jumps while the reels run. */''}${hasTeam&&!busy?run.party.filter(m=>choices[m.key]?.length).map(m=>`<div class="rpg-panel bond-choice"><span class="eyebrow">BOND · ${esc(this.catalog[m.key].name)}'S STARTING SKILL</span><div class="bond-skills">${choices[m.key].map((s,i)=>`<button type="button" class="rpg-button ${m.skills[0]?.id===s.id?'':'secondary'}" data-action="start-skill-${m.key}-${i}" aria-pressed="${m.skills[0]?.id===s.id}">${esc(s.name)}</button>`).join('')}</div></div>`).join(''):''}<details class="rpg-panel slot-details" ${hasTeam&&!busy?'':'inert style="visibility:hidden"'}><summary>Starting skills & effects</summary>${hasTeam&&!busy?run.party.map(m=>this.member(m)).join(''):''}</details>
-   <p class="muted">Your party and remaining rerolls are saved.${run.rules?.awakeningMode==='highest-reviewed'?'<br>Prototype awakening: highest reviewed original form.':''}</p>`,'setup');
+   ${run.rules?.awakeningMode==='highest-reviewed'?'<p class="muted">Prototype awakening: highest reviewed original form.</p>':''}`,'setup');
  }
  rewardText(r:Reward,run:RunState){const m=run.party.find(m=>m.key===r.member),c=m?this.catalog[m.key]:null;
   if(r.type==='revive')return {title:'Phoenix Down',detail:`Revive ${c!.name} from K.O. with ${Math.round(REVIVE_HP_SHARE*100)}% base HP.`,tag:'REVIVAL'};
@@ -242,8 +253,8 @@ export class RunUI{
    strip.style.transition='none';strip.style.transform=`translateX(${target}px)`;
    winner.classList.add('is-landed');windowEl.classList.add('tier-'+tier,'is-landed');
    const show=isShowTier(tier);
-   this.onSample(FATE_SOUND[tier],show?.36:tierRank(tier)>=tierRank('gold')?.32:.3);
-   if(show){this.onSample(FATE_SOUND.fireworks,.28);if(tier==='nv')this.onSample(FATE_SOUND.awaken,.24);}
+   this.onSample(FATE_SOUND[tier],FATE_GAIN[tier]);
+   if(show){this.onSample(FATE_SOUND.fireworks,FATE_GAIN.fireworks);if(tier==='nv')this.onSample(FATE_SOUND.awaken,FATE_GAIN.awaken);}
    timers.push(window.setTimeout(reveal,show?1400:850));};
   this.on('summon-skip',()=>{land();reveal();});
   if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){land();return;}
@@ -251,7 +262,7 @@ export class RunUI{
   const tick=()=>{const x=new DOMMatrixReadOnly(getComputedStyle(strip).transform).m41,index=Math.floor((center-x)/step),now=performance.now();
    if(index!==lastTile&&now-lastTick>28){lastTile=index;lastTick=now;this.onSound('select',1+Math.random()*.08);}
    if(!landed)frame=requestAnimationFrame(tick);};
-  this.onSample(FATE_SOUND.slide,.3);
+  this.onSample(FATE_SOUND.slide,FATE_GAIN.slide);
   requestAnimationFrame(()=>{strip.style.transition='transform 6.4s cubic-bezier(.08,.72,.16,1)';strip.style.transform=`translateX(${target}px)`;frame=requestAnimationFrame(tick);});
   strip.addEventListener('transitionend',land,{once:true});}
  dialog(title:string,text:string,accept='Confirm'){this.show(`${this.title('EXPEDITION',esc(title),text)}<div class="actions">${this.button('accept',accept)}${this.button('cancel','Cancel',true)}</div>`,'dialog');}

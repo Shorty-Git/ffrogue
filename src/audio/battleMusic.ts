@@ -141,20 +141,23 @@ export class GameAudio {
   }
 
   /** Play a one-shot original sample on the effects bus; returns a stop function. */
-  playSample(url:string,gain:number):()=>void {
+  /** Returns a stop handle; stop(fade) ramps the sample out over `fade` seconds instead of cutting it. */
+  playSample(url:string,gain:number):(fade?:number)=>void {
     const context=this.context;
     if(!context||context.state!=='running'||this.preferences.effects.muted)return ()=>{};
-    let source:AudioBufferSourceNode|undefined,stopped=false;
+    let source:AudioBufferSourceNode|undefined,level:GainNode|undefined,stopped=false;
     void this.loadBuffer(context,url).then(buffer=>{
       if(stopped)return;
       source=context.createBufferSource();
-      const level=context.createGain();
+      level=context.createGain();
       source.buffer=buffer;level.gain.value=gain;
       source.connect(level).connect(this.bus('effects'));
-      source.onended=()=>{source?.disconnect();level.disconnect();};
+      source.onended=()=>{source?.disconnect();level?.disconnect();};
       source.start();
     }).catch(error=>console.warn('Sample unavailable',url,error));
-    return ()=>{stopped=true;try{source?.stop();}catch{/* already ended */}};
+    return (fade=0)=>{stopped=true;try{
+      if(fade>0&&source&&level){const now=context.currentTime;level.gain.setValueAtTime(level.gain.value,now);level.gain.linearRampToValueAtTime(0,now+fade);source.stop(now+fade+.02);}
+      else source?.stop();}catch{/* already ended */}};
   }
 
   warmCombat():void {

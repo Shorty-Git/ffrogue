@@ -146,3 +146,17 @@
 .hero-tile.tip-left .hero-tip{left:0;transform:none}
 .hero-tile.tip-right .hero-tip{left:auto;right:0;transform:none}
 .hero-tile.tip-below .hero-tip{bottom:auto;top:calc(100% + 6px)}
+
+/* Awakening inside the battle view: a compact banner over the hero; the arena stays visible and live. */
+#run-ui.awakening-inline{background:none;display:block;padding:0;overflow:visible;pointer-events:none}
+#run-ui.awakening-inline::before{display:none}
+#run-ui.awakening-inline .rpg-shell{position:absolute;left:var(--aw-left);top:var(--aw-top);width:var(--aw-width);padding:0;text-align:center}
+#run-ui.awakening-inline .awakening-sequence{padding:8px 10px 6px;background:linear-gradient(150deg,#163c67d0,#071932d8 65%);box-shadow:0 0 0 2px #061429,0 0 30px #5dbdff55}
+#run-ui.awakening-inline .eyebrow{margin:0 0 2px;font-size:9px;letter-spacing:.25em}
+#run-ui.awakening-inline h1{font-size:18px!important;margin:0!important;letter-spacing:2px}
+#run-ui.awakening-inline .awakening-stage{height:150px}
+#run-ui.awakening-inline .awakening-rings{width:120px;height:34px;left:calc(50% - 60px);bottom:6px}
+#run-ui.awakening-inline .awakening-stars{margin:2px 0 0;font-size:13px}
+#run-ui.awakening-inline .lead{display:none}
+#run-ui.awakening-inline .actions{margin:6px 0 0;pointer-events:auto}
+#run-ui.awakening-inline .actions .rpg-button{padding:4px 10px;min-height:0;font-size:11px}

@@ -151,3 +151,7 @@ body[data-battle-entrance] .combat-ui{animation:battle-hud-rise .5s cubic-bezier
 .party-weapon i{font-style:normal;color:#e9d293}
 .party-weapon .el-chip{font-size:.85em}
 .caption-wards{display:inline-flex;align-items:center;gap:3px;font-size:.8em;color:#b9cde1;pointer-events:auto;cursor:help}
+/* Hero status badges answer hover with their explanation (title); enemy statuses are in the enemy tooltip. */
+.party-card .status-row{pointer-events:auto}
+.party-card .status-badge{cursor:help}
+@media(max-width:600px){.party-weapon{display:none}}

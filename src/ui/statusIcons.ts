@@ -18,10 +18,19 @@ const STATUS_UI: Record<string, string> = {
   stop: 'Stop',
 };
 
+/** Tooltip explanations (hover a badge). */
+const STATUS_HELP: Record<string, string> = {
+  'physical-boost': 'physical damage dealt up', 'auto-revive': 'revives once after a K.O.',
+  'guard-physical': 'physical damage taken down', 'guard-magical': 'magical damage taken down',
+  'break-attack': 'physical damage dealt down', 'break-defense': 'physical damage taken up',
+  'break-magic': 'magic damage dealt down', 'break-spirit': 'magical damage taken up',
+  blind: 'basic attacks may miss', 'attack-down': 'damage dealt down', 'physical-weakness': 'takes more physical damage',
+  'magic-weakness': 'takes more magic damage', silence: 'cannot use magic', stop: 'cannot act',
+};
 export function statusBadge(kind: string, turns: number): StatusBadge | null {
-  const label = STATUS_UI[kind];
-  if (!label || !(turns > 0)) return null;
-  return {icon: `/assets/ui/status/${kind}.png`, label, turns};
+  const name = STATUS_UI[kind];
+  if (!name || !(turns > 0)) return null;
+  return {icon: `/assets/ui/status/${kind}.png`, label: STATUS_HELP[kind] ? `${name}: ${STATUS_HELP[kind]}` : name, turns};
 }
 
 /** Hero buffs expire after `expiresAfterRound`; the badge counts the rounds still covered. */

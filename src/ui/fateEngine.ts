@@ -54,6 +54,21 @@ export const FATE_SOUND = {
   slide: 'reel-slide', fireworks: 'fireworks', awaken: 'limit-open', verdict: 'verdict',
 } as const;
 export type FateSound = typeof FATE_SOUND[keyof typeof FATE_SOUND];
+
+/**
+ * Sample gains (mix pass 2026-11-10). Measured loudest 400 ms window of each WAV (dBFS): reel-slide -11.8,
+ * get-bronze -19.0, get-silver -17.0, get-gold -13.9, get-rainbow -13.4, fireworks -12.3, limit-open -5.5,
+ * verdict -18.9. Gains place them at a target level (dBFS after gain): rarer tiers land louder
+ * (bronze -27, silver -26, gold -24, 6★ -23, 7★ -22, NV -21); the slide and fireworks sit under the tier
+ * cues (-24); limit-open was ~4 dB over the 7★ cue before and now sits at -24; the verdict (-22) is no
+ * longer buried under the tier tails.
+ */
+export const FATE_GAIN: Record<FateTier | 'slide' | 'fireworks' | 'awaken' | 'verdict', number> = {
+  bronze: .4, silver: .355, gold: .31, rainbow: .35, prism: .37, nv: .42,
+  slide: .25, fireworks: .26, awaken: .12, verdict: .7,
+};
+/** A landing reel fades the previous reel's tier cue over this many seconds (they used to stack 3 deep). */
+export const FATE_TAIL_FADE = .3;
 export const fateSoundUrl = (sound: FateSound) => `assets/audio/fate/${sound}.wav`;
 export const ALL_FATE_SOUNDS: FateSound[] = [...new Set(Object.values(FATE_SOUND))];
 

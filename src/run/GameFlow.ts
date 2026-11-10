@@ -24,7 +24,7 @@ export class GameFlow{
  private battleCursor:BattleCursorProfile='felt';
  private entry?:EncounterTransition;
  readonly catalog;readonly store;readonly ui;private readonly profiles;profile:Profile;state:RunState|null=null;private animationTimer?:ReturnType<typeof setTimeout>;private busy=false;
- constructor(readonly scene:Phaser.Scene,readonly manifests:Record<string,UnitManifest>){this.audio=new GameAudio(scene.sound);this.rules=(scene.cache.json.get('run_rules')as RunRules)??{awakeningMode:'sequential'};this.catalog=runCatalog(scene,manifests);this.store=new RunStore(window.localStorage,this.catalog);this.profiles=new ProfileStore(window.localStorage,this.catalog);this.profile=this.profiles.load();this.ui=new RunUI(this.catalog,manifests);this.ui.onError=error=>this.fail(error);this.ui.onSound=(event,rate)=>this.audio.playUi(event,rate);this.ui.onSample=(sound,gain)=>{this.audio.playSample(fateSoundUrl(sound),gain);};const resize=()=>{this.placeBattleToolbar();if(this.ui.root.classList.contains('victory-overlay'))this.ui.overBattle(this.rewardBounds());};window.addEventListener('resize',resize);scene.scale.on('resize',resize);this.menu();}
+ constructor(readonly scene:Phaser.Scene,readonly manifests:Record<string,UnitManifest>){this.audio=new GameAudio(scene.sound);this.rules=(scene.cache.json.get('run_rules')as RunRules)??{awakeningMode:'sequential'};this.catalog=runCatalog(scene,manifests);this.store=new RunStore(window.localStorage,this.catalog);this.profiles=new ProfileStore(window.localStorage,this.catalog);this.profile=this.profiles.load();this.ui=new RunUI(this.catalog,manifests);this.ui.onError=error=>this.fail(error);this.ui.onSound=(event,rate)=>this.audio.playUi(event,rate);this.ui.onSample=(sound,gain)=>this.audio.playSample(fateSoundUrl(sound),gain);const resize=()=>{this.placeBattleToolbar();if(this.ui.root.classList.contains('victory-overlay'))this.ui.overBattle(this.rewardBounds());};window.addEventListener('resize',resize);scene.scale.on('resize',resize);this.menu();}
  private closeEntry(){this.entry?.close();this.entry=undefined;}
  private fail(error:unknown){this.closeEntry();this.audio.setMusic(null);clearTimeout(this.animationTimer);this.busy=false;this.scene.scene.stop('BattleScene');this.ui.error(String(error));this.ui.on('reload',()=>location.reload());}
  private commit(next:RunState){this.store.save(next);this.state=next;}
@@ -223,9 +223,10 @@ export class GameFlow{
   const advance=()=>{if(next.phase==='battle')this.battle(enterArea?'area':'cut');
     else{this.scene.scene.stop('BattleScene');this.route();}};
   const notice=this.state.pendingAwakening;
-  if(notice){this.ui.awakening(notice,()=>{if(this.state?.pendingAwakening?.id!==notice.id)return;
+  if(notice){const slot=this.state.party.findIndex(m=>m.key===notice.member),anchor=this.scene.scene.isActive('BattleScene')?this.rewardBounds().party[slot]:undefined;
+   this.ui.awakening(notice,()=>{if(this.state?.pendingAwakening?.id!==notice.id)return;
     try{this.commit(acknowledgeAwakening(this.state,notice.id));advance();}catch(error){this.fail(error);}
-   });return;}
+   },anchor);return;}
   advance();}catch(error){this.fail(error);}}
  private result(){this.audio.setMusic(this.state?.phase==='won'?VICTORY_FANFARE_RESOURCE:null,'result');
   // Crystals and unlocks are settled once per finished run (keyed by seed and history), then shown.

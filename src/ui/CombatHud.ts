@@ -93,7 +93,7 @@ export class CombatHud {
     const attrs=(action:string,i:number)=>`data-command="${action}" data-index="${i}" data-focus="${action}-${i}"`;
 
     const party=state.party.map((hero,i)=>`<button type="button" class="party-card is-${hero.state} ${hero.target!==undefined?'is-target':''}"
-        ${attrs(hero.target===undefined?'hero':'target',hero.target??i)} ${hero.disabled?'disabled':''} aria-pressed="${hero.active}">
+        ${attrs(hero.target===undefined?'hero':'target',hero.target??i)} ${hero.disabled?'disabled':''} aria-pressed="${hero.active}" title="${escapeHtml(`${hero.name} · HP ${hero.hp}/${hero.maxHp} · MP ${hero.mp}/${hero.maxMp}${hero.limit?` · Limit ${hero.limit.value}/${hero.limit.max}`:''} · ${hero.status}`)}">
       <span class="portrait-frame">${hero.portrait?`<img src="${escapeHtml(hero.portrait)}" alt="" draggable="false">`:''}</span>
       <span class="party-info">
         <span class="party-head"><strong>${escapeHtml(hero.name)}</strong>${hero.weapon?`<span class="party-weapon" title="${escapeHtml(hero.weapon.name+' · '+hero.weapon.tip)}"><i aria-hidden="true">${hero.weapon.glyph}</i>${elementChips(hero.weapon.elements)}</span>`:''}<small>${escapeHtml(hero.status)}</small></span>
@@ -104,7 +104,7 @@ export class CombatHud {
       </span></button>`).join('');
 
     const commands=state.commands.map((command,i)=>command?`<button type="button" class="command ${command.limit?'is-limit':''} ${command.ready?'is-ready':''}" ${attrs('ability',i)} ${command.disabled?'disabled':''}
-        aria-pressed="${command.selected}" aria-description="${escapeHtml(command.description)}">
+        aria-pressed="${command.selected}" aria-description="${escapeHtml(command.description)}" title="${escapeHtml(command.name+' · '+command.cost+' · '+command.description)}">
       <img class="command-icon ${command.iconUrl?'is-skill':''}" src="${command.iconUrl??UI+command.icon+'.png'}" alt="" draggable="false">
       <span class="command-text"><strong>${escapeHtml(command.name)}</strong><small>${escapeHtml(command.cost)}</small></span>
       <kbd>${i+1}</kbd></button>`:`<span class="command is-empty" aria-hidden="true"></span>`).join('');
@@ -114,7 +114,7 @@ export class CombatHud {
       const plate=actor.hp===undefined?'':`<span class="arena-health ${actor.boss?'is-boss':''}">
         <span class="enemy-head"><strong>${escapeHtml(actor.name)}</strong><span>${number(actor.hp)} / ${number(actor.maxHp!)}</span></span>
         ${gauge('enemy',actor.hp,actor.maxHp!,'HP',`enemy-${actor.id}`)}${statusRow(actor.statuses)}${actor.affinity&&(actor.affinity.weak.length||actor.affinity.resist.length)?`<span class="element-row">${actor.affinity.weak.length?'<em>Weak</em>'+elementChips(actor.affinity.weak,'weak'):''}${elementChips(actor.affinity.resist,'resist')}</span>`:''}${actor.status?`<small>${escapeHtml(actor.status)}</small>`:''}</span>`;
-      const tip=[actor.name,actor.affinity?affinityText(actor.affinity):'',actor.status??''].filter(Boolean).join(' · ');
+      const tip=[actor.name,actor.affinity?affinityText(actor.affinity):'',...(actor.statuses??[]).map(s=>`${s.label} (${s.turns})`),actor.status??''].filter(Boolean).join(' · ');
       return `<div class="arena-actor ${actor.marked?'is-marked':''} ${actor.targeted?'is-targeted':''}" style="${position}">${plate}${actor.targeted?TARGET_CURSOR:''}
         ${actor.selectable?`<button type="button" class="arena-hit" ${attrs('target',actor.id)} aria-label="Target ${escapeHtml(actor.name)}" title="${escapeHtml(tip)}" aria-pressed="${actor.targeted}"></button>`:''}</div>`;
     }).join('');
