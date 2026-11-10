@@ -55,6 +55,8 @@ export class TargetDummy extends Phaser.GameObjects.Container {
 
   public sprite!: Phaser.GameObjects.Sprite;
   private defeatStarted = false;
+  /** Still on the field: alive, or K.O. but held for overkill hits until the hero's action ends. */
+  public get standing(): boolean { return !this.defeatStarted; }
   private pointerHandlersRegistered = false;
 
   constructor(
@@ -191,7 +193,8 @@ export class TargetDummy extends Phaser.GameObjects.Container {
    * (src/run/elementRules.mjs) and the number is tagged WEAK / RESIST.
    */
   public applyDamage(damage: number, isCritical = false, damageType: 'physical' | 'holy' | 'unmitigated' = 'physical', quiet = false, elements: readonly string[] = []): number {
-    if (this.currentHp <= 0) return 0;
+    // Overkill (2026-11-11): a K.O. enemy still standing takes the rest of the action's hits for show.
+    if (this.currentHp <= 0 && this.defeatStarted) return 0;
 
     const elementFactor = damageType === 'unmitigated' ? 1 : enemyElementMultiplier(this.assetKey, elements);
     const scaled = Math.round(damage * statusDamageMultiplier(this.statusEffects, damageType) * elementFactor);

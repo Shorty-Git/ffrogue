@@ -740,6 +740,7 @@ export class BattleScene extends Phaser.Scene {
    */
   private advanceToNextHero(): void {
     if (this.combatState !== 'HERO_ATTACKING' && this.combatState !== 'VICTORY') return;
+    this.settleDefeats();
     const allDead = this.enemies.every((e) => e.currentHp <= 0);
     if (allDead || this.combatState === 'VICTORY') {
       this.triggerVictory();
@@ -788,7 +789,19 @@ export class BattleScene extends Phaser.Scene {
    *   sets combatState to VICTORY, and marks battle finished.
    * - If other enemies are still alive: immediately retargets to next alive monster.
    */
+  /** Overkill window: during a hero action a K.O. enemy keeps taking that action's hits. */
+  private hittable(enemy?: TargetDummy | null): enemy is TargetDummy {
+    return !!enemy && (enemy.currentHp > 0 || (this.combatState === 'HERO_ATTACKING' && enemy.standing));
+  }
+  /** Ends the overkill window: K.O. enemies fade and the cursor moves to a living one. */
+  private settleDefeats(): void {
+    for (const enemy of this.enemies) if (enemy.currentHp <= 0 && enemy.standing) enemy.playDefeatFade();
+    if (!this.currentTarget || this.currentTarget.currentHp <= 0) this.autoRetarget();
+  }
   private handleTargetDamaged(target: TargetDummy): void {
+    // A hero action in progress keeps the K.O. enemy for its remaining hits (overkill); it fades when the
+    // action ends (settleDefeats / triggerVictory). Other damage (status ticks, enemy phase) fades now.
+    if (target.currentHp <= 0 && this.combatState === 'HERO_ATTACKING') return;
     if (target.currentHp <= 0) {
       target.playDefeatFade();
 
@@ -1146,7 +1159,7 @@ export class BattleScene extends Phaser.Scene {
           }
           remaining--;
           // A locked target's remaining hits cannot spill into another target's visual anchor.
-          if (remaining === 0 || hero.isDead || this.combatState === 'VICTORY' || !targets.some(t => t.currentHp > 0)) {
+          if (remaining === 0 || hero.isDead || this.combatState === 'VICTORY' || !targets.some(t => t instanceof TargetDummy ? this.hittable(t) : t.currentHp > 0)) {
             impactDone = true;
             stopTimers();
             if(choreography.body.mode==='rest')recover();
@@ -1193,7 +1206,7 @@ export class BattleScene extends Phaser.Scene {
       this.executeSourceAreaSkill(hero, skill, onComplete, admittedSourceKey);
       return;
     }
-    const target = this.currentTarget && this.currentTarget.currentHp > 0
+    const target = this.hittable(this.currentTarget)
       ? this.currentTarget
       : this.autoRetarget();
     const sourceKey = admittedSourceKey ?? this.sourceSceneKey(skill);
@@ -1202,8 +1215,8 @@ export class BattleScene extends Phaser.Scene {
     const triggerImpact = (weight = 1) => {
       if (this.combatState !== 'HERO_ATTACKING') return;
       if (skill.scope === 'single_enemy') {
-        const hitTarget = skill.damageEvents ? target : this.currentTarget && this.currentTarget.currentHp > 0 ? this.currentTarget : target;
-        if (!hitTarget || hitTarget.currentHp <= 0) return;
+        const hitTarget = skill.damageEvents ? target : this.hittable(this.currentTarget) ? this.currentTarget : target;
+        if (!hitTarget || !this.hittable(hitTarget)) return;
 
         // 1. Hit-Stop if dashing. Source scenes own the clock: pausing the body there would let
         // it fall behind the original effect/damage timeline (80 ms per hit; Omnislash's 15 hits
@@ -1283,7 +1296,7 @@ export class BattleScene extends Phaser.Scene {
     const count = repeat.minHits + Math.floor(this.randomValue() * (repeat.maxHits - repeat.minHits + 1));
     const hits = config.hitFrames ?? [{frame: -1, weight: 1}];
     const living = () => this.enemies.filter(enemy => enemy.currentHp > 0);
-    const selected = () => this.currentTarget && this.currentTarget.currentHp > 0 ? this.currentTarget : this.autoRetarget() ?? undefined;
+    const selected = () => this.hittable(this.currentTarget) ? this.currentTarget : this.autoRetarget() ?? undefined;
     const pick = (): TargetDummy | undefined => {
       const list = living();
       if (!list.length) return undefined;
@@ -1314,7 +1327,7 @@ export class BattleScene extends Phaser.Scene {
             if (landed.has(index)) return;
             landed.add(index);
             if (this.combatState !== 'HERO_ATTACKING') return;
-            const victims = repeat.targeting === 'all' ? living() : [target.currentHp > 0 ? target : pick()].filter((v): v is TargetDummy => !!v);
+            const victims = repeat.targeting === 'all' ? living() : [this.hittable(target) ? target : pick()].filter((v): v is TargetDummy => !!v);
             for (const victim of victims) {
               if (this.blindMiss(hero, victim)) continue;
               victim.applyDamage(Math.max(1, Math.round(roll * skill.damageMultiplier * hits[index].weight)), false, 'physical', false, this.actionElements(hero, skill));
@@ -1347,7 +1360,7 @@ export class BattleScene extends Phaser.Scene {
       actionBase ??= rolled;
       const damage = Math.round(actionBase * skill.damageMultiplier * weight);
       for (const enemy of targets) {
-        if (enemy.currentHp <= 0) continue;
+        if (!this.hittable(enemy)) continue;
         enemy.applyDamage(damage, false, skillDamageType(skill), true, this.actionElements(hero, skill));
         this.handleTargetDamaged(enemy);
       }
@@ -1388,12 +1401,12 @@ export class BattleScene extends Phaser.Scene {
    */
   private executeHeroSequence(hero: UnitActor, onComplete: () => void): void {
     // If all enemies are already dead, conclude immediately without performing attack
-    if (this.enemies.every((e) => e.currentHp <= 0) || this.combatState === 'VICTORY') {
+    if (this.enemies.every((e) => !this.hittable(e)) || this.combatState === 'VICTORY') {
       onComplete();
       return;
     }
 
-    const target = this.currentTarget && this.currentTarget.currentHp > 0
+    const target = this.hittable(this.currentTarget)
       ? this.currentTarget
       : this.autoRetarget();
     if (!target) {
@@ -1420,12 +1433,12 @@ export class BattleScene extends Phaser.Scene {
           firedFrames.add(frameIdx);
 
           // If all enemies dead, stop firing immediately!
-          if (this.enemies.every((e) => e.currentHp <= 0) || this.combatState === 'VICTORY') {
+          if (this.enemies.every((e) => !this.hittable(e)) || this.combatState === 'VICTORY') {
             return;
           }
 
           // Dynamically retarget to current alive target if previous bullet killed current target
-          const activeTarget = this.currentTarget && this.currentTarget.currentHp > 0
+          const activeTarget = this.hittable(this.currentTarget)
             ? this.currentTarget
             : this.autoRetarget();
           if (!activeTarget) return;
@@ -1442,8 +1455,8 @@ export class BattleScene extends Phaser.Scene {
 
       hero.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
         hero.off(Phaser.Animations.Events.ANIMATION_UPDATE, onAnimUpdate);
-        if (firedFrames.size === 0 && !this.enemies.every((e) => e.currentHp <= 0) && this.combatState !== 'VICTORY') {
-          const fallback = this.currentTarget && this.currentTarget.currentHp > 0
+        if (firedFrames.size === 0 && !this.enemies.every((e) => !this.hittable(e)) && this.combatState !== 'VICTORY') {
+          const fallback = this.hittable(this.currentTarget)
             ? this.currentTarget
             : this.autoRetarget();
           if (fallback) {
@@ -1457,7 +1470,7 @@ export class BattleScene extends Phaser.Scene {
       });
     } else {
       // --- MELEE MOVE-TO-TARGET ---
-      const activeTarget = this.currentTarget && this.currentTarget.currentHp > 0
+      const activeTarget = this.hittable(this.currentTarget)
         ? this.currentTarget
         : target;
 
@@ -1482,8 +1495,8 @@ export class BattleScene extends Phaser.Scene {
           const land = (index: number) => {
             if (landed.has(index)) return;
             landed.add(index);
-            if (this.enemies.every((e) => e.currentHp <= 0) || this.combatState === 'VICTORY') return;
-            const hitTarget = this.currentTarget && this.currentTarget.currentHp > 0 ? this.currentTarget : activeTarget;
+            if (this.enemies.every((e) => !this.hittable(e)) || this.combatState === 'VICTORY') return;
+            const hitTarget = this.hittable(this.currentTarget) ? this.currentTarget : activeTarget;
             this.applyHeroMeleeDamage(hero, hitTarget, hits[index].weight, base, isCritical, hits[index].frame >= 0 ? hits[index].frame : undefined);
           };
           const timers = hits.flatMap((hit, index) => hit.frame < 0 ? [] : [this.time.delayedCall(hit.frame * 1000 / 60, () => land(index))]);
@@ -1535,7 +1548,7 @@ export class BattleScene extends Phaser.Scene {
   }
 
   private applyHeroMeleeDamage(hero: UnitActor, target: TargetDummy, weight = 1, roll = this.randomBetween(300,380), isCrit = this.randomValue()<.15, sourceFrame?: number): void {
-    if (this.combatState !== 'HERO_ATTACKING' || target.currentHp <= 0) return;
+    if (this.combatState !== 'HERO_ATTACKING' || !this.hittable(target)) return;
     if (this.blindMiss(hero, target)) return;
     let baseDmg = roll*weight*memberPower(this.memberOf(hero),'attack');
 
@@ -1599,7 +1612,7 @@ export class BattleScene extends Phaser.Scene {
       onComplete: () => {
         bullet.destroy();
         glow.destroy();
-        if (this.combatState === 'HERO_ATTACKING' && target.currentHp > 0) {
+        if (this.combatState === 'HERO_ATTACKING' && this.hittable(target)) {
           const actor=this.getActiveHero();
           if(actor)this.basicImpactSound(actor,isCrit);
           target.applyDamage(damage, isCrit, 'physical', false, actor ? this.actionElements(actor) : []);

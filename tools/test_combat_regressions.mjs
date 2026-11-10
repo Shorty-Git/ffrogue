@@ -183,13 +183,18 @@ test('last K.O. hero advances to enemy phase without an invalid index', () => {
   scene.advanceToNextHero();
   assert.equal(scene.combatState, 'ENEMY_TURN');
 });
-test('last enemy death synchronously locks further attacks', () => {
+test('overkill: a K.O. during a hero action keeps the enemy for its hits; input stays locked; fades after', () => {
   const scene = battle();
-  const target = { currentHp: 0, playDefeatFade() {} };
+  let faded = 0;
+  const target = { currentHp: 0, standing: true, playDefeatFade() { faded++; this.standing = false; } };
   scene.enemies = [target];
   scene.combatState = 'HERO_ATTACKING';
   scene.handleTargetDamaged(target);
-  assert.equal(scene.combatState, 'VICTORY');
+  assert.equal(scene.combatState, 'HERO_ATTACKING', 'the action finishes its remaining hits');
+  assert.equal(faded, 0);assert.equal(scene.hittable(target), true, 'remaining hits land on the K.O. enemy, not the next one');
+  scene.settleDefeats();assert.equal(faded, 1);assert.equal(scene.hittable(target), false);
+  scene.combatState = 'ENEMY_TURN';const other = { currentHp: 0, standing: true, playDefeatFade() { faded++; } };scene.enemies.push(other);
+  scene.handleTargetDamaged(other);assert.equal(faded, 2, 'outside a hero action a K.O. fades at once');
   scene.getActiveHero = () => { throw Error('Input was not locked'); };
   scene.executeActiveHeroAttack();
   scene.executeSkillChoice({});
@@ -205,8 +210,8 @@ test('repeated interactivity setup registers one click handler', () => {
   assert.equal(target.listenerCount('pointerover'), 1);
   assert.equal(target.listenerCount('pointerout'), 1);
 });
-test('dead targets produce no additional damage feedback', () => {
-  TargetDummy.prototype.applyDamage.call({ currentHp: 0 }, 100);
+test('faded targets produce no additional damage feedback (K.O. but standing ones take overkill hits)', () => {
+  assert.equal(TargetDummy.prototype.applyDamage.call({ currentHp: 0, defeatStarted: true }, 100), 0);
 });
 test('ranged turn completion waits for every outstanding impact', () => {
   const scene = battle();
