@@ -29,6 +29,28 @@ data or pin hashes of local-only files; no new failures), `npx tsc --noEmit -p .
 - Data finding: Sephiroth's reviewed pattern never uses his imported Firaga/Blizzaga (only Heartless Angel
   carries an element).
 
+### 2. Balance: buffs, debuffs, elements, rewards
+- Simulator: now mirrors blind misses (`BLIND_MISS_CHANCE` moved to heroBuffs.mjs), raise, limit-fill, and
+  its greedy policy uses Protect/Shell (fresh guard type, enemy HP > 3000), Esuna-type cleanses (two
+  debuffed allies, or self) and raise. New `--ablate a,b` switches mechanics off (elements, guard, boost,
+  break, blind, cleanse, debuff, lb, heal, raise) to measure their weight.
+- Finding (400 runs, before the change): Limit Bursts dominated: without them wins fell 100 % -> 70.8 %
+  (5.26 LB per run, one LB every ~4 actions per hero). Everything else moved final-fight HP by <= 3.5 points.
+  Breaks/blind hit only 15 times in 100 runs (their skills come late in normal-enemy patterns), so they have
+  no measurable weight in the simulator.
+- Changes: `LB_PER_ACTION` 25 -> 15 (LB every ~7 actions); `RUN_BALANCE.damage` 390 -> 350,
+  `damagePerEncounter` 95 -> 85. Guard/boost/break strengths unchanged (their weight is limited by how often
+  they are used, not by their size).
+- Reward pool (`src/run/runState.mjs`): new party relic `ward` (+50 % resistance to one element, `run.wards`,
+  once per element), offered only for elements the next stage's enemies really attack with
+  (`stageElementProfile`, every pattern step in both phases). Offers are drawn with weights
+  (`REWARD_WEIGHTS`: learn a skill hitting a weakness of the next stage x3, ward x2, others x1), one RNG draw
+  per pick as before, deterministic per seed. Reward card "Dark Ward" with element chip.
+- Result (400 runs): full roster 100 % wins, 47.3 % party HP after the final fight, 3.75 LB per run
+  (before: 100 % / 51.8 % / 5.26); starters 99.5 % / 51.6 % / 3.71 (before: 100 % / 54.8 % / 5.18).
+  Ablations now: no LB 81.8 % wins / 29.8 % HP; no heal 99.8 % / 42.0 %; no elements 46.0 %; no guard 46.6 %.
+- Tests: `tools/test_reward_hints.mjs`. Browser check: reward screen shows the Dark Ward card.
+
 ## Product state
 
 - Playable PC roguelike prototype: title → slot-machine team draw (3 heroes, rerolls) →

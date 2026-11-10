@@ -7,3 +7,5 @@ export function heroDamageTakenMultiplier(current:ActiveHeroBuff[]|undefined,rou
 export function isHeroBlind(current:ActiveHeroBuff[]|undefined,round:number):boolean;
 export function cleanseHeroDebuffs(current:ActiveHeroBuff[]|undefined):ActiveHeroBuff[];
 export function consumeAutoRevive(current:ActiveHeroBuff[]|undefined,round:number):{hpFraction:number;buffs:ActiveHeroBuff[]}|null;
+
+export const BLIND_MISS_CHANCE:number;

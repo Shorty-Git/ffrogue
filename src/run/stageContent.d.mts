@@ -17,3 +17,4 @@ export const ENEMY_CONTENT:Record<string,EnemyDefinition>;
 export const STAGE_CONTENT:Record<string,StageDefinition>;
 export function stageForArea(area:{stageId?:string;arena:string}):StageDefinition;
 export function enemyAction(definition:EnemyDefinition,cursor:number,hpRatio:number):EnemyAction;
+export function stageElementProfile(stage:StageDefinition):{weak:import('./elements.mjs').Element[];attack:import('./elements.mjs').Element[]};

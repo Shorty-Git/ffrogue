@@ -4,7 +4,8 @@
 // in a few lines (marked below). It plays every run with a simple greedy policy, so the
 // numbers describe pacing trends, not how a skilled player fares.
 //
-// Usage: node tools/simulate_run_balance.mjs [--runs 400] [--seed-prefix sim] [--json out.json] [--roster all|starters]
+// Usage: node tools/simulate_run_balance.mjs [--runs 400] [--seed-prefix sim] [--json out.json] [--roster all|starters] [--ablate a,b]
+// --ablate switches mechanics off to measure their weight: elements, guard, boost, break, blind, cleanse, debuff, lb, heal, raise.
 // --roster starters draws only a fresh profile's starter heroes (src/run/profile.mjs), as a new player does.
 import fs from 'node:fs';
 import {runCatalog} from '../src/run/catalog.ts';
@@ -13,7 +14,7 @@ import {runEncounter} from '../src/run/runBalance.mjs';
 import {ENEMY_CONTENT,enemyAction} from '../src/run/stageContent.mjs';
 import * as limit from '../src/run/limitGauge.mjs';
 import {applyEnemyStatuses,statusDamageMultiplier,enemyAttackMultiplier,isEnemyActionBlocked,ageEnemyStatuses} from '../src/effects/enemyStatus.mjs';
-import {applyHeroBuffs,heroPhysicalMultiplier,heroMagicMultiplier,heroDamageTakenMultiplier,cleanseHeroDebuffs} from '../src/effects/heroBuffs.mjs';
+import {applyHeroBuffs,heroPhysicalMultiplier,heroMagicMultiplier,heroDamageTakenMultiplier,cleanseHeroDebuffs,isHeroBlind,BLIND_MISS_CHANCE} from '../src/effects/heroBuffs.mjs';
 import {drawCatalog,newProfile} from '../src/run/profile.mjs';
 import {resolveEnemyInstant} from '../src/effects/enemyInstant.mjs';
 import {skillDamageType} from '../src/effects/skillDamageTimeline.mjs';
@@ -22,6 +23,7 @@ import {enemyElementMultiplier,heroElementMultiplier,heroAttackElements,skillEle
 
 const args=process.argv.slice(2),flag=(name,fallback)=>{const i=args.indexOf('--'+name);return i<0?fallback:args[i+1];};
 const RUNS=Number(flag('runs',400)),PREFIX=flag('seed-prefix','sim'),JSON_OUT=flag('json',null),ROSTER=flag('roster','all');
+const ABLATE=new Set(String(flag('ablate','')).split(',').filter(Boolean)),on=m=>!ABLATE.has(m);
 const read=p=>JSON.parse(fs.readFileSync(p,'utf8'));
 
 function loadCatalog(){
@@ -41,6 +43,8 @@ const catalog=loadCatalog(),rules=read('public/assets/run-rules.json');
 // --- BattleScene formulas (src/scenes/BattleScene.ts: skillBaseDamage, applyHeroMeleeDamage, enemy turn) ---
 const between=(run,min,max)=>min+Math.floor(nextRandom(run,'combat')*(max-min+1));
 function attackDamage(run,hero,round){
+ // BattleScene.blindMiss: a blind hero's basic hit misses with BLIND_MISS_CHANCE.
+ if(isHeroBlind(hero.buffs,round)&&nextRandom(run,'combat')<BLIND_MISS_CHANCE)return 0;
  let dmg=between(run,300,380)*hero.member.stats.attack;
  dmg=Math.round(dmg*heroPhysicalMultiplier(hero.buffs,round));
  if(nextRandom(run,'combat')<.15)dmg=Math.round(dmg*1.5);
@@ -48,28 +52,38 @@ function attackDamage(run,hero,round){
 }
 const skillBase=(run,hero,skill,round)=>between(run,300,380)*(skillDamageType(skill)==='holy'?heroMagicMultiplier(hero.buffs,round):heroPhysicalMultiplier(hero.buffs,round));
 // TargetDummy.applyDamage: statuses and the enemy's original element resistances (src/run/elementRules.mjs).
-const hit=(enemy,amount,type,elements=[])=>{const d=Math.round(amount*statusDamageMultiplier(enemy.statuses,type)*enemyElementMultiplier(enemy.key,elements));enemy.hp=Math.max(0,enemy.hp-d);return d;};
+const hit=(enemy,amount,type,elements=[])=>{const d=Math.round(amount*statusDamageMultiplier(enemy.statuses,type)*(on('elements')?enemyElementMultiplier(enemy.key,elements):1));enemy.hp=Math.max(0,enemy.hp-d);return d;};
 const heroElements=(hero,s)=>{const own=s?skillElements(s):[];return own.length||(s&&!s.basicRepeat)?own:heroAttackElements(hero.member);};
 // ---------------------------------------------------------------------------------------
 
-const expected=(hero,skill,target)=>skill.damageMultiplier*340*(skill.basicRepeat?(skill.basicRepeat.minHits+skill.basicRepeat.maxHits)/2:1)*(target?enemyElementMultiplier(target.key,heroElements(hero,skill)):1);
-const isHeal=s=>s.allyEvents?.some(e=>e.effects.some(f=>f.kind==='heal'));
-const isBuff=s=>s.allyEvents?.some(e=>e.effects.some(f=>f.kind==='physical-boost'));
+const expected=(hero,skill,target)=>skill.damageMultiplier*340*(skill.basicRepeat?(skill.basicRepeat.minHits+skill.basicRepeat.maxHits)/2:1)*(target&&on('elements')?enemyElementMultiplier(target.key,heroElements(hero,skill)):1);
+const has=(s,kind)=>s.allyEvents?.some(e=>e.effects.some(f=>f.kind===kind));
+const isHeal=s=>has(s,'heal');
+const isBuff=s=>has(s,'physical-boost');
+const guardTypes=s=>(s.allyEvents??[]).flatMap(e=>e.effects.filter(f=>f.kind==='guard').map(f=>f.damageType));
 const isDebuff=s=>s.supportEvents?.some(e=>e.effects.some(f=>!['execute-or-damage'].includes(f.kind)));
+const guarded=(h,type,round)=>h.buffs.some(b=>b.kind==='guard'&&b.damageType===type&&b.expiresAfterRound>=round);
 
 function chooseAction(state,hero){
  const {enemies,heroes,round}=state,living=enemies.filter(e=>e.hp>0),target=living.find(e=>e.boss)??living.slice().sort((a,b)=>a.hp-b.hp)[0];
  const lb=catalog[hero.key].limitBurst;
- if(lb&&limit.isFull(hero.limit))return {skill:lb,target};
+ if(on('lb')&&lb&&limit.isFull(hero.limit))return {skill:lb,target};
  const usable=hero.skills.filter(s=>hero.mp>=s.mpCost&&(!s.hpCost||hero.hp>s.hpCost));
+ const fallen=heroes.filter(h=>h.hp<=0);
+ const raise=on('raise')&&usable.find(s=>has(s,'raise'));if(raise&&fallen.length)return {skill:raise};
  const hurt=heroes.filter(h=>h.hp>0&&h.hp<h.maxHp*.45);
- const heal=usable.find(isHeal);if(heal&&hurt.length)return {skill:heal};
+ const heal=on('heal')&&usable.find(isHeal);if(heal&&hurt.length)return {skill:heal};
  const totalHp=living.reduce((a,e)=>a+e.hp,0);
- const buff=usable.find(isBuff);
- if(buff&&totalHp>2500&&heroPhysicalMultiplier(hero.buffs,round)===1)return {skill:buff};
- const debuff=usable.find(s=>isDebuff(s)&&!s.damageEvents);
+ const cleanse=on('cleanse')&&usable.find(s=>has(s,'cleanse'));
+ if(cleanse&&heroes.filter(h=>h.hp>0&&h.buffs.some(b=>(b.kind==='break'||b.kind==='blind')&&b.expiresAfterRound>round)).length>=(cleanse.scope==='self'?1:2))return {skill:cleanse};
+ // Protect/Shell early in a long fight, when no ally already holds that guard.
+ const guard=on('guard')&&usable.find(s=>{const types=guardTypes(s);return types.length&&types.some(t=>!heroes.some(h=>h.hp>0&&guarded(h,t,round+1)));});
+ if(guard&&totalHp>3000)return {skill:guard};
+ const buff=on('boost')&&usable.find(isBuff);
+ if(buff&&totalHp>2500&&heroPhysicalMultiplier(hero.buffs,round)<=1)return {skill:buff};
+ const debuff=on('debuff')&&usable.find(s=>isDebuff(s)&&!s.damageEvents);
  if(debuff&&target.boss&&!target.statuses.length)return {skill:debuff,target};
- const attack=340*hero.member.stats.attack*heroPhysicalMultiplier(hero.buffs,round)*1.075*enemyElementMultiplier(target.key,heroElements(hero));
+ const attack=340*hero.member.stats.attack*heroPhysicalMultiplier(hero.buffs,round)*1.075*(on('elements')?enemyElementMultiplier(target.key,heroElements(hero)):1);
  let best={skill:null,target,value:attack};
  if(attack<target.hp){
   for(const s of usable){
@@ -88,11 +102,14 @@ function resolveHeroAction(run,state,hero,action){
  if(s.type==='LIMIT'){hero.limit=0;state.stats.limitBursts++;}
  else{hero.mp-=s.mpCost;if(s.hpCost)hero.hp-=s.hpCost;state.stats.skills++;}
  if(s.allyEvents){
-  const targets=s.scope==='self'?[hero]:heroes.filter(h=>h.hp>0);
+  const raising=s.allyTargeting==='fallen-ally'||s.allyTargeting==='fallen-allies';
+  const targets=raising?heroes.filter(h=>h.hp<=0).slice(0,s.allyTargeting==='fallen-ally'?1:3):s.scope==='self'?[hero]:heroes.filter(h=>h.hp>0);
   for(const e of s.allyEvents)for(const f of e.effects)for(const t of targets){
-   if(f.kind==='heal')t.hp=Math.min(t.maxHp,t.hp+f.amount);
+   if(f.kind==='heal'){if(t.hp>0)t.hp=Math.min(t.maxHp,t.hp+f.amount);}
+   else if(f.kind==='raise'){if(t.hp<=0){t.hp=Math.max(1,Math.round(t.maxHp*f.hpFraction));t.buffs=[];t.limit=0;}}
    else if(f.kind==='cleanse')t.buffs=cleanseHeroDebuffs(t.buffs);
-   else if(f.kind!=='raise'&&f.kind!=='limit-fill')t.buffs=applyHeroBuffs(t.buffs,[f],round);
+   else if(f.kind==='limit-fill')t.limit=limit.gainFromSupport(t.limit,f.amount);
+   else if((f.kind!=='guard'||on('guard'))&&(f.kind!=='physical-boost'||on('boost')))t.buffs=applyHeroBuffs(t.buffs,[f],round);
   }
  }
  const targets=s.scope==='all_enemies'?living:s.scope==='single_enemy'?[action.target]:[];
@@ -129,9 +146,9 @@ function fight(run){
    if(action.kind==='prepare')continue;
    const pick=heroes[enemyTargetIndex(heroes.map(h=>({alive:h.hp>0,hp:h.hp,maxHp:h.maxHp})),()=>nextRandom(run,'combat'))];
    for(const t of action.scope==='party'?alive:[pick]){
-    const dmg=Math.round(profile.damage*action.multiplier*mult/(t.member.stats.defense??1)*heroDamageTakenMultiplier(t.buffs,state.round,action.damageType??'physical')*heroElementMultiplier(t.key,action.elements));
+    const dmg=Math.round(profile.damage*action.multiplier*mult/(t.member.stats.defense??1)*heroDamageTakenMultiplier(t.buffs,state.round,action.damageType??'physical')*(on('elements')?heroElementMultiplier(t.key,action.elements,run.wards):1));
     t.hp=Math.max(0,t.hp-dmg);if(t.hp>0)t.limit=limit.gainFromDamage(t.limit,dmg,t.maxHp);
-    if(t.hp>0&&action.heroEffects){const applied=action.heroEffects.filter(e=>nextRandom(run,'combat')<(e.chance??1)).map(({chance:_c,...e})=>e);if(applied.length)t.buffs=applyHeroBuffs(t.buffs,applied,state.round);}
+    if(t.hp>0&&action.heroEffects){const applied=action.heroEffects.filter(e=>nextRandom(run,'combat')<(e.chance??1)&&on(e.kind)).map(({chance:_c,...e})=>e);if(applied.length)t.buffs=applyHeroBuffs(t.buffs,applied,state.round);}
    }
   }
   if(heroes.every(h=>h.hp<=0))break;
@@ -150,6 +167,7 @@ function chooseOffer(run){
   if(r.type==='rest')return run.party.reduce((a,m)=>a+m.hp/(catalog[m.key].maxHp*m.stats.hp),0)/3<.55?90:5;
   if(r.type==='learn')return m.skills.length<3?60:20;
   if(r.type==='skill')return 40;
+  if(r.type==='ward')return 30;
   return r.stat==='attack'?35:r.stat==='hp'?25:15;};
  let best=0;run.offers.forEach((r,i)=>{if(score(r)>score(run.offers[best]))best=i;});
  const r=run.offers[best],m=run.party.find(m=>m.key===r.member);
@@ -177,7 +195,7 @@ for(let i=0;i<RUNS;i++){
 }
 const f=(n,d=1)=>Number.isFinite(n)?n.toFixed(d):'-';
 const rows=perEncounter.map((r,i)=>({encounter:i+1,fights:r.fights,winRate:r.won/r.fights,avgRounds:r.rounds/r.fights,avgEnemyHp:r.enemyHp/r.fights,avgHpLost:r.hpLost/r.fights,partyHpLeft:r.hpLeft/r.fights,partyMpLeft:r.mpLeft/r.fights,kosPerFight:r.kos/r.fights,limitBurstsPerFight:r.limitBursts/r.fights}));
-console.log(`Runs: ${RUNS}  run win rate: ${f(100*wins/RUNS)}%  Limit Bursts per run: ${f(limitUses/RUNS,2)}`);
+console.log(`${ABLATE.size?'Ablated: '+[...ABLATE].join(',')+'  ':''}Runs: ${RUNS}  run win rate: ${f(100*wins/RUNS)}%  Limit Bursts per run: ${f(limitUses/RUNS,2)}`);
 console.log('enc  fights  win%  rounds  enemyHP  hpLost  partyHP%  partyMP%  KO/fight  LB/fight');
 for(const r of rows)console.log([r.encounter,r.fights,f(100*r.winRate),f(r.avgRounds,2),f(r.avgEnemyHp,0),f(r.avgHpLost,0),f(100*r.partyHpLeft),f(100*r.partyMpLeft),f(r.kosPerFight,2),f(r.limitBurstsPerFight,2)].map(v=>String(v).padStart(7)).join(' '));
 console.log('team start level (sum of 3)  runs  win%  party HP% after final fight');

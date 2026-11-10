@@ -16,7 +16,7 @@ import { validateSceneManifest, validateSceneAction } from '../effects/sceneProf
 import { reviewedSkillEvents,skillDamageType } from '../effects/skillDamageTimeline.mjs';
 import { applyEnemyStatuses, isEnemyActionBlocked, ageEnemyStatuses, enemyAttackMultiplier } from '../effects/enemyStatus.mjs';
 import { validateBasicRepeat } from '../effects/basicRepeat.mjs';
-import { applyHeroBuffs, cleanseHeroDebuffs, consumeAutoRevive, heroDamageTakenMultiplier, heroMagicMultiplier, heroPhysicalMultiplier, isHeroBlind } from '../effects/heroBuffs.mjs';
+import { BLIND_MISS_CHANCE, applyHeroBuffs, cleanseHeroDebuffs, consumeAutoRevive, heroDamageTakenMultiplier, heroMagicMultiplier, heroPhysicalMultiplier, isHeroBlind } from '../effects/heroBuffs.mjs';
 import {resolveEnemyInstant} from '../effects/enemyInstant.mjs';
 import {validateActionChoreography,actionTravel} from '../effects/actionChoreography.mjs';
 import type {RunBattleContext} from '../run/battleContext';
@@ -51,7 +51,6 @@ type PlannedAction = ({ kind: 'attack'; config: UnitCombatConfig } | { kind: 'sk
 /** Beat after an enemy skill's last hit before the next enemy acts (the scene tail keeps fading). */
 const ENEMY_SKILL_SETTLE_MS = 400;
 /** Chance that a blinded hero's basic-attack hit misses (reviewed FFRogue value). */
-const BLIND_MISS_CHANCE = 0.5;
 
 export class BattleScene extends Phaser.Scene {
   private runContext!:RunBattleContext;
@@ -1710,7 +1709,7 @@ export class BattleScene extends Phaser.Scene {
           const impacts:{unit:string;damage:number}[]=[];
           for(const target of targets){
             const defense=this.runContext.state.party.find(m=>m.key===target.unitKey)?.stats.defense??1;
-            const element=heroElementMultiplier(target.unitKey,action?.elements);
+            const element=heroElementMultiplier(target.unitKey,action?.elements,this.runContext.state.wards);
             const dmg=Math.round(profile.damage*(action?.multiplier??1)*attackMultiplier/defense*heroDamageTakenMultiplier(target.sourceBuffs,this.currentRound,action?.damageType??'physical')*element);
             target.applyDamage(dmg,elementTag(element));
             this.playHeroHitFeedback(target,enemy.x,dmg/Math.max(1,target.maxHp));
@@ -1759,7 +1758,7 @@ export class BattleScene extends Phaser.Scene {
       for(const target of targets){
         if(target.isDead)continue;
         const defense=this.runContext.state.party.find(m=>m.key===target.unitKey)?.stats.defense??1;
-        const element=heroElementMultiplier(target.unitKey,action.elements);
+        const element=heroElementMultiplier(target.unitKey,action.elements,this.runContext.state.wards);
         const dmg=Math.max(1,Math.round(profile.damage*action.multiplier*attackMultiplier/defense*event.weight*heroDamageTakenMultiplier(target.sourceBuffs,this.currentRound,action.damageType??'physical')*element));
         target.applyDamage(dmg,elementTag(element));
         total.set(target,(total.get(target)??0)+dmg);

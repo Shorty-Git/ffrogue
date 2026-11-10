@@ -9,6 +9,8 @@ const strengthKey=kind=>kind==='auto-revive'?'hpFraction':kind==='guard'?'reduct
 const sameStatus=(a,b)=>a.kind===b.kind&&(a.kind!=='guard'||a.damageType===b.damageType)&&(a.kind!=='break'||a.stat===b.stat);
 const STATS=['attack','defense','magic','spirit'];
 export const DEBUFF_KINDS=['break','blind'];
+/** Blind: each basic-attack hit misses with this chance (BattleScene.blindMiss, simulator). */
+export const BLIND_MISS_CHANCE=.5;
 export function applyHeroBuffs(current=[],effects,round) {
   if(!Number.isInteger(round)||round<1)throw Error('Explicit combat round required');
   const result=current.filter(b=>b.expiresAfterRound>=round).map(b=>({...b}));

@@ -9,11 +9,13 @@ export interface RunMember extends RunForm{canonicalIdentity:string;key:string;
   /** FFRogue level 1–6 (unitForms.mjs MAX_LEVEL); the form is the body for it. */level:number;skills:{id:string;level:number}[];stats:{attack:number;magic:number;defense:number;hp:number;mp?:number};hp:number;mp:number;
   /** Limit gauge carried from the previous battle (1–100); absent when empty. */limit?:number;}
 export interface AreaConfig{stageId?:string;name:string;arena:string;normals:number;}
-export interface Reward{type:'learn'|'skill'|'stat'|'evolve'|'rest'|'revive';member?:string;skill?:string;stat?:'attack'|'magic'|'defense'|'hp';form?:string;level?:number;}
+export interface Reward{type:'learn'|'skill'|'stat'|'evolve'|'rest'|'revive'|'ward';
+  /** ward: the element the party relic protects against. */element?:import('./elements.mjs').Element;member?:string;skill?:string;stat?:'attack'|'magic'|'defense'|'hp';form?:string;level?:number;}
 export interface AwakeningNotice{id:string;member:string;encounter:number;from:{form:string;unitId:string;rarity:number};to:{form:string;unitId:string;rarity:number};}
 export interface FormPolicy{weights:Record<string,number>;pathWeights?:Record<string,number[]>;hpPerRank:number;mpPerRank:number;powerPerRank:number;defensePerRank:number;}
 export interface RunRules{awakeningMode:'sequential'|'highest-reviewed';originalForms?:FormPolicy;}
-export interface RunState{version:number;seed:string;phase:'setup'|'battle'|'rewards'|'won'|'lost';party:RunMember[];rerolls:number;encounter:number;offers:Reward[];history:unknown[];areas:AreaConfig[];rng:Record<string,number>;pendingAwakening?:AwakeningNotice;rules?:RunRules;}
+export interface RunState{version:number;seed:string;phase:'setup'|'battle'|'rewards'|'won'|'lost';party:RunMember[];rerolls:number;encounter:number;offers:Reward[];history:unknown[];areas:AreaConfig[];rng:Record<string,number>;pendingAwakening?:AwakeningNotice;rules?:RunRules;
+  /** Party ward relics: +50 % resistance to each listed element (src/run/elementRules.mjs). */wards?:import('./elements.mjs').Element[];}
 export const RUN_VERSION:number;export const SAVE_KEY:string;export const REVIVE_HP_SHARE:number;export const PROTOTYPE_AREAS:AreaConfig[];export const FULL_AREAS:AreaConfig[];
 export function variantAreas(seed:string):AreaConfig[];
 export const COURSE_LENGTH:number;
@@ -34,3 +36,5 @@ export function chooseReward(run:RunState,index:number,catalog:RunCatalog,replac
 export function acknowledgeAwakening(run:RunState,id:string):RunState;
 export function validateRun(run:unknown,catalog:RunCatalog):RunState;
 export class RunStore{constructor(storage:Pick<Storage,'getItem'|'setItem'|'removeItem'>,catalog:RunCatalog);load():RunState|null;save(run:RunState):RunState;clear():void;}
+export function upcomingStage(run:RunState):import('./stageContent.mjs').StageDefinition;
+export const REWARD_WEIGHTS:{learnOnWeakness:number;ward:number;default:number};

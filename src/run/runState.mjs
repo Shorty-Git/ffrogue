@@ -1,5 +1,7 @@
 // Serializable roguelike rules. Visual animations never consume these streams.
-import {STAGE_CONTENT,stageForArea} from './stageContent.mjs';
+import {STAGE_CONTENT,stageForArea,stageElementProfile} from './stageContent.mjs';
+import {ELEMENTS} from './elements.mjs';
+import {skillElements} from './elementRules.mjs';
 import {awakeningPath,formAt,formForLevel,levelOf,MAX_LEVEL} from './unitForms.mjs';
 import {carriedLimit,LB_MAX} from './limitGauge.mjs';
 export const RUN_VERSION=3;
@@ -133,6 +135,27 @@ export function skillForRun(source,member){
   else f.phases=Math.min(9,f.phases+level-1);
  return skill;
 }
+/** Stage of the fight after the current one (the current stage after the last fight). */
+export function upcomingStage(run){
+ const list=encounters(run.areas),next=list[run.encounter+1]??list[run.encounter];
+ return stageForArea(run.areas[next.area]);
+}
+/** Reward weights (one RNG draw per pick either way): skills whose element hits a weakness of the
+ * next stage's enemies and wards against elements they use are offered more often. */
+export const REWARD_WEIGHTS={learnOnWeakness:3,ward:2,default:1};
+function rewardWeight(run,catalog,reward,profile){
+ if(reward.type==='ward')return REWARD_WEIGHTS.ward;
+ if(reward.type==='learn'){const skill=catalog[reward.member]?.skills.find(s=>s.id===reward.skill);
+  if(skill&&skillElements(skill).some(e=>profile.weak.includes(e)))return REWARD_WEIGHTS.learnOnWeakness;}
+ return REWARD_WEIGHTS.default;
+}
+function pickWeighted(run,stream,values,weight){
+ if(!values.length)throw Error('No valid content');
+ const weights=values.map(weight),total=weights.reduce((a,b)=>a+b,0);
+ let roll=nextRandom(run,stream)*total;
+ for(const [i,w] of weights.entries()){roll-=w;if(roll<0)return values[i];}
+ return values.at(-1);
+}
 export function rewardPool(run,catalog){
  const pool=[],e=encounters(run.areas)[run.encounter];
  for(const m of run.party){const c=catalog[m.key];
@@ -144,6 +167,8 @@ export function rewardPool(run,catalog){
   // K.O. persists between battles; only an explicit revival reward brings a member back.
   if(m.hp<=0)pool.push({type:'revive',member:m.key});
  }
+ // Ward relics: elements the next stage's enemies really attack with, once per run each.
+ for(const element of stageElementProfile(upcomingStage(run)).attack)if(!(run.wards??[]).includes(element))pool.push({type:'ward',element});
  pool.push({type:'rest'});return pool;
 }
 export function completeBattle(input,catalog,snapshot,won){
@@ -158,7 +183,8 @@ export function completeBattle(input,catalog,snapshot,won){
  if(boss&&evolution.length)run.offers.push(pick(run,'rewards',evolution));
  // A fallen member always has one way back: one revival offer is guaranteed while anyone is K.O.
  if(revival.length)run.offers.push(pick(run,'rewards',revival));
- while(run.offers.length<3){const available=pool.filter(r=>!run.offers.some(o=>JSON.stringify(o)===JSON.stringify(r)));run.offers.push(clone(pick(run,'rewards',available)));}
+ const profile=stageElementProfile(upcomingStage(run));
+ while(run.offers.length<3){const available=pool.filter(r=>!run.offers.some(o=>JSON.stringify(o)===JSON.stringify(r)));run.offers.push(clone(pickWeighted(run,'rewards',available,r=>rewardWeight(run,catalog,r,profile))));}
  return run;
 }
 export function chooseReward(input,index,catalog,replace){
@@ -188,6 +214,7 @@ export function chooseReward(input,index,catalog,replace){
   if(m.hp>0){m.hp+=Math.round(character.maxHp*m.stats.hp)-oldHp;m.mp+=memberMaxMp(character,m)-oldMp;}}
  else if(r.type==='revive'){if(m.hp>0)throw Error('Revival needs a K.O. member');
   m.hp=Math.max(1,Math.round(catalog[m.key].maxHp*m.stats.hp*REVIVE_HP_SHARE));}
+ else if(r.type==='ward'){if(!ELEMENTS.includes(r.element)||(run.wards??[]).includes(r.element))throw Error('Invalid ward');run.wards=[...(run.wards??[]),r.element];}
  else if(r.type==='rest'){for(const a of run.party)if(a.hp>0){const c=catalog[a.key];a.hp=Math.min(Math.round(c.maxHp*a.stats.hp),a.hp+Math.round(c.maxHp*.4));a.mp=Math.min(memberMaxMp(c,a),a.mp+Math.round(c.maxMp*.4));}}
  else throw Error('Unknown reward');
  run.history.push({kind:'reward',encounter:run.encounter,reward:r,replace:replace??null});run.encounter++;run.offers=[];
@@ -230,6 +257,7 @@ export function validateRun(run,catalog){
   ||!Array.isArray(run.offers)||!Array.isArray(run.history)||!run.rng||['roster','skills','rewards','combat'].some(k=>!Number.isInteger(run.rng[k])||run.rng[k]<0||run.rng[k]>0xffffffff))throw Error('Invalid or incompatible run save');
  run.areas.forEach(stageForArea);
  if(run.rules&&(!['sequential','highest-reviewed'].includes(run.rules.awakeningMode)||!validFormPolicy(run.rules.originalForms)))throw Error('Unsupported saved run rules');
+ if(run.wards!==undefined&&(!Array.isArray(run.wards)||run.wards.some(e=>!ELEMENTS.includes(e))||new Set(run.wards).size!==run.wards.length))throw Error('Invalid saved wards');
  if(Object.hasOwn(run.rng,'forms')&&(!Number.isInteger(run.rng.forms)||run.rng.forms<0||run.rng.forms>0xffffffff))throw Error('Invalid saved form RNG');
  if(run.pendingAwakening){const p=run.pendingAwakening,c=catalog[p.member],m=run.party.find(m=>m.key===p.member),last=run.history.at(-1);
   const from=c&&formAt(c,p.from?.form),to=c&&formAt(c,p.to?.form);

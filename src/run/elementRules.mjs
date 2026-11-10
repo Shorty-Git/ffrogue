@@ -30,7 +30,14 @@ export function elementMultiplier(elements,resist={}){
  return list.reduce((sum,e)=>sum+clamp(1-(resist?.[e]??0)/100),0)/list.length;
 }
 export const enemyElementMultiplier=(enemyKey,elements)=>elementMultiplier(elements,ENEMY_ELEMENT_RESIST[enemyKey]);
-export const heroElementMultiplier=(heroKey,elements)=>elementMultiplier(elements,HERO_ELEMENT_RESIST[heroKey]);
+/** Party ward relic (reward 'ward'): +WARD_RESIST percent resistance to one element for the run. */
+export const WARD_RESIST=50;
+export function heroResistances(heroKey,wards=[]){
+ const resist={...(HERO_ELEMENT_RESIST[heroKey]??{})};
+ for(const e of wards??[])if(ELEMENTS.includes(e))resist[e]=(resist[e]??0)+WARD_RESIST;
+ return resist;
+}
+export const heroElementMultiplier=(heroKey,elements,wards=[])=>elementMultiplier(elements,heroResistances(heroKey,wards));
 /** 'weak' | 'resist' | null for a final multiplier (presentation tag). */
 export function elementTag(multiplier){return multiplier>1.001?'weak':multiplier<.999?'resist':null;}
 /** Weak / resisted elements of an enemy, sorted by strength (for name plate tooltips and rewards). */

@@ -1,7 +1,7 @@
 // Reviewed FFRogue encounters; source identity is not a claim of original FFBE AI.
 import {IMPORTED_ENEMIES,IMPORTED_STAGES} from './importedStages.mjs';
 import {ENEMY_SKILLS} from './enemySkills.mjs';
-import {enemySkillElements} from './elementRules.mjs';
+import {enemySkillElements,enemyAffinities} from './elementRules.mjs';
 export const ENEMY_CONTENT = {
   microchu: {key:'microchu',name:'Microchu',spriteId:'1110310',monsterId:'111031000',dictionaryId:1110310,
     scale:2,attack:{clip:'atk',impactFrame:1,movement:'approach'},audio:[]},
@@ -56,4 +56,17 @@ export function enemyAction(definition,cursor,hpRatio){
   // Original element of an imported monster skill (src/run/elements.mjs); FFRogue actions have none.
   const elements=raw.skill&&skills[raw.skill]?enemySkillElements(definition.key,raw.skill):[];
   return {...action,phase:phase?b.phaseName:'',multiplier:(action.multiplier??0)*(phase?b.phaseMultiplier:1),...(elements.length?{elements}:{})};
+}
+
+/** Element profile of a stage for reward hints: weaknesses of its enemies and the elements their
+ * actions really use (every pattern step in both phases, not just the imported skill list). */
+export function stageElementProfile(stage){
+  const keys=[...new Set([...stage.enemyPool,stage.bossId])],weak=new Set(),attack=new Set();
+  for(const key of keys){
+    const definition=ENEMY_CONTENT[key];if(!definition)continue;
+    for(const e of enemyAffinities(key).weak)weak.add(e);
+    const steps=Math.max(1,definition.behavior?.pattern.length??Object.keys(ENEMY_SKILLS[key]??{}).length*2);
+    for(const hp of [1,.2])for(let cursor=0;cursor<steps;cursor++)for(const e of enemyAction(definition,cursor,hp).elements??[])attack.add(e);
+  }
+  return {weak:[...weak],attack:[...attack]};
 }

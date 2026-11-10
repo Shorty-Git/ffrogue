@@ -5,7 +5,7 @@
  * of the run for heroes who end a battle standing (a K.O. empties it).
  */
 export const LB_MAX = 100;
-export const LB_PER_ACTION = 25;
+export const LB_PER_ACTION = 15;
 /** Losing a whole max-HP bar would add this much; any hit adds at least 1. */
 export const LB_PER_FULL_HP_LOST = 60;
 
