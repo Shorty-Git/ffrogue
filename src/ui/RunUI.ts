@@ -1,5 +1,5 @@
 import type {RunCatalog,RunMember,RunState,Reward,AwakeningNotice} from '../run/runState.mjs';
-import {skillForRun,memberMaxMp,REVIVE_HP_SHARE,upcomingStage,COURSE_LENGTH,encounters,AREA_CAMP} from '../run/runState.mjs';
+import {skillForRun,memberMaxMp,REVIVE_HP_SHARE,upcomingStage,encounters,AREA_CAMP} from '../run/runState.mjs';
 import {ELEMENT_LABELS,WARD_RESIST} from '../run/elementRules.mjs';
 import {elementChip,elementChips} from './elementChips';
 import {WEAPON_ELEMENT_RULE,WEAPON_GLYPHS,weaponSummary,type RunWeapon} from '../run/weapons.mjs';
@@ -15,6 +15,8 @@ import {fateTier,fateTimeline,fateVerdict,tierRank,isShowTier,FATE_SOUND,type Fa
 import {startCrystalSparks} from './CrystalSparks';
 import {startTitleCrystal,titleCrystalMarkup} from './TitleCrystal';
 import {formAt,formForLevel,rankLabel,levelLabel,levelOf,MAX_LEVEL} from '../run/unitForms.mjs';
+import type {Profile} from '../run/profile.mjs';
+import {skillElements} from '../run/elementRules.mjs';
 const esc=(s:unknown)=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
 
 function bodyPreview(root:string,clip:AnimationMeta,classes:string,style:string){
@@ -118,7 +120,25 @@ export class RunUI{
   return `<div class="pixel-stage">${preview.html}</div>`;}
  member(m:RunMember){const c=this.catalog[m.key];return `<article class="rpg-panel member-card"><header class="member-head"><span class="portrait-frame"><img class="portrait" src="${esc(c.portrait)}" alt="${esc(c.name)}"></span><span class="member-title"><strong>${esc(c.name)}</strong><span class="stars">${levelLabel(m.level)}</span></span></header>${this.sprite(m)}<div class="member-gauges">${gaugeRow('hp',m.hp,Math.round(c.maxHp*m.stats.hp))}${gaugeRow('mp',m.mp,memberMaxMp(c,m))}</div>${m.weapon?weaponLine(m.weapon):''}${m.skills.map(a=>{const s=skillForRun(c.skills.find(s=>s.id===a.id)!,m);return `<div class="skill-copy"><b>${skillIcon(s)}${esc(s.name)}${a.level>1?' +'+(a.level-1):''}</b><p>${esc(skillDescription(s))}</p></div>`;}).join('')}</article>`;}
  title(kicker:string,title:string,subtitle:string){return `<div class="eyebrow">${esc(kicker)}</div><h1>${title}</h1><p class="lead">${esc(subtitle)}</p>`;}
- menu(hasSave:boolean,error:string|null,meta?:{crystals:number;unlocked:number;total:number;cost:number;canSummon:boolean}){const canStart=new Set(Object.values(this.catalog).map(c=>c.canonicalIdentity).filter(Boolean)).size>=3;this.show(`${this.title('A CRYSTAL-BOUND ROGUELIKE','FINAL FANTASY<br><em>ROGUE</em>','Three heroes from across the worlds. One expedition. A new fate every run.')}<div class="crystal-stage" aria-hidden="true">${titleCrystalMarkup()}<span class="crystal-sparks"></span></div><div class="rpg-panel menu-panel"><label class="seed-label">FATE SEED <input id="run-seed" maxlength="64" placeholder="Leave empty for a random fate" autocomplete="off"></label>${hasSave?this.button('continue','Continue the journey'):''}${this.button('play',hasSave?'Begin a new journey':'Begin the journey',false,!canStart)}${this.button('training','Training grounds',true,!canStart)}${!canStart?'<p class="muted">Three reviewed, distinct characters are required to begin.</p>':''}${meta?`<div class="profile-line"><span>◆ ${meta.crystals} crystals</span><span>Heroes ${meta.unlocked}/${meta.total}</span></div>${this.button('summon',`Summon a hero · ${meta.cost} ◆`,true,!meta.canSummon)}`:''}${error?`<p role="alert" class="error">${esc(error)}</p>`:''}<p class="muted">Expedition · ${COURSE_LENGTH+1} areas · ends against the final boss<br>One free draw from the Fate Engine, then three rerolls</p></div><footer>Your journey is saved on this device</footer>`,'menu');{const stopSparks=startCrystalSparks(this.root.querySelector<HTMLElement>('.crystal-sparks')!),stopCrystal=startTitleCrystal(this.root.querySelector<HTMLElement>('.crystal-stage')!);this.crystalCleanup=()=>{stopSparks();stopCrystal();};}}
+ menu(hasSave:boolean,error:string|null,meta?:{crystals:number;unlocked:number;total:number;cost:number;canSummon:boolean}){const canStart=new Set(Object.values(this.catalog).map(c=>c.canonicalIdentity).filter(Boolean)).size>=3;this.show(`<h1 class="title-logo">FINAL FANTASY<br><em>ROGUE</em></h1><div class="crystal-stage" aria-hidden="true">${titleCrystalMarkup()}<span class="crystal-sparks"></span></div><div class="rpg-panel menu-panel">${hasSave?this.button('continue','Continue'):''}${this.button('play',hasSave?'New Journey':'Begin',false,!canStart)}${this.button('heroes','Heroes',true)}${this.button('training','Training Grounds',true,!canStart)}${meta?`<div class="profile-line"><span title="Crystals: 10 per battle won, 60 per expedition">◆ ${meta.crystals}</span><span title="Unlocked heroes the Fate Engine can draw">Heroes ${meta.unlocked}/${meta.total}</span></div>${this.button('summon',`Summon · ${meta.cost} ◆`,true,!meta.canSummon)}`:''}${!canStart?'<p class="muted">Three distinct heroes are required to begin.</p>':''}${error?`<p role="alert" class="error">${esc(error)}</p>`:''}<details class="seed-details"><summary>Fate seed</summary><input id="run-seed" maxlength="64" placeholder="Random" autocomplete="off" aria-label="Fate seed"></details></div>`,'menu');{const stopSparks=startCrystalSparks(this.root.querySelector<HTMLElement>('.crystal-sparks')!),stopCrystal=startTitleCrystal(this.root.querySelector<HTMLElement>('.crystal-stage')!);this.crystalCleanup=()=>{stopSparks();stopCrystal();};}}
+ /** Heroes collection: every drawable hero; locked ones as silhouettes. Hover/focus shows the details. */
+ heroes(profile:Profile){
+  const keys=Object.keys(this.catalog).filter(k=>this.catalog[k].canonicalIdentity&&this.catalog[k].skills.length)
+   .sort((a,b)=>(this.catalog[a].variantLabel??'').localeCompare(this.catalog[b].variantLabel??'')||this.catalog[a].name.localeCompare(this.catalog[b].name));
+  const unlocked=new Set(profile.unlocked);
+  const tile=(key:string)=>{const c=this.catalog[key],open=unlocked.has(key),base=levelOf(c),bond=profile.bond?.[key]??0;
+   const skills=c.skills.map(sk=>{const el=skillElements(sk);return `<li>${skillIcon(sk)}<span>${esc(sk.name)}</span>${elementChips(el)}</li>`;}).join('');
+   const tip=open?`<span class="hero-tip" role="tooltip"><strong>${esc(c.name)}</strong><em>${esc(c.variantLabel??'')}</em>
+     <dl><dt>Base rarity</dt><dd>${esc(rankLabel(c))}</dd><dt>Start level</dt><dd>Lv ${base}–${MAX_LEVEL} (rarity sets the floor)</dd><dt>Max level</dt><dd>Lv ${MAX_LEVEL}${c.forms?.length?' · awakens '+c.forms.map(f=>rankLabel(f)).join(' → '):''}</dd><dt>Bond</dt><dd>${bond?'◆'.repeat(bond)+` (${bond}/3)`:'None yet'}</dd></dl>
+     <b>Skills</b><ul>${skills}</ul>${c.limitBurst?`<b>Limit Burst</b><p>${esc(c.limitBurst.name)}</p>`:''}</span>`
+    :`<span class="hero-tip" role="tooltip"><strong>Locked</strong><em>${esc(c.variantLabel??'')}</em><p>Win an expedition or summon on the title screen to unlock.</p></span>`;
+   return `<button type="button" class="hero-tile ${open?'':'is-locked'}" aria-label="${esc(open?c.name:'Locked hero')}"><img src="${esc(c.portrait)}" alt="" draggable="false"><span class="hero-name">${esc(open?c.name:'???')}</span>${open&&bond?`<span class="hero-bond">${'◆'.repeat(bond)}</span>`:''}${tip}</button>`;};
+  this.show(`${this.title('COLLECTION','HEROES',`${keys.filter(k=>unlocked.has(k)).length} of ${keys.length} heroes answer the call. Hover a hero for details.`)}<div class="hero-grid">${keys.map(tile).join('')}</div><div class="actions">${this.button('menu','Back to title',true)}</div>`,'heroes');
+  // Keep tooltips on screen: tiles near an edge anchor their tooltip to that edge.
+  const place=(event:Event)=>{const tile=(event.target as HTMLElement).closest<HTMLElement>('.hero-tile');if(!tile)return;const r=tile.getBoundingClientRect(),half=Math.min(290,innerWidth*.8)/2;
+   tile.classList.toggle('tip-left',r.left+r.width/2-half<8);tile.classList.toggle('tip-right',r.left+r.width/2+half>innerWidth-8);tile.classList.toggle('tip-below',r.top<330);};
+  this.root.querySelector('.hero-grid')?.addEventListener('pointerover',place);this.root.querySelector('.hero-grid')?.addEventListener('focusin',place);
+ }
  slots(run:RunState,busy:boolean,choices:Record<string,{id:string;name:string}[]>={}){
   const hasTeam=run.party.length>0;
   const exhausted=hasTeam&&run.rerolls===0;

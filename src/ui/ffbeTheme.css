@@ -113,3 +113,36 @@
 .swap-card .card-choose{margin-top:auto}
 @media(max-width:520px){.swap-grid{grid-template-columns:1fr}}
 .camp-note{margin:0 auto 8px;width:fit-content;max-width:100%;padding:4px 12px;border:1px solid #9fc0e066;border-radius:4px;background:#061226cc;font-size:12px;color:#d9e8f6;text-shadow:0 1px 2px #000}
+
+/* Title (2026-11-10): logo, crystal and a short command list; the seed hides in a small fold-out. */
+#run-ui[data-phase=menu] .title-logo{margin:28px 0 0;font:600 clamp(2rem,6vw,3.2rem)/1.05 var(--rpg-display);letter-spacing:.1em;color:#f4f7fb;text-shadow:0 2px 6px #000,0 0 24px #6fa8ff66}
+#run-ui[data-phase=menu] .title-logo em{display:block;font-style:normal;font-size:.62em;letter-spacing:.32em;color:#9fd0ff}
+.menu-panel .seed-details{margin-top:6px;text-align:left;font-size:12px;color:#9fb6cf}
+.menu-panel .seed-details summary{cursor:pointer;letter-spacing:.12em;text-transform:uppercase;font-size:11px}
+.menu-panel .seed-details input{width:100%;margin-top:6px}
+
+/* Heroes collection: portrait tiles, silhouettes for locked heroes, rich hover/focus tooltips. */
+.hero-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(86px,1fr));gap:8px;margin:14px 0 18px;text-align:center}
+.hero-tile{position:relative;display:grid;justify-items:center;gap:3px;padding:8px 4px 6px;border:1px solid #6f93b8;border-radius:4px;cursor:help;font:inherit;color:#e8f1fb;
+  background:linear-gradient(180deg,#14305a,#071a36);box-shadow:inset 0 1px 0 #ffffff22}
+.hero-tile img{width:48px;height:48px;object-fit:contain;image-rendering:pixelated}
+.hero-tile .hero-name{font:600 11px/1.15 var(--rpg-display);letter-spacing:.04em;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hero-tile .hero-bond{position:absolute;top:3px;right:5px;font-size:9px;color:#9fe3ff}
+.hero-tile.is-locked img{filter:brightness(0) drop-shadow(0 0 1px #9fc0e0aa);opacity:.75}
+.hero-tile.is-locked{border-color:#3d5878;color:#7f95ad;background:linear-gradient(180deg,#0d1f3a,#050f22)}
+.hero-tile:hover,.hero-tile:focus-visible{border-color:#e9d293;outline:none;z-index:5}
+.hero-tip{position:absolute;left:50%;bottom:calc(100% + 6px);transform:translateX(-50%);width:min(290px,80vw);z-index:20;display:none;text-align:left;
+  padding:10px 12px;border:1px solid #e9d293;border-radius:4px;background:#051229f2;box-shadow:0 8px 24px #000a;font-size:12px;line-height:1.4;color:#d9e8f6;pointer-events:none}
+.hero-tile:hover .hero-tip,.hero-tile:focus-visible .hero-tip{display:block}
+.hero-tip strong{display:block;font:600 14px/1.2 var(--rpg-display);color:#fff}
+.hero-tip em{display:block;font-style:normal;color:#e9d293;margin-bottom:6px}
+.hero-tip dl{display:grid;grid-template-columns:auto 1fr;gap:2px 8px;margin:0 0 6px}
+.hero-tip dt{color:#9fb6cf}.hero-tip dd{margin:0}
+.hero-tip b{display:block;margin-top:4px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#9fb6cf}
+.hero-tip ul{list-style:none;margin:2px 0;padding:0;display:grid;gap:2px}
+.hero-tip li{display:flex;align-items:center;gap:5px}
+.hero-tip li .skill-icon{width:16px;height:16px}
+.hero-tip p{margin:2px 0 0}
+.hero-tile.tip-left .hero-tip{left:0;transform:none}
+.hero-tile.tip-right .hero-tip{left:auto;right:0;transform:none}
+.hero-tile.tip-below .hero-tip{bottom:auto;top:calc(100% + 6px)}

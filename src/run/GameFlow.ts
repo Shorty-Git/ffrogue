@@ -31,6 +31,7 @@ export class GameFlow{
  menu(){this.closeEntry();this.audio.setMusic(HOME_MUSIC_RESOURCE,'home');if(this.scene.scene.isActive('BattleScene'))this.scene.scene.stop('BattleScene');this.busy=false;clearTimeout(this.animationTimer);
   try{this.state=this.store.load();const drawable=this.profile.unlocked.length+lockedHeroes(this.profile,this.catalog).length;this.ui.menu(!!this.state,null,{crystals:this.profile.crystals,unlocked:this.profile.unlocked.length,total:drawable,cost:SUMMON_COST,canSummon:this.profile.crystals>=SUMMON_COST});this.audioControls();if(this.state?.phase==='battle'){const note=document.createElement('p');note.className='muted';note.textContent='Continue restarts the current encounter from its saved starting state.';this.ui.root.querySelector('.menu-panel')?.append(note);}}catch(error){this.ui.error(String(error),true);this.ui.on('reload',()=>location.reload());this.ui.on('discard',()=>{this.store.clear();this.state=null;this.menu();});return;}
   this.ui.on('training',()=>this.training());
+  this.ui.on('heroes',()=>{this.ui.heroes(this.profile);this.ui.on('menu',()=>this.menu());});
   this.ui.on('summon',()=>this.summon());
   this.ui.on('continue',()=>this.route());this.ui.on('play',()=>{const seed=(this.ui.root.querySelector('#run-seed')as HTMLInputElement).value.trim()||new URLSearchParams(location.search).get('seed')||crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
    const start=()=>{try{this.commit(createRun(seed,this.catalog,new URLSearchParams(location.search).get("arenaVariants")==="1"?variantAreas(seed):undefined,this.rules));this.audio.clearRunPosition();this.setup();}catch(e){this.fail(e);}};
@@ -145,10 +146,10 @@ export class GameFlow{
  private audioControls(updateMusic=()=>{}){
   const panel=document.createElement('details');
   panel.className='rpg-panel audio-controls';
-  panel.innerHTML='<summary>Audio</summary>';
+  panel.innerHTML='<summary>Sound</summary>';
   for(const [bus,label] of [['music','Music'],['effects','Sound effects']] as const){
    const row=document.createElement('fieldset');
-   row.innerHTML='<legend>'+label+'</legend><label>Volume <input type="range" min="0" max="1" step=".01" data-volume="'+bus+'"></label> <label><input type="checkbox" data-muted="'+bus+'"> Mute</label>';
+   row.innerHTML='<legend>'+label+'</legend><label title="'+label+' volume">Volume <input type="range" min="0" max="1" step=".01" data-volume="'+bus+'"></label> <label title="Silence '+label.toLowerCase()+'"><input type="checkbox" data-muted="'+bus+'"> Mute</label>';
    const volume=row.querySelector<HTMLInputElement>('[type=range]')!;
    const muted=row.querySelector<HTMLInputElement>('[type=checkbox]')!;
    const change=()=>{this.audio.setPreference(bus,{volume:Number(volume.value),muted:muted.checked});updateMusic();};
@@ -158,7 +159,9 @@ export class GameFlow{
   }
   (this.ui.root.querySelector('.run-toolbar, .menu-panel')??this.ui.root).append(panel);
   this.syncAudioControls();
-  if(this.ui.root.dataset.phase==='battle'){
+  // Developer-only sound tools (cursor profiles, sound comparison, housing shake): add ?dev=1 to the URL.
+  const devTools=new URLSearchParams(location.search).has('dev');
+  if(devTools&&this.ui.root.dataset.phase==='battle'){
    const label=document.createElement('label');
    label.textContent='Battle cursor ';
    const profiles=document.createElement('select');
@@ -172,7 +175,7 @@ export class GameFlow{
    label.append(profiles);
    panel.append(label);
   }
-  if(this.ui.root.dataset.phase==='menu'){
+  if(devTools&&this.ui.root.dataset.phase==='menu'){
    const preview=document.createElement('div');
    preview.className='audio-preview';
    preview.innerHTML='<p>Sound comparison · FFBE originals and FFRogue alternatives</p>';
