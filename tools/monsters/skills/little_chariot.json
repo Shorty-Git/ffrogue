@@ -1,0 +1,26 @@
+{
+  "schema": "enemy-skills-v1",
+  "key": "little_chariot",
+  "monsterId": 106031000,
+  "dictionaryId": 1060310,
+  "skills": [
+    {
+      "id": "mustard_bomb",
+      "ffbeId": 155170,
+      "type": "MONSTER_SKILL",
+      "name": "Mustard Bomb",
+      "scope": "all_enemies",
+      "damageType": "physical",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 110,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "little_chariot_mustard_bomb",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value. Not reconstructed: original process(es) 6 beyond the damage."
+    }
+  ]
+}

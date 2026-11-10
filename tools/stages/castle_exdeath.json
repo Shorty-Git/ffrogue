@@ -1,0 +1,150 @@
+{
+  "schema": "stage-recipe-v1",
+  "key": "castle_exdeath",
+  "name": "Castle Exdeath",
+  "theme": "FINAL FANTASY V",
+  "series": "FFV",
+  "arena": {
+    "key": "castle_exdeath",
+    "battleBgId": 120065,
+    "title": "FFV",
+    "label": "Castle Exdeath",
+    "floor": [
+      0.56,
+      0.82
+    ],
+    "worldIdentity": "Reviewed visual identification (2026-11-11): organic red hall (battle_bg_2005_05) read as FFV's Castle Exdeath; the original Hellraiser, Blind Wolf, Black Warlock and Exdeath descriptions place them in Castle Exdeath. No original stage-to-world join."
+  },
+  "music": {
+    "normal": {
+      "resourceId": 400898,
+      "title": "Battle 1",
+      "game": "FFV"
+    },
+    "boss": {
+      "resourceId": 400900,
+      "title": "The Last Battle",
+      "game": "FFV"
+    }
+  },
+  "enemies": [
+    {
+      "key": "blind_wolf",
+      "dictionaryId": 2013510,
+      "name": "Blind Wolf",
+      "scale": 1.5,
+      "movement": "approach",
+      "monsterId": "201351000"
+    },
+    {
+      "key": "black_warlock",
+      "dictionaryId": 2250210,
+      "name": "Black Warlock",
+      "scale": 1.5,
+      "movement": "stationary",
+      "monsterId": "225021000"
+    }
+  ],
+  "boss": {
+    "key": "exdeath",
+    "dictionaryId": 3055710,
+    "name": "Exdeath",
+    "scale": 2,
+    "movement": "stationary",
+    "note": "FFBE trial boss Exdeath (dictionary 3055710); final boss. Firaga, Blizzaga, Thundaga, Vacuum Wave and Earth Shaker are his original moves (import_enemy_skills.mjs).",
+    "behavior": {
+      "phaseAt": 0.5,
+      "phaseName": "Power of the Void",
+      "phaseMultiplier": 1.3,
+      "pattern": [
+        {
+          "kind": "attack",
+          "name": "Attack",
+          "multiplier": 1,
+          "scope": "single"
+        },
+        {
+          "kind": "prepare",
+          "name": "Exdeath raises his staff",
+          "next": "Firaga"
+        },
+        {
+          "kind": "attack",
+          "name": "Firaga",
+          "multiplier": 1.2,
+          "scope": "party",
+          "skill": "firaga"
+        },
+        {
+          "kind": "attack",
+          "name": "Vacuum Wave",
+          "multiplier": 1.2,
+          "scope": "single",
+          "skill": "vacuum_wave"
+        },
+        {
+          "kind": "prepare",
+          "name": "The air freezes",
+          "next": "Blizzaga"
+        },
+        {
+          "kind": "attack",
+          "name": "Blizzaga",
+          "multiplier": 1.2,
+          "scope": "party",
+          "skill": "blizzaga"
+        },
+        {
+          "kind": "attack",
+          "name": "Attack",
+          "multiplier": 1,
+          "scope": "single"
+        },
+        {
+          "kind": "prepare",
+          "name": "Lightning gathers",
+          "next": "Thundaga"
+        },
+        {
+          "kind": "attack",
+          "name": "Thundaga",
+          "multiplier": 1.2,
+          "scope": "party",
+          "skill": "thundaga"
+        },
+        {
+          "kind": "attack",
+          "name": "Vacuum Wave",
+          "multiplier": 1.2,
+          "scope": "single",
+          "skill": "vacuum_wave"
+        },
+        {
+          "kind": "prepare",
+          "name": "The Void stirs",
+          "next": "Earth Shaker"
+        },
+        {
+          "kind": "attack",
+          "name": "Earth Shaker",
+          "multiplier": 1.5,
+          "scope": "party",
+          "skill": "earth_shaker"
+        }
+      ]
+    },
+    "monsterId": "305571000"
+  },
+  "formations": [
+    [
+      "top",
+      "bottom"
+    ],
+    [
+      "center"
+    ]
+  ],
+  "difficulty": 1.4,
+  "normalFights": 1,
+  "rewardCategory": "castle-exdeath-relic"
+}

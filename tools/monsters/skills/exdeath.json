@@ -1,0 +1,98 @@
+{
+  "schema": "enemy-skills-v1",
+  "key": "exdeath",
+  "monsterId": 305571000,
+  "dictionaryId": 3055710,
+  "skills": [
+    {
+      "id": "earth_shaker",
+      "ffbeId": 215212,
+      "type": "MONSTER_SKILL",
+      "name": "Earth Shaker",
+      "scope": "all_enemies",
+      "damageType": "magical",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 180,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "exdeath_earth_shaker",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    },
+    {
+      "id": "firaga",
+      "ffbeId": 183060,
+      "type": "MONSTER_SKILL",
+      "name": "Firaga",
+      "scope": "all_enemies",
+      "damageType": "magical",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 150,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "exdeath_firaga",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    },
+    {
+      "id": "blizzaga",
+      "ffbeId": 173670,
+      "type": "MONSTER_SKILL",
+      "name": "Blizzaga",
+      "scope": "all_enemies",
+      "damageType": "magical",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 150,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "exdeath_blizzaga",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    },
+    {
+      "id": "thundaga",
+      "ffbeId": 177950,
+      "type": "MONSTER_SKILL",
+      "name": "Thundaga",
+      "scope": "all_enemies",
+      "damageType": "magical",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 70,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "exdeath_thundaga",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    },
+    {
+      "id": "vacuum_wave",
+      "ffbeId": 215214,
+      "type": "MONSTER_SKILL",
+      "name": "Vacuum Wave",
+      "scope": "single_enemy",
+      "damageType": "physical",
+      "moveType": "stationary",
+      "multiplier": 1.2,
+      "damageEvents": [
+        {
+          "frame": 50,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "exdeath_vacuum_wave",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value. Not reconstructed: original process(es) 139 beyond the damage."
+    }
+  ]
+}

@@ -154,7 +154,7 @@ export class RunUI{
    ${c.weak.length?`<span class="path-row"><small>Weak to</small>${elementChips(c.weak,'weak')}</span>`:''}
    ${c.attack.length?`<span class="path-row"><small>Attacks with</small>${elementChips(c.attack)}</span>`:''}
    <span class="card-choose">CHOOSE →</span></span></button>`;
-  this.show(`${this.title(eyebrow,title,lead)}<div class="path-grid">${cards.map(card).join('')}</div>${back?`<div class="actions">${this.button(back,'Back',true)}</div>`:''}`,'path');
+  this.show(`${this.title(eyebrow,title,lead)}<div class="path-grid${cards.length===4?' is-quad':''}">${cards.map(card).join('')}</div>${back?`<div class="actions">${this.button(back,'Back',true)}</div>`:''}`,'path');
  }
  /** Heroes collection: every drawable hero; locked ones as silhouettes. Hover/focus shows the details. */
  heroes(profile:Profile){

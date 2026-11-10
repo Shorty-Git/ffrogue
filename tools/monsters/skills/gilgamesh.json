@@ -1,0 +1,62 @@
+{
+  "schema": "enemy-skills-v1",
+  "key": "gilgamesh",
+  "monsterId": 405041000,
+  "dictionaryId": 4050410,
+  "skills": [
+    {
+      "id": "wind_slash",
+      "ffbeId": 155250,
+      "type": "MONSTER_SKILL",
+      "name": "Wind Slash",
+      "scope": "all_enemies",
+      "damageType": "magical",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 100,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "gilgamesh_wind_slash",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    },
+    {
+      "id": "goblin_punch",
+      "ffbeId": 155270,
+      "type": "MONSTER_SKILL",
+      "name": "Goblin Punch",
+      "scope": "single_enemy",
+      "damageType": "physical",
+      "moveType": "stationary",
+      "multiplier": 1.2,
+      "damageEvents": [
+        {
+          "frame": 80,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "gilgamesh_goblin_punch",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    },
+    {
+      "id": "electric_shock",
+      "ffbeId": 155380,
+      "type": "MONSTER_SKILL",
+      "name": "Electric Shock",
+      "scope": "all_enemies",
+      "damageType": "magical",
+      "moveType": "stationary",
+      "multiplier": 0.9,
+      "damageEvents": [
+        {
+          "frame": 80,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "gilgamesh_electric_shock",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value."
+    }
+  ]
+}

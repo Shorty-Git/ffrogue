@@ -48,6 +48,23 @@ Last consolidated: 2026-11-07; newest section: cloud night 2026-11-10.
     (`profile.bosses`, settleRun); the route lead names the room only when known.
   - How to Play: five steps, shown once before the first journey (localStorage `ffrogue.guide.v1`) and from
     the title screen.
+- Two new FFV final boss rooms (FINAL_STAGES now nibelheim, vector, big_bridge, castle_exdeath; boss choice
+  shows four cards as 2x2):
+  - Big Bridge (`tools/stages/big_bridge.json`, battle_bg 120061 `battle_bg_2005_01`, castle rampart):
+    Flying Killer, Little Chariot (Mustard Bomb); boss Gilgamesh 4050410 (the FFV Big Bridge entry, not the
+    Type-0 3053910) with his original Wind Slash, Goblin Punch, Electric Shock. Music FFV Battle 2 (400816)
+    and Clash on the Big Bridge (400817).
+  - Castle Exdeath (`castle_exdeath.json`, 120065 `battle_bg_2005_05`): Blind Wolf (Tusk, blind), Black
+    Warlock (only status moves: basic attacks); boss Exdeath 3055710 with Firaga, Blizzaga, Thundaga, Vacuum
+    Wave, Earth Shaker. Music FFV Battle 1 (400898) and The Last Battle (400900).
+  - Evidence: original monster_dictionary_explain texts place these monsters on the Big Bridge / in Castle
+    Exdeath; the arenas are reviewed visual identifications (battle_bg 2005_* is the FFV crossover set, no
+    stage-to-world join). Skipped source moves (no damage process): Gilgamesh's taunts, Protect, Shell,
+    Jump; Exdeath's Gravity, Dispel, Blaze, Hurricane.
+  - Checked: arena screenshots (floor 0.56-0.82 fits both), training fights with every boss move above
+    (single moves hit one hero, -ga moves the party), stage content tests.
+  - Import order note: import_stage.mjs regenerates all stage recipes, so a second new recipe in
+    tools/stages must have its arena prepared (run its import) before the first one's final step succeeds.
 - Web (alpha) build: `npm run build:web` = normal build + `tools/web_audio.py dist` (music WAVs > 1 MB ->
   Ogg Vorbis q0.6, frame count checked, references in the built JS rewritten; public/ keeps the WAVs).
   Python needs `soundfile` (set FFROGUE_PYTHON if the PATH python lacks it). Result 2026-11-11: dist 1.2 GB,

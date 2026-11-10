@@ -19,7 +19,7 @@ export const COURSE_LENGTH=2;
 /** Developer decision 2026-11-10: every run ends in a final boss room. Since 2026-11-11 the player picks
  * it when the journey starts (Nibelheim / Sephiroth, Vector / Kefka); Nibelheim stays the default. */
 export const FINAL_STAGE='nibelheim';
-export const FINAL_STAGES=['nibelheim','vector'];
+export const FINAL_STAGES=['nibelheim','vector','big_bridge','castle_exdeath'];
 const routePool=()=>Object.values(STAGE_CONTENT).filter(s=>!FINAL_STAGES.includes(s.id));
 const areaOf=stage=>({stageId:stage.id,name:stage.name,arena:stage.arena,normals:stage.normalFights});
 /** Run structure: each seeded area ends in an elite fight, the final area in the boss fight. */

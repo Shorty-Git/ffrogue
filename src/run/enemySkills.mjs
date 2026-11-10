@@ -80,6 +80,29 @@ export const ENEMY_SKILLS = {
       "damageType": "physical"
     }
   },
+  "blind_wolf": {
+    "tusk": {
+      "name": "Tusk",
+      "scope": "single",
+      "multiplier": 1.2,
+      "origin": "source",
+      "presentation": "blind_wolf_tusk",
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 1
+        }
+      ],
+      "damageType": "physical",
+      "heroEffects": [
+        {
+          "kind": "blind",
+          "turns": 3,
+          "chance": 0.2
+        }
+      ]
+    }
+  },
   "condor": {
     "beak": {
       "name": "Beak",
@@ -134,6 +157,122 @@ export const ENEMY_SKILLS = {
         }
       ],
       "damageType": "physical"
+    }
+  },
+  "exdeath": {
+    "earth_shaker": {
+      "name": "Earth Shaker",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "exdeath_earth_shaker",
+      "damageEvents": [
+        {
+          "frame": 180,
+          "weight": 1
+        }
+      ],
+      "damageType": "magical"
+    },
+    "firaga": {
+      "name": "Firaga",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "exdeath_firaga",
+      "damageEvents": [
+        {
+          "frame": 150,
+          "weight": 1
+        }
+      ],
+      "damageType": "magical"
+    },
+    "blizzaga": {
+      "name": "Blizzaga",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "exdeath_blizzaga",
+      "damageEvents": [
+        {
+          "frame": 150,
+          "weight": 1
+        }
+      ],
+      "damageType": "magical"
+    },
+    "thundaga": {
+      "name": "Thundaga",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "exdeath_thundaga",
+      "damageEvents": [
+        {
+          "frame": 70,
+          "weight": 1
+        }
+      ],
+      "damageType": "magical"
+    },
+    "vacuum_wave": {
+      "name": "Vacuum Wave",
+      "scope": "single",
+      "multiplier": 1.2,
+      "origin": "source",
+      "presentation": "exdeath_vacuum_wave",
+      "damageEvents": [
+        {
+          "frame": 50,
+          "weight": 1
+        }
+      ],
+      "damageType": "physical"
+    }
+  },
+  "gilgamesh": {
+    "wind_slash": {
+      "name": "Wind Slash",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "gilgamesh_wind_slash",
+      "damageEvents": [
+        {
+          "frame": 100,
+          "weight": 1
+        }
+      ],
+      "damageType": "magical"
+    },
+    "goblin_punch": {
+      "name": "Goblin Punch",
+      "scope": "single",
+      "multiplier": 1.2,
+      "origin": "source",
+      "presentation": "gilgamesh_goblin_punch",
+      "damageEvents": [
+        {
+          "frame": 80,
+          "weight": 1
+        }
+      ],
+      "damageType": "physical"
+    },
+    "electric_shock": {
+      "name": "Electric Shock",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "gilgamesh_electric_shock",
+      "damageEvents": [
+        {
+          "frame": 80,
+          "weight": 1
+        }
+      ],
+      "damageType": "magical"
     }
   },
   "guardian": {
@@ -648,6 +787,22 @@ export const ENEMY_SKILLS = {
         }
       ],
       "damageType": "magical"
+    }
+  },
+  "little_chariot": {
+    "mustard_bomb": {
+      "name": "Mustard Bomb",
+      "scope": "party",
+      "multiplier": 0.9,
+      "origin": "source",
+      "presentation": "little_chariot_mustard_bomb",
+      "damageEvents": [
+        {
+          "frame": 110,
+          "weight": 1
+        }
+      ],
+      "damageType": "physical"
     }
   },
   "magitek_armor": {

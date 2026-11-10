@@ -148,6 +148,233 @@ export const IMPORTED_ENEMIES = {
       ]
     }
   },
+  "flying_killer": {
+    "key": "flying_killer",
+    "name": "Flying Killer",
+    "spriteId": "1010510",
+    "monsterId": "101051000",
+    "dictionaryId": 1010510,
+    "scale": 1.5,
+    "attack": {
+      "clip": "atk",
+      "impactFrame": 1,
+      "movement": "approach"
+    },
+    "audio": []
+  },
+  "little_chariot": {
+    "key": "little_chariot",
+    "name": "Little Chariot",
+    "spriteId": "1060310",
+    "monsterId": "106031000",
+    "dictionaryId": 1060310,
+    "scale": 1.5,
+    "attack": {
+      "clip": "atk",
+      "impactFrame": 1,
+      "movement": "approach"
+    },
+    "audio": []
+  },
+  "gilgamesh": {
+    "key": "gilgamesh",
+    "name": "Gilgamesh",
+    "spriteId": "4050410",
+    "monsterId": "405041000",
+    "dictionaryId": 4050410,
+    "scale": 2,
+    "attack": {
+      "clip": "atk",
+      "impactFrame": 1,
+      "movement": "approach"
+    },
+    "audio": [],
+    "behavior": {
+      "phaseAt": 0.5,
+      "phaseName": "Gilgamesh gets serious",
+      "phaseMultiplier": 1.3,
+      "pattern": [
+        {
+          "kind": "attack",
+          "name": "Attack",
+          "multiplier": 1,
+          "scope": "single"
+        },
+        {
+          "kind": "prepare",
+          "name": "Gilgamesh strikes a pose",
+          "next": "Wind Slash"
+        },
+        {
+          "kind": "attack",
+          "name": "Wind Slash",
+          "multiplier": 1.2,
+          "scope": "party",
+          "skill": "wind_slash"
+        },
+        {
+          "kind": "attack",
+          "name": "Goblin Punch",
+          "multiplier": 1.2,
+          "scope": "single",
+          "skill": "goblin_punch"
+        },
+        {
+          "kind": "prepare",
+          "name": "\"Enough foreplay!\"",
+          "next": "Electric Shock"
+        },
+        {
+          "kind": "attack",
+          "name": "Electric Shock",
+          "multiplier": 1.3,
+          "scope": "party",
+          "skill": "electric_shock"
+        },
+        {
+          "kind": "attack",
+          "name": "Attack",
+          "multiplier": 1,
+          "scope": "single"
+        },
+        {
+          "kind": "prepare",
+          "name": "Gilgamesh switches weapons",
+          "next": "Wind Slash"
+        },
+        {
+          "kind": "attack",
+          "name": "Wind Slash",
+          "multiplier": 1.4,
+          "scope": "party",
+          "skill": "wind_slash"
+        }
+      ]
+    }
+  },
+  "blind_wolf": {
+    "key": "blind_wolf",
+    "name": "Blind Wolf",
+    "spriteId": "2013510",
+    "monsterId": "201351000",
+    "dictionaryId": 2013510,
+    "scale": 1.5,
+    "attack": {
+      "clip": "atk",
+      "impactFrame": 1,
+      "movement": "approach"
+    },
+    "audio": []
+  },
+  "black_warlock": {
+    "key": "black_warlock",
+    "name": "Black Warlock",
+    "spriteId": "2250210",
+    "monsterId": "225021000",
+    "dictionaryId": 2250210,
+    "scale": 1.5,
+    "attack": {
+      "clip": "atk",
+      "impactFrame": 1,
+      "movement": "stationary"
+    },
+    "audio": []
+  },
+  "exdeath": {
+    "key": "exdeath",
+    "name": "Exdeath",
+    "spriteId": "3055710",
+    "monsterId": "305571000",
+    "dictionaryId": 3055710,
+    "scale": 2,
+    "attack": {
+      "clip": "atk",
+      "impactFrame": 1,
+      "movement": "stationary"
+    },
+    "audio": [],
+    "behavior": {
+      "phaseAt": 0.5,
+      "phaseName": "Power of the Void",
+      "phaseMultiplier": 1.3,
+      "pattern": [
+        {
+          "kind": "attack",
+          "name": "Attack",
+          "multiplier": 1,
+          "scope": "single"
+        },
+        {
+          "kind": "prepare",
+          "name": "Exdeath raises his staff",
+          "next": "Firaga"
+        },
+        {
+          "kind": "attack",
+          "name": "Firaga",
+          "multiplier": 1.2,
+          "scope": "party",
+          "skill": "firaga"
+        },
+        {
+          "kind": "attack",
+          "name": "Vacuum Wave",
+          "multiplier": 1.2,
+          "scope": "single",
+          "skill": "vacuum_wave"
+        },
+        {
+          "kind": "prepare",
+          "name": "The air freezes",
+          "next": "Blizzaga"
+        },
+        {
+          "kind": "attack",
+          "name": "Blizzaga",
+          "multiplier": 1.2,
+          "scope": "party",
+          "skill": "blizzaga"
+        },
+        {
+          "kind": "attack",
+          "name": "Attack",
+          "multiplier": 1,
+          "scope": "single"
+        },
+        {
+          "kind": "prepare",
+          "name": "Lightning gathers",
+          "next": "Thundaga"
+        },
+        {
+          "kind": "attack",
+          "name": "Thundaga",
+          "multiplier": 1.2,
+          "scope": "party",
+          "skill": "thundaga"
+        },
+        {
+          "kind": "attack",
+          "name": "Vacuum Wave",
+          "multiplier": 1.2,
+          "scope": "single",
+          "skill": "vacuum_wave"
+        },
+        {
+          "kind": "prepare",
+          "name": "The Void stirs",
+          "next": "Earth Shaker"
+        },
+        {
+          "kind": "attack",
+          "name": "Earth Shaker",
+          "multiplier": 1.5,
+          "scope": "party",
+          "skill": "earth_shaker"
+        }
+      ]
+    }
+  },
   "g_soldier": {
     "key": "g_soldier",
     "name": "G-Soldier",
@@ -618,6 +845,76 @@ export const IMPORTED_STAGES = {
       "musicResourceId": 400829,
       "musicSeries": "FFX",
       "bossMusicResourceId": 400833,
+      "musicAssignment": "Original series battle and boss themes (tools/import_stage.mjs)",
+      "soundCues": []
+    }
+  },
+  "big_bridge": {
+    "id": "big_bridge",
+    "name": "Big Bridge",
+    "theme": "FINAL FANTASY V",
+    "arena": "big_bridge",
+    "source": {
+      "battleBgId": 120061,
+      "file": "battle_bg_2005_01.jpg",
+      "worldIdentity": "Reviewed visual identification (2026-11-11): castle rampart with towers (battle_bg_2005_01) read as FFV's Big Bridge; the original Flying Killer, Little Chariot and Gilgamesh (4050410) descriptions place them on the Big Bridge. No original stage-to-world join."
+    },
+    "enemyPool": [
+      "flying_killer",
+      "little_chariot"
+    ],
+    "formations": [
+      [
+        "top",
+        "bottom"
+      ],
+      [
+        "center"
+      ]
+    ],
+    "bossId": "gilgamesh",
+    "difficulty": 1.4,
+    "rewardCategory": "big-bridge-relic",
+    "normalFights": 1,
+    "audio": {
+      "musicResourceId": 400816,
+      "musicSeries": "FFV",
+      "bossMusicResourceId": 400817,
+      "musicAssignment": "Original series battle and boss themes (tools/import_stage.mjs)",
+      "soundCues": []
+    }
+  },
+  "castle_exdeath": {
+    "id": "castle_exdeath",
+    "name": "Castle Exdeath",
+    "theme": "FINAL FANTASY V",
+    "arena": "castle_exdeath",
+    "source": {
+      "battleBgId": 120065,
+      "file": "battle_bg_2005_05.jpg",
+      "worldIdentity": "Reviewed visual identification (2026-11-11): organic red hall (battle_bg_2005_05) read as FFV's Castle Exdeath; the original Hellraiser, Blind Wolf, Black Warlock and Exdeath descriptions place them in Castle Exdeath. No original stage-to-world join."
+    },
+    "enemyPool": [
+      "blind_wolf",
+      "black_warlock"
+    ],
+    "formations": [
+      [
+        "top",
+        "bottom"
+      ],
+      [
+        "center"
+      ]
+    ],
+    "bossId": "exdeath",
+    "difficulty": 1.4,
+    "rewardCategory": "castle-exdeath-relic",
+    "normalFights": 1,
+    "audio": {
+      "musicResourceId": 400898,
+      "musicSeries": "FFV",
+      "bossMusicResourceId": 400900,
       "musicAssignment": "Original series battle and boss themes (tools/import_stage.mjs)",
       "soundCues": []
     }

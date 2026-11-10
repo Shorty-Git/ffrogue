@@ -1,0 +1,33 @@
+{
+  "schema": "enemy-skills-v1",
+  "key": "blind_wolf",
+  "monsterId": 201351000,
+  "dictionaryId": 2013510,
+  "skills": [
+    {
+      "id": "tusk",
+      "ffbeId": 215183,
+      "type": "MONSTER_SKILL",
+      "name": "Tusk",
+      "scope": "single_enemy",
+      "damageType": "physical",
+      "heroEffects": [
+        {
+          "kind": "blind",
+          "turns": 3,
+          "chance": 0.2
+        }
+      ],
+      "moveType": "stationary",
+      "multiplier": 1.2,
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 1
+        }
+      ],
+      "scenePresentation": "blind_wolf_tusk",
+      "reviewNote": "Original monster skill (tools/import_enemy_skills.mjs): source visuals, timing and sounds; multiplier is a provisional FFRogue value. Not reconstructed: original process(es) 6 beyond the damage."
+    }
+  ]
+}

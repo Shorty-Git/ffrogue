@@ -1,0 +1,131 @@
+{
+  "schema": "stage-recipe-v1",
+  "key": "big_bridge",
+  "name": "Big Bridge",
+  "theme": "FINAL FANTASY V",
+  "series": "FFV",
+  "arena": {
+    "key": "big_bridge",
+    "battleBgId": 120061,
+    "title": "FFV",
+    "label": "Big Bridge",
+    "floor": [
+      0.56,
+      0.82
+    ],
+    "worldIdentity": "Reviewed visual identification (2026-11-11): castle rampart with towers (battle_bg_2005_01) read as FFV's Big Bridge; the original Flying Killer, Little Chariot and Gilgamesh (4050410) descriptions place them on the Big Bridge. No original stage-to-world join."
+  },
+  "music": {
+    "normal": {
+      "resourceId": 400816,
+      "title": "Battle 2",
+      "game": "FFV"
+    },
+    "boss": {
+      "resourceId": 400817,
+      "title": "Clash on the Big Bridge",
+      "game": "FFV"
+    }
+  },
+  "enemies": [
+    {
+      "key": "flying_killer",
+      "dictionaryId": 1010510,
+      "name": "Flying Killer",
+      "scale": 1.5,
+      "movement": "approach",
+      "monsterId": "101051000"
+    },
+    {
+      "key": "little_chariot",
+      "dictionaryId": 1060310,
+      "name": "Little Chariot",
+      "scale": 1.5,
+      "movement": "approach",
+      "monsterId": "106031000"
+    }
+  ],
+  "boss": {
+    "key": "gilgamesh",
+    "dictionaryId": 4050410,
+    "name": "Gilgamesh",
+    "scale": 2,
+    "movement": "approach",
+    "note": "FFBE boss Gilgamesh (dictionary 4050410, Big Bridge); final boss. Wind Slash, Goblin Punch and Electric Shock are his original moves (import_enemy_skills.mjs).",
+    "behavior": {
+      "phaseAt": 0.5,
+      "phaseName": "Gilgamesh gets serious",
+      "phaseMultiplier": 1.3,
+      "pattern": [
+        {
+          "kind": "attack",
+          "name": "Attack",
+          "multiplier": 1,
+          "scope": "single"
+        },
+        {
+          "kind": "prepare",
+          "name": "Gilgamesh strikes a pose",
+          "next": "Wind Slash"
+        },
+        {
+          "kind": "attack",
+          "name": "Wind Slash",
+          "multiplier": 1.2,
+          "scope": "party",
+          "skill": "wind_slash"
+        },
+        {
+          "kind": "attack",
+          "name": "Goblin Punch",
+          "multiplier": 1.2,
+          "scope": "single",
+          "skill": "goblin_punch"
+        },
+        {
+          "kind": "prepare",
+          "name": "\"Enough foreplay!\"",
+          "next": "Electric Shock"
+        },
+        {
+          "kind": "attack",
+          "name": "Electric Shock",
+          "multiplier": 1.3,
+          "scope": "party",
+          "skill": "electric_shock"
+        },
+        {
+          "kind": "attack",
+          "name": "Attack",
+          "multiplier": 1,
+          "scope": "single"
+        },
+        {
+          "kind": "prepare",
+          "name": "Gilgamesh switches weapons",
+          "next": "Wind Slash"
+        },
+        {
+          "kind": "attack",
+          "name": "Wind Slash",
+          "multiplier": 1.4,
+          "scope": "party",
+          "skill": "wind_slash"
+        }
+      ]
+    },
+    "monsterId": "405041000"
+  },
+  "formations": [
+    [
+      "top",
+      "bottom"
+    ],
+    [
+      "center"
+    ]
+  ],
+  "difficulty": 1.4,
+  "normalFights": 1,
+  "rewardCategory": "big-bridge-relic"
+}
