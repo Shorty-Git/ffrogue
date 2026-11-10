@@ -151,7 +151,12 @@ Last consolidated: 2026-11-07; newest section: cloud night 2026-11-10.
   6,179 files, largest file 10.6 MB (presentation manifests), music 332 -> 41 MB. Checked with
   `vite preview` (launch config ffrogue-dist, port 4173): all 21 referenced audio files 200 and decodable,
   headless boss choice -> slot -> route -> first battle without page errors or 4xx. Fits Cloudflare Pages
-  limits (25 MiB per file, 20k files); GitHub Pages (1 GB) does not. Not deployed yet.
+  limits (25 MiB per file, 20k files); GitHub Pages (1 GB) does not.
+  Deployed 2026-11-10 to Cloudflare Pages project `ffrogue` (https://ffrogue.pages.dev, direct upload, 6,395 files).
+  Update: `npm run build:web` (FFROGUE_PYTHON = a python with soundfile), then
+  `npx.cmd wrangler pages deploy dist --project-name ffrogue --branch main` (only changed files upload).
+  Do not run `wrangler pages project create` again (wrangler 4.160 tries to convert the repo to Workers and edits
+  package.json; the project exists). Deploy only on the developer's go; live smoke test passed.
 
 ## Cloud night 2026-11-10 (docs/cloud-night-brief.md)
 
