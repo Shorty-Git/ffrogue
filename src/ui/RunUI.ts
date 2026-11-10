@@ -217,7 +217,9 @@ export class RunUI{
   };
   const grid=this.root.querySelector<HTMLElement>('.hero-grid')!;
   const pick=(event:Event)=>{const t=(event.target as HTMLElement).closest<HTMLElement>('.hero-tile');if(t?.dataset.hero)select(t.dataset.hero);};
-  grid.addEventListener('pointerover',pick);grid.addEventListener('focusin',pick);grid.addEventListener('click',pick);
+  // Click (or keyboard focus) selects; hover no longer does: the panel's height changes with the hero and
+  // moved the grid under a resting pointer, which re-selected in a loop (2026-11-11).
+  grid.addEventListener('click',pick);grid.addEventListener('focusin',event=>{if((event.target as HTMLElement).matches?.(':focus-visible'))pick(event);});
   const first=keys.find(k=>unlocked.has(k));if(first)select(first);
  }
  private heroAnimation?:()=>void;

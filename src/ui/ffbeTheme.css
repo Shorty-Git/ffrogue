@@ -204,7 +204,7 @@
 .heroes-layout{display:grid;grid-template-columns:1fr 0fr;gap:0;align-items:start;transition:grid-template-columns .4s cubic-bezier(.2,.8,.2,1),gap .4s}
 .heroes-layout.has-detail{grid-template-columns:1fr minmax(300px,360px);gap:18px}
 .heroes-layout .hero-grid{min-width:0}
-.hero-detail{min-width:0;overflow:hidden;opacity:0;transform:translateX(24px);transition:opacity .35s .1s,transform .4s cubic-bezier(.2,.8,.2,1);padding:16px 18px;text-align:left;position:sticky;top:12px;height:auto;max-height:calc(100vh - 40px);overflow-y:auto;scrollbar-width:thin}
+.hero-detail{min-width:0;overflow:hidden;opacity:0;transform:translateX(24px);transition:opacity .35s .1s,transform .4s cubic-bezier(.2,.8,.2,1);padding:16px 18px;text-align:left;position:static;height:auto}
 .has-detail .hero-detail{opacity:1;transform:none}
 .hero-detail h2{margin:4px 0 0;font:600 1.5rem/1.15 var(--rpg-display,Georgia,serif);letter-spacing:.04em}
 .hero-origin{margin:2px 0 12px;color:#9fc0de;font-size:.85rem}
