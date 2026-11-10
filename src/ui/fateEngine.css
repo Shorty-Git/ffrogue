@@ -116,3 +116,6 @@
 .summon-hero .hero-unlock{border-color:var(--tier);box-shadow:0 0 18px var(--tier-glow)}
 .summon-rank{margin:.2em 0 0;text-align:center;color:var(--tier);font-weight:700;letter-spacing:.04em}
 @media (prefers-reduced-motion:reduce){.case-tile.is-landed,.summon-result{animation:none}}
+
+/* No visible skip buttons (2026-11-11): every animation is short. */
+#run-ui [data-action=lever-skip]{display:none!important}

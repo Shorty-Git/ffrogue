@@ -28,6 +28,8 @@ export class EncounterTransition {
     this.root.setAttribute('aria-label', 'Entering battle');
     this.skipButton.className = 'rpg-button secondary';
     this.skipButton.textContent = 'Skip transition';
+    // Transitions take about a second; the developer asked for no visible skip buttons (2026-11-11).
+    this.skipButton.style.display = 'none';
     this.skipButton.onclick = () => this.skip();
     this.ui.inert = true;
     this.root.append(this.canvas, this.skipButton);

@@ -23,5 +23,5 @@ export interface PreparedSceneBridge {
   snapshot():{active:boolean;key:string|null;frame:number|null;quality:'experimental-preview';errors:string[];limitations:string[];variants:number;host:PreparedSceneHost|null;layers:Record<string,unknown[]>|null};
 }
 export function casterStrikeOffset(plan:unknown,casterUnit:PreparedSceneHost['casterUnit']):{x:number;y:number}|null;
-export function createPreparedSceneBridge(scene:Phaser.Scene,manifests:PreparedSceneManifest[]):PreparedSceneBridge;
+export function createPreparedSceneBridge(scene:Phaser.Scene,manifests:PreparedSceneManifest[],options?:{canWarm?:()=>boolean}):PreparedSceneBridge;
 export function scenePresentationMembers(plan:{presentation:{scope:string};members:Record<string,unknown>[]},keys:string[]):Record<string,unknown>[];

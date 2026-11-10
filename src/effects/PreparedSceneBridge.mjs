@@ -93,7 +93,8 @@ export function applyOriginalDrawOrder(layerScene, player, plan, members) {
 }
 
 /** Same prepared player as the research view, drawn directly into Phaser's framebuffer. */
-export function createPreparedSceneBridge(scene, manifests) {
+/** options.canWarm: () => boolean gates the idle warm-up (e.g. only while the player picks commands). */
+export function createPreparedSceneBridge(scene, manifests, options = {}) {
   const THREE = globalThis.THREE, phaser = scene.game.renderer;
   if (!THREE || !phaser.gl) throw Error('Prepared scene playback requires the bundled Three runtime and Phaser WebGL');
   const renderer = new THREE.WebGLRenderer({canvas:scene.game.canvas, context:phaser.gl,
@@ -103,7 +104,12 @@ export function createPreparedSceneBridge(scene, manifests) {
     scene.scale.height/2,-scene.scale.height/2,.1,5000);
   camera.position.z = 1000;
   const variants = new Map(), errors = [], externs = [], warmQueue = [];
-  let active = null, disposed = false, paused = false;
+  let active = null, disposed = false, paused = false, warmFrame = 0;
+  // Warm-ups compile shaders and upload textures synchronously (three r130 has no compileAsync) and can
+  // cost up to ~600 ms each. They are spread out, and the host allows them only while its transition
+  // veil covers the screen (BattleScene canWarm); variants not warmed by then compile on first play.
+  const WARM_EVERY_FRAMES = 8;
+  const mayWarm = () => warmQueue.length && ++warmFrame % WARM_EVERY_FRAMES === 0 && (options.canWarm?.() ?? true);
   const update = (_time, delta) => {
     if (!active || paused) return;
     active.elapsed += delta * scene.time.timeScale;
@@ -137,7 +143,7 @@ export function createPreparedSceneBridge(scene, manifests) {
       if (disposed) return;
       // Idle frames warm one prepared variant each (shader compile, texture upload), so a skill's first
       // frame does not stall (Squall's Flame Barret spiked to 250 ms on its first play).
-      if (!active && !(name === 'back' && warmQueue.length)) return;
+      if (!active && !(name === 'back' && mayWarm())) return;
       const gl = phaser.gl, previous = {framebuffer:gl.getParameter(gl.FRAMEBUFFER_BINDING),
         viewport:gl.getParameter(gl.VIEWPORT),scissor:gl.getParameter(gl.SCISSOR_BOX),
         scissorTest:gl.isEnabled(gl.SCISSOR_TEST)};

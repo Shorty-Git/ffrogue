@@ -51,6 +51,8 @@ type PlannedAction = ({ kind: 'attack'; config: UnitCombatConfig } | { kind: 'sk
   & { target: TargetDummy | null };
 /** Beat after an enemy skill's last hit before the next enemy acts (the scene tail keeps fading). */
 const ENEMY_SKILL_SETTLE_MS = 400;
+/** Beat between the last enemy fading and the reward choice (victory clips continue underneath). */
+const VICTORY_REWARD_DELAY_MS = 500;
 /** Chance that a blinded hero's basic-attack hit misses (reviewed FFRogue value). */
 
 export class BattleScene extends Phaser.Scene {
@@ -175,7 +177,7 @@ export class BattleScene extends Phaser.Scene {
       for(const key of new Set(this.currentEncounter().enemies.map(e=>e.key)))
         JSON.stringify([ENEMY_CONTENT[key],ENEMY_SKILLS[key]],(field,value)=>{if(field==='presentation'&&typeof value==='string')needed.add(value);return value;});
       const prepared = (registry.scenePresentations ?? []).filter(key=>needed.has(key)).map(key => validateSceneManifest(this.cache.json.get(`scene_${key}_manifest`)));
-      if (prepared.length && this.game.renderer.type === Phaser.WEBGL) this.preparedScenes = createPreparedSceneBridge(this, prepared);
+      if (prepared.length && this.game.renderer.type === Phaser.WEBGL) this.preparedScenes = createPreparedSceneBridge(this, prepared, {canWarm:()=>!!document.querySelector('.encounter-transition[data-phase="loading"]')});
       else if (this.game.renderer.type !== Phaser.WEBGL) this.sourceVisualError = 'Source skills require WebGL and published presentations';
     } catch (error) { this.sourceVisualError = String(error); }
 
@@ -302,9 +304,9 @@ export class BattleScene extends Phaser.Scene {
     if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
     const camera=this.cameras.main;
     camera.setZoom(1.09);camera.setScroll(-this.scale.width*.035,this.scale.height*.012);
-    this.tweens.add({targets:camera,zoom:1,scrollX:0,scrollY:0,duration:1150,ease:'Cubic.easeOut'});
+    this.tweens.add({targets:camera,zoom:1,scrollX:0,scrollY:0,duration:700,ease:'Cubic.easeOut'});
     document.body.dataset.battleEntrance='';
-    this.time.delayedCall(1700,()=>delete document.body.dataset.battleEntrance);
+    this.time.delayedCall(1000,()=>delete document.body.dataset.battleEntrance);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN,()=>delete document.body.dataset.battleEntrance);
   }
   private finishRunEncounter(won:boolean):void{
@@ -326,6 +328,9 @@ export class BattleScene extends Phaser.Scene {
     const living=this.turnOrder.filter(h=>!h.isDead);let remaining=living.length;
     const ready=()=>{if(this.runVictoryStage!=='celebrating')return;this.runVictoryStage='rewards';this.runContext.rewardsReady();};
     if(!remaining){ready();return;}
+    // The reward choice opens over the celebration after a short beat instead of waiting for every
+    // victory clip to finish (that took ~2.8 s per fight); the clips keep playing underneath.
+    this.time?.delayedCall(VICTORY_REWARD_DELAY_MS,ready);
     living.forEach(hero=>hero.playVictoryCycle(()=>{remaining--;if(!remaining)ready();}));
   }
 

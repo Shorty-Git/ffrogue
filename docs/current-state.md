@@ -11,6 +11,18 @@ Last consolidated: 2026-11-07; newest section: cloud night 2026-11-10.
   drift/shake curves are replaced by the coverage, as for backdrop Quads). Delita's Hallowed Bolt showed
   its speed-line background as a box. Dry run: 54 nodes in 30 scenes, textures only tornado_001 (speed
   lines), white, deffuse_aura_011, deff_mothercrystal_001; all 30 republished. Test in test_scene_flashes.py.
+- Weapons: original icons via the DB icon table (977 of 1002, public/assets/items/icons); 27 signature
+  weapons from the heroes' trust rewards (TMR/STMR), shared by every variant of the character
+  (canonicalIdentity). A signature weapon gives its own hero SIGNATURE_BONUS (+10 % attack/magic) and is
+  offered from the second area on (one weapon hash in three, weight x3); gold-framed card "SIGNATURE WEAPON".
+- Reward cards: 64 px framed art, full text (no 3-line clamp), weapon icon with hero badge, element chips,
+  popup width 960. Skip buttons removed (slot machine, summon, awakening, encounter transition).
+- Pacing (measured headless): first fight playable 3.8 -> 1.7 s, victory -> rewards 2.8 -> 1.3 s (rewards
+  open 500 ms after the enemies fade, victory clips keep playing), reward -> next fight 3.4 -> 1.9 s
+  (shatter cover 980 -> 620 ms, reveal 900 -> 520 ms, entrance camera 1150 -> 700 ms).
+- Load lags: the scene warm-up of 2026-11-10 compiled up to 21 variants during the player's first turn
+  (frames up to 637 ms). It now runs only while the transition veil covers the screen; during play no
+  frame over 50 ms in the first 9 s (before: 10 frames over 100 ms).
 
 ## Cloud night 2026-11-10 (docs/cloud-night-brief.md)
 

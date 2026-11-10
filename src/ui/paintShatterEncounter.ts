@@ -3,8 +3,8 @@
  * shards that fly past the viewer with a white flash; the arena then fades up out of the dark. Geometry uses a fixed hash, so
  * every entry looks alike and nothing depends on gameplay RNG.
  */
-export const SHATTER_COVER_MS = 980;
-export const SHATTER_REVEAL_MS = 900;
+export const SHATTER_COVER_MS = 620;
+export const SHATTER_REVEAL_MS = 520;
 /** Cover progress at which the glass audibly cracks and at which the shards break loose. */
 export const SHATTER_CRACK = .1;
 export const SHATTER_BREAK = .36;

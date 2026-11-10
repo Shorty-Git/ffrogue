@@ -51,7 +51,7 @@ export class RunUI{
    paths.push(...preview.paths);
    return `<div class="awakening-form ${index?'new':'old'}" data-form="${esc(form)}">${preview.html}</div>`;
   };
-  this.show(`<div class="awakening-sequence rpg-panel"><div class="eyebrow">A NEW LIGHT AWAKENS</div><h1>${esc(this.catalog[notice.member].name)}</h1><div class="awakening-stage"><div class="awakening-halo"></div><div class="awakening-rings"></div>${Array.from({length:12},(_,i)=>`<i class="awakening-spark" style="--spark-angle:${i*30}deg;--spark-delay:${i%4*60}ms" aria-hidden="true">✦</i>`).join('')}${body(notice.from.form,0)}${body(notice.to.form,1)}</div><p class="awakening-stars" aria-label="${fromLabel} to ${toLabel}">${fromLabel} <span>→</span> <strong>${toLabel}</strong></p><p class="lead">${toLabel} original form unlocked</p></div><div class="actions">${this.button('awakening-skip','Skip animation',true)}</div>`,'awakening');
+  this.show(`<div class="awakening-sequence rpg-panel"><div class="eyebrow">A NEW LIGHT AWAKENS</div><h1>${esc(this.catalog[notice.member].name)}</h1><div class="awakening-stage"><div class="awakening-halo"></div><div class="awakening-rings"></div>${Array.from({length:12},(_,i)=>`<i class="awakening-spark" style="--spark-angle:${i*30}deg;--spark-delay:${i%4*60}ms" aria-hidden="true">✦</i>`).join('')}${body(notice.from.form,0)}${body(notice.to.form,1)}</div><p class="awakening-stars" aria-label="${fromLabel} to ${toLabel}">${fromLabel} <span>→</span> <strong>${toLabel}</strong></p><p class="lead">${toLabel} original form unlocked</p></div>`,'awakening');
   this.root.classList.add('awakening-overlay');
   if(anchor){const width=Math.min(270,innerWidth-16),height=262;
    this.root.classList.add('awakening-inline');
@@ -191,7 +191,7 @@ export class RunUI{
      <span class="lever-mount"><span class="lever-caption">${exhausted?'SPENT':'PULL'}</span></span><span class="lever-arm"><span class="lever-rod"></span><span class="lever-ball"></span></span>
     </button>
    </div>
-   <div class="actions"><button class="rpg-button secondary" data-action="lever-skip" hidden>Skip animation</button>${hasTeam?this.button('confirm','Set out',false,busy):''}${busy?this.button('skip','Skip animation',true):this.button('menu','Back to title',true)}</div>
+   <div class="actions"><button class="rpg-button secondary" data-action="lever-skip" hidden>Skip animation</button>${hasTeam?this.button('confirm','Set out',false,busy):''}${busy?'':this.button('menu','Back to title',true)}</div>
    ${/* Always reserve the panel so the centred layout never jumps while the reels run. */''}${hasTeam&&!busy?run.party.filter(m=>choices[m.key]?.length).map(m=>`<div class="rpg-panel bond-choice"><span class="eyebrow">BOND · ${esc(this.catalog[m.key].name)}'S STARTING SKILL</span><div class="bond-skills">${choices[m.key].map((s,i)=>`<button type="button" class="rpg-button ${m.skills[0]?.id===s.id?'':'secondary'}" data-action="start-skill-${m.key}-${i}" aria-pressed="${m.skills[0]?.id===s.id}">${esc(s.name)}</button>`).join('')}</div></div>`).join(''):''}<details class="rpg-panel slot-details" ${hasTeam&&!busy?'':'inert style="visibility:hidden"'}><summary>Starting skills & effects</summary>${hasTeam&&!busy?run.party.map(m=>this.member(m)).join(''):''}</details>
    ${run.rules?.awakeningMode==='highest-reviewed'?'<p class="muted">Prototype awakening: highest reviewed original form.</p>':''}`,'setup');
  }
@@ -240,7 +240,7 @@ export class RunUI{
   const TILES=46,WINNER=40,tiles=Array.from({length:TILES},(_,i)=>i===WINNER?key:randomKey());
   const tier=tierOf(key),start=levelOf(this.catalog[key]);
   const tile=(k:string,i:number)=>`<li class="case-tile tier-${tierOf(k)}" ${i===WINNER?'data-winner':''}><img src="${esc(this.catalog[k].portrait)}" alt="" draggable="false"></li>`;
-  this.show(`<div class="summon-case"><div class="eyebrow">FATE ENGINE</div><h1>SUMMONING…</h1><div class="case-window"><ol class="case-strip">${tiles.map(tile).join('')}</ol><span class="case-marker" aria-hidden="true"></span></div>${this.button('summon-skip','Skip',true)}</div>
+  this.show(`<div class="summon-case"><div class="eyebrow">FATE ENGINE</div><h1>SUMMONING…</h1><div class="case-window"><ol class="case-strip">${tiles.map(tile).join('')}</ol><span class="case-marker" aria-hidden="true"></span></div></div>
    <div class="summon-result" hidden>${this.title('FATE ENGINE',bond||refund?'A BOND DEEPENS':'A HERO ANSWERS',text)}<div class="summon-hero tier-${tier}">${this.heroCard(key,bond||refund?`BOND ${bond}`:'NEW HERO')}<p class="summon-rank">${esc(rankLabel(this.catalog[key]))} base · starts at ${levelLabel(start)} or higher</p></div><p class="muted">◆ ${crystals} crystals left</p>${this.button('close','Return to title')}</div>`,'result');
   const strip=this.root.querySelector<HTMLElement>('.case-strip')!,windowEl=this.root.querySelector<HTMLElement>('.case-window')!;
   const winner=strip.querySelector<HTMLElement>('[data-winner]')!;

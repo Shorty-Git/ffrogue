@@ -48,8 +48,9 @@ function test(name, run) {
   console.log(`PASS ${name}`);
 }
 
-test('run victory persists once, waits for VFX and defeat fade, then every actual celebration cycle',()=>{
- const scene=new BattleScene(),calls=[],ready=[];let active=true;
+test('run victory persists once, waits for VFX and defeat fade, then opens rewards after a beat or the clips, once',()=>{
+ const scene=new BattleScene(),calls=[],ready=[],timers=[];let active=true;
+ scene.time={delayedCall:(_ms,cb)=>{timers.push(cb);return {remove(){}};}};
  scene.turnOrder=[{isDead:false,playVictoryCycle(cb){calls.push('clip-a');ready.push(cb);}},{isDead:false,playVictoryCycle(cb){calls.push('clip-b');ready.push(cb);}}];
  scene.activeSkillActions=1;scene.pendingImpacts=0;scene.enemies=[{visible:true}];
  scene.preparedScenes={snapshot:()=>({active}),stop(){throw Error('VFX must finish naturally');}};
@@ -59,6 +60,13 @@ test('run victory persists once, waits for VFX and defeat fade, then every actua
  scene.pendingImpacts=0;scene.advanceRunVictory();scene.advanceRunVictory();assert.deepEqual(calls,['persist']);
  active=false;scene.advanceRunVictory();assert.deepEqual(calls,['persist']);scene.enemies[0].visible=false;scene.advanceRunVictory();assert.deepEqual(calls,['persist','clip-a','clip-b']);
  ready[0]();assert.ok(!calls.includes('overlay'));ready[1]();scene.advanceRunVictory();assert.deepEqual(calls,['persist','clip-a','clip-b','overlay']);
+ timers.forEach(cb=>cb());assert.deepEqual(calls,['persist','clip-a','clip-b','overlay'],'the beat timer cannot open rewards twice');
+ // The beat alone opens the rewards while the clips keep playing (2026-11-11: no wait for every clip).
+ const quick=new BattleScene(),log=[],beat=[];
+ quick.time={delayedCall:(_ms,cb)=>{beat.push(cb);return {remove(){}};}};
+ quick.turnOrder=[{isDead:false,playVictoryCycle(){log.push('clip');}}];quick.activeSkillActions=0;quick.pendingImpacts=0;quick.enemies=[{visible:false}];
+ quick.preparedScenes={snapshot:()=>({active:false})};quick.runContext={settle(){log.push('persist');},rewardsReady(){log.push('overlay');}};
+ quick.finishRunEncounter(true);quick.advanceRunVictory();assert.deepEqual(log,['persist','clip']);beat.forEach(cb=>cb());assert.deepEqual(log,['persist','clip','overlay']);
 });
 
 test('restored saved rewards replay celebration without generating or charging rewards again',()=>{
