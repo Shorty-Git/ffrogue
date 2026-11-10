@@ -22,8 +22,6 @@ import {validateActionChoreography,actionTravel} from '../effects/actionChoreogr
 import type {RunBattleContext} from '../run/battleContext';
 import {nextRandom,skillForRun,memberMaxMp,encounters,ENCOUNTER_LABELS} from '../run/runState.mjs';
 import {skillDescription} from '../run/catalog';
-import {RPG,rpgHex,RPG_FONT} from '../ui/designTokens';
-import {rpgPanel} from '../ui/rpgPanel';
 import {runEncounter} from '../run/runBalance.mjs';
 import {ENEMY_CONTENT,enemyAction,type EnemyAction} from '../run/stageContent.mjs';
 import {ENEMY_SKILLS} from '../run/enemySkills.mjs';
@@ -447,7 +445,7 @@ export class BattleScene extends Phaser.Scene {
       // Statuses show as icon badges; the text line keeps the boss intent only.
       const status=intent?[intent.name,intent.next,intent.phase].filter(Boolean).join(' · '):'';
       const selectable=this.combatState==='PLAYER_TURN'&&scope!=='single_ally';
-      return [{id,name:enemy.nameTag,hp:enemy.currentHp,maxHp:enemy.maxHp,boss:enemy.isBoss,status,selectable,
+      return [{id,name:enemy.nameTag,hp:enemy.currentHp,maxHp:enemy.maxHp,boss:enemy.isBoss,rank:enemy.isBoss?(this.currentEncounter().kind==='elite'?'Elite':'Boss'):undefined,status,selectable,
         statuses:enemyStatusBadges(enemy.statusEffects),affinity:enemyAffinities(enemy.assetKey),
         targeted:selectable&&enemy===this.currentTarget,marked:this.ribbonMarks.includes(enemy),...placement(enemy.sprite)}];
     });
@@ -687,23 +685,11 @@ export class BattleScene extends Phaser.Scene {
           if (firstAlive) {
             this.setTarget(firstAlive);
           }
-          if(cfg.isBoss&&onComplete)this.announceBoss(cfg.nameTag,onComplete);
-          else if (onComplete) onComplete();
+          // No intro card (2026-11-11): the HP plate names elites and bosses.
+          onComplete?.();
         }
       });
     });
-  }
-
-  /** Skippable presentation only; actual spawn completion remains the input barrier. */
-  private announceBoss(name:string,onComplete:()=>void):void{
-    const profile=this.currentEncounter(),root=this.add.container(this.scale.width/2,290).setDepth(2600);
-    root.add([rpgPanel(this,0,0,700,128),this.add.text(0,-38,profile.theme,{fontFamily:RPG_FONT,fontSize:'19px',color:rpgHex(RPG.muted)}).setOrigin(.5,0),
-      this.add.text(0,-10,name.toUpperCase(),{fontFamily:RPG_FONT,fontSize:'34px',fontStyle:'bold',color:rpgHex(RPG.gold)}).setOrigin(.5,0),
-      this.add.text(0,35,`${profile.kind==='elite'?'ELITE':'BOSS'} ENCOUNTER · Tap to begin`,{fontFamily:RPG_FONT,fontSize:'17px',color:rpgHex(RPG.ink)}).setOrigin(.5,0)]);
-    let complete=false;let tween:Phaser.Tweens.Tween|undefined;
-    const finish=()=>{if(complete)return;complete=true;tween?.stop();root.destroy();onComplete();};
-    root.setSize(700,128).setInteractive().once('pointerdown',finish);
-    tween=this.tweens.add({targets:root,alpha:0,delay:window.matchMedia('(prefers-reduced-motion: reduce)').matches?0:650,duration:180,onComplete:finish});
   }
 
   /**

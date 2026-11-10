@@ -65,6 +65,11 @@ Last consolidated: 2026-11-07; newest section: cloud night 2026-11-10.
     (single moves hit one hero, -ga moves the party), stage content tests.
   - Import order note: import_stage.mjs regenerates all stage recipes, so a second new recipe in
     tools/stages must have its arena prepared (run its import) before the first one's final step succeeds.
+- No encounter intro card any more ("ELITE ENCOUNTER · Tap to begin" waited for a click over the arena):
+  the enemy HP plate carries an ELITE (gold) or BOSS (red) tag instead.
+- New hero reveal (run result "A new hero answers the call" and the Summon): the card shows the full idle body
+  animated on its original frame timings, first as a glowing black silhouette with ???, then a light burst,
+  colour and the name (RunUI.heroCard + revealHeroes; Bond duplicates are shown at once).
 - Web (alpha) build: `npm run build:web` = normal build + `tools/web_audio.py dist` (music WAVs > 1 MB ->
   Ogg Vorbis q0.6, frame count checked, references in the built JS rewritten; public/ keeps the WAVs).
   Python needs `soundfile` (set FFROGUE_PYTHON if the PATH python lacks it). Result 2026-11-11: dist 1.2 GB,

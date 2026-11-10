@@ -273,8 +273,26 @@ export class RunUI{
   <div class="swap-grid">${m.skills.map((s,i)=>{const a=skillForRun(c.skills.find(x=>x.id===s.id)!,m);return `<button class="rpg-panel swap-card" data-action="replace-${i}"><span class="eyebrow">FORGET</span><h2>${skillIcon(a)}${esc(a.name)}${s.level>1?' +'+(s.level-1):''}</h2><p>${esc(skillDescription(a))}</p>${s.level>1?'<small>Its rank bonus is lost.</small>':''}<span class="card-choose">FORGET →</span></button>`;}).join('')}</div>
   <div class="actions">${this.button('cancel','Keep current skills',true)}</div>`,'replacement');}
  party(run:RunState){this.show(`${this.title('EXPEDITION PARTY','YOUR COMPANIONS',`Seed ${run.seed} · your companions for this journey`)}<div class="party-grid">${run.party.map(m=>this.member(m)).join('')}</div>${this.button('close','Return to battle')}`,'party');}
- result(run:RunState,earned?:{crystals:number;unlocked:string|null}){this.show(`${this.title(run.phase==='won'?'EXPEDITION COMPLETE':'THE CRYSTAL FALLS',run.phase==='won'?'A NEW LEGEND':'ANOTHER DAWN',run.phase==='won'?'Your companions endured the rift. Their journey is complete.':'The expedition has ended. A new seed begins a fresh story.')}<div class="party-grid">${run.party.map(m=>this.member(m)).join('')}</div><p class="muted">Seed ${esc(run.seed)} · ${run.history.filter((h:any)=>h.kind==='reward').length} rewards chosen</p>${earned?`<p class="profile-line"><span>+${earned.crystals} ◆ crystals</span></p>${earned.unlocked?this.heroCard(earned.unlocked,'A NEW HERO ANSWERS THE CALL'):''}`:''}${this.button('new','Return to title')}`,'result');}
- heroCard(key:string,label:string){const c=this.catalog[key];return `<article class="rpg-panel hero-unlock"><span class="eyebrow">${esc(label)}</span><span class="portrait-frame"><img class="portrait" src="${esc(c.portrait)}" alt="${esc(c.name)}"></span><strong>${esc(c.name)}</strong></article>`;}
+ result(run:RunState,earned?:{crystals:number;unlocked:string|null}){this.show(`${this.title(run.phase==='won'?'EXPEDITION COMPLETE':'THE CRYSTAL FALLS',run.phase==='won'?'A NEW LEGEND':'ANOTHER DAWN',run.phase==='won'?'Your companions endured the rift. Their journey is complete.':'The expedition has ended. A new seed begins a fresh story.')}<div class="party-grid">${run.party.map(m=>this.member(m)).join('')}</div><p class="muted">Seed ${esc(run.seed)} · ${run.history.filter((h:any)=>h.kind==='reward').length} rewards chosen</p>${earned?`<p class="profile-line"><span>+${earned.crystals} ◆ crystals</span></p>${earned.unlocked?this.heroCard(earned.unlocked,'A NEW HERO ANSWERS THE CALL'):''}`:''}${this.button('new','Return to title')}`,'result');this.revealHeroes(1100);}
+ /** New hero card (2026-11-11): the full animated idle body, veiled as a glowing silhouette until
+  * revealHeroes() lifts the veil with a burst and the name. */
+ heroCard(key:string,label:string){const c=this.catalog[key],a=this.manifests[key].animations.idle;
+  const scale=Math.min(2,170/a.frameWidth,170/a.frameHeight);
+  const preview=bodyPreview('/assets/units/'+key,a,'pixel-sprite hero-unlock-sprite',`width:${a.frameWidth*scale}px;height:${a.frameHeight*scale}px;background-size:${a.frameWidth*a.frameCount*scale}px ${a.frameHeight*scale}px;background-position:${-a.frames[0].index*a.frameWidth*scale}px 0`);
+  return `<article class="rpg-panel hero-unlock is-veiled" data-unlock="${esc(key)}" data-scale="${scale}"><span class="eyebrow">${esc(label)}</span><div class="hero-unlock-stage"><span class="hero-unlock-burst" aria-hidden="true"></span>${preview.html}</div><strong aria-live="polite"><span class="unlock-unknown">???</span><span class="unlock-name">${esc(c.name)}</span></strong></article>`;}
+ /** Animates every veiled hero card on its original idle timings and reveals it after delayMs. */
+ revealHeroes(delayMs:number){
+  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches,timers:number[]=[];
+  for(const card of Array.from(this.root.querySelectorAll<HTMLElement>('.hero-unlock[data-unlock]'))){
+   const a=this.manifests[card.dataset.unlock!].animations.idle,scale=Number(card.dataset.scale);
+   const layers=Array.from(card.querySelectorAll<HTMLElement>('.hero-unlock-sprite,.hero-unlock-sprite .body-emission'));
+   let frame=0;
+   const step=()=>{const f=a.frames[frame%a.frames.length];layers.forEach(l=>l.style.backgroundPosition=`${-f.index*a.frameWidth*scale}px 0`);frame++;timers.push(window.setTimeout(step,Math.max(30,f.durationMs)));};
+   if(a.frames.length>1&&!reduced)step();
+   timers.push(window.setTimeout(()=>{card.classList.remove('is-veiled');card.classList.add('is-revealed');this.onSound('confirm');},reduced?0:delayMs));
+  }
+  const previous=this.heroAnimation;this.heroAnimation=()=>{previous?.();timers.forEach(clearTimeout);};
+ }
  /**
   * Summon roulette (case style): a strip of hero heads, drawn with the real summon weights and edged in
   * their Fate Engine tier colour, slows down under the marker and stops on the summoned hero. The hero is
@@ -300,7 +318,9 @@ export class RunUI{
   const timers:number[]=[];
   this.slotAudioCleanup=()=>{cancelAnimationFrame(frame);timers.forEach(clearTimeout);};
   const reveal=()=>{const result=this.root.querySelector<HTMLElement>('.summon-result');if(!result)return;
-   this.root.querySelector('.summon-case')?.classList.add('is-done');result.hidden=false;result.querySelector<HTMLElement>('button')?.focus();};
+   this.root.querySelector('.summon-case')?.classList.add('is-done');result.hidden=false;result.querySelector<HTMLElement>('button')?.focus();
+   // A known hero (Bond) is shown at once; a new one rises from its silhouette.
+   if(bond||refund)this.root.querySelectorAll('.hero-unlock').forEach(c=>c.classList.remove('is-veiled'));this.revealHeroes(bond||refund?0:900);};
   const land=()=>{if(landed)return;landed=true;cancelAnimationFrame(frame);
    strip.style.transition='none';strip.style.transform=`translateX(${target}px)`;
    winner.classList.add('is-landed');windowEl.classList.add('tier-'+tier,'is-landed');

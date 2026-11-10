@@ -166,3 +166,6 @@ body[data-battle-entrance] .combat-ui{animation:battle-hud-rise .5s cubic-bezier
 .command-tip ul{margin:0;padding:0;list-style:none}
 .command-tip li{padding-left:1em;position:relative}
 .command-tip li::before{content:'◆';position:absolute;left:0;top:.2em;font-size:.6em;color:#e8c46a}
+/* Elite / boss tag in the enemy plate (replaces the old intro card, 2026-11-11). */
+.enemy-rank{display:inline-block;margin-right:.45em;padding:0 .4em;border-radius:3px;font:700 .72em/1.5 var(--rpg-display);font-style:normal;letter-spacing:.08em;text-transform:uppercase;vertical-align:.12em;color:#1a0f02;background:linear-gradient(#ffe7a6,#d4a23f)}
+.enemy-rank.is-boss{color:#fff;background:linear-gradient(#e0576b,#8e1d32)}

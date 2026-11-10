@@ -81,6 +81,22 @@
 .profile-line span:first-child{color:#9fe0ff}
 .hero-unlock{display:flex;flex-direction:column;align-items:center;gap:.5em;margin:.8em auto;padding:1em 1.6em;max-width:16em;text-align:center}
 .hero-unlock .portrait-frame{width:96px;font-size:14px}
+/* Unlock reveal (2026-11-11): animated full body, silhouette first, then a burst, colour and the name. */
+.hero-unlock-stage{position:relative;display:grid;place-items:end center;min-width:190px;min-height:180px;padding-bottom:10px}
+.hero-unlock-sprite{position:relative;z-index:1;image-rendering:pixelated;transition:filter .7s ease-out}
+.hero-unlock.is-veiled .hero-unlock-sprite{filter:brightness(0) drop-shadow(0 0 6px #9fd0ffdd) drop-shadow(0 0 16px #5a8fd0aa)}
+.hero-unlock.is-revealed .hero-unlock-sprite{filter:drop-shadow(0 0 10px #ffe9a866)}
+.hero-unlock-burst{position:absolute;inset:-20% -10%;border-radius:50%;opacity:0;pointer-events:none;background:radial-gradient(circle,#fffbe8 0,#ffe39acc 22%,#9fd0ff55 48%,#0000 70%)}
+.hero-unlock.is-revealed .hero-unlock-burst{animation:unlock-burst .9s ease-out}
+@keyframes unlock-burst{0%{opacity:0;transform:scale(.4)}25%{opacity:1}100%{opacity:0;transform:scale(1.35)}}
+.hero-unlock strong{display:grid}
+.hero-unlock strong>span{grid-area:1/1;transition:opacity .4s,transform .4s}
+.hero-unlock .unlock-name{opacity:0;transform:translateY(6px)}
+.hero-unlock.is-revealed .unlock-name{opacity:1;transform:none}
+.hero-unlock.is-revealed .unlock-unknown{opacity:0}
+.hero-unlock:not(.is-veiled):not(.is-revealed) .unlock-name{opacity:1;transform:none}
+.hero-unlock:not(.is-veiled):not(.is-revealed) .unlock-unknown{opacity:0}
+@media (prefers-reduced-motion:reduce){.hero-unlock-sprite,.hero-unlock strong>span{transition:none}.hero-unlock.is-revealed .hero-unlock-burst{animation:none}}
 .hero-unlock strong{font-family:var(--rpg-display);letter-spacing:.14em;font-size:1.2em}
 /* Bond 2: choose a drawn hero's starting skill before setting out. */
 .bond-choice{margin:.6em auto;padding:.6em 1em;max-width:44em;text-align:center}

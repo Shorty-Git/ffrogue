@@ -12,7 +12,7 @@ type PartyEntry = {name:string; portrait?:string; hp:number; maxHp:number; mp:nu
   /** Equipped weapon: category glyph, name, effect tooltip and elements. */ weapon?:{glyph:string;name:string;tip:string;elements:Element[]}};
 type Command = {name:string; icon:'attack'|'magic'|'ability'|'limit'; iconUrl?:string; cost:string; description:string; disabled:boolean; selected:boolean;
   /** The hero's Limit Burst; `ready` once the LB gauge is full. */ limit?:boolean; ready?:boolean};
-type ArenaActor = {id:number; name:string; hp?:number; maxHp?:number; status?:string; statuses?:StatusBadge[]; boss?:boolean; marked:boolean; selectable:boolean;
+type ArenaActor = {id:number; name:string; hp?:number; maxHp?:number; status?:string; statuses?:StatusBadge[]; boss?:boolean; rank?:string; marked:boolean; selectable:boolean;
   /** Current enemy target: drawn with the crystal target cursor. */ targeted:boolean;
   /** Original element weaknesses / resistances (enemies only). */ affinity?:{weak:Element[];resist:Element[]};
   x:number; y:number; width:number; height:number};
@@ -128,7 +128,7 @@ export class CombatHud {
       // inside their box, so it never slides under the caption.
       const inside=actor.y-actor.height/2<14;
       const plate=actor.hp===undefined?'':`<span class="arena-health ${actor.boss?'is-boss':''} ${inside?'is-inside':''}">
-        <span class="enemy-head"><strong>${escapeHtml(actor.name)}</strong><span>${number(actor.hp)} / ${number(actor.maxHp!)}</span></span>
+        <span class="enemy-head"><strong>${actor.rank?`<em class="enemy-rank is-${actor.rank.toLowerCase()}">${escapeHtml(actor.rank)}</em>`:''}${escapeHtml(actor.name)}</strong><span>${number(actor.hp)} / ${number(actor.maxHp!)}</span></span>
         ${gauge('enemy',actor.hp,actor.maxHp!,'HP',`enemy-${actor.id}`)}${statusRow(actor.statuses)}${actor.affinity&&(actor.affinity.weak.length||actor.affinity.resist.length)?`<span class="element-row">${actor.affinity.weak.length?'<em>Weak</em>'+elementChips(actor.affinity.weak,'weak'):''}${elementChips(actor.affinity.resist,'resist')}</span>`:''}${actor.status?`<small>${escapeHtml(actor.status)}</small>`:''}</span>`;
       const tip=[actor.name,actor.affinity?affinityText(actor.affinity):'',...(actor.statuses??[]).map(s=>`${s.label} (${s.turns})`),actor.status??''].filter(Boolean).join(' · ');
       return `<div class="arena-actor ${actor.marked?'is-marked':''} ${actor.targeted?'is-targeted':''}" style="${position}">${plate}${actor.targeted?TARGET_CURSOR:''}
