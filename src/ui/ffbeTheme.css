@@ -160,3 +160,24 @@
 #run-ui.awakening-inline .lead{display:none}
 #run-ui.awakening-inline .actions{margin:6px 0 0;pointer-events:auto}
 #run-ui.awakening-inline .actions .rpg-button{padding:4px 10px;min-height:0;font-size:11px}
+
+/* Reward cards (2026-11-11): bigger cards, framed 64 px art, full text, weapon icon + element chips,
+   gold frame for a hero's own signature weapon. #run-ui wins over the older card rules. */
+#run-ui .reward-card{display:flex;flex-direction:column;align-items:stretch;gap:9px;min-height:225px;padding:14px 16px 12px}
+#run-ui .reward-card .eyebrow{min-height:0;font-size:.72rem;letter-spacing:.12em}
+#run-ui .reward-head{display:flex;align-items:center;gap:12px;min-width:0}
+#run-ui .reward-head h2{grid-column:auto;grid-row:auto;margin:0;font-size:clamp(1.05rem,2.2vmin,1.3rem);line-height:1.2;overflow-wrap:anywhere}
+#run-ui .reward-card .reward-portrait{flex:none;width:64px;height:64px;padding:3px;display:grid;place-items:center;position:relative;overflow:hidden;grid-column:auto;grid-row:auto}
+#run-ui .reward-card .reward-portrait>img:first-child{width:100%;height:100%;object-fit:contain;image-rendering:pixelated}
+#run-ui .reward-card .reward-portrait .skill-badge{position:absolute;right:1px;bottom:1px;width:24px;height:24px}
+#run-ui .reward-card .reward-portrait.is-weapon{background:radial-gradient(circle at 50% 45%,#2a4f86,#0b1a33 72%)}
+#run-ui .reward-card .reward-portrait.is-weapon>img:first-child{width:52px;height:52px;image-rendering:auto}
+#run-ui .reward-card .reward-portrait .hero-badge{position:absolute;right:0;bottom:0;width:26px;height:26px;object-fit:contain;image-rendering:pixelated;background:#06152cdd;border:1px solid #c9dcef88;border-radius:3px}
+#run-ui .reward-card .weapon-glyph{font-size:30px}
+#run-ui .reward-elements{display:flex;flex-wrap:wrap;gap:6px}
+#run-ui .reward-elements .el-chip{font-size:.85rem;padding:.25em .7em}
+#run-ui .reward-card p{display:block;-webkit-line-clamp:unset;overflow:visible;font-size:.92rem;line-height:1.45;color:#d2e1f1;grid-column:auto}
+#run-ui .reward-card .card-choose{margin-top:auto}
+#run-ui .reward-card.is-signature{outline:2px solid #f0c96a;outline-offset:-2px;box-shadow:0 0 26px #f0c96aaa,inset 0 0 26px #f0c96a33;background:linear-gradient(145deg,#2a2412,#0b1a33 60%)}
+#run-ui .reward-card.is-signature .eyebrow{color:#ffe08a;text-shadow:0 0 8px #f0c96a99}
+@media(max-width:620px){#run-ui.victory-overlay .reward-grid{grid-template-columns:1fr}#run-ui .reward-card{min-height:0}}

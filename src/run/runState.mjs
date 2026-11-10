@@ -2,7 +2,7 @@
 import {STAGE_CONTENT,stageForArea,stageElementProfile} from './stageContent.mjs';
 import {ELEMENTS} from './elements.mjs';
 import {skillElements} from './elementRules.mjs';
-import {memberPower,validWeapon,weaponsForTier} from './weapons.mjs';
+import {isSignatureFor,memberPower,signatureWeaponFor,validWeapon,weaponsForTier} from './weapons.mjs';
 import {awakeningPath,formAt,formForLevel,levelOf,MAX_LEVEL} from './unitForms.mjs';
 import {carriedLimit,LB_MAX} from './limitGauge.mjs';
 export const RUN_VERSION=4;
@@ -154,9 +154,11 @@ export function upcomingStage(run){
 }
 /** Reward weights (one RNG draw per pick either way): skills whose element hits a weakness of the
  * next stage's enemies and wards against elements they use are offered more often. */
-export const REWARD_WEIGHTS={learnOnWeakness:3,ward:2,weapon:1,weaponOnWeakness:2,default:1};
+export const REWARD_WEIGHTS={learnOnWeakness:3,ward:2,weapon:1,weaponOnWeakness:2,signatureWeapon:3,default:1};
 function rewardWeight(run,catalog,reward,profile){
  if(reward.type==='ward')return REWARD_WEIGHTS.ward;
+
+ if(reward.type==='weapon'&&reward.weapon.signatureFor?.length)return REWARD_WEIGHTS.signatureWeapon;
  if(reward.type==='weapon')return reward.weapon.elements.some(e=>profile.weak.includes(e))?REWARD_WEIGHTS.weaponOnWeakness:REWARD_WEIGHTS.weapon;
  if(reward.type==='learn'){const skill=catalog[reward.member]?.skills.find(s=>s.id===reward.skill);
   if(skill&&skillElements(skill).some(e=>profile.weak.includes(e)))return REWARD_WEIGHTS.learnOnWeakness;}
@@ -190,6 +192,9 @@ export function rewardPool(run,catalog){
  for(const m of run.party){
   const candidates=weaponsForTier(next.area).filter(w=>w.id!==m.weapon?.id);if(!candidates.length)continue;
   const h=seedHash(`${run.seed}:${run.encounter}:${m.key}:weapon`),weak=candidates.filter(w=>w.elements.some(x=>profile.weak.includes(x)));
+  // From the second area on, one hash in three offers the hero's own signature weapon (if it has one).
+  const signature=signatureWeaponFor(m);
+  if(next.area>=1&&signature&&!isSignatureFor(m,m.weapon)&&(h>>>3)%3===0){pool.push({type:'weapon',member:m.key,weapon:signature});continue;}
   const list=h%2===0&&weak.length?weak:candidates;
   pool.push({type:'weapon',member:m.key,weapon:list[(h>>>1)%list.length]});
  }

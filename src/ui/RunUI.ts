@@ -2,7 +2,7 @@ import type {RunCatalog,RunMember,RunState,Reward,AwakeningNotice} from '../run/
 import {skillForRun,memberMaxMp,REVIVE_HP_SHARE,upcomingStage,encounters,AREA_CAMP} from '../run/runState.mjs';
 import {ELEMENT_LABELS,WARD_RESIST} from '../run/elementRules.mjs';
 import {elementChip,elementChips} from './elementChips';
-import {WEAPON_ELEMENT_RULE,WEAPON_GLYPHS,weaponSummary,type RunWeapon} from '../run/weapons.mjs';
+import {WEAPON_ELEMENT_RULE,WEAPON_GLYPHS,weaponSummary,isSignatureFor,type RunWeapon} from '../run/weapons.mjs';
 import {gaugeRow} from './ffbeGauge';
 import {skillIconUrl} from './skillIcons';
 const skillIcon=(skill:Parameters<typeof skillIconUrl>[0])=>{const url=skillIconUrl(skill);return url?`<img class="skill-icon" src="${esc(url)}" alt="" draggable="false">`:'';};
@@ -74,7 +74,7 @@ export class RunUI{
  overBattle(bounds:RewardStageBounds){
   this.root.classList.add('victory-overlay');this.root.setAttribute('role','dialog');this.root.setAttribute('aria-modal','true');this.root.setAttribute('aria-label','Battle rewards');
   const shell=this.root.querySelector<HTMLElement>('.rpg-shell')!;
-  this.root.style.setProperty('--reward-width',Math.min(840,window.innerWidth-24)+'px');
+  this.root.style.setProperty('--reward-width',Math.min(960,window.innerWidth-24)+'px');
   const viewport={width:window.innerWidth,height:window.innerHeight};
   const layout=rewardPopupLayout({viewport,canvas:bounds,arena:bounds.arena,party:bounds.party,panel:{width:shell.offsetWidth,height:shell.offsetHeight}});
   for(const [key,value]of Object.entries({left:layout.left,top:layout.top,width:layout.width}))this.root.style.setProperty('--reward-'+key,value+'px');
@@ -198,7 +198,9 @@ export class RunUI{
  rewardText(r:Reward,run:RunState){const m=run.party.find(m=>m.key===r.member),c=m?this.catalog[m.key]:null;
   if(r.type==='revive')return {title:'Phoenix Down',detail:`Revive ${c!.name} from K.O. with ${Math.round(REVIVE_HP_SHARE*100)}% base HP.`,tag:'REVIVAL'};
   if(r.type==='weapon'){const w=r.weapon!,old=m!.weapon;
-   return {title:w.name,detail:`${c!.name} equips this ${w.category} (${'★'.repeat(w.rarity)}): ${weaponSummary(w)||'no bonus'}.${old?` Replaces ${old.name} (${weaponSummary(old)||'no bonus'}).`:''}${w.elements.length?' '+WEAPON_ELEMENT_RULE:''}`,tag:'WEAPON'};}
+   const own=isSignatureFor(m,w);
+   return {title:w.name,detail:`${c!.name} · ${w.category} ${'★'.repeat(Math.min(w.rarity,7))}${w.rarity>7?'+':''}: ${weaponSummary(w)||'no bonus'}.${own?` ${c!.name}'s own weapon.`:''}${old?` Replaces ${old.name}.`:''}`,
+    hint:w.elements.length?WEAPON_ELEMENT_RULE:'',tag:own?'SIGNATURE WEAPON':'WEAPON'};}
   if(r.type==='ward'){const name=ELEMENT_LABELS[r.element!],stage=upcomingStage(run);
    return {title:`${name} Ward`,detail:`Party relic: every ally takes ${WARD_RESIST}% less ${name} damage for the rest of the run. ${stage.name}'s enemies attack with ${name}.`,tag:'PARTY RELIC'};}
   if(r.type==='rest')return {title:'Field Rest',detail:'Restore 40% base HP and 40% maximum MP to living allies. Does not revive.',tag:'PARTY RECOVERY'};
@@ -209,9 +211,11 @@ export class RunUI{
  }
  /** Portrait of the rewarded member; skill rewards add the skill's original icon as a badge. */
  rewardArt(r:Reward,m:RunMember){const c=this.catalog[m.key],skill=(r.type==='learn'||r.type==='skill')?c.skills.find(s=>s.id===r.skill):undefined,icon=skill&&skillIconUrl(skill);
-  const weapon=r.type==='weapon'&&r.weapon?`<span class="weapon-badge" aria-hidden="true">${WEAPON_GLYPHS[r.weapon.category]??'⚔'}</span>`:'';
-  return `<span class="reward-portrait ${icon||weapon?'has-skill':''}"><img src="${esc(c.portrait)}" alt="${esc(c.name)}">${icon?`<img class="skill-badge" src="${esc(icon)}" alt="">`:''}${weapon}</span>`;}
- rewards(run:RunState){this.show(`${this.title('VICTORY','THE SPOILS OF FATE','Choose one reward for your expedition.')}${campNote(run)?`<p class="camp-note">${esc(campNote(run)!)}</p>`:''}<div class="reward-grid">${run.offers.map((r,i)=>{const t=this.rewardText(r,run),m=run.party.find(m=>m.key===r.member);return `<article class="reward-option" style="--card-index:${i}"><button class="rpg-panel reward-card" data-action="reward-${i}" title="${esc(t.title+' — '+t.detail)}"><span class="eyebrow">${t.tag}</span>${m?this.rewardArt(r,m):r.type==='ward'?`<span class="reward-portrait crystal-icon ward-icon">${elementChip(r.element!)}</span>`:'<span class="reward-portrait crystal-icon">✦</span>'}<h2>${esc(t.title)}</h2><p>${esc(t.detail)}</p><span class="card-choose">CHOOSE →</span></button><details class="reward-details"><summary>Details</summary><div class="reward-explanation rpg-panel"><h2>${esc(t.title)}</h2><p>${esc(t.detail)}</p>${this.button('reward-info-close-'+i,'Close details',true)}</div></details></article>`;}).join('')}</div>`,'rewards');
+  // Weapons show the original FFBE icon (tools/export_weapons.mjs) with the hero as a small badge.
+  if(r.type==='weapon'&&r.weapon){const w=r.weapon;
+   return `<span class="reward-portrait is-weapon">${w.icon?`<img src="${esc(w.icon)}" alt="${esc(w.name)}">`:`<b class="weapon-glyph" aria-hidden="true">${WEAPON_GLYPHS[w.category]??'⚔'}</b>`}<img class="hero-badge" src="${esc(c.portrait)}" alt="${esc(c.name)}"></span>`;}
+  return `<span class="reward-portrait ${icon?'has-skill':''}"><img src="${esc(c.portrait)}" alt="${esc(c.name)}">${icon?`<img class="skill-badge" src="${esc(icon)}" alt="">`:''}</span>`;}
+ rewards(run:RunState){this.show(`${this.title('VICTORY','THE SPOILS OF FATE','Choose one reward for your expedition.')}${campNote(run)?`<p class="camp-note">${esc(campNote(run)!)}</p>`:''}<div class="reward-grid">${run.offers.map((r,i)=>{const t=this.rewardText(r,run),m=run.party.find(m=>m.key===r.member);return `<article class="reward-option" style="--card-index:${i}"><button class="rpg-panel reward-card kind-${r.type} ${r.type==='weapon'&&isSignatureFor(m,r.weapon)?'is-signature':''}" data-action="reward-${i}" title="${esc(t.title+' — '+t.detail+('hint' in t&&t.hint?' '+t.hint:''))}"><span class="eyebrow">${t.tag}</span><span class="reward-head">${m?this.rewardArt(r,m):r.type==='ward'?`<span class="reward-portrait crystal-icon ward-icon">${elementChip(r.element!)}</span>`:'<span class="reward-portrait crystal-icon">✦</span>'}<h2>${esc(t.title)}</h2></span>${r.type==='weapon'&&r.weapon?.elements.length?`<span class="reward-elements">${elementChips(r.weapon.elements)}</span>`:''}<p>${esc(t.detail)}</p><span class="card-choose">CHOOSE →</span></button><details class="reward-details"><summary>Details</summary><div class="reward-explanation rpg-panel"><h2>${esc(t.title)}</h2><p>${esc(t.detail)}</p>${this.button('reward-info-close-'+i,'Close details',true)}</div></details></article>`;}).join('')}</div>`,'rewards');
   for(let i=0;i<3;i++)this.on('reward-info-close-'+i,()=>{this.root.querySelectorAll<HTMLDetailsElement>('.reward-details').forEach(d=>d.open=false);});
  }
 

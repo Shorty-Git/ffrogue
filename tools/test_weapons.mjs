@@ -50,3 +50,16 @@ test('weapon offers come from the save-recomputable pool, equip once and survive
   const old = structuredClone(after); old.version = 3; for (const m of old.party) delete m.weapon;
   assert.equal(migrateRun(old, catalog).version, RUN_VERSION, 'v3 saves load');
 });
+
+test('a signature weapon belongs to every variant of its character and adds SIGNATURE_BONUS', async () => {
+  const {signatureWeaponFor, isSignatureFor, SIGNATURE_BONUS, memberPower: power} = await import('../src/run/weapons.mjs');
+  const cloud = {key: 'cloud', canonicalIdentity: 'ff7:cloud-strife', stats: {attack: 1, magic: 1}};
+  const sword = signatureWeaponFor(cloud);
+  assert.ok(sword && sword.icon && sword.signatureFor.includes('ff7:cloud-strife'), 'Cloud has a signature weapon with an icon');
+  assert.equal(isSignatureFor(cloud, sword), true);
+  assert.equal(isSignatureFor({canonicalIdentity: 'ff8:squall-leonhart'}, sword), false);
+  const armed = {...cloud, weapon: sword};
+  assert.ok(Math.abs(power(armed, 'attack') - (1 + sword.attack + SIGNATURE_BONUS)) < 1e-9);
+  assert.ok(Math.abs(power({...armed, canonicalIdentity: 'ff8:squall-leonhart'}, 'attack') - (1 + sword.attack)) < 1e-9);
+  assert.ok(validWeapon(sword));
+});
