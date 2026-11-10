@@ -111,7 +111,10 @@ export class CombatHud {
 
     const actors=state.actors.map(actor=>{
       const position=`left:${actor.x}%;top:${actor.y}%;width:${actor.width}%;height:${actor.height}%`;
-      const plate=actor.hp===undefined?'':`<span class="arena-health ${actor.boss?'is-boss':''}">
+      // Bodies whose frame reaches the top of the arena (Ghirofelgo hangs from the ceiling) keep the plate
+      // inside their box, so it never slides under the caption.
+      const inside=actor.y-actor.height/2<14;
+      const plate=actor.hp===undefined?'':`<span class="arena-health ${actor.boss?'is-boss':''} ${inside?'is-inside':''}">
         <span class="enemy-head"><strong>${escapeHtml(actor.name)}</strong><span>${number(actor.hp)} / ${number(actor.maxHp!)}</span></span>
         ${gauge('enemy',actor.hp,actor.maxHp!,'HP',`enemy-${actor.id}`)}${statusRow(actor.statuses)}${actor.affinity&&(actor.affinity.weak.length||actor.affinity.resist.length)?`<span class="element-row">${actor.affinity.weak.length?'<em>Weak</em>'+elementChips(actor.affinity.weak,'weak'):''}${elementChips(actor.affinity.resist,'resist')}</span>`:''}${actor.status?`<small>${escapeHtml(actor.status)}</small>`:''}</span>`;
       const tip=[actor.name,actor.affinity?affinityText(actor.affinity):'',...(actor.statuses??[]).map(s=>`${s.label} (${s.turns})`),actor.status??''].filter(Boolean).join(' · ');

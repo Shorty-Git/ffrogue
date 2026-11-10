@@ -138,6 +138,21 @@ data or pin hashes of local-only files; no new failures), `npx tsc --noEmit -p .
 - Screenshots (outside git): title, heroes (900 and 375 wide), battle HUD 375 wide, awakening banner,
   slot machine. Mobile: the HUD weapon marker hides below 600 px so names stay readable.
 
+### 7. Battle placement across all arenas
+- Review: headless screenshots of all 8 arenas (normal pair + closing fight, outside git). Findings: in every
+  two-enemy formation the top and bottom slots shared x 0.32 and were only ~137 px apart, so a tall front
+  body hid the back enemy (Altissia: Magitek Axeman covered Magitek Infantry completely) and the name plates
+  overlapped; in Altissia the enemies stood over the tidal wave instead of the stone quay; Nibelheim's
+  Ghirofelgo hangs from the ceiling, so its plate slid under the caption.
+- One layout for all arenas (`src/ui/battleLayout.ts`): staggered enemy pair, back (top) x 0.32 -> 0.23 /
+  y 0.16 -> 0.14, front (bottom) x 0.32 -> 0.38; centre and party unchanged. Per-arena override only where
+  needed: `enemyShiftX` (Altissia 0.18, in `src/data/battleArenas.ts`). Name plates of bodies reaching the
+  top of the arena stay inside their box (`.arena-health.is-inside`).
+- Distances: melee approach is relative to the target (`targetOffsetX`), so it follows the new slots; the
+  regression test over all arenas passes, and a browser check of a basic attack on Altissia's front enemy
+  landed (3100 -> ~2700 HP). Limit Burst clamping (`approachX`) is unchanged; a Limit Burst in Altissia was
+  not captured on screen in the cloud check (not verified visually).
+
 ## Product state
 
 - Playable PC roguelike prototype: title → slot-machine team draw (3 heroes, rerolls) →

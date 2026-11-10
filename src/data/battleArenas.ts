@@ -11,6 +11,9 @@ export const BATTLE_ARENAS = {
     width: 960, height: 1024, floorTop: 0.54, floorBottom: 0.76,
   },
   ...reviewed,
+  // Per-arena placement override (2026-11-10 review of all arenas): Altissia's walkable ground is the stone
+  // quay right of centre; the default enemy slots stood over the tidal wave.
+  altissia: { ...reviewed.altissia, enemyShiftX: 0.18 },
 } as const;
 
 export type BattleArenaKey = keyof typeof BATTLE_ARENAS;
