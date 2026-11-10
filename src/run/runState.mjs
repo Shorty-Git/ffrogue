@@ -12,13 +12,18 @@ export const REVIVE_HP_SHARE=.5;
 export const PROTOTYPE_AREAS=Object.values(STAGE_CONTENT).map(s=>({stageId:s.id,name:s.name,arena:s.arena,normals:s.normalFights}));
 export const FULL_AREAS=[{name:'Whisperwood',arena:'forest',normals:5},{name:'Mako Outskirts',arena:'reactor',normals:5},{name:'Final Rift',arena:'forest',normals:5}];
 export function seedHash(value){let h=2166136261;for(const c of String(value)){h^=c.charCodeAt(0);h=Math.imul(h,16777619);}return h>>>0;}
-/** Areas per run; the seed picks which stages and the route climbs in difficulty. */
+/** Seeded areas before the final one; the seed picks which stages and the route climbs in difficulty. */
 export const COURSE_LENGTH=2;
+/** Developer decision 2026-11-10: every run ends in the final boss room, Nibelheim (Sephiroth). */
+export const FINAL_STAGE='nibelheim';
+/** Run structure: each seeded area ends in an elite fight, the final area in the boss fight. */
 export function courseAreas(seed){
- const pool=Object.values(STAGE_CONTENT);
+ const pool=Object.values(STAGE_CONTENT).filter(s=>s.id!==FINAL_STAGE);
  const picked=[...pool].sort((a,b)=>seedHash(seed+':course:'+a.id)-seedHash(seed+':course:'+b.id)).slice(0,COURSE_LENGTH);
- return picked.sort((a,b)=>a.difficulty-b.difficulty||a.id.localeCompare(b.id))
-  .map(s=>({stageId:s.id,name:s.name,arena:s.arena,normals:s.normalFights}));
+ const final=STAGE_CONTENT[FINAL_STAGE];
+ return [...picked.sort((a,b)=>a.difficulty-b.difficulty||a.id.localeCompare(b.id))
+  .map(s=>({stageId:s.id,name:s.name,arena:s.arena,normals:s.normalFights})),
+  ...(final?[{stageId:final.id,name:final.name,arena:final.arena,normals:final.normalFights,final:true}]:[])];
 }
 export function variantAreas(seed){
  return courseAreas(seed).map(area=>{
@@ -46,7 +51,11 @@ function validFormPolicy(policy){
    &&Number.isFinite(weights.reduce((sum,w)=>sum+w,0)))
   &&['hpPerRank','mpPerRank','powerPerRank','defensePerRank'].every(key=>Number.isFinite(policy[key])&&policy[key]>=0&&policy[key]<=.2);
 }
-export function encounters(areas){return areas.flatMap((area,index)=>Array.from({length:area.normals+1},(_,wave)=>({area:index,name:area.name,arena:area.arena,boss:wave===area.normals,wave})));}
+/** `boss` marks an area's closing fight (relic rewards, single strong enemy); `kind` names it for the
+ * player: 'normal', 'elite' (closing fight of a seeded area) or 'boss' (closing fight of the final area). */
+export function encounters(areas){return areas.flatMap((area,index)=>Array.from({length:area.normals+1},(_,wave)=>{const last=wave===area.normals;
+ return {area:index,name:area.name,arena:area.arena,boss:last,kind:last?(area.final?'boss':'elite'):'normal',wave};}));}
+export const ENCOUNTER_LABELS={normal:'Battle',elite:'Elite',boss:'Boss'};
 export function createRun(seed,catalog,areas=courseAreas(seed),rules){
  areas.forEach(stageForArea);
  if(new Set(Object.values(catalog).filter(c=>c.canonicalIdentity&&c.skills.length).map(c=>c.canonicalIdentity)).size<3)throw Error('Three reviewed canonical character identities required');
@@ -158,6 +167,9 @@ function pickWeighted(run,stream,values,weight){
  for(const [i,w] of weights.entries()){roll-=w;if(roll<0)return values[i];}
  return values.at(-1);
 }
+/** Card kinds of the reward screen, in display order. */
+export const REWARD_KINDS=['skill','upgrade','weapon'];
+export function rewardKind(reward){return reward.type==='learn'||reward.type==='skill'?'skill':reward.type==='weapon'?'weapon':'upgrade';}
 export function rewardPool(run,catalog){
  const pool=[],e=encounters(run.areas)[run.encounter];
  for(const m of run.party){const c=catalog[m.key];
@@ -191,12 +203,22 @@ export function completeBattle(input,catalog,snapshot,won){
   const gauge=carriedLimit(catalog[m.key],m.hp,snapshot[i].limit);if(gauge>0)m.limit=gauge;else delete m.limit;});
  if(!won){run.phase='lost';return run;}
  run.phase='rewards';const pool=rewardPool(run,catalog),boss=encounters(run.areas)[run.encounter].boss;
- const evolution=pool.filter(r=>r.type==='evolve'),revival=pool.filter(r=>r.type==='revive');run.offers=[];
- if(boss&&evolution.length)run.offers.push(pick(run,'rewards',evolution));
- // A fallen member always has one way back: one revival offer is guaranteed while anyone is K.O.
- if(revival.length)run.offers.push(pick(run,'rewards',revival));
- const profile=stageElementProfile(upcomingStage(run));
- while(run.offers.length<3){const available=pool.filter(r=>!run.offers.some(o=>JSON.stringify(o)===JSON.stringify(r)));run.offers.push(clone(pickWeighted(run,'rewards',available,r=>rewardWeight(run,catalog,r,profile))));}
+ const evolution=pool.filter(r=>r.type==='evolve'),revival=pool.filter(r=>r.type==='revive');
+ const profile=stageElementProfile(upcomingStage(run)),weigh=r=>rewardWeight(run,catalog,r,profile);
+ // Reward mix (cloud night 2026-11-10): one card per kind, always in this order: a skill, an upgrade,
+ // a weapon. The elite relic (awakening) takes the upgrade card; a revival (guaranteed while anyone is
+ // K.O.) takes the upgrade card, or the weapon card when the relic holds it. An empty kind falls back
+ // to any remaining reward, so three cards always remain.
+ const slots=REWARD_KINDS.map(kind=>({kind,offer:null}));
+ if(boss&&evolution.length)slots[1].offer=pick(run,'rewards',evolution);
+ if(revival.length)slots[slots[1].offer?2:1].offer=pick(run,'rewards',revival);
+ const taken=()=>slots.flatMap(slot=>slot.offer?[JSON.stringify(slot.offer)]:[]);
+ for(const slot of slots){
+  if(slot.offer)continue;
+  const free=pool.filter(r=>!taken().includes(JSON.stringify(r))),own=free.filter(r=>rewardKind(r)===slot.kind);
+  slot.offer=clone(pickWeighted(run,'rewards',own.length?own:free,weigh));
+ }
+ run.offers=slots.map(slot=>slot.offer);
  return run;
 }
 export function chooseReward(input,index,catalog,replace){
@@ -267,7 +289,8 @@ export function validateRun(run,catalog){
  if(run?.version!==RUN_VERSION||typeof run.seed!=='string'||!['setup','battle','rewards','won','lost'].includes(run.phase)
   ||!Number.isInteger(run.rerolls)||run.rerolls<0||run.rerolls>3||!Array.isArray(run.party)
   ||(run.phase==='setup'?![0,3].includes(run.party.length):run.party.length!==3)
-  ||!Array.isArray(run.areas)||!run.areas.length||run.areas.length>3||run.areas.some(a=>!Number.isInteger(a.normals)||a.normals<1||a.normals>5)
+  ||!Array.isArray(run.areas)||!run.areas.length||run.areas.length>3||run.areas.some(a=>!Number.isInteger(a.normals)||a.normals<1||a.normals>5||(a.final!==undefined&&a.final!==true))
+  ||run.areas.some((a,i)=>a.final&&i!==run.areas.length-1)
   ||!Number.isInteger(run.encounter)||run.encounter<0||run.encounter>encounters(run.areas).length
   ||!Array.isArray(run.offers)||!Array.isArray(run.history)||!run.rng||['roster','skills','rewards','combat'].some(k=>!Number.isInteger(run.rng[k])||run.rng[k]<0||run.rng[k]>0xffffffff))throw Error('Invalid or incompatible run save');
  run.areas.forEach(stageForArea);

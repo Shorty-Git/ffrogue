@@ -20,7 +20,7 @@ import { BLIND_MISS_CHANCE, applyHeroBuffs, cleanseHeroDebuffs, consumeAutoReviv
 import {resolveEnemyInstant} from '../effects/enemyInstant.mjs';
 import {validateActionChoreography,actionTravel} from '../effects/actionChoreography.mjs';
 import type {RunBattleContext} from '../run/battleContext';
-import {nextRandom,skillForRun,memberMaxMp,encounters} from '../run/runState.mjs';
+import {nextRandom,skillForRun,memberMaxMp,encounters,ENCOUNTER_LABELS} from '../run/runState.mjs';
 import {skillDescription} from '../run/catalog';
 import {RPG,rpgHex,RPG_FONT} from '../ui/designTokens';
 import {rpgPanel} from '../ui/rpgPanel';
@@ -448,7 +448,7 @@ export class BattleScene extends Phaser.Scene {
     });
     const skills=hero?(this.unitSkills[hero.unitKey]??[]).slice(0,3):[];
     this.combatHud.render({
-      area:stage.title,phase:`${stage.boss?'Boss':'Battle'} ${this.fightNumber} / ${encounters(this.runContext.state.areas).length}`,pending:!!plan,
+      area:stage.title,wards:this.runContext.state.wards,phase:`${ENCOUNTER_LABELS[stage.kind??(stage.boss?'boss':'normal')]} ${this.fightNumber} / ${encounters(this.runContext.state.areas).length}`,pending:!!plan,
       message:plan?`${skill?.name??'Attack'} · ${scope==='single_ally'?'Choose an ally':'Choose an enemy'}`:
         available?`Round ${this.currentRound} · ${hero.heroName} → ${this.currentTarget?.nameTag??'no target'}`:this.statusMessage,
       actors:[...actors,...this.turnOrder.flatMap((ally,i)=>{
@@ -694,7 +694,7 @@ export class BattleScene extends Phaser.Scene {
     const profile=this.currentEncounter(),root=this.add.container(this.scale.width/2,290).setDepth(2600);
     root.add([rpgPanel(this,0,0,700,128),this.add.text(0,-38,profile.theme,{fontFamily:RPG_FONT,fontSize:'19px',color:rpgHex(RPG.muted)}).setOrigin(.5,0),
       this.add.text(0,-10,name.toUpperCase(),{fontFamily:RPG_FONT,fontSize:'34px',fontStyle:'bold',color:rpgHex(RPG.gold)}).setOrigin(.5,0),
-      this.add.text(0,35,'BOSS ENCOUNTER · Tap to begin',{fontFamily:RPG_FONT,fontSize:'17px',color:rpgHex(RPG.ink)}).setOrigin(.5,0)]);
+      this.add.text(0,35,`${profile.kind==='elite'?'ELITE':'BOSS'} ENCOUNTER · Tap to begin`,{fontFamily:RPG_FONT,fontSize:'17px',color:rpgHex(RPG.ink)}).setOrigin(.5,0)]);
     let complete=false;let tween:Phaser.Tweens.Tween|undefined;
     const finish=()=>{if(complete)return;complete=true;tween?.stop();root.destroy();onComplete();};
     root.setSize(700,128).setInteractive().once('pointerdown',finish);

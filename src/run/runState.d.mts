@@ -9,7 +9,8 @@ export interface RunMember extends RunForm{canonicalIdentity:string;key:string;
   /** FFRogue level 1–6 (unitForms.mjs MAX_LEVEL); the form is the body for it. */level:number;skills:{id:string;level:number}[];stats:{attack:number;magic:number;defense:number;hp:number;mp?:number};hp:number;mp:number;
   /** Limit gauge carried from the previous battle (1–100); absent when empty. */limit?:number;
   /** Equipped weapon (src/run/weapons.mjs), stored whole. */weapon?:import('./weapons.mjs').RunWeapon;}
-export interface AreaConfig{stageId?:string;name:string;arena:string;normals:number;}
+export interface AreaConfig{stageId?:string;name:string;arena:string;normals:number;
+  /** The final boss room (always last): its closing fight is the boss, other areas end in elites. */final?:true;}
 export interface Reward{type:'learn'|'skill'|'stat'|'evolve'|'rest'|'revive'|'ward'|'weapon';
   /** weapon: the offered weapon. */weapon?:import('./weapons.mjs').RunWeapon;
   /** ward: the element the party relic protects against. */element?:import('./elements.mjs').Element;member?:string;skill?:string;stat?:'attack'|'magic'|'defense'|'hp';form?:string;level?:number;}
@@ -24,7 +25,10 @@ export const COURSE_LENGTH:number;
 export function courseAreas(seed:string):AreaConfig[];
 export function seedHash(value:unknown):number;
 export function nextRandom(run:RunState,stream:string):number;
-export function encounters(areas:AreaConfig[]):{area:number;name:string;arena:string;boss:boolean;wave:number}[];
+export type EncounterKind='normal'|'elite'|'boss';
+export const ENCOUNTER_LABELS:Record<EncounterKind,string>;
+export const FINAL_STAGE:string;
+export function encounters(areas:AreaConfig[]):{area:number;name:string;arena:string;boss:boolean;kind:EncounterKind;wave:number}[];
 export function createRun(seed:string,catalog:RunCatalog,areas?:AreaConfig[],rules?:RunRules):RunState;
 export function migrateRun(run:unknown,catalog:RunCatalog):RunState;
 export function rollParty(run:RunState,catalog:RunCatalog):RunState;
@@ -40,3 +44,6 @@ export function validateRun(run:unknown,catalog:RunCatalog):RunState;
 export class RunStore{constructor(storage:Pick<Storage,'getItem'|'setItem'|'removeItem'>,catalog:RunCatalog);load():RunState|null;save(run:RunState):RunState;clear():void;}
 export function upcomingStage(run:RunState):import('./stageContent.mjs').StageDefinition;
 export const REWARD_WEIGHTS:{learnOnWeakness:number;ward:number;weapon:number;weaponOnWeakness:number;default:number};
+export type RewardKind='skill'|'upgrade'|'weapon';
+export const REWARD_KINDS:RewardKind[];
+export function rewardKind(reward:Reward):RewardKind;

@@ -17,7 +17,8 @@ type ArenaActor = {id:number; name:string; hp?:number; maxHp?:number; status?:st
   /** Original element weaknesses / resistances (enemies only). */ affinity?:{weak:Element[];resist:Element[]};
   x:number; y:number; width:number; height:number};
 export type CombatHudState = {
-  area:string; phase:string; message:string; pending:boolean; party:PartyEntry[]; commands:(Command|null)[]; actors:ArenaActor[];
+  area:string; phase:string; message:string;
+  /** Party ward relics (elements), shown beside the caption. */ wards?:Element[]; pending:boolean; party:PartyEntry[]; commands:(Command|null)[]; actors:ArenaActor[];
 };
 
 // Crystal arrow pointing at the target from the party side (party stands right of the enemies).
@@ -95,8 +96,7 @@ export class CombatHud {
         ${attrs(hero.target===undefined?'hero':'target',hero.target??i)} ${hero.disabled?'disabled':''} aria-pressed="${hero.active}">
       <span class="portrait-frame">${hero.portrait?`<img src="${escapeHtml(hero.portrait)}" alt="" draggable="false">`:''}</span>
       <span class="party-info">
-        <span class="party-head"><strong>${escapeHtml(hero.name)}</strong><small>${escapeHtml(hero.status)}</small></span>
-        ${hero.weapon?`<span class="party-weapon" title="${escapeHtml(hero.weapon.name+' · '+hero.weapon.tip)}"><i aria-hidden="true">${hero.weapon.glyph}</i>${escapeHtml(hero.weapon.name)}${elementChips(hero.weapon.elements)}</span>`:''}
+        <span class="party-head"><strong>${escapeHtml(hero.name)}</strong>${hero.weapon?`<span class="party-weapon" title="${escapeHtml(hero.weapon.name+' · '+hero.weapon.tip)}"><i aria-hidden="true">${hero.weapon.glyph}</i>${elementChips(hero.weapon.elements)}</span>`:''}<small>${escapeHtml(hero.status)}</small></span>
         ${statusRow(hero.statuses)}
         ${gaugeRow('hp',hero.hp,hero.maxHp,`hero-${i}-hp`)}
         ${gaugeRow('mp',hero.mp,hero.maxMp,`hero-${i}-mp`)}
@@ -120,7 +120,7 @@ export class CombatHud {
     }).join('');
 
     const shown=captureGauges(this.root);
-    this.root.innerHTML=`<div class="combat-caption"><strong>${escapeHtml(state.area)}</strong><span>${escapeHtml(state.phase)}</span></div>
+    this.root.innerHTML=`<div class="combat-caption"><strong>${escapeHtml(state.area)}</strong><span>${escapeHtml(state.phase)}</span>${state.wards?.length?`<span class="caption-wards" title="Party wards: ${escapeHtml(state.wards.join(', '))} damage taken -50%">Ward ${elementChips(state.wards)}</span>`:''}</div>
       ${actors}<div class="combat-dock"><div class="combat-party">${party}</div><div class="ribbon-commands" style="--commands:${state.commands.length}">${commands}</div>
       <div class="ribbon-prompt"><span role="status">${escapeHtml(state.message)}</span>${state.pending?`<button type="button" class="prompt-cancel" ${attrs('clear',0)}>Cancel <kbd>Esc</kbd></button>`:''}</div>
       <p class="ribbon-keys" aria-hidden="true"><kbd>1</kbd>–<kbd>${state.commands.length}</kbd> command · <kbd>←</kbd><kbd>→</kbd> target · <kbd>Esc</kbd> cancel · hover a command for details</p></div>`;

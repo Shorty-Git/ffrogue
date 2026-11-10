@@ -59,7 +59,7 @@ test('boss evolution retains identity and skills; fixed party survives all confi
  const evolved=r.party.find(m=>m.key==='cloud');assert.equal(evolved.unitId,'207000106');assert.equal(evolved.identity,'207000105');assert.deepEqual(evolved.skills,skills);assert.deepEqual(r.party.map(m=>m.key),keys);validateRun(r,catalog);
  r=acknowledgeAwakening(r,r.pendingAwakening.id);
  while(r.phase==='battle'){const p=completeBattle(r,catalog,snapshot(r),true);let at=p.offers.findIndex(o=>o.type!=='learn');r=chooseReward(p,at,catalog);}
- assert.equal(r.phase,'won');assert.equal(r.encounter,4);assert.equal(encounters(FULL_AREAS).length,18);
+ assert.equal(r.phase,'won');assert.equal(r.encounter,encounters(r.areas).length);assert.equal(r.areas.at(-1).stageId,'nibelheim');assert.deepEqual(encounters(r.areas).map(e=>e.kind),['normal','elite','normal','elite','normal','boss']);assert.equal(encounters(FULL_AREAS).length,18);
  const bad=structuredClone(r);bad.party.find(m=>m.key==='cloud').form='cloud_ac';assert.throws(()=>validateRun(bad,catalog));
 });
 test('loss ends progress and encounter difficulty depends on stage rather than reward strength',()=>{

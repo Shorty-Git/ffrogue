@@ -102,3 +102,13 @@
 .weapon-line{display:flex;align-items:center;gap:.35em;flex-wrap:wrap;margin:8px 0 0;font-size:12px;color:#c9d8ea}
 .weapon-line small{color:#e5c778;letter-spacing:1px}
 .weapon-glyph{color:#e9d293}
+/* Skill swap (reward with three skills): the new skill on top, the three current skills to forget below. */
+.swap-new{display:grid;gap:4px;padding:10px 14px;margin:0 5px 10px;border-color:#e9d293}
+.swap-new h2,.swap-card h2{display:flex;align-items:center;gap:.4em;margin:0;font:600 clamp(.95rem,2vmin,1.15rem)/1.2 var(--rpg-display);text-shadow:0 1px 2px #000}
+.swap-new p,.swap-card p{margin:0;font-size:12px;line-height:1.45;color:#c4d5e8}
+.swap-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:0 5px}
+.swap-card{display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding:10px 12px;text-align:left;color:var(--rpg-ink);font:inherit;cursor:pointer;background:linear-gradient(145deg,var(--rpg-panel-light),var(--rpg-panel-bottom))}
+.swap-card:hover,.swap-card:focus-visible{filter:brightness(1.15)}
+.swap-card small{font-size:11px;color:#ffb38a}
+.swap-card .card-choose{margin-top:auto}
+@media(max-width:520px){.swap-grid{grid-template-columns:1fr}}

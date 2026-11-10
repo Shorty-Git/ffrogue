@@ -72,6 +72,27 @@ data or pin hashes of local-only files; no new failures), `npx tsc --noEmit -p .
 - Tests: `tools/test_weapons.mjs`; test_unit_forms and test_combat_regressions follow the constants.
   Browser check: reward screen with two weapon cards, HUD shows "Thunder Spear (FFII) THUNDER".
 
+### 4. Run structure, skill swap, reward mix, UI
+- Run structure (`courseAreas`): two seeded areas from every stage except Nibelheim, sorted by difficulty,
+  then always Nibelheim (`FINAL_STAGE`, area flag `final`). Each area: its normal fight, then its closing
+  fight. `encounters()` adds `kind`: `elite` for the closing fight of a seeded area (Guard Scorpion, Ochu,
+  X-ATM092, Leviathan, Kain, Air Buster, Kimahri), `boss` only for Sephiroth. 4 -> 6 fights per run.
+  HUD caption "Battle / Elite / Boss n / 6", intro banner "ELITE ENCOUNTER" / "BOSS ENCOUNTER", the
+  awakening card is an "ELITE RELIC". Saves keep their own area list, so old 2-area saves play on unchanged
+  (no extra version bump beyond v4; validation accepts an optional `final` on the last area only).
+- Reward mix (decision): three cards, always one per kind in this order: skill (learn / rank up), upgrade
+  (stat, ward, rest, elite relic, revival), weapon. The elite relic takes the upgrade card; a revival takes
+  the upgrade card, or the weapon card when the relic holds it. Empty kinds fall back to any reward.
+  Reason: every screen offers a real choice between kinds, and the player reads the cards by position.
+- Skill swap: the replacement screen was laid out by the reward-card grid and lost its text order. New
+  layout: the incoming skill on top, three "FORGET" cards (rank loss marked), "Keep current skills" returns
+  to the reward choice (declining). `chooseReward(..., replace)` unchanged.
+- UI pass: reward cards carry a hover tooltip with the full text; battle HUD party cards show the weapon as
+  glyph + element chip beside the name (tooltip: name and effect); the caption shows party wards.
+  Screenshots (outside git): skill swap before/after, HUD with weapons and wards.
+- Simulator with the new structure before rebalancing: 25 % wins (fight 5 86 %, Sephiroth 29 %); task 5.
+- Tests: `tools/test_reward_hints.mjs` (structure, reward mix), `tools/test_run_state.mjs` (6 fights).
+
 ## Product state
 
 - Playable PC roguelike prototype: title → slot-machine team draw (3 heroes, rerolls) →

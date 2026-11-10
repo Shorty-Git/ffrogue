@@ -43,3 +43,37 @@ test('weakness-matching skills are favoured, offers stay deterministic per seed'
   assert.deepEqual(runs[0].offers, runs[1].offers);
   assert.deepEqual(runs[0].rng, runs[1].rng);
 });
+
+test('every run ends in the Nibelheim boss room; earlier areas are seeded and end in elites', async () => {
+  const {courseAreas, encounters, FINAL_STAGE, rewardKind, REWARD_KINDS} = await import('../src/run/runState.mjs');
+  const seen = new Set();
+  for (let i = 0; i < 200; i++) {
+    const areas = courseAreas('course-' + i);
+    assert.equal(areas.length, 3);
+    assert.equal(areas[2].stageId, FINAL_STAGE);
+    assert.ok(areas.slice(0, 2).every(a => a.stageId !== FINAL_STAGE && !a.final));
+    seen.add(areas[0].stageId); seen.add(areas[1].stageId);
+    assert.deepEqual(encounters(areas).filter(e => e.boss).map(e => e.kind), ['elite', 'elite', 'boss']);
+  }
+  assert.ok(seen.size >= 6, 'all other stages appear');
+  assert.deepEqual(REWARD_KINDS, ['skill', 'upgrade', 'weapon']);
+  assert.equal(rewardKind({type: 'ward'}), 'upgrade');
+});
+
+test('a won fight offers one skill, one upgrade and one weapon card, relics take the upgrade card', async () => {
+  const {setWeaponData} = await import('../src/run/weapons.mjs');
+  const {rewardKind, encounters} = await import('../src/run/runState.mjs');
+  setWeaponData(read('public/assets/items/weapons.json'));
+  for (let i = 0; i < 30; i++) {
+    let run = confirmParty(rollParty(createRun('mix-' + i, catalog), catalog));
+    run = completeBattle(run, catalog, snapshot(run), true);
+    assert.deepEqual(run.offers.map(rewardKind), ['skill', 'upgrade', 'weapon']);
+    run = chooseReward(run, 1, catalog);
+    run = completeBattle(run, catalog, snapshot(run), true);
+    assert.equal(encounters(run.areas)[run.encounter].kind, 'elite');
+    assert.equal(run.offers[1].type, 'evolve', 'elite relic in the upgrade slot');
+    const ko = structuredClone(run); ko.phase = 'battle'; ko.offers = [];
+    const fallen = completeBattle(ko, catalog, ko.party.map((m, j) => ({key: m.key, hp: j === 0 ? 0 : m.hp, mp: m.mp})), true);
+    assert.deepEqual(fallen.offers.slice(1).map(o => o.type), ['evolve', 'revive']);
+  }
+});
