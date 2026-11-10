@@ -4,6 +4,14 @@ Single entry point for any developer or AI picking up the project. Read this fir
 `docs/vision.md` (goals), `AGENTS.md` (rules) and the specialised docs linked below.
 Last consolidated: 2026-11-07; newest section: cloud night 2026-11-10.
 
+## Playtest round 2026-11-11
+
+- Screen layers: `_screen_sized_quad` (prepare_scene_flashes.py): a static Quad authored at >= 300 units
+  on both axes on a screen-anchored effect is fitted to the battlefield whatever its texture (ancestor
+  drift/shake curves are replaced by the coverage, as for backdrop Quads). Delita's Hallowed Bolt showed
+  its speed-line background as a box. Dry run: 54 nodes in 30 scenes, textures only tornado_001 (speed
+  lines), white, deffuse_aura_011, deff_mothercrystal_001; all 30 republished. Test in test_scene_flashes.py.
+
 ## Cloud night 2026-11-10 (docs/cloud-night-brief.md)
 
 Branch `claude/night-2026-11-10`, one commit per brief task. Checks before every commit:

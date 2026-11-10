@@ -102,4 +102,24 @@ class FlashRoleTests(unittest.TestCase):
             self.assertEqual(annotate_white_flashes(self._particle_plan(path,size=100)),0)
 
 
+class ScreenQuadTests(unittest.TestCase):
+    def test_screen_sized_patterned_quad_is_a_screen_layer_but_small_or_moving_quads_are_not(self):
+        with tempfile.TemporaryDirectory() as folder:
+            path=Path(folder)/'lines.png';im=Image.new('RGBA',(2,2),(0,0,0,0));im.putpixel((1,0),(200,180,255,255));im.save(path)
+            def channel(value):return {'valueInitial':value,'valueRange':[0,0,0],'speedInitial':[0,0,0],'speedRange':[0,0,0],'accelerationInitial':[0,0,0],'accelerationRange':[0,0,0]}
+            def plan(size=360,curves=None):
+                parent={'index':0,'typeId':0,'parentIndex':None,'vectorCurves':{'translationValue':{'keys':[[0,1]]}},
+                    'staticVectors':{'transform':{'translation':channel([5,0,0]),'rotation':channel([0,0,0]),'scale':channel([1,1,1])}}}
+                quad={'index':1,'typeId':2,'parentIndex':0,'vectorCurves':curves or {},'lifeParameter':140,
+                    'staticVectors':{'transform':{'translation':channel([0,0,0]),'rotation':channel([0,0,0]),'scale':channel([size,320,1])}},
+                    'resourceBindings':{'texture1':{'name':'lines'}}}
+                return {'files':{'image':{'path':str(path),'sha256':hashlib.sha256(path.read_bytes()).hexdigest()}},
+                    'members':[{'effect':0,'anchor':'screen','scalePercent':100,'placement':{'rectangle':'screen'}}],
+                    'effects':[{'textures':{'lines':'image'},'meshes':{},'nodes':[parent,quad]}]}
+            data=plan();self.assertEqual(annotate_screen_backdrops(data),1)
+            self.assertEqual(data['effects'][0]['nodes'][1]['presentationCoverage']['primitive'],'unit-quad')
+            self.assertEqual(annotate_screen_backdrops(plan(size=200)),0)
+            self.assertEqual(annotate_screen_backdrops(plan(curves={'scaleValue':{'keys':[[0,1]]}})),0)
+
+
 if __name__=='__main__':unittest.main()

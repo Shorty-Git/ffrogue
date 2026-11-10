@@ -192,6 +192,35 @@ def _rows_uniform(effect, node, plan):
                    for y in range(height))
 
 
+SCREEN_QUAD_MIN = 300
+
+
+def _screen_sized_quad(effect, node, plan, nodes, members):
+    """A static Quad authored at screen size (>= SCREEN_QUAD_MIN on both axes) on a screen-anchored
+    effect is a full-screen layer even with a patterned texture (Delita's Hallowed Bolt: aura and
+    speed lines, 360 x 320): at source size it shows as a box. Stretched, the pattern keeps reading
+    as the same layer. Colour/alpha curves and blend stay source data."""
+    binding = node.get('resourceBindings') or {}
+    if node['typeId'] != 2 or not binding.get('texture1') or binding.get('texture2') or binding.get('model'):
+        return None
+    if not _static_identity(node):
+        return None
+    parent = node.get('parentIndex')
+    while parent is not None:
+        ancestor = next((n for n in nodes if n.get('index') == parent), nodes[parent])
+        # Ancestor drift/shake curves are replaced by the coverage placement (as for backdrop Quads).
+        if ancestor['typeId'] != 0 or ancestor['staticVectors']['transform']['scale']['valueInitial'] != [1, 1, 1]:
+            return None
+        parent = ancestor.get('parentIndex')
+    width, height = _effective_size(node, nodes, members)
+    if min(width, height) < SCREEN_QUAD_MIN:
+        return None
+    sha, _ = _texture_extrema(effect, node, plan)
+    return dict(region='arena', primitive='unit-quad', textureSha256=sha,
+                origin=f'Automatic screen layer: static Quad authored at screen size ({width:g} x {height:g} >= {SCREEN_QUAD_MIN}) '
+                       'on a screen-anchored effect; fitted to the visible battlefield')
+
+
 def _screen_sized_particle(effect, node, plan, nodes, members):
     """A static, opaque Basic Particle authored at screen size on a screen-anchored effect is a
     backdrop (Squall's Lion Heart: a black plane and a dark vertical-gradient plane, 360 units).
@@ -263,7 +292,8 @@ def annotate_screen_backdrops(plan):
             if node.get('presentationCoverage'):
                 continue
             quad = (_opaque_backdrop_quad(effect, node, plan, nodes, longest) or _backdrop_particle(effect, node, plan, longest)
-                    or _screen_sized_particle(effect, node, plan, nodes, members))
+                    or _screen_sized_particle(effect, node, plan, nodes, members)
+                    or _screen_sized_quad(effect, node, plan, nodes, members))
             if quad:
                 node['presentationCoverage'] = quad
                 count += 1
