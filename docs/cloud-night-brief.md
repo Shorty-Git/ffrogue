@@ -33,6 +33,12 @@ Autonomous overnight session. Read `AGENTS.md`, `docs/current-state.md` (newest 
   the battle HUD are getting crowded. Improve layout and readability (tiefblau/silver style, PC
   portrait). Screenshots before/after, outside git.
 
+## Scope and order
+
+This is a long list on purpose. Work strictly in the task order below, finish and commit each task
+before starting the next, and stop a task rather than leave it half-done. Whatever is not reached goes
+into the final report as open, with notes on where to continue.
+
 ## Tasks (in this order)
 
 ### 1. Elements in combat
@@ -80,7 +86,25 @@ Autonomous overnight session. Read `AGENTS.md`, `docs/current-state.md` (newest 
   Angel; 20 enemies now, incl. new stage Mako Reactor 05 with elite Air Buster). Sephiroth should feel
   like the strongest boss.
 
-### 6. Battle placement across all arenas
+### 6. Complete UI polish (wording, look, menus)
+- **Title screen:** drop the tagline "Three heroes from across the worlds. One expedition..." and the
+  other placeholder copy; keep it short and FF-like.
+- **Heroes collection (new menu section):** every hero in the roster, locked ones shown as
+  silhouettes/greyed. Hover tooltips explain origin game and variant, base rarity and the start-level
+  range it implies, max level, Bond, skills (with element) and Limit Burst. Idea from the developer:
+  PokeRogue's starter/collection view does this well; take the idea, not its look.
+- **Settings / audio:** players only need Music volume and SFX volume (and mute). Remove the sound
+  comparison, cursor-sound profile test and similar developer-only controls from the player UI (keep
+  them reachable only via a dev flag if tests or tools need them).
+- **Slot machine (Fate Engine):** polish the sound mix (levels, overlaps, timing with the reels) and
+  the look; consider showing the drawn heroes as full bodies, not only portraits.
+- **Awakening / level-up during a run:** today a full-screen overlay hides the arena. Present it inside
+  the battle view (e.g. on the hero in the arena with a light banner), readable but not blocking.
+- **Everywhere:** tooltips on hover for every stat, status icon, element, reward card and command;
+  consistent English wording and capitalisation; check PC portrait layout and mobile width sanity.
+- Screenshots before/after for each screen (outside git) and describe them in the report.
+
+### 7. Battle placement across all arenas
 - The developer finds unit/enemy placement sometimes off (noticed in Altissia; placement was set by
   hand earlier). Analyse the backgrounds (`public/assets/backgrounds/`, arena list in
   `src/data/battleArenas.ts`, layout in `src/ui/battleLayout.ts`) and find one layout (party right, enemies left, FFBE
@@ -90,7 +114,7 @@ Autonomous overnight session. Read `AGENTS.md`, `docs/current-state.md` (newest 
 - Prove it with headless screenshots of every arena (Playwright is available via npx) and keep them
   out of git; describe the result in the report.
 
-### 7. Optional, if time is left
+### 8. Optional, if time is left
 - Squall's Flame Barret runs ~18 ms/frame (others 6 ms): find what makes it expensive in the bridge or
   lightning layer, without changing the frozen player.
 
