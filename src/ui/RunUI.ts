@@ -226,7 +226,10 @@ export class RunUI{
   const exhausted=hasTeam&&run.rerolls===0;
   const hint=busy?'The reels are turning…':!hasTeam?'Pull the crystal lever to summon your party. The first draw is free.':exhausted?'The Fate Engine is spent. Set out with this party.':'Pull again to redraw all three heroes, or set out with this party.';
   const roster=Object.values(this.catalog);
-  const tape=busy?`<div class="reel-tape" aria-hidden="true">${Array.from({length:18},(_,i)=>`<div class="tape-symbol"><img src="${esc(roster[i%roster.length].portrait)}" alt=""></div>`).join('')}</div>`:'';
+  // Each reel has its own tape; it stops (12 symbols = the -2040px keyframe) on the hero this reel draws,
+  // so the last face before the reveal is that hero's (2026-11-11: every reel ended on the same head).
+  const LANDING=12;
+  const tape=(reel:number,member?:RunMember)=>busy?`<div class="reel-tape" aria-hidden="true">${Array.from({length:18},(_,i)=>{const c=i===LANDING&&member?this.catalog[member.key]:roster[(i*7+reel*5+3)%roster.length];return `<div class="tape-symbol"><img src="${esc(c.portrait)}" alt=""></div>`;}).join('')}</div>`:'';
   const tiers=run.party.map(member=>fateTier(member));
   const timeline=fateTimeline(tiers);
   const verdict=hasTeam?fateVerdict(tiers,run.party.reduce((sum,member)=>sum+member.level,0)):undefined;
@@ -241,7 +244,7 @@ export class RunUI{
    const tip=member&&character&&!busy?`${character.name} · ${character.variantLabel??''} · ${levelLabel(member.level)}${skill?` · Starting skill: ${skill.name} (${skillDescription(skillForRun(skill,member))})`:''}${character.limitBurst?` · Limit Burst: ${character.limitBurst.name}`:''}`:'';
    return `<div class="reel ${tier?'tier-'+tier:''} ${busy?'is-spinning':''} ${busy&&timeline.teases[i]?'is-tease':''}" ${tier?`data-tier="${tier}"`:''} style="--stop-duration:${stop}s" ${tip?`title="${esc(tip)}"`:''}>
     <span class="slot-number">${String(i+1).padStart(2,'0')}</span>
-    <div class="reel-window">${tape}<span class="fate-burst" aria-hidden="true"></span><div class="final-symbol">${member?this.sprite(member,true):'<span class="unknown-crystal">◆</span>'}</div></div>
+    <div class="reel-window">${tape(i,member)}<span class="fate-burst" aria-hidden="true"></span><div class="final-symbol">${member?this.sprite(member,true):'<span class="unknown-crystal">◆</span>'}</div></div>
     <div class="reel-result">
      ${member?`<span class="fate-stars" aria-label="${levelLabel(member.level)}">${stars(member)}</span>`:'<span class="fate-stars" aria-hidden="true">&nbsp;</span>'}
      <b>${character?esc(character.name):'???'}</b>

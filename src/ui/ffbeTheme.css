@@ -204,7 +204,7 @@
 .heroes-layout{display:grid;grid-template-columns:1fr 0fr;gap:0;align-items:start;transition:grid-template-columns .4s cubic-bezier(.2,.8,.2,1),gap .4s}
 .heroes-layout.has-detail{grid-template-columns:1fr minmax(300px,360px);gap:18px}
 .heroes-layout .hero-grid{min-width:0}
-.hero-detail{min-width:0;overflow:hidden;opacity:0;transform:translateX(24px);transition:opacity .35s .1s,transform .4s cubic-bezier(.2,.8,.2,1);padding:16px 18px;text-align:left;position:sticky;top:12px;height:min(640px,calc(100vh - 150px));overflow-y:auto;scrollbar-width:thin}
+.hero-detail{min-width:0;overflow:hidden;opacity:0;transform:translateX(24px);transition:opacity .35s .1s,transform .4s cubic-bezier(.2,.8,.2,1);padding:16px 18px;text-align:left;position:sticky;top:12px;height:auto;max-height:calc(100vh - 40px);overflow-y:auto;scrollbar-width:thin}
 .has-detail .hero-detail{opacity:1;transform:none}
 .hero-detail h2{margin:4px 0 0;font:600 1.5rem/1.15 var(--rpg-display,Georgia,serif);letter-spacing:.04em}
 .hero-origin{margin:2px 0 12px;color:#9fc0de;font-size:.85rem}
@@ -221,7 +221,7 @@
 .hero-levels small{color:#b6cce4;font-size:.8rem}
 .hero-facts{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin:0 0 12px;font-size:.86rem}
 .hero-facts dt{color:#9fb7cf}.hero-facts dd{margin:0;color:#e8f2ff}
-.hero-skills{list-style:none;margin:6px 0 10px;padding:0;display:grid;gap:5px;max-height:220px;overflow:auto}
+.hero-skills{list-style:none;margin:6px 0 10px;padding:0;display:grid;gap:5px;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:10px}
 .hero-skills li{display:flex;align-items:center;gap:7px;font-size:.86rem}
 .hero-skills .skill-icon{width:22px;height:22px}
 .hero-skills .el-chip{font-size:.66rem;padding:.1em .45em}
@@ -303,3 +303,5 @@
 .favorite-card[aria-pressed=true]{box-shadow:0 0 0 2px #e8c77d,0 0 16px #e8c77d66}
 .favorite-card.is-full{opacity:.55}
 .favorite-rank:not(:empty){position:absolute;top:8px;left:8px;width:26px;height:26px;display:grid;place-items:center;border-radius:50%;border:1px solid #c9a95c;background:radial-gradient(#1d4377,#0a1a35);font:700 .95rem/1 var(--rpg-display);color:#ffe3a8}
+.heroes-layout.has-detail{grid-template-columns:1fr minmax(340px,400px)}
+.hero-skills li span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
