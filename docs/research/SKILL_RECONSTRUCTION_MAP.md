@@ -1,5 +1,32 @@
 # FFRogue - Skill Reconstruction Map
 
+## Renderer measurement tools (2026-11-11)
+
+Not a reconstruction step: no player code, plan or published scene changed. Three tools now measure
+the shared renderer over the whole published corpus instead of the three Cloud plans of
+`renderer-coverage-priorities.md`:
+
+- `tools/inventory_player_issues.mjs` -> `docs/research/player-issue-inventory.md` (generated):
+  the player's own `issues` for all published scenes, grouped by cause and ranked by affected scenes,
+  plus source-feature counts (texture combinations, emission shapes, untextured primitives).
+  It is the corpus-wide successor of the per-plan requirement matrix; an issue is a statement of the
+  player, not a measured visual difference.
+- `tools/detect_scene_boxes.mjs`: every scene played through the production bridge in a training
+  fight, frames compared with the effect-free frame, ranked by rectangle corners / straight edges / flat
+  planes. Finds display bugs nobody has seen yet; candidates need a look.
+- `tools/rebaseline_scenes.mjs`: republish + before/after frames + verdicts after a player change.
+  This replaces "never edit the player" as the working rule: the player may change when every scene is
+  republished and compared; accepted Cloud identities in `tools/test_scene_migration.mjs` are then
+  updated with the comparison as the documented review.
+
+Evidence: `tools/test_scene_frames.mjs` (3 pass); all 545 published scenes build headless and play
+in the browser without error; the detector ranks the known box scenes (Flare 6, Stock Break 13,
+Firaga 26, Blizzaga 31 of 545) and found unreported ones, confirmed on contact sheets (Ultima family,
+Terra's Flare, Aerith Remake's Healing Wind, True Cross Slash, Limit Raid, Finishing Touch, Holy's
+cloud layer; list in `docs/current-state.md`, ranking in `docs/research/box-detector-report.md`). Missing: no native reference is
+involved; the detector samples 12 frames per scene and misses rotated boxes and short-lived ones
+between samples.
+
 ## Generic source semantics for wave imports (2026-11-09)
 
 Status: approximation mode only (`--approximate-unverified`). Each rule is listed in `plan.approximations`.

@@ -2,7 +2,72 @@
 
 Single entry point for any developer or AI picking up the project. Read this first, then
 `docs/vision.md` (goals), `AGENTS.md` (rules) and the specialised docs linked below.
-Last consolidated: 2026-11-07; newest section: cloud night 2026-11-10.
+Last consolidated: 2026-11-07; newest section: renderer completion session 2026-11-11.
+
+## Renderer completion session (2026-11-11, brief: docs/briefs/renderer-completion.md)
+
+### Phase 0: tools that make renderer progress measurable
+
+All three need nothing but the repository, except where noted (dev server on 3001, Playwright).
+
+- Issue inventory: `node tools/inventory_player_issues.mjs --json tools/data/renderer-inventory/issues.json
+  --markdown docs/research/player-issue-inventory.md`. Builds the production player headless (vm + three,
+  no GPU, ~20 s) for every published manifest, collects `player.issues`, strips instance detail (effect
+  name, node index, numbers), splits compound eligibility messages into their reasons and ranks causes by
+  affected scenes. A second table counts source features without issue text (texture combinations,
+  non-point emitters, untextured primitives, screen layers, lightning, approximations).
+  Result (player e4e4f09f…): all 545 scenes build without error; 65 causes. Largest by affected scenes:
+  placement adaptation 545 (every scene, by design); Particle geometry / native-X eligibility reasons
+  (rotated or scaled ancestors, non-constant scale, dynamic X) 333-467; RGB random range unverified 461;
+  UV modes without authoring 444; colour selector unresolved 406; no matching native Add fragment 390;
+  nonzero parent alpha 350; untextured particles withheld 172; Quad corner colours 144; unsupported parent
+  transform combination 136; texture 2 not evaluated 80; distortion withheld 78; non-point emitters
+  withheld 25 (Cube 17, Cylinder 5, Model 2, Sphere 1). Feature table: Particle draw type 6 with a second
+  texture in 23 scenes, Quad Distortion in 79.
+- Box detector: `node tools/detect_scene_boxes.mjs [--match text | --keys a,b] [--frames 12]`. Page
+  `tools/test-source-frames.html` runs the production BattleScene as a training fight (two dummies, frozen
+  bodies) and plays any manifest through the production `PreparedSceneBridge` (`seek`); 12 evenly spaced
+  frames per scene are compared with the frame without the effect. Findings: straight axis-aligned edge
+  runs the effect adds (>= 30 px at half resolution), rectangle corners (a horizontal and a vertical run
+  meeting) and flat rectangular planes; clip borders are excluded. Output in `tools/data/box-detector/`
+  (ignored): `sheets/<key>.jpg` contact sheets with the edges marked, `report.json`, `report.md`,
+  `index.html` (ranked sheets). A finding is a candidate for a look, not a verdict (beams, cards and
+  panels have straight edges too). It also lists scenes with playback errors and scenes that show nothing.
+  It needs no second render: `node tools/detect_scene_boxes.mjs --from tools/data/scene-baseline/baseline
+  --markdown docs/research/box-detector-report.md` builds the report from a re-baseline capture.
+  Result: 545 scenes, no playback errors, 165 with rectangle corners (tracked list:
+  `docs/research/box-detector-report.md`), 6 show nothing in the sampled frames (baron_marine_hack,
+  garuda_skyfall, guard_scorpion_scorpion_tail, magitek_axeman_spin_kick, tifa_avalanche_chi_trap,
+  vampire_thorn_vine_whip). Looked at and confirmed as real display bugs (contact sheets):
+  - Ultima family (ramza_ultima, terra_trance_ultima, terra_magitek_warrior_ultima, beatrix_stock_break,
+    kefka_his_magic_power_is_raging): black box, then white boxes at the target.
+  - Flare family (chaos_flare, terra_flare): red cloud square (draw type 6) and a square flash.
+  - aerith_remake_healing_wind_ffvii_remake: four white bars framing the arena centre.
+  - cloud_strife_true_cross_slash: dim plane ends in hard edges; a white wedge plane.
+  - cloud_limit_raid: red sphere cut off at straight right/bottom edges.
+  - cloud_ac_finishing_touch / cloud_finishing_touch: tornado layer cut at a straight right/bottom edge.
+  - aerith_holy (and cetra/remake): cloud layer with a hard right and bottom edge; chaos_tsunami /
+    leviathan_tidal_wave: striped rectangle in the middle of the water layer.
+  - auron_banishing_blade: purple square at the target.
+  Known boxes rank 6 (chaos_flare), 13 (beatrix_stock_break), 26 (chaos_firaga), 31 (edea_blizzaga).
+  Not a box, ranked low on purpose: stretched speed-line layers (Army of One, Limit Raid) give hundreds of
+  straight runs per frame ("pattern frames").
+- Re-baseline: `node tools/rebaseline_scenes.mjs capture --to baseline` (before a player change),
+  then after the change `node tools/rebaseline_scenes.mjs run` = `republish` (every recipe in
+  tools/presentations through publish_scene_presentations, ~1 s each; pins the new player hash and applies
+  the current screen-layer rules) + `capture --to candidate` + `compare` (verdict per scene: unchanged /
+  ok / review; `tools/data/scene-baseline/compare.html` shows before above after) + `accept` (baseline
+  frames move only for unchanged/ok; `review` scenes keep the old baseline until fixed or accepted with
+  `--force key` after a look). Review reasons: new playback errors, more rectangle corners, a larger flat
+  plane, the effect lost (< 60 %) or gained (> 250 %) picture. Every manifest is republished either way,
+  because the pipeline gate rejects a manifest whose player hash is stale.
+  Baseline captured 2026-11-11 with player `e4e4f09f…`: 545 scenes in 442 s, 333 MB in
+  `tools/data/scene-baseline/baseline/` (frames JSON, plain and marked contact sheets).
+- Shared code: `tools/lib/scene-frames.mjs` (browser driver, scores, verdicts, issue causes); tests
+  `tools/test_scene_frames.mjs`.
+- Found on the way: `tifa_limit_reels` pins a player hash that is not the current file (published while
+  the alphaMap experiment was in the working tree) and `squall_lone_lion_agile_edge` pins a plan hash that
+  differs from its plan file; both are corrected by the next `republish`.
 
 ## Playtest round 2026-11-11
 

@@ -1,0 +1,87 @@
+// Issue inventory: builds the production effect player headless (no GPU) for every published scene
+// manifest, collects the player's own `issues`, groups them by cause and ranks causes by the number
+// of affected scenes. Also counts static source features the player has no issue text for
+// (texture combinations, emission shapes, node types), so unseen renderer gaps can be ranked too.
+//   node tools/inventory_player_issues.mjs [--json tools/data/renderer-inventory/issues.json] [--markdown docs/research/player-issue-inventory.md]
+import fs from 'node:fs';
+import path from 'node:path';
+import vm from 'node:vm';
+import {createHash} from 'node:crypto';
+import {createEffectPlayer, presentationMembers} from '../src/effects/originalEffectPlayer.mjs';
+import {issueCauses} from './lib/scene-frames.mjs';
+
+const arg = name => { const i = process.argv.indexOf(name); return i > 0 ? process.argv[i + 1] : undefined; };
+const root = 'public/assets/presentations';
+const runtime = vm.createContext({console});
+vm.runInContext(fs.readFileSync('public/vendor/three-preview.js', 'utf8'), runtime);
+const THREE = runtime.THREE;
+THREE.TextureLoader = class { load(url, done) { const texture = new THREE.Texture({width: 1, height: 1}); queueMicrotask(() => done(texture)); return texture; } };
+// Prepared texture uploads are fetched by URL in the browser; headless they come from public/.
+globalThis.fetch = async url => { const file = path.join('public', String(url)); const ok = fs.existsSync(file);
+  return {ok, arrayBuffer: async () => fs.readFileSync(file).buffer}; };
+
+const keys = fs.readdirSync(root).filter(key => fs.existsSync(`${root}/${key}/manifest.json`)).sort();
+const causes = new Map(), features = new Map(), failures = [];
+const add = (map, name, key, count = 1) => { const row = map.get(name) ?? map.set(name, {scenes: new Map()}).get(name); row.scenes.set(key, (row.scenes.get(key) ?? 0) + count); };
+for (const key of keys) {
+  const manifest = JSON.parse(fs.readFileSync(`${root}/${key}/manifest.json`, 'utf8')), plan = manifest.plan;
+  try {
+    const scope = plan.presentation.scope === 'self' ? 'single_enemy' : plan.presentation.scope === 'party' ? 'all_enemies' : plan.presentation.scope;
+    const player = await createEffectPlayer(THREE, new THREE.Scene(), {...plan, members: presentationMembers(plan.members, ['target0'], scope)});
+    for (const issue of player.issues) for (const cause of issueCauses(issue)) add(causes, cause, key);
+    player.dispose();
+  } catch (error) { failures.push({key, error: String(error.message)}); }
+  const used = new Set(plan.members.map(member => member.effect));
+  plan.effects.forEach((effect, index) => {
+    if (!used.has(index)) return;
+    for (const node of effect.nodes) {
+      const type = {0: 'Null', 2: 'Quad', 3: 'Particle', 6: 'Model'}[node.typeId] ?? 'type ' + node.typeId;
+      const combination = node.materialControls?.textureCombination;
+      if (combination && node.typeId !== 0) add(features, `${type}: texture combination ${combination.id} "${combination.name}"${node.resourceBindings?.texture2 ? ' with texture 2' : ''}`, key);
+      if (node.authoringEmissionShape && node.authoringEmissionShape !== 'Point') add(features, `${type}: emission shape ${node.authoringEmissionShape}`, key);
+      if (node.typeId !== 0 && !node.resourceBindings?.texture1) add(features, `${type}: untextured`, key);
+      if (node.presentationCoverage) add(features, `${type}: screen coverage (${node.presentationCoverage.primitive ?? 'particle'})`, key);
+    }
+    for (const bolt of effect.lightning ?? []) add(features, 'type 7 lightning emitter' + (bolt.goals ? '' : ' (no goals, not drawn)'), key);
+  });
+  for (const curve of plan.approximations?.curves ?? []) add(features, 'approximation: ' + (curve.treatment ?? 'held-constant curve'), key);
+}
+const rank = map => [...map].map(([cause, row]) => ({cause, scenes: row.scenes.size, occurrences: [...row.scenes.values()].reduce((a, b) => a + b, 0),
+  examples: [...row.scenes.keys()].slice(0, 4)})).sort((a, b) => b.scenes - a.scenes || a.cause.localeCompare(b.cause));
+const report = {
+  playerSha256: createHash('sha256').update(fs.readFileSync('src/effects/originalEffectPlayer.mjs')).digest('hex'),
+  scenes: keys.length, failures, issues: rank(causes), features: rank(features),
+  sceneLists: Object.fromEntries([...causes, ...features].map(([cause, row]) => [cause, [...row.scenes.keys()]])),
+};
+const json = arg('--json');
+if (json) { fs.mkdirSync(path.dirname(json), {recursive: true}); fs.writeFileSync(json, JSON.stringify(report, null, 1) + '\n'); }
+const cell = text => text.replace(/\|/g, '\\|');
+const table = rows => ['| Scenes | Share | Cause | Examples |', '| ---: | ---: | --- | --- |',
+  ...rows.map(row => `| ${row.scenes} | ${(100 * row.scenes / keys.length).toFixed(0)} % | ${cell(row.cause)} | ${row.examples.join(', ')} |`)].join('\n');
+const markdown = `# Player issue inventory
+
+Generated by \`node tools/inventory_player_issues.mjs --markdown docs/research/player-issue-inventory.md\`; do not edit by hand.
+Player SHA-256 \`${report.playerSha256}\`, ${keys.length} published scenes, ${failures.length} could not be built headless.
+
+Method: the production player (\`src/effects/originalEffectPlayer.mjs\`) is built without a GPU for every
+\`public/assets/presentations/*/manifest.json\` (one target, all members) and its \`issues\` are collected.
+Effect names, node indices and numbers are removed and compound eligibility messages are split into
+their reasons, so one row is one cause. An issue is the player's own
+statement that it does not reproduce something; it says nothing about how visible the difference is.
+
+## Issues reported by the player, by affected scenes
+
+${table(report.issues)}
+
+## Source features in published scenes
+
+Counted from the plans (only effects a member plays). These have no issue text but mark renderer paths
+whose coverage matters: texture combinations, non-point emitters, untextured primitives, screen layers,
+lightning, approximations.
+
+${table(report.features)}
+${failures.length ? '\n## Scenes that failed to build headless\n\n' + failures.map(f => `- ${f.key}: ${f.error}`).join('\n') + '\n' : ''}`;
+const out = arg('--markdown');
+if (out) fs.writeFileSync(out, markdown);
+console.log(JSON.stringify({scenes: keys.length, failures: failures.length, causes: report.issues.length, features: report.features.length,
+  top: report.issues.slice(0, 12).map(r => [r.scenes, r.cause])}, null, 1));

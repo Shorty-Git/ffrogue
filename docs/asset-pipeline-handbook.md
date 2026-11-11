@@ -1,5 +1,15 @@
 # Asset pipeline handbook
 
+Renderer measurement tools (2026-11-11): before changing `src/effects/originalEffectPlayer.mjs`
+or a screen-layer rule, capture frames (`node tools/rebaseline_scenes.mjs capture --to baseline`);
+afterwards `node tools/rebaseline_scenes.mjs run` republishes every scene (the player hash is pinned
+in each manifest), compares before/after frames and moves the frame baseline only where the result is
+unchanged or at least as good. `node tools/inventory_player_issues.mjs` ranks what the player itself
+reports as not reproduced ([player issue inventory](research/player-issue-inventory.md), generated);
+`node tools/detect_scene_boxes.mjs` plays every scene in a training fight and ranks hard rectangle
+edges. These are measurements of this renderer against itself, not original-game fidelity evidence.
+Commands, outputs and limits: `current-state.md`, section "Renderer completion session".
+
 Limit Bursts (2026-11-07): the pipeline now admits a form's Limit Burst as skill
 type `LIMIT` (Cloud's Omnislash is the first). Visual approximation is an explicit opt-in
 (`--approximate-unverified`), long body clips wrap into a grid (`tools/sheet_grid.py`).

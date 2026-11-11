@@ -1,0 +1,67 @@
+// Box detector: plays every published scene headless in the training grounds (dev server on 3001),
+// measures several frames against the frame without the effect and ranks scenes by rectangle corners,
+// hard axis-aligned edges and flat rectangular planes. Writes contact sheets, report.json, report.md
+// and index.html.
+//   node tools/detect_scene_boxes.mjs [--out tools/data/box-detector] [--keys a,b] [--match chaos_] [--frames 12] [--arena key]
+//   node tools/detect_scene_boxes.mjs --from tools/data/scene-baseline/baseline     report from an existing capture (no browser)
+//   --markdown docs/research/box-detector-report.md                                 tracked summary of the corner candidates
+// A finding is a candidate for review, not a verdict: beams, cards and panels have straight edges too.
+import fs from 'node:fs';
+import {captureScenes, sceneKeys, boxScore, effectEnergy, writeFile} from './lib/scene-frames.mjs';
+
+const arg = name => { const i = process.argv.indexOf(name); return i > 0 ? process.argv[i + 1] : undefined; };
+const from = arg('--from'), out = arg('--out') ?? (from ? from : 'tools/data/box-detector'), count = Number(arg('--frames') ?? 12);
+let keys = sceneKeys();
+if (arg('--keys')) keys = arg('--keys').split(',');
+if (arg('--match')) keys = keys.filter(key => key.includes(arg('--match')));
+const rows = [], started = Date.now();
+const row = result => ({key: result.key, durationFrames: result.durationFrames, scope: result.scope, caster: result.caster, ...boxScore(result),
+  energy: Number(effectEnergy(result).toFixed(2)), errors: result.errors,
+  frames: result.frames.map(f => ({frame: f.frame, coverage: Number(f.coverage.toFixed(4)), edges: f.edges, plane: f.plane && !f.plane.whole && f.plane.fill > .8 ? f.plane : null}))});
+const names = from ? {report: 'box-report', index: 'box-index.html', sheet: key => `${key}.marked.jpg`} : {report: 'report', index: 'index.html', sheet: key => `sheets/${key}.jpg`};
+// A partial run (--keys/--match) updates its rows inside the existing report.
+const reportFile = `${out}/${names.report}.json`;
+const previous = fs.existsSync(reportFile) && (arg('--keys') || arg('--match')) ? JSON.parse(fs.readFileSync(reportFile, 'utf8')).scenes.filter(old => !keys.includes(old.key)) : [];
+if (from) {
+  for (const key of keys) if (fs.existsSync(`${from}/${key}.json`)) rows.push(row(JSON.parse(fs.readFileSync(`${from}/${key}.json`, 'utf8'))));
+} else await captureScenes(keys, (result, index) => {
+  if (result.markedSheet) writeFile(`${out}/${names.sheet(result.key)}`, result.markedSheet);
+  rows.push(row(result));
+  if ((index + 1) % 20 === 0 || index + 1 === keys.length) console.log(`${index + 1}/${keys.length} ${((Date.now() - started) / 1000).toFixed(0)} s`);
+}, {count, arena: arg('--arena'), log: message => console.log(message)});
+const scenes = [...previous, ...rows].sort((a, b) => b.score - a.score || a.key.localeCompare(b.key));
+const frames = scenes[0]?.frames.length ?? count;
+writeFile(reportFile, JSON.stringify({generated: new Date().toISOString(), framesPerScene: frames, scenes}, null, 1) + '\n');
+const flagged = scenes.filter(scene => scene.score > 0), cornered = scenes.filter(scene => scene.cornerFrames > 0);
+const failed = scenes.filter(scene => scene.errors.length), empty = scenes.filter(scene => !scene.errors.length && scene.energy < .05);
+const markdown = rowsShown => `# Box detector report
+
+${scenes.length} scenes, ${frames} frames each; ${cornered.length} with rectangle corners, ${flagged.length} with any straight-edge or flat-plane finding, ${failed.length} with playback errors, ${empty.length} without a visible effect in the sampled frames.
+Score = 300 per frame with a rectangle corner (a horizontal and a vertical hard edge meeting) + 50 per corner in the worst frame (max 10) + longest straight edge (px at half resolution, max 250) + 20 per pattern frame + 2000 x share of a flat rectangular plane. A pattern frame has more than 120 straight runs (stretched speed lines, ray bursts): corners there happen by chance and are not counted.
+
+| Rank | Scene | Score | Corner frames | Corners | Longest edge | Pattern frames | Plane share | Energy |
+| ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+${rowsShown.map((scene, i) => `| ${i + 1} | ${scene.key} | ${scene.score} | ${scene.cornerFrames} | ${scene.corners} | ${scene.longest} | ${scene.patternFrames} | ${(100 * scene.plane).toFixed(1)} % | ${scene.energy} |`).join('\n')}
+
+## Playback errors
+
+${failed.map(scene => `- ${scene.key}: ${scene.errors.join('; ')}`).join('\n') || 'None.'}
+
+## No visible effect in the sampled frames
+
+${empty.map(scene => scene.key).join(', ') || 'None.'}
+`;
+writeFile(`${out}/${names.report}.md`, markdown(flagged));
+// Tracked summary: only scenes with rectangle corners (the review candidates), sheets stay in tools/data.
+if (arg('--markdown')) {
+  const head = ['# Box detector report', '',
+    'Generated by `node tools/detect_scene_boxes.mjs' + (from ? ' --from ' + from : '') + ' --markdown ' + arg('--markdown') + '`; do not edit by hand.',
+    'Only scenes with rectangle corners are listed; contact sheets with marked edges: `' + out + '/' + names.index + '` (local, ignored).',
+    'A row is a candidate for a look, not a verdict.'].join('\n');
+  writeFile(arg('--markdown'), markdown(cornered).replace('# Box detector report', head));
+}
+writeFile(`${out}/${names.index}`, `<!doctype html><meta charset="utf-8"><title>Box detector</title><style>body{background:#101724;color:#e7eef9;font:14px system-ui;margin:16px}img{max-width:100%;display:block;margin:4px 0 22px}h2{font-size:15px;margin:0}</style>
+<h1>Box detector: ${cornered.length} of ${scenes.length} scenes with rectangle corners, ${flagged.length} with any finding</h1>
+${scenes.filter(scene => scene.score > 0 || scene.errors.length).map((scene, i) => `<h2>${i + 1}. ${scene.key} · score ${scene.score} · corner frames ${scene.cornerFrames} · corners ${scene.corners} · longest ${scene.longest} · pattern frames ${scene.patternFrames} · plane ${(100 * scene.plane).toFixed(1)} %${scene.errors.length ? ' · ERRORS: ' + scene.errors.join('; ').replace(/</g, '&lt;') : ''}</h2><img loading="lazy" src="${names.sheet(scene.key)}">`).join('\n')}
+`);
+console.log(JSON.stringify({scenes: scenes.length, cornered: cornered.length, flagged: flagged.length, failed: failed.length, empty: empty.length, top: scenes.slice(0, 15).map(scene => [scene.key, scene.score])}));

@@ -1,0 +1,204 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><base href="/"><title>Scene frame capture</title>
+<style>body{margin:0;background:#081428;color:#e7eef9;font:13px system-ui}#game-container{width:1000px;height:1100px}#status{position:fixed;right:8px;top:8px}</style>
+<div id="game-container"></div><div id="status">Loading…</div>
+<script type="module">
+// Development review page driven by tools/detect_scene_boxes.mjs and tools/rebaseline_scenes.mjs.
+// The production BattleScene runs a fixed training fight (two dummies, frozen bodies); any published
+// scene manifest is played through the production PreparedSceneBridge and seeked to chosen frames.
+// Each frame is compared with the frame without the effect, so every measurement is the effect's own
+// contribution. Detection: long axis-aligned edges the effect adds (hard rectangle borders), corners
+// where such edges meet, and rectangular regions of one uniform colour change (flat planes).
+import {game} from '/src/main.ts';
+import {createTrainingRun} from '/src/run/trainingRun.ts';
+import {createPreparedSceneBridge} from '/src/effects/PreparedSceneBridge.mjs';
+
+const status = document.getElementById('status'), query = new URLSearchParams(location.search);
+const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+const until = async (test, label, timeout = 90000) => { const end = performance.now() + timeout; while (!test()) { if (performance.now() > end) throw Error('Timeout: ' + label); await delay(30); } };
+const scene = () => game.scene.getScene('BattleScene');
+const DETECT = 0.5, THUMB = 0.3;
+const EDGE_GAIN = 9, BASE_EDGE = 14, RUN_MIN = 30, RUN_GAP = 2, PLANE_STEP = 12;
+
+function grab(scale) {
+  return new Promise(resolve => game.events.once('postrender', () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.round(game.canvas.width * scale); canvas.height = Math.round(game.canvas.height * scale);
+    const paint = canvas.getContext('2d', {willReadFrequently: true});
+    paint.imageSmoothingEnabled = true; paint.drawImage(game.canvas, 0, 0, canvas.width, canvas.height);
+    resolve(canvas);
+  }));
+}
+const pixels = canvas => canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height).data;
+
+/**
+ * Straight runs of edge pixels the effect adds along one axis. Clip and arena borders are not
+ * findings. Pixels where the effect-free frame already has an edge (unit silhouettes, shadows,
+ * background detail) are neutral: a tint behind them changes their contrast, which is not a new
+ * edge; they neither count towards a run nor break it.
+ */
+function edgeRuns(frame, base, width, height, borders, horizontal) {
+  const runs = [], outer = horizontal ? height - 1 : width - 1, inner = horizontal ? width : height;
+  const step = horizontal ? width * 4 : 4;
+  const lines = horizontal ? borders.rows : borders.columns;
+  for (let o = 1; o < outer - 1; o++) {
+    if (lines.some(b => Math.abs(o + 1 - b) <= 2)) continue;
+    let start = -1, gap = 0, last = -1, counted = 0;
+    const close = () => { if (start >= 0 && counted >= RUN_MIN) runs.push(horizontal ? {x: start, y: o + 1, length: last - start + 1} : {x: o + 1, y: start, length: last - start + 1}); start = -1; counted = 0; };
+    for (let i = 0; i < inner; i++) {
+      const at = (horizontal ? o * width + i : i * width + o) * 4;
+      let gain = 0, existing = 0;
+      for (let c = 0; c < 3; c++) {
+        const before = Math.abs(base[at + c] - base[at + step + c]);
+        existing = Math.max(existing, before); gain = Math.max(gain, Math.abs(frame[at + c] - frame[at + step + c]) - before);
+      }
+      if (existing > BASE_EDGE) continue;
+      if (gain > EDGE_GAIN) { if (start < 0) start = i; last = i; gap = 0; counted++; } else if (start >= 0 && ++gap > RUN_GAP) close();
+    }
+    close();
+  }
+  return runs;
+}
+
+/** Rectangle corners: a horizontal and a vertical run ending at the same point (within 4 px). */
+function corners(horizontal, vertical) {
+  let count = 0;
+  const near = (a, b) => Math.abs(a - b) <= 4;
+  for (const h of horizontal) for (const v of vertical)
+    if ((near(v.x, h.x) || near(v.x, h.x + h.length)) && (near(h.y, v.y) || near(h.y, v.y + v.length))) count++;
+  return count;
+}
+
+/** Largest region of one uniform colour change and how completely it fills its bounding box. */
+function uniformPlane(frame, base, width, height, clip) {
+  const counts = new Map();
+  for (let i = 0; i < frame.length; i += 4) {
+    const r = frame[i] - base[i], g = frame[i + 1] - base[i + 1], b = frame[i + 2] - base[i + 2];
+    if (Math.max(Math.abs(r), Math.abs(g), Math.abs(b)) <= PLANE_STEP) continue;
+    const key = (Math.round(r / PLANE_STEP) + 32) * 4096 + (Math.round(g / PLANE_STEP) + 32) * 64 + Math.round(b / PLANE_STEP) + 32;
+    counts.set(key, (counts.get(key) ?? 0) + 1);
+  }
+  let best = 0, total = 0, mode = null;
+  for (const [key, count] of counts) { total += count; if (count > best) { best = count; mode = key; } }
+  const coverage = total / (width * height);
+  if (mode === null || best < width * height * 0.01) return {coverage, plane: null};
+  let x0 = width, y0 = height, x1 = -1, y1 = -1;
+  for (let y = 0; y < height; y++) for (let x = 0; x < width; x++) {
+    const i = (y * width + x) * 4, r = frame[i] - base[i], g = frame[i + 1] - base[i + 1], b = frame[i + 2] - base[i + 2];
+    if (Math.max(Math.abs(r), Math.abs(g), Math.abs(b)) <= PLANE_STEP) continue;
+    if ((Math.round(r / PLANE_STEP) + 32) * 4096 + (Math.round(g / PLANE_STEP) + 32) * 64 + Math.round(b / PLANE_STEP) + 32 !== mode) continue;
+    if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y;
+  }
+  const box = {x: x0, y: y0, width: x1 - x0 + 1, height: y1 - y0 + 1}, fill = best / (box.width * box.height);
+  // A plane covering the whole clip is a screen layer doing its job, not a box.
+  const whole = box.x <= clip.x + 3 && box.y <= clip.y + 3 && box.x + box.width >= clip.x + clip.width - 3 && box.y + box.height >= clip.y + clip.height - 3;
+  return {coverage, plane: {box, fill, share: best / (width * height), whole}};
+}
+
+/** Small greyscale effect-difference image (base64), for before/after comparison outside the page. */
+function signature(frame, base, width, height, cols = 50, rows = 55) {
+  const out = new Uint8Array(cols * rows), sum = new Float64Array(cols * rows), count = new Uint32Array(cols * rows);
+  for (let y = 0; y < height; y++) for (let x = 0; x < width; x++) {
+    const i = (y * width + x) * 4, cell = Math.min(rows - 1, Math.floor(y * rows / height)) * cols + Math.min(cols - 1, Math.floor(x * cols / width));
+    sum[cell] += Math.max(Math.abs(frame[i] - base[i]), Math.abs(frame[i + 1] - base[i + 1]), Math.abs(frame[i + 2] - base[i + 2])); count[cell]++;
+  }
+  for (let i = 0; i < out.length; i++) out[i] = Math.round(sum[i] / count[i]);
+  return btoa(String.fromCharCode(...out));
+}
+
+function freeze() {
+  const s = scene();
+  s.tweens.pauseAll(); s.anims.pauseAll(); s.time.paused = true;
+  for (const actor of [...s.turnOrder, ...s.enemies]) (actor.sprite ?? actor).anims?.pause();
+}
+
+async function start() {
+  await until(() => game.registry.get('reviewManifests'), 'review manifests');
+  const run = createTrainingRun(game.cache, {encounter: 2, ...(query.get('arena') ? {arena: query.get('arena')} : {})});
+  game.scene.start('BattleScene', {manifests: game.registry.get('reviewManifests'), runContext: run.context});
+  await until(() => scene()?.sys.isActive() && scene().combatState === 'PLAYER_TURN', 'battle');
+  await scene().preparedScenes?.ready;
+  await delay(1500);
+  freeze();
+  // The DOM HUD is not part of the canvas; hide it so a visible page shows what is measured.
+  for (const element of document.querySelectorAll('#game-container ~ *:not(#status), .combat-hud')) element.style.visibility = 'hidden';
+  status.textContent = 'Ready';
+}
+
+/**
+ * Plays one scene and measures `count` evenly spaced frames (or the explicit `frames`).
+ * options.manifest overrides the published manifest (before/after comparisons).
+ */
+async function capture(key, options = {}) {
+  const s = scene(), errors = [];
+  const manifest = structuredClone(options.manifest ?? await fetch(`/assets/presentations/${key}/manifest.json`, {cache: 'no-store'}).then(r => { if (!/json/.test(r.headers.get('content-type') ?? '')) throw Error('No published manifest: ' + key); return r.json(); }));
+  delete manifest.audioSource;
+  const cacheKey = 'scene_' + key + '_manifest', previous = s.cache.json.get(cacheKey);
+  s.cache.json.remove(cacheKey); s.cache.json.add(cacheKey, manifest);
+  s.preparedScenes?.destroy();
+  const onError = message => errors.push(message);
+  s.events.on('prepared-scene-error', onError);
+  const bridge = s.preparedScenes = createPreparedSceneBridge(s, [manifest], {canWarm: () => false});
+  await bridge.ready;
+  const plan = manifest.plan, heroes = s.turnOrder, enemies = s.enemies, enemyCaster = plan.presentation.caster === 'enemy';
+  const scope = plan.presentation.scope, caster = enemyCaster ? enemies[0] : heroes[0];
+  const targets = scope === 'self' ? [caster] : scope === 'party' ? (enemyCaster ? heroes : heroes)
+    : enemyCaster ? (scope === 'all_enemies' ? heroes : [heroes[0]]) : scope === 'all_enemies' ? enemies : [enemies[0]];
+  const home = {x: caster.x, y: caster.y};
+  const result = {key, durationFrames: manifest.durationFrames, scope, caster: enemyCaster ? 'enemy' : 'hero', frames: [], errors};
+  try {
+    if (!bridge.canPlay(key, targets.length)) throw Error('Scene variant not prepared: ' + bridge.snapshot().errors.join('; '));
+    if (!enemyCaster && plan.presentation.movement === 'dash') caster.setPosition(s.approachX(caster, targets[0], key), targets[0].y);
+    await grab(DETECT);
+    const baseCanvas = await grab(DETECT), base = pixels(baseCanvas), width = baseCanvas.width, height = baseCanvas.height;
+    s.playPreparedScene(key, caster, targets);
+    const host = bridge.snapshot().host, view = host.view ?? host.arena;
+    const clip = {x: view.x * DETECT, y: view.y * DETECT, width: view.width * DETECT, height: view.height * DETECT};
+    // The HUD covers everything outside the arena in the game, so arena borders are no findings either.
+    const borders = {rows: [clip.y, clip.y + clip.height, host.arena.y * DETECT, (host.arena.y + host.arena.height) * DETECT],
+      columns: [clip.x, clip.x + clip.width, host.arena.x * DETECT, (host.arena.x + host.arena.width) * DETECT]};
+    const count = options.count ?? 12, duration = manifest.durationFrames;
+    const list = options.frames ?? Array.from({length: count}, (_, i) => Math.min(duration - 1, Math.round((i + .5) * duration / count)));
+    const thumbs = [];
+    for (const frame of list) {
+      bridge.seek(frame);
+      const canvas = await grab(DETECT), data = pixels(canvas);
+      const horizontal = edgeRuns(data, base, width, height, borders, true), vertical = edgeRuns(data, base, width, height, borders, false);
+      const {coverage, plane} = uniformPlane(data, base, width, height, clip);
+      const longest = runs => runs.reduce((m, r) => Math.max(m, r.length), 0), total = runs => runs.reduce((m, r) => m + r.length, 0);
+      result.frames.push({frame, coverage, plane,
+        edges: {horizontal: horizontal.length, vertical: vertical.length, longestHorizontal: longest(horizontal), longestVertical: longest(vertical), corners: corners(horizontal, vertical),
+          total: total(horizontal) + total(vertical)},
+        signature: signature(data, base, width, height)});
+      thumbs.push({canvas, horizontal, vertical, plane, frame});
+    }
+    // Contact sheets: every measured frame; the marked one shows detected edges in red and a flagged plane in yellow.
+    const cols = Math.min(6, thumbs.length), rows = Math.ceil(thumbs.length / cols), tw = Math.round(width * THUMB / DETECT), th = Math.round(height * THUMB / DETECT);
+    const k = THUMB / DETECT;
+    const draw = marks => { const sheet = document.createElement('canvas'); sheet.width = cols * tw; sheet.height = rows * th;
+    const paint = sheet.getContext('2d');
+    thumbs.forEach((thumb, i) => {
+      const x = (i % cols) * tw, y = Math.floor(i / cols) * th;
+      paint.drawImage(thumb.canvas, x, y, tw, th);
+      if (marks) {
+        paint.strokeStyle = '#ff2030'; paint.lineWidth = 2; paint.beginPath();
+        for (const r of thumb.horizontal) { paint.moveTo(x + r.x * k, y + r.y * k); paint.lineTo(x + (r.x + r.length) * k, y + r.y * k); }
+        for (const r of thumb.vertical) { paint.moveTo(x + r.x * k, y + r.y * k); paint.lineTo(x + r.x * k, y + (r.y + r.length) * k); }
+        paint.stroke();
+        if (thumb.plane && !thumb.plane.whole && thumb.plane.fill > .8) { paint.strokeStyle = '#ffe040'; const b = thumb.plane.box; paint.strokeRect(x + b.x * k, y + b.y * k, b.width * k, b.height * k); }
+      }
+      paint.fillStyle = '#000a'; paint.fillRect(x, y, 46, 16); paint.fillStyle = '#fff'; paint.font = '12px system-ui'; paint.fillText('F' + thumb.frame, x + 4, y + 12);
+    });
+    return sheet.toDataURL('image/jpeg', .8); };
+    result.sheet = draw(false); result.markedSheet = draw(true);
+    result.errors.push(...bridge.snapshot().errors);
+  } catch (error) { errors.push(String(error.message ?? error)); }
+  finally {
+    bridge.stop(); s.events.off('prepared-scene-error', onError);
+    caster.setPosition(home.x, home.y);
+    s.cache.json.remove(cacheKey); if (previous) s.cache.json.add(cacheKey, previous);
+  }
+  result.errors = [...new Set(result.errors)];
+  return result;
+}
+window.sceneFrames = {ready: start().catch(error => { status.textContent = 'FAIL ' + error.message; throw error; }), capture};
+</script>
