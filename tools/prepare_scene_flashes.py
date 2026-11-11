@@ -82,6 +82,17 @@ def _unit_xy_uniform(effect, node, plan):
     return dict(region='arena', primitive='unit-xy-model', textureSha256=source['sha256'], modelSha256=mesh['sourceSha256'])
 
 
+def _fixed_frame(node):
+    """No transform curves, randomness, speed or rotation; a constant offset is allowed (screen-layer coverage
+    replaces the placement anyway)."""
+    transform = node.get('staticVectors', {}).get('transform', {})
+    if any(curve.get('keys') for name, curve in node.get('vectorCurves', {}).items() if name.startswith(('translation', 'rotation', 'scale'))):
+        return False
+    if any(any(value) for channel in transform.values() for key, value in channel.items() if key != 'valueInitial'):
+        return False
+    return transform.get('rotation', {}).get('valueInitial', [0, 0, 0]) == [0, 0, 0]
+
+
 def _static_identity(node):
     """No animated or randomized transform: the node's frame is fixed relative to its parent."""
     # Only transform curves move a plane; colour/alpha curves stay source data on the coverage.
@@ -192,7 +203,7 @@ def _rows_uniform(effect, node, plan):
                    for y in range(height))
 
 
-SCREEN_QUAD_MIN = 300
+SCREEN_QUAD_MIN = 240  # 2026-11-11: Tifa's Limit Reels back layer uses 240-unit white Quads
 
 
 def _screen_sized_quad(effect, node, plan, nodes, members):
@@ -203,7 +214,7 @@ def _screen_sized_quad(effect, node, plan, nodes, members):
     binding = node.get('resourceBindings') or {}
     if node['typeId'] != 2 or not binding.get('texture1') or binding.get('texture2') or binding.get('model'):
         return None
-    if not _static_identity(node):
+    if not _fixed_frame(node):
         return None
     parent = node.get('parentIndex')
     while parent is not None:

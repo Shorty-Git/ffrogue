@@ -1,5 +1,10 @@
 import Phaser from 'phaser';
 import { UnitManifest } from '../types/manifest';
+
+/** Reviewed melee stand-off overrides (2026-11-11 playtest): these heroes' attack clips lunge far forward
+ * inside their frames, so the default foot offset (90) put them inside the enemy. Applied on top of the
+ * hash-pinned character data; awakened forms (key_formN) share their base value. */
+const MELEE_STANDOFF: Record<string, number> = {squall: 300, tidus: 300, cloud_remake: 230};
 import { MotionType, ActiveHeroBuff } from '../types/skills';
 
 export interface UnitCombatConfig {
@@ -71,7 +76,7 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
 
     this.combatConfig = {
       attackType: config?.attackType ?? 'melee',
-      targetOffsetX: config?.targetOffsetX ?? 90,
+      targetOffsetX: MELEE_STANDOFF[unitKey.split('_form')[0]] ?? config?.targetOffsetX ?? 90,
       attackAnim: config?.attackAnim ?? 'atk',
       hitFrameIndex: config?.hitFrameIndex ?? 2,
       ...(config?.hitFrames?.length ? {hitFrames: config.hitFrames} : {}),

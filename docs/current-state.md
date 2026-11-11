@@ -145,6 +145,21 @@ Last consolidated: 2026-11-07; newest section: cloud night 2026-11-10.
   profile starts from that set instead of the 7 default starters; a profile with finished runs keeps everything
   and gains the game's heroes. Stored as `profile.favorite`. Checked in the browser (FFIX: Zidane, Vivi, Cloud,
   Squall) and in tools/test_profile.mjs.
+- Playtest round 5 (2026-11-11, live alpha):
+  - Party list ("Show my party", Fate Engine list): signature weapons carry a gold SIGNATURE tag.
+  - Heroes panel: the sprite's pivot (feet) sits on the shadow, whatever the frame margins.
+  - Melee stand-off: Squall and Tidus 300, Cloud Remake 230 (MELEE_STANDOFF in UnitActor.ts, also for their
+    awakened forms); their attack clips lunge far forward, the default 90 put them inside the enemy. A generic
+    measurement (painted reach of the attack clip) was tried and dropped: it also counts swords and moved
+    classic Cloud back.
+  - Dollet: enemyShiftX 0.07 puts enemies on the street instead of the left sidewalk (party formation unchanged).
+  - Tifa's Limit Reels: the white box was the back layer's 240-unit white Quads. prepare_scene_flashes.py:
+    SCREEN_QUAD_MIN 300 -> 240 and screen Quads may carry a constant offset (`_fixed_frame`); Limit Reels
+    republished (the layer now tints the whole arena). Other published scenes are unchanged until republished.
+  - Particle draw type 6 ("Unknown" textureCombination, texture 2 = soft mask) still renders as a square (Chaos's
+    Firaga/Flare, Beatrix's Stock Break). A renderer fix (texture 2 as alphaMap) worked visually but changes
+    originalEffectPlayer.mjs, whose hash is pinned in every published manifest's provenance; reverted. Chaos uses
+    Cyclone instead of Firaga.
 - Web (alpha) build: `npm run build:web` = normal build + `tools/web_audio.py dist` (music WAVs > 1 MB ->
   Ogg Vorbis q0.6, frame count checked, references in the built JS rewritten; public/ keeps the WAVs).
   Python needs `soundfile` (set FFROGUE_PYTHON if the PATH python lacks it). Result 2026-11-11: dist 1.2 GB,

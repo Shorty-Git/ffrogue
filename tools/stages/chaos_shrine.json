@@ -51,7 +51,7 @@
     "name": "Chaos",
     "scale": 2,
     "movement": "stationary",
-    "note": "FFBE boss Chaos (dictionary 4051810, Chaos Shrine); final boss with his original moves (import_enemy_skills.mjs). Flare is left out: its red cloud particle uses an unsupported texture combination and shows as a square.",
+    "note": "FFBE boss Chaos (dictionary 4051810, Chaos Shrine); final boss with his original moves (import_enemy_skills.mjs). Flare and Firaga are left out (Firaga: two draw-type-6 particles show as squares on the party; Cyclone takes its slot): its red cloud particle uses an unsupported texture combination and shows as a square.",
     "behavior": {
       "phaseAt": 0.5,
       "phaseName": "Wrath of Chaos",
@@ -66,15 +66,15 @@
         },
         {
           "kind": "prepare",
-          "name": "Chaos calls the four elements",
-          "next": "Firaga"
+          "name": "Chaos calls the storm",
+          "next": "Cyclone"
         },
         {
           "kind": "attack",
-          "name": "Firaga",
+          "name": "Cyclone",
           "multiplier": 1.2,
           "scope": "party",
-          "skill": "firaga"
+          "skill": "cyclone"
         },
         {
           "kind": "attack",

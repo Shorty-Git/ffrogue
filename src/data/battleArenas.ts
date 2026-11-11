@@ -15,6 +15,8 @@ export const BATTLE_ARENAS = {
   // Enemies stand in the shared slots, out on the water (developer playtest 2026-11-11; the quay shift of
   // 2026-11-10 pushed them into the party).
   altissia: { ...reviewed.altissia, contentWidth: 0.7 },
+  // Dollet: the default slots put enemies on the left sidewalk; nudge them onto the street (2026-11-11).
+  dollet: { ...reviewed.dollet, enemyShiftX: 0.07 },
 } as const;
 
 export type BattleArenaKey = keyof typeof BATTLE_ARENAS;

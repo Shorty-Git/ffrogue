@@ -504,15 +504,15 @@ export const IMPORTED_ENEMIES = {
         },
         {
           "kind": "prepare",
-          "name": "Chaos calls the four elements",
-          "next": "Firaga"
+          "name": "Chaos calls the storm",
+          "next": "Cyclone"
         },
         {
           "kind": "attack",
-          "name": "Firaga",
+          "name": "Cyclone",
           "multiplier": 1.2,
           "scope": "party",
-          "skill": "firaga"
+          "skill": "cyclone"
         },
         {
           "kind": "attack",
