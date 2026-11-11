@@ -109,10 +109,15 @@ export function createPreparedSceneBridge(scene, manifests, options = {}) {
   // cost up to ~600 ms each. They are spread out, and the host allows them only while its transition
   // veil covers the screen (BattleScene canWarm); variants not warmed by then compile on first play.
   const WARM_EVERY_FRAMES = 8;
+  // The scene clock never advances more than this per update. Phaser already drops single stalls
+  // above 200 ms, but a run of 100-200 ms frames (shaders compiling as nodes first appear) passed
+  // through and a first play skipped most of its scene (Cloud Remake's Ascension showed from about
+  // frame 400 of 543). Below 10 fps a scene slows down instead of skipping.
+  const MAX_STEP_MS = 100;
   const mayWarm = () => warmQueue.length && ++warmFrame % WARM_EVERY_FRAMES === 0 && (options.canWarm?.() ?? true);
   const update = (_time, delta) => {
     if (!active || paused) return;
-    active.elapsed += delta * scene.time.timeScale;
+    active.elapsed += Math.min(delta, MAX_STEP_MS) * scene.time.timeScale;
     active.frame = Math.floor(active.elapsed * 60 / 1000);
     active.onFrame?.(Math.min(active.frame,active.manifest.durationFrames-1));
     if (active.frame >= active.manifest.durationFrames) { finish(); return; }
@@ -187,8 +192,23 @@ export function createPreparedSceneBridge(scene, manifests, options = {}) {
     };
     externs.push(external);
   }
+  /** Runs GPU work outside Phaser's render pass and hands Phaser its GL state back. */
+  function withPhaserState(work) {
+    const gl = phaser.gl, previous = {framebuffer:gl.getParameter(gl.FRAMEBUFFER_BINDING),
+      viewport:gl.getParameter(gl.VIEWPORT),scissor:gl.getParameter(gl.SCISSOR_BOX),
+      scissorTest:gl.isEnabled(gl.SCISSOR_TEST)};
+    try { renderer.resetState(); work(); }
+    catch (error) { errors.push('warm-up: '+String(error.message)); }
+    finally {
+      renderer.resetState();
+      gl.bindFramebuffer(gl.FRAMEBUFFER,previous.framebuffer);
+      gl.viewport(...previous.viewport);gl.scissor(...previous.scissor);
+      if(previous.scissorTest)gl.enable(gl.SCISSOR_TEST);else gl.disable(gl.SCISSOR_TEST);
+    }
+  }
   function warmVariant(variant) {
-    if (!variant || disposed || ![...variants.values()].includes(variant)) return;
+    if (!variant || variant.warmed || disposed || ![...variants.values()].includes(variant)) return;
+    variant.warmed = true;
     for (const layer of Object.values(variant.layers)) {
       const hidden = [];
       layer.scene.traverse(object => {
@@ -262,6 +282,9 @@ export function createPreparedSceneBridge(scene, manifests, options = {}) {
     play(key,host,onComplete,onFrame) {
       const variant=variants.get(key+'/'+Object.keys(host.targets).length);
       if(!variant)throw Error('Prepared scene variant not ready: '+key);
+      // A variant the idle warm-up has not reached compiles here, before frame 0, as one stall
+      // (which Phaser drops from its clock) instead of hitching through the scene's first seconds.
+      if(!variant.warmed)withPhaserState(()=>warmVariant(variant));
       paused=false;active={...variant,host:structuredClone(host),frame:0,elapsed:0,onComplete,onFrame};evaluate();onFrame?.(0);
     },
     stop(){active=null;},

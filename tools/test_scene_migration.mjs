@@ -88,9 +88,11 @@ test('prepared action admission rejects scope/movement mismatch independently of
 test('bridge completion follows its effect clock once; stop/shutdown never complete an obsolete action',async()=>{
  const previous=globalThis.THREE;let externs=0;
  // Real prepared player/geometry, with only the GPU boundary replaced. No pixel claim.
- globalThis.THREE={...THREE,WebGLRenderer:class{dispose(){}}};
+ let warmed=0;
+ globalThis.THREE={...THREE,WebGLRenderer:class{dispose(){}resetState(){}initTexture(){}compile(){warmed++;}}};
+ const gl={getParameter:()=>[0,0,0,0],isEnabled:()=>false,bindFramebuffer(){},viewport(){},scissor(){},enable(){},disable(){}};
  const events=new EventEmitter(),scene={events,scale:{width:1000,height:1100},time:{timeScale:.5},
-  game:{canvas:{},renderer:{gl:{}}},add:{extern:()=>({setDepth(){return this;},destroy(){externs++;}})}};
+  game:{canvas:{},renderer:{gl}},add:{extern:()=>({setDepth(){return this;},destroy(){externs++;}})}};
  let bridge;
  try{
   const manifest=read('public/assets/presentations/cloud_brave_slash/manifest.json');
@@ -99,10 +101,15 @@ test('bridge completion follows its effect clock once; stop/shutdown never compl
    targets:{target0:{x:190,y:500}},units:{target0:{frameWidth:66,frameHeight:68,pivotX:.5,pivotY:.8,scale:2}}};
   let completed=0;bridge.play(manifest.key,host,()=>completed++);
   const duration=manifest.durationFrames*1000/60;
-  events.emit('update',0,2*(duration-1));assert.equal(completed,0);assert.equal(bridge.snapshot().active,true);
+  // First play warms the variant (both layers) before frame 0; errors would be recorded.
+  assert.equal(warmed,2);assert.deepEqual(bridge.snapshot().errors,[]);
+  // One update never advances the scene clock by more than 100 ms (x timeScale .5 = 3 frames).
+  events.emit('update',0,5000);assert.equal(bridge.snapshot().frame,3);
+  for(let t=100;t<2*(duration-1);t+=100)events.emit('update',0,Math.min(100,2*(duration-1)-t));
+  assert.equal(completed,0);assert.equal(bridge.snapshot().active,true);
   events.emit('update',0,4);assert.equal(completed,1);assert.equal(bridge.snapshot().active,false);
   events.emit('update',0,duration*2);assert.equal(completed,1);
-  bridge.play(manifest.key,host,()=>completed++);bridge.stop();events.emit('update',0,duration*2);assert.equal(completed,1);
+  bridge.play(manifest.key,host,()=>completed++);assert.equal(warmed,2,'a warmed variant is not compiled again');bridge.stop();events.emit('update',0,duration*2);assert.equal(completed,1);
   bridge.play(manifest.key,host,()=>completed++);events.emit('shutdown');events.emit('update',0,duration*2);
   assert.equal(completed,1);assert.equal(bridge.snapshot().variants,0);assert.equal(externs,2);
   assert.equal(events.listenerCount('update'),0);assert.equal(events.listenerCount('shutdown'),0);
