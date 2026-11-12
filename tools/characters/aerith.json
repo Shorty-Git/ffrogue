@@ -169,10 +169,71 @@
       ],
       "moveType": "stationary",
       "motion": "magic_atk",
-      "desc": "Magic light damage (20x, SPR) to all enemies",
-      "execution": "not-imported",
-      "importStatus": "not-imported",
-      "unavailableReason": "Original visual resources and execution profile are not yet fully supported by the Source pipeline."
+      "desc": "Magic light damage (3x) to all enemies",
+      "execution": "prepared-source",
+      "reviewNote": "Imported 2026-11-12 (authoring-free approximation; the last roster skill without a scene). Source timing and visuals; level 36 and 3x are the reviewed FFRogue values this entry carried before its scene existed.",
+      "scenePresentation": "aerith_banishga",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/renderer-phase3/banishga/source/skill-source.json",
+        "sha256": "f44c0d30b0d5ce08c6f6778d23d20afe851bad73c7604c00bc06a0ab5a3b09de"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "stationary",
+        "travelTiming": "prepared",
+        "readiness": "magic-standby",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "magic_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 2,
+          "sourceMoveType": 4,
+          "note": "Drafted from motion 2 / move 4: stationary magic_atk body."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 42,
+          "weight": 0.08
+        },
+        {
+          "frame": 62,
+          "weight": 0.08
+        },
+        {
+          "frame": 82,
+          "weight": 0.08
+        },
+        {
+          "frame": 102,
+          "weight": 0.08
+        },
+        {
+          "frame": 122,
+          "weight": 0.08
+        },
+        {
+          "frame": 142,
+          "weight": 0.08
+        },
+        {
+          "frame": 162,
+          "weight": 0.08
+        },
+        {
+          "frame": 182,
+          "weight": 0.44
+        }
+      ]
     },
     {
       "id": "seal_evil",

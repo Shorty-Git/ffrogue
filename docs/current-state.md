@@ -159,6 +159,27 @@ Still open after this phase:
   file for a moment) and, where a recipe no longer publishes (cloud-review: hand-reviewed legacy audio),
   keeps the manifest and pins only the player hash again (listed under `repinned` in republish.json).
 
+### Phase 3: unlock (2026-11-12)
+
+- Boss patterns: Chaos casts Firaga (party, in Cyclone's slot; Cyclone stays imported) and Flare (single,
+  in the second Dread Strike's slot) again; Beatrix casts Stock Break in the slot of the FFRogue "Sword
+  Sweep". Edea's Blizzaga stays out (see Phase 1, open). Regenerated with `import_stage.mjs`.
+  Check: `node tools/review_boss_moves.mjs --enemy chaos --skills firaga,flare` (and `--enemy beatrix
+  --skills stock_break`) plays the pattern step through the production enemy turn in a training fight and
+  saves a screenshot at the first hit: Firaga and Stock Break hit all three heroes, Flare one, no errors.
+  Not checked: full runs against these bosses (balance).
+- `import_stage.mjs` dropped the music of every stage it did not re-import when `importedMusic.mjs` had
+  CRLF line endings (22 of 28 tracks, caught by test_stage_content after it was committed in 3b6ba75,
+  fixed in e2dc31b). It now normalises line endings and refuses to write when it cannot read the list back.
+- Roster re-check: 428 of 429 skill entries were already published; the import gates are in preparation,
+  not in the renderer, so the renderer work unblocked nothing by itself. The one entry without a scene,
+  Aerith's Banishga (MAGIC 10170), now passes staging and preparation and was imported through
+  `import_skill_batch.sh` (level 36 and 3x kept from its earlier reviewed entry; original sounds admitted).
+  Checked: contact sheet (light bursts on both enemies, no boxes) and a cast in a training battle (844
+  damage on the target). Roster: 380 Source skills. The eight skills skipped in the full-import logs fail
+  before rendering (generation delay profile x2, instance limit x2, missing unit clip x2, non-finite
+  curve key, missing file) and were not retried.
+
 ## Playtest round 2026-11-11
 
 - Screen layers: `_screen_sized_quad` (prepare_scene_flashes.py): a static Quad authored at >= 300 units
