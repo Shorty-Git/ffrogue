@@ -1,5 +1,13 @@
 # Renderer coverage inventory and shared implementation priorities
 
+**Superseded as the working inventory (2026-11-12):** the corpus-wide successor is the generated
+[player issue inventory](player-issue-inventory.md) over all published scenes, with the
+[box detector report](box-detector-report.md). Of the priorities below, two-texture Distortion, Quad
+corner gradients, zero-extent emitters and untextured screen planes are implemented in approximation
+mode (see `docs/current-state.md`, "Renderer completion session"); parent alpha/transform
+combinations, Particle facing/billboards and emitters with an extent are still open. The text below is
+the 2026-10-24 evidence for three strict Cloud plans and is kept unchanged.
+
 Baseline evidence date: 2026-10-24. **Successor:** the
 [shared RGBA experiment](model-vertex-rgba.md) implements and tests the first
 recommendation under an explicit plan flag. The table below records the baseline

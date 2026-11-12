@@ -1,5 +1,25 @@
 # FFRogue - Skill Reconstruction Map
 
+## Renderer completion: decoders, screen layers, full re-baseline (2026-11-12)
+
+Status: approximation mode; published for all 546 scenes after a full re-prepare, republish and frame
+comparison (`tools/rebaseline_scenes.mjs`). Details, numbers and open points: `docs/current-state.md`,
+section "Renderer completion session".
+
+| Component | Before | Now | Evidence |
+| --- | --- | --- | --- |
+| Particle texture combination 6 | "Unknown", first texture drawn as a square | Distortion (same as Quad) | 17 staged nodes carry the midpoint at Quad offset - 96; matched authoring of bm_2035_flare_bg / bm_2044_artema_bg; native selector slot 184; `test_bmb_distortion.py`, `test_bmb_materials.py` |
+| Distortion fields in approximation plans | Quads withheld | Quads and Particles drawn from binary tints/midpoint/curves | 101 scenes; Firaga family box score 1495 -> 74 |
+| Particle colour selector | unresolved without authoring (406 scenes), dormant curve used | binary field +1624 | 458 of 458 authored Particle nodes agree; strict plans unchanged (`test_original_appearance.py`, `test_source_prepare_profile.py`) |
+| Quad corner colours | mean RGB or white | four corner RGBA for constant gradients | 71 scenes; looked at on Healing Wind; no unit test of its own |
+| Untextured Particles | withheld | drawn when they are screen planes (>= 190 units) | 168 scenes; player change, hash pinned in `test_scene_migration.mjs` |
+| Non-point emitters | withheld | zero-extent shapes are points; others still withheld | NV Limit Burst frame bars in 17 scenes |
+| Screen layers | several narrow rules | uniform planes on any anchor, patterned planes from 190 on screen anchors, backdrop Models, frame effects | `test_scene_flashes.py` (9 tests) |
+| First play | skipped most of the scene | warm-up in the first render pass, clock step capped | bridge test, Limit Burst body drift 0 frames |
+
+Not integration-proof beyond this renderer: no native frame was compared. Missing references and open
+scenes are listed in current-state (Edea's Blizzaga, Holy's cloud layer, Tifa's reel placement).
+
 ## Renderer measurement tools (2026-11-11)
 
 Not a reconstruction step: no player code, plan or published scene changed. Three tools now measure

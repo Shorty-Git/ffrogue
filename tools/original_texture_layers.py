@@ -21,6 +21,20 @@ def attach_texture_layers(result, project):
     count = 0
     for node, source in zip(result['nodes'], sources):
         node['authoringEmissionShape'] = source.findtext('GenerateShape_Basic_GenerateShapeType')
+        outside = source.find('GenerateShape_Area_Outside')
+        if (bmb_channels.APPROXIMATED_CURVES is not None and outside is not None
+                and node['authoringEmissionShape'] in ['Cube', 'Sphere', 'Cylinder']):
+            # Approximation mode (2026-11-12). A shape without extent is a point: the border bars of the NV
+            # Limit Burst frame effects are "Cube" emitters with Outside 0/0/0 and were withheld for it.
+            # Shapes with an extent and Model-surface emitters stay withheld (their distribution is not
+            # reconstructed; a box-range stand-in was tried and conflicts with the authoring comparison).
+            extent = [float(outside.attrib[axis]) for axis in 'XYZ']
+            if not all(math.isfinite(value) for value in extent):
+                raise ValueError('Non-finite emission shape extent')
+            if not any(extent):
+                bmb_channels.APPROXIMATED_CURVES.append({'node': node['index'], 'emissionShape': node['authoringEmissionShape'],
+                    'treatment': 'zero-extent-emission-shape-as-point'})
+                node['authoringEmissionShape'] = 'Point'
         if node.get('materialControls', {}).get('textureCombination', {}).get('name') != 'Add':
             continue
         if not node['resourceBindings'].get('texture2'):

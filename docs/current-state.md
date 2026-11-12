@@ -2,7 +2,7 @@
 
 Single entry point for any developer or AI picking up the project. Read this first, then
 `docs/vision.md` (goals), `AGENTS.md` (rules) and the specialised docs linked below.
-Last consolidated: 2026-11-07; newest section: renderer completion session 2026-11-11.
+Last consolidated: 2026-11-07; newest section: renderer completion session 2026-11-11/12.
 
 ## Renderer completion session (2026-11-11, brief: docs/briefs/renderer-completion.md)
 
@@ -76,7 +76,8 @@ e4e4f09f… and the manifests of 2026-11-11, after = player 103046af…): 185 un
 for review, no playback errors. The 126 were accepted by class after looking at 16 contact sheets, not one
 by one: 91 "gained much picture" (back-layer colour fades `eff_fadeblack_*` and full-screen flashes that
 were withheld or boxed before), 33 "more rectangle corners" (looked at: lightning layers, star fields, hit
-bursts; no new box found in the samples), 2 changed duration. Scenes with rectangle corners 165 -> 150;
+bursts; no new box found in the samples), 2 changed duration. Scenes with rectangle corners 165 -> 150
+(161 after Phase 2 drew the NV frame bars: their soft glow at the arena border counts as corners);
 33 scenes lost 500 or more box score (Firaga family 1495 -> 74, Stock Break/Ultima family, Flare, Riot
 Blade Lotus, Meltdown, Blasting Zone). Browse `tools/data/scene-baseline/compare.html` for every pair.
 Fixed and looked at: chaos_firaga (soft fireball), chaos_flare / terra_flare (red distorted backdrop,
@@ -179,6 +180,26 @@ Still open after this phase:
   damage on the target). Roster: 380 Source skills. The eight skills skipped in the full-import logs fail
   before rendering (generation delay profile x2, instance limit x2, missing unit clip x2, non-finite
   curve key, missing file) and were not retried.
+
+### Phase 2: documented renderer gaps (2026-11-12), by brief item
+
+Counts are published scenes (546) carrying the capability; nothing here is original-fidelity proof.
+- 8 Model vertex RGBA: on in all 546 scenes (already before this session). Parent alpha and parent
+  transform combinations: not touched (still reported by the player in 350 and 136 scenes).
+- 9 Particle facing / billboards: not touched.
+- 10 Non-point emitters: a shape without extent is a point. The border bars of the NV Limit Burst frame
+  effects are "Cube" emitters with Outside 0/0/0 and were withheld for it in 17 scenes; they are drawn
+  now (`original_texture_layers.py`, treatment `zero-extent-emission-shape-as-point`) and sit at the
+  border through `annotate_screen_frames`. Shapes with an extent (Sphere/Cylinder Nulls, 6 scenes) and
+  Model-surface emitters (2 scenes) stay withheld; a box-range stand-in was tried and conflicts with the
+  authoring comparison of the same vectors.
+- 11 Untextured primitives: drawn where they are screen planes (168 scenes); smaller ones stay withheld
+  (Phase 1). Power Geyser node 15 belongs to a strict Cloud plan and is unchanged.
+- 12 Quad corners and two-texture materials: constant corner gradients (71 scenes) and the Distortion
+  material on Quads and Particles (101 scenes) are drawn in approximation mode (Phase 1). The Add
+  material still uses the labelled legacy comparison where the native fragment does not match (390 scenes).
+- 13 Draw order was already source priority through the bridge (`applyOriginalDrawOrder`); type 7 stays
+  the approximate bolt; node types 4 and 15 are still omitted subtrees.
 
 ## Playtest round 2026-11-11
 

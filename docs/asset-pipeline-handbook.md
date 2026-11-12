@@ -10,6 +10,23 @@ reports as not reproduced ([player issue inventory](research/player-issue-invent
 edges. These are measurements of this renderer against itself, not original-game fidelity evidence.
 Commands, outputs and limits: `current-state.md`, section "Renderer completion session".
 
+Renderer status after that session (2026-11-12), approximation mode only unless noted:
+- Supported now: Distortion material on Quads and Particles (binary tints, midpoint, colour curves; native
+  alpha equation); Particle colour selector from the binary; constant Quad corner gradients; untextured
+  Particles that are screen planes; zero-extent emission shapes as points; screen layers from 190 units
+  (uniform planes on any anchor, patterned/two-texture planes on screen anchors, backdrop Models on the
+  back layer of screen/target-side effects); Limit Burst frame effects scaled to this view.
+- Still unsupported, explicit: emission shapes with an extent and Model-surface emitters (withheld), small
+  untextured Particles (withheld), subdivided backdrop Models (drawn at source size), parent alpha/transform
+  combinations, Particle facing/billboards, node types 4 and 15, the Add material where the native fragment
+  does not match (labelled legacy comparison).
+- After any decoder change run `node tools/reprepare_scene_plans.mjs`, then
+  `node tools/rebaseline_scenes.mjs run`. Strict plans (the first Cloud/Aerith/Barret skills) are not
+  re-prepared and keep their manifests; only their player hash is pinned again.
+- `import_stage.mjs` and the publish tools write files Vite watches; on Windows a write can fail while
+  the dev server holds the file. The re-baseline tool retries; a recipe that still cannot publish is
+  listed under `repinned` in `tools/data/scene-baseline/republish.json` and must be looked at.
+
 Limit Bursts (2026-11-07): the pipeline now admits a form's Limit Burst as skill
 type `LIMIT` (Cloud's Omnislash is the first). Visual approximation is an explicit opt-in
 (`--approximate-unverified`), long body clips wrap into a grid (`tools/sheet_grid.py`).
