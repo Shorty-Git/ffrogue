@@ -8,8 +8,8 @@
   "durationFrames": 192,
   "provenance": {
     "planFile": "tools/data/full-import/squall/skills/keen_edge/source/plan.json",
-    "planSha256": "45141aca503c3849791cd5a7ba1234674ee561df49c9e015c46367c9e637ca39",
-    "playerSha256": "e4e4f09f03c649f80c0f5f3bfa4a383a4033680d33d473799cc2e4d7472a834e",
+    "planSha256": "b9dfbc2da5c200e0c492b9c3f50a83b455e9b6e324bf9d4ff72493ce9cef1b54",
+    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "2ec59c80de0c98e72318b8498f7d5132674391f6254178b4674296d63c64401c"
   },
@@ -19055,6 +19055,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 3832
+              },
               "blend": {
                 "id": 1,
                 "name": "Semitrans",
@@ -19215,10 +19220,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   0,
                   0,
@@ -19226,8 +19231,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "nativeMaterialSelection": {
@@ -19302,6 +19306,11 @@
               ],
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+            },
+            "presentationCoverage": {
+              "region": "arena",
+              "primitive": "screen-particle",
+              "origin": "Automatic screen layer: untextured plane (412.5 x 225 >= 190); fitted to the visible battlefield instead of a box"
             }
           }
         ],
@@ -19384,7 +19393,9 @@
         "appearanceReport": {
           "nodes": 4,
           "dormantAlphaCurves": [],
-          "dormantColorCurves": [],
+          "dormantColorCurves": [
+            3
+          ],
           "limitations": [
             {
               "node": 0,
@@ -19401,10 +19412,6 @@
             {
               "node": 3,
               "reason": "RGB random-range support is unverified without authoring"
-            },
-            {
-              "node": 3,
-              "reason": "color selector unresolved; legacy preview tint retained"
             }
           ],
           "authoringComparison": null,
@@ -21041,6 +21048,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 3832
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -21344,7 +21356,7 @@
             "nonemptyBindingsChecked": 1
           },
           "materialChecks": {
-            "materialEnumsChecked": 11,
+            "materialEnumsChecked": 12,
             "materialAlphaValuesChecked": 4
           },
           "dormantAuthoringCurvesNotDecoded": [],
@@ -21377,7 +21389,7 @@
             "nonemptyBindingsChecked": 1
           },
           "materialChecks": {
-            "materialEnumsChecked": 11,
+            "materialEnumsChecked": 12,
             "materialAlphaValuesChecked": 4
           },
           "dormantAuthoringCurvesNotDecoded": [],
@@ -21479,7 +21491,7 @@
               "nonemptyBindingsChecked": 1
             },
             "materialChecks": {
-              "materialEnumsChecked": 11,
+              "materialEnumsChecked": 12,
               "materialAlphaValuesChecked": 4
             },
             "dormantAuthoringCurvesNotDecoded": []
@@ -21513,7 +21525,7 @@
               "nonemptyBindingsChecked": 1
             },
             "materialChecks": {
-              "materialEnumsChecked": 11,
+              "materialEnumsChecked": 12,
               "materialAlphaValuesChecked": 4
             },
             "dormantAuthoringCurvesNotDecoded": []

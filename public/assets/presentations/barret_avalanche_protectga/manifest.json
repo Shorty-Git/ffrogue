@@ -8,8 +8,8 @@
   "durationFrames": 230,
   "provenance": {
     "planFile": "tools/data/full-import/barret_avalanche/skills/protectga/source/plan.json",
-    "planSha256": "473e6be0733e08b3b9e029428fddd62d6a19618e603dcbbd3e43c437bca26518",
-    "playerSha256": "e4e4f09f03c649f80c0f5f3bfa4a383a4033680d33d473799cc2e4d7472a834e",
+    "planSha256": "3c6e16deea8be5285f8e6611e48ae6fe8d3faae33906ede024487f36d7893c81",
+    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "acccf7e153ae98cacb309d764835ac3e5a898fd81043c56cd8f826c5e40998bd"
   },
@@ -5954,6 +5954,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 4536
+              },
               "blend": {
                 "id": 1,
                 "name": "Semitrans",
@@ -6114,10 +6119,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   0,
                   0,
@@ -6125,8 +6130,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "nativeMaterialSelection": {
@@ -6201,6 +6205,11 @@
               ],
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+            },
+            "presentationCoverage": {
+              "region": "arena",
+              "primitive": "screen-particle",
+              "origin": "Automatic screen layer: untextured plane (320 x 280 >= 190); fitted to the visible battlefield instead of a box"
             }
           }
         ],
@@ -6319,10 +6328,6 @@
             {
               "node": 4,
               "reason": "RGB random-range support is unverified without authoring"
-            },
-            {
-              "node": 4,
-              "reason": "color selector unresolved; legacy preview tint retained"
             }
           ],
           "authoringComparison": null,

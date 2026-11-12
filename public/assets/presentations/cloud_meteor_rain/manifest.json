@@ -5,11 +5,11 @@
   "sourceId": 214830,
   "quality": "experimental-preview",
   "originalFidelityVerified": false,
-  "durationFrames": 245,
+  "durationFrames": 261,
   "provenance": {
     "planFile": "tools/data/authoring-free-20261107/meteor/source/plan.json",
-    "planSha256": "57432d7a735cebde49bbf50860ca9c1a7b1d87f1f5ab0b6264d817777abe2d4a",
-    "playerSha256": "e4e4f09f03c649f80c0f5f3bfa4a383a4033680d33d473799cc2e4d7472a834e",
+    "planSha256": "b990e2aef5ed2f07eb034c2d9290a362a18873120c452ef58e9326718de2b0d1",
+    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "4035f85b18dd03c9789cb4fd47632b02764c82d0120806e0c433e2cc99f33976"
   },
@@ -78,7 +78,7 @@
       "origin": "Explicit composed research inspection; raw ability retained"
     },
     "seed": 1,
-    "effectHorizon": 180,
+    "effectHorizon": 196,
     "endFrame": 210,
     "approachFrames": 18,
     "presentation": {
@@ -87,7 +87,7 @@
       "approachFrames": 0,
       "returnFrames": 12,
       "targetOffsetX": 90,
-      "recipeSha256": "a8bcd45e9af29e75fe866c9a040097320aeae890bc6bad58a8429a6fad4a1f57",
+      "recipeSha256": "5d7f81540137525e2006332536ba1004f4eeafbef29b3bca5b0353bacb5799ad",
       "origin": "Reviewed game recipe; preview timing and offsets are adaptations"
     },
     "fitScreenToArena": false,
@@ -14890,6 +14890,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 34424
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -15056,10 +15061,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   1,
                   1,
@@ -15067,8 +15072,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "basicTextureMapping": {
@@ -15538,6 +15542,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 36264
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -15704,10 +15713,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   0.15424229204654694,
                   0.2592654526233673,
@@ -15715,8 +15724,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "basicTextureMapping": {
@@ -92325,16 +92333,8 @@
               "reason": "RGB random-range support is unverified without authoring"
             },
             {
-              "node": 26,
-              "reason": "color selector unresolved; legacy preview tint retained"
-            },
-            {
               "node": 27,
               "reason": "RGB random-range support is unverified without authoring"
-            },
-            {
-              "node": 27,
-              "reason": "color selector unresolved; legacy preview tint retained"
             },
             {
               "node": 28,
@@ -96302,6 +96302,10 @@
           "value": "0",
           "corpusShare": 0.9998,
           "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "effectHorizon": 196,
+          "treatment": "spawn-horizon-to-last-hit"
         }
       ],
       "boundary": "Visual approximation: these source curves are not evaluated; the effect is not a native-fidelity reconstruction."

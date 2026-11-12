@@ -8,8 +8,8 @@
   "durationFrames": 416,
   "provenance": {
     "planFile": "tools/data/full-import/terra_magitek_warrior/skills/chaos_wind/source/plan.json",
-    "planSha256": "5d6e68f9e97cbfabd3895dc6856ea53c47f659482372813f117553444e9d1d16",
-    "playerSha256": "e4e4f09f03c649f80c0f5f3bfa4a383a4033680d33d473799cc2e4d7472a834e",
+    "planSha256": "b32de3c243cf9575caa45f3e8c90af2b947ae79031a15825dc56772115055287",
+    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "b38b9633192df481bdbe1865aa3f085d2fff5ad7b76590d24f631da18dbf4148"
   },
@@ -87,7 +87,7 @@
       "approachFrames": 0,
       "returnFrames": 12,
       "targetOffsetX": 90,
-      "recipeSha256": "088024463c0e3188e80e9e1f642d22be570473c5431c3cc8b6566414d17ead7d",
+      "recipeSha256": "c18ce2d1f81aa3029b6772f952f2541d3fcaa7711994212e8b0a7d622c932df6",
       "origin": "Reviewed game recipe; preview timing and offsets are adaptations"
     },
     "fitScreenToArena": false,
@@ -28883,6 +28883,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 1,
+                "name": "Curve",
+                "fieldOffset": 23000
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -29095,10 +29100,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Curve",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   1,
                   1,
@@ -29106,8 +29111,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "nativeMaterialSelection": {
@@ -59223,10 +59227,6 @@
               "reason": "RGB random-range support is unverified without authoring"
             },
             {
-              "node": 20,
-              "reason": "color selector unresolved; legacy preview tint retained"
-            },
-            {
               "node": 21,
               "reason": "RGB random-range support is unverified without authoring"
             },
@@ -61558,7 +61558,7 @@
               "region": "arena",
               "primitive": "unit-quad",
               "textureSha256": "adb55b501c864239cbdc86823e5044aa1e5a4b567abbba37df90f4f834cde20d",
-              "origin": "Automatic screen layer: static Quad authored at screen size (390 x 360 >= 300) on a screen-anchored effect; fitted to the visible battlefield"
+              "origin": "Automatic screen layer: static Quad authored at screen size (390 x 360 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           },
           {
@@ -62226,7 +62226,7 @@
               "region": "arena",
               "primitive": "unit-quad",
               "textureSha256": "3b03488b361554f606c86d64c5b745640bdc722370361d78516ec2818864ed7d",
-              "origin": "Automatic screen layer: static Quad authored at screen size (390 x 360 >= 300) on a screen-anchored effect; fitted to the visible battlefield"
+              "origin": "Automatic screen layer: static Quad authored at screen size (390 x 360 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           },
           {
@@ -62856,7 +62856,7 @@
               "region": "arena",
               "primitive": "unit-quad",
               "textureSha256": "94abad2d64f86fb0157c0bd06097bf2b028438d63e07874ac4cd8759c2276365",
-              "origin": "Automatic screen layer: static Quad authored at screen size (390 x 360 >= 300) on a screen-anchored effect; fitted to the visible battlefield"
+              "origin": "Automatic screen layer: static Quad authored at screen size (390 x 360 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           }
         ],

@@ -8,8 +8,8 @@
   "durationFrames": 267,
   "provenance": {
     "planFile": "tools/data/full-import/noctis_true_king/skills/armiger_strike/source/plan.json",
-    "planSha256": "e0b283be4f3e0da0d8d576c5d4970162125d1fcf1c722eaf442643c88c6d0333",
-    "playerSha256": "e4e4f09f03c649f80c0f5f3bfa4a383a4033680d33d473799cc2e4d7472a834e",
+    "planSha256": "a2f7cbff7500251761893fad05db397490cff57af80d52ab7a25331b64b423e7",
+    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "9292372e6bb8f1db712edf0990c5ac51e401a743fdaaf59290d69d562c117c1f"
   },
@@ -87,7 +87,7 @@
       "approachFrames": 0,
       "returnFrames": 12,
       "targetOffsetX": 90,
-      "recipeSha256": "3df148f566a6d38f187e1fc1fd755ce94fc551b04c3b61b9b9230f6d0327b693",
+      "recipeSha256": "cff6f920ba2710cdaa05988ba506f3a6f1c57a5bce39ac8278e26a18c515237c",
       "origin": "Reviewed game recipe; preview timing and offsets are adaptations"
     },
     "fitScreenToArena": false,
@@ -3732,6 +3732,73 @@
               }
             },
             "sortPriority": 0.6000000238418579,
+            "quadColors": {
+              "flat": false,
+              "modeId": 0,
+              "mode": "Constant",
+              "corners": {
+                "leftTop": {
+                  "value": [
+                    0.48472318053245544,
+                    0.6231894493103027,
+                    1,
+                    0
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 5128
+                },
+                "rightTop": {
+                  "value": [
+                    1,
+                    1,
+                    1,
+                    1
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 5160
+                },
+                "leftBottom": {
+                  "value": [
+                    1,
+                    1,
+                    1,
+                    1
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 5192
+                },
+                "rightBottom": {
+                  "value": [
+                    1,
+                    1,
+                    1,
+                    1
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 5224
+                }
+              }
+            },
             "authoringEmissionShape": "Point",
             "authoringTextureLayers": {
               "texture1": {
@@ -3804,11 +3871,9 @@
                 "mode": "Constant",
                 "origin": "IBMB",
                 "domain": "corners",
-                "supported": false
+                "supported": true
               },
-              "limitations": [
-                "quad corner color evaluation unavailable; legacy preview tint retained"
-              ]
+              "limitations": []
             },
             "nativeMaterialSelection": {
               "scope": "Initial ordinary Quad/Particle constructor; no runtime override",
@@ -4392,6 +4457,73 @@
               }
             },
             "sortPriority": 0.6000000238418579,
+            "quadColors": {
+              "flat": false,
+              "modeId": 0,
+              "mode": "Constant",
+              "corners": {
+                "leftTop": {
+                  "value": [
+                    0.4017031490802765,
+                    0.6678392291069031,
+                    1,
+                    0
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 7256
+                },
+                "rightTop": {
+                  "value": [
+                    1,
+                    1,
+                    1,
+                    1
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 7288
+                },
+                "leftBottom": {
+                  "value": [
+                    1,
+                    1,
+                    1,
+                    1
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 7320
+                },
+                "rightBottom": {
+                  "value": [
+                    1,
+                    1,
+                    1,
+                    1
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 7352
+                }
+              }
+            },
             "authoringEmissionShape": "Point",
             "authoringTextureLayers": {
               "texture1": {
@@ -4464,11 +4596,9 @@
                 "mode": "Constant",
                 "origin": "IBMB",
                 "domain": "corners",
-                "supported": false
+                "supported": true
               },
-              "limitations": [
-                "quad corner color evaluation unavailable; legacy preview tint retained"
-              ]
+              "limitations": []
             },
             "nativeMaterialSelection": {
               "scope": "Initial ordinary Quad/Particle constructor; no runtime override",
@@ -12260,14 +12390,6 @@
               "reason": "RGB random-range support is unverified without authoring"
             },
             {
-              "node": 7,
-              "reason": "quad corner color evaluation unavailable; legacy preview tint retained"
-            },
-            {
-              "node": 8,
-              "reason": "quad corner color evaluation unavailable; legacy preview tint retained"
-            },
-            {
               "node": 11,
               "reason": "RGB random-range support is unverified without authoring"
             },
@@ -12603,15 +12725,13 @@
       "curves": [
         {
           "node": 7,
-          "quadColors": "Constant",
-          "flat": false,
-          "treatment": "legacy-preview-tint"
+          "quadColors": "Constant-corners",
+          "treatment": "corner-gradient-rgba"
         },
         {
           "node": 8,
-          "quadColors": "Constant",
-          "flat": false,
-          "treatment": "legacy-preview-tint"
+          "quadColors": "Constant-corners",
+          "treatment": "corner-gradient-rgba"
         },
         {
           "member": "eff_slash_trace_blue.bmb",

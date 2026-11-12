@@ -8,8 +8,8 @@
   "durationFrames": 502,
   "provenance": {
     "planFile": "tools/data/enemy-skills/chaos-216517/source/plan.json",
-    "planSha256": "796950d6e5f6c5c073dd42b234dc3e9fe134c52290cacda499aa29cc748e0b47",
-    "playerSha256": "e4e4f09f03c649f80c0f5f3bfa4a383a4033680d33d473799cc2e4d7472a834e",
+    "planSha256": "32b20e8bd78bf0720041938c609e112c287309bcf054c4363ae99d88060903ec",
+    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "180af71b64160c57895f95dbf323f25e785770f1d6515f423573abd408d33cd5"
   },
@@ -57,7 +57,7 @@
       "returnFrames": 12,
       "targetOffsetX": 0,
       "caster": "enemy",
-      "recipeSha256": "6d22268f504a0031945a224094deec9da7f6a96b3006d484b4454299b197ca64",
+      "recipeSha256": "5639bb3eb3a268ad35b261754561bb1bcb62efeb151412cfa311824908e8772e",
       "origin": "Reviewed game recipe; preview timing and offsets are adaptations"
     },
     "fitScreenToArena": false,
@@ -3609,6 +3609,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 8072
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -8030,6 +8035,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 1,
+                "name": "Curve",
+                "fieldOffset": 17736
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -8778,6 +8788,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 1,
+                "name": "Curve",
+                "fieldOffset": 19576
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -9933,6 +9948,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 22120
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -10614,6 +10634,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 23960
+              },
               "blend": {
                 "id": 1,
                 "name": "Semitrans",
@@ -24552,6 +24577,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 54696
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -26760,6 +26790,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 59848
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -28166,6 +28201,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 1,
+                "name": "Curve",
+                "fieldOffset": 62392
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -28914,6 +28954,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 1,
+                "name": "Curve",
+                "fieldOffset": 64232
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -84394,7 +84439,7 @@
             "nonemptyBindingsChecked": 47
           },
           "materialChecks": {
-            "materialEnumsChecked": 175,
+            "materialEnumsChecked": 184,
             "materialAlphaValuesChecked": 51
           },
           "dormantAuthoringCurvesNotDecoded": [],
@@ -84439,7 +84484,7 @@
             "nonemptyBindingsChecked": 47
           },
           "materialChecks": {
-            "materialEnumsChecked": 175,
+            "materialEnumsChecked": 184,
             "materialAlphaValuesChecked": 51
           },
           "dormantAuthoringCurvesNotDecoded": [],
@@ -85281,7 +85326,7 @@
               "nonemptyBindingsChecked": 47
             },
             "materialChecks": {
-              "materialEnumsChecked": 175,
+              "materialEnumsChecked": 184,
               "materialAlphaValuesChecked": 51
             },
             "dormantAuthoringCurvesNotDecoded": []
@@ -85327,7 +85372,7 @@
               "nonemptyBindingsChecked": 47
             },
             "materialChecks": {
-              "materialEnumsChecked": 175,
+              "materialEnumsChecked": 184,
               "materialAlphaValuesChecked": 51
             },
             "dormantAuthoringCurvesNotDecoded": []
@@ -85697,9 +85742,9 @@
               "alphaRate": 0,
               "colorRate": 0,
               "compatibility": {
-                "nodeV16": true,
+                "nodeV16": false,
                 "nodeV15": false,
-                "rootV16": true,
+                "rootV16": false,
                 "rootV15": false
               }
             },
@@ -85707,13 +85752,13 @@
               "rotationMode": "NewtonDynamics",
               "scaleMode": "NewtonDynamics",
               "origin": "Explicit matching BMSLN; these selectors are not newly decoded binary fields",
-              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+              "projectSha256": "ef945c2cb2cafa8b3e3219f276c6adb592ab0ee00ca6ccee77655aff7d1770d2"
             },
             "nullLocatorSource": {
               "type": "Standard",
               "rotationMode": "NewtonDynamics",
               "scaleMode": "NewtonDynamics",
-              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7",
+              "projectSha256": "ef945c2cb2cafa8b3e3219f276c6adb592ab0ee00ca6ccee77655aff7d1770d2",
               "origin": "IBMB Null type; rotation/scale still require explicit matching BMSLN"
             },
             "appearance": {
@@ -85733,9 +85778,7 @@
                   1
                 ]
               },
-              "limitations": [
-                "RGB random-range support is unverified without authoring"
-              ]
+              "limitations": []
             },
             "nativeNullLocator": {
               "typeId": 1,
@@ -86078,7 +86121,7 @@
               "compatibility": {
                 "nodeV16": true,
                 "nodeV15": false,
-                "rootV16": true,
+                "rootV16": false,
                 "rootV15": false
               }
             },
@@ -86086,13 +86129,13 @@
               "rotationMode": "NewtonDynamics",
               "scaleMode": "NewtonDynamics",
               "origin": "Explicit matching BMSLN; these selectors are not newly decoded binary fields",
-              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+              "projectSha256": "ef945c2cb2cafa8b3e3219f276c6adb592ab0ee00ca6ccee77655aff7d1770d2"
             },
             "nullLocatorSource": {
               "type": "Standard",
               "rotationMode": "NewtonDynamics",
               "scaleMode": "NewtonDynamics",
-              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7",
+              "projectSha256": "ef945c2cb2cafa8b3e3219f276c6adb592ab0ee00ca6ccee77655aff7d1770d2",
               "origin": "IBMB Null type; rotation/scale still require explicit matching BMSLN"
             },
             "appearance": {
@@ -86112,9 +86155,7 @@
                   1
                 ]
               },
-              "limitations": [
-                "RGB random-range support is unverified without authoring"
-              ]
+              "limitations": []
             },
             "nativeNullLocator": {
               "typeId": 1,
@@ -86459,7 +86500,7 @@
               "compatibility": {
                 "nodeV16": true,
                 "nodeV15": false,
-                "rootV16": true,
+                "rootV16": false,
                 "rootV15": false
               }
             },
@@ -86467,13 +86508,13 @@
               "rotationMode": "NewtonDynamics",
               "scaleMode": "NewtonDynamics",
               "origin": "Explicit matching BMSLN; these selectors are not newly decoded binary fields",
-              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+              "projectSha256": "ef945c2cb2cafa8b3e3219f276c6adb592ab0ee00ca6ccee77655aff7d1770d2"
             },
             "nullLocatorSource": {
               "type": "Standard",
               "rotationMode": "NewtonDynamics",
               "scaleMode": "NewtonDynamics",
-              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7",
+              "projectSha256": "ef945c2cb2cafa8b3e3219f276c6adb592ab0ee00ca6ccee77655aff7d1770d2",
               "origin": "IBMB Null type; rotation/scale still require explicit matching BMSLN"
             },
             "appearance": {
@@ -86493,9 +86534,7 @@
                   1
                 ]
               },
-              "limitations": [
-                "RGB random-range support is unverified without authoring"
-              ]
+              "limitations": []
             },
             "nativeNullLocator": {
               "typeId": 1,
@@ -86838,7 +86877,7 @@
               "compatibility": {
                 "nodeV16": true,
                 "nodeV15": false,
-                "rootV16": true,
+                "rootV16": false,
                 "rootV15": false
               }
             },
@@ -86846,13 +86885,13 @@
               "rotationMode": "NewtonDynamics",
               "scaleMode": "NewtonDynamics",
               "origin": "Explicit matching BMSLN; these selectors are not newly decoded binary fields",
-              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+              "projectSha256": "ef945c2cb2cafa8b3e3219f276c6adb592ab0ee00ca6ccee77655aff7d1770d2"
             },
             "nullLocatorSource": {
               "type": "Standard",
               "rotationMode": "NewtonDynamics",
               "scaleMode": "NewtonDynamics",
-              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7",
+              "projectSha256": "ef945c2cb2cafa8b3e3219f276c6adb592ab0ee00ca6ccee77655aff7d1770d2",
               "origin": "IBMB Null type; rotation/scale still require explicit matching BMSLN"
             },
             "appearance": {
@@ -86872,9 +86911,7 @@
                   1
                 ]
               },
-              "limitations": [
-                "RGB random-range support is unverified without authoring"
-              ]
+              "limitations": []
             },
             "nativeNullLocator": {
               "typeId": 1,
@@ -87373,6 +87410,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 4536
+              },
               "blend": {
                 "id": 1,
                 "name": "Semitrans",
@@ -87385,7 +87427,7 @@
               },
               "textureCombination": {
                 "id": 6,
-                "name": "Unknown",
+                "name": "Distortion",
                 "fieldOffset": 4608
               },
               "texture1Address": {
@@ -87516,6 +87558,91 @@
               }
             },
             "sortPriority": 0.20000000298023224,
+            "distortionFields": {
+              "midpoint": [
+                128,
+                128,
+                128
+              ],
+              "layers": {
+                "texture1": {
+                  "rgbInitial": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "rgbRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "colorMode": "Constant",
+                  "colorCurve": {
+                    "fieldOffset": 4560,
+                    "axes": [
+                      "R",
+                      "G",
+                      "B"
+                    ],
+                    "keys": []
+                  }
+                },
+                "texture2": {
+                  "rgbInitial": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "rgbRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "colorMode": "Constant",
+                  "colorCurve": {
+                    "fieldOffset": 4576,
+                    "axes": [
+                      "R",
+                      "G",
+                      "B"
+                    ],
+                    "keys": []
+                  }
+                }
+              },
+              "motionModes": {
+                "texture1Translation": {
+                  "id": 1,
+                  "name": "NewtonDynamics",
+                  "fieldOffset": 4712
+                },
+                "texture1Rotation": {
+                  "id": 1,
+                  "name": "NewtonDynamics",
+                  "fieldOffset": 4716
+                },
+                "texture1Scale": {
+                  "id": 1,
+                  "name": "NewtonDynamics",
+                  "fieldOffset": 4720
+                },
+                "texture2Translation": {
+                  "id": 1,
+                  "name": "NewtonDynamics",
+                  "fieldOffset": 4732
+                },
+                "texture2Rotation": {
+                  "id": 1,
+                  "name": "NewtonDynamics",
+                  "fieldOffset": 4736
+                },
+                "texture2Scale": {
+                  "id": 1,
+                  "name": "NewtonDynamics",
+                  "fieldOffset": 4740
+                }
+              }
+            },
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -87528,7 +87655,7 @@
               "compatibility": {
                 "nodeV16": true,
                 "nodeV15": true,
-                "rootV16": true,
+                "rootV16": false,
                 "rootV15": false
               }
             },
@@ -87536,7 +87663,7 @@
               "rotationMode": "NewtonDynamics",
               "scaleMode": "NewtonDynamics",
               "origin": "Explicit matching BMSLN; these selectors are not newly decoded binary fields",
-              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+              "projectSha256": "ef945c2cb2cafa8b3e3219f276c6adb592ab0ee00ca6ccee77655aff7d1770d2"
             },
             "appearance": {
               "alpha": {
@@ -87545,20 +87672,18 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "BMSLN",
+                "projectSha256": "ef945c2cb2cafa8b3e3219f276c6adb592ab0ee00ca6ccee77655aff7d1770d2",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   0.8738317489624023,
                   0,
                   0.11515848338603973
                 ]
               },
-              "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
-              ]
+              "limitations": []
             },
             "nativeMaterialSelection": {
               "scope": "Initial ordinary Quad/Particle constructor; no runtime override",
@@ -87630,8 +87755,14 @@
               "limitations": [
                 "initial native fragment is not the pinned Basic family"
               ],
-              "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
-              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+              "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
+              "projectSha256": "ef945c2cb2cafa8b3e3219f276c6adb592ab0ee00ca6ccee77655aff7d1770d2"
+            },
+            "presentationCoverage": {
+              "region": "arena",
+              "primitive": "screen-particle",
+              "textureSha256": "30fa72165d6fea1fc72accd8411d3c2d149bc611545859ce82f992ca63e98a73",
+              "origin": "Automatic screen layer: static Particle authored at screen size (190 x 210 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           },
           {
@@ -88016,6 +88147,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 6376
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -88165,7 +88301,7 @@
               "compatibility": {
                 "nodeV16": true,
                 "nodeV15": true,
-                "rootV16": true,
+                "rootV16": false,
                 "rootV15": false
               }
             },
@@ -88173,7 +88309,7 @@
               "rotationMode": "NewtonDynamics",
               "scaleMode": "NewtonDynamics",
               "origin": "Explicit matching BMSLN; these selectors are not newly decoded binary fields",
-              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+              "projectSha256": "ef945c2cb2cafa8b3e3219f276c6adb592ab0ee00ca6ccee77655aff7d1770d2"
             },
             "appearance": {
               "alpha": {
@@ -88182,28 +88318,28 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "BMSLN",
+                "projectSha256": "ef945c2cb2cafa8b3e3219f276c6adb592ab0ee00ca6ccee77655aff7d1770d2",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   1,
                   0.4377659261226654,
                   0.2444760650396347
                 ]
               },
-              "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
-              ]
+              "limitations": []
             },
             "basicTextureMapping": {
-              "supported": false,
-              "motionModes": {},
+              "supported": true,
+              "motionModes": {
+                "translation": "NewtonDynamics",
+                "rotation": "NewtonDynamics",
+                "scale": "NewtonDynamics"
+              },
               "origin": "Explicit BMSLN after known-field comparison",
-              "limitations": [
-                "single-texture mapping/motion modes lack an authoring supplement"
-              ]
+              "limitations": []
             },
             "nativeMaterialSelection": {
               "scope": "Initial ordinary Quad/Particle constructor; no runtime override",
@@ -88283,8 +88419,14 @@
                 1
               ],
               "limitations": [],
-              "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
-              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+              "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
+              "projectSha256": "ef945c2cb2cafa8b3e3219f276c6adb592ab0ee00ca6ccee77655aff7d1770d2"
+            },
+            "presentationCoverage": {
+              "region": "arena",
+              "primitive": "screen-particle",
+              "textureSha256": "2255d5a81011f6b52db45f91da143be0979d99eb83975e2b3204ad294e7e02f9",
+              "origin": "Automatic screen layer: static Particle authored at screen size (190 x 210 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           },
           {
@@ -88669,6 +88811,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 8216
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -88818,7 +88965,7 @@
               "compatibility": {
                 "nodeV16": true,
                 "nodeV15": true,
-                "rootV16": true,
+                "rootV16": false,
                 "rootV15": false
               }
             },
@@ -88826,7 +88973,7 @@
               "rotationMode": "NewtonDynamics",
               "scaleMode": "NewtonDynamics",
               "origin": "Explicit matching BMSLN; these selectors are not newly decoded binary fields",
-              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+              "projectSha256": "ef945c2cb2cafa8b3e3219f276c6adb592ab0ee00ca6ccee77655aff7d1770d2"
             },
             "appearance": {
               "alpha": {
@@ -88835,28 +88982,28 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "BMSLN",
+                "projectSha256": "ef945c2cb2cafa8b3e3219f276c6adb592ab0ee00ca6ccee77655aff7d1770d2",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   1,
                   0.4377659261226654,
                   0.2444760650396347
                 ]
               },
-              "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
-              ]
+              "limitations": []
             },
             "basicTextureMapping": {
-              "supported": false,
-              "motionModes": {},
+              "supported": true,
+              "motionModes": {
+                "translation": "NewtonDynamics",
+                "rotation": "NewtonDynamics",
+                "scale": "NewtonDynamics"
+              },
               "origin": "Explicit BMSLN after known-field comparison",
-              "limitations": [
-                "single-texture mapping/motion modes lack an authoring supplement"
-              ]
+              "limitations": []
             },
             "nativeMaterialSelection": {
               "scope": "Initial ordinary Quad/Particle constructor; no runtime override",
@@ -88936,8 +89083,14 @@
                 1
               ],
               "limitations": [],
-              "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
-              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+              "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
+              "projectSha256": "ef945c2cb2cafa8b3e3219f276c6adb592ab0ee00ca6ccee77655aff7d1770d2"
+            },
+            "presentationCoverage": {
+              "region": "arena",
+              "primitive": "screen-particle",
+              "textureSha256": "2255d5a81011f6b52db45f91da143be0979d99eb83975e2b3204ad294e7e02f9",
+              "origin": "Automatic screen layer: static Particle authored at screen size (190 x 210 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           }
         ],
@@ -88948,14 +89101,68 @@
         },
         "meshes": {},
         "authoringSupplement": {
-          "authoringFree": true,
-          "corpusSha256": "da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7",
+          "projectSha256": "ef945c2cb2cafa8b3e3219f276c6adb592ab0ee00ca6ccee77655aff7d1770d2",
+          "nodesChecked": 7,
+          "nodeOrderAndTypesMatch": true,
+          "lifeParametersMatch": true,
+          "typedResourceSetsMatch": true,
+          "hierarchyMatches": true,
+          "alphaCurvesChecked": 3,
+          "alphaKeysChecked": 8,
+          "alphaKeyDataMatches": true,
+          "vectorCurvesChecked": 1,
+          "vectorKeysChecked": 3,
+          "vectorKeyDataMatches": true,
+          "vectorChannelChecks": {
+            "centerColor": {
+              "curves": 1,
+              "keys": 3
+            }
+          },
+          "parameterChecks": {
+            "staticVectorsChecked": 240,
+            "motionModesChecked": 18,
+            "bindingSlotsChecked": 6,
+            "nonemptyBindingsChecked": 4
+          },
+          "materialChecks": {
+            "materialEnumsChecked": 26,
+            "materialAlphaValuesChecked": 7
+          },
+          "dormantAuthoringCurvesNotDecoded": [],
           "supplementedAddNodes": 0,
           "origin": "BMSLN authoring supplement; not decoded binary fields"
         },
         "inheritanceSupplement": {
-          "authoringFree": true,
-          "corpusSha256": "da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7",
+          "projectSha256": "ef945c2cb2cafa8b3e3219f276c6adb592ab0ee00ca6ccee77655aff7d1770d2",
+          "nodesChecked": 7,
+          "nodeOrderAndTypesMatch": true,
+          "lifeParametersMatch": true,
+          "typedResourceSetsMatch": true,
+          "hierarchyMatches": true,
+          "alphaCurvesChecked": 3,
+          "alphaKeysChecked": 8,
+          "alphaKeyDataMatches": true,
+          "vectorCurvesChecked": 1,
+          "vectorKeysChecked": 3,
+          "vectorKeyDataMatches": true,
+          "vectorChannelChecks": {
+            "centerColor": {
+              "curves": 1,
+              "keys": 3
+            }
+          },
+          "parameterChecks": {
+            "staticVectorsChecked": 240,
+            "motionModesChecked": 18,
+            "bindingSlotsChecked": 6,
+            "nonemptyBindingsChecked": 4
+          },
+          "materialChecks": {
+            "materialEnumsChecked": 26,
+            "materialAlphaValuesChecked": 7
+          },
+          "dormantAuthoringCurvesNotDecoded": [],
           "supplementedInheritanceNodes": 7,
           "binaryControls": [
             {
@@ -89069,69 +89276,80 @@
         "appearanceReport": {
           "nodes": 7,
           "dormantAlphaCurves": [],
-          "dormantColorCurves": [],
-          "limitations": [
-            {
-              "node": 0,
-              "reason": "RGB random-range support is unverified without authoring"
-            },
-            {
-              "node": 1,
-              "reason": "RGB random-range support is unverified without authoring"
-            },
-            {
-              "node": 2,
-              "reason": "RGB random-range support is unverified without authoring"
-            },
-            {
-              "node": 3,
-              "reason": "RGB random-range support is unverified without authoring"
-            },
-            {
-              "node": 4,
-              "reason": "RGB random-range support is unverified without authoring"
-            },
-            {
-              "node": 4,
-              "reason": "color selector unresolved; legacy preview tint retained"
-            },
-            {
-              "node": 5,
-              "reason": "RGB random-range support is unverified without authoring"
-            },
-            {
-              "node": 5,
-              "reason": "color selector unresolved; legacy preview tint retained"
-            },
-            {
-              "node": 6,
-              "reason": "RGB random-range support is unverified without authoring"
-            },
-            {
-              "node": 6,
-              "reason": "color selector unresolved; legacy preview tint retained"
-            }
+          "dormantColorCurves": [
+            4
           ],
-          "authoringComparison": null,
+          "limitations": [],
+          "authoringComparison": {
+            "projectSha256": "ef945c2cb2cafa8b3e3219f276c6adb592ab0ee00ca6ccee77655aff7d1770d2",
+            "nodesChecked": 7,
+            "nodeOrderAndTypesMatch": true,
+            "lifeParametersMatch": true,
+            "typedResourceSetsMatch": true,
+            "hierarchyMatches": true,
+            "alphaCurvesChecked": 3,
+            "alphaKeysChecked": 8,
+            "alphaKeyDataMatches": true,
+            "vectorCurvesChecked": 1,
+            "vectorKeysChecked": 3,
+            "vectorKeyDataMatches": true,
+            "vectorChannelChecks": {
+              "centerColor": {
+                "curves": 1,
+                "keys": 3
+              }
+            },
+            "parameterChecks": {
+              "staticVectorsChecked": 240,
+              "motionModesChecked": 18,
+              "bindingSlotsChecked": 6,
+              "nonemptyBindingsChecked": 4
+            },
+            "materialChecks": {
+              "materialEnumsChecked": 26,
+              "materialAlphaValuesChecked": 7
+            },
+            "dormantAuthoringCurvesNotDecoded": []
+          },
           "particleColorModeOrigin": "Explicit matching BMSLN; binary selector unresolved"
         },
         "basicUvReport": {
-          "authoringComparison": null,
-          "supportedNodes": [],
-          "unsupportedNodes": [
-            {
-              "node": 5,
-              "reasons": [
-                "single-texture mapping/motion modes lack an authoring supplement"
-              ]
+          "authoringComparison": {
+            "projectSha256": "ef945c2cb2cafa8b3e3219f276c6adb592ab0ee00ca6ccee77655aff7d1770d2",
+            "nodesChecked": 7,
+            "nodeOrderAndTypesMatch": true,
+            "lifeParametersMatch": true,
+            "typedResourceSetsMatch": true,
+            "hierarchyMatches": true,
+            "alphaCurvesChecked": 3,
+            "alphaKeysChecked": 8,
+            "alphaKeyDataMatches": true,
+            "vectorCurvesChecked": 1,
+            "vectorKeysChecked": 3,
+            "vectorKeyDataMatches": true,
+            "vectorChannelChecks": {
+              "centerColor": {
+                "curves": 1,
+                "keys": 3
+              }
             },
-            {
-              "node": 6,
-              "reasons": [
-                "single-texture mapping/motion modes lack an authoring supplement"
-              ]
-            }
-          ]
+            "parameterChecks": {
+              "staticVectorsChecked": 240,
+              "motionModesChecked": 18,
+              "bindingSlotsChecked": 6,
+              "nonemptyBindingsChecked": 4
+            },
+            "materialChecks": {
+              "materialEnumsChecked": 26,
+              "materialAlphaValuesChecked": 7
+            },
+            "dormantAuthoringCurvesNotDecoded": []
+          },
+          "supportedNodes": [
+            5,
+            6
+          ],
+          "unsupportedNodes": []
         }
       }
     ],
@@ -89228,649 +89446,14 @@
           "treatment": "corner-mean-rgb"
         },
         {
-          "member": "bm_2035_flare_bg.bmb",
-          "authoringMismatch": "BMB/BMSLN material control differs: textureCombination",
-          "treatment": "authoring-free-fallback"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 0,
-          "field": "GenerateShape_Basic_GenerateShapeType",
-          "value": "Point",
-          "corpusShare": 0.9887,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 1,
-          "field": "GenerateShape_Basic_GenerateShapeType",
-          "value": "Point",
-          "corpusShare": 0.9887,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 2,
-          "field": "GenerateShape_Basic_GenerateShapeType",
-          "value": "Point",
-          "corpusShare": 0.9887,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 3,
-          "field": "GenerateShape_Basic_GenerateShapeType",
-          "value": "Point",
-          "corpusShare": 0.9887,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
           "node": 4,
-          "field": "GenerateShape_Basic_GenerateShapeType",
-          "value": "Point",
-          "corpusShare": 0.9545,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 5,
-          "field": "GenerateShape_Basic_GenerateShapeType",
-          "value": "Point",
-          "corpusShare": 0.9545,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 6,
-          "field": "GenerateShape_Basic_GenerateShapeType",
-          "value": "Point",
-          "corpusShare": 0.9545,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 0,
-          "field": "Basic_ParentNodeInfluence_TranslateParentNodeInfluenceType",
-          "value": "On",
-          "corpusShare": 0.9874,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 0,
-          "field": "Basic_ParentNodeInfluence_ScaleParentNodeInfluenceType",
-          "value": "On",
-          "corpusShare": 0.994,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 0,
-          "field": "Basic_ParentNodeInfluence_MatrixParentNodeInfluenceType",
-          "value": "On",
-          "corpusShare": 1,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 0,
-          "field": "Basic_ParentNodeInfluence_AlphaParentNodeInfluenceType",
-          "value": "Multiply",
-          "corpusShare": 1,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 0,
-          "field": "Basic_ParentNodeInfluence_ParentColorRate",
-          "value": "0",
-          "corpusShare": 0.9923,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 0,
-          "field": "Basic_Basic_Version1_6",
-          "value": "true",
-          "corpusShare": 0.9098,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 0,
-          "field": "Basic_Basic_Version1_5",
-          "value": "false",
-          "corpusShare": 1,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 1,
-          "field": "Basic_ParentNodeInfluence_TranslateParentNodeInfluenceType",
-          "value": "On",
-          "corpusShare": 0.9874,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 1,
-          "field": "Basic_ParentNodeInfluence_ScaleParentNodeInfluenceType",
-          "value": "On",
-          "corpusShare": 0.994,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 1,
-          "field": "Basic_ParentNodeInfluence_MatrixParentNodeInfluenceType",
-          "value": "On",
-          "corpusShare": 1,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 1,
-          "field": "Basic_ParentNodeInfluence_AlphaParentNodeInfluenceType",
-          "value": "Multiply",
-          "corpusShare": 1,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 1,
-          "field": "Basic_ParentNodeInfluence_ParentColorRate",
-          "value": "0",
-          "corpusShare": 0.9923,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 1,
-          "field": "Basic_Basic_Version1_6",
-          "value": "true",
-          "corpusShare": 0.9098,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 1,
-          "field": "Basic_Basic_Version1_5",
-          "value": "false",
-          "corpusShare": 1,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 2,
-          "field": "Basic_ParentNodeInfluence_TranslateParentNodeInfluenceType",
-          "value": "On",
-          "corpusShare": 0.9874,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 2,
-          "field": "Basic_ParentNodeInfluence_ScaleParentNodeInfluenceType",
-          "value": "On",
-          "corpusShare": 0.994,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 2,
-          "field": "Basic_ParentNodeInfluence_MatrixParentNodeInfluenceType",
-          "value": "On",
-          "corpusShare": 1,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 2,
-          "field": "Basic_ParentNodeInfluence_AlphaParentNodeInfluenceType",
-          "value": "Multiply",
-          "corpusShare": 1,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 2,
-          "field": "Basic_ParentNodeInfluence_ParentColorRate",
-          "value": "0",
-          "corpusShare": 0.9923,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 2,
-          "field": "Basic_Basic_Version1_6",
-          "value": "true",
-          "corpusShare": 0.9098,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 2,
-          "field": "Basic_Basic_Version1_5",
-          "value": "false",
-          "corpusShare": 1,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 3,
-          "field": "Basic_ParentNodeInfluence_TranslateParentNodeInfluenceType",
-          "value": "On",
-          "corpusShare": 0.9874,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 3,
-          "field": "Basic_ParentNodeInfluence_ScaleParentNodeInfluenceType",
-          "value": "On",
-          "corpusShare": 0.994,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 3,
-          "field": "Basic_ParentNodeInfluence_MatrixParentNodeInfluenceType",
-          "value": "On",
-          "corpusShare": 1,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 3,
-          "field": "Basic_ParentNodeInfluence_AlphaParentNodeInfluenceType",
-          "value": "Multiply",
-          "corpusShare": 1,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 3,
-          "field": "Basic_ParentNodeInfluence_ParentColorRate",
-          "value": "0",
-          "corpusShare": 0.9923,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 3,
-          "field": "Basic_Basic_Version1_6",
-          "value": "true",
-          "corpusShare": 0.9098,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 3,
-          "field": "Basic_Basic_Version1_5",
-          "value": "false",
-          "corpusShare": 1,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 4,
-          "field": "Basic_ParentNodeInfluence_TranslateParentNodeInfluenceType",
-          "value": "On",
-          "corpusShare": 0.9076,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 4,
-          "field": "Basic_ParentNodeInfluence_RotateParentNodeInfluenceType",
-          "value": "On",
-          "corpusShare": 0.9303,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 4,
-          "field": "Basic_ParentNodeInfluence_ScaleParentNodeInfluenceType",
-          "value": "On",
-          "corpusShare": 0.9595,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 4,
-          "field": "Basic_ParentNodeInfluence_MatrixParentNodeInfluenceType",
-          "value": "On",
-          "corpusShare": 1,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 4,
-          "field": "Basic_ParentNodeInfluence_ParentColorRate",
-          "value": "0",
-          "corpusShare": 0.986,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 4,
-          "field": "Basic_Basic_Version1_6",
-          "value": "true",
-          "corpusShare": 1,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 4,
-          "field": "Basic_Basic_Version1_5",
-          "value": "true",
-          "corpusShare": 1,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 5,
-          "field": "Basic_ParentNodeInfluence_TranslateParentNodeInfluenceType",
-          "value": "On",
-          "corpusShare": 0.9076,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 5,
-          "field": "Basic_ParentNodeInfluence_RotateParentNodeInfluenceType",
-          "value": "On",
-          "corpusShare": 0.9303,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 5,
-          "field": "Basic_ParentNodeInfluence_ScaleParentNodeInfluenceType",
-          "value": "On",
-          "corpusShare": 0.9595,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 5,
-          "field": "Basic_ParentNodeInfluence_MatrixParentNodeInfluenceType",
-          "value": "On",
-          "corpusShare": 1,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 5,
-          "field": "Basic_ParentNodeInfluence_ParentColorRate",
-          "value": "0",
-          "corpusShare": 0.986,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 5,
-          "field": "Basic_Basic_Version1_6",
-          "value": "true",
-          "corpusShare": 1,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 5,
-          "field": "Basic_Basic_Version1_5",
-          "value": "true",
-          "corpusShare": 1,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 6,
-          "field": "Basic_ParentNodeInfluence_TranslateParentNodeInfluenceType",
-          "value": "On",
-          "corpusShare": 0.9076,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 6,
-          "field": "Basic_ParentNodeInfluence_RotateParentNodeInfluenceType",
-          "value": "On",
-          "corpusShare": 0.9303,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 6,
-          "field": "Basic_ParentNodeInfluence_ScaleParentNodeInfluenceType",
-          "value": "On",
-          "corpusShare": 0.9595,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 6,
-          "field": "Basic_ParentNodeInfluence_MatrixParentNodeInfluenceType",
-          "value": "On",
-          "corpusShare": 1,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 6,
-          "field": "Basic_ParentNodeInfluence_ParentColorRate",
-          "value": "0",
-          "corpusShare": 0.986,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 6,
-          "field": "Basic_Basic_Version1_6",
-          "value": "true",
-          "corpusShare": 1,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 6,
-          "field": "Basic_Basic_Version1_5",
-          "value": "true",
-          "corpusShare": 1,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 0,
-          "field": "Rotate_Basic_RotateType",
-          "value": "NewtonDynamics",
-          "corpusShare": 0.9435,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 0,
-          "field": "Scale_Basic_ScaleType",
-          "value": "NewtonDynamics",
-          "corpusShare": 0.8567,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 1,
-          "field": "Rotate_Basic_RotateType",
-          "value": "NewtonDynamics",
-          "corpusShare": 0.9435,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 1,
-          "field": "Scale_Basic_ScaleType",
-          "value": "NewtonDynamics",
-          "corpusShare": 0.8567,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 2,
-          "field": "Rotate_Basic_RotateType",
-          "value": "NewtonDynamics",
-          "corpusShare": 0.9435,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 2,
-          "field": "Scale_Basic_ScaleType",
-          "value": "NewtonDynamics",
-          "corpusShare": 0.8567,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 3,
-          "field": "Rotate_Basic_RotateType",
-          "value": "NewtonDynamics",
-          "corpusShare": 0.9435,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 3,
-          "field": "Scale_Basic_ScaleType",
-          "value": "NewtonDynamics",
-          "corpusShare": 0.8567,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 4,
-          "field": "Rotate_Basic_RotateType",
-          "value": "NewtonDynamics",
-          "corpusShare": 0.9924,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 4,
-          "field": "Scale_Basic_ScaleType",
-          "value": "NewtonDynamics",
-          "corpusShare": 0.8134,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 5,
-          "field": "Rotate_Basic_RotateType",
-          "value": "NewtonDynamics",
-          "corpusShare": 0.9924,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 5,
-          "field": "Scale_Basic_ScaleType",
-          "value": "NewtonDynamics",
-          "corpusShare": 0.8134,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 6,
-          "field": "Rotate_Basic_RotateType",
-          "value": "NewtonDynamics",
-          "corpusShare": 0.9924,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 6,
-          "field": "Scale_Basic_ScaleType",
-          "value": "NewtonDynamics",
-          "corpusShare": 0.8134,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 5,
-          "field": "Texture_Basic_TextureDrawType",
-          "value": "Basic",
-          "corpusShare": 0.7187,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 5,
-          "field": "Texture1_Color_Scale_Rgb_MotionType",
-          "value": "Constant",
-          "corpusShare": 0.9596,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 5,
-          "field": "Texture1_Color_Scale_Alpha_MotionType",
-          "value": "Constant",
-          "corpusShare": 1,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 5,
-          "field": "Texture1_Color_Scale_Alpha_Value_Initial",
-          "value": "1",
-          "corpusShare": 0.996,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 5,
-          "field": "Texture1_Color_Scale_Alpha_Value_Range",
-          "value": "0",
-          "corpusShare": 0.9993,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 6,
-          "field": "Texture_Basic_TextureDrawType",
-          "value": "Basic",
-          "corpusShare": 0.7187,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 6,
-          "field": "Texture1_Color_Scale_Rgb_MotionType",
-          "value": "Constant",
-          "corpusShare": 0.9596,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 6,
-          "field": "Texture1_Color_Scale_Alpha_MotionType",
-          "value": "Constant",
-          "corpusShare": 1,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 6,
-          "field": "Texture1_Color_Scale_Alpha_Value_Initial",
-          "value": "1",
-          "corpusShare": 0.996,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2035_flare_bg.bmb",
-          "node": 6,
-          "field": "Texture1_Color_Scale_Alpha_Value_Range",
-          "value": "0",
-          "corpusShare": 0.9993,
-          "treatment": "authoring-free-corpus-default"
+          "midpoint": [
+            128,
+            128,
+            128
+          ],
+          "heldInitial": [],
+          "treatment": "distortion-material-from-binary-fields"
         },
         {
           "effectHorizon": 259,

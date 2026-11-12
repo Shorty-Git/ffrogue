@@ -1,4 +1,9 @@
-"""Selected source-checked quad fields for the isolated distortion experiment."""
+"""Selected source-checked Quad and Particle fields of the distortion material.
+
+Particle layout (2026-11-12): the Quad offsets shifted by -96 (tints, midpoint) and -144 (colour
+curves, mode enums), checked against matched authoring of bm_2035_flare_bg and bm_2044_artema_bg
+(tools/test_bmb_distortion.py). The Quad UV-speed curve has no checked Particle counterpart.
+"""
 import struct
 from bmb_channels import read_vector_curve
 from bmb_parameters import MODE_NAMES, vector
@@ -6,28 +11,37 @@ from bmb_parameters import MODE_NAMES, vector
 QUAD_MODES = {'texture1Translation':1944,'texture1Rotation':1948,'texture1Scale':1952,
               'texture2Translation':1964,'texture2Rotation':1968,'texture2Scale':1972}
 COLOR_MODES = {'texture1':1936,'texture2':1956}
+LAYOUTS = {
+    2: {'tints': {'texture1': 248, 'texture2': 280}, 'curves': {'texture1': 1792, 'texture2': 1808}, 'midpoint': 948,
+        'colorModes': COLOR_MODES, 'motionModes': QUAD_MODES, 'uvSpeed': 1632},
+    3: {'tints': {'texture1': 152, 'texture2': 184}, 'curves': {'texture1': 1648, 'texture2': 1664}, 'midpoint': 852,
+        'colorModes': {name: offset - 144 for name, offset in COLOR_MODES.items()},
+        'motionModes': {name: offset - 144 for name, offset in QUAD_MODES.items()}, 'uvSpeed': None},
+}
 
 
 def attach_distortion_fields(raw, result):
     parameters = struct.unpack_from('<I', raw, 92)[0]
     for node in result['nodes']:
-        if node['typeId'] != 2:
+        layout = LAYOUTS.get(node['typeId'])
+        if not layout:
             continue
         start = node['offset']
         layers = {}
-        for layer, color_offset in [('texture1',248),('texture2',280)]:
-            mode_id = struct.unpack_from('<I',raw,start+COLOR_MODES[layer])[0]
-            curve = read_vector_curve(raw,parameters,start+({'texture1':1792,'texture2':1808}[layer]),'RGB')
+        for layer, color_offset in layout['tints'].items():
+            mode_id = struct.unpack_from('<I',raw,start+layout['colorModes'][layer])[0]
+            curve = read_vector_curve(raw,parameters,start+layout['curves'][layer],'RGB')
             layers[layer] = {'rgbInitial':vector(raw,start+color_offset),
                              'rgbRange':vector(raw,start+color_offset+16),
                              'colorMode':MODE_NAMES.get(mode_id,'Unknown'), 'colorCurve':curve}
         modes = {}
-        for name,offset in QUAD_MODES.items():
+        for name,offset in layout['motionModes'].items():
             code = struct.unpack_from('<I',raw,start+offset)[0]
             modes[name] = {'id':code,'name':MODE_NAMES.get(code,'Unknown'),'fieldOffset':start+offset}
-        node['distortionFields'] = {'midpoint':vector(raw,start+948),'layers':layers,'motionModes':modes,
-            'texture2TranslationSpeed':read_vector_curve(raw,parameters,start+1632,'XYZ'),
-            'uvSpeedLayoutStatus':'Candidate quad channel: valid vector-key layout, no nonempty authoring counterpart found'}
+        node['distortionFields'] = {'midpoint':vector(raw,start+layout['midpoint']),'layers':layers,'motionModes':modes}
+        if layout['uvSpeed'] is not None:
+            node['distortionFields'].update({'texture2TranslationSpeed':read_vector_curve(raw,parameters,start+layout['uvSpeed'],'XYZ'),
+                'uvSpeedLayoutStatus':'Candidate quad channel: valid vector-key layout, no nonempty authoring counterpart found'})
 
 
 def compare_distortion_fields(node, source):

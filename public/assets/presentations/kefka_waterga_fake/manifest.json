@@ -8,8 +8,8 @@
   "durationFrames": 222,
   "provenance": {
     "planFile": "tools/data/enemy-skills/kefka-160880/source/plan.json",
-    "planSha256": "f3e274f79f1f427add5b6d1bba326f44cca05f35169422acc16be7009fb51e1c",
-    "playerSha256": "e4e4f09f03c649f80c0f5f3bfa4a383a4033680d33d473799cc2e4d7472a834e",
+    "planSha256": "17582917cd4bf67c1eb12ff095a5159025be17aa8c4d7420d62d88d10ca752fb",
+    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "6b74d5dcc3a25bf120bf01f52a02438a48b5fca3b6c66e91ffe66f32a0ec4ee1"
   },
@@ -57,7 +57,7 @@
       "returnFrames": 12,
       "targetOffsetX": 0,
       "caster": "enemy",
-      "recipeSha256": "08bc25a109efa17235158ed7db0d2ac65d42f3095f03c256b275d4fc17367417",
+      "recipeSha256": "8edc55b73928bf102140045e73f2ae9e4e5bc2f18999636b2ac02b33c6776b77",
       "origin": "Reviewed game recipe; preview timing and offsets are adaptations"
     },
     "fitScreenToArena": false,
@@ -7122,6 +7122,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 15672
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -7288,10 +7293,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   0.6761204600334167,
                   0.7763953804969788,
@@ -7299,8 +7304,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "basicTextureMapping": {
@@ -89943,10 +89947,6 @@
             {
               "node": 13,
               "reason": "RGB random-range support is unverified without authoring"
-            },
-            {
-              "node": 13,
-              "reason": "color selector unresolved; legacy preview tint retained"
             },
             {
               "node": 14,

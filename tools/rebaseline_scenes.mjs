@@ -55,11 +55,11 @@ function republish(keys) {
     const before = own.map(key => fs.existsSync(`${PRESENTATIONS}/${key}/manifest.json`) ? sha(`${PRESENTATIONS}/${key}/manifest.json`) : null);
     // Windows: a watcher (Vite, antivirus) can hold content.json for a moment; such open errors are retried.
     let error = null;
-    for (let attempt = 0; attempt < 6; attempt++) {
+    for (let attempt = 0; attempt < 30; attempt++) {
       const result = spawnSync('node', ['tools/publish_scene_presentations.mjs', '--recipe', 'tools/presentations/' + file, '--python', python], {encoding: 'utf8', maxBuffer: 64 * 1024 * 1024});
       error = result.status === 0 ? null : ((result.stderr || result.stdout).trim().split('\n').find(line => /Error/.test(line)) ?? 'failed').trim();
       if (!error || !/UNKNOWN: unknown error, open|EBUSY|EPERM/.test(error)) break;
-      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 400);
+      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 1000);
     }
     if (error) {
       // A recipe that no longer publishes (hand-reviewed legacy audio, a staged plan overwritten by a

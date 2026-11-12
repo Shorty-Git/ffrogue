@@ -8,8 +8,8 @@
   "durationFrames": 291,
   "provenance": {
     "planFile": "tools/data/full-import/tifa_avalanche/skills/overpower/source/plan.json",
-    "planSha256": "ce0a2f64d38c3eff68650a0b2e94dc9e214cb09304fa2320c7c27524ac6ac844",
-    "playerSha256": "e4e4f09f03c649f80c0f5f3bfa4a383a4033680d33d473799cc2e4d7472a834e",
+    "planSha256": "f92d4dad333e6b570a24b3389e7b22f4d3e735603bd1c236da437fb109510ff1",
+    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "18a0542aaf949039609ddc1b9ee5b46e37b9cc9306c0b1f7e18e8ecb604f366c"
   },
@@ -87,7 +87,7 @@
       "approachFrames": 0,
       "returnFrames": 12,
       "targetOffsetX": 90,
-      "recipeSha256": "220fac2142f7aaa51efb628aa693d338e53f05e206983df2d8db3707bdcef309",
+      "recipeSha256": "d36a722c4ebda1e4b411206e1f5211f41ef912ac9c0f417d6cb07d456f448974",
       "origin": "Reviewed game recipe; preview timing and offsets are adaptations"
     },
     "fitScreenToArena": false,
@@ -2545,6 +2545,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 5736
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -2717,10 +2722,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   0.6711245775222778,
                   0.6808511018753052,
@@ -2728,8 +2733,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "nativeMaterialSelection": {
@@ -21007,10 +21011,6 @@
             {
               "node": 4,
               "reason": "RGB random-range support is unverified without authoring"
-            },
-            {
-              "node": 4,
-              "reason": "color selector unresolved; legacy preview tint retained"
             },
             {
               "node": 5,

@@ -36,6 +36,12 @@ def attach_appearance(result, project=None):
         if alpha_mode == 'Constant' and node['alphaCurve']['keys']:
             report['dormantAlphaCurves'].append(i)
         color_mode = controls.get('colorMode', {}).get('name')
+        if node['typeId'] == 3:
+            # The binary Particle selector (bmb_materials, 2026-11-12) is used in approximation mode only; strict
+            # plans keep "matched authoring or unresolved", so accepted strict plans do not change.
+            import bmb_channels
+            if bmb_channels.APPROXIMATED_CURVES is None:
+                color_mode = None
         color = {'mode': color_mode or 'Unresolved', 'origin': 'IBMB' if color_mode else 'Unresolved'}
         issues = []
         if node['typeId'] == 3 and source is not None:
@@ -57,7 +63,12 @@ def attach_appearance(result, project=None):
                 raise ValueError('Non-finite initial color')
             curve = node['vectorCurves'].get('centerColor', {}).get('keys', [])
             if color['mode'] == 'Curve' and not curve:
-                raise ValueError('Selected center color curve is empty at node ' + str(i))
+                import bmb_channels
+                if bmb_channels.APPROXIMATED_CURVES is None:
+                    raise ValueError('Selected center color curve is empty at node ' + str(i))
+                # Approximation: an empty selected curve falls back to the constant initial colour.
+                bmb_channels.APPROXIMATED_CURVES.append({'node': i, 'colorMode': 'Curve', 'treatment': 'empty-color-curve-as-constant'})
+                color['mode'] = 'Constant'
             if color['mode'] == 'Constant' and curve:
                 report['dormantColorCurves'].append(i)
             if source is not None:

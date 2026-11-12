@@ -263,6 +263,36 @@ if __name__ == '__main__':
                     raise ValueError('Unsupported distortion texture color mode')
                 node['motionModes'].update(fields['motionModes'])
                 node['vectorCurves']['texture2TranslationSpeed']=fields['texture2TranslationSpeed']
+        elif a.approximate_unverified:
+            # Distortion draw type on Quads and Particles (2026-11-12): tints (displacement strength), midpoint and
+            # colour curves are binary fields, so the node is drawn with the native distortion material instead of
+            # being withheld (Quad) or shown as its plain first texture (Particle: a hard square). Modes outside the
+            # checked subset keep their initial values; each node is listed in plan.approximations.
+            attach_distortion_fields(raw, data)
+            for node in data['nodes']:
+                fields = node.pop('distortionFields', None)
+                if (not fields or node.get('materialControls',{}).get('textureCombination',{}).get('name') != 'Distortion'
+                        or not node.get('resourceBindings',{}).get('texture2')):
+                    continue
+                held = []
+                for layer, values in fields['layers'].items():
+                    if values['colorMode'] not in ['Constant','CurveValue']:
+                        held.append(layer+' colour mode '+values['colorMode']); values['colorMode'] = 'Constant'
+                # UV motion keeps the initial value/speed/acceleration vectors every node already carries; curve
+                # modes are not merged into node['motionModes'] (the authoring comparison knows no such keys).
+                for name, value in fields['motionModes'].items():
+                    if value['name'] not in ['Constant','NewtonDynamics']:
+                        held.append(name+' mode '+value['name'])
+                # The player's texture matrix is 2D: only Z rotation exists there. X/Y rotation components
+                # (Firaga's fire particles) are dropped instead of stopping the whole scene.
+                for layer in ['texture1', 'texture2']:
+                    rotation = node.get('staticVectors', {}).get(layer, {}).get('rotation', {})
+                    for name, value in rotation.items():
+                        if value[0] or value[1]:
+                            held.append(layer+' rotation '+name+' X/Y dropped'); rotation[name] = [0, 0, value[2]]
+                node['distortionFields'] = fields
+                bmb_channels.APPROXIMATED_CURVES.append({'node': node['index'], 'midpoint': fields['midpoint'], 'heldInitial': held,
+                                                         'treatment': 'distortion-material-from-binary-fields'})
         supplement = None
         if a.flat_quad_rgb:
             if not a.source_appearance or a.quad_colors:

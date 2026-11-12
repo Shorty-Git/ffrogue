@@ -8,8 +8,8 @@
   "durationFrames": 222,
   "provenance": {
     "planFile": "tools/data/enemy-skills/gilgamesh-155380/source/plan.json",
-    "planSha256": "f253f963548a3e288e753e95691d9ef9eccaf88d03c50336dfe35bab9c995e6b",
-    "playerSha256": "e4e4f09f03c649f80c0f5f3bfa4a383a4033680d33d473799cc2e4d7472a834e",
+    "planSha256": "57272de5bb189db08a5896f503fd3e2e3b5c62670a0e9b51f0ffabb703f64b2e",
+    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "a77440f5c333c988654d616fb8747b724c34659138768a9de1967d339244aefd"
   },
@@ -16380,6 +16380,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 40584
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -16547,10 +16552,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   1,
                   1,
@@ -16558,8 +16563,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "basicTextureMapping": {
@@ -17029,6 +17033,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 42424
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -17196,10 +17205,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   0.22672173380851746,
                   0.6759348511695862,
@@ -17207,8 +17216,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "basicTextureMapping": {
@@ -30128,16 +30136,8 @@
               "reason": "RGB random-range support is unverified without authoring"
             },
             {
-              "node": 30,
-              "reason": "color selector unresolved; legacy preview tint retained"
-            },
-            {
               "node": 31,
               "reason": "RGB random-range support is unverified without authoring"
-            },
-            {
-              "node": 31,
-              "reason": "color selector unresolved; legacy preview tint retained"
             },
             {
               "node": 32,

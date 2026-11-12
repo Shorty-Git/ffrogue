@@ -8,8 +8,8 @@
   "durationFrames": 189,
   "provenance": {
     "planFile": "tools/data/full-import/barret/skills/hammerblow/source/plan.json",
-    "planSha256": "c18d23529a52ca13c22c4c4b724c0b989f1b5bef25d19a8ab1b28ef1b6398bfe",
-    "playerSha256": "e4e4f09f03c649f80c0f5f3bfa4a383a4033680d33d473799cc2e4d7472a834e",
+    "planSha256": "ad65e84337937c67093fdab50a3e5a3b7fe84b5ae4ec161bead9af50d6f5e32a",
+    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "d64de3f22410d908e3baacea5ef8fef5a3cd78a416af94f33154446b125c05aa"
   },
@@ -11704,24 +11704,72 @@
               }
             },
             "sortPriority": 0.5,
-            "flatQuadColor": {
-              "profile": "native-flat-quad-rgb-v1",
+            "quadColors": {
+              "flat": false,
+              "modeId": 0,
               "mode": "Constant",
-              "flat": true,
-              "value": [
-                0.9696078449487686,
-                0.9509803950786591,
-                0.9382352977991104
-              ],
-              "range": [
-                0,
-                0,
-                0
-              ],
-              "valueOffset": 24696,
-              "rangeOffset": 24712,
-              "projectSha256": null,
-              "boundary": "Approximation: mean of constant opaque corner RGB; native corner gradient not evaluated"
+              "corners": {
+                "leftTop": {
+                  "value": [
+                    0.8784313797950745,
+                    0.8039215803146362,
+                    0.7529411911964417,
+                    1
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 24696
+                },
+                "rightTop": {
+                  "value": [
+                    1,
+                    1,
+                    1,
+                    1
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 24728
+                },
+                "leftBottom": {
+                  "value": [
+                    1,
+                    1,
+                    1,
+                    1
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 24760
+                },
+                "rightBottom": {
+                  "value": [
+                    1,
+                    1,
+                    1,
+                    1
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 24792
+                }
+              }
             },
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
@@ -25721,12 +25769,7 @@
         {
           "node": 20,
           "quadColors": "Constant-corners",
-          "rgb": [
-            0.9696,
-            0.951,
-            0.9382
-          ],
-          "treatment": "corner-mean-rgb"
+          "treatment": "corner-gradient-rgba"
         },
         {
           "member": "eff_godspeed_purple.bmb",

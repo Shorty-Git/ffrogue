@@ -8,8 +8,8 @@
   "durationFrames": 222,
   "provenance": {
     "planFile": "tools/data/wave5-20261108/meditate/source/plan.json",
-    "planSha256": "b299e5b1b2d370f07cb437b3c9aa03ac33f50ae5cd53219fb1e3cd36f38c7936",
-    "playerSha256": "e4e4f09f03c649f80c0f5f3bfa4a383a4033680d33d473799cc2e4d7472a834e",
+    "planSha256": "63603b964263d97c186bd0ed0b4af6533e34697eee5b6a67ed7fc647993c1e57",
+    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "d12ed3ab91b61b8018d55128ee440ff7c7b067f4ef1b915232ad14fe0dc1a89c"
   },
@@ -87,7 +87,7 @@
       "approachFrames": 0,
       "returnFrames": 12,
       "targetOffsetX": 90,
-      "recipeSha256": "ebf727656532ba2055d9ec78bb9a359710d4c0879ab786730ea879e9e86ac3f2",
+      "recipeSha256": "36025973d215885c8f1c8ce4205cf737992a50bfdb6ff180bc1c1f42d927d0da",
       "origin": "Reviewed game recipe; preview timing and offsets are adaptations"
     },
     "fitScreenToArena": false,
@@ -4770,6 +4770,21 @@
           "fullZSort": false,
           "prioritySort": true
         },
+        "lightning": [
+          {
+            "parent": 11,
+            "sourceIndex": 12,
+            "life": 30,
+            "start": 0,
+            "color": [
+              1,
+              0.6204,
+              0.7457
+            ],
+            "texture": "glow_001",
+            "goals": 0
+          }
+        ],
         "nodes": [
           {
             "index": 0,
@@ -38935,6 +38950,10 @@
           "bytes": 1856,
           "subtreeSize": 1,
           "treatment": "unsupported-node-type-subtree-omitted"
+        },
+        {
+          "lightningNode": 12,
+          "treatment": "type-7-drawn-as-approximate-bolt"
         },
         {
           "member": "gm_3019_shell_front.bmb",

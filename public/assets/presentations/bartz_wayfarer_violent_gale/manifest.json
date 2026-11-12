@@ -8,8 +8,8 @@
   "durationFrames": 269,
   "provenance": {
     "planFile": "tools/data/full-import/bartz_wayfarer/skills/violent_gale/source/plan.json",
-    "planSha256": "4f7e8e6cfacf3da850d6e93372dff97b9f46b6bfe2fd153a59bac78c9f9dc55d",
-    "playerSha256": "e4e4f09f03c649f80c0f5f3bfa4a383a4033680d33d473799cc2e4d7472a834e",
+    "planSha256": "0d28e8129b06bec4310cfc4b233d21384bd59b6549ad262d6c9e00b18bca8b74",
+    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "69f1d82cea9110015284d0ca8ae39f11fb0e85386689c13465ebabbb52e4ceb4"
   },
@@ -87,7 +87,7 @@
       "approachFrames": 0,
       "returnFrames": 12,
       "targetOffsetX": 90,
-      "recipeSha256": "b832c150f779a2b3a7f55c8aa5c91cd5f9b6d0b051ef068c0ed17ad39290ffd1",
+      "recipeSha256": "9e397b2206787ba81c26ef369b532524b86c7bca6989df695933300e16acc27f",
       "origin": "Reviewed game recipe; preview timing and offsets are adaptations"
     },
     "fitScreenToArena": false,
@@ -10961,6 +10961,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 1,
+                "name": "Curve",
+                "fieldOffset": 23000
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -11173,10 +11178,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Curve",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   1,
                   1,
@@ -11184,8 +11189,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "nativeMaterialSelection": {
@@ -41183,10 +41187,6 @@
             {
               "node": 20,
               "reason": "RGB random-range support is unverified without authoring"
-            },
-            {
-              "node": 20,
-              "reason": "color selector unresolved; legacy preview tint retained"
             },
             {
               "node": 21,

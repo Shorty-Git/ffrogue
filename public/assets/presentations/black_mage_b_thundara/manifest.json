@@ -8,8 +8,8 @@
   "durationFrames": 222,
   "provenance": {
     "planFile": "tools/data/enemy-skills/black_mage_b-120100/source/plan.json",
-    "planSha256": "add56d328602a3db1cff0ebb49453ebd4f7284ec3050851e8c5a3810c0208294",
-    "playerSha256": "e4e4f09f03c649f80c0f5f3bfa4a383a4033680d33d473799cc2e4d7472a834e",
+    "planSha256": "ce9a7d52a4ced6ac649b88034f8f22a8621712c13f66a502cbd6351194fdd7cc",
+    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "9f2506b019f79d0010ae56b71417eaa1f9b00d3def3302e6fe830aa8e48cc0c8"
   },
@@ -57,7 +57,7 @@
       "returnFrames": 12,
       "targetOffsetX": 0,
       "caster": "enemy",
-      "recipeSha256": "d59476aa9a057aa694db46e25951f36fe03bd36c236f666d35b606fb33348a84",
+      "recipeSha256": "01c570b265c1c0cb8cef85d1ef00c67c383cb6cdd8855d5da1635e8b070c329d",
       "origin": "Reviewed game recipe; preview timing and offsets are adaptations"
     },
     "fitScreenToArena": false,
@@ -16380,6 +16380,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 40584
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -16547,10 +16552,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   1,
                   1,
@@ -16558,8 +16563,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "basicTextureMapping": {
@@ -17029,6 +17033,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 42424
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -17196,10 +17205,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   0.22672173380851746,
                   0.6759348511695862,
@@ -17207,8 +17216,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "basicTextureMapping": {
@@ -30128,16 +30136,8 @@
               "reason": "RGB random-range support is unverified without authoring"
             },
             {
-              "node": 30,
-              "reason": "color selector unresolved; legacy preview tint retained"
-            },
-            {
               "node": 31,
               "reason": "RGB random-range support is unverified without authoring"
-            },
-            {
-              "node": 31,
-              "reason": "color selector unresolved; legacy preview tint retained"
             },
             {
               "node": 32,

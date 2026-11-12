@@ -34,7 +34,7 @@ class MaterialTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             read_materials(data, {'offset': 0, 'typeId': 6})
 
-    def test_distortion_is_only_enabled_on_verified_quad_layout(self):
+    def test_distortion_is_named_on_the_verified_quad_and_particle_layouts(self):
         quad = bytearray(2128)
         struct.pack_into('<I', quad, 1840, 6)
         node = {'offset': 0, 'typeId': 2}
@@ -43,6 +43,9 @@ class MaterialTests(unittest.TestCase):
         particle = bytearray(1840)
         struct.pack_into('<I', particle, 1696, 6)
         node = {'offset': 0, 'typeId': 3}
+        read_materials(particle, node)
+        self.assertEqual(node['materialControls']['textureCombination']['name'], 'Distortion')
+        struct.pack_into('<I', particle, 1696, 3)
         read_materials(particle, node)
         self.assertEqual(node['materialControls']['textureCombination']['name'], 'Unknown')
 

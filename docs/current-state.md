@@ -69,6 +69,96 @@ All three need nothing but the repository, except where noted (dev server on 300
   the alphaMap experiment was in the working tree) and `squall_lone_lion_agile_edge` pins a plan hash that
   differs from its plan file; both are corrected by the next `republish`.
 
+### Phase 1: known bugs (2026-11-12)
+
+Result of the re-baseline (all 545 scenes re-prepared, republished and captured; before = player
+e4e4f09f… and the manifests of 2026-11-11, after = player 103046af…): 185 unchanged, 234 ok, 126 flagged
+for review, no playback errors. The 126 were accepted by class after looking at 16 contact sheets, not one
+by one: 91 "gained much picture" (back-layer colour fades `eff_fadeblack_*` and full-screen flashes that
+were withheld or boxed before), 33 "more rectangle corners" (looked at: lightning layers, star fields, hit
+bursts; no new box found in the samples), 2 changed duration. Scenes with rectangle corners 165 -> 150;
+33 scenes lost 500 or more box score (Firaga family 1495 -> 74, Stock Break/Ultima family, Flare, Riot
+Blade Lotus, Meltdown, Blasting Zone). Browse `tools/data/scene-baseline/compare.html` for every pair.
+Fixed and looked at: chaos_firaga (soft fireball), chaos_flare / terra_flare (red distorted backdrop,
+full-screen flashes), beatrix_stock_break / ramza_ultima (black backdrop, flashes, dome), Healing Wind
+(soft frame glow at the arena border), Vivi's Doomsday.
+Still open after this phase:
+- edea_blizzaga: its two cloud boards are subdivided Models (128 triangles, vertex-colour gradient), not
+  unit rectangles; the screen coverage only handles unit planes. Still a box behind the party.
+- aerith_holy (and cetra/remake): a cloud layer with a hard right/bottom edge stays to the scene's end; the
+  node was not identified (none of the planes >= 150 units).
+- onion_knight_awakened_job_change_attack: three tilted speed-line boards (Distortion Quads, drawn now)
+  are 300 x 141 after their ancestor scale, under the 190 threshold; chaos_tsunami / leviathan_tidal_wave:
+  striped rectangle in the water layer; cloud_ac_finishing_touch: tornado layer cut at a straight edge.
+- Tifa's Limit Reels (brief item 7): not changed. The reel effect is screen-anchored at (0, -100) from the
+  screen centre and draws a small row of symbols there; where it should sit needs an original reference.
+- The corner-gradient path has no unit test of its own (checked on Healing Wind's frames only).
+
+- First playback jump (brief item 6): cause is not one long frame (Phaser replaces a delta above 200 ms
+  by the last sane one) but a run of 100-200 ms frames while shaders compile as nodes first appear; the
+  scene clock followed real time and most of a first play was never drawn. `PreparedSceneBridge`: a variant
+  the idle warm-up has not reached compiles in its first render pass while the scene clock waits
+  (`pendingWarm`), and one update advances the clock by at most 100 ms (`MAX_STEP_MS`). The warm-up must
+  stay inside Phaser's extern render: a first version ran it in `play()` and the arena background was
+  missing for one frame (caught by the re-baseline comparison, fixed in a997181). Ascension (543 frames):
+  content in frames 0-300 (curtain, ring slash, speed lines, flash), nothing after about frame 330.
+  Checked: bridge test, frames equal the baseline, Limit Burst body drift 0 frames.
+- Particle draw type 6 (brief item 4) is the Distortion material, the same as on Quads. Evidence: all 17
+  staged Particle nodes with id 6 carry the distortion midpoint (128) at the Quad offset - 96; matched
+  authoring of `bm_2035_flare_bg` and `bm_2044_artema_bg` names them Distortion; the native selector picks
+  the distortion fragment (slot 184) for operation 6 on both resource types. Because the enum read
+  "Unknown", matched authoring was rejected ("material control differs") and the node drew its first
+  texture as a plain square. Changes (tools only, player untouched):
+  - `bmb_materials.py`: Particle 6 = Distortion. `bmb_distortion.py`: Particle layout (tints 152/184,
+    colour curves 1648/1664, colour modes 1792/1812, UV modes 1800-1828, midpoint 852), compared field by
+    field with authoring (`tools/test_bmb_distortion.py`).
+  - `prepare_original_preview.py --approximate-unverified`: Distortion nodes with a second texture get
+    `distortionFields` from the binary (texture 2 tint = displacement strength, midpoint, colour curves), so
+    the player draws them with the native equation (`alpha *= texture2.a`) instead of withholding them
+    (Quads, 78 scenes) or drawing a square (Particles, 23 scenes). Listed per node in
+    `plan.approximations` as `distortion-material-from-binary-fields`.
+- Particle colour selector decoded (`bmb_materials.py`: Particle `colorMode` at +1624, equal to
+  `Color_Basic_ColorType` on all 458 Particle nodes of 316 staged effects with matched authoring).
+  Without it the selector was "unresolved" (406 scenes) and the player used a dormant colour curve: black
+  dimming planes (`eff_fadeblack_*`) drew white. Used in approximation mode only; strict plans keep
+  "matched authoring or unresolved" (`original_appearance.py`), so accepted strict plans do not change.
+- Untextured Particles are planes of their own colour (the native untextured branch has no texture stage;
+  the `eff_fadeblack_*` dimming planes of many skills are such nodes). The player now draws an untextured
+  Particle that carries reviewed screen coverage (>= 190 units, `_uniform_plane`); smaller ones stay
+  withheld, because at source size they are hard-edged boxes (tried: Edea's Thundaga showed a white box at
+  the target). This is the one change to `originalEffectPlayer.mjs` (new hash 103046af…, pinned in
+  `test_scene_migration.mjs`); 172 scenes have untextured Particles.
+- Quad corner colours (brief item 12): constant corner gradients are drawn with their four source RGBA
+  values (`original_flat_quad_color.py`, treatment `corner-gradient-rgba`; the player's corner-colour
+  attribute existed already). Before, opaque gradients were flattened to their mean and gradients with
+  corner alpha stayed white. 163 of 1,450 staged Quads are such gradients.
+- Screen layers (brief item 5), all generic rules in `prepare_scene_flashes.py`, tests in
+  `test_scene_flashes.py`:
+  - `_uniform_plane`: a Quad, Particle, unit-XY Model or untextured Particle of one uniform colour and
+    >= 190 units on both axes is a flash/tint of the whole picture whatever its anchor, life or alpha curve
+    (FFBE's view is 360 units wide; ours is wider, so at source size it is a box around the target). Off
+    the screen anchor it must stay in place (it may grow); on it any motion is replaced by the coverage.
+  - `_screen_sized_particle`: any texture and material (patterned, Add, Distortion), threshold 200 -> 190,
+    ancestor drift ignored, scale curves and a constant Z turn allowed (Holy's cloud layer, Flare's and
+    Ultima's distorted backgrounds). `_screen_sized_quad`: threshold 240 -> 190, second texture and a
+    constant Z turn allowed (Onion Knight's tilted speed-line boards). `_screen_sized_model`: second
+    texture and a constant Z turn allowed; on the back layer of a screen or target-side effect the
+    threshold is 190 instead of 500 (`BACKDROP_MODEL_MIN`; Edea's Blizzaga: two 190 x 230 cloud boards).
+  - `annotate_screen_frames`: an effect that draws nothing but thin uniform edge bars at >= 140 units from
+    the screen centre (`lb_rarity_*`, the glowing border of 7-star/NV Limit Bursts, 18 scenes) is scaled at
+    its root by 563/360 so the bars sit at the border of this game's view (`presentationFit` on the root).
+  - `sceneProfile.mjs` accepts the wider coverage (second textures, untextured Particles).
+- New tool `node tools/reprepare_scene_plans.mjs [--check]`: rebuilds every staged approximation plan from
+  its staged source with the current decoders (same command line as the import tools), then
+  `rebaseline_scenes.mjs` republishes and compares. Before the decoder change 457 of 524 plans came out
+  byte-identical (the others were prepared with older decoder versions); 13 legacy plans without
+  approximation mode and 2 without staged source are skipped. `squall_lone_lion_agile_edge`: its staged
+  plan was overwritten by the import of "Agile Edge" (234547; the published scene is "Agile Edge+",
+  800416, both map to the directory `agile_edge`); it keeps its manifest until that import is repeated.
+- `rebaseline_scenes.mjs republish` retries Windows open errors on `content.json` (a watcher holds the
+  file for a moment) and, where a recipe no longer publishes (cloud-review: hand-reviewed legacy audio),
+  keeps the manifest and pins only the player hash again (listed under `repinned` in republish.json).
+
 ## Playtest round 2026-11-11
 
 - Screen layers: `_screen_sized_quad` (prepare_scene_flashes.py): a static Quad authored at >= 300 units

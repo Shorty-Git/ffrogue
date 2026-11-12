@@ -8,8 +8,8 @@
   "durationFrames": 181,
   "provenance": {
     "planFile": "tools/data/full-import/warrior_of_light/skills/raise/source/plan.json",
-    "planSha256": "6375df366d6cad29f9f0dfacfd782390c6a13c9988c383ae7a055a3b8101b471",
-    "playerSha256": "e4e4f09f03c649f80c0f5f3bfa4a383a4033680d33d473799cc2e4d7472a834e",
+    "planSha256": "0829b77b9dcb21418afbd326c9d18f2208a8b94b982166141d11e7230834c879",
+    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "365bb5be5b90ce215b0575244a036cb38cd5e228c7e7f1ca327db1c095e86df7"
   },
@@ -56,7 +56,7 @@
       "approachFrames": 0,
       "returnFrames": 12,
       "targetOffsetX": 90,
-      "recipeSha256": "9a71bd3a4f23dc34b2633fa92c42cba19ba082c0708f7584057d8f076d68f421",
+      "recipeSha256": "c47c69db07fae5fbb929b9770acc786a538adc4e0219124ce9a1a78be68b1afb",
       "origin": "Reviewed game recipe; preview timing and offsets are adaptations"
     },
     "fitScreenToArena": false,
@@ -2057,6 +2057,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 1,
+                "name": "Curve",
+                "fieldOffset": 3832
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -2224,10 +2229,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Curve",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   1,
                   1,
@@ -2235,8 +2240,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "basicTextureMapping": {
@@ -14318,6 +14322,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 1,
+                "name": "Curve",
+                "fieldOffset": 32568
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -14485,10 +14494,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Curve",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   1,
                   1,
@@ -14496,8 +14505,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "basicTextureMapping": {
@@ -19713,10 +19721,6 @@
               "reason": "RGB random-range support is unverified without authoring"
             },
             {
-              "node": 3,
-              "reason": "color selector unresolved; legacy preview tint retained"
-            },
-            {
               "node": 4,
               "reason": "RGB random-range support is unverified without authoring"
             },
@@ -19807,10 +19811,6 @@
             {
               "node": 27,
               "reason": "RGB random-range support is unverified without authoring"
-            },
-            {
-              "node": 27,
-              "reason": "color selector unresolved; legacy preview tint retained"
             },
             {
               "node": 28,

@@ -8,8 +8,8 @@
   "durationFrames": 557,
   "provenance": {
     "planFile": "tools/data/full-import/squall_lone_lion/skills/blasting_zone/source/plan.json",
-    "planSha256": "19273301a6bec5c7bd462793b62c81873b43817d0db7c0942713c7eaaedd541b",
-    "playerSha256": "e4e4f09f03c649f80c0f5f3bfa4a383a4033680d33d473799cc2e4d7472a834e",
+    "planSha256": "03f5bed5c9f6901d5fb671195c0090a08b285db00cd0d2766dc919297f0a3f77",
+    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "2465099ff96ce6824878cedc503c7a27ad95c1c86c1642ddad00e7d0119432c4"
   },
@@ -56,7 +56,7 @@
       "approachFrames": 0,
       "returnFrames": 12,
       "targetOffsetX": 90,
-      "recipeSha256": "dbbbedf6226fe9e6e7f80da649fa7c7eb609d48fed1dc55acc4fc5262bc40fad",
+      "recipeSha256": "b5eea2979e08e890e83e14bd4330bf8063ec57d820973832c34d403faf44cbe3",
       "origin": "Reviewed game recipe; preview timing and offsets are adaptations"
     },
     "fitScreenToArena": false,
@@ -3560,6 +3560,12 @@
               "limitations": [],
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+            },
+            "presentationCoverage": {
+              "region": "arena",
+              "primitive": "unit-quad",
+              "textureSha256": "3b03488b361554f606c86d64c5b745640bdc722370361d78516ec2818864ed7d",
+              "origin": "Automatic screen layer: static Quad authored at screen size (240 x 240 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           },
           {
@@ -4583,6 +4589,12 @@
               "limitations": [],
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+            },
+            "presentationCoverage": {
+              "region": "arena",
+              "primitive": "unit-quad",
+              "textureSha256": "3b03488b361554f606c86d64c5b745640bdc722370361d78516ec2818864ed7d",
+              "origin": "Automatic screen layer: static Quad authored at screen size (240 x 240 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           },
           {
@@ -12376,6 +12388,12 @@
               "limitations": [],
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+            },
+            "presentationCoverage": {
+              "region": "arena",
+              "primitive": "unit-quad",
+              "textureSha256": "ad2bbef4984932208f79de6e7ba17101f4fabb5244c43eddc7837ef5169c20cb",
+              "origin": "Automatic screen layer: static Quad authored at screen size (222 x 220 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           },
           {
@@ -20413,6 +20431,12 @@
               "limitations": [],
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+            },
+            "presentationCoverage": {
+              "region": "arena",
+              "primitive": "unit-quad",
+              "textureSha256": "ad2bbef4984932208f79de6e7ba17101f4fabb5244c43eddc7837ef5169c20cb",
+              "origin": "Automatic screen layer: static Quad authored at screen size (222 x 220 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           },
           {
@@ -29045,6 +29069,12 @@
               "limitations": [],
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+            },
+            "presentationCoverage": {
+              "region": "arena",
+              "primitive": "unit-quad",
+              "textureSha256": "55724185f4059f33f0bfc2643f57d6cad0b2dcf0c17ec0dccaa205d7bed85493",
+              "origin": "Automatic screen layer: static Quad authored at screen size (300 x 300 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           },
           {
@@ -56406,6 +56436,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 37112
+              },
               "blend": {
                 "id": 1,
                 "name": "Semitrans",
@@ -56572,10 +56607,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   0,
                   0,
@@ -56583,8 +56618,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "basicTextureMapping": {
@@ -56675,6 +56709,12 @@
               "limitations": [],
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+            },
+            "presentationCoverage": {
+              "region": "arena",
+              "primitive": "screen-particle",
+              "textureSha256": "1461bea7e88dbeef7d78c61c65a5530e3abfb019e65dbe2fe7526a28bf1caf1c",
+              "origin": "Automatic screen layer: static Particle authored at screen size (240 x 550 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           },
           {
@@ -57077,6 +57117,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 38952
+              },
               "blend": {
                 "id": 1,
                 "name": "Semitrans",
@@ -57243,10 +57288,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   0,
                   0,
@@ -57254,8 +57299,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "basicTextureMapping": {
@@ -57346,6 +57390,12 @@
               "limitations": [],
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+            },
+            "presentationCoverage": {
+              "region": "arena",
+              "primitive": "screen-particle",
+              "textureSha256": "1461bea7e88dbeef7d78c61c65a5530e3abfb019e65dbe2fe7526a28bf1caf1c",
+              "origin": "Automatic screen layer: static Particle authored at screen size (240 x 550 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           },
           {
@@ -71796,6 +71846,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 63928
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -71962,10 +72017,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   0.381424218416214,
                   0.5530349016189575,
@@ -71973,8 +72028,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "basicTextureMapping": {
@@ -75927,7 +75981,7 @@
               "region": "arena",
               "primitive": "unit-quad",
               "textureSha256": "3b03488b361554f606c86d64c5b745640bdc722370361d78516ec2818864ed7d",
-              "origin": "Automatic screen layer: static Quad authored at screen size (300 x 300 >= 300) on a screen-anchored effect; fitted to the visible battlefield"
+              "origin": "Automatic screen layer: static Quad authored at screen size (300 x 300 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           },
           {
@@ -76571,6 +76625,12 @@
               "limitations": [],
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+            },
+            "presentationCoverage": {
+              "region": "arena",
+              "primitive": "unit-quad",
+              "textureSha256": "3b03488b361554f606c86d64c5b745640bdc722370361d78516ec2818864ed7d",
+              "origin": "Automatic screen layer: static Quad authored at screen size (240 x 240 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           },
           {
@@ -77953,6 +78013,12 @@
               "limitations": [],
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+            },
+            "presentationCoverage": {
+              "region": "arena",
+              "primitive": "unit-quad",
+              "textureSha256": "3b03488b361554f606c86d64c5b745640bdc722370361d78516ec2818864ed7d",
+              "origin": "Automatic screen layer: static Quad authored at screen size (240 x 240 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           },
           {
@@ -78656,6 +78722,12 @@
               "limitations": [],
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+            },
+            "presentationCoverage": {
+              "region": "arena",
+              "primitive": "unit-quad",
+              "textureSha256": "3b03488b361554f606c86d64c5b745640bdc722370361d78516ec2818864ed7d",
+              "origin": "Automatic screen layer: static Quad authored at screen size (240 x 240 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           },
           {
@@ -152006,16 +152078,8 @@
               "reason": "RGB random-range support is unverified without authoring"
             },
             {
-              "node": 26,
-              "reason": "color selector unresolved; legacy preview tint retained"
-            },
-            {
               "node": 27,
               "reason": "RGB random-range support is unverified without authoring"
-            },
-            {
-              "node": 27,
-              "reason": "color selector unresolved; legacy preview tint retained"
             },
             {
               "node": 28,
@@ -152060,10 +152124,6 @@
             {
               "node": 45,
               "reason": "RGB random-range support is unverified without authoring"
-            },
-            {
-              "node": 45,
-              "reason": "color selector unresolved; legacy preview tint retained"
             },
             {
               "node": 46,
@@ -180178,6 +180238,12 @@
               "limitations": [],
               "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
               "projectSha256": "5325a94acb18ec81d050ade8828e2cac62354b2d8dadcce1e94ee40e41b83f5e"
+            },
+            "presentationCoverage": {
+              "region": "arena",
+              "primitive": "unit-quad",
+              "textureSha256": "3b03488b361554f606c86d64c5b745640bdc722370361d78516ec2818864ed7d",
+              "origin": "Automatic screen layer: uniform-colour plane (300 x 300 >= 190); fitted to the visible battlefield instead of a box"
             }
           },
           {

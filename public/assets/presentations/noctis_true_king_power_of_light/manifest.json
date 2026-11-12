@@ -8,8 +8,8 @@
   "durationFrames": 311,
   "provenance": {
     "planFile": "tools/data/full-import/noctis_true_king/skills/power_of_light/source/plan.json",
-    "planSha256": "77c5b9f6e2c0279bfc8b571924f5ee4b5265c8f1bc8ee6a08cd0afef17237a53",
-    "playerSha256": "e4e4f09f03c649f80c0f5f3bfa4a383a4033680d33d473799cc2e4d7472a834e",
+    "planSha256": "2c62399f843fd1828327d0504e9c78068c1091e7a61e378434144934b02bb9a1",
+    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "93c0fb995b39bbc318fe57e6e4440e2480b67da6702b0a306ee3f4f57f217586"
   },
@@ -56,7 +56,7 @@
       "approachFrames": 0,
       "returnFrames": 12,
       "targetOffsetX": 90,
-      "recipeSha256": "62924e197ab4720e9c85ce4bb979cf0f2aa5e45e319da3ee725b338b93990398",
+      "recipeSha256": "cff6f920ba2710cdaa05988ba506f3a6f1c57a5bce39ac8278e26a18c515237c",
       "origin": "Reviewed game recipe; preview timing and offsets are adaptations"
     },
     "fitScreenToArena": false,
@@ -4375,6 +4375,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 10200
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -5766,7 +5771,7 @@
             "nonemptyBindingsChecked": 8
           },
           "materialChecks": {
-            "materialEnumsChecked": 37,
+            "materialEnumsChecked": 38,
             "materialAlphaValuesChecked": 11
           },
           "dormantAuthoringCurvesNotDecoded": [],
@@ -5799,7 +5804,7 @@
             "nonemptyBindingsChecked": 8
           },
           "materialChecks": {
-            "materialEnumsChecked": 37,
+            "materialEnumsChecked": 38,
             "materialAlphaValuesChecked": 11
           },
           "dormantAuthoringCurvesNotDecoded": [],
@@ -6009,7 +6014,7 @@
               "nonemptyBindingsChecked": 8
             },
             "materialChecks": {
-              "materialEnumsChecked": 37,
+              "materialEnumsChecked": 38,
               "materialAlphaValuesChecked": 11
             },
             "dormantAuthoringCurvesNotDecoded": []
@@ -6043,7 +6048,7 @@
               "nonemptyBindingsChecked": 8
             },
             "materialChecks": {
-              "materialEnumsChecked": 37,
+              "materialEnumsChecked": 38,
               "materialAlphaValuesChecked": 11
             },
             "dormantAuthoringCurvesNotDecoded": []
@@ -8146,24 +8151,72 @@
               }
             },
             "sortPriority": 0.5,
-            "flatQuadColor": {
-              "profile": "native-flat-quad-rgb-v1",
+            "quadColors": {
+              "flat": false,
+              "modeId": 0,
               "mode": "Constant",
-              "flat": true,
-              "value": [
-                0.779119361191988,
-                0.8125970214605331,
-                1
-              ],
-              "range": [
-                0,
-                0,
-                0
-              ],
-              "valueOffset": 3016,
-              "rangeOffset": 3032,
-              "projectSha256": null,
-              "boundary": "Approximation: mean of constant opaque corner RGB; native corner gradient not evaluated"
+              "corners": {
+                "leftTop": {
+                  "value": [
+                    0.11647744476795197,
+                    0.25038808584213257,
+                    1,
+                    1
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 3016
+                },
+                "rightTop": {
+                  "value": [
+                    1,
+                    1,
+                    1,
+                    1
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 3048
+                },
+                "leftBottom": {
+                  "value": [
+                    1,
+                    1,
+                    1,
+                    1
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 3080
+                },
+                "rightBottom": {
+                  "value": [
+                    1,
+                    1,
+                    1,
+                    1
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 3112
+                }
+              }
             },
             "authoringEmissionShape": "Point",
             "authoringTextureLayers": {
@@ -9501,6 +9554,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 8072
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -9713,10 +9771,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   1,
                   1,
@@ -9724,8 +9782,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "nativeMaterialSelection": {
@@ -12272,6 +12329,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 14424
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -12484,10 +12546,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   0.11372549831867218,
                   0.24705879390239716,
@@ -12495,8 +12557,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "nativeMaterialSelection": {
@@ -13025,6 +13086,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 16264
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -13237,10 +13303,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   0.11372549831867218,
                   0.24705879390239716,
@@ -13248,8 +13314,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "nativeMaterialSelection": {
@@ -13778,6 +13843,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 18104
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -13990,10 +14060,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   0.11372549831867218,
                   0.24705879390239716,
@@ -14001,8 +14071,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "nativeMaterialSelection": {
@@ -14531,6 +14600,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 19944
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -14743,10 +14817,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   0.11372549831867218,
                   0.24705879390239716,
@@ -14754,8 +14828,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "nativeMaterialSelection": {
@@ -15779,6 +15852,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 22488
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -15991,10 +16069,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   0.11372549831867218,
                   0.24705879390239716,
@@ -16002,8 +16080,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "nativeMaterialSelection": {
@@ -17017,6 +17094,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 25032
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -17229,10 +17311,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   0.11372549831867218,
                   0.24705879390239716,
@@ -17240,8 +17322,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "nativeMaterialSelection": {
@@ -22633,7 +22714,12 @@
           "dormantAlphaCurves": [
             10
           ],
-          "dormantColorCurves": [],
+          "dormantColorCurves": [
+            11,
+            12,
+            13,
+            14
+          ],
           "limitations": [
             {
               "node": 0,
@@ -22664,10 +22750,6 @@
               "reason": "RGB random-range support is unverified without authoring"
             },
             {
-              "node": 7,
-              "reason": "color selector unresolved; legacy preview tint retained"
-            },
-            {
               "node": 8,
               "reason": "RGB random-range support is unverified without authoring"
             },
@@ -22684,32 +22766,16 @@
               "reason": "RGB random-range support is unverified without authoring"
             },
             {
-              "node": 11,
-              "reason": "color selector unresolved; legacy preview tint retained"
-            },
-            {
               "node": 12,
               "reason": "RGB random-range support is unverified without authoring"
-            },
-            {
-              "node": 12,
-              "reason": "color selector unresolved; legacy preview tint retained"
             },
             {
               "node": 13,
               "reason": "RGB random-range support is unverified without authoring"
             },
             {
-              "node": 13,
-              "reason": "color selector unresolved; legacy preview tint retained"
-            },
-            {
               "node": 14,
               "reason": "RGB random-range support is unverified without authoring"
-            },
-            {
-              "node": 14,
-              "reason": "color selector unresolved; legacy preview tint retained"
             },
             {
               "node": 15,
@@ -22720,20 +22786,12 @@
               "reason": "RGB random-range support is unverified without authoring"
             },
             {
-              "node": 16,
-              "reason": "color selector unresolved; legacy preview tint retained"
-            },
-            {
               "node": 17,
               "reason": "RGB random-range support is unverified without authoring"
             },
             {
               "node": 18,
               "reason": "RGB random-range support is unverified without authoring"
-            },
-            {
-              "node": 18,
-              "reason": "color selector unresolved; legacy preview tint retained"
             }
           ],
           "authoringComparison": null,
@@ -22917,8 +22975,8 @@
                 },
                 "scale": {
                   "valueInitial": [
-                    1,
-                    1,
+                    1.5639,
+                    1.5639,
                     1
                   ],
                   "valueRange": [
@@ -23048,7 +23106,7 @@
               "repeatCount": 1,
               "interval": 1
             },
-            "uniformScale": true,
+            "uniformScale": false,
             "nativeGeneration": {
               "start": 0,
               "startRange": 0,
@@ -23147,6 +23205,10 @@
               "moduleAddress": null,
               "nativeSha256": "6c7e501c98939581528df3d712ff1f58afcfd392160f1e71ef1f903d49926b77",
               "functionSha256": null
+            },
+            "presentationFit": {
+              "factor": 1.5639,
+              "origin": "Automatic screen frame: 4 edge bars authored for the 360-unit FFBE view, root scaled x1.5639 to the border of this view; not an original scale"
             }
           },
           {
@@ -26367,6 +26429,73 @@
               }
             },
             "sortPriority": 0.8999999761581421,
+            "quadColors": {
+              "flat": false,
+              "modeId": 0,
+              "mode": "Constant",
+              "corners": {
+                "leftTop": {
+                  "value": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 3016
+                },
+                "rightTop": {
+                  "value": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 3048
+                },
+                "leftBottom": {
+                  "value": [
+                    0.8666666150093079,
+                    0.9686274528503418,
+                    1,
+                    1
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 3080
+                },
+                "rightBottom": {
+                  "value": [
+                    0.8666666150093079,
+                    0.9686274528503418,
+                    1,
+                    1
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 3112
+                }
+              }
+            },
             "authoringEmissionShape": "Cube",
             "authoringInheritance": {
               "translation": "On",
@@ -26399,11 +26528,9 @@
                 "mode": "Constant",
                 "origin": "IBMB",
                 "domain": "corners",
-                "supported": false
+                "supported": true
               },
-              "limitations": [
-                "quad corner color evaluation unavailable; legacy preview tint retained"
-              ]
+              "limitations": []
             },
             "basicTextureMapping": {
               "supported": true,
@@ -27165,6 +27292,73 @@
               }
             },
             "sortPriority": 0.8999999761581421,
+            "quadColors": {
+              "flat": false,
+              "modeId": 0,
+              "mode": "Constant",
+              "corners": {
+                "leftTop": {
+                  "value": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 5144
+                },
+                "rightTop": {
+                  "value": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 5176
+                },
+                "leftBottom": {
+                  "value": [
+                    0.8666666150093079,
+                    0.968627393245697,
+                    1,
+                    1
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 5208
+                },
+                "rightBottom": {
+                  "value": [
+                    0.8666666150093079,
+                    0.968627393245697,
+                    1,
+                    1
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 5240
+                }
+              }
+            },
             "authoringEmissionShape": "Cube",
             "authoringInheritance": {
               "translation": "On",
@@ -27197,11 +27391,9 @@
                 "mode": "Constant",
                 "origin": "IBMB",
                 "domain": "corners",
-                "supported": false
+                "supported": true
               },
-              "limitations": [
-                "quad corner color evaluation unavailable; legacy preview tint retained"
-              ]
+              "limitations": []
             },
             "basicTextureMapping": {
               "supported": true,
@@ -27963,6 +28155,73 @@
               }
             },
             "sortPriority": 0.8999999761581421,
+            "quadColors": {
+              "flat": false,
+              "modeId": 0,
+              "mode": "Constant",
+              "corners": {
+                "leftTop": {
+                  "value": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 7272
+                },
+                "rightTop": {
+                  "value": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 7304
+                },
+                "leftBottom": {
+                  "value": [
+                    0.8666666150093079,
+                    0.968627393245697,
+                    1,
+                    1
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 7336
+                },
+                "rightBottom": {
+                  "value": [
+                    0.8666666150093079,
+                    0.968627393245697,
+                    1,
+                    1
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 7368
+                }
+              }
+            },
             "authoringEmissionShape": "Cube",
             "authoringInheritance": {
               "translation": "On",
@@ -27995,11 +28254,9 @@
                 "mode": "Constant",
                 "origin": "IBMB",
                 "domain": "corners",
-                "supported": false
+                "supported": true
               },
-              "limitations": [
-                "quad corner color evaluation unavailable; legacy preview tint retained"
-              ]
+              "limitations": []
             },
             "basicTextureMapping": {
               "supported": true,
@@ -28761,6 +29018,73 @@
               }
             },
             "sortPriority": 0.8999999761581421,
+            "quadColors": {
+              "flat": false,
+              "modeId": 0,
+              "mode": "Constant",
+              "corners": {
+                "leftTop": {
+                  "value": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 9400
+                },
+                "rightTop": {
+                  "value": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 9432
+                },
+                "leftBottom": {
+                  "value": [
+                    0.8666666150093079,
+                    0.968627393245697,
+                    1,
+                    1
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 9464
+                },
+                "rightBottom": {
+                  "value": [
+                    0.8666666150093079,
+                    0.968627393245697,
+                    1,
+                    1
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 9496
+                }
+              }
+            },
             "authoringEmissionShape": "Cube",
             "authoringInheritance": {
               "translation": "On",
@@ -28793,11 +29117,9 @@
                 "mode": "Constant",
                 "origin": "IBMB",
                 "domain": "corners",
-                "supported": false
+                "supported": true
               },
-              "limitations": [
-                "quad corner color evaluation unavailable; legacy preview tint retained"
-              ]
+              "limitations": []
             },
             "basicTextureMapping": {
               "supported": true,
@@ -29051,24 +29373,7 @@
           "nodes": 8,
           "dormantAlphaCurves": [],
           "dormantColorCurves": [],
-          "limitations": [
-            {
-              "node": 4,
-              "reason": "quad corner color evaluation unavailable; legacy preview tint retained"
-            },
-            {
-              "node": 5,
-              "reason": "quad corner color evaluation unavailable; legacy preview tint retained"
-            },
-            {
-              "node": 6,
-              "reason": "quad corner color evaluation unavailable; legacy preview tint retained"
-            },
-            {
-              "node": 7,
-              "reason": "quad corner color evaluation unavailable; legacy preview tint retained"
-            }
-          ],
+          "limitations": [],
           "authoringComparison": {
             "projectSha256": "bc72c5878bc6e4ed24543613abaeebe85fc264bfaa9a28bbd6d2faba9269ccc2",
             "nodesChecked": 8,
@@ -33748,6 +34053,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 12104
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -35160,6 +35470,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 15352
+              },
               "blend": {
                 "id": 1,
                 "name": "Semitrans",
@@ -35814,6 +36129,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 17192
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -39756,6 +40076,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 26584
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -43118,7 +43443,7 @@
             "nonemptyBindingsChecked": 11
           },
           "materialChecks": {
-            "materialEnumsChecked": 74,
+            "materialEnumsChecked": 78,
             "materialAlphaValuesChecked": 22
           },
           "dormantAuthoringCurvesNotDecoded": [],
@@ -43151,7 +43476,7 @@
             "nonemptyBindingsChecked": 11
           },
           "materialChecks": {
-            "materialEnumsChecked": 74,
+            "materialEnumsChecked": 78,
             "materialAlphaValuesChecked": 22
           },
           "dormantAuthoringCurvesNotDecoded": [],
@@ -43526,7 +43851,7 @@
               "nonemptyBindingsChecked": 11
             },
             "materialChecks": {
-              "materialEnumsChecked": 74,
+              "materialEnumsChecked": 78,
               "materialAlphaValuesChecked": 22
             },
             "dormantAuthoringCurvesNotDecoded": []
@@ -43560,7 +43885,7 @@
               "nonemptyBindingsChecked": 11
             },
             "materialChecks": {
-              "materialEnumsChecked": 74,
+              "materialEnumsChecked": 78,
               "materialAlphaValuesChecked": 22
             },
             "dormantAuthoringCurvesNotDecoded": []
@@ -48222,6 +48547,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 12328
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -50259,6 +50589,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 17480
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -50949,6 +51284,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 19320
+              },
               "blend": {
                 "id": 1,
                 "name": "Semitrans",
@@ -53893,6 +54233,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 26104
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -57257,7 +57602,7 @@
             "nonemptyBindingsChecked": 11
           },
           "materialChecks": {
-            "materialEnumsChecked": 73,
+            "materialEnumsChecked": 77,
             "materialAlphaValuesChecked": 21
           },
           "dormantAuthoringCurvesNotDecoded": [],
@@ -57290,7 +57635,7 @@
             "nonemptyBindingsChecked": 11
           },
           "materialChecks": {
-            "materialEnumsChecked": 73,
+            "materialEnumsChecked": 77,
             "materialAlphaValuesChecked": 21
           },
           "dormantAuthoringCurvesNotDecoded": [],
@@ -57650,7 +57995,7 @@
               "nonemptyBindingsChecked": 11
             },
             "materialChecks": {
-              "materialEnumsChecked": 73,
+              "materialEnumsChecked": 77,
               "materialAlphaValuesChecked": 21
             },
             "dormantAuthoringCurvesNotDecoded": []
@@ -57684,7 +58029,7 @@
               "nonemptyBindingsChecked": 11
             },
             "materialChecks": {
-              "materialEnumsChecked": 73,
+              "materialEnumsChecked": 77,
               "materialAlphaValuesChecked": 21
             },
             "dormantAuthoringCurvesNotDecoded": []
@@ -58155,12 +58500,7 @@
         {
           "node": 4,
           "quadColors": "Constant-corners",
-          "rgb": [
-            0.7791,
-            0.8126,
-            1
-          ],
-          "treatment": "corner-mean-rgb"
+          "treatment": "corner-gradient-rgba"
         },
         {
           "member": "eff_exp_before_flash_blue.bmb",
@@ -61084,27 +61424,23 @@
         },
         {
           "node": 4,
-          "quadColors": "Constant",
-          "flat": false,
-          "treatment": "legacy-preview-tint"
+          "quadColors": "Constant-corners",
+          "treatment": "corner-gradient-rgba"
         },
         {
           "node": 5,
-          "quadColors": "Constant",
-          "flat": false,
-          "treatment": "legacy-preview-tint"
+          "quadColors": "Constant-corners",
+          "treatment": "corner-gradient-rgba"
         },
         {
           "node": 6,
-          "quadColors": "Constant",
-          "flat": false,
-          "treatment": "legacy-preview-tint"
+          "quadColors": "Constant-corners",
+          "treatment": "corner-gradient-rgba"
         },
         {
           "node": 7,
-          "quadColors": "Constant",
-          "flat": false,
-          "treatment": "legacy-preview-tint"
+          "quadColors": "Constant-corners",
+          "treatment": "corner-gradient-rgba"
         },
         {
           "node": 4,

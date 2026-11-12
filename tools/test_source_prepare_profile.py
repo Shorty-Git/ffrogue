@@ -51,6 +51,18 @@ class SourcePrepareProfileTests(unittest.TestCase):
                 # Body choreography is independently reviewed in current recipes.
                 # Changing that review must not require rewriting preserved VFX plans.
                 expected['presentation']['recipeSha256'] = actual['presentation']['recipeSha256']
+                # The preserved plans predate the decoded Particle colour selector (bmb_materials, 2026-11-12):
+                # a new source field on Particle nodes, not used by strict plans.
+                # It is also compared with authoring, so the count of checked enums grew.
+                def without_check_count(value):
+                    if isinstance(value, dict):
+                        return {key: without_check_count(item) for key, item in value.items() if key != 'materialEnumsChecked'}
+                    return [without_check_count(item) for item in value] if isinstance(value, list) else value
+                for effect in actual['effects']:
+                    for node in effect['nodes']:
+                        if node['typeId'] == 3:
+                            node['materialControls'].pop('colorMode', None)
+                actual, expected = without_check_count(actual), without_check_count(expected)
                 self.assertEqual(actual, expected)
                 if name == 'braver':
                     with tempfile.TemporaryDirectory(dir=base) as missing:

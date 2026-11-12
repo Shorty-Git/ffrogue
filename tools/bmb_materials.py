@@ -15,11 +15,17 @@ CONTROLS = {
 OFFSETS = {
     0: {'colorMode': 664, 'alphaMode': 688},
     2: {'colorMode': 1720, 'blend': 1824, 'alphaMode': 1828, 'textureCombination': 1840, 'texture1Address': 1844, 'texture2Address': 1848},
-    3: {'blend': 1680, 'alphaMode': 1684, 'textureCombination': 1696, 'texture1Address': 1700, 'texture2Address': 1704},
+    # Particle colorMode (2026-11-12): +1624 equals Color_Basic_ColorType on all 458 Particle nodes of 316 staged
+    # effects with matched authoring (359 Constant, 99 Curve). Without it the colour selector was unresolved and
+    # the player fell back to a dormant colour curve (black dimming planes drew white).
+    3: {'colorMode': 1624, 'blend': 1680, 'alphaMode': 1684, 'textureCombination': 1696, 'texture1Address': 1700, 'texture2Address': 1704},
     6: {'colorMode': 1688, 'blend': 1744, 'alphaMode': 1748, 'alphaTest': 1752, 'texture1Address': 1764},
 }
 ALPHA_OFFSETS = {0: 244, 2: 544, 3: 444, 6: 496}
-NODE_ENUM_EXTENSIONS = {(2, 'textureCombination'): {6: 'Distortion'}}
+# Particle 6 (2026-11-12): 17 staged Particle nodes with draw type 6 carry the distortion midpoint at the
+# Quad layout shifted by -96; matched authoring (bm_2035_flare_bg, bm_2044_artema_bg) names them Distortion,
+# and the native selector picks the distortion fragment (slot 184) for operation 6 on both resource types.
+NODE_ENUM_EXTENSIONS = {(2, 'textureCombination'): {6: 'Distortion'}, (3, 'textureCombination'): {6: 'Distortion'}}
 
 
 def read_materials(data, node):

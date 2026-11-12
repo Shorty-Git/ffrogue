@@ -8,8 +8,8 @@
   "durationFrames": 522,
   "provenance": {
     "planFile": "tools/data/enemy-skills/beatrix-170240/source/plan.json",
-    "planSha256": "4c97d87bfd46845c729da30e35c3bb127a99cc181e8415129109b8e9db72b5dc",
-    "playerSha256": "e4e4f09f03c649f80c0f5f3bfa4a383a4033680d33d473799cc2e4d7472a834e",
+    "planSha256": "c5f81c401d5a03551ff6f7f92100a85c79389db4204869225c2c218fb2916cc7",
+    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "9787c28245a466c3c929047cb9aae853559f577928545079e9215135c1de455a"
   },
@@ -57,7 +57,7 @@
       "returnFrames": 12,
       "targetOffsetX": 0,
       "caster": "enemy",
-      "recipeSha256": "180d748b855c3e126ed764cf37fd09ad081229ed3d3ecfe3a6816c0a0d115051",
+      "recipeSha256": "ae8e7f42c6b02e9025a68a9c3118d37b0bdc505e800698995e91f0936bc5c045",
       "origin": "Reviewed game recipe; preview timing and offsets are adaptations"
     },
     "fitScreenToArena": false,
@@ -2373,6 +2373,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 1,
+                "name": "Curve",
+                "fieldOffset": 4536
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -2586,10 +2591,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Curve",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   1,
                   1,
@@ -2597,8 +2602,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "nativeMaterialSelection": {
@@ -3135,6 +3139,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 6376
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -3308,10 +3317,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   0.21310631930828094,
                   0.6682242155075073,
@@ -3319,8 +3328,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "nativeMaterialSelection": {
@@ -3403,6 +3411,12 @@
               "limitations": [],
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+            },
+            "presentationCoverage": {
+              "region": "arena",
+              "primitive": "screen-particle",
+              "textureSha256": "3bdc43ae41ac72aadab669eda9f1de4a9031df0f208f9c64869daa2ac05516ce",
+              "origin": "Automatic screen layer: static Particle authored at screen size (400 x 400 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           },
           {
@@ -8339,6 +8353,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 1,
+                "name": "Curve",
+                "fieldOffset": 19144
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -8552,10 +8571,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Curve",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   0.7009345889091492,
                   0.7336448431015015,
@@ -8563,8 +8582,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "nativeMaterialSelection": {
@@ -10552,6 +10570,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 24296
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -10765,10 +10788,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   0.20191560685634613,
                   0.4110831916332245,
@@ -10776,8 +10799,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "nativeMaterialSelection": {
@@ -13224,6 +13246,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 30152
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -13437,10 +13464,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   0.15424229204654694,
                   0.2592654526233673,
@@ -13448,8 +13475,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "nativeMaterialSelection": {
@@ -16437,6 +16463,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 38360
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -16604,10 +16635,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   1,
                   1,
@@ -16615,8 +16646,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "basicTextureMapping": {
@@ -16707,6 +16737,12 @@
               "limitations": [],
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+            },
+            "presentationCoverage": {
+              "region": "arena",
+              "primitive": "screen-particle",
+              "textureSha256": "2255d5a81011f6b52db45f91da143be0979d99eb83975e2b3204ad294e7e02f9",
+              "origin": "Automatic screen layer: static Particle authored at screen size (300 x 350 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           },
           {
@@ -27758,6 +27794,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 1,
+                "name": "Curve",
+                "fieldOffset": 62216
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -27971,10 +28012,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Curve",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   0,
                   0,
@@ -27982,8 +28023,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "nativeMaterialSelection": {
@@ -30719,6 +30759,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 68072
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -30886,10 +30931,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   1,
                   1,
@@ -30897,8 +30942,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "basicTextureMapping": {
@@ -30989,6 +31033,12 @@
               "limitations": [],
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+            },
+            "presentationCoverage": {
+              "region": "arena",
+              "primitive": "screen-particle",
+              "textureSha256": "604579b0eb5f9746902bce701719bcebd2ffe22e4b601faef1799e2b3aff66cb",
+              "origin": "Automatic screen layer: static Particle authored at screen size (300 x 350 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           }
         ],
@@ -96214,6 +96264,7 @@
             32
           ],
           "dormantColorCurves": [
+            5,
             34,
             37,
             38,
@@ -96242,16 +96293,8 @@
               "reason": "RGB random-range support is unverified without authoring"
             },
             {
-              "node": 4,
-              "reason": "color selector unresolved; legacy preview tint retained"
-            },
-            {
               "node": 5,
               "reason": "RGB random-range support is unverified without authoring"
-            },
-            {
-              "node": 5,
-              "reason": "color selector unresolved; legacy preview tint retained"
             },
             {
               "node": 6,
@@ -96286,10 +96329,6 @@
               "reason": "RGB random-range support is unverified without authoring"
             },
             {
-              "node": 13,
-              "reason": "color selector unresolved; legacy preview tint retained"
-            },
-            {
               "node": 14,
               "reason": "RGB random-range support is unverified without authoring"
             },
@@ -96304,10 +96343,6 @@
             {
               "node": 17,
               "reason": "RGB random-range support is unverified without authoring"
-            },
-            {
-              "node": 17,
-              "reason": "color selector unresolved; legacy preview tint retained"
             },
             {
               "node": 18,
@@ -96330,10 +96365,6 @@
               "reason": "RGB random-range support is unverified without authoring"
             },
             {
-              "node": 22,
-              "reason": "color selector unresolved; legacy preview tint retained"
-            },
-            {
               "node": 23,
               "reason": "RGB random-range support is unverified without authoring"
             },
@@ -96348,10 +96379,6 @@
             {
               "node": 28,
               "reason": "RGB random-range support is unverified without authoring"
-            },
-            {
-              "node": 28,
-              "reason": "color selector unresolved; legacy preview tint retained"
             },
             {
               "node": 29,
@@ -96418,10 +96445,6 @@
               "reason": "RGB random-range support is unverified without authoring"
             },
             {
-              "node": 44,
-              "reason": "color selector unresolved; legacy preview tint retained"
-            },
-            {
               "node": 45,
               "reason": "RGB random-range support is unverified without authoring"
             },
@@ -96440,10 +96463,6 @@
             {
               "node": 49,
               "reason": "RGB random-range support is unverified without authoring"
-            },
-            {
-              "node": 49,
-              "reason": "color selector unresolved; legacy preview tint retained"
             }
           ],
           "authoringComparison": null,
@@ -96909,9 +96928,9 @@
               "alphaRate": 0,
               "colorRate": 0,
               "compatibility": {
-                "nodeV16": true,
+                "nodeV16": false,
                 "nodeV15": false,
-                "rootV16": true,
+                "rootV16": false,
                 "rootV15": false
               }
             },
@@ -96919,13 +96938,13 @@
               "rotationMode": "NewtonDynamics",
               "scaleMode": "NewtonDynamics",
               "origin": "Explicit matching BMSLN; these selectors are not newly decoded binary fields",
-              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+              "projectSha256": "e039f8c11bdda59885e7560901ceec4bc1d4b462f6d69053d46208ed136d31ca"
             },
             "nullLocatorSource": {
               "type": "Standard",
               "rotationMode": "NewtonDynamics",
               "scaleMode": "NewtonDynamics",
-              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7",
+              "projectSha256": "e039f8c11bdda59885e7560901ceec4bc1d4b462f6d69053d46208ed136d31ca",
               "origin": "IBMB Null type; rotation/scale still require explicit matching BMSLN"
             },
             "appearance": {
@@ -96945,9 +96964,7 @@
                   1
                 ]
               },
-              "limitations": [
-                "RGB random-range support is unverified without authoring"
-              ]
+              "limitations": []
             },
             "nativeNullLocator": {
               "typeId": 1,
@@ -97290,7 +97307,7 @@
               "compatibility": {
                 "nodeV16": true,
                 "nodeV15": false,
-                "rootV16": true,
+                "rootV16": false,
                 "rootV15": false
               }
             },
@@ -97298,13 +97315,13 @@
               "rotationMode": "NewtonDynamics",
               "scaleMode": "NewtonDynamics",
               "origin": "Explicit matching BMSLN; these selectors are not newly decoded binary fields",
-              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+              "projectSha256": "e039f8c11bdda59885e7560901ceec4bc1d4b462f6d69053d46208ed136d31ca"
             },
             "nullLocatorSource": {
               "type": "Standard",
               "rotationMode": "NewtonDynamics",
               "scaleMode": "NewtonDynamics",
-              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7",
+              "projectSha256": "e039f8c11bdda59885e7560901ceec4bc1d4b462f6d69053d46208ed136d31ca",
               "origin": "IBMB Null type; rotation/scale still require explicit matching BMSLN"
             },
             "appearance": {
@@ -97324,9 +97341,7 @@
                   1
                 ]
               },
-              "limitations": [
-                "RGB random-range support is unverified without authoring"
-              ]
+              "limitations": []
             },
             "nativeNullLocator": {
               "typeId": 1,
@@ -97670,7 +97685,7 @@
               "compatibility": {
                 "nodeV16": true,
                 "nodeV15": false,
-                "rootV16": true,
+                "rootV16": false,
                 "rootV15": false
               }
             },
@@ -97678,13 +97693,13 @@
               "rotationMode": "NewtonDynamics",
               "scaleMode": "NewtonDynamics",
               "origin": "Explicit matching BMSLN; these selectors are not newly decoded binary fields",
-              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+              "projectSha256": "e039f8c11bdda59885e7560901ceec4bc1d4b462f6d69053d46208ed136d31ca"
             },
             "nullLocatorSource": {
               "type": "Standard",
               "rotationMode": "NewtonDynamics",
               "scaleMode": "NewtonDynamics",
-              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7",
+              "projectSha256": "e039f8c11bdda59885e7560901ceec4bc1d4b462f6d69053d46208ed136d31ca",
               "origin": "IBMB Null type; rotation/scale still require explicit matching BMSLN"
             },
             "appearance": {
@@ -97704,9 +97719,7 @@
                   1
                 ]
               },
-              "limitations": [
-                "RGB random-range support is unverified without authoring"
-              ]
+              "limitations": []
             },
             "nativeNullLocator": {
               "typeId": 1,
@@ -98243,6 +98256,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 3832
+              },
               "blend": {
                 "id": 1,
                 "name": "Semitrans",
@@ -98255,7 +98273,7 @@
               },
               "textureCombination": {
                 "id": 6,
-                "name": "Unknown",
+                "name": "Distortion",
                 "fieldOffset": 3904
               },
               "texture1Address": {
@@ -98386,6 +98404,122 @@
               }
             },
             "sortPriority": 0.20000000298023224,
+            "distortionFields": {
+              "midpoint": [
+                128,
+                128,
+                128
+              ],
+              "layers": {
+                "texture1": {
+                  "rgbInitial": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "rgbRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "colorMode": "Constant",
+                  "colorCurve": {
+                    "fieldOffset": 3856,
+                    "axes": [
+                      "R",
+                      "G",
+                      "B"
+                    ],
+                    "keys": []
+                  }
+                },
+                "texture2": {
+                  "rgbInitial": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "rgbRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "colorMode": "CurveValue",
+                  "colorCurve": {
+                    "fieldOffset": 3872,
+                    "axes": [
+                      "R",
+                      "G",
+                      "B"
+                    ],
+                    "keys": [
+                      {
+                        "offset": 6408,
+                        "typeIds": [
+                          1,
+                          1,
+                          1
+                        ],
+                        "types": [
+                          "Linear",
+                          "Linear",
+                          "Linear"
+                        ],
+                        "slopeLeft": [
+                          0,
+                          0,
+                          0
+                        ],
+                        "slopeRight": [
+                          0,
+                          0,
+                          0
+                        ],
+                        "value": [
+                          1,
+                          0.016598138958215714,
+                          0.10077441483736038
+                        ],
+                        "frame": 0
+                      }
+                    ],
+                    "dataOffset": 6408
+                  }
+                }
+              },
+              "motionModes": {
+                "texture1Translation": {
+                  "id": 1,
+                  "name": "NewtonDynamics",
+                  "fieldOffset": 4008
+                },
+                "texture1Rotation": {
+                  "id": 1,
+                  "name": "NewtonDynamics",
+                  "fieldOffset": 4012
+                },
+                "texture1Scale": {
+                  "id": 0,
+                  "name": "Constant",
+                  "fieldOffset": 4016
+                },
+                "texture2Translation": {
+                  "id": 1,
+                  "name": "NewtonDynamics",
+                  "fieldOffset": 4028
+                },
+                "texture2Rotation": {
+                  "id": 1,
+                  "name": "NewtonDynamics",
+                  "fieldOffset": 4032
+                },
+                "texture2Scale": {
+                  "id": 1,
+                  "name": "NewtonDynamics",
+                  "fieldOffset": 4036
+                }
+              }
+            },
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -98398,7 +98532,7 @@
               "compatibility": {
                 "nodeV16": true,
                 "nodeV15": true,
-                "rootV16": true,
+                "rootV16": false,
                 "rootV15": false
               }
             },
@@ -98406,7 +98540,7 @@
               "rotationMode": "NewtonDynamics",
               "scaleMode": "NewtonDynamics",
               "origin": "Explicit matching BMSLN; these selectors are not newly decoded binary fields",
-              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+              "projectSha256": "e039f8c11bdda59885e7560901ceec4bc1d4b462f6d69053d46208ed136d31ca"
             },
             "appearance": {
               "alpha": {
@@ -98415,20 +98549,18 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "BMSLN",
+                "projectSha256": "e039f8c11bdda59885e7560901ceec4bc1d4b462f6d69053d46208ed136d31ca",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   0,
                   0,
                   0
                 ]
               },
-              "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
-              ]
+              "limitations": []
             },
             "nativeMaterialSelection": {
               "scope": "Initial ordinary Quad/Particle constructor; no runtime override",
@@ -98510,8 +98642,14 @@
               "limitations": [
                 "initial native fragment is not the pinned Basic family"
               ],
-              "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
-              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+              "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
+              "projectSha256": "e039f8c11bdda59885e7560901ceec4bc1d4b462f6d69053d46208ed136d31ca"
+            },
+            "presentationCoverage": {
+              "region": "arena",
+              "primitive": "screen-particle",
+              "textureSha256": "16c88ef19bfd1bd2df3b28b41b2b31371517b6954678f590d94fe526b00a58b6",
+              "origin": "Automatic screen layer: static Particle authored at screen size (210 x 190 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           },
           {
@@ -99041,6 +99179,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 5672
+              },
               "blend": {
                 "id": 1,
                 "name": "Semitrans",
@@ -99053,7 +99196,7 @@
               },
               "textureCombination": {
                 "id": 6,
-                "name": "Unknown",
+                "name": "Distortion",
                 "fieldOffset": 5744
               },
               "texture1Address": {
@@ -99184,6 +99327,122 @@
               }
             },
             "sortPriority": 0.20000000298023224,
+            "distortionFields": {
+              "midpoint": [
+                128,
+                128,
+                128
+              ],
+              "layers": {
+                "texture1": {
+                  "rgbInitial": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "rgbRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "colorMode": "Constant",
+                  "colorCurve": {
+                    "fieldOffset": 5696,
+                    "axes": [
+                      "R",
+                      "G",
+                      "B"
+                    ],
+                    "keys": []
+                  }
+                },
+                "texture2": {
+                  "rgbInitial": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "rgbRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "colorMode": "CurveValue",
+                  "colorCurve": {
+                    "fieldOffset": 5712,
+                    "axes": [
+                      "R",
+                      "G",
+                      "B"
+                    ],
+                    "keys": [
+                      {
+                        "offset": 6852,
+                        "typeIds": [
+                          1,
+                          1,
+                          1
+                        ],
+                        "types": [
+                          "Linear",
+                          "Linear",
+                          "Linear"
+                        ],
+                        "slopeLeft": [
+                          0,
+                          0,
+                          0
+                        ],
+                        "slopeRight": [
+                          0,
+                          0,
+                          0
+                        ],
+                        "value": [
+                          1,
+                          0.016598138958215714,
+                          0.10077441483736038
+                        ],
+                        "frame": 0
+                      }
+                    ],
+                    "dataOffset": 6852
+                  }
+                }
+              },
+              "motionModes": {
+                "texture1Translation": {
+                  "id": 1,
+                  "name": "NewtonDynamics",
+                  "fieldOffset": 5848
+                },
+                "texture1Rotation": {
+                  "id": 1,
+                  "name": "NewtonDynamics",
+                  "fieldOffset": 5852
+                },
+                "texture1Scale": {
+                  "id": 0,
+                  "name": "Constant",
+                  "fieldOffset": 5856
+                },
+                "texture2Translation": {
+                  "id": 1,
+                  "name": "NewtonDynamics",
+                  "fieldOffset": 5868
+                },
+                "texture2Rotation": {
+                  "id": 1,
+                  "name": "NewtonDynamics",
+                  "fieldOffset": 5872
+                },
+                "texture2Scale": {
+                  "id": 1,
+                  "name": "NewtonDynamics",
+                  "fieldOffset": 5876
+                }
+              }
+            },
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -99196,7 +99455,7 @@
               "compatibility": {
                 "nodeV16": true,
                 "nodeV15": true,
-                "rootV16": true,
+                "rootV16": false,
                 "rootV15": false
               }
             },
@@ -99204,7 +99463,7 @@
               "rotationMode": "NewtonDynamics",
               "scaleMode": "NewtonDynamics",
               "origin": "Explicit matching BMSLN; these selectors are not newly decoded binary fields",
-              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+              "projectSha256": "e039f8c11bdda59885e7560901ceec4bc1d4b462f6d69053d46208ed136d31ca"
             },
             "appearance": {
               "alpha": {
@@ -99213,20 +99472,18 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "BMSLN",
+                "projectSha256": "e039f8c11bdda59885e7560901ceec4bc1d4b462f6d69053d46208ed136d31ca",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   0.10280369967222214,
                   0.8551401495933533,
                   0.6028037667274475
                 ]
               },
-              "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
-              ]
+              "limitations": []
             },
             "nativeMaterialSelection": {
               "scope": "Initial ordinary Quad/Particle constructor; no runtime override",
@@ -99308,8 +99565,14 @@
               "limitations": [
                 "initial native fragment is not the pinned Basic family"
               ],
-              "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
-              "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+              "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
+              "projectSha256": "e039f8c11bdda59885e7560901ceec4bc1d4b462f6d69053d46208ed136d31ca"
+            },
+            "presentationCoverage": {
+              "region": "arena",
+              "primitive": "screen-particle",
+              "textureSha256": "16c88ef19bfd1bd2df3b28b41b2b31371517b6954678f590d94fe526b00a58b6",
+              "origin": "Automatic screen layer: static Particle authored at screen size (210 x 190 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           }
         ],
@@ -99319,14 +99582,68 @@
         },
         "meshes": {},
         "authoringSupplement": {
-          "authoringFree": true,
-          "corpusSha256": "da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7",
+          "projectSha256": "e039f8c11bdda59885e7560901ceec4bc1d4b462f6d69053d46208ed136d31ca",
+          "nodesChecked": 5,
+          "nodeOrderAndTypesMatch": true,
+          "lifeParametersMatch": true,
+          "typedResourceSetsMatch": true,
+          "hierarchyMatches": true,
+          "alphaCurvesChecked": 2,
+          "alphaKeysChecked": 8,
+          "alphaKeyDataMatches": true,
+          "vectorCurvesChecked": 2,
+          "vectorKeysChecked": 8,
+          "vectorKeyDataMatches": true,
+          "vectorChannelChecks": {
+            "scaleValue": {
+              "curves": 2,
+              "keys": 8
+            }
+          },
+          "parameterChecks": {
+            "staticVectorsChecked": 166,
+            "motionModesChecked": 13,
+            "bindingSlotsChecked": 4,
+            "nonemptyBindingsChecked": 4
+          },
+          "materialChecks": {
+            "materialEnumsChecked": 18,
+            "materialAlphaValuesChecked": 5
+          },
+          "dormantAuthoringCurvesNotDecoded": [],
           "supplementedAddNodes": 0,
           "origin": "BMSLN authoring supplement; not decoded binary fields"
         },
         "inheritanceSupplement": {
-          "authoringFree": true,
-          "corpusSha256": "da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7",
+          "projectSha256": "e039f8c11bdda59885e7560901ceec4bc1d4b462f6d69053d46208ed136d31ca",
+          "nodesChecked": 5,
+          "nodeOrderAndTypesMatch": true,
+          "lifeParametersMatch": true,
+          "typedResourceSetsMatch": true,
+          "hierarchyMatches": true,
+          "alphaCurvesChecked": 2,
+          "alphaKeysChecked": 8,
+          "alphaKeyDataMatches": true,
+          "vectorCurvesChecked": 2,
+          "vectorKeysChecked": 8,
+          "vectorKeyDataMatches": true,
+          "vectorChannelChecks": {
+            "scaleValue": {
+              "curves": 2,
+              "keys": 8
+            }
+          },
+          "parameterChecks": {
+            "staticVectorsChecked": 166,
+            "motionModesChecked": 13,
+            "bindingSlotsChecked": 4,
+            "nonemptyBindingsChecked": 4
+          },
+          "materialChecks": {
+            "materialEnumsChecked": 18,
+            "materialAlphaValuesChecked": 5
+          },
+          "dormantAuthoringCurvesNotDecoded": [],
           "supplementedInheritanceNodes": 5,
           "binaryControls": [
             {
@@ -99411,41 +99728,72 @@
           "nodes": 5,
           "dormantAlphaCurves": [],
           "dormantColorCurves": [],
-          "limitations": [
-            {
-              "node": 0,
-              "reason": "RGB random-range support is unverified without authoring"
+          "limitations": [],
+          "authoringComparison": {
+            "projectSha256": "e039f8c11bdda59885e7560901ceec4bc1d4b462f6d69053d46208ed136d31ca",
+            "nodesChecked": 5,
+            "nodeOrderAndTypesMatch": true,
+            "lifeParametersMatch": true,
+            "typedResourceSetsMatch": true,
+            "hierarchyMatches": true,
+            "alphaCurvesChecked": 2,
+            "alphaKeysChecked": 8,
+            "alphaKeyDataMatches": true,
+            "vectorCurvesChecked": 2,
+            "vectorKeysChecked": 8,
+            "vectorKeyDataMatches": true,
+            "vectorChannelChecks": {
+              "scaleValue": {
+                "curves": 2,
+                "keys": 8
+              }
             },
-            {
-              "node": 1,
-              "reason": "RGB random-range support is unverified without authoring"
+            "parameterChecks": {
+              "staticVectorsChecked": 166,
+              "motionModesChecked": 13,
+              "bindingSlotsChecked": 4,
+              "nonemptyBindingsChecked": 4
             },
-            {
-              "node": 2,
-              "reason": "RGB random-range support is unverified without authoring"
+            "materialChecks": {
+              "materialEnumsChecked": 18,
+              "materialAlphaValuesChecked": 5
             },
-            {
-              "node": 3,
-              "reason": "RGB random-range support is unverified without authoring"
-            },
-            {
-              "node": 3,
-              "reason": "color selector unresolved; legacy preview tint retained"
-            },
-            {
-              "node": 4,
-              "reason": "RGB random-range support is unverified without authoring"
-            },
-            {
-              "node": 4,
-              "reason": "color selector unresolved; legacy preview tint retained"
-            }
-          ],
-          "authoringComparison": null,
+            "dormantAuthoringCurvesNotDecoded": []
+          },
           "particleColorModeOrigin": "Explicit matching BMSLN; binary selector unresolved"
         },
         "basicUvReport": {
-          "authoringComparison": null,
+          "authoringComparison": {
+            "projectSha256": "e039f8c11bdda59885e7560901ceec4bc1d4b462f6d69053d46208ed136d31ca",
+            "nodesChecked": 5,
+            "nodeOrderAndTypesMatch": true,
+            "lifeParametersMatch": true,
+            "typedResourceSetsMatch": true,
+            "hierarchyMatches": true,
+            "alphaCurvesChecked": 2,
+            "alphaKeysChecked": 8,
+            "alphaKeyDataMatches": true,
+            "vectorCurvesChecked": 2,
+            "vectorKeysChecked": 8,
+            "vectorKeyDataMatches": true,
+            "vectorChannelChecks": {
+              "scaleValue": {
+                "curves": 2,
+                "keys": 8
+              }
+            },
+            "parameterChecks": {
+              "staticVectorsChecked": 166,
+              "motionModesChecked": 13,
+              "bindingSlotsChecked": 4,
+              "nonemptyBindingsChecked": 4
+            },
+            "materialChecks": {
+              "materialEnumsChecked": 18,
+              "materialAlphaValuesChecked": 5
+            },
+            "dormantAuthoringCurvesNotDecoded": []
+          },
           "supportedNodes": [],
           "unsupportedNodes": []
         }
@@ -105319,409 +105667,184 @@
           "treatment": "authoring-free-corpus-default"
         },
         {
-          "member": "bm_2044_artema_bg.bmb",
-          "authoringMismatch": "BMB/BMSLN material control differs: textureCombination",
-          "treatment": "authoring-free-fallback"
-        },
-        {
-          "member": "bm_2044_artema_bg.bmb",
-          "node": 0,
-          "field": "GenerateShape_Basic_GenerateShapeType",
-          "value": "Point",
-          "corpusShare": 0.9887,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2044_artema_bg.bmb",
-          "node": 1,
-          "field": "GenerateShape_Basic_GenerateShapeType",
-          "value": "Point",
-          "corpusShare": 0.9887,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2044_artema_bg.bmb",
-          "node": 2,
-          "field": "GenerateShape_Basic_GenerateShapeType",
-          "value": "Point",
-          "corpusShare": 0.9887,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2044_artema_bg.bmb",
           "node": 3,
-          "field": "GenerateShape_Basic_GenerateShapeType",
-          "value": "Point",
-          "corpusShare": 0.9545,
-          "treatment": "authoring-free-corpus-default"
+          "midpoint": [
+            128,
+            128,
+            128
+          ],
+          "heldInitial": [],
+          "treatment": "distortion-material-from-binary-fields"
         },
         {
-          "member": "bm_2044_artema_bg.bmb",
           "node": 4,
-          "field": "GenerateShape_Basic_GenerateShapeType",
-          "value": "Point",
-          "corpusShare": 0.9545,
-          "treatment": "authoring-free-corpus-default"
+          "midpoint": [
+            128,
+            128,
+            128
+          ],
+          "heldInitial": [],
+          "treatment": "distortion-material-from-binary-fields"
         },
         {
-          "member": "bm_2044_artema_bg.bmb",
-          "node": 0,
-          "field": "Basic_ParentNodeInfluence_TranslateParentNodeInfluenceType",
-          "value": "On",
-          "corpusShare": 0.9874,
-          "treatment": "authoring-free-corpus-default"
+          "channel": "Texture2_Color_Scale_Rgb_Value_Curve",
+          "keys": 1,
+          "treatment": "held-constant"
         },
         {
-          "member": "bm_2044_artema_bg.bmb",
-          "node": 0,
-          "field": "Basic_ParentNodeInfluence_ScaleParentNodeInfluenceType",
-          "value": "On",
-          "corpusShare": 0.994,
-          "treatment": "authoring-free-corpus-default"
+          "channel": "Scale_Speed_Curve",
+          "keys": 2,
+          "treatment": "held-constant"
         },
         {
-          "member": "bm_2044_artema_bg.bmb",
-          "node": 0,
-          "field": "Basic_ParentNodeInfluence_MatrixParentNodeInfluenceType",
-          "value": "On",
-          "corpusShare": 1,
-          "treatment": "authoring-free-corpus-default"
+          "channel": "Texture2_Color_Scale_Rgb_Value_Curve",
+          "keys": 1,
+          "treatment": "held-constant"
         },
         {
-          "member": "bm_2044_artema_bg.bmb",
-          "node": 0,
-          "field": "Basic_ParentNodeInfluence_AlphaParentNodeInfluenceType",
-          "value": "Multiply",
-          "corpusShare": 1,
-          "treatment": "authoring-free-corpus-default"
+          "channel": "Scale_Speed_Curve",
+          "keys": 2,
+          "treatment": "held-constant"
         },
         {
-          "member": "bm_2044_artema_bg.bmb",
-          "node": 0,
-          "field": "Basic_ParentNodeInfluence_ParentColorRate",
-          "value": "0",
-          "corpusShare": 0.9923,
-          "treatment": "authoring-free-corpus-default"
+          "channel": "Texture2_Color_Scale_Rgb_Value_Curve",
+          "keys": 1,
+          "treatment": "held-constant"
         },
         {
-          "member": "bm_2044_artema_bg.bmb",
-          "node": 0,
-          "field": "Basic_Basic_Version1_6",
-          "value": "true",
-          "corpusShare": 0.9098,
-          "treatment": "authoring-free-corpus-default"
+          "channel": "Scale_Speed_Curve",
+          "keys": 2,
+          "treatment": "held-constant"
         },
         {
-          "member": "bm_2044_artema_bg.bmb",
-          "node": 0,
-          "field": "Basic_Basic_Version1_5",
-          "value": "false",
-          "corpusShare": 1,
-          "treatment": "authoring-free-corpus-default"
+          "channel": "Texture2_Color_Scale_Rgb_Value_Curve",
+          "keys": 1,
+          "treatment": "held-constant"
         },
         {
-          "member": "bm_2044_artema_bg.bmb",
-          "node": 1,
-          "field": "Basic_ParentNodeInfluence_TranslateParentNodeInfluenceType",
-          "value": "On",
-          "corpusShare": 0.9874,
-          "treatment": "authoring-free-corpus-default"
+          "channel": "Scale_Speed_Curve",
+          "keys": 2,
+          "treatment": "held-constant"
         },
         {
-          "member": "bm_2044_artema_bg.bmb",
-          "node": 1,
-          "field": "Basic_ParentNodeInfluence_ScaleParentNodeInfluenceType",
-          "value": "On",
-          "corpusShare": 0.994,
-          "treatment": "authoring-free-corpus-default"
+          "channel": "Texture2_Color_Scale_Rgb_Value_Curve",
+          "keys": 1,
+          "treatment": "held-constant"
         },
         {
-          "member": "bm_2044_artema_bg.bmb",
-          "node": 1,
-          "field": "Basic_ParentNodeInfluence_MatrixParentNodeInfluenceType",
-          "value": "On",
-          "corpusShare": 1,
-          "treatment": "authoring-free-corpus-default"
+          "channel": "Scale_Speed_Curve",
+          "keys": 2,
+          "treatment": "held-constant"
         },
         {
-          "member": "bm_2044_artema_bg.bmb",
-          "node": 1,
-          "field": "Basic_ParentNodeInfluence_AlphaParentNodeInfluenceType",
-          "value": "Multiply",
-          "corpusShare": 1,
-          "treatment": "authoring-free-corpus-default"
+          "channel": "Texture2_Color_Scale_Rgb_Value_Curve",
+          "keys": 1,
+          "treatment": "held-constant"
         },
         {
-          "member": "bm_2044_artema_bg.bmb",
-          "node": 1,
-          "field": "Basic_ParentNodeInfluence_ParentColorRate",
-          "value": "0",
-          "corpusShare": 0.9923,
-          "treatment": "authoring-free-corpus-default"
+          "channel": "Scale_Speed_Curve",
+          "keys": 2,
+          "treatment": "held-constant"
         },
         {
-          "member": "bm_2044_artema_bg.bmb",
-          "node": 1,
-          "field": "Basic_Basic_Version1_6",
-          "value": "true",
-          "corpusShare": 0.9098,
-          "treatment": "authoring-free-corpus-default"
+          "channel": "Texture2_Color_Scale_Rgb_Value_Curve",
+          "keys": 1,
+          "treatment": "held-constant"
         },
         {
-          "member": "bm_2044_artema_bg.bmb",
-          "node": 1,
-          "field": "Basic_Basic_Version1_5",
-          "value": "false",
-          "corpusShare": 1,
-          "treatment": "authoring-free-corpus-default"
+          "channel": "Scale_Speed_Curve",
+          "keys": 2,
+          "treatment": "held-constant"
         },
         {
-          "member": "bm_2044_artema_bg.bmb",
-          "node": 2,
-          "field": "Basic_ParentNodeInfluence_TranslateParentNodeInfluenceType",
-          "value": "On",
-          "corpusShare": 0.9874,
-          "treatment": "authoring-free-corpus-default"
+          "channel": "Texture2_Color_Scale_Rgb_Value_Curve",
+          "keys": 1,
+          "treatment": "held-constant"
         },
         {
-          "member": "bm_2044_artema_bg.bmb",
-          "node": 2,
-          "field": "Basic_ParentNodeInfluence_ScaleParentNodeInfluenceType",
-          "value": "On",
-          "corpusShare": 0.994,
-          "treatment": "authoring-free-corpus-default"
+          "channel": "Scale_Speed_Curve",
+          "keys": 2,
+          "treatment": "held-constant"
         },
         {
-          "member": "bm_2044_artema_bg.bmb",
-          "node": 2,
-          "field": "Basic_ParentNodeInfluence_MatrixParentNodeInfluenceType",
-          "value": "On",
-          "corpusShare": 1,
-          "treatment": "authoring-free-corpus-default"
+          "channel": "Texture2_Color_Scale_Rgb_Value_Curve",
+          "keys": 1,
+          "treatment": "held-constant"
         },
         {
-          "member": "bm_2044_artema_bg.bmb",
-          "node": 2,
-          "field": "Basic_ParentNodeInfluence_AlphaParentNodeInfluenceType",
-          "value": "Multiply",
-          "corpusShare": 1,
-          "treatment": "authoring-free-corpus-default"
+          "channel": "Scale_Speed_Curve",
+          "keys": 2,
+          "treatment": "held-constant"
         },
         {
-          "member": "bm_2044_artema_bg.bmb",
-          "node": 2,
-          "field": "Basic_ParentNodeInfluence_ParentColorRate",
-          "value": "0",
-          "corpusShare": 0.9923,
-          "treatment": "authoring-free-corpus-default"
+          "channel": "Texture2_Color_Scale_Rgb_Value_Curve",
+          "keys": 1,
+          "treatment": "held-constant"
         },
         {
-          "member": "bm_2044_artema_bg.bmb",
-          "node": 2,
-          "field": "Basic_Basic_Version1_6",
-          "value": "true",
-          "corpusShare": 0.9098,
-          "treatment": "authoring-free-corpus-default"
+          "channel": "Scale_Speed_Curve",
+          "keys": 2,
+          "treatment": "held-constant"
         },
         {
-          "member": "bm_2044_artema_bg.bmb",
-          "node": 2,
-          "field": "Basic_Basic_Version1_5",
-          "value": "false",
-          "corpusShare": 1,
-          "treatment": "authoring-free-corpus-default"
+          "channel": "Texture2_Color_Scale_Rgb_Value_Curve",
+          "keys": 1,
+          "treatment": "held-constant"
         },
         {
-          "member": "bm_2044_artema_bg.bmb",
-          "node": 3,
-          "field": "Basic_ParentNodeInfluence_TranslateParentNodeInfluenceType",
-          "value": "On",
-          "corpusShare": 0.9076,
-          "treatment": "authoring-free-corpus-default"
+          "channel": "Scale_Speed_Curve",
+          "keys": 2,
+          "treatment": "held-constant"
         },
         {
-          "member": "bm_2044_artema_bg.bmb",
-          "node": 3,
-          "field": "Basic_ParentNodeInfluence_RotateParentNodeInfluenceType",
-          "value": "On",
-          "corpusShare": 0.9303,
-          "treatment": "authoring-free-corpus-default"
+          "channel": "Texture2_Color_Scale_Rgb_Value_Curve",
+          "keys": 1,
+          "treatment": "held-constant"
         },
         {
-          "member": "bm_2044_artema_bg.bmb",
-          "node": 3,
-          "field": "Basic_ParentNodeInfluence_ScaleParentNodeInfluenceType",
-          "value": "On",
-          "corpusShare": 0.9595,
-          "treatment": "authoring-free-corpus-default"
+          "channel": "Scale_Speed_Curve",
+          "keys": 2,
+          "treatment": "held-constant"
         },
         {
-          "member": "bm_2044_artema_bg.bmb",
-          "node": 3,
-          "field": "Basic_ParentNodeInfluence_MatrixParentNodeInfluenceType",
-          "value": "On",
-          "corpusShare": 1,
-          "treatment": "authoring-free-corpus-default"
+          "channel": "Texture2_Color_Scale_Rgb_Value_Curve",
+          "keys": 1,
+          "treatment": "held-constant"
         },
         {
-          "member": "bm_2044_artema_bg.bmb",
-          "node": 3,
-          "field": "Basic_ParentNodeInfluence_ParentColorRate",
-          "value": "0",
-          "corpusShare": 0.986,
-          "treatment": "authoring-free-corpus-default"
+          "channel": "Scale_Speed_Curve",
+          "keys": 2,
+          "treatment": "held-constant"
         },
         {
-          "member": "bm_2044_artema_bg.bmb",
-          "node": 3,
-          "field": "Basic_Basic_Version1_6",
-          "value": "true",
-          "corpusShare": 1,
-          "treatment": "authoring-free-corpus-default"
+          "channel": "Texture2_Color_Scale_Rgb_Value_Curve",
+          "keys": 1,
+          "treatment": "held-constant"
         },
         {
-          "member": "bm_2044_artema_bg.bmb",
-          "node": 3,
-          "field": "Basic_Basic_Version1_5",
-          "value": "true",
-          "corpusShare": 1,
-          "treatment": "authoring-free-corpus-default"
+          "channel": "Scale_Speed_Curve",
+          "keys": 2,
+          "treatment": "held-constant"
         },
         {
-          "member": "bm_2044_artema_bg.bmb",
-          "node": 4,
-          "field": "Basic_ParentNodeInfluence_TranslateParentNodeInfluenceType",
-          "value": "On",
-          "corpusShare": 0.9076,
-          "treatment": "authoring-free-corpus-default"
+          "channel": "Texture2_Color_Scale_Rgb_Value_Curve",
+          "keys": 1,
+          "treatment": "held-constant"
         },
         {
-          "member": "bm_2044_artema_bg.bmb",
-          "node": 4,
-          "field": "Basic_ParentNodeInfluence_RotateParentNodeInfluenceType",
-          "value": "On",
-          "corpusShare": 0.9303,
-          "treatment": "authoring-free-corpus-default"
+          "channel": "Scale_Speed_Curve",
+          "keys": 2,
+          "treatment": "held-constant"
         },
         {
-          "member": "bm_2044_artema_bg.bmb",
-          "node": 4,
-          "field": "Basic_ParentNodeInfluence_ScaleParentNodeInfluenceType",
-          "value": "On",
-          "corpusShare": 0.9595,
-          "treatment": "authoring-free-corpus-default"
+          "channel": "Texture2_Color_Scale_Rgb_Value_Curve",
+          "keys": 1,
+          "treatment": "held-constant"
         },
         {
-          "member": "bm_2044_artema_bg.bmb",
-          "node": 4,
-          "field": "Basic_ParentNodeInfluence_MatrixParentNodeInfluenceType",
-          "value": "On",
-          "corpusShare": 1,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2044_artema_bg.bmb",
-          "node": 4,
-          "field": "Basic_ParentNodeInfluence_ParentColorRate",
-          "value": "0",
-          "corpusShare": 0.986,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2044_artema_bg.bmb",
-          "node": 4,
-          "field": "Basic_Basic_Version1_6",
-          "value": "true",
-          "corpusShare": 1,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2044_artema_bg.bmb",
-          "node": 4,
-          "field": "Basic_Basic_Version1_5",
-          "value": "true",
-          "corpusShare": 1,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2044_artema_bg.bmb",
-          "node": 0,
-          "field": "Rotate_Basic_RotateType",
-          "value": "NewtonDynamics",
-          "corpusShare": 0.9435,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2044_artema_bg.bmb",
-          "node": 0,
-          "field": "Scale_Basic_ScaleType",
-          "value": "NewtonDynamics",
-          "corpusShare": 0.8567,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2044_artema_bg.bmb",
-          "node": 1,
-          "field": "Rotate_Basic_RotateType",
-          "value": "NewtonDynamics",
-          "corpusShare": 0.9435,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2044_artema_bg.bmb",
-          "node": 1,
-          "field": "Scale_Basic_ScaleType",
-          "value": "NewtonDynamics",
-          "corpusShare": 0.8567,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2044_artema_bg.bmb",
-          "node": 2,
-          "field": "Rotate_Basic_RotateType",
-          "value": "NewtonDynamics",
-          "corpusShare": 0.9435,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2044_artema_bg.bmb",
-          "node": 2,
-          "field": "Scale_Basic_ScaleType",
-          "value": "NewtonDynamics",
-          "corpusShare": 0.8567,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2044_artema_bg.bmb",
-          "node": 3,
-          "field": "Rotate_Basic_RotateType",
-          "value": "NewtonDynamics",
-          "corpusShare": 0.9924,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2044_artema_bg.bmb",
-          "node": 3,
-          "field": "Scale_Basic_ScaleType",
-          "value": "NewtonDynamics",
-          "corpusShare": 0.8134,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2044_artema_bg.bmb",
-          "node": 4,
-          "field": "Rotate_Basic_RotateType",
-          "value": "NewtonDynamics",
-          "corpusShare": 0.9924,
-          "treatment": "authoring-free-corpus-default"
-        },
-        {
-          "member": "bm_2044_artema_bg.bmb",
-          "node": 4,
-          "field": "Scale_Basic_ScaleType",
-          "value": "NewtonDynamics",
-          "corpusShare": 0.8134,
-          "treatment": "authoring-free-corpus-default"
+          "channel": "Scale_Speed_Curve",
+          "keys": 2,
+          "treatment": "held-constant"
         },
         {
           "effectHorizon": 384,

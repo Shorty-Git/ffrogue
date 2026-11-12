@@ -8,8 +8,8 @@
   "durationFrames": 721,
   "provenance": {
     "planFile": "tools/data/full-import/squall/skills/lion_heart/source/plan.json",
-    "planSha256": "6b4c9f4b21f3d4996054ace5d55b9294567cd28c9865e8e2f530d20b6d309a49",
-    "playerSha256": "e4e4f09f03c649f80c0f5f3bfa4a383a4033680d33d473799cc2e4d7472a834e",
+    "planSha256": "505d8526ed6e3c50c711c0201b881da5a5f8b556fd9580d28d2e7f8aa98ec246",
+    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "f1d18298d720eeda1ed15eb7e35a8d1aea2f10cf73c3c08650cdd86a33484e19"
   },
@@ -56,7 +56,7 @@
       "approachFrames": 18,
       "returnFrames": 12,
       "targetOffsetX": 90,
-      "recipeSha256": "19d4a691caaf99538df20b50bca26cfe1bdc39e1aaffa7c4cb56c4f58655404c",
+      "recipeSha256": "7f3d11d121e943a1dc1a06876e99c0f504ed7fa11d2964cafb8248c10cd94625",
       "origin": "Reviewed game recipe; preview timing and offsets are adaptations"
     },
     "fitScreenToArena": false,
@@ -1798,6 +1798,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 3832
+              },
               "blend": {
                 "id": 1,
                 "name": "Semitrans",
@@ -2072,7 +2077,7 @@
               "region": "arena",
               "primitive": "screen-particle",
               "textureSha256": "523fe6a7a99e9afd44fc914953ce85dbe41998048eb11b878e0b0e4125a9c5ec",
-              "origin": "Automatic screen backdrop: static opaque Basic Particle authored at screen size (360 x 360 >= 300) on a screen-anchored effect; fitted to the visible battlefield"
+              "origin": "Automatic screen layer: static Particle authored at screen size (360 x 360 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           },
           {
@@ -2497,6 +2502,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 1,
+                "name": "Curve",
+                "fieldOffset": 5672
+              },
               "blend": {
                 "id": 1,
                 "name": "Semitrans",
@@ -2771,7 +2781,7 @@
               "region": "arena",
               "primitive": "screen-particle",
               "textureSha256": "55724185f4059f33f0bfc2643f57d6cad0b2dcf0c17ec0dccaa205d7bed85493",
-              "origin": "Automatic screen backdrop: static opaque Basic Particle authored at screen size (360 x 360 >= 300) on a screen-anchored effect; fitted to the visible battlefield"
+              "origin": "Automatic screen layer: static Particle authored at screen size (360 x 360 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           },
           {
@@ -5401,6 +5411,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 12728
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -6216,6 +6231,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 1,
+                "name": "Curve",
+                "fieldOffset": 14568
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -6485,6 +6505,12 @@
               "limitations": [],
               "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
               "projectSha256": "9b402697df706aa4e9352b7913d2c0c231b8bf12b75c2823acbd9de62934236c"
+            },
+            "presentationCoverage": {
+              "region": "arena",
+              "primitive": "screen-particle",
+              "textureSha256": "4e4ced10e20cc6d5a55219dc607210887b1c00e93a3169f29cf771f45ce47479",
+              "origin": "Automatic screen layer: static Particle authored at screen size (240 x 200 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           }
         ],
@@ -7802,7 +7828,7 @@
             "nonemptyBindingsChecked": 9
           },
           "materialChecks": {
-            "materialEnumsChecked": 40,
+            "materialEnumsChecked": 44,
             "materialAlphaValuesChecked": 11
           },
           "dormantAuthoringCurvesNotDecoded": [],
@@ -7839,7 +7865,7 @@
             "nonemptyBindingsChecked": 9
           },
           "materialChecks": {
-            "materialEnumsChecked": 40,
+            "materialEnumsChecked": 44,
             "materialAlphaValuesChecked": 11
           },
           "dormantAuthoringCurvesNotDecoded": [],
@@ -8051,7 +8077,7 @@
               "nonemptyBindingsChecked": 9
             },
             "materialChecks": {
-              "materialEnumsChecked": 40,
+              "materialEnumsChecked": 44,
               "materialAlphaValuesChecked": 11
             },
             "dormantAuthoringCurvesNotDecoded": []
@@ -8089,7 +8115,7 @@
               "nonemptyBindingsChecked": 9
             },
             "materialChecks": {
-              "materialEnumsChecked": 40,
+              "materialEnumsChecked": 44,
               "materialAlphaValuesChecked": 11
             },
             "dormantAuthoringCurvesNotDecoded": []
@@ -9640,6 +9666,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 3832
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -9943,7 +9974,7 @@
             "nonemptyBindingsChecked": 1
           },
           "materialChecks": {
-            "materialEnumsChecked": 11,
+            "materialEnumsChecked": 12,
             "materialAlphaValuesChecked": 4
           },
           "dormantAuthoringCurvesNotDecoded": [],
@@ -9971,7 +10002,7 @@
             "nonemptyBindingsChecked": 1
           },
           "materialChecks": {
-            "materialEnumsChecked": 11,
+            "materialEnumsChecked": 12,
             "materialAlphaValuesChecked": 4
           },
           "dormantAuthoringCurvesNotDecoded": [],
@@ -10066,7 +10097,7 @@
               "nonemptyBindingsChecked": 1
             },
             "materialChecks": {
-              "materialEnumsChecked": 11,
+              "materialEnumsChecked": 12,
               "materialAlphaValuesChecked": 4
             },
             "dormantAuthoringCurvesNotDecoded": []
@@ -10095,7 +10126,7 @@
               "nonemptyBindingsChecked": 1
             },
             "materialChecks": {
-              "materialEnumsChecked": 11,
+              "materialEnumsChecked": 12,
               "materialAlphaValuesChecked": 4
             },
             "dormantAuthoringCurvesNotDecoded": []
@@ -14957,6 +14988,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 11752
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -15124,10 +15160,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   0.9347651600837708,
                   1,
@@ -15135,8 +15171,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "basicTextureMapping": {
@@ -15996,6 +16031,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 14296
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -16163,10 +16203,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   1,
                   0.5904792547225952,
@@ -16174,8 +16214,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "basicTextureMapping": {
@@ -23530,6 +23569,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 32552
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -23697,10 +23741,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   0.9347651600837708,
                   1,
@@ -23708,8 +23752,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "basicTextureMapping": {
@@ -24569,6 +24612,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 35096
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -24736,10 +24784,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   1,
                   0.5904792547225952,
@@ -24747,8 +24795,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "basicTextureMapping": {
@@ -32103,6 +32150,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 53352
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -32270,10 +32322,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   0.9347651600837708,
                   1,
@@ -32281,8 +32333,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "basicTextureMapping": {
@@ -33142,6 +33193,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 55896
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -33309,10 +33365,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   1,
                   0.5904792547225952,
@@ -33320,8 +33376,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "basicTextureMapping": {
@@ -43051,6 +43106,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 79224
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -43218,10 +43278,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   0.9347651600837708,
                   1,
@@ -43229,8 +43289,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "basicTextureMapping": {
@@ -44088,6 +44147,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 81768
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -44255,10 +44319,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   1,
                   0.5904792547225952,
@@ -44266,8 +44330,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "basicTextureMapping": {
@@ -57672,20 +57735,12 @@
               "reason": "RGB random-range support is unverified without authoring"
             },
             {
-              "node": 10,
-              "reason": "color selector unresolved; legacy preview tint retained"
-            },
-            {
               "node": 11,
               "reason": "RGB random-range support is unverified without authoring"
             },
             {
               "node": 12,
               "reason": "RGB random-range support is unverified without authoring"
-            },
-            {
-              "node": 12,
-              "reason": "color selector unresolved; legacy preview tint retained"
             },
             {
               "node": 15,
@@ -57736,20 +57791,12 @@
               "reason": "RGB random-range support is unverified without authoring"
             },
             {
-              "node": 26,
-              "reason": "color selector unresolved; legacy preview tint retained"
-            },
-            {
               "node": 27,
               "reason": "RGB random-range support is unverified without authoring"
             },
             {
               "node": 28,
               "reason": "RGB random-range support is unverified without authoring"
-            },
-            {
-              "node": 28,
-              "reason": "color selector unresolved; legacy preview tint retained"
             },
             {
               "node": 31,
@@ -57800,20 +57847,12 @@
               "reason": "RGB random-range support is unverified without authoring"
             },
             {
-              "node": 42,
-              "reason": "color selector unresolved; legacy preview tint retained"
-            },
-            {
               "node": 43,
               "reason": "RGB random-range support is unverified without authoring"
             },
             {
               "node": 44,
               "reason": "RGB random-range support is unverified without authoring"
-            },
-            {
-              "node": 44,
-              "reason": "color selector unresolved; legacy preview tint retained"
             },
             {
               "node": 47,
@@ -57872,20 +57911,12 @@
               "reason": "RGB random-range support is unverified without authoring"
             },
             {
-              "node": 62,
-              "reason": "color selector unresolved; legacy preview tint retained"
-            },
-            {
               "node": 63,
               "reason": "RGB random-range support is unverified without authoring"
             },
             {
               "node": 64,
               "reason": "RGB random-range support is unverified without authoring"
-            },
-            {
-              "node": 64,
-              "reason": "color selector unresolved; legacy preview tint retained"
             },
             {
               "node": 65,

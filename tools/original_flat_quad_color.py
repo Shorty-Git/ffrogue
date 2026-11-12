@@ -41,6 +41,16 @@ def attach_flat_quad_color(raw, result, project):
             compare_quad_colors(colors, xml)
         q = colors['quadColors']
         corners = list(q['corners'].values())
+        gradient = len({tuple(c['value']) for c in corners}) > 1
+        if approximate and q['mode'] == 'Constant' and not q['flat'] and gradient and not any(any(c['range']) for c in corners):
+            # Constant corner gradient (2026-11-12): the four source corner RGBA values are interpolated across
+            # the Quad (the player's corner-colour attribute). Before, opaque gradients were flattened to their
+            # mean and gradients with corner alpha kept a white tint: the glowing border of the Limit Burst
+            # frames (opaque colour fading to transparent black) showed as solid bars.
+            bmb_channels.APPROXIMATED_CURVES.append({'node': node['index'], 'quadColors': 'Constant-corners',
+                'treatment': 'corner-gradient-rgba'})
+            node['quadColors'] = q
+            continue
         if (approximate and q['mode'] == 'Constant' and not q['flat']
                 and not any(any(c['range']) for c in corners) and all(c['value'][3] == 1 for c in corners)):
             # Constant opaque corner gradient: approximate with the mean corner RGB and record it.

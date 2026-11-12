@@ -8,8 +8,8 @@
   "durationFrames": 886,
   "provenance": {
     "planFile": "tools/data/full-import/tifa_avalanche/skills/dolphin_flurry/source/plan.json",
-    "planSha256": "f1602a640cfaa82cc1ee115300e67c8759c8e83dad4274c8ae7d49f3467d34d4",
-    "playerSha256": "e4e4f09f03c649f80c0f5f3bfa4a383a4033680d33d473799cc2e4d7472a834e",
+    "planSha256": "b14e48a001ff24d78373d9fa99c4af10b3f39b0263bbff7e673bd1ce61c71fe2",
+    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "5717a5886f517f341dd3a59a3545b7eed5a89fc1838ae4fad3c76029f51bd999"
   },
@@ -56,7 +56,7 @@
       "approachFrames": 18,
       "returnFrames": 12,
       "targetOffsetX": 90,
-      "recipeSha256": "7d7864c23fef9f4e36128130ad8df419e8cd8b9adcb940c88f264d56a48ad9e3",
+      "recipeSha256": "d36a722c4ebda1e4b411206e1f5211f41ef912ac9c0f417d6cb07d456f448974",
       "origin": "Reviewed game recipe; preview timing and offsets are adaptations"
     },
     "fitScreenToArena": false,
@@ -2640,24 +2640,72 @@
               }
             },
             "sortPriority": 0.10999999940395355,
-            "flatQuadColor": {
-              "profile": "native-flat-quad-rgb-v1",
+            "quadColors": {
+              "flat": false,
+              "modeId": 0,
               "mode": "Constant",
-              "flat": true,
-              "value": [
-                0.3289085105061531,
-                0.3566788174211979,
-                0.3762608617544174
-              ],
-              "range": [
-                0,
-                0,
-                0
-              ],
-              "valueOffset": 2312,
-              "rangeOffset": 2328,
-              "projectSha256": null,
-              "boundary": "Approximation: mean of constant opaque corner RGB; native corner gradient not evaluated"
+              "corners": {
+                "leftTop": {
+                  "value": [
+                    0.6216227412223816,
+                    0.6827554106712341,
+                    0.7234042882919312,
+                    1
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 2312
+                },
+                "rightTop": {
+                  "value": [
+                    0.38520246744155884,
+                    0.39716312289237976,
+                    0.38447603583335876,
+                    1
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 2344
+                },
+                "leftBottom": {
+                  "value": [
+                    0.15640832483768463,
+                    0.18476714193820953,
+                    0.19858156144618988,
+                    1
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 2376
+                },
+                "rightBottom": {
+                  "value": [
+                    0.15240050852298737,
+                    0.16202959418296814,
+                    0.19858156144618988,
+                    1
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 2408
+                }
+              }
             },
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
@@ -2751,7 +2799,7 @@
               "region": "arena",
               "primitive": "unit-quad",
               "textureSha256": "3b03488b361554f606c86d64c5b745640bdc722370361d78516ec2818864ed7d",
-              "origin": "Automatic screen layer: static Quad authored at screen size (300 x 300 >= 300) on a screen-anchored effect; fitted to the visible battlefield"
+              "origin": "Automatic screen layer: static Quad authored at screen size (300 x 300 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           },
           {
@@ -10326,6 +10374,12 @@
               "limitations": [],
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+            },
+            "presentationCoverage": {
+              "region": "arena",
+              "primitive": "unit-quad",
+              "textureSha256": "ad2bbef4984932208f79de6e7ba17101f4fabb5244c43eddc7837ef5169c20cb",
+              "origin": "Automatic screen layer: static Quad authored at screen size (222 x 220 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           },
           {
@@ -11823,6 +11877,161 @@
               }
             },
             "sortPriority": 0.2199999988079071,
+            "distortionFields": {
+              "midpoint": [
+                128,
+                128,
+                128
+              ],
+              "layers": {
+                "texture1": {
+                  "rgbInitial": [
+                    0.6335538625717163,
+                    0.758773922920227,
+                    0.7801418304443359
+                  ],
+                  "rgbRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "colorMode": "Constant",
+                  "colorCurve": {
+                    "fieldOffset": 27408,
+                    "axes": [
+                      "R",
+                      "G",
+                      "B"
+                    ],
+                    "keys": []
+                  }
+                },
+                "texture2": {
+                  "rgbInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "rgbRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "colorMode": "CurveValue",
+                  "colorCurve": {
+                    "fieldOffset": 27424,
+                    "axes": [
+                      "R",
+                      "G",
+                      "B"
+                    ],
+                    "keys": [
+                      {
+                        "offset": 62448,
+                        "typeIds": [
+                          1,
+                          1,
+                          1
+                        ],
+                        "types": [
+                          "Linear",
+                          "Linear",
+                          "Linear"
+                        ],
+                        "slopeLeft": [
+                          0,
+                          0,
+                          0
+                        ],
+                        "slopeRight": [
+                          0,
+                          0,
+                          0
+                        ],
+                        "value": [
+                          0,
+                          0,
+                          0
+                        ],
+                        "frame": 0.46112266182899475
+                      },
+                      {
+                        "offset": 62500,
+                        "typeIds": [
+                          1,
+                          1,
+                          1
+                        ],
+                        "types": [
+                          "Linear",
+                          "Linear",
+                          "Linear"
+                        ],
+                        "slopeLeft": [
+                          0,
+                          0,
+                          0
+                        ],
+                        "slopeRight": [
+                          0,
+                          0,
+                          0
+                        ],
+                        "value": [
+                          1,
+                          0.8985019326210022,
+                          0.8848248720169067
+                        ],
+                        "frame": 1
+                      }
+                    ],
+                    "dataOffset": 62448
+                  }
+                }
+              },
+              "motionModes": {
+                "texture1Translation": {
+                  "id": 2,
+                  "name": "CurveValue",
+                  "fieldOffset": 27560
+                },
+                "texture1Rotation": {
+                  "id": 1,
+                  "name": "NewtonDynamics",
+                  "fieldOffset": 27564
+                },
+                "texture1Scale": {
+                  "id": 0,
+                  "name": "Constant",
+                  "fieldOffset": 27568
+                },
+                "texture2Translation": {
+                  "id": 1,
+                  "name": "NewtonDynamics",
+                  "fieldOffset": 27580
+                },
+                "texture2Rotation": {
+                  "id": 0,
+                  "name": "Constant",
+                  "fieldOffset": 27584
+                },
+                "texture2Scale": {
+                  "id": 2,
+                  "name": "CurveValue",
+                  "fieldOffset": 27588
+                }
+              },
+              "texture2TranslationSpeed": {
+                "fieldOffset": 27248,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "uvSpeedLayoutStatus": "Candidate quad channel: valid vector-key layout, no nonempty authoring counterpart found"
+            },
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -11901,6 +12110,12 @@
               ],
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+            },
+            "presentationCoverage": {
+              "region": "arena",
+              "primitive": "unit-quad",
+              "textureSha256": "40731731d2e04a1d81d8ca1cdf94a0bf9f1a3ad380159bcfd660cdcc164bfd61",
+              "origin": "Automatic screen layer: static Quad authored at screen size (255 x 255 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           },
           {
@@ -12539,6 +12754,161 @@
               }
             },
             "sortPriority": 0.2199999988079071,
+            "distortionFields": {
+              "midpoint": [
+                128,
+                128,
+                128
+              ],
+              "layers": {
+                "texture1": {
+                  "rgbInitial": [
+                    0.6335538625717163,
+                    0.758773922920227,
+                    0.7801418304443359
+                  ],
+                  "rgbRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "colorMode": "Constant",
+                  "colorCurve": {
+                    "fieldOffset": 29536,
+                    "axes": [
+                      "R",
+                      "G",
+                      "B"
+                    ],
+                    "keys": []
+                  }
+                },
+                "texture2": {
+                  "rgbInitial": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "rgbRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "colorMode": "CurveValue",
+                  "colorCurve": {
+                    "fieldOffset": 29552,
+                    "axes": [
+                      "R",
+                      "G",
+                      "B"
+                    ],
+                    "keys": [
+                      {
+                        "offset": 63140,
+                        "typeIds": [
+                          1,
+                          1,
+                          1
+                        ],
+                        "types": [
+                          "Linear",
+                          "Linear",
+                          "Linear"
+                        ],
+                        "slopeLeft": [
+                          0,
+                          0,
+                          0
+                        ],
+                        "slopeRight": [
+                          0,
+                          0,
+                          0
+                        ],
+                        "value": [
+                          0,
+                          0,
+                          0
+                        ],
+                        "frame": 0.46112266182899475
+                      },
+                      {
+                        "offset": 63192,
+                        "typeIds": [
+                          1,
+                          1,
+                          1
+                        ],
+                        "types": [
+                          "Linear",
+                          "Linear",
+                          "Linear"
+                        ],
+                        "slopeLeft": [
+                          0,
+                          0,
+                          0
+                        ],
+                        "slopeRight": [
+                          0,
+                          0,
+                          0
+                        ],
+                        "value": [
+                          1,
+                          0.8985019326210022,
+                          0.8848248720169067
+                        ],
+                        "frame": 1
+                      }
+                    ],
+                    "dataOffset": 63140
+                  }
+                }
+              },
+              "motionModes": {
+                "texture1Translation": {
+                  "id": 2,
+                  "name": "CurveValue",
+                  "fieldOffset": 29688
+                },
+                "texture1Rotation": {
+                  "id": 1,
+                  "name": "NewtonDynamics",
+                  "fieldOffset": 29692
+                },
+                "texture1Scale": {
+                  "id": 0,
+                  "name": "Constant",
+                  "fieldOffset": 29696
+                },
+                "texture2Translation": {
+                  "id": 1,
+                  "name": "NewtonDynamics",
+                  "fieldOffset": 29708
+                },
+                "texture2Rotation": {
+                  "id": 0,
+                  "name": "Constant",
+                  "fieldOffset": 29712
+                },
+                "texture2Scale": {
+                  "id": 2,
+                  "name": "CurveValue",
+                  "fieldOffset": 29716
+                }
+              },
+              "texture2TranslationSpeed": {
+                "fieldOffset": 29376,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "uvSpeedLayoutStatus": "Candidate quad channel: valid vector-key layout, no nonempty authoring counterpart found"
+            },
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -12617,6 +12987,12 @@
               ],
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+            },
+            "presentationCoverage": {
+              "region": "arena",
+              "primitive": "unit-quad",
+              "textureSha256": "40731731d2e04a1d81d8ca1cdf94a0bf9f1a3ad380159bcfd660cdcc164bfd61",
+              "origin": "Automatic screen layer: static Quad authored at screen size (255 x 255 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           },
           {
@@ -13336,6 +13712,12 @@
               "limitations": [],
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+            },
+            "presentationCoverage": {
+              "region": "arena",
+              "primitive": "unit-quad",
+              "textureSha256": "3b03488b361554f606c86d64c5b745640bdc722370361d78516ec2818864ed7d",
+              "origin": "Automatic screen layer: static Quad authored at screen size (255 x 255 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           },
           {
@@ -15667,6 +16049,12 @@
               ],
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+            },
+            "presentationCoverage": {
+              "region": "arena",
+              "primitive": "unit-quad",
+              "textureSha256": "81416c7e8fe0b7ccebcba81fc31dc5af9f68a4d75276f63b092612cee8deceb4",
+              "origin": "Automatic screen layer: static Quad authored at screen size (311.5 x 240.3 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           },
           {
@@ -17148,6 +17536,12 @@
               "limitations": [],
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+            },
+            "presentationCoverage": {
+              "region": "arena",
+              "primitive": "unit-quad",
+              "textureSha256": "3b03488b361554f606c86d64c5b745640bdc722370361d78516ec2818864ed7d",
+              "origin": "Automatic screen layer: static Quad authored at screen size (250 x 250 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           },
           {
@@ -17708,6 +18102,161 @@
               }
             },
             "sortPriority": 0.30000001192092896,
+            "distortionFields": {
+              "midpoint": [
+                128,
+                128,
+                128
+              ],
+              "layers": {
+                "texture1": {
+                  "rgbInitial": [
+                    0.2037641406059265,
+                    0.27226564288139343,
+                    0.5177305340766907
+                  ],
+                  "rgbRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "colorMode": "Constant",
+                  "colorCurve": {
+                    "fieldOffset": 42768,
+                    "axes": [
+                      "R",
+                      "G",
+                      "B"
+                    ],
+                    "keys": [
+                      {
+                        "offset": 65440,
+                        "typeIds": [
+                          1,
+                          1,
+                          1
+                        ],
+                        "types": [
+                          "Linear",
+                          "Linear",
+                          "Linear"
+                        ],
+                        "slopeLeft": [
+                          0,
+                          0,
+                          0
+                        ],
+                        "slopeRight": [
+                          0,
+                          0,
+                          0
+                        ],
+                        "value": [
+                          0.347517728805542,
+                          0.061508659273386,
+                          0
+                        ],
+                        "frame": 0
+                      },
+                      {
+                        "offset": 65492,
+                        "typeIds": [
+                          1,
+                          1,
+                          1
+                        ],
+                        "types": [
+                          "Linear",
+                          "Linear",
+                          "Linear"
+                        ],
+                        "slopeLeft": [
+                          0,
+                          0,
+                          0
+                        ],
+                        "slopeRight": [
+                          0,
+                          0,
+                          0
+                        ],
+                        "value": [
+                          1,
+                          0.09795641899108887,
+                          0
+                        ],
+                        "frame": 1
+                      }
+                    ],
+                    "dataOffset": 65440
+                  }
+                },
+                "texture2": {
+                  "rgbInitial": [
+                    0.8936170935630798,
+                    0.8936170935630798,
+                    0.8936170935630798
+                  ],
+                  "rgbRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "colorMode": "Constant",
+                  "colorCurve": {
+                    "fieldOffset": 42784,
+                    "axes": [
+                      "R",
+                      "G",
+                      "B"
+                    ],
+                    "keys": []
+                  }
+                }
+              },
+              "motionModes": {
+                "texture1Translation": {
+                  "id": 1,
+                  "name": "NewtonDynamics",
+                  "fieldOffset": 42920
+                },
+                "texture1Rotation": {
+                  "id": 1,
+                  "name": "NewtonDynamics",
+                  "fieldOffset": 42924
+                },
+                "texture1Scale": {
+                  "id": 1,
+                  "name": "NewtonDynamics",
+                  "fieldOffset": 42928
+                },
+                "texture2Translation": {
+                  "id": 1,
+                  "name": "NewtonDynamics",
+                  "fieldOffset": 42940
+                },
+                "texture2Rotation": {
+                  "id": 1,
+                  "name": "NewtonDynamics",
+                  "fieldOffset": 42944
+                },
+                "texture2Scale": {
+                  "id": 1,
+                  "name": "NewtonDynamics",
+                  "fieldOffset": 42948
+                }
+              },
+              "texture2TranslationSpeed": {
+                "fieldOffset": 42608,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "uvSpeedLayoutStatus": "Candidate quad channel: valid vector-key layout, no nonempty authoring counterpart found"
+            },
             "flatQuadColor": {
               "profile": "native-flat-quad-rgb-v1",
               "mode": "Constant",
@@ -17803,6 +18352,12 @@
               ],
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+            },
+            "presentationCoverage": {
+              "region": "arena",
+              "primitive": "unit-quad",
+              "textureSha256": "da127ee8c8d843d6cf1721c70c251a629a1b784a410888490f9dab291f49416e",
+              "origin": "Automatic screen layer: static Quad authored at screen size (270 x 260 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           },
           {
@@ -18523,6 +19078,12 @@
               "limitations": [],
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+            },
+            "presentationCoverage": {
+              "region": "arena",
+              "primitive": "unit-quad",
+              "textureSha256": "ad2bbef4984932208f79de6e7ba17101f4fabb5244c43eddc7837ef5169c20cb",
+              "origin": "Automatic screen layer: static Quad authored at screen size (266 x 299 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           },
           {
@@ -19083,6 +19644,161 @@
               }
             },
             "sortPriority": 0.28999999165534973,
+            "distortionFields": {
+              "midpoint": [
+                128,
+                128,
+                128
+              ],
+              "layers": {
+                "texture1": {
+                  "rgbInitial": [
+                    0.1909717321395874,
+                    0.16732479631900787,
+                    0.73758864402771
+                  ],
+                  "rgbRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "colorMode": "Constant",
+                  "colorCurve": {
+                    "fieldOffset": 47024,
+                    "axes": [
+                      "R",
+                      "G",
+                      "B"
+                    ],
+                    "keys": [
+                      {
+                        "offset": 65808,
+                        "typeIds": [
+                          1,
+                          1,
+                          1
+                        ],
+                        "types": [
+                          "Linear",
+                          "Linear",
+                          "Linear"
+                        ],
+                        "slopeLeft": [
+                          0,
+                          0,
+                          0
+                        ],
+                        "slopeRight": [
+                          0,
+                          0,
+                          0
+                        ],
+                        "value": [
+                          0.347517728805542,
+                          0.061508659273386,
+                          0
+                        ],
+                        "frame": 0
+                      },
+                      {
+                        "offset": 65860,
+                        "typeIds": [
+                          1,
+                          1,
+                          1
+                        ],
+                        "types": [
+                          "Linear",
+                          "Linear",
+                          "Linear"
+                        ],
+                        "slopeLeft": [
+                          0,
+                          0,
+                          0
+                        ],
+                        "slopeRight": [
+                          0,
+                          0,
+                          0
+                        ],
+                        "value": [
+                          0.45996975898742676,
+                          1,
+                          0.6626956462860107
+                        ],
+                        "frame": 0.8292903900146484
+                      }
+                    ],
+                    "dataOffset": 65808
+                  }
+                },
+                "texture2": {
+                  "rgbInitial": [
+                    0.8936170339584351,
+                    0.8936170339584351,
+                    0.8936170339584351
+                  ],
+                  "rgbRange": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "colorMode": "Constant",
+                  "colorCurve": {
+                    "fieldOffset": 47040,
+                    "axes": [
+                      "R",
+                      "G",
+                      "B"
+                    ],
+                    "keys": []
+                  }
+                }
+              },
+              "motionModes": {
+                "texture1Translation": {
+                  "id": 1,
+                  "name": "NewtonDynamics",
+                  "fieldOffset": 47176
+                },
+                "texture1Rotation": {
+                  "id": 1,
+                  "name": "NewtonDynamics",
+                  "fieldOffset": 47180
+                },
+                "texture1Scale": {
+                  "id": 1,
+                  "name": "NewtonDynamics",
+                  "fieldOffset": 47184
+                },
+                "texture2Translation": {
+                  "id": 1,
+                  "name": "NewtonDynamics",
+                  "fieldOffset": 47196
+                },
+                "texture2Rotation": {
+                  "id": 1,
+                  "name": "NewtonDynamics",
+                  "fieldOffset": 47200
+                },
+                "texture2Scale": {
+                  "id": 1,
+                  "name": "NewtonDynamics",
+                  "fieldOffset": 47204
+                }
+              },
+              "texture2TranslationSpeed": {
+                "fieldOffset": 46864,
+                "axes": [
+                  "X",
+                  "Y",
+                  "Z"
+                ],
+                "keys": []
+              },
+              "uvSpeedLayoutStatus": "Candidate quad channel: valid vector-key layout, no nonempty authoring counterpart found"
+            },
             "flatQuadColor": {
               "profile": "native-flat-quad-rgb-v1",
               "mode": "Constant",
@@ -19178,6 +19894,12 @@
               ],
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+            },
+            "presentationCoverage": {
+              "region": "arena",
+              "primitive": "unit-quad",
+              "textureSha256": "da127ee8c8d843d6cf1721c70c251a629a1b784a410888490f9dab291f49416e",
+              "origin": "Automatic screen layer: static Quad authored at screen size (270 x 260 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           },
           {
@@ -19843,7 +20565,7 @@
               "region": "arena",
               "primitive": "unit-quad",
               "textureSha256": "3b03488b361554f606c86d64c5b745640bdc722370361d78516ec2818864ed7d",
-              "origin": "Automatic screen layer: static Quad authored at screen size (300 x 300 >= 300) on a screen-anchored effect; fitted to the visible battlefield"
+              "origin": "Automatic screen layer: static Quad authored at screen size (300 x 300 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           },
           {
@@ -21320,7 +22042,7 @@
               "region": "arena",
               "primitive": "unit-quad",
               "textureSha256": "f38368035c610e8067dc8c50a5ca3083a148e26a8b8096b44518cf2ee1e59a5c",
-              "origin": "Automatic screen layer: static Quad authored at screen size (300 x 300 >= 300) on a screen-anchored effect; fitted to the visible battlefield"
+              "origin": "Automatic screen layer: static Quad authored at screen size (300 x 300 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           },
           {
@@ -137443,6 +138165,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 63160
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -137656,10 +138383,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   0.27705246210098267,
                   0.6432920694351196,
@@ -137667,8 +138394,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "nativeMaterialSelection": {
@@ -154561,6 +155287,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 101096
+              },
               "blend": {
                 "id": 1,
                 "name": "Semitrans",
@@ -154774,10 +155505,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   0.453209787607193,
                   0.8190560340881348,
@@ -154785,8 +155516,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "nativeMaterialSelection": {
@@ -156543,6 +157273,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 105048
+              },
               "blend": {
                 "id": 1,
                 "name": "Semitrans",
@@ -156756,10 +157491,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   0.453209787607193,
                   0.8190560340881348,
@@ -156767,8 +157502,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "nativeMaterialSelection": {
@@ -158525,6 +159259,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 109000
+              },
               "blend": {
                 "id": 1,
                 "name": "Semitrans",
@@ -158738,10 +159477,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   0.453209787607193,
                   0.8190560340881348,
@@ -158749,8 +159488,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "nativeMaterialSelection": {
@@ -160507,6 +161245,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 112952
+              },
               "blend": {
                 "id": 1,
                 "name": "Semitrans",
@@ -160720,10 +161463,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   0.453209787607193,
                   0.8190560340881348,
@@ -160731,8 +161474,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "nativeMaterialSelection": {
@@ -170626,6 +171368,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 134840
+              },
               "blend": {
                 "id": 1,
                 "name": "Semitrans",
@@ -170839,10 +171586,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   0.453209787607193,
                   0.8190560340881348,
@@ -170850,8 +171597,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "nativeMaterialSelection": {
@@ -172608,6 +173354,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 138792
+              },
               "blend": {
                 "id": 1,
                 "name": "Semitrans",
@@ -172821,10 +173572,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   0.453209787607193,
                   0.8190560340881348,
@@ -172832,8 +173583,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "nativeMaterialSelection": {
@@ -174590,6 +175340,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 142744
+              },
               "blend": {
                 "id": 1,
                 "name": "Semitrans",
@@ -174803,10 +175558,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   0.453209787607193,
                   0.8190560340881348,
@@ -174814,8 +175569,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "nativeMaterialSelection": {
@@ -176572,6 +177326,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 146696
+              },
               "blend": {
                 "id": 1,
                 "name": "Semitrans",
@@ -176785,10 +177544,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   0.453209787607193,
                   0.8190560340881348,
@@ -176796,8 +177555,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "nativeMaterialSelection": {
@@ -216632,10 +217390,6 @@
               "reason": "RGB random-range support is unverified without authoring"
             },
             {
-              "node": 48,
-              "reason": "color selector unresolved; legacy preview tint retained"
-            },
-            {
               "node": 49,
               "reason": "RGB random-range support is unverified without authoring"
             },
@@ -216748,10 +217502,6 @@
               "reason": "RGB random-range support is unverified without authoring"
             },
             {
-              "node": 81,
-              "reason": "color selector unresolved; legacy preview tint retained"
-            },
-            {
               "node": 82,
               "reason": "RGB random-range support is unverified without authoring"
             },
@@ -216766,10 +217516,6 @@
             {
               "node": 85,
               "reason": "RGB random-range support is unverified without authoring"
-            },
-            {
-              "node": 85,
-              "reason": "color selector unresolved; legacy preview tint retained"
             },
             {
               "node": 86,
@@ -216788,10 +217534,6 @@
               "reason": "RGB random-range support is unverified without authoring"
             },
             {
-              "node": 89,
-              "reason": "color selector unresolved; legacy preview tint retained"
-            },
-            {
               "node": 90,
               "reason": "RGB random-range support is unverified without authoring"
             },
@@ -216806,10 +217548,6 @@
             {
               "node": 93,
               "reason": "RGB random-range support is unverified without authoring"
-            },
-            {
-              "node": 93,
-              "reason": "color selector unresolved; legacy preview tint retained"
             },
             {
               "node": 95,
@@ -216880,10 +217618,6 @@
               "reason": "RGB random-range support is unverified without authoring"
             },
             {
-              "node": 113,
-              "reason": "color selector unresolved; legacy preview tint retained"
-            },
-            {
               "node": 114,
               "reason": "RGB random-range support is unverified without authoring"
             },
@@ -216898,10 +217632,6 @@
             {
               "node": 117,
               "reason": "RGB random-range support is unverified without authoring"
-            },
-            {
-              "node": 117,
-              "reason": "color selector unresolved; legacy preview tint retained"
             },
             {
               "node": 118,
@@ -216920,10 +217650,6 @@
               "reason": "RGB random-range support is unverified without authoring"
             },
             {
-              "node": 121,
-              "reason": "color selector unresolved; legacy preview tint retained"
-            },
-            {
               "node": 122,
               "reason": "RGB random-range support is unverified without authoring"
             },
@@ -216938,10 +217664,6 @@
             {
               "node": 125,
               "reason": "RGB random-range support is unverified without authoring"
-            },
-            {
-              "node": 125,
-              "reason": "color selector unresolved; legacy preview tint retained"
             },
             {
               "node": 127,
@@ -217309,8 +218031,8 @@
                 },
                 "scale": {
                   "valueInitial": [
-                    1,
-                    1,
+                    1.5639,
+                    1.5639,
                     1
                   ],
                   "valueRange": [
@@ -217440,7 +218162,7 @@
               "repeatCount": 1,
               "interval": 1
             },
-            "uniformScale": true,
+            "uniformScale": false,
             "nativeGeneration": {
               "start": 0,
               "startRange": 0,
@@ -217539,6 +218261,10 @@
               "moduleAddress": null,
               "nativeSha256": "6c7e501c98939581528df3d712ff1f58afcfd392160f1e71ef1f903d49926b77",
               "functionSha256": null
+            },
+            "presentationFit": {
+              "factor": 1.5639,
+              "origin": "Automatic screen frame: 4 edge bars authored for the 360-unit FFBE view, root scaled x1.5639 to the border of this view; not an original scale"
             }
           },
           {
@@ -220759,6 +221485,73 @@
               }
             },
             "sortPriority": 0.8999999761581421,
+            "quadColors": {
+              "flat": false,
+              "modeId": 0,
+              "mode": "Constant",
+              "corners": {
+                "leftTop": {
+                  "value": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 3016
+                },
+                "rightTop": {
+                  "value": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 3048
+                },
+                "leftBottom": {
+                  "value": [
+                    0.929411768913269,
+                    1,
+                    0.5568627715110779,
+                    1
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 3080
+                },
+                "rightBottom": {
+                  "value": [
+                    0.929411768913269,
+                    1,
+                    0.5568627715110779,
+                    1
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 3112
+                }
+              }
+            },
             "authoringEmissionShape": "Cube",
             "authoringInheritance": {
               "translation": "On",
@@ -220791,11 +221584,9 @@
                 "mode": "Constant",
                 "origin": "IBMB",
                 "domain": "corners",
-                "supported": false
+                "supported": true
               },
-              "limitations": [
-                "quad corner color evaluation unavailable; legacy preview tint retained"
-              ]
+              "limitations": []
             },
             "basicTextureMapping": {
               "supported": true,
@@ -221557,6 +222348,73 @@
               }
             },
             "sortPriority": 0.8999999761581421,
+            "quadColors": {
+              "flat": false,
+              "modeId": 0,
+              "mode": "Constant",
+              "corners": {
+                "leftTop": {
+                  "value": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 5144
+                },
+                "rightTop": {
+                  "value": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 5176
+                },
+                "leftBottom": {
+                  "value": [
+                    0.9294118285179138,
+                    1,
+                    0.5568627715110779,
+                    1
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 5208
+                },
+                "rightBottom": {
+                  "value": [
+                    0.9294118285179138,
+                    1,
+                    0.5568627715110779,
+                    1
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 5240
+                }
+              }
+            },
             "authoringEmissionShape": "Cube",
             "authoringInheritance": {
               "translation": "On",
@@ -221589,11 +222447,9 @@
                 "mode": "Constant",
                 "origin": "IBMB",
                 "domain": "corners",
-                "supported": false
+                "supported": true
               },
-              "limitations": [
-                "quad corner color evaluation unavailable; legacy preview tint retained"
-              ]
+              "limitations": []
             },
             "basicTextureMapping": {
               "supported": true,
@@ -222355,6 +223211,73 @@
               }
             },
             "sortPriority": 0.8999999761581421,
+            "quadColors": {
+              "flat": false,
+              "modeId": 0,
+              "mode": "Constant",
+              "corners": {
+                "leftTop": {
+                  "value": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 7272
+                },
+                "rightTop": {
+                  "value": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 7304
+                },
+                "leftBottom": {
+                  "value": [
+                    0.9294118285179138,
+                    1,
+                    0.5568627715110779,
+                    1
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 7336
+                },
+                "rightBottom": {
+                  "value": [
+                    0.9294118285179138,
+                    1,
+                    0.5568627715110779,
+                    1
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 7368
+                }
+              }
+            },
             "authoringEmissionShape": "Cube",
             "authoringInheritance": {
               "translation": "On",
@@ -222387,11 +223310,9 @@
                 "mode": "Constant",
                 "origin": "IBMB",
                 "domain": "corners",
-                "supported": false
+                "supported": true
               },
-              "limitations": [
-                "quad corner color evaluation unavailable; legacy preview tint retained"
-              ]
+              "limitations": []
             },
             "basicTextureMapping": {
               "supported": true,
@@ -223153,6 +224074,73 @@
               }
             },
             "sortPriority": 0.8999999761581421,
+            "quadColors": {
+              "flat": false,
+              "modeId": 0,
+              "mode": "Constant",
+              "corners": {
+                "leftTop": {
+                  "value": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 9400
+                },
+                "rightTop": {
+                  "value": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 9432
+                },
+                "leftBottom": {
+                  "value": [
+                    0.9294118285179138,
+                    1,
+                    0.5568627715110779,
+                    1
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 9464
+                },
+                "rightBottom": {
+                  "value": [
+                    0.9294118285179138,
+                    1,
+                    0.5568627715110779,
+                    1
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 9496
+                }
+              }
+            },
             "authoringEmissionShape": "Cube",
             "authoringInheritance": {
               "translation": "On",
@@ -223185,11 +224173,9 @@
                 "mode": "Constant",
                 "origin": "IBMB",
                 "domain": "corners",
-                "supported": false
+                "supported": true
               },
-              "limitations": [
-                "quad corner color evaluation unavailable; legacy preview tint retained"
-              ]
+              "limitations": []
             },
             "basicTextureMapping": {
               "supported": true,
@@ -223443,24 +224429,7 @@
           "nodes": 8,
           "dormantAlphaCurves": [],
           "dormantColorCurves": [],
-          "limitations": [
-            {
-              "node": 4,
-              "reason": "quad corner color evaluation unavailable; legacy preview tint retained"
-            },
-            {
-              "node": 5,
-              "reason": "quad corner color evaluation unavailable; legacy preview tint retained"
-            },
-            {
-              "node": 6,
-              "reason": "quad corner color evaluation unavailable; legacy preview tint retained"
-            },
-            {
-              "node": 7,
-              "reason": "quad corner color evaluation unavailable; legacy preview tint retained"
-            }
-          ],
+          "limitations": [],
           "authoringComparison": {
             "projectSha256": "45f5dff930bf5c9574430805792e78b8e1420d16cdb72a06b2c5bc29d11a1b6b",
             "nodesChecked": 8,
@@ -223707,14 +224676,55 @@
       "profile": "held-constant-unverified-curves-v1",
       "curves": [
         {
+          "node": 19,
+          "midpoint": [
+            128,
+            128,
+            128
+          ],
+          "heldInitial": [
+            "texture1Translation mode CurveValue",
+            "texture2Scale mode CurveValue"
+          ],
+          "treatment": "distortion-material-from-binary-fields"
+        },
+        {
+          "node": 20,
+          "midpoint": [
+            128,
+            128,
+            128
+          ],
+          "heldInitial": [
+            "texture1Translation mode CurveValue",
+            "texture2Scale mode CurveValue"
+          ],
+          "treatment": "distortion-material-from-binary-fields"
+        },
+        {
+          "node": 29,
+          "midpoint": [
+            128,
+            128,
+            128
+          ],
+          "heldInitial": [],
+          "treatment": "distortion-material-from-binary-fields"
+        },
+        {
+          "node": 31,
+          "midpoint": [
+            128,
+            128,
+            128
+          ],
+          "heldInitial": [],
+          "treatment": "distortion-material-from-binary-fields"
+        },
+        {
           "node": 3,
           "quadColors": "Constant-corners",
-          "rgb": [
-            0.3289,
-            0.3567,
-            0.3763
-          ],
-          "treatment": "corner-mean-rgb"
+          "treatment": "corner-gradient-rgba"
         },
         {
           "node": 16,
@@ -243378,27 +244388,23 @@
         },
         {
           "node": 4,
-          "quadColors": "Constant",
-          "flat": false,
-          "treatment": "legacy-preview-tint"
+          "quadColors": "Constant-corners",
+          "treatment": "corner-gradient-rgba"
         },
         {
           "node": 5,
-          "quadColors": "Constant",
-          "flat": false,
-          "treatment": "legacy-preview-tint"
+          "quadColors": "Constant-corners",
+          "treatment": "corner-gradient-rgba"
         },
         {
           "node": 6,
-          "quadColors": "Constant",
-          "flat": false,
-          "treatment": "legacy-preview-tint"
+          "quadColors": "Constant-corners",
+          "treatment": "corner-gradient-rgba"
         },
         {
           "node": 7,
-          "quadColors": "Constant",
-          "flat": false,
-          "treatment": "legacy-preview-tint"
+          "quadColors": "Constant-corners",
+          "treatment": "corner-gradient-rgba"
         },
         {
           "placement": "anchor-mode-3",

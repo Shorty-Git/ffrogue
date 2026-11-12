@@ -8,8 +8,8 @@
   "durationFrames": 230,
   "provenance": {
     "planFile": "tools/data/full-import/aerith_cetra/skills/protectga/source/plan.json",
-    "planSha256": "3052b4a4c99e32afa5487a796b27e393bfcf7af91c7db40d93179f1ccc5b7cc9",
-    "playerSha256": "e4e4f09f03c649f80c0f5f3bfa4a383a4033680d33d473799cc2e4d7472a834e",
+    "planSha256": "0438c1ebf5cc63ba2568fe436259b1899f85bbd2f1ef9a5513402a137b2cd25e",
+    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "b4d5493fac9d884b6b4a1bef60593c39aaa44dca851de3c10daa99ba4a0c18e1"
   },
@@ -56,7 +56,7 @@
       "approachFrames": 0,
       "returnFrames": 12,
       "targetOffsetX": 90,
-      "recipeSha256": "96a13772a70ccdb89fde67d0294fb875e8d670c3f85cf627f7405e436dd4db93",
+      "recipeSha256": "448e35989a944cbf114afc26af60c4fe69b9c5dd04beb704c7eb3afb15aebd81",
       "origin": "Reviewed game recipe; preview timing and offsets are adaptations"
     },
     "fitScreenToArena": false,
@@ -5954,6 +5954,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 4536
+              },
               "blend": {
                 "id": 1,
                 "name": "Semitrans",
@@ -6114,10 +6119,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   0,
                   0,
@@ -6125,8 +6130,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "nativeMaterialSelection": {
@@ -6201,6 +6205,11 @@
               ],
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+            },
+            "presentationCoverage": {
+              "region": "arena",
+              "primitive": "screen-particle",
+              "origin": "Automatic screen layer: untextured plane (320 x 280 >= 190); fitted to the visible battlefield instead of a box"
             }
           }
         ],
@@ -6319,10 +6328,6 @@
             {
               "node": 4,
               "reason": "RGB random-range support is unverified without authoring"
-            },
-            {
-              "node": 4,
-              "reason": "color selector unresolved; legacy preview tint retained"
             }
           ],
           "authoringComparison": null,

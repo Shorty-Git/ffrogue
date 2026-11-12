@@ -8,8 +8,8 @@
   "durationFrames": 221,
   "provenance": {
     "planFile": "tools/data/enemy-skills/exdeath-215214/source/plan.json",
-    "planSha256": "aa9df33dc258c6f1d1c3db978f4536def4b35711b7506a4fc2525a0f47c261b9",
-    "playerSha256": "e4e4f09f03c649f80c0f5f3bfa4a383a4033680d33d473799cc2e4d7472a834e",
+    "planSha256": "2f08c1a81e36b4eb2cd42e968e1ff36a81b0793906da440ef03827c01c9834a9",
+    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "e0dfc5ad8809a9b57413eda5fdd62b006a9625941fa1c655ffc2db3ccaf0c68b"
   },
@@ -4991,6 +4991,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 11656
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -5203,10 +5208,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   0.40784314274787903,
                   1,
@@ -5214,8 +5219,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "nativeMaterialSelection": {
@@ -6733,24 +6737,72 @@
               }
             },
             "sortPriority": 0.5,
-            "flatQuadColor": {
-              "profile": "native-flat-quad-rgb-v1",
+            "quadColors": {
+              "flat": false,
+              "modeId": 0,
               "mode": "Constant",
-              "flat": true,
-              "value": [
-                0.8519607856869698,
-                1,
-                0.845098040997982
-              ],
-              "range": [
-                0,
-                0,
-                0
-              ],
-              "valueOffset": 13384,
-              "rangeOffset": 13400,
-              "projectSha256": null,
-              "boundary": "Approximation: mean of constant opaque corner RGB; native corner gradient not evaluated"
+              "corners": {
+                "leftTop": {
+                  "value": [
+                    0.40784314274787903,
+                    1,
+                    0.3803921639919281,
+                    1
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 13384
+                },
+                "rightTop": {
+                  "value": [
+                    1,
+                    1,
+                    1,
+                    1
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 13416
+                },
+                "leftBottom": {
+                  "value": [
+                    1,
+                    1,
+                    1,
+                    1
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 13448
+                },
+                "rightBottom": {
+                  "value": [
+                    1,
+                    1,
+                    1,
+                    1
+                  ],
+                  "range": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "fieldOffset": 13480
+                }
+              }
             },
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
@@ -15123,10 +15175,6 @@
               "reason": "RGB random-range support is unverified without authoring"
             },
             {
-              "node": 9,
-              "reason": "color selector unresolved; legacy preview tint retained"
-            },
-            {
               "node": 10,
               "reason": "RGB random-range support is unverified without authoring"
             },
@@ -15233,12 +15281,7 @@
         {
           "node": 12,
           "quadColors": "Constant-corners",
-          "rgb": [
-            0.852,
-            1,
-            0.8451
-          ],
-          "treatment": "corner-mean-rgb"
+          "treatment": "corner-gradient-rgba"
         },
         {
           "member": "eff_sonic_slash_green.bmb",

@@ -8,8 +8,8 @@
   "durationFrames": 364,
   "provenance": {
     "planFile": "tools/data/enemy-skills/garuda-800204/source/plan.json",
-    "planSha256": "df57f79bbb70416d158859e91cfb246a5bd0b1d3945963d7e926e6d0e6414e0a",
-    "playerSha256": "e4e4f09f03c649f80c0f5f3bfa4a383a4033680d33d473799cc2e4d7472a834e",
+    "planSha256": "f746aad767d1add6c1416c6711a7ae5ebc3d0ec50b3bc0fce35bf6bc847a9b18",
+    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "b12d723f5295efebab3baa6abc9539361e6e3b080537e6647e24f3a8fe18bb00"
   },
@@ -57,7 +57,7 @@
       "returnFrames": 12,
       "targetOffsetX": 0,
       "caster": "enemy",
-      "recipeSha256": "aa0114dc89ebc8112ca8e85f57f5b47309808062c555cc0633477ddd6fb972b4",
+      "recipeSha256": "793b8dea8fdb4fc8a87ab4b2d4172e063953aaadf6a7d271aa6e5cd934cb4069",
       "origin": "Reviewed game recipe; preview timing and offsets are adaptations"
     },
     "fitScreenToArena": false,
@@ -2394,7 +2394,7 @@
               "primitive": "unit-xy-model",
               "textureSha256": "d020284f666b21aca74d07562a9b95a6723851680fdbabd34a8414c619912c36",
               "modelSha256": "a2214262efa4ef1085a5a677fb77fdfb9bff94a04f5eb138c43409b8433bb37f",
-              "origin": "Automatic screen layer: static unit-XY Model authored at screen size (700 x 800 >= 500) on a screen-anchored effect; fitted to the visible battlefield"
+              "origin": "Automatic screen layer: static unit-XY Model authored at screen size (700 x 800 >= 190) on the back layer of a screen or target-side effect; fitted to the visible battlefield"
             }
           },
           {
@@ -3667,7 +3667,7 @@
               "primitive": "unit-xy-model",
               "textureSha256": "d020284f666b21aca74d07562a9b95a6723851680fdbabd34a8414c619912c36",
               "modelSha256": "a2214262efa4ef1085a5a677fb77fdfb9bff94a04f5eb138c43409b8433bb37f",
-              "origin": "Automatic screen layer: static unit-XY Model authored at screen size (700 x 800 >= 500) on a screen-anchored effect; fitted to the visible battlefield"
+              "origin": "Automatic screen layer: static unit-XY Model authored at screen size (700 x 800 >= 190) on the back layer of a screen or target-side effect; fitted to the visible battlefield"
             }
           },
           {
@@ -17191,6 +17191,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 24488
+              },
               "blend": {
                 "id": 1,
                 "name": "Semitrans",
@@ -18805,6 +18810,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 27736
+              },
               "blend": {
                 "id": 1,
                 "name": "Semitrans",
@@ -21643,6 +21653,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 33592
+              },
               "blend": {
                 "id": 1,
                 "name": "Semitrans",
@@ -49266,7 +49281,7 @@
             "nonemptyBindingsChecked": 25
           },
           "materialChecks": {
-            "materialEnumsChecked": 98,
+            "materialEnumsChecked": 101,
             "materialAlphaValuesChecked": 28
           },
           "dormantAuthoringCurvesNotDecoded": [],
@@ -49311,7 +49326,7 @@
             "nonemptyBindingsChecked": 25
           },
           "materialChecks": {
-            "materialEnumsChecked": 98,
+            "materialEnumsChecked": 101,
             "materialAlphaValuesChecked": 28
           },
           "dormantAuthoringCurvesNotDecoded": [],
@@ -49788,7 +49803,7 @@
               "nonemptyBindingsChecked": 25
             },
             "materialChecks": {
-              "materialEnumsChecked": 98,
+              "materialEnumsChecked": 101,
               "materialAlphaValuesChecked": 28
             },
             "dormantAuthoringCurvesNotDecoded": []
@@ -49834,7 +49849,7 @@
               "nonemptyBindingsChecked": 25
             },
             "materialChecks": {
-              "materialEnumsChecked": 98,
+              "materialEnumsChecked": 101,
               "materialAlphaValuesChecked": 28
             },
             "dormantAuthoringCurvesNotDecoded": []

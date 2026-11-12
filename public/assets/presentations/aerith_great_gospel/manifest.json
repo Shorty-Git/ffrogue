@@ -8,8 +8,8 @@
   "durationFrames": 670,
   "provenance": {
     "planFile": "tools/data/full-import/aerith/skills/great_gospel/source/plan.json",
-    "planSha256": "853565827ddbc7e2000012f9fa590f905feb737338377ec71acc01f93fcae2db",
-    "playerSha256": "e4e4f09f03c649f80c0f5f3bfa4a383a4033680d33d473799cc2e4d7472a834e",
+    "planSha256": "469758aa6c52e881de77d9037bf427b2579663ad806815fab95adca51b60a36c",
+    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "a22e4b4ffc90a1ad812d96ced476e57b33b4432a9a3e405b9c0c7ae9fa26d87a"
   },
@@ -56,7 +56,7 @@
       "approachFrames": 0,
       "returnFrames": 12,
       "targetOffsetX": 200,
-      "recipeSha256": "b52eb887f86441e7a8c98cbbc7fb590fab783dd5b0f232cfc4f32dd6d6f500c6",
+      "recipeSha256": "f3914c8cf529513819be2018707cec2ff3b95286ce407d134d348600be119fee",
       "origin": "Reviewed game recipe; preview timing and offsets are adaptations"
     },
     "fitScreenToArena": false,
@@ -2090,6 +2090,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 4536
+              },
               "blend": {
                 "id": 1,
                 "name": "Semitrans",
@@ -2723,6 +2728,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 6376
+              },
               "blend": {
                 "id": 1,
                 "name": "Semitrans",
@@ -3356,6 +3366,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 8216
+              },
               "blend": {
                 "id": 1,
                 "name": "Semitrans",
@@ -4908,7 +4923,7 @@
             "nonemptyBindingsChecked": 5
           },
           "materialChecks": {
-            "materialEnumsChecked": 30,
+            "materialEnumsChecked": 33,
             "materialAlphaValuesChecked": 9
           },
           "dormantAuthoringCurvesNotDecoded": [],
@@ -4945,7 +4960,7 @@
             "nonemptyBindingsChecked": 5
           },
           "materialChecks": {
-            "materialEnumsChecked": 30,
+            "materialEnumsChecked": 33,
             "materialAlphaValuesChecked": 9
           },
           "dormantAuthoringCurvesNotDecoded": [],
@@ -5127,7 +5142,7 @@
               "nonemptyBindingsChecked": 5
             },
             "materialChecks": {
-              "materialEnumsChecked": 30,
+              "materialEnumsChecked": 33,
               "materialAlphaValuesChecked": 9
             },
             "dormantAuthoringCurvesNotDecoded": []
@@ -5165,7 +5180,7 @@
               "nonemptyBindingsChecked": 5
             },
             "materialChecks": {
-              "materialEnumsChecked": 30,
+              "materialEnumsChecked": 33,
               "materialAlphaValuesChecked": 9
             },
             "dormantAuthoringCurvesNotDecoded": []
@@ -14988,6 +15003,12 @@
               "limitations": [],
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+            },
+            "presentationCoverage": {
+              "region": "arena",
+              "primitive": "unit-quad",
+              "textureSha256": "d5524e3ea32e2514545ba6cdcba27dbb0bf7f08b6707b2d3dc18628c00a93d5c",
+              "origin": "Automatic screen layer: static Quad authored at screen size (48000 x 240 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           },
           {
@@ -21029,6 +21050,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 34104
+              },
               "blend": {
                 "id": 1,
                 "name": "Semitrans",
@@ -21195,10 +21221,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   0,
                   0,
@@ -21206,8 +21232,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "basicTextureMapping": {
@@ -21303,7 +21328,7 @@
               "region": "arena",
               "primitive": "screen-particle",
               "textureSha256": "2b08f95abeaef3ac1f58a04c8d2902496721df7bac90a61c37db46d8445ce321",
-              "origin": "Automatic screen backdrop: static Basic Particle (opaque or one-axis gradient) authored at screen size (210 x 210 >= 200) on a screen-anchored effect; fitted to the visible battlefield"
+              "origin": "Automatic screen layer: static Particle authored at screen size (210 x 210 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           },
           {
@@ -21784,6 +21809,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 1,
+                "name": "Curve",
+                "fieldOffset": 35944
+              },
               "blend": {
                 "id": 1,
                 "name": "Semitrans",
@@ -21950,10 +21980,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Curve",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   0,
                   0,
@@ -21961,8 +21991,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "basicTextureMapping": {
@@ -22461,6 +22490,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 37784
+              },
               "blend": {
                 "id": 1,
                 "name": "Semitrans",
@@ -22627,10 +22661,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   0.26093336939811707,
                   0.39741089940071106,
@@ -22638,8 +22672,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "basicTextureMapping": {
@@ -22735,7 +22768,7 @@
               "region": "arena",
               "primitive": "screen-particle",
               "textureSha256": "3b03488b361554f606c86d64c5b745640bdc722370361d78516ec2818864ed7d",
-              "origin": "Automatic screen backdrop: static Basic Particle (opaque or one-axis gradient) authored at screen size (240 x 240 >= 200) on a screen-anchored effect; fitted to the visible battlefield"
+              "origin": "Automatic screen layer: static Particle authored at screen size (240 x 240 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           },
           {
@@ -23518,6 +23551,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 40328
+              },
               "blend": {
                 "id": 1,
                 "name": "Semitrans",
@@ -23684,10 +23722,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   0.24950481951236725,
                   0.46481481194496155,
@@ -23695,8 +23733,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "basicTextureMapping": {
@@ -23792,7 +23829,7 @@
               "region": "arena",
               "primitive": "screen-particle",
               "textureSha256": "2b08f95abeaef3ac1f58a04c8d2902496721df7bac90a61c37db46d8445ce321",
-              "origin": "Automatic screen backdrop: static Basic Particle (opaque or one-axis gradient) authored at screen size (210 x 210 >= 200) on a screen-anchored effect; fitted to the visible battlefield"
+              "origin": "Automatic screen layer: static Particle authored at screen size (210 x 210 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           },
           {
@@ -30688,24 +30725,12 @@
               "reason": "RGB random-range support is unverified without authoring"
             },
             {
-              "node": 28,
-              "reason": "color selector unresolved; legacy preview tint retained"
-            },
-            {
               "node": 29,
               "reason": "RGB random-range support is unverified without authoring"
             },
             {
-              "node": 29,
-              "reason": "color selector unresolved; legacy preview tint retained"
-            },
-            {
               "node": 30,
               "reason": "RGB random-range support is unverified without authoring"
-            },
-            {
-              "node": 30,
-              "reason": "color selector unresolved; legacy preview tint retained"
             },
             {
               "node": 31,
@@ -30714,10 +30739,6 @@
             {
               "node": 32,
               "reason": "RGB random-range support is unverified without authoring"
-            },
-            {
-              "node": 32,
-              "reason": "color selector unresolved; legacy preview tint retained"
             },
             {
               "node": 33,
@@ -32774,6 +32795,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 4536
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -33436,6 +33462,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 6376
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -33705,6 +33736,12 @@
               "limitations": [],
               "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
               "projectSha256": "8c6edfb323a183c4fb328aa458b67bfaea45ce254a53ef95d9f663d82c04efa2"
+            },
+            "presentationCoverage": {
+              "region": "arena",
+              "primitive": "screen-particle",
+              "textureSha256": "b1769cf25c7f5265a489cb221fa96a2c21f91d5f4365389610b191fbedc72440",
+              "origin": "Automatic screen layer: static Particle authored at screen size (666 x 666 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           }
         ],
@@ -33733,7 +33770,7 @@
             "nonemptyBindingsChecked": 2
           },
           "materialChecks": {
-            "materialEnumsChecked": 18,
+            "materialEnumsChecked": 20,
             "materialAlphaValuesChecked": 6
           },
           "dormantAuthoringCurvesNotDecoded": [],
@@ -33761,7 +33798,7 @@
             "nonemptyBindingsChecked": 2
           },
           "materialChecks": {
-            "materialEnumsChecked": 18,
+            "materialEnumsChecked": 20,
             "materialAlphaValuesChecked": 6
           },
           "dormantAuthoringCurvesNotDecoded": [],
@@ -33886,7 +33923,7 @@
               "nonemptyBindingsChecked": 2
             },
             "materialChecks": {
-              "materialEnumsChecked": 18,
+              "materialEnumsChecked": 20,
               "materialAlphaValuesChecked": 6
             },
             "dormantAuthoringCurvesNotDecoded": []
@@ -33915,7 +33952,7 @@
               "nonemptyBindingsChecked": 2
             },
             "materialChecks": {
-              "materialEnumsChecked": 18,
+              "materialEnumsChecked": 20,
               "materialAlphaValuesChecked": 6
             },
             "dormantAuthoringCurvesNotDecoded": []
@@ -35435,6 +35472,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 3832
+              },
               "blend": {
                 "id": 1,
                 "name": "Semitrans",
@@ -37309,6 +37351,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 7784
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -38042,6 +38089,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 9624
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -38773,6 +38825,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 11464
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -39513,6 +39570,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 13304
+              },
               "blend": {
                 "id": 1,
                 "name": "Semitrans",
@@ -39821,7 +39883,7 @@
             "nonemptyBindingsChecked": 5
           },
           "materialChecks": {
-            "materialEnumsChecked": 37,
+            "materialEnumsChecked": 42,
             "materialAlphaValuesChecked": 11
           },
           "dormantAuthoringCurvesNotDecoded": [],
@@ -39854,7 +39916,7 @@
             "nonemptyBindingsChecked": 5
           },
           "materialChecks": {
-            "materialEnumsChecked": 37,
+            "materialEnumsChecked": 42,
             "materialAlphaValuesChecked": 11
           },
           "dormantAuthoringCurvesNotDecoded": [],
@@ -40068,7 +40130,7 @@
               "nonemptyBindingsChecked": 5
             },
             "materialChecks": {
-              "materialEnumsChecked": 37,
+              "materialEnumsChecked": 42,
               "materialAlphaValuesChecked": 11
             },
             "dormantAuthoringCurvesNotDecoded": []
@@ -40102,7 +40164,7 @@
               "nonemptyBindingsChecked": 5
             },
             "materialChecks": {
-              "materialEnumsChecked": 37,
+              "materialEnumsChecked": 42,
               "materialAlphaValuesChecked": 11
             },
             "dormantAuthoringCurvesNotDecoded": []

@@ -8,8 +8,8 @@
   "durationFrames": 201,
   "provenance": {
     "planFile": "tools/data/full-import/lightning/skills/lightning_strike_ffxiii/source/plan.json",
-    "planSha256": "0db7fbe5b258a1d6ab4b36557ffacb8765eeb5bfa7c6f0a9ef43e059f0725c7b",
-    "playerSha256": "e4e4f09f03c649f80c0f5f3bfa4a383a4033680d33d473799cc2e4d7472a834e",
+    "planSha256": "ce58020c5ec1d66e357b56c41cbc4c5ae0b0d57285004d6ef3bb560b4b36caf4",
+    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "a55518ce1811f659b560b41fe2360569bb3c780ff5ba11ab10a61a09355b96f4"
   },
@@ -87,7 +87,7 @@
       "approachFrames": 18,
       "returnFrames": 12,
       "targetOffsetX": 90,
-      "recipeSha256": "b07a6dd5fce888f96495509538670cf1f64650a6e1dd2325deff6774dc480fd7",
+      "recipeSha256": "5eb5a6e0e0c0b158e9ae769f2925aa12a3b19702bd902b59304daa925acc9419",
       "origin": "Reviewed game recipe; preview timing and offsets are adaptations"
     },
     "fitScreenToArena": false,
@@ -1762,6 +1762,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 3832
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -1928,10 +1933,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   0.7424606084823608,
                   0.9165570139884949,
@@ -1939,8 +1944,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "basicTextureMapping": {
@@ -7443,10 +7447,6 @@
             {
               "node": 3,
               "reason": "RGB random-range support is unverified without authoring"
-            },
-            {
-              "node": 3,
-              "reason": "color selector unresolved; legacy preview tint retained"
             },
             {
               "node": 4,
@@ -20329,6 +20329,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 32760
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -20496,10 +20501,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   1,
                   1,
@@ -20507,8 +20512,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "basicTextureMapping": {
@@ -20978,6 +20982,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 34600
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -21145,10 +21154,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   0.73333340883255,
                   1,
@@ -21156,8 +21165,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "basicTextureMapping": {
@@ -29870,16 +29878,8 @@
               "reason": "RGB random-range support is unverified without authoring"
             },
             {
-              "node": 24,
-              "reason": "color selector unresolved; legacy preview tint retained"
-            },
-            {
               "node": 25,
               "reason": "RGB random-range support is unverified without authoring"
-            },
-            {
-              "node": 25,
-              "reason": "color selector unresolved; legacy preview tint retained"
             },
             {
               "node": 26,
@@ -31600,6 +31600,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 1,
+                "name": "Curve",
+                "fieldOffset": 3832
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -31903,7 +31908,7 @@
             "nonemptyBindingsChecked": 1
           },
           "materialChecks": {
-            "materialEnumsChecked": 11,
+            "materialEnumsChecked": 12,
             "materialAlphaValuesChecked": 4
           },
           "dormantAuthoringCurvesNotDecoded": [],
@@ -31936,7 +31941,7 @@
             "nonemptyBindingsChecked": 1
           },
           "materialChecks": {
-            "materialEnumsChecked": 11,
+            "materialEnumsChecked": 12,
             "materialAlphaValuesChecked": 4
           },
           "dormantAuthoringCurvesNotDecoded": [],
@@ -32036,7 +32041,7 @@
               "nonemptyBindingsChecked": 1
             },
             "materialChecks": {
-              "materialEnumsChecked": 11,
+              "materialEnumsChecked": 12,
               "materialAlphaValuesChecked": 4
             },
             "dormantAuthoringCurvesNotDecoded": []
@@ -32070,7 +32075,7 @@
               "nonemptyBindingsChecked": 1
             },
             "materialChecks": {
-              "materialEnumsChecked": 11,
+              "materialEnumsChecked": 12,
               "materialAlphaValuesChecked": 4
             },
             "dormantAuthoringCurvesNotDecoded": []

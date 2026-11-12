@@ -8,8 +8,8 @@
   "durationFrames": 291,
   "provenance": {
     "planFile": "tools/data/wave6-20261108/buster_end/source/plan.json",
-    "planSha256": "0a49593705cb48dc26798ad1d542fdd852a0d2f0ae3b1547570a9d70df7f3ced",
-    "playerSha256": "e4e4f09f03c649f80c0f5f3bfa4a383a4033680d33d473799cc2e4d7472a834e",
+    "planSha256": "18343e4899a6ae4315c2cddee8ed23f5054081028af8604664cf7f16c691c89e",
+    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "7cf521a36a3194725fd0c5fd1e01f88022e734699bbb484f97001bab65446b94"
   },
@@ -87,7 +87,7 @@
       "approachFrames": 0,
       "returnFrames": 12,
       "targetOffsetX": 90,
-      "recipeSha256": "ddb31620e666de6461798699ba3e96de0684cd1f0ad03075a60988215eb5d17c",
+      "recipeSha256": "5d7f81540137525e2006332536ba1004f4eeafbef29b3bca5b0353bacb5799ad",
       "origin": "Reviewed game recipe; preview timing and offsets are adaptations"
     },
     "fitScreenToArena": false,
@@ -4925,6 +4925,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 8776
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -14196,6 +14201,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 29576
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -19967,6 +19977,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 43752
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -20236,6 +20251,12 @@
               "limitations": [],
               "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
               "projectSha256": "38388e181ca64e3e18ed645d0be0eee76aa84dde9f10531451fd319fcdef3490"
+            },
+            "presentationCoverage": {
+              "region": "arena",
+              "primitive": "screen-particle",
+              "textureSha256": "3b03488b361554f606c86d64c5b745640bdc722370361d78516ec2818864ed7d",
+              "origin": "Automatic screen layer: uniform-colour plane (360 x 320 >= 190); fitted to the visible battlefield instead of a box"
             }
           }
         ],
@@ -44142,7 +44163,7 @@
             "nonemptyBindingsChecked": 30
           },
           "materialChecks": {
-            "materialEnumsChecked": 119,
+            "materialEnumsChecked": 122,
             "materialAlphaValuesChecked": 35
           },
           "dormantAuthoringCurvesNotDecoded": [],
@@ -44195,7 +44216,7 @@
             "nonemptyBindingsChecked": 30
           },
           "materialChecks": {
-            "materialEnumsChecked": 119,
+            "materialEnumsChecked": 122,
             "materialAlphaValuesChecked": 35
           },
           "dormantAuthoringCurvesNotDecoded": [],
@@ -44798,7 +44819,7 @@
               "nonemptyBindingsChecked": 30
             },
             "materialChecks": {
-              "materialEnumsChecked": 119,
+              "materialEnumsChecked": 122,
               "materialAlphaValuesChecked": 35
             },
             "dormantAuthoringCurvesNotDecoded": []
@@ -44852,7 +44873,7 @@
               "nonemptyBindingsChecked": 30
             },
             "materialChecks": {
-              "materialEnumsChecked": 119,
+              "materialEnumsChecked": 122,
               "materialAlphaValuesChecked": 35
             },
             "dormantAuthoringCurvesNotDecoded": []

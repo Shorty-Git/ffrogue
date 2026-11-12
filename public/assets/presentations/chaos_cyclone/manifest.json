@@ -8,8 +8,8 @@
   "durationFrames": 364,
   "provenance": {
     "planFile": "tools/data/enemy-skills/chaos-216521/source/plan.json",
-    "planSha256": "56f24e3938ece8c199b1fedc772ed9b557a091cfe90df2a8056f118b474abfbd",
-    "playerSha256": "e4e4f09f03c649f80c0f5f3bfa4a383a4033680d33d473799cc2e4d7472a834e",
+    "planSha256": "a3128484073e25a3be3c3935d192c7888f18666021bbfac1b227e6835f222afb",
+    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "135892ca826ff06d7e8fab00c3dfe13604868d7b1415c1f22b57df8d5da1ad67"
   },
@@ -57,7 +57,7 @@
       "returnFrames": 12,
       "targetOffsetX": 0,
       "caster": "enemy",
-      "recipeSha256": "7d008bc08fbfb182659d3ee403799ada37a52e30b1053c613a4fb7ce495e966f",
+      "recipeSha256": "5639bb3eb3a268ad35b261754561bb1bcb62efeb151412cfa311824908e8772e",
       "origin": "Reviewed game recipe; preview timing and offsets are adaptations"
     },
     "fitScreenToArena": false,
@@ -2388,6 +2388,13 @@
               "limitations": [],
               "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
               "projectSha256": "6ce5e9d3f4b079bf97390ad13ff3270738c135b96015ebfa153a1bc81492b580"
+            },
+            "presentationCoverage": {
+              "region": "arena",
+              "primitive": "unit-xy-model",
+              "textureSha256": "d020284f666b21aca74d07562a9b95a6723851680fdbabd34a8414c619912c36",
+              "modelSha256": "a2214262efa4ef1085a5a677fb77fdfb9bff94a04f5eb138c43409b8433bb37f",
+              "origin": "Automatic screen layer: static unit-XY Model authored at screen size (700 x 800 >= 190) on the back layer of a screen or target-side effect; fitted to the visible battlefield"
             }
           },
           {
@@ -3654,6 +3661,13 @@
               "limitations": [],
               "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
               "projectSha256": "6ce5e9d3f4b079bf97390ad13ff3270738c135b96015ebfa153a1bc81492b580"
+            },
+            "presentationCoverage": {
+              "region": "arena",
+              "primitive": "unit-xy-model",
+              "textureSha256": "d020284f666b21aca74d07562a9b95a6723851680fdbabd34a8414c619912c36",
+              "modelSha256": "a2214262efa4ef1085a5a677fb77fdfb9bff94a04f5eb138c43409b8433bb37f",
+              "origin": "Automatic screen layer: static unit-XY Model authored at screen size (700 x 800 >= 190) on the back layer of a screen or target-side effect; fitted to the visible battlefield"
             }
           },
           {
@@ -17177,6 +17191,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 24488
+              },
               "blend": {
                 "id": 1,
                 "name": "Semitrans",
@@ -18791,6 +18810,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 27736
+              },
               "blend": {
                 "id": 1,
                 "name": "Semitrans",
@@ -21629,6 +21653,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 33592
+              },
               "blend": {
                 "id": 1,
                 "name": "Semitrans",
@@ -49252,7 +49281,7 @@
             "nonemptyBindingsChecked": 25
           },
           "materialChecks": {
-            "materialEnumsChecked": 98,
+            "materialEnumsChecked": 101,
             "materialAlphaValuesChecked": 28
           },
           "dormantAuthoringCurvesNotDecoded": [],
@@ -49297,7 +49326,7 @@
             "nonemptyBindingsChecked": 25
           },
           "materialChecks": {
-            "materialEnumsChecked": 98,
+            "materialEnumsChecked": 101,
             "materialAlphaValuesChecked": 28
           },
           "dormantAuthoringCurvesNotDecoded": [],
@@ -49774,7 +49803,7 @@
               "nonemptyBindingsChecked": 25
             },
             "materialChecks": {
-              "materialEnumsChecked": 98,
+              "materialEnumsChecked": 101,
               "materialAlphaValuesChecked": 28
             },
             "dormantAuthoringCurvesNotDecoded": []
@@ -49820,7 +49849,7 @@
               "nonemptyBindingsChecked": 25
             },
             "materialChecks": {
-              "materialEnumsChecked": 98,
+              "materialEnumsChecked": 101,
               "materialAlphaValuesChecked": 28
             },
             "dormantAuthoringCurvesNotDecoded": []

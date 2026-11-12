@@ -8,8 +8,8 @@
   "durationFrames": 269,
   "provenance": {
     "planFile": "tools/data/full-import/clive/skills/wicked_wheel/source/plan.json",
-    "planSha256": "c2432f061429e57c285b81365b91a382cf4a8ff182539b925468063722ffdebf",
-    "playerSha256": "e4e4f09f03c649f80c0f5f3bfa4a383a4033680d33d473799cc2e4d7472a834e",
+    "planSha256": "e35a84f180b45ec2b5d732988a390d3dbdbe70ea3e47758caac0662dfb32cba9",
+    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "c4cf30fcf909b2c4c7644c0cab2cee04638c2e604b683600c937385ebab24a34"
   },
@@ -87,7 +87,7 @@
       "approachFrames": 0,
       "returnFrames": 12,
       "targetOffsetX": 90,
-      "recipeSha256": "105685494f8da069691204345e0af08d82bab844aa457e952a2b3e0466604960",
+      "recipeSha256": "ed09008653f84189571ec012b72dd2a7b44749690c802595d0cb98b686668fce",
       "origin": "Reviewed game recipe; preview timing and offsets are adaptations"
     },
     "fitScreenToArena": false,
@@ -19060,6 +19060,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 9496
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -19272,10 +19277,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   0.7841917276382446,
                   1,
@@ -19283,8 +19288,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "nativeMaterialSelection": {
@@ -19898,10 +19902,6 @@
             {
               "node": 7,
               "reason": "RGB random-range support is unverified without authoring"
-            },
-            {
-              "node": 7,
-              "reason": "color selector unresolved; legacy preview tint retained"
             }
           ],
           "authoringComparison": null,

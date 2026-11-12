@@ -8,8 +8,8 @@
   "durationFrames": 230,
   "provenance": {
     "planFile": "tools/data/full-import/bartz/skills/wind_shear/source/plan.json",
-    "planSha256": "0b05a926232b33a10dd923281fdae73dc841bde7af47d6aa6a1ea58b253a1024",
-    "playerSha256": "e4e4f09f03c649f80c0f5f3bfa4a383a4033680d33d473799cc2e4d7472a834e",
+    "planSha256": "4b47f4c9e58e316824bf1ee55e2fccb8ed3064a0f5e2e9c065866788f54cfcb1",
+    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "85619b7f0b1d997a655d5328c7822d638db136a1dc6aa42b099e29914aa27389"
   },
@@ -87,7 +87,7 @@
       "approachFrames": 18,
       "returnFrames": 12,
       "targetOffsetX": 90,
-      "recipeSha256": "d8ad80ede1580fe3dc97cafbc8aba4cbad880d7b8a2414f497fd3f3d446c3128",
+      "recipeSha256": "d30488e1bba1bdd95714ffebf29f586642dfe6e13eed8e3fc8351678e8b200d1",
       "origin": "Reviewed game recipe; preview timing and offsets are adaptations"
     },
     "fitScreenToArena": false,
@@ -4835,6 +4835,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 13048
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -5174,7 +5179,7 @@
             "nonemptyBindingsChecked": 7
           },
           "materialChecks": {
-            "materialEnumsChecked": 37,
+            "materialEnumsChecked": 38,
             "materialAlphaValuesChecked": 9
           },
           "dormantAuthoringCurvesNotDecoded": [
@@ -5213,7 +5218,7 @@
             "nonemptyBindingsChecked": 7
           },
           "materialChecks": {
-            "materialEnumsChecked": 37,
+            "materialEnumsChecked": 38,
             "materialAlphaValuesChecked": 9
           },
           "dormantAuthoringCurvesNotDecoded": [
@@ -5399,7 +5404,7 @@
               "nonemptyBindingsChecked": 7
             },
             "materialChecks": {
-              "materialEnumsChecked": 37,
+              "materialEnumsChecked": 38,
               "materialAlphaValuesChecked": 9
             },
             "dormantAuthoringCurvesNotDecoded": [
@@ -5439,7 +5444,7 @@
               "nonemptyBindingsChecked": 7
             },
             "materialChecks": {
-              "materialEnumsChecked": 37,
+              "materialEnumsChecked": 38,
               "materialAlphaValuesChecked": 9
             },
             "dormantAuthoringCurvesNotDecoded": [
@@ -16169,6 +16174,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 1,
+                "name": "Curve",
+                "fieldOffset": 23000
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -16381,10 +16391,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Curve",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   1,
                   1,
@@ -16392,8 +16402,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "nativeMaterialSelection": {
@@ -46507,10 +46516,6 @@
             {
               "node": 20,
               "reason": "RGB random-range support is unverified without authoring"
-            },
-            {
-              "node": 20,
-              "reason": "color selector unresolved; legacy preview tint retained"
             },
             {
               "node": 21,

@@ -8,8 +8,8 @@
   "durationFrames": 206,
   "provenance": {
     "planFile": "tools/data/full-import/tifa_ac/skills/waterkick_ffvii_ac/source/plan.json",
-    "planSha256": "1a845d28d669cdee15e8f6b8438b777f22a5408215b06d63644ad807bbcb7669",
-    "playerSha256": "e4e4f09f03c649f80c0f5f3bfa4a383a4033680d33d473799cc2e4d7472a834e",
+    "planSha256": "5682493b7dc8001a77dc25339da017040f48cc8c586287e9bf51f2a893d4b7f6",
+    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "4036c35168077bba0c1c446c3836a3a71bb4e3ece3a226f4b32a0764fb556814"
   },
@@ -87,7 +87,7 @@
       "approachFrames": 0,
       "returnFrames": 12,
       "targetOffsetX": 90,
-      "recipeSha256": "827546aeb9ef7583f8d118d4aa7495c0048a104fbbb75a1dab76661aa21eadd2",
+      "recipeSha256": "0bb71006d3adb2e9f4ff5641485d21c349701e43aae68c4b95aad289736b0444",
       "origin": "Reviewed game recipe; preview timing and offsets are adaptations"
     },
     "fitScreenToArena": false,
@@ -3843,6 +3843,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 7848
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -14824,7 +14829,7 @@
             "nonemptyBindingsChecked": 17
           },
           "materialChecks": {
-            "materialEnumsChecked": 75,
+            "materialEnumsChecked": 76,
             "materialAlphaValuesChecked": 23
           },
           "dormantAuthoringCurvesNotDecoded": [],
@@ -14865,7 +14870,7 @@
             "nonemptyBindingsChecked": 17
           },
           "materialChecks": {
-            "materialEnumsChecked": 75,
+            "materialEnumsChecked": 76,
             "materialAlphaValuesChecked": 23
           },
           "dormantAuthoringCurvesNotDecoded": [],
@@ -15277,7 +15282,7 @@
               "nonemptyBindingsChecked": 17
             },
             "materialChecks": {
-              "materialEnumsChecked": 75,
+              "materialEnumsChecked": 76,
               "materialAlphaValuesChecked": 23
             },
             "dormantAuthoringCurvesNotDecoded": []
@@ -15319,7 +15324,7 @@
               "nonemptyBindingsChecked": 17
             },
             "materialChecks": {
-              "materialEnumsChecked": 75,
+              "materialEnumsChecked": 76,
               "materialAlphaValuesChecked": 23
             },
             "dormantAuthoringCurvesNotDecoded": []
@@ -18432,6 +18437,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 7864
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -18604,10 +18614,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   1,
                   0.5836287140846252,
@@ -18615,8 +18625,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "nativeMaterialSelection": {
@@ -24198,10 +24207,6 @@
               "reason": "RGB random-range support is unverified without authoring"
             },
             {
-              "node": 5,
-              "reason": "color selector unresolved; legacy preview tint retained"
-            },
-            {
               "node": 6,
               "reason": "RGB random-range support is unverified without authoring"
             },
@@ -25860,6 +25865,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 1,
+                "name": "Curve",
+                "fieldOffset": 3832
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -26163,7 +26173,7 @@
             "nonemptyBindingsChecked": 1
           },
           "materialChecks": {
-            "materialEnumsChecked": 11,
+            "materialEnumsChecked": 12,
             "materialAlphaValuesChecked": 4
           },
           "dormantAuthoringCurvesNotDecoded": [],
@@ -26196,7 +26206,7 @@
             "nonemptyBindingsChecked": 1
           },
           "materialChecks": {
-            "materialEnumsChecked": 11,
+            "materialEnumsChecked": 12,
             "materialAlphaValuesChecked": 4
           },
           "dormantAuthoringCurvesNotDecoded": [],
@@ -26296,7 +26306,7 @@
               "nonemptyBindingsChecked": 1
             },
             "materialChecks": {
-              "materialEnumsChecked": 11,
+              "materialEnumsChecked": 12,
               "materialAlphaValuesChecked": 4
             },
             "dormantAuthoringCurvesNotDecoded": []
@@ -26330,7 +26340,7 @@
               "nonemptyBindingsChecked": 1
             },
             "materialChecks": {
-              "materialEnumsChecked": 11,
+              "materialEnumsChecked": 12,
               "materialAlphaValuesChecked": 4
             },
             "dormantAuthoringCurvesNotDecoded": []

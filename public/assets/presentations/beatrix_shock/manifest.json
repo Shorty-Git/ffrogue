@@ -8,8 +8,8 @@
   "durationFrames": 251,
   "provenance": {
     "planFile": "tools/data/enemy-skills/beatrix-170230/source/plan.json",
-    "planSha256": "85b74269119aa34edd39c4c8cd4b6f3d2aaf1a34a6b9911d6e916ea9835b8851",
-    "playerSha256": "e4e4f09f03c649f80c0f5f3bfa4a383a4033680d33d473799cc2e4d7472a834e",
+    "planSha256": "dafeb953b5d08c1f71bceb1d0e2227d792aec4896ca55fd0e2aed1f05b721693",
+    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "1a5aea73386cf7e4bee4445447da5b165e57db80d132a1c6abec061b48679e1d"
   },
@@ -13551,6 +13551,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 1,
+                "name": "Curve",
+                "fieldOffset": 22328
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -13718,10 +13723,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Curve",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   1,
                   0.5775589942932129,
@@ -13729,8 +13734,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "basicTextureMapping": {
@@ -20420,10 +20424,6 @@
             {
               "node": 16,
               "reason": "RGB random-range support is unverified without authoring"
-            },
-            {
-              "node": 16,
-              "reason": "color selector unresolved; legacy preview tint retained"
             },
             {
               "node": 17,

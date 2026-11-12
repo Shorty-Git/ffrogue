@@ -8,8 +8,8 @@
   "durationFrames": 240,
   "provenance": {
     "planFile": "tools/data/enemy-skills/exdeath-177950/source/plan.json",
-    "planSha256": "f1ab5e80cc352c7c2babb200968a4269bb3a24e6dca0810fe09f8b9b1f90b1c4",
-    "playerSha256": "e4e4f09f03c649f80c0f5f3bfa4a383a4033680d33d473799cc2e4d7472a834e",
+    "planSha256": "a24038dd0fb83833033343461d7c69c6b081393db31da101b274b5e3c9f06261",
+    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "d6bb8fd504d72eba7b3a48651c7879dd565dbe41306390ab05363521434409c5"
   },
@@ -57,7 +57,7 @@
       "returnFrames": 12,
       "targetOffsetX": 0,
       "caster": "enemy",
-      "recipeSha256": "5b984b5c29bb6dc95dc958b3c51abd427903bf23b0301b82deec635198d77ad2",
+      "recipeSha256": "9efb5864f68bbb21a5e3ac137e9135bba472da7ddf82eb6e25f8dc3a935189c1",
       "origin": "Reviewed game recipe; preview timing and offsets are adaptations"
     },
     "fitScreenToArena": false,
@@ -5429,6 +5429,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 12360
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -5595,10 +5600,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   1,
                   1,
@@ -5606,8 +5611,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "basicTextureMapping": {
@@ -6077,6 +6081,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 14200
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -6243,10 +6252,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   0.22672173380851746,
                   0.6759348511695862,
@@ -6254,8 +6263,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "basicTextureMapping": {
@@ -48757,16 +48765,8 @@
               "reason": "RGB random-range support is unverified without authoring"
             },
             {
-              "node": 10,
-              "reason": "color selector unresolved; legacy preview tint retained"
-            },
-            {
               "node": 11,
               "reason": "RGB random-range support is unverified without authoring"
-            },
-            {
-              "node": 11,
-              "reason": "color selector unresolved; legacy preview tint retained"
             },
             {
               "node": 12,

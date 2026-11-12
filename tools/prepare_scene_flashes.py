@@ -164,7 +164,9 @@ def _backdrop_particle(effect, node, plan, longest):
                        f'life {node.get("lifeParameter")} of {longest} frames; fitted to the visible battlefield')
 
 
-SCREEN_PARTICLE_MIN = 200
+# 200 until 2026-11-12. Flare's background (bm_2035_flare_bg: a red cloud and two white flashes, all 190 x 210 on
+# a screen-anchored back effect) showed as squares in the arena centre.
+SCREEN_PARTICLE_MIN = 190
 FLASH_MAX_LIFE = 60
 
 
@@ -203,7 +205,7 @@ def _rows_uniform(effect, node, plan):
                    for y in range(height))
 
 
-SCREEN_QUAD_MIN = 240  # 2026-11-11: Tifa's Limit Reels back layer uses 240-unit white Quads
+SCREEN_QUAD_MIN = 190  # 240 until 2026-11-12 (Tifa's Limit Reels); 190 = the smallest screen layers found (see SCREEN_PARTICLE_MIN)
 
 
 def _screen_sized_quad(effect, node, plan, nodes, members):
@@ -212,15 +214,23 @@ def _screen_sized_quad(effect, node, plan, nodes, members):
     speed lines, 360 x 320): at source size it shows as a box. Stretched, the pattern keeps reading
     as the same layer. Colour/alpha curves and blend stay source data."""
     binding = node.get('resourceBindings') or {}
-    if node['typeId'] != 2 or not binding.get('texture1') or binding.get('texture2') or binding.get('model'):
+    # A second texture (Add, Distortion) stays the node's material; only the plane is fitted.
+    if node['typeId'] != 2 or not binding.get('texture1') or binding.get('model'):
         return None
-    if not _fixed_frame(node):
+    # A constant turn around Z does not matter to a stretched layer (Onion Knight's tilted speed-line boards,
+    # 360 x 176, showed as tilted panels once their Distortion material was drawn).
+    transform = node['staticVectors']['transform']
+    turn = transform['rotation']['valueInitial']
+    upright = node if turn[0] or turn[1] else {**node, 'staticVectors': {**node['staticVectors'], 'transform': {**transform,
+        'rotation': {**transform['rotation'], 'valueInitial': [0, 0, 0]}}}}
+    if not _fixed_frame(upright):
         return None
     parent = node.get('parentIndex')
     while parent is not None:
         ancestor = next((n for n in nodes if n.get('index') == parent), nodes[parent])
-        # Ancestor drift/shake curves are replaced by the coverage placement (as for backdrop Quads).
-        if ancestor['typeId'] != 0 or ancestor['staticVectors']['transform']['scale']['valueInitial'] != [1, 1, 1]:
+        # Ancestor drift/shake curves, turns and scales are replaced by the coverage placement; the scale counts
+        # towards the authored size (Onion Knight's speed-line boards: 300 x 220 Quads under a 1.2 x 0.8 Null).
+        if ancestor['typeId'] != 0:
             return None
         parent = ancestor.get('parentIndex')
     width, height = _effective_size(node, nodes, members)
@@ -233,6 +243,7 @@ def _screen_sized_quad(effect, node, plan, nodes, members):
 
 
 SCREEN_MODEL_MIN = 500
+BACKDROP_MODEL_MIN = 190
 
 
 def _screen_sized_model(effect, node, plan, nodes, members):
@@ -242,10 +253,11 @@ def _screen_sized_model(effect, node, plan, nodes, members):
     500-700 x 800 units). At source size they show as a box with a hard edge across the arena; stretched,
     the pattern reads as the same layer. Colour/alpha curves, UV scroll and blend stay source data."""
     binding = node.get('resourceBindings') or {}
-    if node['typeId'] != 6 or not binding.get('model') or not binding.get('texture1') or binding.get('texture2'):
+    # A second texture stays the node's material; only the plane is fitted.
+    if node['typeId'] != 6 or not binding.get('model') or not binding.get('texture1'):
         return None
     mesh = effect['meshes'].get(binding['model']['name'])
-    if not mesh or mesh['triangleCount'] != 2:
+    if not mesh or mesh['triangleCount'] != 2 or len({tuple(v['colorBytes']) for v in mesh['vertices']}) != 1:
         return None
     if sorted(v['position'] for v in mesh['vertices']) != sorted([[x, y, 0] for x in [-.5, .5] for y in [-.5, .5]]):
         return None
@@ -256,7 +268,9 @@ def _screen_sized_model(effect, node, plan, nodes, members):
         return None
     if any(any(value) for channel in transform.values() for key, value in channel.items() if key != 'valueInitial'):
         return None
-    if transform.get('rotation', {}).get('valueInitial', [0, 0, 0]) != [0, 0, 0]:
+    # A constant turn around Z does not matter to a stretched layer.
+    turn = transform.get('rotation', {}).get('valueInitial', [0, 0, 0])
+    if turn[0] or turn[1]:
         return None
     parent = node.get('parentIndex')
     while parent is not None:
@@ -265,12 +279,19 @@ def _screen_sized_model(effect, node, plan, nodes, members):
             return None
         parent = ancestor.get('parentIndex')
     width, height = _effective_size(node, nodes, members)
-    if min(width, height) < SCREEN_MODEL_MIN:
+    # Area backdrops (2026-11-12): on the back layer of an effect placed on the screen or on the target side
+    # (Edea's Blizzaga: two turned 190 x 230 cloud boards behind the party) the smaller screen-layer size
+    # applies; at source size such a board is a box with hard edges behind the targets.
+    backdrop = bool(members) and all(m.get('layer') == 'back' and m.get('placement', {}).get('rectangle') in ('screen', 'target-side')
+                                     for m in members)
+    minimum = BACKDROP_MODEL_MIN if backdrop else SCREEN_MODEL_MIN
+    if min(width, height) < minimum:
         return None
     sha, _ = _texture_extrema(effect, node, plan)
     return dict(region='arena', primitive='unit-xy-model', textureSha256=sha, modelSha256=mesh['sourceSha256'],
-                origin=f'Automatic screen layer: static unit-XY Model authored at screen size ({width:g} x {height:g} >= {SCREEN_MODEL_MIN}) '
-                       'on a screen-anchored effect; fitted to the visible battlefield')
+                origin=f'Automatic screen layer: static unit-XY Model authored at screen size ({width:g} x {height:g} >= {minimum}) '
+                       + ('on the back layer of a screen or target-side effect' if backdrop else 'on a screen-anchored effect')
+                       + '; fitted to the visible battlefield')
 
 
 def _screen_sized_particle(effect, node, plan, nodes, members):
@@ -279,26 +300,31 @@ def _screen_sized_particle(effect, node, plan, nodes, members):
     Its life may be short against helper ControlNull nodes, so size decides instead of life.
     The texture may vary in colour (gradients); colour/alpha curves stay source data."""
     binding = node.get('resourceBindings', {})
-    if node['typeId'] != 3 or not binding.get('texture1') or binding.get('texture2') or binding.get('model'):
-        return None
-    if node.get('materialControls', {}).get('textureCombination', {}).get('name') != 'Basic' or not _static_identity(node):
+    # 2026-11-12: any texture and material. Patterned planes (Holy's cloud layer, 320 x 280) and two-texture
+    # planes (Flare's distorted cloud) at source size show as boxes with hard edges; stretched, the pattern
+    # keeps reading as the same layer (as for screen-sized Quads and Models).
+    # The plane may grow or pulse (scale curves: Ultima's background); its motion is replaced by the coverage.
+    still = {**node, 'vectorCurves': {name: curve for name, curve in node.get('vectorCurves', {}).items() if not name.startswith('scale')}}
+    turn = node.get('staticVectors', {}).get('transform', {}).get('rotation', {}).get('valueInitial', [0, 0, 0])
+    if not turn[0] and not turn[1]:
+        # A constant turn around Z (Ultima's background is turned by 90 degrees) does not matter to a stretched layer.
+        transform = node['staticVectors']['transform']
+        still['staticVectors'] = {**node['staticVectors'], 'transform': {**transform, 'rotation': {**transform['rotation'], 'valueInitial': [0, 0, 0]}}}
+    if node['typeId'] != 3 or not binding.get('texture1') or binding.get('model') or not _static_identity(still):
         return None
     parent = node.get('parentIndex')
     while parent is not None:
         ancestor = next((n for n in nodes if n.get('index') == parent), nodes[parent])
-        if ancestor['typeId'] != 0 or not _static_identity(ancestor):
+        # Ancestor drift, shake and offsets are replaced by the coverage placement (as for screen Quads).
+        if ancestor['typeId'] != 0:
             return None
         parent = ancestor.get('parentIndex')
     width, height = _effective_size(node, nodes, members)
     if min(width, height) < SCREEN_PARTICLE_MIN:
         return None
     sha, extrema = _texture_extrema(effect, node, plan)
-    # Opaque planes, or one-axis gradients (every row uniform, e.g. Great Gospel's top-down darkening):
-    # both read the same when stretched across the canvas. Patterned textures stay at source size.
-    if extrema[3] != (255, 255) and not _rows_uniform(effect, node, plan):
-        return None
     return dict(region='arena', primitive='screen-particle', textureSha256=sha,
-                origin=f'Automatic screen backdrop: static Basic Particle (opaque or one-axis gradient) authored at screen size '
+                origin=f'Automatic screen layer: static Particle authored at screen size '
                        f'({width:g} x {height:g} >= {SCREEN_PARTICLE_MIN}) on a screen-anchored effect; fitted to the visible battlefield')
 
 
@@ -408,6 +434,125 @@ def _white_flash_quad(effect, node, plan, nodes):
                        'alpha rises and falls; fitted to the visible battlefield instead of a hard-edged box')
 
 
+UNIFORM_PLANE_MIN = 190
+
+
+def _uniform_plane(effect, node, plan, nodes, members):
+    """A Quad or Particle whose single texture is one uniform colour (FFBE 'white' and its variants) and
+    whose authored size is >= UNIFORM_PLANE_MIN on both axes is a flash or tint of the whole picture, whatever
+    its anchor, life or alpha curve: FFBE's battlefield is 360 units wide, ours is wider, so at source size it
+    shows as a box around the target or caster (Ultima's white boxes, the 360 x 320 impact flashes of 20
+    skills). A plain colour looks the same stretched. On a screen-anchored effect the plane may also move or
+    grow (its motion is replaced by the coverage); elsewhere it must be fixed in its frame."""
+    binding = node.get('resourceBindings') or {}
+    untextured = node['typeId'] == 3 and not binding.get('texture1') and not binding.get('texture2') and not binding.get('model')
+    mesh = None
+    if node['typeId'] == 6:
+        # Unit XY rectangle Models with one vertex colour only (the reviewed arena-surface geometry).
+        mesh = effect['meshes'].get((binding.get('model') or {}).get('name'))
+        if (not mesh or binding.get('texture2') or not binding.get('texture1') or mesh['triangleCount'] != 2
+                or sorted(v['position'] for v in mesh['vertices']) != sorted([[x, y, 0] for x in [-.5, .5] for y in [-.5, .5]])
+                or len({tuple(v['colorBytes']) for v in mesh['vertices']}) != 1):
+            return None
+    elif untextured:
+        # An untextured Particle is a plane of its own colour (eff_fadeblack_*: the dimming plane of many
+        # skills). The player draws a withheld untextured Particle once it carries this coverage; smaller
+        # ones stay withheld (drawn at source size they are hard-edged boxes, e.g. in Edea's Thundaga).
+        pass
+    elif node['typeId'] not in (2, 3) or not binding.get('texture1') or binding.get('texture2') or binding.get('model'):
+        return None
+    if node['typeId'] == 3 and node.get('materialControls', {}).get('textureCombination', {}).get('name') != 'Basic':
+        return None
+    screen = bool(members) and all(m.get('anchor') == 'screen' and m.get('placement', {}).get('rectangle', 'screen') == 'screen' for m in members)
+    # Off the screen anchor the plane must stay where it is and unrotated; it may grow (a flash that opens).
+    if not screen and not _fixed_frame({**node, 'vectorCurves': {name: curve for name, curve in node.get('vectorCurves', {}).items()
+                                                               if not name.startswith('scale')}}):
+        return None
+    parent = node.get('parentIndex')
+    while parent is not None:
+        ancestor = next((n for n in nodes if n.get('index') == parent), nodes[parent])
+        if ancestor['typeId'] != 0:
+            return None
+        parent = ancestor.get('parentIndex')
+    width, height = _effective_size(node, nodes, members)
+    if min(width, height) < UNIFORM_PLANE_MIN:
+        return None
+    origin = (f'Automatic screen layer: uniform-colour plane ({width:g} x {height:g} >= {UNIFORM_PLANE_MIN}); '
+              'fitted to the visible battlefield instead of a box')
+    if untextured:
+        return dict(region='arena', primitive='screen-particle', origin=origin.replace('uniform-colour', 'untextured'))
+    sha, extrema = _texture_extrema(effect, node, plan)
+    if any(low != high for low, high in extrema):
+        return None
+    if mesh:
+        return dict(region='arena', primitive='unit-xy-model', textureSha256=sha, modelSha256=mesh['sourceSha256'], origin=origin)
+    return dict(region='arena', primitive='unit-quad' if node['typeId'] == 2 else 'screen-particle', textureSha256=sha, origin=origin)
+
+
+def annotate_uniform_planes(plan):
+    count = 0
+    for index, effect in enumerate(plan['effects']):
+        members = [m for m in plan['members'] if m['effect'] == index]
+        if not members:
+            continue
+        for node in effect['nodes']:
+            if node.get('presentationCoverage'):
+                continue
+            plane = _uniform_plane(effect, node, plan, effect['nodes'], members)
+            if plane:
+                node['presentationCoverage'] = plane
+                count += 1
+    return count
+
+
+FFBE_FIELD_WIDTH = 360   # units across the original battle view (360 x 320 impact flashes span it exactly)
+GAME_FIELD_UNITS = 563   # units across this game's 1000 px battle view at the native geometry scale 1.775
+EDGE_BAR_OFFSET = 140
+
+
+def annotate_screen_frames(plan):
+    """Screen frame effects (lb_rarity_*: four thin uniform Quads at +-160 / -187 / +157 units around the screen
+    centre, the glowing border of 7-star and NV Limit Bursts) hug the border of FFBE's 360-unit view. In our
+    wider view they hang in the arena as four bars. An effect that draws nothing but such edge bars is scaled
+    at its root so the bars sit at the border of this game's view again; recorded on the root node."""
+    count = 0
+    for index, effect in enumerate(plan['effects']):
+        members = [m for m in plan['members'] if m['effect'] == index]
+        if not members or any(m.get('anchor') != 'screen' or m.get('placement', {}).get('rectangle', 'screen') != 'screen' for m in members):
+            continue
+        nodes = effect['nodes']
+        drawn = [n for n in nodes if n['typeId'] != 0]
+        if not drawn or nodes[0]['typeId'] != 0 or nodes[0].get('presentationFit'):
+            continue
+
+        def edge_bar(node):
+            binding = node.get('resourceBindings') or {}
+            if node['typeId'] != 2 or not binding.get('texture1') or binding.get('texture2') or binding.get('model'):
+                return False
+            # Fixed in its frame; the bars are the same Quad turned by quarter turns around Z.
+            rotation = node['staticVectors']['transform']['rotation']['valueInitial']
+            upright = {**node, 'staticVectors': {**node['staticVectors'], 'transform': {**node['staticVectors']['transform'],
+                       'rotation': {**node['staticVectors']['transform']['rotation'], 'valueInitial': [0, 0, 0]}}}}
+            if rotation[0] or rotation[1] or rotation[2] % 90 or not _fixed_frame(upright):
+                return False
+            scale = node['staticVectors']['transform']['scale']['valueInitial']
+            offset = node['staticVectors']['transform']['translation']['valueInitial']
+            if min(scale[0], scale[1]) > 45 or max(scale[0], scale[1]) < 150 or max(abs(offset[0]), abs(offset[1])) < EDGE_BAR_OFFSET:
+                return False
+            return all(low == high for low, high in _texture_extrema(effect, node, plan)[1])
+
+        if not all(edge_bar(node) for node in drawn):
+            continue
+        factor = round(GAME_FIELD_UNITS / FFBE_FIELD_WIDTH, 4)
+        scale = nodes[0]['staticVectors']['transform']['scale']['valueInitial']
+        nodes[0]['staticVectors']['transform']['scale']['valueInitial'] = [scale[0] * factor, scale[1] * factor, scale[2]]
+        nodes[0]['uniformScale'] = False
+        nodes[0]['presentationFit'] = dict(factor=factor, origin=f'Automatic screen frame: {len(drawn)} edge bars authored for the '
+            f'{FFBE_FIELD_WIDTH}-unit FFBE view, root scaled x{factor} to the border of this view; not an original scale')
+        count += 1
+    return count
+
+
 def annotate_screen_models(plan):
     """_screen_sized_model for every effect, whatever its anchor: a screen-sized wall anchored on the
     target side (Chaos's Ultimate Chaos) otherwise covers only that side and cuts the arena in two."""
@@ -448,5 +593,5 @@ if __name__ == '__main__':
     plan = json.loads(args.plan.read_text(encoding='utf-8'))
     count = (0 if args.skip_particles else annotate(plan))+annotate_arena_surfaces(plan,args.arena_surfaces)
     if args.screen_backdrops:
-        count += annotate_screen_backdrops(plan) + annotate_screen_models(plan) + annotate_white_flashes(plan)
+        count += annotate_screen_backdrops(plan) + annotate_screen_models(plan) + annotate_white_flashes(plan) + annotate_uniform_planes(plan) + annotate_screen_frames(plan)
     print(json.dumps(dict(plan=plan, flashPlanes=count)))

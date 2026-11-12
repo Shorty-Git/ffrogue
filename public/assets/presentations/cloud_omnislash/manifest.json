@@ -5,11 +5,11 @@
   "sourceId": 207000105,
   "quality": "experimental-preview",
   "originalFidelityVerified": false,
-  "durationFrames": 729,
+  "durationFrames": 610,
   "provenance": {
     "planFile": "tools/data/omnislash-20261107/intake/cloud-207000105/plan.json",
-    "planSha256": "88811a2e5f98222735df4d4570d202770300d3feec5b6704a37f8b22fa024b1b",
-    "playerSha256": "e4e4f09f03c649f80c0f5f3bfa4a383a4033680d33d473799cc2e4d7472a834e",
+    "planSha256": "8ebf8781eb09cebef7a8d6905486d4f02364a69634ce232b81c5dd584caa0472",
+    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "be76add8cfe3f0c89d1cb04862c1c3743afbe6773c31941a424586e3cd53268b"
   },
@@ -47,7 +47,7 @@
     "unit": "cloud",
     "sourceSha256": "151394de8ff098f77c55a9c236568cea4f1afa188fff9a3dc5f7daebd17b52e7",
     "seed": 1,
-    "effectHorizon": 180,
+    "effectHorizon": 610,
     "endFrame": 210,
     "approachFrames": 18,
     "presentation": {
@@ -56,7 +56,7 @@
       "approachFrames": 18,
       "returnFrames": 12,
       "targetOffsetX": 90,
-      "recipeSha256": "8bcfa873763d62cc10f4d5d14a69583fe3fdd3ba6227c4fe83374605b2f17c25",
+      "recipeSha256": "5d7f81540137525e2006332536ba1004f4eeafbef29b3bca5b0353bacb5799ad",
       "origin": "Reviewed game recipe; preview timing and offsets are adaptations"
     },
     "fitScreenToArena": false,
@@ -251,6 +251,10 @@
           "lifeFramesRaw": 0,
           "fieldOffset": 80,
           "boundary": "Header RootLife only; child expiration, flags and source emitter ownership are separate"
+        },
+        "drawOrder": {
+          "fullZSort": false,
+          "prioritySort": true
         },
         "nodes": [
           {
@@ -1956,6 +1960,7 @@
               0,
               0
             ],
+            "sortPriority": 0.25999999046325684,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -2060,7 +2065,7 @@
               "primitive": "unit-xy-model",
               "textureSha256": "3b03488b361554f606c86d64c5b745640bdc722370361d78516ec2818864ed7d",
               "modelSha256": "a2214262efa4ef1085a5a677fb77fdfb9bff94a04f5eb138c43409b8433bb37f",
-              "origin": "Automatic screen backdrop: static uniform unit-XY Model, screen-anchored, authored width 700 >= FFBE logical width 640; fitted to the visible battlefield"
+              "origin": "Automatic screen layer: static unit-XY Model authored at screen size (700 x 700 >= 190) on the back layer of a screen or target-side effect; fitted to the visible battlefield"
             }
           },
           {
@@ -2944,6 +2949,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 6440
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -3080,6 +3090,7 @@
                 "rangeOffset": 6076
               }
             },
+            "sortPriority": 0.5,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -3621,6 +3632,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 8280
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -3757,6 +3773,7 @@
                 "rangeOffset": 7916
               }
             },
+            "sortPriority": 0.5,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -4298,6 +4315,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 10120
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -4434,6 +4456,7 @@
                 "rangeOffset": 9756
               }
             },
+            "sortPriority": 0.5,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -4973,6 +4996,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 11960
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -5109,6 +5137,7 @@
                 "rangeOffset": 11596
               }
             },
+            "sortPriority": 0.5,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -5650,6 +5679,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 13800
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -5786,6 +5820,7 @@
                 "rangeOffset": 13436
               }
             },
+            "sortPriority": 0.5,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -7006,6 +7041,26 @@
                 "rangeOffset": 14840
               }
             },
+            "sortPriority": 0.5,
+            "flatQuadColor": {
+              "profile": "native-flat-quad-rgb-v1",
+              "mode": "Constant",
+              "flat": true,
+              "value": [
+                1,
+                1,
+                1
+              ],
+              "range": [
+                0,
+                0,
+                0
+              ],
+              "valueOffset": 14824,
+              "rangeOffset": 14840,
+              "projectSha256": null,
+              "boundary": "Approximation: mean of constant opaque corner RGB; native corner gradient not evaluated"
+            },
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -7038,11 +7093,9 @@
                 "mode": "Constant",
                 "origin": "IBMB",
                 "domain": "corners",
-                "supported": false
+                "supported": true
               },
-              "limitations": [
-                "quad corner color evaluation unavailable; legacy preview tint retained"
-              ]
+              "limitations": []
             },
             "basicTextureMapping": {
               "supported": true,
@@ -8065,6 +8118,7 @@
               0.3787560760974884,
               1
             ],
+            "sortPriority": 0.30000001192092896,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -9074,6 +9128,7 @@
               0.12765957415103912,
               0.09755533933639526
             ],
+            "sortPriority": 0.4099999964237213,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -10886,6 +10941,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 25800
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -11022,6 +11082,7 @@
                 "rangeOffset": 25436
               }
             },
+            "sortPriority": 0.4099999964237213,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -12495,6 +12556,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 29048
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -12631,6 +12697,7 @@
                 "rangeOffset": 28684
               }
             },
+            "sortPriority": 0.4099999964237213,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -13781,6 +13848,7 @@
               0.3138327896595001,
               1
             ],
+            "sortPriority": 0.25999999046325684,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -14413,6 +14481,7 @@
               0.9727112054824829,
               1
             ],
+            "sortPriority": 0.38999998569488525,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -15045,6 +15114,7 @@
               0.9727112054824829,
               1
             ],
+            "sortPriority": 0.38999998569488525,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -15677,6 +15747,7 @@
               0.9727112054824829,
               1
             ],
+            "sortPriority": 0.38999998569488525,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -16309,6 +16380,7 @@
               0.9727112054824829,
               1
             ],
+            "sortPriority": 0.38999998569488525,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -36119,7 +36191,7 @@
             "nonemptyBindingsChecked": 24
           },
           "materialChecks": {
-            "materialEnumsChecked": 107,
+            "materialEnumsChecked": 114,
             "materialAlphaValuesChecked": 29
           },
           "dormantAuthoringCurvesNotDecoded": [],
@@ -36164,7 +36236,7 @@
             "nonemptyBindingsChecked": 24
           },
           "materialChecks": {
-            "materialEnumsChecked": 107,
+            "materialEnumsChecked": 114,
             "materialAlphaValuesChecked": 29
           },
           "dormantAuthoringCurvesNotDecoded": [],
@@ -36612,12 +36684,7 @@
           "nodes": 29,
           "dormantAlphaCurves": [],
           "dormantColorCurves": [],
-          "limitations": [
-            {
-              "node": 11,
-              "reason": "quad corner color evaluation unavailable; legacy preview tint retained"
-            }
-          ],
+          "limitations": [],
           "authoringComparison": {
             "projectSha256": "023d3f7b660a00ef238f4a3ced4564230ce053032a57c178e68f2a08afa0ed1b",
             "nodesChecked": 29,
@@ -36656,7 +36723,7 @@
               "nonemptyBindingsChecked": 24
             },
             "materialChecks": {
-              "materialEnumsChecked": 107,
+              "materialEnumsChecked": 114,
               "materialAlphaValuesChecked": 29
             },
             "dormantAuthoringCurvesNotDecoded": []
@@ -36702,7 +36769,7 @@
               "nonemptyBindingsChecked": 24
             },
             "materialChecks": {
-              "materialEnumsChecked": 107,
+              "materialEnumsChecked": 114,
               "materialAlphaValuesChecked": 29
             },
             "dormantAuthoringCurvesNotDecoded": []
@@ -36757,6 +36824,10 @@
           "lifeFramesRaw": 0,
           "fieldOffset": 80,
           "boundary": "Header RootLife only; child expiration, flags and source emitter ownership are separate"
+        },
+        "drawOrder": {
+          "fullZSort": false,
+          "prioritySort": true
         },
         "nodes": [
           {
@@ -38953,6 +39024,7 @@
               1,
               1
             ],
+            "sortPriority": 0.5,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -39611,6 +39683,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 1,
+                "name": "Curve",
+                "fieldOffset": 6440
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -39747,6 +39824,7 @@
                 "rangeOffset": 6076
               }
             },
+            "sortPriority": 0.5,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -40444,6 +40522,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 1,
+                "name": "Curve",
+                "fieldOffset": 8280
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -40580,6 +40663,7 @@
                 "rangeOffset": 7916
               }
             },
+            "sortPriority": 0.5,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -41779,6 +41863,7 @@
               1,
               1
             ],
+            "sortPriority": 0.5,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -42437,6 +42522,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 1,
+                "name": "Curve",
+                "fieldOffset": 12728
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -42573,6 +42663,7 @@
                 "rangeOffset": 12364
               }
             },
+            "sortPriority": 0.5,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -43270,6 +43361,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 1,
+                "name": "Curve",
+                "fieldOffset": 14568
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -43406,6 +43502,7 @@
                 "rangeOffset": 14204
               }
             },
+            "sortPriority": 0.5,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -45257,6 +45354,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 18520
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -45393,6 +45495,7 @@
                 "rangeOffset": 18156
               }
             },
+            "sortPriority": 0.5,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -46866,6 +46969,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 21768
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -47002,6 +47110,7 @@
                 "rangeOffset": 21404
               }
             },
+            "sortPriority": 0.5,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -48140,6 +48249,7 @@
               0,
               0.050213348120450974
             ],
+            "sortPriority": 0.5,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -48921,6 +49031,7 @@
               0.6634262204170227,
               0
             ],
+            "sortPriority": 0.5,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -53496,7 +53607,7 @@
             "nonemptyBindingsChecked": 14
           },
           "materialChecks": {
-            "materialEnumsChecked": 72,
+            "materialEnumsChecked": 78,
             "materialAlphaValuesChecked": 21
           },
           "dormantAuthoringCurvesNotDecoded": [],
@@ -53541,7 +53652,7 @@
             "nonemptyBindingsChecked": 14
           },
           "materialChecks": {
-            "materialEnumsChecked": 72,
+            "materialEnumsChecked": 78,
             "materialAlphaValuesChecked": 21
           },
           "dormantAuthoringCurvesNotDecoded": [],
@@ -53908,7 +54019,7 @@
               "nonemptyBindingsChecked": 14
             },
             "materialChecks": {
-              "materialEnumsChecked": 72,
+              "materialEnumsChecked": 78,
               "materialAlphaValuesChecked": 21
             },
             "dormantAuthoringCurvesNotDecoded": []
@@ -53954,7 +54065,7 @@
               "nonemptyBindingsChecked": 14
             },
             "materialChecks": {
-              "materialEnumsChecked": 72,
+              "materialEnumsChecked": 78,
               "materialAlphaValuesChecked": 21
             },
             "dormantAuthoringCurvesNotDecoded": []
@@ -53982,6 +54093,10 @@
           "lifeFramesRaw": 0,
           "fieldOffset": 80,
           "boundary": "Header RootLife only; child expiration, flags and source emitter ownership are separate"
+        },
+        "drawOrder": {
+          "fullZSort": false,
+          "prioritySort": true
         },
         "nodes": [
           {
@@ -56509,6 +56624,7 @@
               0.9588655233383179,
               1
             ],
+            "sortPriority": 0.5,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -57122,6 +57238,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 7144
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -57258,6 +57379,7 @@
                 "rangeOffset": 6780
               }
             },
+            "sortPriority": 0.5,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -58336,6 +58458,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 9688
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -58478,6 +58605,7 @@
                 "rangeOffset": 9324
               }
             },
+            "sortPriority": 0.5,
             "authoringEmissionShape": "Point",
             "authoringTextureLayers": {
               "texture1": {
@@ -59689,6 +59817,26 @@
                 "rangeOffset": 10728
               }
             },
+            "sortPriority": 0.5,
+            "flatQuadColor": {
+              "profile": "native-flat-quad-rgb-v1",
+              "mode": "Constant",
+              "flat": true,
+              "value": [
+                1,
+                1,
+                1
+              ],
+              "range": [
+                0,
+                0,
+                0
+              ],
+              "valueOffset": 10712,
+              "rangeOffset": 10728,
+              "projectSha256": null,
+              "boundary": "Approximation: mean of constant opaque corner RGB; native corner gradient not evaluated"
+            },
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -59721,11 +59869,9 @@
                 "mode": "Constant",
                 "origin": "IBMB",
                 "domain": "corners",
-                "supported": false
+                "supported": true
               },
-              "limitations": [
-                "quad corner color evaluation unavailable; legacy preview tint retained"
-              ]
+              "limitations": []
             },
             "basicTextureMapping": {
               "supported": true,
@@ -61378,6 +61524,7 @@
               1,
               0.9727085828781128
             ],
+            "sortPriority": 0.30000001192092896,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -61991,6 +62138,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 1,
+                "name": "Curve",
+                "fieldOffset": 17672
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -62127,6 +62279,7 @@
                 "rangeOffset": 17308
               }
             },
+            "sortPriority": 0.5,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -62781,6 +62934,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 1,
+                "name": "Curve",
+                "fieldOffset": 19512
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -62917,6 +63075,7 @@
                 "rangeOffset": 19148
               }
             },
+            "sortPriority": 0.5,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -64177,7 +64336,7 @@
             "nonemptyBindingsChecked": 10
           },
           "materialChecks": {
-            "materialEnumsChecked": 54,
+            "materialEnumsChecked": 58,
             "materialAlphaValuesChecked": 16
           },
           "dormantAuthoringCurvesNotDecoded": [],
@@ -64226,7 +64385,7 @@
             "nonemptyBindingsChecked": 10
           },
           "materialChecks": {
-            "materialEnumsChecked": 54,
+            "materialEnumsChecked": 58,
             "materialAlphaValuesChecked": 16
           },
           "dormantAuthoringCurvesNotDecoded": [],
@@ -64496,10 +64655,6 @@
               "reason": "RGB random range is not sampled; base color only in this preview"
             },
             {
-              "node": 10,
-              "reason": "quad corner color evaluation unavailable; legacy preview tint retained"
-            },
-            {
               "node": 13,
               "reason": "RGB random range is not sampled; base color only in this preview"
             }
@@ -64546,7 +64701,7 @@
               "nonemptyBindingsChecked": 10
             },
             "materialChecks": {
-              "materialEnumsChecked": 54,
+              "materialEnumsChecked": 58,
               "materialAlphaValuesChecked": 16
             },
             "dormantAuthoringCurvesNotDecoded": []
@@ -64596,7 +64751,7 @@
               "nonemptyBindingsChecked": 10
             },
             "materialChecks": {
-              "materialEnumsChecked": 54,
+              "materialEnumsChecked": 58,
               "materialAlphaValuesChecked": 16
             },
             "dormantAuthoringCurvesNotDecoded": []
@@ -64626,6 +64781,10 @@
           "lifeFramesRaw": 0,
           "fieldOffset": 80,
           "boundary": "Header RootLife only; child expiration, flags and source emitter ownership are separate"
+        },
+        "drawOrder": {
+          "fullZSort": false,
+          "prioritySort": true
         },
         "nodes": [
           {
@@ -67184,6 +67343,7 @@
               0.9588655233383179,
               1
             ],
+            "sortPriority": 0.5,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -67797,6 +67957,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 7144
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -67933,6 +68098,7 @@
                 "rangeOffset": 6780
               }
             },
+            "sortPriority": 0.5,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -69011,6 +69177,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 9688
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -69153,6 +69324,7 @@
                 "rangeOffset": 9324
               }
             },
+            "sortPriority": 0.5,
             "authoringEmissionShape": "Point",
             "authoringTextureLayers": {
               "texture1": {
@@ -70364,6 +70536,26 @@
                 "rangeOffset": 10728
               }
             },
+            "sortPriority": 0.5,
+            "flatQuadColor": {
+              "profile": "native-flat-quad-rgb-v1",
+              "mode": "Constant",
+              "flat": true,
+              "value": [
+                1,
+                1,
+                1
+              ],
+              "range": [
+                0,
+                0,
+                0
+              ],
+              "valueOffset": 10712,
+              "rangeOffset": 10728,
+              "projectSha256": null,
+              "boundary": "Approximation: mean of constant opaque corner RGB; native corner gradient not evaluated"
+            },
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -70396,11 +70588,9 @@
                 "mode": "Constant",
                 "origin": "IBMB",
                 "domain": "corners",
-                "supported": false
+                "supported": true
               },
-              "limitations": [
-                "quad corner color evaluation unavailable; legacy preview tint retained"
-              ]
+              "limitations": []
             },
             "basicTextureMapping": {
               "supported": true,
@@ -72053,6 +72243,7 @@
               0.9590321183204651,
               1
             ],
+            "sortPriority": 0.30000001192092896,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -72666,6 +72857,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 1,
+                "name": "Curve",
+                "fieldOffset": 17672
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -72802,6 +72998,7 @@
                 "rangeOffset": 17308
               }
             },
+            "sortPriority": 0.5,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -73456,6 +73653,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 1,
+                "name": "Curve",
+                "fieldOffset": 19512
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -73592,6 +73794,7 @@
                 "rangeOffset": 19148
               }
             },
+            "sortPriority": 0.5,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -74305,6 +74508,7 @@
               0.8202962875366211,
               1
             ],
+            "sortPriority": 0.5,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -74979,6 +75183,7 @@
               0.8202962875366211,
               1
             ],
+            "sortPriority": 0.5,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -78314,7 +78519,7 @@
             "nonemptyBindingsChecked": 14
           },
           "materialChecks": {
-            "materialEnumsChecked": 64,
+            "materialEnumsChecked": 68,
             "materialAlphaValuesChecked": 18
           },
           "dormantAuthoringCurvesNotDecoded": [],
@@ -78363,7 +78568,7 @@
             "nonemptyBindingsChecked": 14
           },
           "materialChecks": {
-            "materialEnumsChecked": 64,
+            "materialEnumsChecked": 68,
             "materialAlphaValuesChecked": 18
           },
           "dormantAuthoringCurvesNotDecoded": [],
@@ -78663,10 +78868,6 @@
               "reason": "RGB random range is not sampled; base color only in this preview"
             },
             {
-              "node": 10,
-              "reason": "quad corner color evaluation unavailable; legacy preview tint retained"
-            },
-            {
               "node": 13,
               "reason": "RGB random range is not sampled; base color only in this preview"
             }
@@ -78713,7 +78914,7 @@
               "nonemptyBindingsChecked": 14
             },
             "materialChecks": {
-              "materialEnumsChecked": 64,
+              "materialEnumsChecked": 68,
               "materialAlphaValuesChecked": 18
             },
             "dormantAuthoringCurvesNotDecoded": []
@@ -78763,7 +78964,7 @@
               "nonemptyBindingsChecked": 14
             },
             "materialChecks": {
-              "materialEnumsChecked": 64,
+              "materialEnumsChecked": 68,
               "materialAlphaValuesChecked": 18
             },
             "dormantAuthoringCurvesNotDecoded": []
@@ -78795,6 +78996,10 @@
           "lifeFramesRaw": 0,
           "fieldOffset": 80,
           "boundary": "Header RootLife only; child expiration, flags and source emitter ownership are separate"
+        },
+        "drawOrder": {
+          "fullZSort": false,
+          "prioritySort": true
         },
         "nodes": [
           {
@@ -80670,6 +80875,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 4536
+              },
               "blend": {
                 "id": 1,
                 "name": "Semitrans",
@@ -80806,6 +81016,7 @@
                 "rangeOffset": 4172
               }
             },
+            "sortPriority": 0.5,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -81302,6 +81513,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 6376
+              },
               "blend": {
                 "id": 1,
                 "name": "Semitrans",
@@ -81438,6 +81654,7 @@
                 "rangeOffset": 6012
               }
             },
+            "sortPriority": 0.5099999904632568,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -81934,6 +82151,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 8216
+              },
               "blend": {
                 "id": 1,
                 "name": "Semitrans",
@@ -82070,6 +82292,7 @@
                 "rangeOffset": 7852
               }
             },
+            "sortPriority": 0.5,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -83197,6 +83420,7 @@
               1,
               1
             ],
+            "sortPriority": 0.5199999809265137,
             "authoringEmissionShape": "Point",
             "authoringInheritance": {
               "translation": "On",
@@ -83484,7 +83708,7 @@
             "nonemptyBindingsChecked": 5
           },
           "materialChecks": {
-            "materialEnumsChecked": 30,
+            "materialEnumsChecked": 33,
             "materialAlphaValuesChecked": 9
           },
           "dormantAuthoringCurvesNotDecoded": [],
@@ -83521,7 +83745,7 @@
             "nonemptyBindingsChecked": 5
           },
           "materialChecks": {
-            "materialEnumsChecked": 30,
+            "materialEnumsChecked": 33,
             "materialAlphaValuesChecked": 9
           },
           "dormantAuthoringCurvesNotDecoded": [],
@@ -83703,7 +83927,7 @@
               "nonemptyBindingsChecked": 5
             },
             "materialChecks": {
-              "materialEnumsChecked": 30,
+              "materialEnumsChecked": 33,
               "materialAlphaValuesChecked": 9
             },
             "dormantAuthoringCurvesNotDecoded": []
@@ -83741,7 +83965,7 @@
               "nonemptyBindingsChecked": 5
             },
             "materialChecks": {
-              "materialEnumsChecked": 30,
+              "materialEnumsChecked": 33,
               "materialAlphaValuesChecked": 9
             },
             "dormantAuthoringCurvesNotDecoded": []
@@ -84323,54 +84547,27 @@
       }
     ],
     "audioGroupCoverage": "all-resolved-effect-groups-only",
+    "flatQuadColors": {
+      "profile": "native-flat-quad-rgb-v1",
+      "randomness": "reviewed-color-streams-v1",
+      "boundary": "Original ConstFlat RGB semantics; deterministic per-instance host seeds, not measured FFBE RNG ownership"
+    },
+    "drawOrder": {
+      "profile": "native-priority-order-v1",
+      "boundary": "Per member: emitter packets ordered by source SortPriority (if enabled) then node index; members in plan order. Full-Z sorting is not evaluated."
+    },
     "approximations": {
       "profile": "held-constant-unverified-curves-v1",
       "curves": [
         {
-          "control": "rotation",
-          "raw": 6,
-          "authoring": "On",
-          "treatment": "authoring-value"
-        },
-        {
-          "control": "scale",
-          "raw": 0,
-          "authoring": "Off",
-          "treatment": "authoring-value"
-        },
-        {
-          "channel": "Texture1_Color_Scale_Rgb_Value_Curve",
-          "keys": 2,
-          "treatment": "held-constant"
-        },
-        {
-          "control": "rotation",
-          "raw": 6,
-          "authoring": "On",
-          "treatment": "authoring-value"
-        },
-        {
-          "control": "scale",
-          "raw": 0,
-          "authoring": "Off",
-          "treatment": "authoring-value"
-        },
-        {
-          "channel": "Texture1_Color_Scale_Rgb_Value_Curve",
-          "keys": 2,
-          "treatment": "held-constant"
-        },
-        {
-          "control": "rotation",
-          "raw": 6,
-          "authoring": "On",
-          "treatment": "authoring-value"
-        },
-        {
-          "control": "scale",
-          "raw": 0,
-          "authoring": "Off",
-          "treatment": "authoring-value"
+          "node": 11,
+          "quadColors": "Constant-corners",
+          "rgb": [
+            1,
+            1,
+            1
+          ],
+          "treatment": "corner-mean-rgb"
         },
         {
           "control": "rotation",
@@ -84436,6 +84633,18 @@
           "treatment": "authoring-value"
         },
         {
+          "control": "rotation",
+          "raw": 6,
+          "authoring": "On",
+          "treatment": "authoring-value"
+        },
+        {
+          "control": "scale",
+          "raw": 0,
+          "authoring": "Off",
+          "treatment": "authoring-value"
+        },
+        {
           "channel": "Texture1_Color_Scale_Rgb_Value_Curve",
           "keys": 2,
           "treatment": "held-constant"
@@ -84454,6 +84663,82 @@
         },
         {
           "channel": "Texture1_Color_Scale_Rgb_Value_Curve",
+          "keys": 2,
+          "treatment": "held-constant"
+        },
+        {
+          "control": "rotation",
+          "raw": 6,
+          "authoring": "On",
+          "treatment": "authoring-value"
+        },
+        {
+          "control": "scale",
+          "raw": 0,
+          "authoring": "Off",
+          "treatment": "authoring-value"
+        },
+        {
+          "channel": "Texture1_Color_Scale_Rgb_Value_Curve",
+          "keys": 2,
+          "treatment": "held-constant"
+        },
+        {
+          "control": "rotation",
+          "raw": 6,
+          "authoring": "On",
+          "treatment": "authoring-value"
+        },
+        {
+          "control": "scale",
+          "raw": 0,
+          "authoring": "Off",
+          "treatment": "authoring-value"
+        },
+        {
+          "channel": "Texture1_Color_Scale_Rgb_Value_Curve",
+          "keys": 2,
+          "treatment": "held-constant"
+        },
+        {
+          "control": "rotation",
+          "raw": 6,
+          "authoring": "On",
+          "treatment": "authoring-value"
+        },
+        {
+          "control": "scale",
+          "raw": 0,
+          "authoring": "Off",
+          "treatment": "authoring-value"
+        },
+        {
+          "channel": "Texture1_Color_Scale_Rgb_Value_Curve",
+          "keys": 2,
+          "treatment": "held-constant"
+        },
+        {
+          "node": 10,
+          "quadColors": "Constant-corners",
+          "rgb": [
+            1,
+            1,
+            1
+          ],
+          "treatment": "corner-mean-rgb"
+        },
+        {
+          "channel": "Texture1_Color_Scale_Rgb_Value_Curve",
+          "keys": 2,
+          "treatment": "held-constant"
+        },
+        {
+          "channel": "Texture1_Color_Scale_Rgb_Value_Curve",
+          "keys": 2,
+          "treatment": "held-constant"
+        },
+        {
+          "channel": "Rotate_Value_Curve",
           "keys": 2,
           "treatment": "held-constant"
         },
@@ -84568,6 +84853,31 @@
           "treatment": "held-constant"
         },
         {
+          "node": 10,
+          "quadColors": "Constant-corners",
+          "rgb": [
+            1,
+            1,
+            1
+          ],
+          "treatment": "corner-mean-rgb"
+        },
+        {
+          "channel": "Texture1_Color_Scale_Rgb_Value_Curve",
+          "keys": 2,
+          "treatment": "held-constant"
+        },
+        {
+          "channel": "Texture1_Color_Scale_Rgb_Value_Curve",
+          "keys": 3,
+          "treatment": "held-constant"
+        },
+        {
+          "channel": "Rotate_Value_Curve",
+          "keys": 2,
+          "treatment": "held-constant"
+        },
+        {
           "channel": "Texture1_Color_Scale_Rgb_Value_Curve",
           "keys": 2,
           "treatment": "held-constant"
@@ -84713,9 +85023,9 @@
           "treatment": "held-constant"
         },
         {
-          "placement": "anchor-mode-3",
-          "scope": "single_enemy",
-          "treatment": "caster-unit"
+          "channel": "Texture1_Translate_Value_Curve",
+          "keys": 13,
+          "treatment": "held-constant"
         },
         {
           "placement": "anchor-mode-3",
@@ -84796,6 +85106,20 @@
           "placement": "anchor-mode-3",
           "scope": "single_enemy",
           "treatment": "caster-unit"
+        },
+        {
+          "placement": "anchor-mode-3",
+          "scope": "single_enemy",
+          "treatment": "caster-unit"
+        },
+        {
+          "effectHorizon": 610,
+          "treatment": "spawn-horizon-to-last-hit"
+        },
+        {
+          "treatment": "scene-capped-at-effect-horizon",
+          "computedFrames": 1159,
+          "cappedFrames": 610
         }
       ],
       "boundary": "Visual approximation: these source curves are not evaluated; the effect is not a native-fidelity reconstruction."

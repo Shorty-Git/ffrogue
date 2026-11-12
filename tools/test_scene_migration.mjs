@@ -19,17 +19,21 @@ test('confirmed Cloud visual data identities require an explicit baseline review
  // delita-placement-20261101/baseline-browser.json: reviewed opt-in member RNG, all3 frames unchanged.
  const baseline={
   'src/effects/nativeDrawSubmission.mjs':'784bebcb4e37964a02f02bd04b1e18eabd3cf86aaea608986cbbf1b5e37b665d',
-  'src/effects/originalEffectPlayer.mjs':'e4e4f09f03c649f80c0f5f3bfa4a383a4033680d33d473799cc2e4d7472a834e',
+  // 2026-11-12: an untextured Particle with reviewed screen coverage is drawn (dimming/flash planes).
+  // Review: tools/rebaseline_scenes.mjs over all 545 scenes; the three Cloud manifests below carry no
+  // such coverage, their frames compare unchanged or ok against the baseline of e4e4f09f….
+  'src/effects/originalEffectPlayer.mjs':'103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c',
   // Connected Particle packets: all three frozen GPU frames retain zero changed pixels.
   // Receipt: diagnostic-v35-render-context/browser-review-37.json; OneX admission preserves the Cloud frames.
   'src/effects/nativeLifecycle.mjs':'a72df9ee85e0c11e4cecc2d12208b462fcd5cd310ff83433dfe2a796fe0e00e2',
   // Accepted Cloud manifests pin their VISUAL data only (canonical JSON without audioSource, see
   // visualHash): sound can be admitted without touching the accepted picture. Brave Slash is the
   // composed/native-null variant approved on 2026-11-08; Blade Beam and Climhazzard gained their
-  // recovered master sounds on 2026-11-08 with unchanged visual data.
-  'public/assets/presentations/cloud_brave_slash/manifest.json':'f09225013791458b829b740cd43fea68c03caf9b2f5ded2610bd29a2b55e8dff',
-  'public/assets/presentations/cloud_blade_beam/manifest.json':'da13cda3c54d92edcf858c2e05760a9fda2b51e22eec106caa6ef1dc224d0862',
-  'public/assets/presentations/cloud_climhazzard/manifest.json':'9364f16c110d93c3e1fbad650e706d5fde079c444454d2aa43cbb491f57429d4',
+  // recovered master sounds on 2026-11-08 with unchanged visual data. 2026-11-12: only
+  // provenance.playerSha256 changed (player 103046af...); plans and effect data are byte-identical.
+  'public/assets/presentations/cloud_brave_slash/manifest.json':'bbc9cabdf9bcea9fcea1dc7e99171aeb81eac9ff7d7fd022547600b8f1ac93f7',
+  'public/assets/presentations/cloud_blade_beam/manifest.json':'9f41fec89354abd74a1aad1e750f62038523ebac05ee09ede271a990e782deb6',
+  'public/assets/presentations/cloud_climhazzard/manifest.json':'b2ec6a2ffafbf45db9e6ec81ee7b4cc7ec82e757f52a67fa9ab4f84508855305',
  };
  const visualHash=file=>{const m=JSON.parse(fs.readFileSync(file,'utf8'));delete m.audioSource;return createHash('sha256').update(JSON.stringify(m)).digest('hex');};
  for(const [file,expected]of Object.entries(baseline))assert.equal(file.endsWith('manifest.json')?visualHash(file):hash(file),expected,

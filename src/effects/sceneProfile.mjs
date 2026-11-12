@@ -68,16 +68,16 @@ export function validateSceneManifest(manifest) {
     for(const node of effect.nodes)if(node.presentationCoverage){
       const coverage=node.presentationCoverage,binding=node.resourceBindings;
       if(coverage.primitive==='unit-quad'){
-        if(coverage.region!=='arena'||!coverage.origin||node.typeId!==2||!binding?.texture1||binding.texture2||binding.model
+        if(coverage.region!=='arena'||!coverage.origin||node.typeId!==2||!binding?.texture1||binding.model
           ||effect.textures[binding.texture1.name]!==`/assets/presentations/resources/${coverage.textureSha256}.png`)
-          throw Error('Reviewed uniform Quad backdrop coverage required');
+          throw Error('Reviewed Quad screen coverage required');
         continue;
       }
       if(coverage.primitive==='unit-xy-model'){
         const mesh=effect.meshes[binding?.model?.name];
         const positions=mesh?.vertices.map(v=>v.position).sort();
         const expected=[[-.5,-.5,0],[-.5,.5,0],[.5,-.5,0],[.5,.5,0]].sort();
-        if(coverage.region!=='arena'||!coverage.origin||node.typeId!==6||binding.texture2
+        if(coverage.region!=='arena'||!coverage.origin||node.typeId!==6
           ||!mesh||mesh.sourceSha256!==coverage.modelSha256||mesh.triangleCount!==2
           ||JSON.stringify(positions)!==JSON.stringify(expected)
           ||new Set(mesh.vertices.map(v=>JSON.stringify(v.colorBytes))).size!==1
@@ -85,10 +85,11 @@ export function validateSceneManifest(manifest) {
           throw Error('Reviewed uniform unit XY Model coverage required');
         continue;
       }
-      if(coverage.region!=='arena'||!coverage.origin||node.typeId!==3||!binding.texture1||binding.texture2||binding.model
-        ||node.materialControls?.textureCombination?.name!=='Basic'
-        ||effect.textures[binding.texture1.name]!==`/assets/presentations/resources/${coverage.textureSha256}.png`)
-        throw Error('Reviewed uniform Particle screen coverage required');
+      // Untextured Particles are planes of their own colour: coverage without a texture identity.
+      if(coverage.region!=='arena'||!coverage.origin||node.typeId!==3||binding.model
+        ||(binding.texture1?effect.textures[binding.texture1.name]!==`/assets/presentations/resources/${coverage.textureSha256}.png`
+          :coverage.textureSha256!==undefined||!!binding.texture2))
+        throw Error('Reviewed Particle screen coverage required');
     }
   }
   return manifest;

@@ -8,8 +8,8 @@
   "durationFrames": 421,
   "provenance": {
     "planFile": "tools/data/wave5-20261108/fusion_sword_3/source/plan.json",
-    "planSha256": "9f545e61a56f9d698810e45eb62732ee5446f2dd185cb3783624b2e53e571d20",
-    "playerSha256": "e4e4f09f03c649f80c0f5f3bfa4a383a4033680d33d473799cc2e4d7472a834e",
+    "planSha256": "05c554f3d42563807ce60a750b505f456d5447460b9cfe5af4e03430ea33a675",
+    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "6bb8cece6c06b5aae071115ce725fb23c4c95871ac31536a42de32ca51ff1592"
   },
@@ -87,7 +87,7 @@
       "approachFrames": 0,
       "returnFrames": 12,
       "targetOffsetX": 90,
-      "recipeSha256": "117f49e32242e073d5aa218a39b09a04b433d0c7133e51b24231e9d7f616a1dc",
+      "recipeSha256": "6bdc3f684ae5e649e1f9754803344fdbed8a2d0c655e76ca7d8e45e95662e0f0",
       "origin": "Reviewed game recipe; preview timing and offsets are adaptations"
     },
     "fitScreenToArena": false,
@@ -267,6 +267,34 @@
           "fullZSort": false,
           "prioritySort": true
         },
+        "lightning": [
+          {
+            "parent": 9,
+            "sourceIndex": 10,
+            "life": 15,
+            "start": 0,
+            "color": [
+              1,
+              1,
+              1
+            ],
+            "texture": "lapis_eff_material_019_common_0008_ball1",
+            "goals": 0
+          },
+          {
+            "parent": 9,
+            "sourceIndex": 11,
+            "life": 15,
+            "start": 0,
+            "color": [
+              1,
+              1,
+              1
+            ],
+            "texture": "lapis_eff_material_019_common_0008_ball1",
+            "goals": 0
+          }
+        ],
         "nodes": [
           {
             "index": 0,
@@ -23865,6 +23893,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 3832
+              },
               "blend": {
                 "id": 1,
                 "name": "Semitrans",
@@ -24025,10 +24058,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   0,
                   0,
@@ -24036,8 +24069,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "nativeMaterialSelection": {
@@ -24112,6 +24144,11 @@
               ],
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+            },
+            "presentationCoverage": {
+              "region": "arena",
+              "primitive": "screen-particle",
+              "origin": "Automatic screen layer: untextured plane (412.5 x 225 >= 190); fitted to the visible battlefield instead of a box"
             }
           }
         ],
@@ -24194,7 +24231,9 @@
         "appearanceReport": {
           "nodes": 4,
           "dormantAlphaCurves": [],
-          "dormantColorCurves": [],
+          "dormantColorCurves": [
+            3
+          ],
           "limitations": [
             {
               "node": 0,
@@ -24211,10 +24250,6 @@
             {
               "node": 3,
               "reason": "RGB random-range support is unverified without authoring"
-            },
-            {
-              "node": 3,
-              "reason": "color selector unresolved; legacy preview tint retained"
             }
           ],
           "authoringComparison": null,
@@ -24639,6 +24674,14 @@
           "bytes": 1856,
           "subtreeSize": 1,
           "treatment": "unsupported-node-type-subtree-omitted"
+        },
+        {
+          "lightningNode": 10,
+          "treatment": "type-7-drawn-as-approximate-bolt"
+        },
+        {
+          "lightningNode": 11,
+          "treatment": "type-7-drawn-as-approximate-bolt"
         },
         {
           "member": "atk_aero2_yellow.bmb",

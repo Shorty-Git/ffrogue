@@ -8,8 +8,8 @@
   "durationFrames": 421,
   "provenance": {
     "planFile": "tools/data/full-import/squall_lone_lion/skills/flame_barret/source/plan.json",
-    "planSha256": "e32ead9c924e654c04656647f0f8ba20251973d3d8d734024e94b2e277bcb0e6",
-    "playerSha256": "e4e4f09f03c649f80c0f5f3bfa4a383a4033680d33d473799cc2e4d7472a834e",
+    "planSha256": "6729116b75bc787974703e8731c947ebf09c02f05235a9274d964785ffbf3eea",
+    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "a1b120e60b04f1436f475237567df59a6cb4ef964017c3d57ced4e1300ae358e"
   },
@@ -87,7 +87,7 @@
       "approachFrames": 0,
       "returnFrames": 12,
       "targetOffsetX": 90,
-      "recipeSha256": "ca391b877644d9ba635f9f210296e015547ef0059a696ea27e4b5122ed23b3f4",
+      "recipeSha256": "b5eea2979e08e890e83e14bd4330bf8063ec57d820973832c34d403faf44cbe3",
       "origin": "Reviewed game recipe; preview timing and offsets are adaptations"
     },
     "fitScreenToArena": false,
@@ -1786,6 +1786,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 3832
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -2512,6 +2517,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 5672
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -3169,6 +3179,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 7512
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -7317,7 +7332,7 @@
             "nonemptyBindingsChecked": 11
           },
           "materialChecks": {
-            "materialEnumsChecked": 51,
+            "materialEnumsChecked": 54,
             "materialAlphaValuesChecked": 13
           },
           "dormantAuthoringCurvesNotDecoded": [],
@@ -7350,7 +7365,7 @@
             "nonemptyBindingsChecked": 11
           },
           "materialChecks": {
-            "materialEnumsChecked": 51,
+            "materialEnumsChecked": 54,
             "materialAlphaValuesChecked": 13
           },
           "dormantAuthoringCurvesNotDecoded": [],
@@ -7598,7 +7613,7 @@
               "nonemptyBindingsChecked": 11
             },
             "materialChecks": {
-              "materialEnumsChecked": 51,
+              "materialEnumsChecked": 54,
               "materialAlphaValuesChecked": 13
             },
             "dormantAuthoringCurvesNotDecoded": []
@@ -7632,7 +7647,7 @@
               "nonemptyBindingsChecked": 11
             },
             "materialChecks": {
-              "materialEnumsChecked": 51,
+              "materialEnumsChecked": 54,
               "materialAlphaValuesChecked": 13
             },
             "dormantAuthoringCurvesNotDecoded": []
@@ -9796,6 +9811,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 1,
+                "name": "Curve",
+                "fieldOffset": 4536
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -13700,7 +13720,7 @@
             "nonemptyBindingsChecked": 7
           },
           "materialChecks": {
-            "materialEnumsChecked": 32,
+            "materialEnumsChecked": 33,
             "materialAlphaValuesChecked": 10
           },
           "dormantAuthoringCurvesNotDecoded": [
@@ -13748,7 +13768,7 @@
             "nonemptyBindingsChecked": 7
           },
           "materialChecks": {
-            "materialEnumsChecked": 32,
+            "materialEnumsChecked": 33,
             "materialAlphaValuesChecked": 10
           },
           "dormantAuthoringCurvesNotDecoded": [
@@ -13968,7 +13988,7 @@
               "nonemptyBindingsChecked": 7
             },
             "materialChecks": {
-              "materialEnumsChecked": 32,
+              "materialEnumsChecked": 33,
               "materialAlphaValuesChecked": 10
             },
             "dormantAuthoringCurvesNotDecoded": [
@@ -14017,7 +14037,7 @@
               "nonemptyBindingsChecked": 7
             },
             "materialChecks": {
-              "materialEnumsChecked": 32,
+              "materialEnumsChecked": 33,
               "materialAlphaValuesChecked": 10
             },
             "dormantAuthoringCurvesNotDecoded": [
@@ -15682,6 +15702,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 3832
+              },
               "blend": {
                 "id": 1,
                 "name": "Semitrans",
@@ -15842,10 +15867,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   0,
                   0,
@@ -15853,8 +15878,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "nativeMaterialSelection": {
@@ -15929,6 +15953,11 @@
               ],
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+            },
+            "presentationCoverage": {
+              "region": "arena",
+              "primitive": "screen-particle",
+              "origin": "Automatic screen layer: untextured plane (412.5 x 225 >= 190); fitted to the visible battlefield instead of a box"
             }
           }
         ],
@@ -16011,7 +16040,9 @@
         "appearanceReport": {
           "nodes": 4,
           "dormantAlphaCurves": [],
-          "dormantColorCurves": [],
+          "dormantColorCurves": [
+            3
+          ],
           "limitations": [
             {
               "node": 0,
@@ -16028,10 +16059,6 @@
             {
               "node": 3,
               "reason": "RGB random-range support is unverified without authoring"
-            },
-            {
-              "node": 3,
-              "reason": "color selector unresolved; legacy preview tint retained"
             }
           ],
           "authoringComparison": null,
@@ -18904,6 +18931,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 5944
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -19594,6 +19626,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 7784
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -32613,6 +32650,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 40440
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -34371,6 +34413,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 44888
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -36129,6 +36176,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 49336
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -38655,7 +38707,7 @@
             "nonemptyBindingsChecked": 36
           },
           "materialChecks": {
-            "materialEnumsChecked": 141,
+            "materialEnumsChecked": 146,
             "materialAlphaValuesChecked": 40
           },
           "dormantAuthoringCurvesNotDecoded": [
@@ -38706,7 +38758,7 @@
             "nonemptyBindingsChecked": 36
           },
           "materialChecks": {
-            "materialEnumsChecked": 141,
+            "materialEnumsChecked": 146,
             "materialAlphaValuesChecked": 40
           },
           "dormantAuthoringCurvesNotDecoded": [
@@ -39377,7 +39429,7 @@
               "nonemptyBindingsChecked": 36
             },
             "materialChecks": {
-              "materialEnumsChecked": 141,
+              "materialEnumsChecked": 146,
               "materialAlphaValuesChecked": 40
             },
             "dormantAuthoringCurvesNotDecoded": [
@@ -39429,7 +39481,7 @@
               "nonemptyBindingsChecked": 36
             },
             "materialChecks": {
-              "materialEnumsChecked": 141,
+              "materialEnumsChecked": 146,
               "materialAlphaValuesChecked": 40
             },
             "dormantAuthoringCurvesNotDecoded": [

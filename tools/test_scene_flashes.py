@@ -84,12 +84,58 @@ class FlashRoleTests(unittest.TestCase):
             self.assertEqual(data['effects'][0]['nodes'][1]['presentationCoverage']['primitive'],'screen-particle')
             self.assertEqual(annotate_screen_backdrops(self._particle_plan(path,size=120,alpha_keys=())),0)
             self.assertEqual(annotate_screen_backdrops(self._particle_plan(path,anchor='caster-unit',alpha_keys=())),0)
-            self.assertEqual(annotate_screen_backdrops(self._particle_plan(path,combination='Add',alpha_keys=())),0)
-            # A uniform translucent plane is a one-axis gradient too (accepted); a pattern across a row is not.
+            self.assertEqual(annotate_screen_backdrops(self._particle_plan(path,combination='Add',alpha_keys=())),1)
+            # A uniform translucent plane is a one-axis gradient too (accepted); a patterned plane is a screen layer as well since 2026-11-12.
             Image.new('RGBA',(2,2),(0,0,0,128)).save(path)
             self.assertEqual(annotate_screen_backdrops(self._particle_plan(path,alpha_keys=())),1)
             im=Image.new('RGBA',(2,2),(0,0,0,0));im.putpixel((1,0),(255,255,255,255));im.save(path)
-            self.assertEqual(annotate_screen_backdrops(self._particle_plan(path,alpha_keys=())),0)
+            self.assertEqual(annotate_screen_backdrops(self._particle_plan(path,alpha_keys=())),1)
+
+    def test_uniform_colour_plane_covers_the_battlefield_for_any_anchor_life_and_alpha(self):
+        from prepare_scene_flashes import annotate_uniform_planes
+        with tempfile.TemporaryDirectory() as folder:
+            path=Path(folder)/'white.png';Image.new('RGBA',(2,2),'white').save(path)
+            # Long life and a constant alpha: not an impact flash, still a plane of one colour.
+            data=self._particle_plan(path,anchor='target-unit',life=240,alpha_keys=(1,1))
+            self.assertEqual(annotate_white_flashes(data),0);self.assertEqual(annotate_uniform_planes(data),1)
+            self.assertIn('uniform-colour plane',data['effects'][0]['nodes'][1]['presentationCoverage']['origin'])
+            self.assertEqual(annotate_uniform_planes(self._particle_plan(path,size=180)),0)
+            self.assertEqual(annotate_uniform_planes(self._particle_plan(path,combination='Add')),0)
+            # Off the screen anchor a moving plane stays as it is; on it, the motion is replaced.
+            for anchor,expected in [('target-unit',0),('screen',1)]:
+                moving=self._particle_plan(path,anchor=anchor);moving['effects'][0]['nodes'][1]['vectorCurves']={'translationValue':{'keys':[[0,1]]}}
+                self.assertEqual(annotate_uniform_planes(moving),expected)
+            # A plane that only grows (a flash that opens) is still covered off the screen anchor.
+            growing=self._particle_plan(path,anchor='target-unit');growing['effects'][0]['nodes'][1]['vectorCurves']={'scaleValue':{'keys':[[0,1]]}}
+            self.assertEqual(annotate_uniform_planes(growing),1)
+            # Untextured Particles are planes of their own colour, once the plan draws them.
+            bare=self._particle_plan(path,anchor='target-unit');bare['effects'][0]['nodes'][1]['resourceBindings']={}
+            self.assertEqual(annotate_uniform_planes(bare),1)
+            self.assertNotIn('textureSha256',bare['effects'][0]['nodes'][1]['presentationCoverage'])
+            im=Image.new('RGBA',(2,2),'white');im.putpixel((1,0),(0,0,0,255));im.save(path)
+            self.assertEqual(annotate_uniform_planes(self._particle_plan(path,anchor='target-unit')),0)
+
+    def test_screen_frame_of_edge_bars_is_scaled_to_this_view(self):
+        from prepare_scene_flashes import annotate_screen_frames
+        with tempfile.TemporaryDirectory() as folder:
+            path=Path(folder)/'white.png';Image.new('RGBA',(2,2),'white').save(path)
+            def frame(offsets=((0,-187,0),(160,-15,90),(0,157,180),(-160,-15,-90)),anchor='screen',extra=None):
+                def channel(value):return {'valueInitial':value,'valueRange':[0,0,0],'speedInitial':[0,0,0],'speedRange':[0,0,0],'accelerationInitial':[0,0,0],'accelerationRange':[0,0,0]}
+                def node(index,type_id,parent,scale,translation=(0,0,0),turn=0,**more):
+                    return {'index':index,'typeId':type_id,'parentIndex':parent,'vectorCurves':{},'lifeParameter':240,
+                        'staticVectors':{'transform':{'translation':channel(list(translation)),'rotation':channel([0,0,turn]),'scale':channel(scale)}},**more}
+                bars=[node(i+1,2,0,[190,30,100],(x,y,0),turn,resourceBindings={'texture1':{'name':'tex'}}) for i,(x,y,turn) in enumerate(offsets)]
+                return {'files':{'image':{'path':str(path),'sha256':hashlib.sha256(path.read_bytes()).hexdigest()}},
+                    'members':[{'effect':0,'anchor':anchor,'scalePercent':100,'placement':{'rectangle':anchor}}],
+                    'effects':[{'textures':{'tex':'image'},'meshes':{},'nodes':[node(0,0,None,[1,1,1]),*bars,*(extra or [])]}]}
+            data=frame();self.assertEqual(annotate_screen_frames(data),1)
+            root=data['effects'][0]['nodes'][0]
+            self.assertAlmostEqual(root['staticVectors']['transform']['scale']['valueInitial'][0],563/360,places=3)
+            self.assertIn('not an original scale',root['presentationFit']['origin'])
+            self.assertEqual(annotate_screen_frames(data),0,'applied once')
+            self.assertEqual(annotate_screen_frames(frame(anchor='caster-unit')),0)
+            self.assertEqual(annotate_screen_frames(frame(offsets=((0,-40,0),(160,-15,90)))),0,'a bar in the middle is not a frame')
+            self.assertEqual(annotate_screen_frames(frame(offsets=((0,-187,45),))),0,'only quarter turns')
 
     def test_white_flash_particle_covers_the_battlefield_for_any_anchor(self):
         with tempfile.TemporaryDirectory() as folder:
@@ -118,7 +164,7 @@ class ScreenQuadTests(unittest.TestCase):
                     'effects':[{'textures':{'lines':'image'},'meshes':{},'nodes':[parent,quad]}]}
             data=plan();self.assertEqual(annotate_screen_backdrops(data),1)
             self.assertEqual(data['effects'][0]['nodes'][1]['presentationCoverage']['primitive'],'unit-quad')
-            self.assertEqual(annotate_screen_backdrops(plan(size=200)),0)
+            self.assertEqual(annotate_screen_backdrops(plan(size=180)),0)
             self.assertEqual(annotate_screen_backdrops(plan(curves={'scaleValue':{'keys':[[0,1]]}})),0)
 
 
@@ -129,17 +175,22 @@ class ScreenModelTests(unittest.TestCase):
             path=Path(folder)/'cloud.png';im=Image.new('RGBA',(2,2),(0,0,0,0));im.putpixel((1,0),(120,40,40,255));im.save(path)
             def channel(value):return {'valueInitial':value,'valueRange':[0,0,0],'speedInitial':[0,0,0],'speedRange':[0,0,0],'accelerationInitial':[0,0,0],'accelerationRange':[0,0,0]}
             mesh={'triangleCount':2,'sourceSha256':'m','vertices':[{'position':[x,y,0],'colorBytes':[255,255,255,255]} for x in [-.5,.5] for y in [-.5,.5]]}
-            def plan(size=700,rotation=0,anchor='target-group'):
+            def plan(size=700,rotation=0,anchor='target-group',tilt=0,layer='front'):
                 wall={'index':0,'typeId':6,'parentIndex':None,'vectorCurves':{},'lifeParameter':120,
-                    'staticVectors':{'transform':{'translation':channel([60,0,0]),'rotation':channel([0,0,rotation]),'scale':channel([size,800,1])}},
+                    'staticVectors':{'transform':{'translation':channel([60,0,0]),'rotation':channel([tilt,0,rotation]),'scale':channel([size,800,1])}},
                     'resourceBindings':{'texture1':{'name':'cloud'},'model':{'name':'wall'}}}
                 return {'files':{'image':{'path':str(path),'sha256':hashlib.sha256(path.read_bytes()).hexdigest()}},
-                    'members':[{'effect':0,'anchor':anchor,'scalePercent':100,'placement':{'rectangle':'target-side'}}],
+                    'members':[{'effect':0,'anchor':anchor,'layer':layer,'scalePercent':100,'placement':{'rectangle':'target-side'}}],
                     'effects':[{'textures':{'cloud':'image'},'meshes':{'wall':mesh},'nodes':[wall]}]}
             data=plan();self.assertEqual(annotate_screen_models(data),1)
             self.assertEqual(data['effects'][0]['nodes'][0]['presentationCoverage']['primitive'],'unit-xy-model')
             self.assertEqual(annotate_screen_models(plan(size=300)),0)
-            self.assertEqual(annotate_screen_models(plan(rotation=20)),0)
+            # A constant turn around Z does not matter to a stretched layer; a tilt out of the picture plane does.
+            self.assertEqual(annotate_screen_models(plan(rotation=90)),1)
+            self.assertEqual(annotate_screen_models(plan(tilt=30)),0)
+            # Area backdrop: on the back layer of a target-side effect the smaller screen-layer size applies.
+            self.assertEqual(annotate_screen_models(plan(size=300,layer='back')),1)
+            self.assertEqual(annotate_screen_models(plan(size=150,layer='back')),0)
 
 
 if __name__=='__main__':unittest.main()

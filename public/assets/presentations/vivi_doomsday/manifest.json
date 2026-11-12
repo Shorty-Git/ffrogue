@@ -8,8 +8,8 @@
   "durationFrames": 410,
   "provenance": {
     "planFile": "tools/data/full-import/vivi/skills/doomsday/source/plan.json",
-    "planSha256": "23dd08335b7ed78440f7f4415f311e4978d280aab580bdc6498f1184621f0998",
-    "playerSha256": "e4e4f09f03c649f80c0f5f3bfa4a383a4033680d33d473799cc2e4d7472a834e",
+    "planSha256": "7c4c18431e84031932adb16b59674ff7cff12cd09d11cda9a9207874fbe2a1f2",
+    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "cbea65c9f17bc27ee5072651b8917b869b0a380fe3346d1901971caa019c41e0"
   },
@@ -56,7 +56,7 @@
       "approachFrames": 0,
       "returnFrames": 12,
       "targetOffsetX": 90,
-      "recipeSha256": "ceab5d653588c4bfd273276377fb5c895aff2e34907aa0435d96a6b529f9f6df",
+      "recipeSha256": "78b321d99a0ce4e2a3a2818a2b9ecfd41b1f656c81983c6795d96fb887b81051",
       "origin": "Reviewed game recipe; preview timing and offsets are adaptations"
     },
     "fitScreenToArena": false,
@@ -3100,6 +3100,13 @@
               "limitations": [],
               "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
               "projectSha256": "1f636b3e294a3af3abb226155b8d35ae297dbe9aec1331b76a8336f70c2e131e"
+            },
+            "presentationCoverage": {
+              "region": "arena",
+              "primitive": "unit-xy-model",
+              "textureSha256": "91d641345691d6b6c11cf4fea0a1c8fbcfb92dca13250066e6adb16afd6cff59",
+              "modelSha256": "a2214262efa4ef1085a5a677fb77fdfb9bff94a04f5eb138c43409b8433bb37f",
+              "origin": "Automatic screen layer: static unit-XY Model authored at screen size (700 x 700 >= 190) on the back layer of a screen or target-side effect; fitted to the visible battlefield"
             }
           },
           {
@@ -17968,6 +17975,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 24488
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -18180,10 +18192,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Constant",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   1,
                   1,
@@ -18191,8 +18203,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "nativeMaterialSelection": {
@@ -20416,6 +20427,13 @@
               "limitations": [],
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+            },
+            "presentationCoverage": {
+              "region": "arena",
+              "primitive": "unit-xy-model",
+              "textureSha256": "3b03488b361554f606c86d64c5b745640bdc722370361d78516ec2818864ed7d",
+              "modelSha256": "a2214262efa4ef1085a5a677fb77fdfb9bff94a04f5eb138c43409b8433bb37f",
+              "origin": "Automatic screen layer: static unit-XY Model authored at screen size (800 x 800 >= 500) on a screen-anchored effect; fitted to the visible battlefield"
             }
           },
           {
@@ -28964,6 +28982,13 @@
               "limitations": [],
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
+            },
+            "presentationCoverage": {
+              "region": "arena",
+              "primitive": "unit-xy-model",
+              "textureSha256": "3b03488b361554f606c86d64c5b745640bdc722370361d78516ec2818864ed7d",
+              "modelSha256": "a2214262efa4ef1085a5a677fb77fdfb9bff94a04f5eb138c43409b8433bb37f",
+              "origin": "Automatic screen layer: static unit-XY Model authored at screen size (800 x 800 >= 500) on a screen-anchored effect; fitted to the visible battlefield"
             }
           },
           {
@@ -81569,10 +81594,6 @@
             {
               "node": 17,
               "reason": "RGB random-range support is unverified without authoring"
-            },
-            {
-              "node": 17,
-              "reason": "color selector unresolved; legacy preview tint retained"
             },
             {
               "node": 18,

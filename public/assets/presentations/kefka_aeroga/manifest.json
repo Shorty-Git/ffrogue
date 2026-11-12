@@ -8,8 +8,8 @@
   "durationFrames": 242,
   "provenance": {
     "planFile": "tools/data/enemy-skills/kefka-160790/source/plan.json",
-    "planSha256": "b3548f69e2a75f62ce70fa3b3f6f3b32d679c4bc8230eee08e3fad2d013330cd",
-    "playerSha256": "e4e4f09f03c649f80c0f5f3bfa4a383a4033680d33d473799cc2e4d7472a834e",
+    "planSha256": "c2b36dd3700d51c9f27dbbd56aba191caa0fffdc3f37466b72fc27a82e65a851",
+    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "7af0c5e22ffe6af2eb0fc308cccad013ec08523a896b4dce30027ba7a329f769"
   },
@@ -57,7 +57,7 @@
       "returnFrames": 12,
       "targetOffsetX": 0,
       "caster": "enemy",
-      "recipeSha256": "344fb65a15c5c6d2f218905a9a470cea422d23f3b4341e7a4f9198c773dc5c93",
+      "recipeSha256": "8edc55b73928bf102140045e73f2ae9e4e5bc2f18999636b2ac02b33c6776b77",
       "origin": "Reviewed game recipe; preview timing and offsets are adaptations"
     },
     "fitScreenToArena": false,
@@ -10899,6 +10899,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 1,
+                "name": "Curve",
+                "fieldOffset": 23000
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -11111,10 +11116,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Curve",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   1,
                   1,
@@ -11122,8 +11127,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "nativeMaterialSelection": {
@@ -41237,10 +41241,6 @@
             {
               "node": 20,
               "reason": "RGB random-range support is unverified without authoring"
-            },
-            {
-              "node": 20,
-              "reason": "color selector unresolved; legacy preview tint retained"
             },
             {
               "node": 21,

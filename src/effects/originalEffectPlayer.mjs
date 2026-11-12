@@ -853,7 +853,8 @@ export async function createEffectPlayer(THREE, scene, plan) {
       const unsupportedEmission=!!(node.authoringEmissionShape&&node.authoringEmissionShape!=='Point')
         ||(item.parent!==null&&runtime[item.parent].unsupportedEmission);
       if(node.authoringEmissionShape&&node.authoringEmissionShape!=='Point')issues.add(effect.name+': node '+node.index+' emission shape '+node.authoringEmissionShape+' unsupported; source node withheld, not replaced with point emission');
-      if(isUntexturedParticle(node))issues.add(effect.name+': untextured particle '+node.index+' has unverified primitive rendering; '+(plan.withholdUntexturedParticles?'withheld by default':'legacy white-plane assumption enabled'));
+      // An untextured Particle with reviewed screen coverage is a plane of its own colour (dimming, flash).
+      if(isUntexturedParticle(node)&&!node.presentationCoverage)issues.add(effect.name+': untextured particle '+node.index+' has unverified primitive rendering; '+(plan.withholdUntexturedParticles?'withheld by default':'legacy white-plane assumption enabled'));
       let mesh=null;
       if(node.typeId!==0) {
         const combination=node.materialControls?.textureCombination?.name;
@@ -1010,7 +1011,7 @@ export async function createEffectPlayer(THREE, scene, plan) {
           const node=entry.effect.nodes[item.node],{age,matrix,alpha}=transforms[index];
           const color=localColor(node,age/item.life,appearanceEnabled);
           item.group.matrixAutoUpdate=false;item.group.matrix.copy(matrix);item.group.matrixWorldNeedsUpdate=true;
-          item.group.visible=time>=item.birth&&time<item.birth+item.life&&(!node.distortionFields||distortionEnabled)&&hiddenSourceNode!==entry.effect.name+':'+node.index&&(!onlySourceNode||onlySourceNode===entry.effect.name+':'+node.index)&&(!isUntexturedParticle(node)||legacyWhitePlanesEnabled)&&!item.unsupportedEmission;
+          item.group.visible=time>=item.birth&&time<item.birth+item.life&&(!node.distortionFields||distortionEnabled)&&hiddenSourceNode!==entry.effect.name+':'+node.index&&(!onlySourceNode||onlySourceNode===entry.effect.name+':'+node.index)&&(!isUntexturedParticle(node)||legacyWhitePlanesEnabled||!!node.presentationCoverage)&&!item.unsupportedEmission;
           if(item.mesh) {
             if(item.particleSupport?.supported||item.nativeXSupport?.supported) {
               item.mesh.matrixAutoUpdate=false;item.mesh.matrix.identity();item.mesh.visible=true;

@@ -8,8 +8,8 @@
   "durationFrames": 222,
   "provenance": {
     "planFile": "tools/data/full-import/zidane/skills/life_steal/source/plan.json",
-    "planSha256": "2594b494c841aa53b0ba8bf6a57a72d9b63e3c4f5d9aae935a3fe90034c69886",
-    "playerSha256": "e4e4f09f03c649f80c0f5f3bfa4a383a4033680d33d473799cc2e4d7472a834e",
+    "planSha256": "a8f584d5b0bb30ce86b29d01f6007a8649e5857e74b6b468f66fa391cca6f024",
+    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "95df05d9299e24be95c37a2754246584118b205a822fb95bf648e266cd3f9890"
   },
@@ -1911,6 +1911,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 1,
+                "name": "Curve",
+                "fieldOffset": 3832
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -2123,10 +2128,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Curve",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   1,
                   0,
@@ -2134,8 +2139,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "nativeMaterialSelection": {
@@ -6541,6 +6545,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 1,
+                "name": "Curve",
+                "fieldOffset": 13000
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -6753,10 +6762,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Curve",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   1,
                   0,
@@ -6764,8 +6773,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "nativeMaterialSelection": {
@@ -8565,10 +8573,6 @@
               "reason": "RGB random-range support is unverified without authoring"
             },
             {
-              "node": 3,
-              "reason": "color selector unresolved; legacy preview tint retained"
-            },
-            {
               "node": 4,
               "reason": "RGB random-range support is unverified without authoring"
             },
@@ -8599,10 +8603,6 @@
             {
               "node": 11,
               "reason": "RGB random-range support is unverified without authoring"
-            },
-            {
-              "node": 11,
-              "reason": "color selector unresolved; legacy preview tint retained"
             }
           ],
           "authoringComparison": null,
@@ -11118,6 +11118,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 1,
+                "name": "Curve",
+                "fieldOffset": 5240
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -11870,6 +11875,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 1,
+                "name": "Curve",
+                "fieldOffset": 7080
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -12216,7 +12226,7 @@
             "nonemptyBindingsChecked": 4
           },
           "materialChecks": {
-            "materialEnumsChecked": 20,
+            "materialEnumsChecked": 22,
             "materialAlphaValuesChecked": 7
           },
           "dormantAuthoringCurvesNotDecoded": [],
@@ -12257,7 +12267,7 @@
             "nonemptyBindingsChecked": 4
           },
           "materialChecks": {
-            "materialEnumsChecked": 20,
+            "materialEnumsChecked": 22,
             "materialAlphaValuesChecked": 7
           },
           "dormantAuthoringCurvesNotDecoded": [],
@@ -12419,7 +12429,7 @@
               "nonemptyBindingsChecked": 4
             },
             "materialChecks": {
-              "materialEnumsChecked": 20,
+              "materialEnumsChecked": 22,
               "materialAlphaValuesChecked": 7
             },
             "dormantAuthoringCurvesNotDecoded": []
@@ -12461,7 +12471,7 @@
               "nonemptyBindingsChecked": 4
             },
             "materialChecks": {
-              "materialEnumsChecked": 20,
+              "materialEnumsChecked": 22,
               "materialAlphaValuesChecked": 7
             },
             "dormantAuthoringCurvesNotDecoded": []
@@ -14524,6 +14534,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 1,
+                "name": "Curve",
+                "fieldOffset": 4536
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -18992,7 +19007,7 @@
             "nonemptyBindingsChecked": 4
           },
           "materialChecks": {
-            "materialEnumsChecked": 20,
+            "materialEnumsChecked": 21,
             "materialAlphaValuesChecked": 7
           },
           "dormantAuthoringCurvesNotDecoded": [],
@@ -19029,7 +19044,7 @@
             "nonemptyBindingsChecked": 4
           },
           "materialChecks": {
-            "materialEnumsChecked": 20,
+            "materialEnumsChecked": 21,
             "materialAlphaValuesChecked": 7
           },
           "dormantAuthoringCurvesNotDecoded": [],
@@ -19187,7 +19202,7 @@
               "nonemptyBindingsChecked": 4
             },
             "materialChecks": {
-              "materialEnumsChecked": 20,
+              "materialEnumsChecked": 21,
               "materialAlphaValuesChecked": 7
             },
             "dormantAuthoringCurvesNotDecoded": []
@@ -19225,7 +19240,7 @@
               "nonemptyBindingsChecked": 4
             },
             "materialChecks": {
-              "materialEnumsChecked": 20,
+              "materialEnumsChecked": 21,
               "materialAlphaValuesChecked": 7
             },
             "dormantAuthoringCurvesNotDecoded": []

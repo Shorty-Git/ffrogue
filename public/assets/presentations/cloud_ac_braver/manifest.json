@@ -9,7 +9,7 @@
   "provenance": {
     "planFile": "tools/data/braver-20261101/source/plan.json",
     "planSha256": "e0572d5e023dfea55b3812e87c4f2628416d928ed5deae096523cd2da226005f",
-    "playerSha256": "e4e4f09f03c649f80c0f5f3bfa4a383a4033680d33d473799cc2e4d7472a834e",
+    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "bf14b10cda8caa18c2c4c0eaf4f45270b7eae856d3a9948486641a6297c7f20e"
   },
@@ -31,7 +31,7 @@
     "Distortion is enabled only for plans carrying decoded experimental fields. Midpoint subtraction, color strength and UV order are shader hypotheses; native fidelity remains unverified.",
     "Optional model vertex RGBA multiplies interpolated source bytes into material RGBA. This is an explicit shader experiment; native combination/control semantics remain unverified.",
     "Quad and baseline Particle geometry use inherited unit XY planes. Optional Particle geometry evaluates only the declared zero-roll, constant-scale subset as view-aligned radius-one planes; unsupported nodes retain explicitly labeled legacy comparison geometry. Native locator, roll and other primitive variants remain unresolved.",
-    "Optional source appearance selects Constant or Curve explicitly. Dormant keys stay inactive. Unresolved color selectors retain the labeled legacy preview; RGB random ranges and parent tint remain unsupported.",
+    "Optional source appearance selects Constant or Curve explicitly. Dormant keys stay inactive. Opt-in Flat Quad RGB uses source constants/ranges and independent alpha; its deterministic color seeds are host policy. Other RGB random ranges and parent tint remain unsupported.",
     "Optional Basic single-texture UV playback uses the same inverse texture TRS/pivot matrix as layered materials. Source values/modes are checked; the native matrix convention remains experimental. Unsupported mapping retains the labeled legacy path.",
     "Body approach/return is an explicit preview adaptation; damage is a source-tick marker, not game execution.",
     "Supplemented Add nodes sample two independent UV transforms and constant layer colors. Clamped RGBA addition and inverse pivot transforms are experimental shader policies.",

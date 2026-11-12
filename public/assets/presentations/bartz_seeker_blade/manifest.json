@@ -8,8 +8,8 @@
   "durationFrames": 241,
   "provenance": {
     "planFile": "tools/data/full-import/bartz/skills/seeker_blade/source/plan.json",
-    "planSha256": "788de339deedcc15e3506d41e38888c79d935cfce67e1112bc8fbb67eb594a5d",
-    "playerSha256": "e4e4f09f03c649f80c0f5f3bfa4a383a4033680d33d473799cc2e4d7472a834e",
+    "planSha256": "c1463011503cc95f55be452da47ad629f12d18bc6ed9dee7ee9ca00b124a80d2",
+    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "f56c5f9ae3d22c753dae35ba9e14faca06669e793b537dc25decc04c3c471376"
   },
@@ -87,7 +87,7 @@
       "approachFrames": 0,
       "returnFrames": 12,
       "targetOffsetX": 90,
-      "recipeSha256": "5088e614d06e14f866d7093f8b9caea23fdd4361b39048a7416a9390de6d88bf",
+      "recipeSha256": "d30488e1bba1bdd95714ffebf29f586642dfe6e13eed8e3fc8351678e8b200d1",
       "origin": "Reviewed game recipe; preview timing and offsets are adaptations"
     },
     "fitScreenToArena": false,
@@ -3847,6 +3847,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 0,
+                "name": "Constant",
+                "fieldOffset": 7848
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -14828,7 +14833,7 @@
             "nonemptyBindingsChecked": 17
           },
           "materialChecks": {
-            "materialEnumsChecked": 75,
+            "materialEnumsChecked": 76,
             "materialAlphaValuesChecked": 23
           },
           "dormantAuthoringCurvesNotDecoded": [],
@@ -14869,7 +14874,7 @@
             "nonemptyBindingsChecked": 17
           },
           "materialChecks": {
-            "materialEnumsChecked": 75,
+            "materialEnumsChecked": 76,
             "materialAlphaValuesChecked": 23
           },
           "dormantAuthoringCurvesNotDecoded": [],
@@ -15281,7 +15286,7 @@
               "nonemptyBindingsChecked": 17
             },
             "materialChecks": {
-              "materialEnumsChecked": 75,
+              "materialEnumsChecked": 76,
               "materialAlphaValuesChecked": 23
             },
             "dormantAuthoringCurvesNotDecoded": []
@@ -15323,7 +15328,7 @@
               "nonemptyBindingsChecked": 17
             },
             "materialChecks": {
-              "materialEnumsChecked": 75,
+              "materialEnumsChecked": 76,
               "materialAlphaValuesChecked": 23
             },
             "dormantAuthoringCurvesNotDecoded": []
@@ -32554,6 +32559,11 @@
               }
             },
             "materialControls": {
+              "colorMode": {
+                "id": 1,
+                "name": "Curve",
+                "fieldOffset": 23000
+              },
               "blend": {
                 "id": 2,
                 "name": "SemiAdd",
@@ -32766,10 +32776,10 @@
                 "value": 1
               },
               "color": {
-                "mode": "Unresolved",
-                "origin": "Unresolved",
+                "mode": "Curve",
+                "origin": "IBMB",
                 "domain": "center",
-                "supported": false,
+                "supported": true,
                 "value": [
                   1,
                   1,
@@ -32777,8 +32787,7 @@
                 ]
               },
               "limitations": [
-                "RGB random-range support is unverified without authoring",
-                "color selector unresolved; legacy preview tint retained"
+                "RGB random-range support is unverified without authoring"
               ]
             },
             "nativeMaterialSelection": {
@@ -62892,10 +62901,6 @@
             {
               "node": 20,
               "reason": "RGB random-range support is unverified without authoring"
-            },
-            {
-              "node": 20,
-              "reason": "color selector unresolved; legacy preview tint retained"
             },
             {
               "node": 21,

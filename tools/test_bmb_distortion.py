@@ -30,6 +30,26 @@ class DistortionFieldsTest(unittest.TestCase):
         self.assertGreater(nodes,40)
         self.assertGreater(keys,10)
 
+    def test_particle_layout_matches_authoring(self):
+        # Staged enemy-skill originals (local only): Flare's and Ultima's background effects.
+        nodes=keys=distortion=0
+        for raw in ['tools/data/enemy-skills/chaos-216517/source/originals/bm_2035_flare_bg.bmb',
+                    'tools/data/enemy-skills/beatrix-170240/source/originals/bm_2044_artema_bg.bmb']:
+            raw=ROOT/raw;project=ROOT/'rawdata/assets/battle_effect'/f'{raw.stem}.bmsln'
+            if not raw.exists() or not project.exists():
+                self.skipTest('Local original source pairs are required')
+            data=raw.read_bytes();result=read_bmb(data);attach_distortion_fields(data,result)
+            source=ET.parse(project).findall('.//ResIdeNode')[1:]
+            self.assertEqual(len(result['nodes']),len(source))
+            for node,xml in zip(result['nodes'],source):
+                if node['typeId']==3:
+                    keys+=compare_distortion_fields(node,xml);nodes+=1
+                    if xml.findtext('Texture_Basic_TextureDrawType')=='Distortion':
+                        distortion+=1
+                        self.assertEqual(node['materialControls']['textureCombination']['name'],'Distortion')
+                        self.assertNotIn('texture2TranslationSpeed',node['distortionFields'])
+        self.assertEqual((nodes,distortion,keys),(5,3,2))
+
     def test_source_mutation_is_detected(self):
         stem=STEMS[0];raw=ROOT/'tools/data/bmb-format'/f'{stem}.bmb'
         if not raw.exists():self.skipTest('Local original source pair is required')
