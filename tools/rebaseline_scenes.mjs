@@ -46,24 +46,39 @@ async function capture(name, keys) {
 }
 
 function republish(keys) {
-  const wanted = new Set(keys), failures = [], changed = [];
+  const wanted = new Set(keys), changed = [], repinned = [];
   const recipes = fs.readdirSync('tools/presentations').filter(file => file.endsWith('.json')).sort();
   let done = 0;
   for (const file of recipes) {
     const recipe = read('tools/presentations/' + file), own = (recipe.bindings ?? []).map(binding => binding.key).filter(key => wanted.has(key));
     if (!own.length) continue;
     const before = own.map(key => fs.existsSync(`${PRESENTATIONS}/${key}/manifest.json`) ? sha(`${PRESENTATIONS}/${key}/manifest.json`) : null);
-    const result = spawnSync('node', ['tools/publish_scene_presentations.mjs', '--recipe', 'tools/presentations/' + file, '--python', python], {encoding: 'utf8', maxBuffer: 64 * 1024 * 1024});
-    if (result.status !== 0) failures.push({recipe: file, keys: own, error: (result.stderr || result.stdout).trim().split('\n').find(line => /Error/.test(line)) ?? 'failed'});
-    else own.forEach((key, i) => { if (sha(`${PRESENTATIONS}/${key}/manifest.json`) !== before[i]) changed.push(key); });
-    if (++done % 25 === 0) console.log(`republish ${done} recipes, ${failures.length} failed`);
+    // Windows: a watcher (Vite, antivirus) can hold content.json for a moment; such open errors are retried.
+    let error = null;
+    for (let attempt = 0; attempt < 6; attempt++) {
+      const result = spawnSync('node', ['tools/publish_scene_presentations.mjs', '--recipe', 'tools/presentations/' + file, '--python', python], {encoding: 'utf8', maxBuffer: 64 * 1024 * 1024});
+      error = result.status === 0 ? null : ((result.stderr || result.stdout).trim().split('\n').find(line => /Error/.test(line)) ?? 'failed').trim();
+      if (!error || !/UNKNOWN: unknown error, open|EBUSY|EPERM/.test(error)) break;
+      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 400);
+    }
+    if (error) {
+      // A recipe that no longer publishes (hand-reviewed legacy audio, a staged plan overwritten by a
+      // later import) keeps its manifest, which carries its whole plan: only the player identity is
+      // pinned again. It misses publish-time rule updates and is listed under `repinned` with the reason.
+      for (const key of own) {
+        const target = PRESENTATIONS + '/' + key + '/manifest.json', m = read(target);
+        if (m.provenance.playerSha256 !== playerSha()) { m.provenance.playerSha256 = playerSha(); fs.writeFileSync(target, JSON.stringify(m, null, 2) + '\n'); changed.push(key); }
+      }
+      repinned.push({recipe: file, keys: own, publishError: error});
+    } else own.forEach((key, i) => { if (sha(`${PRESENTATIONS}/${key}/manifest.json`) !== before[i]) changed.push(key); });
+    if (++done % 25 === 0) console.log(`republish ${done} recipes, ${repinned.length} only re-pinned`);
   }
   const published = new Set(recipes.flatMap(file => (read('tools/presentations/' + file).bindings ?? []).map(binding => binding.key)));
   const withoutRecipe = keys.filter(key => !published.has(key));
   const stale = keys.filter(key => read(`${PRESENTATIONS}/${key}/manifest.json`).provenance.playerSha256 !== playerSha());
-  writeFile(`${dir}/republish.json`, JSON.stringify({playerSha256: playerSha(), changed, failures, withoutRecipe, stale}, null, 1) + '\n');
-  console.log(JSON.stringify({recipes: done, changedManifests: changed.length, failures, withoutRecipe, stalePlayerHash: stale}));
-  return failures.length === 0 && stale.length === 0;
+  writeFile(`${dir}/republish.json`, JSON.stringify({playerSha256: playerSha(), changed, repinned, withoutRecipe, stale}, null, 1) + '\n');
+  console.log(JSON.stringify({recipes: done, changedManifests: changed.length, repinned: repinned.map(r => [r.keys.join(','), r.publishError]), withoutRecipe, stalePlayerHash: stale}));
+  return stale.length === 0;
 }
 
 function compare(keys) {

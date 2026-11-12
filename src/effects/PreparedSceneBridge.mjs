@@ -116,7 +116,7 @@ export function createPreparedSceneBridge(scene, manifests, options = {}) {
   const MAX_STEP_MS = 100;
   const mayWarm = () => warmQueue.length && ++warmFrame % WARM_EVERY_FRAMES === 0 && (options.canWarm?.() ?? true);
   const update = (_time, delta) => {
-    if (!active || paused) return;
+    if (!active || paused || active.pendingWarm) return;
     active.elapsed += Math.min(delta, MAX_STEP_MS) * scene.time.timeScale;
     active.frame = Math.floor(active.elapsed * 60 / 1000);
     active.onFrame?.(Math.min(active.frame,active.manifest.durationFrames-1));
@@ -166,6 +166,11 @@ export function createPreparedSceneBridge(scene, manifests, options = {}) {
       try {
         if (phaserCamera.zoom !== 1 || phaserCamera.rotation !== 0) throw Error('Prepared scene profile requires an unrotated unit-zoom camera');
         renderer.resetState();
+        if (active.pendingWarm) {
+          try { warmVariant(active.source); } catch (error) { errors.push('warm-up: '+String(error.message)); }
+          active.pendingWarm = false;
+          renderer.resetState();
+        }
         renderer.setRenderTarget(null);
         gl.bindFramebuffer(gl.FRAMEBUFFER,previous.framebuffer);
         const {host} = active, arena = host.view ?? host.arena;
@@ -191,20 +196,6 @@ export function createPreparedSceneBridge(scene, manifests, options = {}) {
       }
     };
     externs.push(external);
-  }
-  /** Runs GPU work outside Phaser's render pass and hands Phaser its GL state back. */
-  function withPhaserState(work) {
-    const gl = phaser.gl, previous = {framebuffer:gl.getParameter(gl.FRAMEBUFFER_BINDING),
-      viewport:gl.getParameter(gl.VIEWPORT),scissor:gl.getParameter(gl.SCISSOR_BOX),
-      scissorTest:gl.isEnabled(gl.SCISSOR_TEST)};
-    try { renderer.resetState(); work(); }
-    catch (error) { errors.push('warm-up: '+String(error.message)); }
-    finally {
-      renderer.resetState();
-      gl.bindFramebuffer(gl.FRAMEBUFFER,previous.framebuffer);
-      gl.viewport(...previous.viewport);gl.scissor(...previous.scissor);
-      if(previous.scissorTest)gl.enable(gl.SCISSOR_TEST);else gl.disable(gl.SCISSOR_TEST);
-    }
   }
   function warmVariant(variant) {
     if (!variant || variant.warmed || disposed || ![...variants.values()].includes(variant)) return;
@@ -282,10 +273,11 @@ export function createPreparedSceneBridge(scene, manifests, options = {}) {
     play(key,host,onComplete,onFrame) {
       const variant=variants.get(key+'/'+Object.keys(host.targets).length);
       if(!variant)throw Error('Prepared scene variant not ready: '+key);
-      // A variant the idle warm-up has not reached compiles here, before frame 0, as one stall
-      // (which Phaser drops from its clock) instead of hitching through the scene's first seconds.
-      if(!variant.warmed)withPhaserState(()=>warmVariant(variant));
-      paused=false;active={...variant,host:structuredClone(host),frame:0,elapsed:0,onComplete,onFrame};evaluate();onFrame?.(0);
+      // A variant the idle warm-up has not reached compiles in its first render pass, before the clock
+      // starts (pendingWarm), as one stall instead of hitching through the scene's first seconds. GPU
+      // work must stay inside Phaser's extern render: done here it left Phaser's texture state stale and
+      // the arena background missing for a frame.
+      paused=false;active={...variant,source:variant,pendingWarm:!variant.warmed,host:structuredClone(host),frame:0,elapsed:0,onComplete,onFrame};evaluate();onFrame?.(0);
     },
     stop(){active=null;},
     seek(frame){if(!active||!Number.isFinite(frame)||frame<0||frame>=active.manifest.durationFrames)throw Error('Active bounded frame required');paused=true;active.frame=frame;active.elapsed=frame*1000/60;evaluate();},
