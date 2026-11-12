@@ -56,13 +56,14 @@ export const IMPORTED_ENEMIES = {
         {
           "kind": "prepare",
           "name": "Beatrix raises Save the Queen",
-          "next": "Sword Sweep"
+          "next": "Stock Break"
         },
         {
           "kind": "attack",
-          "name": "Sword Sweep",
+          "name": "Stock Break",
           "multiplier": 1.2,
-          "scope": "party"
+          "scope": "party",
+          "skill": "stock_break"
         },
         {
           "kind": "attack",
@@ -504,15 +505,15 @@ export const IMPORTED_ENEMIES = {
         },
         {
           "kind": "prepare",
-          "name": "Chaos calls the storm",
-          "next": "Cyclone"
+          "name": "Chaos kindles the air",
+          "next": "Firaga"
         },
         {
           "kind": "attack",
-          "name": "Cyclone",
+          "name": "Firaga",
           "multiplier": 1.2,
           "scope": "party",
-          "skill": "cyclone"
+          "skill": "firaga"
         },
         {
           "kind": "attack",
@@ -554,10 +555,10 @@ export const IMPORTED_ENEMIES = {
         },
         {
           "kind": "attack",
-          "name": "Dread Strike",
-          "multiplier": 1.1,
+          "name": "Flare",
+          "multiplier": 1.3,
           "scope": "single",
-          "skill": "dread_strike"
+          "skill": "flare"
         },
         {
           "kind": "prepare",

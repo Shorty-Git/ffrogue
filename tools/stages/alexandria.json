@@ -51,7 +51,7 @@
     "name": "Beatrix",
     "scale": 1.8,
     "movement": "approach",
-    "note": "FFBE Beatrix (dictionary 2056610); elite of the Alexandria route. Lightning Slash and Shock are her original moves; Stock Break is left out (white planes on drifting helpers and an unsupported cloud combination show as boxes), its slot is an FFRogue party sweep with her attack clip.",
+    "note": "FFBE Beatrix (dictionary 2056610); elite of the Alexandria route. Lightning Slash, Stock Break and Shock are her original moves (Stock Break since 2026-11-12: its white planes and distorted background are screen layers now).",
     "behavior": {
       "phaseAt": 0.5,
       "phaseName": "Seiken",
@@ -67,13 +67,14 @@
         {
           "kind": "prepare",
           "name": "Beatrix raises Save the Queen",
-          "next": "Sword Sweep"
+          "next": "Stock Break"
         },
         {
           "kind": "attack",
-          "name": "Sword Sweep",
+          "name": "Stock Break",
           "multiplier": 1.2,
-          "scope": "party"
+          "scope": "party",
+          "skill": "stock_break"
         },
         {
           "kind": "attack",

@@ -51,7 +51,7 @@
     "name": "Chaos",
     "scale": 2,
     "movement": "stationary",
-    "note": "FFBE boss Chaos (dictionary 4051810, Chaos Shrine); final boss with his original moves (import_enemy_skills.mjs). Flare and Firaga are left out (Firaga: two draw-type-6 particles show as squares on the party; Cyclone takes its slot): its red cloud particle uses an unsupported texture combination and shows as a square.",
+    "note": "FFBE boss Chaos (dictionary 4051810, Chaos Shrine); final boss with his original moves (import_enemy_skills.mjs). Firaga and Flare are back in the pattern since 2026-11-12 (their draw-type-6 particles are the Distortion material and Flare's background is a screen layer now); Cyclone stays imported but unused.",
     "behavior": {
       "phaseAt": 0.5,
       "phaseName": "Wrath of Chaos",
@@ -66,15 +66,15 @@
         },
         {
           "kind": "prepare",
-          "name": "Chaos calls the storm",
-          "next": "Cyclone"
+          "name": "Chaos kindles the air",
+          "next": "Firaga"
         },
         {
           "kind": "attack",
-          "name": "Cyclone",
+          "name": "Firaga",
           "multiplier": 1.2,
           "scope": "party",
-          "skill": "cyclone"
+          "skill": "firaga"
         },
         {
           "kind": "attack",
@@ -116,10 +116,10 @@
         },
         {
           "kind": "attack",
-          "name": "Dread Strike",
-          "multiplier": 1.1,
+          "name": "Flare",
+          "multiplier": 1.3,
           "scope": "single",
-          "skill": "dread_strike"
+          "skill": "flare"
         },
         {
           "kind": "prepare",
