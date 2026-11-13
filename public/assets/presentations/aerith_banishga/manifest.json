@@ -8,8 +8,8 @@
   "durationFrames": 383,
   "provenance": {
     "planFile": "tools/data/renderer-phase3/banishga/source/plan.json",
-    "planSha256": "952dc19347ad1fafc138fc461271279ccf7751d8f6708b0f60e685220bc0e33b",
-    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
+    "planSha256": "8c2886ff8f4a4d117905405556273d894992354bb35210cc2e77d2a4d501f625",
+    "playerSha256": "e52a4d776b5f858a6bd4e036105cbc558d9abe40999daed7d06abb15a7d0c6e1",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "0631f0d6d496a88fcab29fa862c3f199187df427a7f978961b9f656f871d8420"
   },
@@ -5845,10 +5845,16 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
+              "rgba": [
+                0,
+                0.13643614947795868,
+                0.25,
+                1
+              ],
               "limitations": [
                 "initial native fragment is not the pinned Basic family"
               ],
+              "approximate": true,
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
@@ -15159,10 +15165,16 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
+              "rgba": [
+                0.256095826625824,
+                0.549630343914032,
+                0.75,
+                1
+              ],
               "limitations": [
                 "initial native fragment is not the pinned Basic family"
               ],
+              "approximate": true,
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
@@ -16606,10 +16618,16 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
+              "rgba": [
+                0.34146106243133545,
+                0.7328405380249023,
+                1,
+                1
+              ],
               "limitations": [
                 "initial native fragment is not the pinned Basic family"
               ],
+              "approximate": true,
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
@@ -22665,6 +22683,7 @@
               "limitations": [
                 "random texture tint is outside the constant subset"
               ],
+              "approximate": true,
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
@@ -34058,10 +34077,16 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
+              "rgba": [
+                0.1280478686094284,
+                0.27481523156166077,
+                0.375,
+                1
+              ],
               "limitations": [
                 "initial native fragment is not the pinned Basic family"
               ],
+              "approximate": true,
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
@@ -38774,10 +38799,16 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
+              "rgba": [
+                0.34146106243133545,
+                0.7328405380249023,
+                1,
+                1
+              ],
               "limitations": [
                 "initial native fragment is not the pinned Basic family"
               ],
+              "approximate": true,
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
@@ -42736,6 +42767,7 @@
               "limitations": [
                 "random texture tint is outside the constant subset"
               ],
+              "approximate": true,
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
@@ -49050,10 +49082,16 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
+              "rgba": [
+                0.20486170053482056,
+                0.7643222808837891,
+                1,
+                1
+              ],
               "limitations": [
                 "initial native fragment is not the pinned Basic family"
               ],
+              "approximate": true,
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
@@ -59764,6 +59802,35 @@
         },
         {
           "member": "wm_1006_banish_back.bmb",
+          "node": 10,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.7134,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_back.bmb",
+          "node": 10,
+          "field": "Texture1_Color_Scale_Alpha_Value_Initial",
+          "value": "1",
+          "corpusShare": 0.9989,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "node": 10,
+          "textureTint": [
+            0,
+            0.1364,
+            0.25,
+            1
+          ],
+          "notEvaluated": [
+            "initial native fragment is not the pinned Basic family"
+          ],
+          "treatment": "texture-tint-initial-value"
+        },
+        {
+          "member": "wm_1006_banish_back.bmb",
           "node": 12,
           "field": "Texture_Basic_TextureDrawType",
           "value": "Basic",
@@ -62364,6 +62431,56 @@
         },
         {
           "member": "wm_1006_banish_front.bmb",
+          "node": 4,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.7187,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "node": 4,
+          "textureTint": [
+            0.2561,
+            0.5496,
+            0.75,
+            1
+          ],
+          "notEvaluated": [
+            "initial native fragment is not the pinned Basic family"
+          ],
+          "treatment": "texture-tint-initial-value"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 6,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.7134,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
+          "node": 6,
+          "field": "Texture1_Color_Scale_Alpha_Value_Initial",
+          "value": "1",
+          "corpusShare": 0.9989,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "node": 6,
+          "textureTint": [
+            0.3415,
+            0.7328,
+            1,
+            1
+          ],
+          "notEvaluated": [
+            "initial native fragment is not the pinned Basic family"
+          ],
+          "treatment": "texture-tint-initial-value"
+        },
+        {
+          "member": "wm_1006_banish_front.bmb",
           "node": 8,
           "field": "Texture_Basic_TextureDrawType",
           "value": "Basic",
@@ -62561,6 +62678,19 @@
           "value": "0",
           "corpusShare": 1,
           "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "node": 17,
+          "textureTint": [
+            0.4782,
+            0.7723,
+            0.9439,
+            1
+          ],
+          "notEvaluated": [
+            "random texture tint is outside the constant subset"
+          ],
+          "treatment": "texture-tint-initial-value"
         },
         {
           "member": "wm_1006_banish_front.bmb",
@@ -63703,6 +63833,35 @@
           "value": "0",
           "corpusShare": 0.9998,
           "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1017_banish2_back.bmb",
+          "node": 7,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.7134,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1017_banish2_back.bmb",
+          "node": 7,
+          "field": "Texture1_Color_Scale_Alpha_Value_Initial",
+          "value": "1",
+          "corpusShare": 0.9989,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "node": 7,
+          "textureTint": [
+            0.128,
+            0.2748,
+            0.375,
+            1
+          ],
+          "notEvaluated": [
+            "initial native fragment is not the pinned Basic family"
+          ],
+          "treatment": "texture-tint-initial-value"
         },
         {
           "member": "wm_1017_banish2_back.bmb",
@@ -66509,6 +66668,35 @@
         },
         {
           "member": "wm_1017_banish2_front.bmb",
+          "node": 5,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.7134,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1017_banish2_front.bmb",
+          "node": 5,
+          "field": "Texture1_Color_Scale_Alpha_Value_Initial",
+          "value": "1",
+          "corpusShare": 0.9989,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "node": 5,
+          "textureTint": [
+            0.3415,
+            0.7328,
+            1,
+            1
+          ],
+          "notEvaluated": [
+            "initial native fragment is not the pinned Basic family"
+          ],
+          "treatment": "texture-tint-initial-value"
+        },
+        {
+          "member": "wm_1017_banish2_front.bmb",
           "node": 7,
           "field": "Texture_Basic_TextureDrawType",
           "value": "Basic",
@@ -66628,6 +66816,19 @@
           "treatment": "authoring-free-corpus-default"
         },
         {
+          "node": 12,
+          "textureTint": [
+            0.4782,
+            0.7723,
+            0.9439,
+            1
+          ],
+          "notEvaluated": [
+            "random texture tint is outside the constant subset"
+          ],
+          "treatment": "texture-tint-initial-value"
+        },
+        {
           "member": "wm_1017_banish2_front.bmb",
           "node": 14,
           "field": "Texture_Basic_TextureDrawType",
@@ -66826,6 +67027,27 @@
           "value": "0",
           "corpusShare": 0.9998,
           "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1017_banish2_front.bmb",
+          "node": 23,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.7187,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "node": 23,
+          "textureTint": [
+            0.2049,
+            0.7643,
+            1,
+            1
+          ],
+          "notEvaluated": [
+            "initial native fragment is not the pinned Basic family"
+          ],
+          "treatment": "texture-tint-initial-value"
         },
         {
           "member": "wm_1017_banish2_front.bmb",

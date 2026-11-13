@@ -8,8 +8,8 @@
   "durationFrames": 209,
   "provenance": {
     "planFile": "tools/data/full-import/firion/skills/fynn_briar/source/plan.json",
-    "planSha256": "2907d7d3e09d4ee99252d87ccae2f8a7aaf505246a0a6045ddb8aa636ea8a56e",
-    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
+    "planSha256": "fa713af7c644de5a4d0e3b43eb3af32dd5361701fd2a0e5f65d5521580e86e7d",
+    "playerSha256": "e52a4d776b5f858a6bd4e036105cbc558d9abe40999daed7d06abb15a7d0c6e1",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "f477b58070c998926e35c35db236aec6400871f85d4f511edf3fcff3c17f4a3e"
   },
@@ -3302,6 +3302,7 @@
               "limitations": [
                 "random texture tint is outside the constant subset"
               ],
+              "approximate": true,
               "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
               "projectSha256": "2f62e89c56b79645bd2cc31fcbf7871557fb9e9df3811131bc6da5f96ed32236"
             }
@@ -9805,6 +9806,7 @@
               "limitations": [
                 "random texture tint is outside the constant subset"
               ],
+              "approximate": true,
               "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
               "projectSha256": "eb480492580d331ab496ac405d4bcb630c057af0ed20c06b670193b6746a8847"
             }
@@ -21490,6 +21492,32 @@
     "approximations": {
       "profile": "held-constant-unverified-curves-v1",
       "curves": [
+        {
+          "node": 5,
+          "textureTint": [
+            0.5561,
+            0.087,
+            0.0794,
+            1
+          ],
+          "notEvaluated": [
+            "random texture tint is outside the constant subset"
+          ],
+          "treatment": "texture-tint-initial-value"
+        },
+        {
+          "node": 5,
+          "textureTint": [
+            0.5561,
+            0.087,
+            0.0794,
+            1
+          ],
+          "notEvaluated": [
+            "random texture tint is outside the constant subset"
+          ],
+          "treatment": "texture-tint-initial-value"
+        },
         {
           "channel": "Texture2_Color_Scale_Alpha_Value_Curve",
           "keys": 2,

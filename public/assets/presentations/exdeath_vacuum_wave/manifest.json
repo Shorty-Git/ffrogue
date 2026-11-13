@@ -8,8 +8,8 @@
   "durationFrames": 221,
   "provenance": {
     "planFile": "tools/data/enemy-skills/exdeath-215214/source/plan.json",
-    "planSha256": "ad08ae1bb645e9ecc2bf10836fdb1ff688e536e35d3c5dea60f6e7b6d85451dd",
-    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
+    "planSha256": "f78e5ae467099f1b1cc7223faceabd7b110d437df3c1affddbf82bfe82f6eb2c",
+    "playerSha256": "e52a4d776b5f858a6bd4e036105cbc558d9abe40999daed7d06abb15a7d0c6e1",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "e0dfc5ad8809a9b57413eda5fdd62b006a9625941fa1c655ffc2db3ccaf0c68b"
   },
@@ -5292,10 +5292,16 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
+              "rgba": [
+                0.40784314274787903,
+                1,
+                0.3803921639919281,
+                1
+              ],
               "limitations": [
                 "initial native fragment is not the pinned Basic family"
               ],
+              "approximate": true,
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
@@ -16896,6 +16902,27 @@
           "value": "0",
           "corpusShare": 0.9998,
           "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "eff_sonic_slash_green.bmb",
+          "node": 9,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.7187,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "node": 9,
+          "textureTint": [
+            0.4078,
+            1,
+            0.3804,
+            1
+          ],
+          "notEvaluated": [
+            "initial native fragment is not the pinned Basic family"
+          ],
+          "treatment": "texture-tint-initial-value"
         },
         {
           "member": "eff_sonic_slash_green.bmb",

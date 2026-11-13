@@ -8,8 +8,8 @@
   "durationFrames": 181,
   "provenance": {
     "planFile": "tools/data/full-import/ramza_unsung_hero/skills/raise/source/plan.json",
-    "planSha256": "c4919580fa61d4dd452820025a8cc4d7a53c9aeb18c32771a77d23e0ac8495ba",
-    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
+    "planSha256": "f8e31b61675bd56536f1686a400d6aae7f5ea16c5d0dd0c9d07be91b022ae392",
+    "playerSha256": "e52a4d776b5f858a6bd4e036105cbc558d9abe40999daed7d06abb15a7d0c6e1",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "9203b59e8ac035ebda69c0ef3c4558e1d82c7239710f5de8a843ebfdec2b7a5d"
   },
@@ -5463,10 +5463,16 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
+              "rgba": [
+                1,
+                0.6499999761581421,
+                0.550000011920929,
+                1
+              ],
               "limitations": [
                 "initial native fragment is not the pinned Basic family"
               ],
+              "approximate": true,
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
@@ -7949,10 +7955,16 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
+              "rgba": [
+                1,
+                1,
+                1,
+                1
+              ],
               "limitations": [
                 "initial native fragment is not the pinned Basic family"
               ],
+              "approximate": true,
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
@@ -10172,10 +10184,16 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
+              "rgba": [
+                1,
+                1,
+                1,
+                1
+              ],
               "limitations": [
                 "initial native fragment is not the pinned Basic family"
               ],
+              "approximate": true,
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
@@ -23213,6 +23231,27 @@
         },
         {
           "member": "wm_1010_raise.bmb",
+          "node": 10,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.7134,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "node": 10,
+          "textureTint": [
+            1,
+            0.65,
+            0.55,
+            1
+          ],
+          "notEvaluated": [
+            "initial native fragment is not the pinned Basic family"
+          ],
+          "treatment": "texture-tint-initial-value"
+        },
+        {
+          "member": "wm_1010_raise.bmb",
           "node": 12,
           "field": "Texture_Basic_TextureDrawType",
           "value": "Basic",
@@ -23253,6 +23292,22 @@
         },
         {
           "member": "wm_1010_raise.bmb",
+          "node": 15,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.7134,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1010_raise.bmb",
+          "node": 15,
+          "field": "Texture1_Color_Scale_Alpha_Value_Initial",
+          "value": "1",
+          "corpusShare": 0.9989,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1010_raise.bmb",
           "node": 17,
           "field": "Texture_Basic_TextureDrawType",
           "value": "Basic",
@@ -23289,6 +23344,22 @@
           "field": "Texture1_Color_Scale_Alpha_Value_Range",
           "value": "0",
           "corpusShare": 0.9998,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1010_raise.bmb",
+          "node": 19,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.9979,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1010_raise.bmb",
+          "node": 19,
+          "field": "Texture1_Color_Scale_Alpha_Value_Initial",
+          "value": "1",
+          "corpusShare": 1,
           "treatment": "authoring-free-corpus-default"
         },
         {

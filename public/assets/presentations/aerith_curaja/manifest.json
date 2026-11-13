@@ -8,8 +8,8 @@
   "durationFrames": 239,
   "provenance": {
     "planFile": "tools/data/wave5-20261108/curaja/source/plan.json",
-    "planSha256": "85124af6bf89a477b18f97e8ee8ee007aa2895a880eae9ecc1d8667a95e8ff3a",
-    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
+    "planSha256": "fab66a84fa167d3fcde4228b03abf873f3cb4507f981c3942ddee06786bbc557",
+    "playerSha256": "e52a4d776b5f858a6bd4e036105cbc558d9abe40999daed7d06abb15a7d0c6e1",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "c6295138a9acb6ec60947b9a741317c781c5a634c4569f361aaf756443df8e11"
   },
@@ -17786,10 +17786,16 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
+              "rgba": [
+                0.33085498213768005,
+                1,
+                0.8202964067459106,
+                1
+              ],
               "limitations": [
                 "initial native fragment is not the pinned Basic family"
               ],
+              "approximate": true,
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
@@ -32751,10 +32757,16 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
+              "rgba": [
+                1,
+                1,
+                1,
+                1
+              ],
               "limitations": [
                 "initial native fragment is not the pinned Basic family"
               ],
+              "approximate": true,
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
@@ -49495,6 +49507,27 @@
         },
         {
           "member": "wm_1029_cure5_front.bmb",
+          "node": 6,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.7187,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "node": 6,
+          "textureTint": [
+            0.3309,
+            1,
+            0.8203,
+            1
+          ],
+          "notEvaluated": [
+            "initial native fragment is not the pinned Basic family"
+          ],
+          "treatment": "texture-tint-initial-value"
+        },
+        {
+          "member": "wm_1029_cure5_front.bmb",
           "node": 10,
           "field": "Texture_Basic_TextureDrawType",
           "value": "Basic",
@@ -49851,6 +49884,14 @@
           "field": "Texture1_Color_Scale_Alpha_Value_Range",
           "value": "0",
           "corpusShare": 0.9993,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1029_cure5_front.bmb",
+          "node": 32,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.7187,
           "treatment": "authoring-free-corpus-default"
         },
         {

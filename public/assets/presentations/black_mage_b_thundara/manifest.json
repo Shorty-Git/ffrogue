@@ -8,8 +8,8 @@
   "durationFrames": 222,
   "provenance": {
     "planFile": "tools/data/enemy-skills/black_mage_b-120100/source/plan.json",
-    "planSha256": "4fb1b82a1ea9e2d364a25df006e02eb4d353d671ba5389260df9e0999452cad4",
-    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
+    "planSha256": "6d45b49a4972ceb22963daba7ef6c95c9f2944bbd3dcdaca0a5cfa0dfb92fa5b",
+    "playerSha256": "e52a4d776b5f858a6bd4e036105cbc558d9abe40999daed7d06abb15a7d0c6e1",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "9f2506b019f79d0010ae56b71417eaa1f9b00d3def3302e6fe830aa8e48cc0c8"
   },
@@ -17307,6 +17307,7 @@
               "limitations": [
                 "random texture tint is outside the constant subset"
               ],
+              "approximate": true,
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
@@ -33961,6 +33962,19 @@
           "value": "0",
           "corpusShare": 0.9993,
           "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "node": 31,
+          "textureTint": [
+            0.9979,
+            1,
+            1,
+            1
+          ],
+          "notEvaluated": [
+            "random texture tint is outside the constant subset"
+          ],
+          "treatment": "texture-tint-initial-value"
         },
         {
           "member": "bm_2010_thunder2.bmb",

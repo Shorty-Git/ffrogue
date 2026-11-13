@@ -8,8 +8,8 @@
   "durationFrames": 239,
   "provenance": {
     "planFile": "tools/data/full-import/aerith_remake/skills/white_healing_ffvii_remake/source/plan.json",
-    "planSha256": "0bda85f1b777518fd1b180e7b62caa613707f60a0653e4fdb721707f891a0ee5",
-    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
+    "planSha256": "57c82815d1aead511067ab17dd6e46a666e4030d3d45f7efefde06d1347c0772",
+    "playerSha256": "e52a4d776b5f858a6bd4e036105cbc558d9abe40999daed7d06abb15a7d0c6e1",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "b31c598c8de5372829d1b639e1ff7d3a2d0821b6e02738d4fd1a1bdf0ce960f1"
   },
@@ -17819,10 +17819,16 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
+              "rgba": [
+                1,
+                1,
+                1,
+                1
+              ],
               "limitations": [
                 "initial native fragment is not the pinned Basic family"
               ],
+              "approximate": true,
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
@@ -32784,10 +32790,16 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
+              "rgba": [
+                1,
+                1,
+                1,
+                1
+              ],
               "limitations": [
                 "initial native fragment is not the pinned Basic family"
               ],
+              "approximate": true,
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
@@ -47611,7 +47623,7 @@
             "presentationCoverage": {
               "region": "arena",
               "primitive": "screen-particle",
-              "origin": "Automatic screen layer: untextured plane (412.5 x 225 >= 190); fitted to the visible battlefield instead of a box"
+              "origin": "Automatic screen layer: untextured plane (825 x 450 >= 190); fitted to the visible battlefield instead of a box"
             }
           }
         ],
@@ -51574,6 +51586,14 @@
         },
         {
           "member": "eff_cure5_white_front.bmb",
+          "node": 6,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.7187,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "eff_cure5_white_front.bmb",
           "node": 10,
           "field": "Texture_Basic_TextureDrawType",
           "value": "Basic",
@@ -51930,6 +51950,14 @@
           "field": "Texture1_Color_Scale_Alpha_Value_Range",
           "value": "0",
           "corpusShare": 0.9993,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "eff_cure5_white_front.bmb",
+          "node": 32,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.7187,
           "treatment": "authoring-free-corpus-default"
         },
         {

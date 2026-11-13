@@ -200,5 +200,40 @@ async function capture(key, options = {}) {
   result.errors = [...new Set(result.errors)];
   return result;
 }
-window.sceneFrames = {ready: start().catch(error => { status.textContent = 'FAIL ' + error.message; throw error; }), capture};
+/** Visible instances of one frame with their screen boxes (diagnostic for tools/inspect_scene_frame.mjs). */
+async function inspect(key, frame) {
+  const s = scene();
+  const manifest = await fetch('/assets/presentations/' + key + '/manifest.json', {cache: 'no-store'}).then(r => r.json());
+  delete manifest.audioSource;
+  const cacheKey = 'scene_' + key + '_manifest'; s.cache.json.remove(cacheKey); s.cache.json.add(cacheKey, manifest);
+  s.preparedScenes?.destroy();
+  const bridge = s.preparedScenes = createPreparedSceneBridge(s, [manifest], {canWarm: () => false});
+  await bridge.ready;
+  const plan = manifest.plan, enemyCaster = plan.presentation.caster === 'enemy', scope = plan.presentation.scope;
+  const caster = enemyCaster ? s.enemies[0] : s.turnOrder[0];
+  const targets = scope === 'self' ? [caster] : scope === 'party' ? s.turnOrder : enemyCaster ? (scope === 'all_enemies' ? s.turnOrder : [s.turnOrder[0]]) : scope === 'all_enemies' ? s.enemies : [s.enemies[0]];
+  s.playPreparedScene(key, caster, targets); bridge.seek(frame); await grab(DETECT);
+  const snapshot = bridge.snapshot(), rows = [];
+  const members = name => plan.members.filter(m => m.layer === name);
+  for (const [name, items] of Object.entries(snapshot.layers)) {
+    // Items follow the layer's members in order; each member contributes its effect's instances.
+    const counts = new Map();
+    for (const item of items) {
+      if (!item.visible || !item.worldVertices.length) continue;
+      const xs = item.worldVertices.map(v => v[0]), ys = item.worldVertices.map(v => v[1]);
+      rows.push({layer: name, node: item.node, id: item.id, x: Math.min(...xs) + snapshot.host.width / 2, y: snapshot.host.height / 2 - Math.max(...ys),
+        width: Math.max(...xs) - Math.min(...xs), height: Math.max(...ys) - Math.min(...ys), opacity: item.material?.opacity ?? 0, blendId: item.material?.blending});
+    }
+  }
+  // Node details: the same node index can exist in several effects; report every candidate effect.
+  for (const row of rows) {
+    const candidates = plan.effects.filter((e, i) => plan.members.some(m => m.effect === i && m.layer === row.layer) && e.nodes[row.node]);
+    const pick = candidates.find(e => e.nodes[row.node].typeId !== 0) ?? candidates[0], node = pick?.nodes[row.node];
+    Object.assign(row, {effect: candidates.map(e => e.name).join('|'), type: node?.type, texture: node?.resourceBindings?.texture1?.name ?? 'untextured',
+      blend: node?.materialControls?.blend?.name, coverage: !!node?.presentationCoverage});
+  }
+  bridge.stop();
+  return rows;
+}
+window.sceneFrames = {inspect, ready: start().catch(error => { status.textContent = 'FAIL ' + error.message; throw error; }), capture};
 </script>

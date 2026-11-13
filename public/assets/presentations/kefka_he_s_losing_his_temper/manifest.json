@@ -8,8 +8,8 @@
   "durationFrames": 181,
   "provenance": {
     "planFile": "tools/data/enemy-skills/kefka-161010/source/plan.json",
-    "planSha256": "a8573b965b6df443f14b9237f9b08a34fe714e0599787106334574c9c8e8d61a",
-    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
+    "planSha256": "526782f35eff45a619233e015c7c99c444e22e8995bfc0625b351b6ad77405bc",
+    "playerSha256": "e52a4d776b5f858a6bd4e036105cbc558d9abe40999daed7d06abb15a7d0c6e1",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "140cbb0d9bbf81a75e0c11295f7caf2b7996ac45fb5d8069f843c35ecbbaeae2"
   },
@@ -2453,10 +2453,16 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
+              "rgba": [
+                1,
+                0.9923284,
+                0.813737,
+                1
+              ],
               "limitations": [
                 "initial native fragment is not the pinned Basic family"
               ],
+              "approximate": true,
               "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
               "projectSha256": "2c678fad35efd104541d53bb8c69747bfb94d658549ee046e4757b637cdeb184"
             }
@@ -3867,10 +3873,16 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
+              "rgba": [
+                1,
+                0.9923284,
+                0.813737,
+                1
+              ],
               "limitations": [
                 "initial native fragment is not the pinned Basic family"
               ],
+              "approximate": true,
               "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
               "projectSha256": "2c678fad35efd104541d53bb8c69747bfb94d658549ee046e4757b637cdeb184"
             }
@@ -4531,10 +4543,16 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
+              "rgba": [
+                0.5,
+                0.496164173,
+                0.406868517,
+                1
+              ],
               "limitations": [
                 "initial native fragment is not the pinned Basic family"
               ],
+              "approximate": true,
               "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
               "projectSha256": "2c678fad35efd104541d53bb8c69747bfb94d658549ee046e4757b637cdeb184"
             }
@@ -5572,10 +5590,16 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
+              "rgba": [
+                1,
+                0.9923284,
+                0.813737,
+                1
+              ],
               "limitations": [
                 "initial native fragment is not the pinned Basic family"
               ],
+              "approximate": true,
               "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
               "projectSha256": "2c678fad35efd104541d53bb8c69747bfb94d658549ee046e4757b637cdeb184"
             }
@@ -6608,6 +6632,7 @@
               "limitations": [
                 "random texture tint is outside the constant subset"
               ],
+              "approximate": true,
               "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
               "projectSha256": "2c678fad35efd104541d53bb8c69747bfb94d658549ee046e4757b637cdeb184"
             }
@@ -7134,6 +7159,71 @@
           "raw": 17,
           "authoring": "Off",
           "treatment": "authoring-value"
+        },
+        {
+          "node": 4,
+          "textureTint": [
+            1,
+            0.9923,
+            0.8137,
+            1
+          ],
+          "notEvaluated": [
+            "initial native fragment is not the pinned Basic family"
+          ],
+          "treatment": "texture-tint-initial-value"
+        },
+        {
+          "node": 7,
+          "textureTint": [
+            1,
+            0.9923,
+            0.8137,
+            1
+          ],
+          "notEvaluated": [
+            "initial native fragment is not the pinned Basic family"
+          ],
+          "treatment": "texture-tint-initial-value"
+        },
+        {
+          "node": 8,
+          "textureTint": [
+            0.5,
+            0.4962,
+            0.4069,
+            1
+          ],
+          "notEvaluated": [
+            "initial native fragment is not the pinned Basic family"
+          ],
+          "treatment": "texture-tint-initial-value"
+        },
+        {
+          "node": 10,
+          "textureTint": [
+            1,
+            0.9923,
+            0.8137,
+            1
+          ],
+          "notEvaluated": [
+            "initial native fragment is not the pinned Basic family"
+          ],
+          "treatment": "texture-tint-initial-value"
+        },
+        {
+          "node": 12,
+          "textureTint": [
+            1,
+            0.9923,
+            0.8137,
+            1
+          ],
+          "notEvaluated": [
+            "random texture tint is outside the constant subset"
+          ],
+          "treatment": "texture-tint-initial-value"
         },
         {
           "memberStart": -39,

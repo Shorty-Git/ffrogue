@@ -8,8 +8,8 @@
   "durationFrames": 299,
   "provenance": {
     "planFile": "tools/data/full-import/onion_knight_awakened/skills/adept_wind_art/source/plan.json",
-    "planSha256": "6bde9d9586da8587ad33c37dfcb050cc67fcb270da12e1410863f3e6e1ac11a7",
-    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
+    "planSha256": "ad31eee3c3ba0b50c3d569bf13935c03046180c7cfc64b71bfd3d2b37f7e1496",
+    "playerSha256": "e52a4d776b5f858a6bd4e036105cbc558d9abe40999daed7d06abb15a7d0c6e1",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "b73ea42ef3751a61623e11957f287df4b6afe868f9a7fa0aa92592c70d6f308a"
   },
@@ -26042,10 +26042,16 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
+              "rgba": [
+                1,
+                1,
+                1,
+                1
+              ],
               "limitations": [
                 "initial native fragment is not the pinned Basic family"
               ],
+              "approximate": true,
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
@@ -27109,10 +27115,16 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
+              "rgba": [
+                0.6946063041687012,
+                1,
+                0.8598130941390991,
+                1
+              ],
               "limitations": [
                 "initial native fragment is not the pinned Basic family"
               ],
+              "approximate": true,
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
@@ -53386,6 +53398,43 @@
           "value": "NewtonDynamics",
           "corpusShare": 0.8567,
           "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "gm_3011_baraero.bmb",
+          "node": 8,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.9979,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "gm_3011_baraero.bmb",
+          "node": 8,
+          "field": "Texture1_Color_Scale_Alpha_Value_Initial",
+          "value": "1",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "gm_3011_baraero.bmb",
+          "node": 10,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.7134,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "node": 10,
+          "textureTint": [
+            0.6946,
+            1,
+            0.8598,
+            1
+          ],
+          "notEvaluated": [
+            "initial native fragment is not the pinned Basic family"
+          ],
+          "treatment": "texture-tint-initial-value"
         },
         {
           "member": "gm_3011_baraero.bmb",

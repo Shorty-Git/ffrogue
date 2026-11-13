@@ -8,8 +8,8 @@
   "durationFrames": 242,
   "provenance": {
     "planFile": "tools/data/full-import/firion/skills/lance/source/plan.json",
-    "planSha256": "9d2ab0a2589057d02480c067708d38db59c3daa3168842edc6c114396799af1e",
-    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
+    "planSha256": "eda6bff6e031061d600ea5fa20712ded48177564eaf575b7b703b1337a02449a",
+    "playerSha256": "e52a4d776b5f858a6bd4e036105cbc558d9abe40999daed7d06abb15a7d0c6e1",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "ed2a264390bd24e46ada3beb3ebefa23ffd1f03b980ca0f1adadd689d599e063"
   },
@@ -9898,6 +9898,7 @@
               "limitations": [
                 "random texture tint is outside the constant subset"
               ],
+              "approximate": true,
               "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
               "projectSha256": "69bc4f14f9c94c758f27ec71324366826576635222b3b4c222e455b892a067bb"
             }
@@ -21154,6 +21155,19 @@
             1
           ],
           "treatment": "corner-mean-rgb"
+        },
+        {
+          "node": 6,
+          "textureTint": [
+            1,
+            0.6789,
+            0.2591,
+            1
+          ],
+          "notEvaluated": [
+            "random texture tint is outside the constant subset"
+          ],
+          "treatment": "texture-tint-initial-value"
         },
         {
           "group": 5000141,

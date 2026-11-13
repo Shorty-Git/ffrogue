@@ -8,8 +8,8 @@
   "durationFrames": 502,
   "provenance": {
     "planFile": "tools/data/full-import/terra/skills/flare/source/plan.json",
-    "planSha256": "419e43b82aae83e91259d6481bebf5c2bff92e9eb2b7b988c57894f4e71ca976",
-    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
+    "planSha256": "f876fc43334df10bd22a529a1bc26283f62c910cd95f76f795edfc6c52d88d51",
+    "playerSha256": "e52a4d776b5f858a6bd4e036105cbc558d9abe40999daed7d06abb15a7d0c6e1",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "033e8d2837d0d49b341a51fe479c1b9a87004a8bd2ef3bcdfeeb402047f6f3c1"
   },
@@ -10902,6 +10902,7 @@
               "limitations": [
                 "random texture tint is outside the constant subset"
               ],
+              "approximate": true,
               "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
               "projectSha256": "bc8377fa68bde724e3c2eb90d052c9cee918af9086a732b1d3fb6f050cd7b6b2"
             }
@@ -87761,7 +87762,7 @@
               "region": "arena",
               "primitive": "screen-particle",
               "textureSha256": "30fa72165d6fea1fc72accd8411d3c2d149bc611545859ce82f992ca63e98a73",
-              "origin": "Automatic screen layer: static Particle authored at screen size (190 x 210 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
+              "origin": "Automatic screen layer: static Particle authored at screen size (380 x 420 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           },
           {
@@ -88425,7 +88426,7 @@
               "region": "arena",
               "primitive": "screen-particle",
               "textureSha256": "2255d5a81011f6b52db45f91da143be0979d99eb83975e2b3204ad294e7e02f9",
-              "origin": "Automatic screen layer: static Particle authored at screen size (190 x 210 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
+              "origin": "Automatic screen layer: static Particle authored at screen size (380 x 420 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           },
           {
@@ -89089,7 +89090,7 @@
               "region": "arena",
               "primitive": "screen-particle",
               "textureSha256": "2255d5a81011f6b52db45f91da143be0979d99eb83975e2b3204ad294e7e02f9",
-              "origin": "Automatic screen layer: static Particle authored at screen size (190 x 210 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
+              "origin": "Automatic screen layer: static Particle authored at screen size (380 x 420 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           }
         ],
@@ -108238,10 +108239,16 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
+              "rgba": [
+                0.7137255072593689,
+                0.10060284286737442,
+                0.13957765698432922,
+                1
+              ],
               "limitations": [
                 "initial native fragment is not the pinned Basic family"
               ],
+              "approximate": true,
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
@@ -114569,10 +114576,16 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
+              "rgba": [
+                0.7137255072593689,
+                0.30587995052337646,
+                0.22761735320091248,
+                1
+              ],
               "limitations": [
                 "initial native fragment is not the pinned Basic family"
               ],
+              "approximate": true,
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
@@ -115768,10 +115781,16 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
+              "rgba": [
+                0.8156027793884277,
+                0.34244903922080994,
+                0.21909770369529724,
+                1
+              ],
               "limitations": [
                 "initial native fragment is not the pinned Basic family"
               ],
+              "approximate": true,
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
@@ -124234,6 +124253,19 @@
           "treatment": "corner-mean-rgb"
         },
         {
+          "node": 18,
+          "textureTint": [
+            1,
+            0,
+            0.0185,
+            1
+          ],
+          "notEvaluated": [
+            "random texture tint is outside the constant subset"
+          ],
+          "treatment": "texture-tint-initial-value"
+        },
+        {
           "node": 4,
           "midpoint": [
             128,
@@ -128018,6 +128050,27 @@
         },
         {
           "member": "eff_3029_weak_red_front.bmb",
+          "node": 15,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.7134,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "node": 15,
+          "textureTint": [
+            0.7137,
+            0.1006,
+            0.1396,
+            1
+          ],
+          "notEvaluated": [
+            "initial native fragment is not the pinned Basic family"
+          ],
+          "treatment": "texture-tint-initial-value"
+        },
+        {
+          "member": "eff_3029_weak_red_front.bmb",
           "node": 18,
           "field": "Texture_Basic_TextureDrawType",
           "value": "Basic",
@@ -128175,6 +128228,48 @@
           "value": "0",
           "corpusShare": 0.9998,
           "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "eff_3029_weak_red_front.bmb",
+          "node": 27,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.7187,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "node": 27,
+          "textureTint": [
+            0.7137,
+            0.3059,
+            0.2276,
+            1
+          ],
+          "notEvaluated": [
+            "initial native fragment is not the pinned Basic family"
+          ],
+          "treatment": "texture-tint-initial-value"
+        },
+        {
+          "member": "eff_3029_weak_red_front.bmb",
+          "node": 29,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.7187,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "node": 29,
+          "textureTint": [
+            0.8156,
+            0.3424,
+            0.2191,
+            1
+          ],
+          "notEvaluated": [
+            "initial native fragment is not the pinned Basic family"
+          ],
+          "treatment": "texture-tint-initial-value"
         },
         {
           "member": "eff_3029_weak_red_front.bmb",

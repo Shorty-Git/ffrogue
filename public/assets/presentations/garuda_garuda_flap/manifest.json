@@ -8,8 +8,8 @@
   "durationFrames": 224,
   "provenance": {
     "planFile": "tools/data/enemy-skills/garuda-224848/source/plan.json",
-    "planSha256": "84292a6e7ef13c8dca4e4ab965d48a228ff9430a78f6578b292660b05db4f56f",
-    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
+    "planSha256": "fb43c15d6d4261d0317a7a49a902e73d6512f84b633c0b01b85784986d52a7f4",
+    "playerSha256": "e52a4d776b5f858a6bd4e036105cbc558d9abe40999daed7d06abb15a7d0c6e1",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "bc8622e00c333ebabf13b37b1fafee99c8c46971bb1918e73055c20677db4ae8"
   },
@@ -2583,10 +2583,16 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
+              "rgba": [
+                1,
+                0.28318044543266296,
+                0,
+                1
+              ],
               "limitations": [
                 "initial native fragment is not the pinned Basic family"
               ],
+              "approximate": true,
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
@@ -3583,10 +3589,16 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
+              "rgba": [
+                1,
+                1,
+                1,
+                1
+              ],
               "limitations": [
                 "initial native fragment is not the pinned Basic family"
               ],
+              "approximate": true,
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
@@ -4698,10 +4710,16 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
+              "rgba": [
+                1,
+                0.684109628200531,
+                0.4879014790058136,
+                1
+              ],
               "limitations": [
                 "initial native fragment is not the pinned Basic family"
               ],
+              "approximate": true,
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
@@ -5361,10 +5379,16 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
+              "rgba": [
+                1,
+                0.33490461111068726,
+                0.015010589733719826,
+                1
+              ],
               "limitations": [
                 "initial native fragment is not the pinned Basic family"
               ],
+              "approximate": true,
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
@@ -13026,10 +13050,16 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
+              "rgba": [
+                1,
+                0.33490461111068726,
+                0.015010589733719826,
+                1
+              ],
               "limitations": [
                 "initial native fragment is not the pinned Basic family"
               ],
+              "approximate": true,
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
@@ -16218,10 +16248,16 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
+              "rgba": [
+                1,
+                0.24034596979618073,
+                0,
+                1
+              ],
               "limitations": [
                 "initial native fragment is not the pinned Basic family"
               ],
+              "approximate": true,
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
@@ -18680,6 +18716,7 @@
               "limitations": [
                 "random texture tint is outside the constant subset"
               ],
+              "approximate": true,
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
@@ -19338,6 +19375,7 @@
               "limitations": [
                 "random texture tint is outside the constant subset"
               ],
+              "approximate": true,
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
@@ -20367,7 +20405,7 @@
             "presentationCoverage": {
               "region": "arena",
               "primitive": "screen-particle",
-              "origin": "Automatic screen layer: untextured plane (340 x 240 >= 190); fitted to the visible battlefield instead of a box"
+              "origin": "Automatic screen layer: untextured plane (680 x 480 >= 190); fitted to the visible battlefield instead of a box"
             }
           }
         ],
@@ -52762,6 +52800,93 @@
         },
         {
           "member": "sp_20108_hardshot.bmb",
+          "node": 4,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.7134,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "node": 4,
+          "textureTint": [
+            1,
+            0.2832,
+            0,
+            1
+          ],
+          "notEvaluated": [
+            "initial native fragment is not the pinned Basic family"
+          ],
+          "treatment": "texture-tint-initial-value"
+        },
+        {
+          "member": "sp_20108_hardshot.bmb",
+          "node": 6,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.9979,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "sp_20108_hardshot.bmb",
+          "node": 6,
+          "field": "Texture1_Color_Scale_Alpha_Value_Initial",
+          "value": "1",
+          "corpusShare": 1,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "sp_20108_hardshot.bmb",
+          "node": 8,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.7187,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "node": 8,
+          "textureTint": [
+            1,
+            0.6841,
+            0.4879,
+            1
+          ],
+          "notEvaluated": [
+            "initial native fragment is not the pinned Basic family"
+          ],
+          "treatment": "texture-tint-initial-value"
+        },
+        {
+          "member": "sp_20108_hardshot.bmb",
+          "node": 9,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.7187,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "sp_20108_hardshot.bmb",
+          "node": 9,
+          "field": "Texture1_Color_Scale_Alpha_Value_Initial",
+          "value": "1",
+          "corpusShare": 0.996,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "node": 9,
+          "textureTint": [
+            1,
+            0.3349,
+            0.015,
+            1
+          ],
+          "notEvaluated": [
+            "initial native fragment is not the pinned Basic family"
+          ],
+          "treatment": "texture-tint-initial-value"
+        },
+        {
+          "member": "sp_20108_hardshot.bmb",
           "node": 12,
           "field": "Texture_Basic_TextureDrawType",
           "value": "Basic",
@@ -53039,6 +53164,27 @@
           "value": "0",
           "corpusShare": 0.9998,
           "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "sp_20108_hardshot.bmb",
+          "node": 23,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.7187,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "node": 23,
+          "textureTint": [
+            1,
+            0.3349,
+            0.015,
+            1
+          ],
+          "notEvaluated": [
+            "initial native fragment is not the pinned Basic family"
+          ],
+          "treatment": "texture-tint-initial-value"
         },
         {
           "member": "sp_20108_hardshot.bmb",
@@ -53122,6 +53268,27 @@
         },
         {
           "member": "sp_20108_hardshot.bmb",
+          "node": 29,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.7187,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "node": 29,
+          "textureTint": [
+            1,
+            0.2403,
+            0,
+            1
+          ],
+          "notEvaluated": [
+            "initial native fragment is not the pinned Basic family"
+          ],
+          "treatment": "texture-tint-initial-value"
+        },
+        {
+          "member": "sp_20108_hardshot.bmb",
           "node": 31,
           "field": "Texture_Basic_TextureDrawType",
           "value": "Basic",
@@ -53201,6 +53368,19 @@
           "treatment": "authoring-free-corpus-default"
         },
         {
+          "node": 34,
+          "textureTint": [
+            1,
+            0.9473,
+            0.828,
+            1
+          ],
+          "notEvaluated": [
+            "random texture tint is outside the constant subset"
+          ],
+          "treatment": "texture-tint-initial-value"
+        },
+        {
           "member": "sp_20108_hardshot.bmb",
           "node": 35,
           "field": "Texture_Basic_TextureDrawType",
@@ -53239,6 +53419,19 @@
           "value": "0",
           "corpusShare": 0.9993,
           "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "node": 35,
+          "textureTint": [
+            1,
+            0.3349,
+            0.015,
+            1
+          ],
+          "notEvaluated": [
+            "random texture tint is outside the constant subset"
+          ],
+          "treatment": "texture-tint-initial-value"
         }
       ],
       "boundary": "Visual approximation: these source curves are not evaluated; the effect is not a native-fidelity reconstruction."

@@ -8,8 +8,8 @@
   "durationFrames": 269,
   "provenance": {
     "planFile": "tools/data/full-import/clive/skills/flames_of_rebirth/source/plan.json",
-    "planSha256": "a31113abb79f881514ae28b36a7eeb719296044d2c8f0b54dc94fbfe3b2e435d",
-    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
+    "planSha256": "57edc5da3c513d34294a7be04205c6e3d491d35c090a06434660c218c63db435",
+    "playerSha256": "e52a4d776b5f858a6bd4e036105cbc558d9abe40999daed7d06abb15a7d0c6e1",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "a096a23c5441bf2dceed8032f9a62dc73dc76aac0a109c9ab03066b0b8897057"
   },
@@ -3280,6 +3280,7 @@
               "limitations": [
                 "random texture tint is outside the constant subset"
               ],
+              "approximate": true,
               "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
               "projectSha256": "c9ab8c18c32b19e99243ed19cedc1b7e4310e3c572edbe25f0d0e3fefa5b12f8"
             }
@@ -130129,6 +130130,19 @@
     "approximations": {
       "profile": "held-constant-unverified-curves-v1",
       "curves": [
+        {
+          "node": 5,
+          "textureTint": [
+            0.8364,
+            0.2519,
+            0.0406,
+            1
+          ],
+          "notEvaluated": [
+            "random texture tint is outside the constant subset"
+          ],
+          "treatment": "texture-tint-initial-value"
+        },
         {
           "droppedNode": 7,
           "typeId": 7,

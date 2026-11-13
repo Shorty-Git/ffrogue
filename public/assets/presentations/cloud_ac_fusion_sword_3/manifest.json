@@ -8,8 +8,8 @@
   "durationFrames": 421,
   "provenance": {
     "planFile": "tools/data/wave5-20261108/fusion_sword_3/source/plan.json",
-    "planSha256": "0aafa71249747e8c92e060f3685e5aa667a2954772b8966b63761ad3a7a0739c",
-    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
+    "planSha256": "9c7ef2d2fe52b0b9238a7b8781753ab17ba4a5dc0239fecf570f61b1ab61e529",
+    "playerSha256": "e52a4d776b5f858a6bd4e036105cbc558d9abe40999daed7d06abb15a7d0c6e1",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "6bb8cece6c06b5aae071115ce725fb23c4c95871ac31536a42de32ca51ff1592"
   },
@@ -18834,6 +18834,7 @@
               "limitations": [
                 "random texture tint is outside the constant subset"
               ],
+              "approximate": true,
               "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
               "projectSha256": "0b4483d95b7eaceb6e7b6c5a3bce6c2f349a87f857cbd6b68a0d7b9b28b1680d"
             }
@@ -24148,7 +24149,7 @@
             "presentationCoverage": {
               "region": "arena",
               "primitive": "screen-particle",
-              "origin": "Automatic screen layer: untextured plane (412.5 x 225 >= 190); fitted to the visible battlefield instead of a box"
+              "origin": "Automatic screen layer: untextured plane (825 x 450 >= 190); fitted to the visible battlefield instead of a box"
             }
           }
         ],
@@ -26406,6 +26407,19 @@
           "value": "0",
           "corpusShare": 0.9998,
           "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "node": 5,
+          "textureTint": [
+            0.5561,
+            0.087,
+            0.0794,
+            1
+          ],
+          "notEvaluated": [
+            "random texture tint is outside the constant subset"
+          ],
+          "treatment": "texture-tint-initial-value"
         },
         {
           "member": "eff_fadeblack_a50_f180.bmb",

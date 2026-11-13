@@ -8,8 +8,8 @@
   "durationFrames": 281,
   "provenance": {
     "planFile": "tools/data/enemy-skills/air_buster-167030/source/plan.json",
-    "planSha256": "c76048cca72579ce3edfe9ac1f3ffe60148acdcf07c654c54860076dcb77019c",
-    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
+    "planSha256": "166f247987fb4242965d23e9b8f8d74bc13cfede9931a2abddf5d8b3c8f283ba",
+    "playerSha256": "e52a4d776b5f858a6bd4e036105cbc558d9abe40999daed7d06abb15a7d0c6e1",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "f29676109a743dea3d8943a2ce0fa4479867932d1d36599c3a7a110c5ad120a0"
   },
@@ -14111,10 +14111,16 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
+              "rgba": [
+                0.747469961643219,
+                0.6604324579238892,
+                1,
+                1
+              ],
               "limitations": [
                 "initial native fragment is not the pinned Basic family"
               ],
+              "approximate": true,
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
@@ -15559,10 +15565,16 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
+              "rgba": [
+                0.39576640725135803,
+                0,
+                1,
+                1
+              ],
               "limitations": [
                 "initial native fragment is not the pinned Basic family"
               ],
+              "approximate": true,
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
@@ -80196,6 +80208,64 @@
           "value": "0",
           "corpusShare": 0.9998,
           "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "atk_energyball_001_purple.bmb",
+          "node": 23,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.7134,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "atk_energyball_001_purple.bmb",
+          "node": 23,
+          "field": "Texture1_Color_Scale_Alpha_Value_Initial",
+          "value": "1",
+          "corpusShare": 0.9989,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "node": 23,
+          "textureTint": [
+            0.7475,
+            0.6604,
+            1,
+            1
+          ],
+          "notEvaluated": [
+            "initial native fragment is not the pinned Basic family"
+          ],
+          "treatment": "texture-tint-initial-value"
+        },
+        {
+          "member": "atk_energyball_001_purple.bmb",
+          "node": 25,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.7134,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "atk_energyball_001_purple.bmb",
+          "node": 25,
+          "field": "Texture1_Color_Scale_Alpha_Value_Initial",
+          "value": "1",
+          "corpusShare": 0.9989,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "node": 25,
+          "textureTint": [
+            0.3958,
+            0,
+            1,
+            1
+          ],
+          "notEvaluated": [
+            "initial native fragment is not the pinned Basic family"
+          ],
+          "treatment": "texture-tint-initial-value"
         },
         {
           "member": "atk_energyball_001_purple.bmb",

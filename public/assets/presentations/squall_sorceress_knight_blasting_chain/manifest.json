@@ -8,8 +8,8 @@
   "durationFrames": 291,
   "provenance": {
     "planFile": "tools/data/full-import/squall_sorceress_knight/skills/blasting_chain/source/plan.json",
-    "planSha256": "6665514948f824396a104199de822946ee1569f19bdf4c131454e1ce12acf2bb",
-    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
+    "planSha256": "98e99b89d1affcaa2259f0c9b609860525e1d6fbff2ece9642b03895333cdc5c",
+    "playerSha256": "e52a4d776b5f858a6bd4e036105cbc558d9abe40999daed7d06abb15a7d0c6e1",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "fd9ea06c3175af0bde6070b3a2a762982598db310bf08e0a15c32849bae06c16"
   },
@@ -3272,6 +3272,7 @@
               "limitations": [
                 "random texture tint is outside the constant subset"
               ],
+              "approximate": true,
               "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
               "projectSha256": "39268e93010dadb010a85c57d52cc32e5a08f3337bc92596736eaf9d188c0d7a"
             }
@@ -7592,7 +7593,21 @@
     },
     "approximations": {
       "profile": "held-constant-unverified-curves-v1",
-      "curves": [],
+      "curves": [
+        {
+          "node": 5,
+          "textureTint": [
+            0.5106,
+            0.5106,
+            0.5106,
+            1
+          ],
+          "notEvaluated": [
+            "random texture tint is outside the constant subset"
+          ],
+          "treatment": "texture-tint-initial-value"
+        }
+      ],
       "boundary": "Visual approximation: these source curves are not evaluated; the effect is not a native-fidelity reconstruction."
     }
   },

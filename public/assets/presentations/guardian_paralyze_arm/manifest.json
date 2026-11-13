@@ -8,8 +8,8 @@
   "durationFrames": 222,
   "provenance": {
     "planFile": "tools/data/enemy-skills/guardian-216370/source/plan.json",
-    "planSha256": "4b18005d9536b5a42cf67e068222c1fee8ac1389826f64f28c228db1ceb56b1c",
-    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
+    "planSha256": "7cb92591fd95486191118b0a3273617f35e48eba5289f3620cea7cf8e5de3dbe",
+    "playerSha256": "e52a4d776b5f858a6bd4e036105cbc558d9abe40999daed7d06abb15a7d0c6e1",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "eef0a0f4f025bbf7af16f0dfa43236801617c02585265c1c2fa6bbe310f2c9ae"
   },
@@ -12746,6 +12746,7 @@
               "limitations": [
                 "random texture tint is outside the constant subset"
               ],
+              "approximate": true,
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
@@ -23151,6 +23152,19 @@
           "value": "0",
           "corpusShare": 0.9993,
           "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "node": 24,
+          "textureTint": [
+            0.9979,
+            1,
+            1,
+            1
+          ],
+          "notEvaluated": [
+            "random texture tint is outside the constant subset"
+          ],
+          "treatment": "texture-tint-initial-value"
         },
         {
           "member": "bm_2003_thunder1.bmb",

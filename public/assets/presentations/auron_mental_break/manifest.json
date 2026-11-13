@@ -8,8 +8,8 @@
   "durationFrames": 198,
   "provenance": {
     "planFile": "tools/data/full-import/auron/skills/mental_break/source/plan.json",
-    "planSha256": "170f16baf097daee85012c5dbff1eb0545a24d42c153122c060831868fd279dc",
-    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
+    "planSha256": "b3adda1a68809da34871eee5a2b67c59d671271b1b91f2f5ac89a22a0b8dfd99",
+    "playerSha256": "e52a4d776b5f858a6bd4e036105cbc558d9abe40999daed7d06abb15a7d0c6e1",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "e7c472f53f7a5de9d4f5d93adaea05cdd53f886974d29cdea8783aa58703ae78"
   },
@@ -4794,6 +4794,7 @@
               "limitations": [
                 "random texture tint is outside the constant subset"
               ],
+              "approximate": true,
               "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
               "projectSha256": "2588226edb70b9f52c7a3a986aea79698331816fdd7909fe3acf56db156a304b"
             }
@@ -6203,6 +6204,7 @@
               "limitations": [
                 "random texture tint is outside the constant subset"
               ],
+              "approximate": true,
               "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
               "projectSha256": "2588226edb70b9f52c7a3a986aea79698331816fdd7909fe3acf56db156a304b"
             }
@@ -7244,6 +7246,7 @@
               "limitations": [
                 "random texture tint is outside the constant subset"
               ],
+              "approximate": true,
               "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
               "projectSha256": "2588226edb70b9f52c7a3a986aea79698331816fdd7909fe3acf56db156a304b"
             }
@@ -8240,10 +8243,16 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
+              "rgba": [
+                1,
+                1,
+                1,
+                1
+              ],
               "limitations": [
                 "initial native fragment is not the pinned Basic family"
               ],
+              "approximate": true,
               "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
               "projectSha256": "2588226edb70b9f52c7a3a986aea79698331816fdd7909fe3acf56db156a304b"
             }
@@ -9977,10 +9986,16 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
+              "rgba": [
+                0,
+                0.314591438,
+                0.5,
+                1
+              ],
               "limitations": [
                 "initial native fragment is not the pinned Basic family"
               ],
+              "approximate": true,
               "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
               "projectSha256": "2588226edb70b9f52c7a3a986aea79698331816fdd7909fe3acf56db156a304b"
             }
@@ -11898,6 +11913,7 @@
               "limitations": [
                 "random texture tint is outside the constant subset"
               ],
+              "approximate": true,
               "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
               "projectSha256": "2588226edb70b9f52c7a3a986aea79698331816fdd7909fe3acf56db156a304b"
             }
@@ -12930,6 +12946,7 @@
               "limitations": [
                 "random texture tint is outside the constant subset"
               ],
+              "approximate": true,
               "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
               "projectSha256": "2588226edb70b9f52c7a3a986aea79698331816fdd7909fe3acf56db156a304b"
             }
@@ -16594,6 +16611,84 @@
             1
           ],
           "treatment": "corner-mean-rgb"
+        },
+        {
+          "node": 4,
+          "textureTint": [
+            0,
+            0.6292,
+            1,
+            1
+          ],
+          "notEvaluated": [
+            "random texture tint is outside the constant subset"
+          ],
+          "treatment": "texture-tint-initial-value"
+        },
+        {
+          "node": 7,
+          "textureTint": [
+            0,
+            0.6292,
+            1,
+            1
+          ],
+          "notEvaluated": [
+            "random texture tint is outside the constant subset"
+          ],
+          "treatment": "texture-tint-initial-value"
+        },
+        {
+          "node": 9,
+          "textureTint": [
+            0,
+            0.6292,
+            1,
+            1
+          ],
+          "notEvaluated": [
+            "random texture tint is outside the constant subset"
+          ],
+          "treatment": "texture-tint-initial-value"
+        },
+        {
+          "node": 14,
+          "textureTint": [
+            0,
+            0.3146,
+            0.5,
+            1
+          ],
+          "notEvaluated": [
+            "initial native fragment is not the pinned Basic family"
+          ],
+          "treatment": "texture-tint-initial-value"
+        },
+        {
+          "node": 18,
+          "textureTint": [
+            0,
+            0.6292,
+            1,
+            1
+          ],
+          "notEvaluated": [
+            "random texture tint is outside the constant subset"
+          ],
+          "treatment": "texture-tint-initial-value"
+        },
+        {
+          "node": 20,
+          "textureTint": [
+            0,
+            0.6292,
+            1,
+            1
+          ],
+          "notEvaluated": [
+            "random texture tint is outside the constant subset"
+          ],
+          "treatment": "texture-tint-initial-value"
         }
       ],
       "boundary": "Visual approximation: these source curves are not evaluated; the effect is not a native-fidelity reconstruction."

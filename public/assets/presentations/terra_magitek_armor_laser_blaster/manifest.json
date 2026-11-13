@@ -8,8 +8,8 @@
   "durationFrames": 259,
   "provenance": {
     "planFile": "tools/data/full-import/terra_magitek_armor/skills/laser_blaster/source/plan.json",
-    "planSha256": "9c0f8077a2237bf5dccfe428b9ccaf4b678e7282d184cf76c897f513c9f9ff37",
-    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
+    "planSha256": "74025ce0aa1bb845fa31f959d690fc375a4aa34d3db7e65d86f3e9d7fa1ac027",
+    "playerSha256": "e52a4d776b5f858a6bd4e036105cbc558d9abe40999daed7d06abb15a7d0c6e1",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "a838ec76d6b48cd178732ab634a0b6c29c7bf858653f4c45a4d6244f4648096d"
   },
@@ -3390,6 +3390,7 @@
               "limitations": [
                 "random texture tint is outside the constant subset"
               ],
+              "approximate": true,
               "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
               "projectSha256": "293bb4c0d2cff3d948f18f7a773beee3adf90a614cf4213532e0205f06c39c80"
             }
@@ -6885,6 +6886,7 @@
               "limitations": [
                 "random texture tint is outside the constant subset"
               ],
+              "approximate": true,
               "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
               "projectSha256": "293bb4c0d2cff3d948f18f7a773beee3adf90a614cf4213532e0205f06c39c80"
             }
@@ -21986,6 +21988,7 @@
               "limitations": [
                 "random texture tint is outside the constant subset"
               ],
+              "approximate": true,
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
@@ -32316,6 +32319,19 @@
           "value": "0",
           "corpusShare": 0.9993,
           "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "node": 22,
+          "textureTint": [
+            0.9979,
+            1,
+            1,
+            1
+          ],
+          "notEvaluated": [
+            "random texture tint is outside the constant subset"
+          ],
+          "treatment": "texture-tint-initial-value"
         },
         {
           "member": "lb_0106_bedeal3.bmb",

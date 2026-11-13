@@ -8,8 +8,8 @@
   "durationFrames": 670,
   "provenance": {
     "planFile": "tools/data/full-import/aerith/skills/great_gospel/source/plan.json",
-    "planSha256": "87738abb95067812138859ca19d91b9b5d8bcb62423b65c142b5ddaa1169a1cb",
-    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
+    "planSha256": "2c0379e92eaf8c4fdeb6d3e03afd08136aac6540707a9e042b6a13ef49ab1d3a",
+    "playerSha256": "e52a4d776b5f858a6bd4e036105cbc558d9abe40999daed7d06abb15a7d0c6e1",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "a22e4b4ffc90a1ad812d96ced476e57b33b4432a9a3e405b9c0c7ae9fa26d87a"
   },
@@ -16059,10 +16059,16 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
+              "rgba": [
+                0.12056737393140793,
+                0.12056737393140793,
+                0.12056737393140793,
+                1
+              ],
               "limitations": [
                 "initial native fragment is not the pinned Basic family"
               ],
+              "approximate": true,
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
@@ -21328,7 +21334,7 @@
               "region": "arena",
               "primitive": "screen-particle",
               "textureSha256": "2b08f95abeaef3ac1f58a04c8d2902496721df7bac90a61c37db46d8445ce321",
-              "origin": "Automatic screen layer: static Particle authored at screen size (210 x 210 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
+              "origin": "Automatic screen layer: static Particle authored at screen size (420 x 420 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           },
           {
@@ -22768,7 +22774,7 @@
               "region": "arena",
               "primitive": "screen-particle",
               "textureSha256": "3b03488b361554f606c86d64c5b745640bdc722370361d78516ec2818864ed7d",
-              "origin": "Automatic screen layer: static Particle authored at screen size (240 x 240 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
+              "origin": "Automatic screen layer: static Particle authored at screen size (480 x 480 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           },
           {
@@ -23829,7 +23835,7 @@
               "region": "arena",
               "primitive": "screen-particle",
               "textureSha256": "2b08f95abeaef3ac1f58a04c8d2902496721df7bac90a61c37db46d8445ce321",
-              "origin": "Automatic screen layer: static Particle authored at screen size (210 x 210 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
+              "origin": "Automatic screen layer: static Particle authored at screen size (420 x 420 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           },
           {
@@ -33069,6 +33075,12 @@
               "limitations": [],
               "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
               "projectSha256": "8c6edfb323a183c4fb328aa458b67bfaea45ce254a53ef95d9f663d82c04efa2"
+            },
+            "presentationCoverage": {
+              "region": "arena",
+              "primitive": "screen-particle",
+              "textureSha256": "b1769cf25c7f5265a489cb221fa96a2c21f91d5f4365389610b191fbedc72440",
+              "origin": "Automatic screen layer: static Particle authored at screen size (222 x 222 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           },
           {
@@ -33741,7 +33753,7 @@
               "region": "arena",
               "primitive": "screen-particle",
               "textureSha256": "b1769cf25c7f5265a489cb221fa96a2c21f91d5f4365389610b191fbedc72440",
-              "origin": "Automatic screen layer: static Particle authored at screen size (666 x 666 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
+              "origin": "Automatic screen layer: static Particle authored at screen size (1332 x 1332 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           }
         ],
@@ -43882,6 +43894,27 @@
           "value": "0",
           "corpusShare": 1,
           "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "lb_207000405_FFVII_Aerith_back_center.bmb",
+          "node": 18,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.7134,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "node": 18,
+          "textureTint": [
+            0.1206,
+            0.1206,
+            0.1206,
+            1
+          ],
+          "notEvaluated": [
+            "initial native fragment is not the pinned Basic family"
+          ],
+          "treatment": "texture-tint-initial-value"
         },
         {
           "member": "lb_207000405_FFVII_Aerith_back_center.bmb",

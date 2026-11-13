@@ -8,8 +8,8 @@
   "durationFrames": 267,
   "provenance": {
     "planFile": "tools/data/full-import/lightning_wondrous_flash/skills/blitz_lightning/source/plan.json",
-    "planSha256": "a7aca5862e1b463a226226906daa9c97d49472def8989072b5c23a68c1c80c9b",
-    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
+    "planSha256": "d8b1575f36b35ea9bd96237c812ea83559436abaac057f91a0db8ba0c0124e14",
+    "playerSha256": "e52a4d776b5f858a6bd4e036105cbc558d9abe40999daed7d06abb15a7d0c6e1",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "43bc9a5fde6e35fc7d345a7f0b003a73ea0e1c14d0a8d08723ff2bcf71bd1cde"
   },
@@ -3276,6 +3276,7 @@
               "limitations": [
                 "random texture tint is outside the constant subset"
               ],
+              "approximate": true,
               "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
               "projectSha256": "39268e93010dadb010a85c57d52cc32e5a08f3337bc92596736eaf9d188c0d7a"
             }
@@ -7628,7 +7629,21 @@
     },
     "approximations": {
       "profile": "held-constant-unverified-curves-v1",
-      "curves": [],
+      "curves": [
+        {
+          "node": 5,
+          "textureTint": [
+            0.5106,
+            0.5106,
+            0.5106,
+            1
+          ],
+          "notEvaluated": [
+            "random texture tint is outside the constant subset"
+          ],
+          "treatment": "texture-tint-initial-value"
+        }
+      ],
       "boundary": "Visual approximation: these source curves are not evaluated; the effect is not a native-fidelity reconstruction."
     }
   },

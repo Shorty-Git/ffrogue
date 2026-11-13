@@ -8,8 +8,8 @@
   "durationFrames": 269,
   "provenance": {
     "planFile": "tools/data/full-import/ramza_unsung_hero/skills/knight_house_s_blade/source/plan.json",
-    "planSha256": "70a72e7fd1f39ef839a414c3859ed16aa445e330147cc78ce6b5cb1ba04005f1",
-    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
+    "planSha256": "35a4e85f27baceeb8c01b4991cea2fda9492e5990669ac25b07e0542ca28a899",
+    "playerSha256": "e52a4d776b5f858a6bd4e036105cbc558d9abe40999daed7d06abb15a7d0c6e1",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "4ee7497a4dd4339e78213362a889f52bc195f73d6a82a14340ed1e4f859a32cc"
   },
@@ -3276,6 +3276,7 @@
               "limitations": [
                 "random texture tint is outside the constant subset"
               ],
+              "approximate": true,
               "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
               "projectSha256": "7702c68c4a8bce073b83d283687f749503dc45a57adbf29502712a671461666f"
             }
@@ -7628,7 +7629,21 @@
     },
     "approximations": {
       "profile": "held-constant-unverified-curves-v1",
-      "curves": [],
+      "curves": [
+        {
+          "node": 5,
+          "textureTint": [
+            0,
+            0.4909,
+            0.5561,
+            1
+          ],
+          "notEvaluated": [
+            "random texture tint is outside the constant subset"
+          ],
+          "treatment": "texture-tint-initial-value"
+        }
+      ],
       "boundary": "Visual approximation: these source curves are not evaluated; the effect is not a native-fidelity reconstruction."
     }
   },

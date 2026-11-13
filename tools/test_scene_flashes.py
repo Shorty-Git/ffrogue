@@ -82,7 +82,7 @@ class FlashRoleTests(unittest.TestCase):
             path=Path(folder)/'grad.png';im=Image.new('RGBA',(2,2),(0,0,0,255));im.putpixel((0,1),(200,200,200,255));im.save(path)
             data=self._particle_plan(path,life=120,alpha_keys=());self.assertEqual(annotate_screen_backdrops(data),1)
             self.assertEqual(data['effects'][0]['nodes'][1]['presentationCoverage']['primitive'],'screen-particle')
-            self.assertEqual(annotate_screen_backdrops(self._particle_plan(path,size=120,alpha_keys=())),0)
+            self.assertEqual(annotate_screen_backdrops(self._particle_plan(path,size=90,alpha_keys=())),0)
             self.assertEqual(annotate_screen_backdrops(self._particle_plan(path,anchor='caster-unit',alpha_keys=())),0)
             self.assertEqual(annotate_screen_backdrops(self._particle_plan(path,combination='Add',alpha_keys=())),1)
             # A uniform translucent plane is a one-axis gradient too (accepted); a patterned plane is a screen layer as well since 2026-11-12.
@@ -99,7 +99,7 @@ class FlashRoleTests(unittest.TestCase):
             data=self._particle_plan(path,anchor='target-unit',life=240,alpha_keys=(1,1))
             self.assertEqual(annotate_white_flashes(data),0);self.assertEqual(annotate_uniform_planes(data),1)
             self.assertIn('uniform-colour plane',data['effects'][0]['nodes'][1]['presentationCoverage']['origin'])
-            self.assertEqual(annotate_uniform_planes(self._particle_plan(path,size=180)),0)
+            self.assertEqual(annotate_uniform_planes(self._particle_plan(path,size=90)),0)
             self.assertEqual(annotate_uniform_planes(self._particle_plan(path,combination='Add')),0)
             # Off the screen anchor a moving plane stays as it is; on it, the motion is replaced.
             for anchor,expected in [('target-unit',0),('screen',1)]:
@@ -145,7 +145,7 @@ class FlashRoleTests(unittest.TestCase):
             self.assertEqual(annotate_white_flashes(self._particle_plan(path,life=90)),0)
             self.assertEqual(annotate_white_flashes(self._particle_plan(path,alpha_keys=(1,1))),0)
             self.assertEqual(annotate_white_flashes(self._particle_plan(path,color=(0,0,0))),0)
-            self.assertEqual(annotate_white_flashes(self._particle_plan(path,size=100)),0)
+            self.assertEqual(annotate_white_flashes(self._particle_plan(path,size=90)),0)
 
 
 class ScreenQuadTests(unittest.TestCase):

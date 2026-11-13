@@ -8,8 +8,8 @@
   "durationFrames": 502,
   "provenance": {
     "planFile": "tools/data/full-import/terra_magitek_warrior/skills/chaos_flare_ii/source/plan.json",
-    "planSha256": "f1952fa822e4807a228a95ab9e88553f5e90d21a297636085fb77a9f0987b167",
-    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
+    "planSha256": "8d97dd10ac68fcaa55263d182b4e99e932ad3c3a1d16818df46f79bce26ad3cb",
+    "playerSha256": "e52a4d776b5f858a6bd4e036105cbc558d9abe40999daed7d06abb15a7d0c6e1",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "4cf9276e42b565640b67ebae7b9ec75e31c68f1a65bd7db10c95bd9771591b7d"
   },
@@ -28887,6 +28887,7 @@
               "limitations": [
                 "random texture tint is outside the constant subset"
               ],
+              "approximate": true,
               "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
               "projectSha256": "bc8377fa68bde724e3c2eb90d052c9cee918af9086a732b1d3fb6f050cd7b6b2"
             }
@@ -107547,6 +107548,19 @@
             1
           ],
           "treatment": "corner-mean-rgb"
+        },
+        {
+          "node": 18,
+          "textureTint": [
+            1,
+            0,
+            0.0185,
+            1
+          ],
+          "notEvaluated": [
+            "random texture tint is outside the constant subset"
+          ],
+          "treatment": "texture-tint-initial-value"
         },
         {
           "channel": "Texture1_Translate_Speed_Curve",

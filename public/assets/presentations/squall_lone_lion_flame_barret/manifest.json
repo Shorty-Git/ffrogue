@@ -8,8 +8,8 @@
   "durationFrames": 421,
   "provenance": {
     "planFile": "tools/data/full-import/squall_lone_lion/skills/flame_barret/source/plan.json",
-    "planSha256": "b20976732a50d07d018a678651507d9a861468ab9074a9b5fdd8b8febc275817",
-    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
+    "planSha256": "522e2363e0c9232f6be5ee08d7455e9e752b322b2fe695a9e649905ed978df60",
+    "playerSha256": "e52a4d776b5f858a6bd4e036105cbc558d9abe40999daed7d06abb15a7d0c6e1",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "a1b120e60b04f1436f475237567df59a6cb4ef964017c3d57ced4e1300ae358e"
   },
@@ -2062,6 +2062,7 @@
               "limitations": [
                 "random texture tint is outside the constant subset"
               ],
+              "approximate": true,
               "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
               "projectSha256": "d06aaf95dd14a80348abb7a35dfdb5c2aaf92dc06339d8957f077e222fcffcca"
             }
@@ -2793,6 +2794,7 @@
               "limitations": [
                 "random texture tint is outside the constant subset"
               ],
+              "approximate": true,
               "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
               "projectSha256": "d06aaf95dd14a80348abb7a35dfdb5c2aaf92dc06339d8957f077e222fcffcca"
             }
@@ -7295,6 +7297,7 @@
               "limitations": [
                 "random texture tint is outside the constant subset"
               ],
+              "approximate": true,
               "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
               "projectSha256": "d06aaf95dd14a80348abb7a35dfdb5c2aaf92dc06339d8957f077e222fcffcca"
             }
@@ -15957,7 +15960,7 @@
             "presentationCoverage": {
               "region": "arena",
               "primitive": "screen-particle",
-              "origin": "Automatic screen layer: untextured plane (412.5 x 225 >= 190); fitted to the visible battlefield instead of a box"
+              "origin": "Automatic screen layer: untextured plane (825 x 450 >= 190); fitted to the visible battlefield instead of a box"
             }
           }
         ],
@@ -32914,10 +32917,16 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
+              "rgba": [
+                1,
+                1,
+                1,
+                1
+              ],
               "limitations": [
                 "animated texture tint is outside the constant subset"
               ],
+              "approximate": true,
               "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
               "projectSha256": "48fa81ac7fc770a2f16c7b242069cbe3fdb1f41fd452905a1cb5f6da95172d63"
             }
@@ -34677,10 +34686,16 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
+              "rgba": [
+                1,
+                1,
+                1,
+                1
+              ],
               "limitations": [
                 "animated texture tint is outside the constant subset"
               ],
+              "approximate": true,
               "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
               "projectSha256": "48fa81ac7fc770a2f16c7b242069cbe3fdb1f41fd452905a1cb5f6da95172d63"
             }
@@ -36440,10 +36455,16 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
+              "rgba": [
+                1,
+                1,
+                1,
+                1
+              ],
               "limitations": [
                 "animated texture tint is outside the constant subset"
               ],
+              "approximate": true,
               "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
               "projectSha256": "48fa81ac7fc770a2f16c7b242069cbe3fdb1f41fd452905a1cb5f6da95172d63"
             }
@@ -40235,6 +40256,19 @@
     "approximations": {
       "profile": "held-constant-unverified-curves-v1",
       "curves": [
+        {
+          "node": 12,
+          "textureTint": [
+            0.5561,
+            0.087,
+            0.0794,
+            1
+          ],
+          "notEvaluated": [
+            "random texture tint is outside the constant subset"
+          ],
+          "treatment": "texture-tint-initial-value"
+        },
         {
           "member": "eff_fadeblack_a50_f180.bmb",
           "node": 0,

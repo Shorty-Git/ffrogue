@@ -8,8 +8,8 @@
   "durationFrames": 610,
   "provenance": {
     "planFile": "tools/data/omnislash-20261107/intake/cloud-207000105/plan.json",
-    "planSha256": "8ebf8781eb09cebef7a8d6905486d4f02364a69634ce232b81c5dd584caa0472",
-    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
+    "planSha256": "56f23ae84a983134f3b65b1441a2c13f7af641dff985021b1f5b29db37655ea2",
+    "playerSha256": "e52a4d776b5f858a6bd4e036105cbc558d9abe40999daed7d06abb15a7d0c6e1",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "be76add8cfe3f0c89d1cb04862c1c3743afbe6773c31941a424586e3cd53268b"
   },
@@ -7141,10 +7141,16 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
+              "rgba": [
+                0,
+                0.676703,
+                1,
+                1
+              ],
               "limitations": [
                 "animated texture tint is outside the constant subset"
               ],
+              "approximate": true,
               "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
               "projectSha256": "023d3f7b660a00ef238f4a3ced4564230ce053032a57c178e68f2a08afa0ed1b"
             }
@@ -59917,10 +59923,16 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
+              "rgba": [
+                0,
+                0.676703,
+                1,
+                1
+              ],
               "limitations": [
                 "animated texture tint is outside the constant subset"
               ],
+              "approximate": true,
               "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
               "projectSha256": "dce147a23267408f02bc63d81b198fb761c800f21cc57ffda49859aeffad7dc6"
             }
@@ -70636,10 +70648,16 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
+              "rgba": [
+                0,
+                0.676703,
+                1,
+                1
+              ],
               "limitations": [
                 "animated texture tint is outside the constant subset"
               ],
+              "approximate": true,
               "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
               "projectSha256": "ec1616beeb036ea323d53ff58ff913bb370ca5c566cb328b2ef0a2156ee7fea3"
             }
@@ -84718,6 +84736,19 @@
           "treatment": "held-constant"
         },
         {
+          "node": 11,
+          "textureTint": [
+            0,
+            0.6767,
+            1,
+            1
+          ],
+          "notEvaluated": [
+            "animated texture tint is outside the constant subset"
+          ],
+          "treatment": "texture-tint-initial-value"
+        },
+        {
           "node": 10,
           "quadColors": "Constant-corners",
           "rgb": [
@@ -84854,6 +84885,19 @@
         },
         {
           "node": 10,
+          "textureTint": [
+            0,
+            0.6767,
+            1,
+            1
+          ],
+          "notEvaluated": [
+            "animated texture tint is outside the constant subset"
+          ],
+          "treatment": "texture-tint-initial-value"
+        },
+        {
+          "node": 10,
           "quadColors": "Constant-corners",
           "rgb": [
             1,
@@ -84986,6 +85030,19 @@
           "channel": "Rotate_Value_Curve",
           "keys": 2,
           "treatment": "held-constant"
+        },
+        {
+          "node": 10,
+          "textureTint": [
+            0,
+            0.6767,
+            1,
+            1
+          ],
+          "notEvaluated": [
+            "animated texture tint is outside the constant subset"
+          ],
+          "treatment": "texture-tint-initial-value"
         },
         {
           "channel": "Texture1_Translate_Value_Curve",

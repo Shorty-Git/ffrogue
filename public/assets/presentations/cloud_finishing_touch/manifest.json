@@ -8,8 +8,8 @@
   "durationFrames": 336,
   "provenance": {
     "planFile": "tools/data/wave6-20261108/finishing_touch/source/plan.json",
-    "planSha256": "ab1272fcaffaa07cb4ac27dccaf20ba0a6f3262537fc906aa366b38a74bcaf38",
-    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
+    "planSha256": "540170e07d86263a855b3056de9cd5698a346675918b99adbb03616f46af8c48",
+    "playerSha256": "e52a4d776b5f858a6bd4e036105cbc558d9abe40999daed7d06abb15a7d0c6e1",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "6fa45a6955dfa87f62e2ce0d8f0b57abc1d0010c5e85646ec03830f2d6fbaffb"
   },
@@ -29061,10 +29061,16 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
+              "rgba": [
+                1,
+                1,
+                1,
+                1
+              ],
               "limitations": [
                 "initial native fragment is not the pinned Basic family"
               ],
+              "approximate": true,
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
@@ -64840,6 +64846,14 @@
           "field": "Texture1_Color_Scale_Alpha_Value_Range",
           "value": "0",
           "corpusShare": 0.9998,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "atk_vortex_blue.bmb",
+          "node": 14,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.7187,
           "treatment": "authoring-free-corpus-default"
         },
         {

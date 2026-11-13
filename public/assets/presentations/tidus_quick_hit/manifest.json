@@ -8,8 +8,8 @@
   "durationFrames": 279,
   "provenance": {
     "planFile": "tools/data/full-import/tidus/skills/quick_hit/source/plan.json",
-    "planSha256": "7604178621eb2d7ec9abb5f3990b026456ee902a2bd130b7abdf0c1cff23ce2b",
-    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
+    "planSha256": "75ac56f40c8eb6c29d777abed50f4a8f075648a25f8dd55b4cfcfc2d79c8aaf1",
+    "playerSha256": "e52a4d776b5f858a6bd4e036105cbc558d9abe40999daed7d06abb15a7d0c6e1",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "8fb7f12edc12ed1e372dd7b7f7bd44b98261b880838c16851756fae8bd3b1135"
   },
@@ -3288,6 +3288,7 @@
               "limitations": [
                 "random texture tint is outside the constant subset"
               ],
+              "approximate": true,
               "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
               "projectSha256": "a231f14ebab21880f78a870c51e1d29c5a84f8bbce4590a56f1f2e6f9e953d63"
             }
@@ -9232,7 +9233,7 @@
             "presentationCoverage": {
               "region": "arena",
               "primitive": "screen-particle",
-              "origin": "Automatic screen layer: untextured plane (412.5 x 225 >= 190); fitted to the visible battlefield instead of a box"
+              "origin": "Automatic screen layer: untextured plane (825 x 450 >= 190); fitted to the visible battlefield instead of a box"
             }
           }
         ],
@@ -9681,6 +9682,19 @@
     "approximations": {
       "profile": "held-constant-unverified-curves-v1",
       "curves": [
+        {
+          "node": 5,
+          "textureTint": [
+            0.0172,
+            0,
+            0.5561,
+            1
+          ],
+          "notEvaluated": [
+            "random texture tint is outside the constant subset"
+          ],
+          "treatment": "texture-tint-initial-value"
+        },
         {
           "member": "eff_fadeblack_a75_f90_lightblue.bmb",
           "node": 0,

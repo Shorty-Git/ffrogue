@@ -171,9 +171,13 @@ FLASH_MAX_LIFE = 60
 
 
 def _effective_size(node, nodes, members=None):
-    """Authored width/height including ControlNull ancestor scales and member scale percent."""
+    """Displayed width/height in source units including ControlNull ancestor scales and member scale percent.
+    A Particle is a quad of radius one (docs/research/native-particle-x-scale.md): scale 1 is 2 units wide, so
+    its authored scale counts double (2026-11-13; before, Particles were measured like unit Quads)."""
     scale = node['staticVectors']['transform']['scale']['valueInitial']
     width, height = scale[0], scale[0] if node.get('uniformScale') else scale[1]
+    if node['typeId'] == 3:
+        width, height = 2 * width, 2 * height
     parent = node.get('parentIndex')
     while parent is not None:
         ancestor = next((n for n in nodes if n.get('index') == parent), nodes[parent])

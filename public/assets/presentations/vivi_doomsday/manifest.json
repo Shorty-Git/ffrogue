@@ -8,8 +8,8 @@
   "durationFrames": 410,
   "provenance": {
     "planFile": "tools/data/full-import/vivi/skills/doomsday/source/plan.json",
-    "planSha256": "672bf6c2c0eadda65f46c00114bb8db3bef3f85ae391304e6197c63cdf8a9417",
-    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
+    "planSha256": "7a721bfb5aa12535036dbbe2062a8a981263d5dfa63ede7d6b6360bf4a43f038",
+    "playerSha256": "e52a4d776b5f858a6bd4e036105cbc558d9abe40999daed7d06abb15a7d0c6e1",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "cbea65c9f17bc27ee5072651b8917b869b0a380fe3346d1901971caa019c41e0"
   },
@@ -18277,10 +18277,16 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
+              "rgba": [
+                1,
+                0.3706269860267639,
+                0.35698413848876953,
+                1
+              ],
               "limitations": [
                 "initial native fragment is not the pinned Basic family"
               ],
+              "approximate": true,
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
@@ -87249,6 +87255,27 @@
           "value": "0",
           "corpusShare": 0.9998,
           "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "bm_2050_doomsday_front.bmb",
+          "node": 17,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.7187,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "node": 17,
+          "textureTint": [
+            1,
+            0.3706,
+            0.357,
+            1
+          ],
+          "notEvaluated": [
+            "initial native fragment is not the pinned Basic family"
+          ],
+          "treatment": "texture-tint-initial-value"
         },
         {
           "member": "bm_2050_doomsday_front.bmb",

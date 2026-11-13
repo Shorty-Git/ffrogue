@@ -257,6 +257,25 @@ export function particleDisplayWorldMatrix(THREE,world,right=[1,0,0],up=[0,1,0])
   result.setPosition(new THREE.Vector3().setFromMatrixPosition(world));
   return result;
 }
+/**
+ * Approximate native Particle geometry for nodes outside the verified subsets: a view-aligned quad of
+ * radius one at the hierarchy position. Half-width and half-height are the lengths of the world X and Y
+ * axes of the node's evaluated matrix (the Square flag already makes the local scale uniform; inherited
+ * scale stays component-wise). The roll is the in-plane direction of the world X axis, so tilts about X
+ * or Y do not tilt the quad.
+ * Not used: the native X consumers' rule "group X for both axes" (native-particle-x-scale.md). Applied to
+ * the accumulated ancestor scale it turns the streak particles of eff_3029_weak_* (scale 25 under a
+ * 10 x 1 Null) into 1,300 px discs; what the engine passes as the group vector is not verified.
+ */
+export function approximateParticleDisplay(THREE,world) {
+  if(!world.elements.every(Number.isFinite))throw Error('Nonfinite Particle transform');
+  const x=new THREE.Vector3().setFromMatrixColumn(world,0),sx=x.length(),sy=new THREE.Vector3().setFromMatrixColumn(world,1).length();
+  if(!(sx>0)||!(sy>0))return null;
+  // An X axis pointing at the viewer has no in-plane direction; the quad then stays unrolled.
+  const roll=Math.hypot(x.x,x.y)>1e-9*sx?Math.atan2(x.y,x.x):0;
+  return new THREE.Matrix4().compose(new THREE.Vector3().setFromMatrixPosition(world),
+    new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,0,1),roll),new THREE.Vector3(2*sx,2*sy,1));
+}
 export function quadCornerColors(source) {
   if(source.mode!=='Constant')throw Error('Unsupported quad color mode');
   const names=['leftTop','rightTop','leftBottom','rightBottom'];
@@ -848,8 +867,15 @@ export async function createEffectPlayer(THREE, scene, plan) {
         issues.add(effect.name+': Model '+node.index+' has no reviewed Basic material selection; legacy material comparison retained');
       const particleSupport=plan.particleGeometry&&node.typeId===3?particleGeometryEligibility(effect,node,member):null;
       const nativeXSupport=plan.nativeParticleX&&node.typeId===3?nativeParticleXEligibility(effect,node,member):null;
-      if(nativeXSupport&&!nativeXSupport.supported)issues.add(effect.name+': Particle '+node.index+' native X unsupported: '+nativeXSupport.reasons.join('; ')+'; existing comparison retained');
-      if(particleSupport&&!particleSupport.supported)issues.add(effect.name+': Particle '+node.index+' geometry unsupported: '+particleSupport.reasons.join('; ')+'; legacy geometry retained only for comparison');
+      // Approximation plans draw such a Particle as a generic view-aligned quad (one issue instead of the
+      // subset reasons); strict plans keep the legacy plane and list why each subset does not apply.
+      if(plan.approximations){
+        if(node.typeId===3&&!nativeXSupport?.supported&&!particleSupport?.supported)
+          issues.add(effect.name+': Particle '+node.index+' is outside the verified geometry subsets; approximate view-aligned radius-one quad (ancestor roll and group vector unverified)');
+      }else{
+        if(nativeXSupport&&!nativeXSupport.supported)issues.add(effect.name+': Particle '+node.index+' native X unsupported: '+nativeXSupport.reasons.join('; ')+'; existing comparison retained');
+        if(particleSupport&&!particleSupport.supported)issues.add(effect.name+': Particle '+node.index+' geometry unsupported: '+particleSupport.reasons.join('; ')+'; legacy geometry retained only for comparison');
+      }
       const unsupportedEmission=!!(node.authoringEmissionShape&&node.authoringEmissionShape!=='Point')
         ||(item.parent!==null&&runtime[item.parent].unsupportedEmission);
       if(node.authoringEmissionShape&&node.authoringEmissionShape!=='Point')issues.add(effect.name+': node '+node.index+' emission shape '+node.authoringEmissionShape+' unsupported; source node withheld, not replaced with point emission');
@@ -908,6 +934,13 @@ export async function createEffectPlayer(THREE, scene, plan) {
             } else issues.add(effect.name+': texture 2 not evaluated on node '+node.index);
           }
           if(shaderBasicEligible(plan,node)&&!material.userData.layers)attachNativeBasicMaterial(THREE,material,node.nativeBasicTint.rgba);
+          else if(plan.approximations&&node.nativeBasicTint?.approximate&&!material.userData.layers){
+            // Approximation plans: the initial first-texture colour scale is applied outside the pinned Basic
+            // fragment family too (random range and tint curves are not evaluated).
+            attachNativeBasicMaterial(THREE,material,node.nativeBasicTint.rgba);
+            if(node.nativeBasicTint.limitations.some(text=>/random|animated/.test(text)))
+              issues.add(effect.name+': node '+node.index+' texture tint uses its initial value; random range or tint curve not evaluated');
+          }
           else if(plan.nativeBasicMaterial&&node.nativeMaterialSelection?.operation===0)
             issues.add(effect.name+': node '+node.index+' retains legacy Basic material: '+(node.nativeBasicTint?.limitations??['missing tint metadata']).join('; '));
           if(node.quadColors)attachConstantQuadColors(THREE,geometry,material,node.quadColors);
@@ -950,6 +983,7 @@ export async function createEffectPlayer(THREE, scene, plan) {
   let particleGeometryEnabled=!!plan.particleGeometry;
   let nativeXEnabled=!!plan.nativeParticleX;
   let nativeAlphaEnabled=!!plan.nativeScalarAlpha;
+  const approximateBillboards=!!plan.approximations;
   return {issues:[...issues], instanceCount:active.reduce((s,e)=>s+e.built.length,0),
     dispose() {
       for (const entry of active) scene.remove(entry.root);
@@ -1030,6 +1064,15 @@ export async function createEffectPlayer(THREE, scene, plan) {
                 if(display)item.mesh.matrix.copy(world.clone().invert().multiply(display));
                 else item.mesh.visible=false;
               }
+              item.mesh.matrixWorldNeedsUpdate=true;
+            } else if(approximateBillboards&&node.typeId===3) {
+              // Approximation plans: every Particle outside the verified subsets is a view-aligned quad of
+              // radius one (see approximateParticleDisplay); before, it was a 1 x 1 plane tilted with its ancestors.
+              item.mesh.matrixAutoUpdate=false;item.mesh.matrix.identity();item.mesh.visible=true;
+              const world=new THREE.Matrix4().multiplyMatrices(entry.root.matrixWorld,matrix);
+              const display=approximateParticleDisplay(THREE,world);
+              if(display&&Math.abs(world.determinant())>1e-12)item.mesh.matrix.copy(world.clone().invert().multiply(display));
+              else item.mesh.visible=false;
               item.mesh.matrixWorldNeedsUpdate=true;
             }
             item.mesh.material.opacity=Math.max(0,Math.min(1,alpha));item.mesh.material.color.setRGB(...(node.quadColors?[1,1,1]:item.flatColor??color));

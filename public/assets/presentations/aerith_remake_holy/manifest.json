@@ -8,8 +8,8 @@
   "durationFrames": 557,
   "provenance": {
     "planFile": "tools/data/full-import/aerith_remake/skills/holy/source/plan.json",
-    "planSha256": "1aa763b968852804aad60a8e01bea5d2e704903af42e097a91c411c7ab3f847a",
-    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
+    "planSha256": "949f08082c14c8524202fa11c52362d7c3ad3a3d88030d37caede38074ccbcfa",
+    "playerSha256": "e52a4d776b5f858a6bd4e036105cbc558d9abe40999daed7d06abb15a7d0c6e1",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "96742cfc990dea44a62eb5304aa7cb7c9a3d16922d859382c7fe675bcb654179"
   },
@@ -3277,7 +3277,7 @@
               "region": "arena",
               "primitive": "screen-particle",
               "textureSha256": "5872fce39d9465f8facb4c0a08036b6e8ff076a5ea48f48524af0dff24b5582f",
-              "origin": "Automatic screen layer: static Particle authored at screen size (320 x 280 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
+              "origin": "Automatic screen layer: static Particle authored at screen size (640 x 560 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           },
           {
@@ -4061,7 +4061,7 @@
               "region": "arena",
               "primitive": "screen-particle",
               "textureSha256": "5872fce39d9465f8facb4c0a08036b6e8ff076a5ea48f48524af0dff24b5582f",
-              "origin": "Automatic screen layer: static Particle authored at screen size (320 x 280 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
+              "origin": "Automatic screen layer: static Particle authored at screen size (640 x 560 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           },
           {
@@ -19728,10 +19728,16 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
+              "rgba": [
+                1,
+                0.7854641079902649,
+                0.5711905360221863,
+                1
+              ],
               "limitations": [
                 "initial native fragment is not the pinned Basic family"
               ],
+              "approximate": true,
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
@@ -23301,10 +23307,16 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
+              "rgba": [
+                1,
+                0.7854641079902649,
+                0.5711905360221863,
+                1
+              ],
               "limitations": [
                 "initial native fragment is not the pinned Basic family"
               ],
+              "approximate": true,
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
@@ -26874,10 +26886,16 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
+              "rgba": [
+                1,
+                0.7854641079902649,
+                0.5711905360221863,
+                1
+              ],
               "limitations": [
                 "initial native fragment is not the pinned Basic family"
               ],
+              "approximate": true,
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
@@ -30447,10 +30465,16 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
+              "rgba": [
+                1,
+                0.7854641079902649,
+                0.5711905360221863,
+                1
+              ],
               "limitations": [
                 "initial native fragment is not the pinned Basic family"
               ],
+              "approximate": true,
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
@@ -36900,7 +36924,7 @@
             "presentationCoverage": {
               "region": "arena",
               "primitive": "screen-particle",
-              "origin": "Automatic screen layer: untextured plane (320 x 280 >= 190); fitted to the visible battlefield instead of a box"
+              "origin": "Automatic screen layer: untextured plane (640 x 560 >= 190); fitted to the visible battlefield instead of a box"
             }
           },
           {
@@ -55768,7 +55792,7 @@
             "presentationCoverage": {
               "region": "arena",
               "primitive": "screen-particle",
-              "origin": "Automatic screen layer: untextured plane (320 x 280 >= 190); fitted to the visible battlefield instead of a box"
+              "origin": "Automatic screen layer: untextured plane (640 x 560 >= 190); fitted to the visible battlefield instead of a box"
             }
           },
           {
@@ -56814,7 +56838,7 @@
             "presentationCoverage": {
               "region": "arena",
               "primitive": "screen-particle",
-              "origin": "Automatic screen layer: untextured plane (320 x 280 >= 190); fitted to the visible battlefield instead of a box"
+              "origin": "Automatic screen layer: untextured plane (640 x 560 >= 190); fitted to the visible battlefield instead of a box"
             }
           },
           {
@@ -119088,6 +119112,27 @@
         },
         {
           "member": "wm_1021_holy_front.bmb",
+          "node": 11,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.7187,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "node": 11,
+          "textureTint": [
+            1,
+            0.7855,
+            0.5712,
+            1
+          ],
+          "notEvaluated": [
+            "initial native fragment is not the pinned Basic family"
+          ],
+          "treatment": "texture-tint-initial-value"
+        },
+        {
+          "member": "wm_1021_holy_front.bmb",
           "node": 12,
           "field": "Texture_Basic_TextureDrawType",
           "value": "Basic",
@@ -119165,6 +119210,27 @@
           "value": "0",
           "corpusShare": 0.9993,
           "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1021_holy_front.bmb",
+          "node": 17,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.7187,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "node": 17,
+          "textureTint": [
+            1,
+            0.7855,
+            0.5712,
+            1
+          ],
+          "notEvaluated": [
+            "initial native fragment is not the pinned Basic family"
+          ],
+          "treatment": "texture-tint-initial-value"
         },
         {
           "member": "wm_1021_holy_front.bmb",
@@ -119248,6 +119314,27 @@
         },
         {
           "member": "wm_1021_holy_front.bmb",
+          "node": 23,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.7187,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "node": 23,
+          "textureTint": [
+            1,
+            0.7855,
+            0.5712,
+            1
+          ],
+          "notEvaluated": [
+            "initial native fragment is not the pinned Basic family"
+          ],
+          "treatment": "texture-tint-initial-value"
+        },
+        {
+          "member": "wm_1021_holy_front.bmb",
           "node": 24,
           "field": "Texture_Basic_TextureDrawType",
           "value": "Basic",
@@ -119325,6 +119412,27 @@
           "value": "0",
           "corpusShare": 0.9993,
           "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "wm_1021_holy_front.bmb",
+          "node": 29,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.7187,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "node": 29,
+          "textureTint": [
+            1,
+            0.7855,
+            0.5712,
+            1
+          ],
+          "notEvaluated": [
+            "initial native fragment is not the pinned Basic family"
+          ],
+          "treatment": "texture-tint-initial-value"
         },
         {
           "member": "wm_1021_holy_front.bmb",

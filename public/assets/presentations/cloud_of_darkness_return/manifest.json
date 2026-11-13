@@ -8,8 +8,8 @@
   "durationFrames": 281,
   "provenance": {
     "planFile": "tools/data/full-import/cloud_of_darkness/skills/return/source/plan.json",
-    "planSha256": "157e81209c59de845099cb0017afd0ca2cff2046a586dfc0bedfe69a18619d04",
-    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
+    "planSha256": "4d0d7b21108a6909f1a4ff0a89b788cee869c88c518b8e61e29929d56064b6b1",
+    "playerSha256": "e52a4d776b5f858a6bd4e036105cbc558d9abe40999daed7d06abb15a7d0c6e1",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "e2b14dd605e3b0cb5c90136f232e88ddf0b27ecfb1cb21b73e893769ae1ea872"
   },
@@ -7289,10 +7289,16 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
+              "rgba": [
+                0.3682144582271576,
+                0,
+                1,
+                1
+              ],
               "limitations": [
                 "initial native fragment is not the pinned Basic family"
               ],
+              "approximate": true,
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
@@ -8975,6 +8981,27 @@
           "value": "NewtonDynamics",
           "corpusShare": 0.8134,
           "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "eff_twincle_whole_002_purple.bmb",
+          "node": 3,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.7187,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "node": 3,
+          "textureTint": [
+            0.3682,
+            0,
+            1,
+            1
+          ],
+          "notEvaluated": [
+            "initial native fragment is not the pinned Basic family"
+          ],
+          "treatment": "texture-tint-initial-value"
         }
       ],
       "boundary": "Visual approximation: these source curves are not evaluated; the effect is not a native-fidelity reconstruction."

@@ -8,8 +8,8 @@
   "durationFrames": 423,
   "provenance": {
     "planFile": "tools/data/full-import/lightning/skills/aero_blitz/source/plan.json",
-    "planSha256": "3e61a50753240c98c258e75de3b94c2b34eefe0c4cb9bbc27b11aab4c04b64a1",
-    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
+    "planSha256": "00d6f3860281ccdc5fdae0a1a677c76f2b901a324ae9ca1aa67f8627a1cda004",
+    "playerSha256": "e52a4d776b5f858a6bd4e036105cbc558d9abe40999daed7d06abb15a7d0c6e1",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "7d602c688a53cc16f62d06691d672f94d33adadfd240976ad5a2bb43d3b7971d"
   },
@@ -28927,10 +28927,16 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
+              "rgba": [
+                1,
+                1,
+                1,
+                1
+              ],
               "limitations": [
                 "initial native fragment is not the pinned Basic family"
               ],
+              "approximate": true,
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
@@ -62389,6 +62395,14 @@
           "field": "Texture1_Color_Scale_Alpha_Value_Range",
           "value": "0",
           "corpusShare": 0.9998,
+          "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "member": "bm_2024_aero3.bmb",
+          "node": 20,
+          "field": "Texture_Basic_TextureDrawType",
+          "value": "Basic",
+          "corpusShare": 0.7187,
           "treatment": "authoring-free-corpus-default"
         },
         {

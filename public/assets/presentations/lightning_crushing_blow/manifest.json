@@ -8,8 +8,8 @@
   "durationFrames": 271,
   "provenance": {
     "planFile": "tools/data/full-import/lightning/skills/crushing_blow/source/plan.json",
-    "planSha256": "92f3cad592924c795f541db02d44df69a1789b94d32c5100f9c916461b34ac76",
-    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
+    "planSha256": "1395e39418b6f44697b12a0b648927ab5d3d2709eb5bb929258d69f6f0cb2f19",
+    "playerSha256": "e52a4d776b5f858a6bd4e036105cbc558d9abe40999daed7d06abb15a7d0c6e1",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "cb9c60dcfbea0813e0a230251d79c1565aae4d1538acfd584e081d7c5cdfbbcf"
   },
@@ -3314,6 +3314,7 @@
               "limitations": [
                 "random texture tint is outside the constant subset"
               ],
+              "approximate": true,
               "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
               "projectSha256": "2f62e89c56b79645bd2cc31fcbf7871557fb9e9df3811131bc6da5f96ed32236"
             }
@@ -8539,7 +8540,7 @@
             "presentationCoverage": {
               "region": "arena",
               "primitive": "screen-particle",
-              "origin": "Automatic screen layer: untextured plane (340 x 280 >= 190); fitted to the visible battlefield instead of a box"
+              "origin": "Automatic screen layer: untextured plane (680 x 560 >= 190); fitted to the visible battlefield instead of a box"
             }
           }
         ],
@@ -8826,6 +8827,19 @@
     "approximations": {
       "profile": "held-constant-unverified-curves-v1",
       "curves": [
+        {
+          "node": 5,
+          "textureTint": [
+            0.5561,
+            0.087,
+            0.0794,
+            1
+          ],
+          "notEvaluated": [
+            "random texture tint is outside the constant subset"
+          ],
+          "treatment": "texture-tint-initial-value"
+        },
         {
           "member": "sp_20016_ankoku_back.bmb",
           "node": 0,

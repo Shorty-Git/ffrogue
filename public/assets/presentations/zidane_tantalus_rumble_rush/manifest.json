@@ -8,8 +8,8 @@
   "durationFrames": 269,
   "provenance": {
     "planFile": "tools/data/full-import/zidane_tantalus/skills/rumble_rush/source/plan.json",
-    "planSha256": "a1208fead3ed5bf61ec8f8499ec0be601aaff2cebb7f004d5208cc9eab125003",
-    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
+    "planSha256": "09f60abd2fb403fa2d678f6e33b40e5d9d7ff8cccd63b8aa9f8a014b5d78b8fc",
+    "playerSha256": "e52a4d776b5f858a6bd4e036105cbc558d9abe40999daed7d06abb15a7d0c6e1",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "20ff5a2152e7dcc74591e7a550c8f64b0025b9cd2d1f8797842860f4b5ddee33"
   },
@@ -2934,10 +2934,16 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
+              "rgba": [
+                1,
+                1,
+                1,
+                1
+              ],
               "limitations": [
                 "animated texture tint is outside the constant subset"
               ],
+              "approximate": true,
               "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
               "projectSha256": "00e29a0b71cdab9f54fae0d7418955d9a2cdeaebd8215ca0baf38603caed216c"
             }
@@ -5958,6 +5964,7 @@
               "limitations": [
                 "random texture tint is outside the constant subset"
               ],
+              "approximate": true,
               "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
               "projectSha256": "00e29a0b71cdab9f54fae0d7418955d9a2cdeaebd8215ca0baf38603caed216c"
             }
@@ -11653,10 +11660,16 @@
             },
             "nativeBasicTint": {
               "supported": false,
-              "rgba": null,
+              "rgba": [
+                1,
+                1,
+                1,
+                1
+              ],
               "limitations": [
                 "animated texture tint is outside the constant subset"
               ],
+              "approximate": true,
               "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
               "projectSha256": "fdeedbf08b7654f9b7b498bbea2738dc90d2aedfc19cd0084310f38468a6484c"
             }
@@ -14677,6 +14690,7 @@
               "limitations": [
                 "random texture tint is outside the constant subset"
               ],
+              "approximate": true,
               "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
               "projectSha256": "fdeedbf08b7654f9b7b498bbea2738dc90d2aedfc19cd0084310f38468a6484c"
             }
@@ -53969,7 +53983,7 @@
             "presentationCoverage": {
               "region": "arena",
               "primitive": "screen-particle",
-              "origin": "Automatic screen layer: untextured plane (412.5 x 225 >= 190); fitted to the visible battlefield instead of a box"
+              "origin": "Automatic screen layer: untextured plane (825 x 450 >= 190); fitted to the visible battlefield instead of a box"
             }
           }
         ],

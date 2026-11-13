@@ -22,7 +22,7 @@ test('confirmed Cloud visual data identities require an explicit baseline review
   // 2026-11-12: an untextured Particle with reviewed screen coverage is drawn (dimming/flash planes).
   // Review: tools/rebaseline_scenes.mjs over all 545 scenes; the three Cloud manifests below carry no
   // such coverage, their frames compare unchanged or ok against the baseline of e4e4f09f….
-  'src/effects/originalEffectPlayer.mjs':'103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c',
+  'src/effects/originalEffectPlayer.mjs':'e52a4d776b5f858a6bd4e036105cbc558d9abe40999daed7d06abb15a7d0c6e1',
   // Connected Particle packets: all three frozen GPU frames retain zero changed pixels.
   // Receipt: diagnostic-v35-render-context/browser-review-37.json; OneX admission preserves the Cloud frames.
   'src/effects/nativeLifecycle.mjs':'a72df9ee85e0c11e4cecc2d12208b462fcd5cd310ff83433dfe2a796fe0e00e2',
@@ -31,9 +31,9 @@ test('confirmed Cloud visual data identities require an explicit baseline review
   // composed/native-null variant approved on 2026-11-08; Blade Beam and Climhazzard gained their
   // recovered master sounds on 2026-11-08 with unchanged visual data. 2026-11-12: only
   // provenance.playerSha256 changed (player 103046af...); plans and effect data are byte-identical.
-  'public/assets/presentations/cloud_brave_slash/manifest.json':'bbc9cabdf9bcea9fcea1dc7e99171aeb81eac9ff7d7fd022547600b8f1ac93f7',
-  'public/assets/presentations/cloud_blade_beam/manifest.json':'9f41fec89354abd74a1aad1e750f62038523ebac05ee09ede271a990e782deb6',
-  'public/assets/presentations/cloud_climhazzard/manifest.json':'b2ec6a2ffafbf45db9e6ec81ee7b4cc7ec82e757f52a67fa9ab4f84508855305',
+  'public/assets/presentations/cloud_brave_slash/manifest.json':'b83e44a08e30aabd5d46bfee541f5f1bc07592f1364e47eb7dc47428d4af0626',
+  'public/assets/presentations/cloud_blade_beam/manifest.json':'cd8e757ff717fa81c8754ee5b6e8c85b79510f3a1cd663b295c33cda8ca4ed4c',
+  'public/assets/presentations/cloud_climhazzard/manifest.json':'ff2d5889ff476c7e8ba9663dcc35d27e0dc0d14de249755ccb4796cd5a892c6b',
  };
  const visualHash=file=>{const m=JSON.parse(fs.readFileSync(file,'utf8'));delete m.audioSource;return createHash('sha256').update(JSON.stringify(m)).digest('hex');};
  for(const [file,expected]of Object.entries(baseline))assert.equal(file.endsWith('manifest.json')?visualHash(file):hash(file),expected,

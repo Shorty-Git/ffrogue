@@ -8,8 +8,8 @@
   "durationFrames": 377,
   "provenance": {
     "planFile": "tools/data/enemy-skills/chaos-216522/source/plan.json",
-    "planSha256": "f0e158d20486d47491f6f260712c44b05cc714b1ab779ba07864aeca10354766",
-    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
+    "planSha256": "4a605e38e9ccd3b114eac34dba7cdc25233ae829c58d6809a1ed8735e869b8a0",
+    "playerSha256": "e52a4d776b5f858a6bd4e036105cbc558d9abe40999daed7d06abb15a7d0c6e1",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "87b58977b82982fb9547e123d17968cde1465996de4efdfa530529070ccbe6b1"
   },
@@ -94441,6 +94441,7 @@
               "limitations": [
                 "random texture tint is outside the constant subset"
               ],
+              "approximate": true,
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
@@ -117804,6 +117805,19 @@
           "value": "0",
           "corpusShare": 1,
           "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "node": 23,
+          "textureTint": [
+            1,
+            0.5757,
+            0.1619,
+            1
+          ],
+          "notEvaluated": [
+            "random texture tint is outside the constant subset"
+          ],
+          "treatment": "texture-tint-initial-value"
         },
         {
           "member": "bm_2040_quake_front.bmb",

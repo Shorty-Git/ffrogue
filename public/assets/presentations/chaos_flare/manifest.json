@@ -8,8 +8,8 @@
   "durationFrames": 502,
   "provenance": {
     "planFile": "tools/data/enemy-skills/chaos-216517/source/plan.json",
-    "planSha256": "32b20e8bd78bf0720041938c609e112c287309bcf054c4363ae99d88060903ec",
-    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
+    "planSha256": "16946a2c8c6f5829647a7a146ee1d3556c60ffc15ddfd53d3247fcb0865f38c9",
+    "playerSha256": "e52a4d776b5f858a6bd4e036105cbc558d9abe40999daed7d06abb15a7d0c6e1",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "180af71b64160c57895f95dbf323f25e785770f1d6515f423573abd408d33cd5"
   },
@@ -10903,6 +10903,7 @@
               "limitations": [
                 "random texture tint is outside the constant subset"
               ],
+              "approximate": true,
               "origin": "Explicit matching BMSLN constant texture color; not decoded BMB tint",
               "projectSha256": "bc8377fa68bde724e3c2eb90d052c9cee918af9086a732b1d3fb6f050cd7b6b2"
             }
@@ -87762,7 +87763,7 @@
               "region": "arena",
               "primitive": "screen-particle",
               "textureSha256": "30fa72165d6fea1fc72accd8411d3c2d149bc611545859ce82f992ca63e98a73",
-              "origin": "Automatic screen layer: static Particle authored at screen size (190 x 210 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
+              "origin": "Automatic screen layer: static Particle authored at screen size (380 x 420 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           },
           {
@@ -88426,7 +88427,7 @@
               "region": "arena",
               "primitive": "screen-particle",
               "textureSha256": "2255d5a81011f6b52db45f91da143be0979d99eb83975e2b3204ad294e7e02f9",
-              "origin": "Automatic screen layer: static Particle authored at screen size (190 x 210 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
+              "origin": "Automatic screen layer: static Particle authored at screen size (380 x 420 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           },
           {
@@ -89090,7 +89091,7 @@
               "region": "arena",
               "primitive": "screen-particle",
               "textureSha256": "2255d5a81011f6b52db45f91da143be0979d99eb83975e2b3204ad294e7e02f9",
-              "origin": "Automatic screen layer: static Particle authored at screen size (190 x 210 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
+              "origin": "Automatic screen layer: static Particle authored at screen size (380 x 420 >= 190) on a screen-anchored effect; fitted to the visible battlefield"
             }
           }
         ],
@@ -89444,6 +89445,19 @@
             1
           ],
           "treatment": "corner-mean-rgb"
+        },
+        {
+          "node": 18,
+          "textureTint": [
+            1,
+            0,
+            0.0185,
+            1
+          ],
+          "notEvaluated": [
+            "random texture tint is outside the constant subset"
+          ],
+          "treatment": "texture-tint-initial-value"
         },
         {
           "node": 4,

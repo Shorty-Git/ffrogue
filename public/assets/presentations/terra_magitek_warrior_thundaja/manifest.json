@@ -8,8 +8,8 @@
   "durationFrames": 286,
   "provenance": {
     "planFile": "tools/data/full-import/terra_magitek_warrior/skills/thundaja/source/plan.json",
-    "planSha256": "6f815438d181fefc64c2c3f6d0234c5e49e480f2d2cd607ea6022a2f9fe29b05",
-    "playerSha256": "103046af32e1cacc7707a584ff12ee0ba14b7adeb6f2ffaca83443d24a4e146c",
+    "planSha256": "f17574ab3fa38ed773edf7a0b6e67bdc8804f74bf53f15d9623dfbab6a4e9afa",
+    "playerSha256": "e52a4d776b5f858a6bd4e036105cbc558d9abe40999daed7d06abb15a7d0c6e1",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "6ad562798d60fdf6c30917dc94fea895c093302ee1781f79d70427e03808e49d"
   },
@@ -6562,6 +6562,7 @@
               "limitations": [
                 "random texture tint is outside the constant subset"
               ],
+              "approximate": true,
               "origin": "Binary IBMB texture tint (bmb_texture_tint.py); authoring-free approximation",
               "projectSha256": "authoring-free:da2c972dda1cb758ca6cd9f9e50154ed2d2425b5fa946e1e9e3061da493d54e7"
             }
@@ -45191,6 +45192,19 @@
           "value": "0",
           "corpusShare": 0.9993,
           "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "node": 11,
+          "textureTint": [
+            0.9979,
+            1,
+            1,
+            1
+          ],
+          "notEvaluated": [
+            "random texture tint is outside the constant subset"
+          ],
+          "treatment": "texture-tint-initial-value"
         },
         {
           "member": "bm_2031_thunder4.bmb",
