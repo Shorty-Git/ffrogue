@@ -8,7 +8,7 @@
   "durationFrames": 421,
   "provenance": {
     "planFile": "tools/data/full-import/tifa_avalanche/skills/starshower/source/plan.json",
-    "planSha256": "d92588b79e3af1523a4a090bb47a68ced6cd4a7820b732ee9e7342d4839def4f",
+    "planSha256": "1b1f009cc8b01eba1188a904e95a96888385cbc931156e3c41e599e5d77230ea",
     "playerSha256": "c942e74668a439a8eca74f3e7eb033fb8979f7acec5589eb7eb4be3c80578669",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "4aa3e5d06a83471f1f0e306995c943dbd03e80f67c7e27c10c908c5d64a16702"
@@ -99348,70 +99348,6 @@
         }
       },
       {
-        "effect": 2,
-        "startFrame": 40,
-        "anchor": "target",
-        "layer": "back",
-        "scalePercent": 100,
-        "rotation": [
-          0,
-          0,
-          0
-        ],
-        "rawGroupFields": [
-          "99999999",
-          "1",
-          "2",
-          "2",
-          "0",
-          "0"
-        ],
-        "compositionOrigin": "skill",
-        "placement": {
-          "rectangle": "target-unit",
-          "axisModes": [
-            2,
-            2
-          ],
-          "offset": [
-            0,
-            0
-          ]
-        }
-      },
-      {
-        "effect": 3,
-        "startFrame": 40,
-        "anchor": "target",
-        "layer": "front",
-        "scalePercent": 100,
-        "rotation": [
-          0,
-          0,
-          0
-        ],
-        "rawGroupFields": [
-          "99999999",
-          "1",
-          "2",
-          "2",
-          "0",
-          "0"
-        ],
-        "compositionOrigin": "skill",
-        "placement": {
-          "rectangle": "target-unit",
-          "axisModes": [
-            2,
-            2
-          ],
-          "offset": [
-            0,
-            0
-          ]
-        }
-      },
-      {
         "effect": 5,
         "startFrame": 40,
         "anchor": "caster",
@@ -113489,6 +113425,16 @@
         {
           "branch": 1,
           "treatment": "process-branch-played-in-parallel"
+        },
+        {
+          "group": 5027982,
+          "member": "eff_3029_weak_light_blue_back.bmb",
+          "treatment": "weakness-overlay-member-skipped"
+        },
+        {
+          "group": 5027991,
+          "member": "eff_3029_weak_light_blue_front.bmb",
+          "treatment": "weakness-overlay-member-skipped"
         },
         {
           "branch": 2,

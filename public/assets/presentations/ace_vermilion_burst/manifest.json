@@ -8,7 +8,7 @@
   "durationFrames": 269,
   "provenance": {
     "planFile": "tools/data/full-import/ace_vermilion/skills/burst/source/plan.json",
-    "planSha256": "8860022af7201041539e11b1396a560d3b066d95bd863ffd2fcfec091256bb1d",
+    "planSha256": "9aa72cfb6555154dd15933345fe0c6fde465707f96b3bea17fe9d6a2965731db",
     "playerSha256": "c942e74668a439a8eca74f3e7eb033fb8979f7acec5589eb7eb4be3c80578669",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "6b04e70ae77d4cc5c37433dc8fc6fa748e3b4ef99c12340d1834bcb1b6a2864e"
@@ -112485,134 +112485,6 @@
             0
           ]
         }
-      },
-      {
-        "effect": 2,
-        "startFrame": 38,
-        "anchor": "target",
-        "layer": "back",
-        "scalePercent": 100,
-        "rotation": [
-          0,
-          0,
-          0
-        ],
-        "rawGroupFields": [
-          "99999999",
-          "1",
-          "2",
-          "2",
-          "0",
-          "0"
-        ],
-        "compositionOrigin": "skill",
-        "placement": {
-          "rectangle": "target-unit",
-          "axisModes": [
-            2,
-            2
-          ],
-          "offset": [
-            0,
-            0
-          ]
-        }
-      },
-      {
-        "effect": 3,
-        "startFrame": 40,
-        "anchor": "target",
-        "layer": "front",
-        "scalePercent": 100,
-        "rotation": [
-          0,
-          0,
-          0
-        ],
-        "rawGroupFields": [
-          "99999999",
-          "1",
-          "2",
-          "2",
-          "0",
-          "0"
-        ],
-        "compositionOrigin": "skill",
-        "placement": {
-          "rectangle": "target-unit",
-          "axisModes": [
-            2,
-            2
-          ],
-          "offset": [
-            0,
-            0
-          ]
-        }
-      },
-      {
-        "effect": 4,
-        "startFrame": 40,
-        "anchor": "target",
-        "layer": "back",
-        "scalePercent": 100,
-        "rotation": [
-          0,
-          0,
-          0
-        ],
-        "rawGroupFields": [
-          "99999999",
-          "1",
-          "2",
-          "2",
-          "0",
-          "0"
-        ],
-        "compositionOrigin": "skill",
-        "placement": {
-          "rectangle": "target-unit",
-          "axisModes": [
-            2,
-            2
-          ],
-          "offset": [
-            0,
-            0
-          ]
-        }
-      },
-      {
-        "effect": 5,
-        "startFrame": 40,
-        "anchor": "target",
-        "layer": "front",
-        "scalePercent": 100,
-        "rotation": [
-          0,
-          0,
-          0
-        ],
-        "rawGroupFields": [
-          "99999999",
-          "1",
-          "2",
-          "2",
-          "0",
-          "0"
-        ],
-        "compositionOrigin": "skill",
-        "placement": {
-          "rectangle": "target-unit",
-          "axisModes": [
-            2,
-            2
-          ],
-          "offset": [
-            0,
-            0
-          ]
-        }
       }
     ],
     "audioGroupCoverage": "all-resolved-effect-groups-only",
@@ -123477,6 +123349,26 @@
         {
           "branch": 1,
           "treatment": "process-branch-played-in-parallel"
+        },
+        {
+          "group": 5027942,
+          "member": "eff_3029_weak_blue_back.bmb",
+          "treatment": "weakness-overlay-member-skipped"
+        },
+        {
+          "group": 5027951,
+          "member": "eff_3029_weak_blue_front.bmb",
+          "treatment": "weakness-overlay-member-skipped"
+        },
+        {
+          "group": 5028102,
+          "member": "eff_3029_weak_yellow_back.bmb",
+          "treatment": "weakness-overlay-member-skipped"
+        },
+        {
+          "group": 5028111,
+          "member": "eff_3029_weak_yellow_front.bmb",
+          "treatment": "weakness-overlay-member-skipped"
         }
       ],
       "boundary": "Visual approximation: these source curves are not evaluated; the effect is not a native-fidelity reconstruction."

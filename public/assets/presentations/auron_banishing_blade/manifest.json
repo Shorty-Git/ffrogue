@@ -5,10 +5,10 @@
   "sourceId": 228903,
   "quality": "experimental-preview",
   "originalFidelityVerified": false,
-  "durationFrames": 257,
+  "durationFrames": 237,
   "provenance": {
     "planFile": "tools/data/full-import/auron/skills/banishing_blade/source/plan.json",
-    "planSha256": "af836ec901454512e87414809375349ca51ea01f0534f25debbfe107b661a7e1",
+    "planSha256": "04e7f3079dfe7250d203cc7cb26a2f3f19ebe4b31a6abb2c0e1aa646beb9ee09",
     "playerSha256": "c942e74668a439a8eca74f3e7eb033fb8979f7acec5589eb7eb4be3c80578669",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "b23d99b10387b537fb2419a6c722ed4983d95cb591bf7352bae8a5ede009ed5c"
@@ -102816,70 +102816,6 @@
             0
           ]
         }
-      },
-      {
-        "effect": 1,
-        "startFrame": 76,
-        "anchor": "target",
-        "layer": "back",
-        "scalePercent": 100,
-        "rotation": [
-          0,
-          0,
-          0
-        ],
-        "rawGroupFields": [
-          "99999999",
-          "1",
-          "2",
-          "2",
-          "0",
-          "0"
-        ],
-        "compositionOrigin": "skill",
-        "placement": {
-          "rectangle": "target-unit",
-          "axisModes": [
-            2,
-            2
-          ],
-          "offset": [
-            0,
-            0
-          ]
-        }
-      },
-      {
-        "effect": 2,
-        "startFrame": 76,
-        "anchor": "target",
-        "layer": "front",
-        "scalePercent": 100,
-        "rotation": [
-          0,
-          0,
-          0
-        ],
-        "rawGroupFields": [
-          "99999999",
-          "1",
-          "2",
-          "2",
-          "0",
-          "0"
-        ],
-        "compositionOrigin": "skill",
-        "placement": {
-          "rectangle": "target-unit",
-          "axisModes": [
-            2,
-            2
-          ],
-          "offset": [
-            0,
-            0
-          ]
-        }
       }
     ],
     "audioGroupCoverage": "all-resolved-effect-groups-only",
@@ -109666,6 +109602,16 @@
           "value": "0",
           "corpusShare": 0.9998,
           "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "group": 5018300,
+          "member": "eff_3029_weak_purple_back.bmb",
+          "treatment": "weakness-overlay-member-skipped"
+        },
+        {
+          "group": 5018310,
+          "member": "eff_3029_weak_purple_front.bmb",
+          "treatment": "weakness-overlay-member-skipped"
         }
       ],
       "boundary": "Visual approximation: these source curves are not evaluated; the effect is not a native-fidelity reconstruction."

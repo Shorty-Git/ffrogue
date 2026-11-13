@@ -8,7 +8,7 @@
   "durationFrames": 446,
   "provenance": {
     "planFile": "tools/data/full-import/bartz_wayfarer/skills/rapid_twin_spellblade/source/plan.json",
-    "planSha256": "8e35523cb207f7811c6de0eb67a2943291d730bd8a3313d31d50c3a665389684",
+    "planSha256": "5cdca03a1ae8099b43477f9e3dc4abad83c15e866e9a90943d6552f0894a951a",
     "playerSha256": "c942e74668a439a8eca74f3e7eb033fb8979f7acec5589eb7eb4be3c80578669",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "a06344db46253d95db890dc8c9bdc7e1ac7266154ed87663f3ceb83c7bbb383c"
@@ -168674,68 +168674,6 @@
         }
       },
       {
-        "effect": 0,
-        "startFrame": 178,
-        "anchor": "target",
-        "layer": "back",
-        "scalePercent": 100,
-        "rotation": [
-          0,
-          0,
-          0
-        ],
-        "rawGroupFields": [
-          "99999999",
-          "1",
-          "2",
-          "2",
-          "0",
-          "0"
-        ],
-        "placement": {
-          "rectangle": "target-unit",
-          "axisModes": [
-            2,
-            2
-          ],
-          "offset": [
-            0,
-            0
-          ]
-        }
-      },
-      {
-        "effect": 1,
-        "startFrame": 178,
-        "anchor": "target",
-        "layer": "front",
-        "scalePercent": 100,
-        "rotation": [
-          0,
-          0,
-          0
-        ],
-        "rawGroupFields": [
-          "99999999",
-          "1",
-          "2",
-          "2",
-          "0",
-          "0"
-        ],
-        "placement": {
-          "rectangle": "target-unit",
-          "axisModes": [
-            2,
-            2
-          ],
-          "offset": [
-            0,
-            0
-          ]
-        }
-      },
-      {
         "effect": 10,
         "startFrame": 178,
         "anchor": "target",
@@ -186179,6 +186117,16 @@
           "placement": "anchor-mode-3",
           "scope": "single_enemy",
           "treatment": "caster-unit"
+        },
+        {
+          "group": 5027962,
+          "member": "eff_3029_weak_green_back.bmb",
+          "treatment": "weakness-overlay-member-skipped"
+        },
+        {
+          "group": 5027971,
+          "member": "eff_3029_weak_green_front.bmb",
+          "treatment": "weakness-overlay-member-skipped"
         },
         {
           "group": 5040360,

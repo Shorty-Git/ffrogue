@@ -5,10 +5,10 @@
   "sourceId": 226624,
   "quality": "experimental-preview",
   "originalFidelityVerified": false,
-  "durationFrames": 421,
+  "durationFrames": 420,
   "provenance": {
     "planFile": "tools/data/full-import/squall/skills/flame_barret/source/plan.json",
-    "planSha256": "f83d8f838b4148909e39d1be72d5325d0804d3ee720bcf7169ad75136f2ed123",
+    "planSha256": "ed2ef3d56ef6c99097e4d51742675e4950e12ab174d0059841368d341a5de71a",
     "playerSha256": "c942e74668a439a8eca74f3e7eb033fb8979f7acec5589eb7eb4be3c80578669",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "9d54c16108c0893877879ce9cf0d8e3d372f443530068b3ec69047484aa89102"
@@ -78,7 +78,7 @@
       "origin": "Explicit composed research inspection; raw ability retained"
     },
     "seed": 1,
-    "effectHorizon": 220,
+    "effectHorizon": 219,
     "endFrame": 210,
     "approachFrames": 18,
     "presentation": {
@@ -41763,70 +41763,6 @@
             0
           ]
         }
-      },
-      {
-        "effect": 1,
-        "startFrame": 40,
-        "anchor": "target",
-        "layer": "back",
-        "scalePercent": 100,
-        "rotation": [
-          0,
-          0,
-          0
-        ],
-        "rawGroupFields": [
-          "99999999",
-          "1",
-          "2",
-          "2",
-          "0",
-          "0"
-        ],
-        "compositionOrigin": "skill",
-        "placement": {
-          "rectangle": "target-unit",
-          "axisModes": [
-            2,
-            2
-          ],
-          "offset": [
-            0,
-            0
-          ]
-        }
-      },
-      {
-        "effect": 2,
-        "startFrame": 40,
-        "anchor": "target",
-        "layer": "front",
-        "scalePercent": 100,
-        "rotation": [
-          0,
-          0,
-          0
-        ],
-        "rawGroupFields": [
-          "99999999",
-          "1",
-          "2",
-          "2",
-          "0",
-          "0"
-        ],
-        "compositionOrigin": "skill",
-        "placement": {
-          "rectangle": "target-unit",
-          "axisModes": [
-            2,
-            2
-          ],
-          "offset": [
-            0,
-            0
-          ]
-        }
       }
     ],
     "audioGroupCoverage": "all-resolved-effect-groups-only",
@@ -47117,7 +47053,17 @@
           "treatment": "authoring-free-corpus-default"
         },
         {
-          "effectHorizon": 220,
+          "group": 5028062,
+          "member": "eff_3029_weak_red_back.bmb",
+          "treatment": "weakness-overlay-member-skipped"
+        },
+        {
+          "group": 5028071,
+          "member": "eff_3029_weak_red_front.bmb",
+          "treatment": "weakness-overlay-member-skipped"
+        },
+        {
+          "effectHorizon": 219,
           "treatment": "spawn-horizon-to-last-hit"
         }
       ],

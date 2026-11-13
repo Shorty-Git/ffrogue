@@ -8,7 +8,7 @@
   "durationFrames": 269,
   "provenance": {
     "planFile": "tools/data/full-import/vaan_rabanastre/skills/flaming_smash/source/plan.json",
-    "planSha256": "6664b7ef7b4b2a1ad26b9071a895250d12dbcd2e5d745c103162bc81d5087691",
+    "planSha256": "c2cda0058d73b8dd49d27afc76d82f09a4421711b8a7533281306494eeb5b2b1",
     "playerSha256": "c942e74668a439a8eca74f3e7eb033fb8979f7acec5589eb7eb4be3c80578669",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "ded7d86b2fd9f1165fb732941d92f817c25f091094acef6cfc34e1f39f095cb6"
@@ -46610,70 +46610,6 @@
             40
           ]
         }
-      },
-      {
-        "effect": 2,
-        "startFrame": 40,
-        "anchor": "target",
-        "layer": "back",
-        "scalePercent": 100,
-        "rotation": [
-          0,
-          0,
-          0
-        ],
-        "rawGroupFields": [
-          "99999999",
-          "1",
-          "2",
-          "2",
-          "0",
-          "0"
-        ],
-        "compositionOrigin": "skill",
-        "placement": {
-          "rectangle": "target-unit",
-          "axisModes": [
-            2,
-            2
-          ],
-          "offset": [
-            0,
-            0
-          ]
-        }
-      },
-      {
-        "effect": 3,
-        "startFrame": 40,
-        "anchor": "target",
-        "layer": "front",
-        "scalePercent": 100,
-        "rotation": [
-          0,
-          0,
-          0
-        ],
-        "rawGroupFields": [
-          "99999999",
-          "1",
-          "2",
-          "2",
-          "0",
-          "0"
-        ],
-        "compositionOrigin": "skill",
-        "placement": {
-          "rectangle": "target-unit",
-          "axisModes": [
-            2,
-            2
-          ],
-          "offset": [
-            0,
-            0
-          ]
-        }
       }
     ],
     "audioGroupCoverage": "all-resolved-effect-groups-only",
@@ -51962,6 +51898,16 @@
           "value": "NewtonDynamics",
           "corpusShare": 0.8134,
           "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "group": 5028062,
+          "member": "eff_3029_weak_red_back.bmb",
+          "treatment": "weakness-overlay-member-skipped"
+        },
+        {
+          "group": 5028071,
+          "member": "eff_3029_weak_red_front.bmb",
+          "treatment": "weakness-overlay-member-skipped"
         }
       ],
       "boundary": "Visual approximation: these source curves are not evaluated; the effect is not a native-fidelity reconstruction."

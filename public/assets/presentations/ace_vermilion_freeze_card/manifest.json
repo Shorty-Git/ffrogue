@@ -8,7 +8,7 @@
   "durationFrames": 383,
   "provenance": {
     "planFile": "tools/data/full-import/ace_vermilion/skills/freeze_card/source/plan.json",
-    "planSha256": "a4a524d1b96afbdbac04d454908b1deaac0188795d423392850c383b28325548",
+    "planSha256": "473805acbc770d2d30ede741a5b5d1b0c7ca4d3ba2c3f1c61a6d0ecbc1eb1cec",
     "playerSha256": "c942e74668a439a8eca74f3e7eb033fb8979f7acec5589eb7eb4be3c80578669",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "100c1b36e4e8e46385bed517e7f785795f22941e96b9ad5b1a3679d97340312a"
@@ -91273,70 +91273,6 @@
             40
           ]
         }
-      },
-      {
-        "effect": 2,
-        "startFrame": 40,
-        "anchor": "target",
-        "layer": "back",
-        "scalePercent": 100,
-        "rotation": [
-          0,
-          0,
-          0
-        ],
-        "rawGroupFields": [
-          "99999999",
-          "1",
-          "2",
-          "2",
-          "0",
-          "0"
-        ],
-        "compositionOrigin": "skill",
-        "placement": {
-          "rectangle": "target-unit",
-          "axisModes": [
-            2,
-            2
-          ],
-          "offset": [
-            0,
-            0
-          ]
-        }
-      },
-      {
-        "effect": 3,
-        "startFrame": 40,
-        "anchor": "target",
-        "layer": "front",
-        "scalePercent": 100,
-        "rotation": [
-          0,
-          0,
-          0
-        ],
-        "rawGroupFields": [
-          "99999999",
-          "1",
-          "2",
-          "2",
-          "0",
-          "0"
-        ],
-        "compositionOrigin": "skill",
-        "placement": {
-          "rectangle": "target-unit",
-          "axisModes": [
-            2,
-            2
-          ],
-          "offset": [
-            0,
-            0
-          ]
-        }
       }
     ],
     "audioGroupCoverage": "all-resolved-effect-groups-only",
@@ -103870,6 +103806,16 @@
         {
           "branch": 1,
           "treatment": "process-branch-played-in-parallel"
+        },
+        {
+          "group": 5027942,
+          "member": "eff_3029_weak_blue_back.bmb",
+          "treatment": "weakness-overlay-member-skipped"
+        },
+        {
+          "group": 5027951,
+          "member": "eff_3029_weak_blue_front.bmb",
+          "treatment": "weakness-overlay-member-skipped"
         },
         {
           "effectHorizon": 202,

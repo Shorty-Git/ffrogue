@@ -8,7 +8,7 @@
   "durationFrames": 269,
   "provenance": {
     "planFile": "tools/data/full-import/lightning/skills/crashing_thunder_slash/source/plan.json",
-    "planSha256": "37e5669d6bc0ab260626907cea2f6ede825c678fdf436d357a71fd58529ce912",
+    "planSha256": "eae0fe9997f4569ecb373f8ab691cfbfabc6b0c039d6b9efa962747a9e11664a",
     "playerSha256": "c942e74668a439a8eca74f3e7eb033fb8979f7acec5589eb7eb4be3c80578669",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "ec7293e21371f06787972a0b6b31ee9768b93965ad1a15f98ead230a37d965bb"
@@ -66862,70 +66862,6 @@
             0
           ]
         }
-      },
-      {
-        "effect": 1,
-        "startFrame": 40,
-        "anchor": "target",
-        "layer": "back",
-        "scalePercent": 100,
-        "rotation": [
-          0,
-          0,
-          0
-        ],
-        "rawGroupFields": [
-          "99999999",
-          "1",
-          "2",
-          "2",
-          "0",
-          "0"
-        ],
-        "compositionOrigin": "skill",
-        "placement": {
-          "rectangle": "target-unit",
-          "axisModes": [
-            2,
-            2
-          ],
-          "offset": [
-            0,
-            0
-          ]
-        }
-      },
-      {
-        "effect": 2,
-        "startFrame": 40,
-        "anchor": "target",
-        "layer": "front",
-        "scalePercent": 100,
-        "rotation": [
-          0,
-          0,
-          0
-        ],
-        "rawGroupFields": [
-          "99999999",
-          "1",
-          "2",
-          "2",
-          "0",
-          "0"
-        ],
-        "compositionOrigin": "skill",
-        "placement": {
-          "rectangle": "target-unit",
-          "axisModes": [
-            2,
-            2
-          ],
-          "offset": [
-            0,
-            0
-          ]
-        }
       }
     ],
     "audioGroupCoverage": "all-resolved-effect-groups-only",
@@ -76781,6 +76717,16 @@
         {
           "branch": 1,
           "treatment": "process-branch-played-in-parallel"
+        },
+        {
+          "group": 5028102,
+          "member": "eff_3029_weak_yellow_back.bmb",
+          "treatment": "weakness-overlay-member-skipped"
+        },
+        {
+          "group": 5028111,
+          "member": "eff_3029_weak_yellow_front.bmb",
+          "treatment": "weakness-overlay-member-skipped"
         }
       ],
       "boundary": "Visual approximation: these source curves are not evaluated; the effect is not a native-fidelity reconstruction."

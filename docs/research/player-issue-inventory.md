@@ -14,17 +14,17 @@ statement that it does not reproduce something; it says nothing about how visibl
 | Scenes | Share | Cause | Examples |
 | ---: | ---: | --- | --- |
 | 546 | 100 % | Rectangle placement uses adapted arena/unit bounds and zero scatter; native coordinate mapping is not verified. | ace_fira, ace_firaga, ace_jackpot_shot, ace_thundaga |
-| 471 | 86 % | Particle N is outside the verified geometry subsets; approximate view-aligned radius-one quad (ancestor roll and group vector unverified) | ace_fira, ace_firaga, ace_jackpot_shot, ace_thundaga |
-| 461 | 84 % | node N RGB random-range support is unverified without authoring | ace_fira, ace_firaga, ace_jackpot_shot, ace_thundaga |
-| 444 | 81 % | node N single-texture mapping/motion modes lack an authoring supplement; legacy UV preview retained | ace_fira, ace_firaga, ace_jackpot_shot, ace_thundaga |
-| 391 | 72 % | node N lacks a matching initial native Add fragment; labeled legacy material comparison retained | ace_jackpot_shot, ace_vermilion_aeroga, ace_vermilion_attack_hand, ace_vermilion_bullet_card |
+| 470 | 86 % | Particle N is outside the verified geometry subsets; approximate view-aligned radius-one quad (ancestor roll and group vector unverified) | ace_fira, ace_firaga, ace_jackpot_shot, ace_thundaga |
+| 458 | 84 % | node N RGB random-range support is unverified without authoring | ace_fira, ace_firaga, ace_jackpot_shot, ace_thundaga |
+| 435 | 80 % | node N single-texture mapping/motion modes lack an authoring supplement; legacy UV preview retained | ace_fira, ace_firaga, ace_jackpot_shot, ace_thundaga |
+| 382 | 70 % | node N lacks a matching initial native Add fragment; labeled legacy material comparison retained | ace_jackpot_shot, ace_vermilion_aeroga, ace_vermilion_attack_hand, ace_vermilion_burst |
 | 235 | 43 % | node N texture tint uses its initial value; random range or tint curve not evaluated | ace_firaga, ace_thundaga, ace_tri_beam_laser, ace_vermilion_attack_hand |
 | 183 | 34 % | node retains legacy Basic material: initial native fragment is not the pinned Basic family | ace_jackpot_shot, ace_vermilion_attack_hand, ace_vermilion_bullet_card, ace_vermilion_burst |
 | 175 | 32 % | node N RGB random range is not sampled; base color only in this preview | ace_jackpot_shot, ace_vermilion_bullet_card, ace_vermilion_burst, ace_vermilion_offensive_card |
-| 136 | 25 % | unsupported parent transform combination; legacy live TRS retained | ace_jackpot_shot, ace_vermilion_bullet_card, ace_vermilion_burst, ace_vermilion_cyclone_card |
 | 126 | 23 % | Null locator unsupported: unverified compatibility combination | ace_firaga, ace_thundaga, ace_vermilion_aerora, ace_vermilion_burst_ffbe |
 | 107 | 20 % | node N quad corner color evaluation unavailable; legacy preview tint retained | ace_vermilion_attack_hand, ace_vermilion_support_hand, ace_wild_card_attack_hand, ace_wild_card_support_hand |
 | 101 | 18 % | node N uses the selected native distortion alpha equation; source layer-alpha controls and UV speed remain unverified | ace_firaga, ace_jackpot_shot, ace_vermilion_attack_hand, ace_vermilion_card_showdown |
+| 90 | 16 % | unsupported parent transform combination; legacy live TRS retained | ace_jackpot_shot, ace_vermilion_freeze_card, ace_vermilion_heat_card, ace_vermilion_jackpot_triad |
 | 68 | 12 % | Null locator unsupported: sampled constant local rotation and unrotated ancestors required | ace_firaga, ace_thundaga, ace_vermilion_aerora, ace_vermilion_firaga |
 | 65 | 12 % | texture N not evaluated on node N | ace_vermilion_burst, ace_vermilion_support_hand, ace_wild_card_burst, ace_wild_card_hp_charge |
 | 63 | 12 % | Null locator unsupported: non-Standard ancestor locator | ace_vermilion_aerora, ace_vermilion_support_hand, ace_wild_card_hp_charge, ace_wild_card_mp_charge |
@@ -80,10 +80,10 @@ lightning, approximations.
 | Scenes | Share | Cause | Examples |
 | ---: | ---: | --- | --- |
 | 460 | 84 % | approximation: authoring-free-corpus-default | ace_fira, ace_firaga, ace_jackpot_shot, ace_thundaga |
-| 433 | 79 % | Particle: texture combination 0 "Basic" | ace_fira, ace_firaga, ace_jackpot_shot, ace_thundaga |
+| 428 | 78 % | Particle: texture combination 0 "Basic" | ace_fira, ace_firaga, ace_jackpot_shot, ace_thundaga |
 | 352 | 64 % | approximation: texture-tint-initial-value | ace_firaga, ace_jackpot_shot, ace_thundaga, ace_tri_beam_laser |
-| 315 | 58 % | Particle: texture combination 2 "Add" with texture 2 | ace_jackpot_shot, ace_vermilion_aeroga, ace_vermilion_attack_hand, ace_vermilion_bullet_card |
-| 311 | 57 % | Quad: texture combination 2 "Add" with texture 2 | ace_jackpot_shot, ace_vermilion_attack_hand, ace_vermilion_bullet_card, ace_vermilion_burst |
+| 292 | 53 % | Particle: texture combination 2 "Add" with texture 2 | ace_jackpot_shot, ace_vermilion_aeroga, ace_vermilion_attack_hand, ace_vermilion_card_showdown |
+| 288 | 53 % | Quad: texture combination 2 "Add" with texture 2 | ace_jackpot_shot, ace_vermilion_attack_hand, ace_vermilion_burst, ace_vermilion_cyclone_card |
 | 270 | 49 % | approximation: unsupported-node-type-subtree-omitted | ace_fira, ace_firaga, ace_thundaga, ace_tri_beam_laser |
 | 257 | 47 % | Quad: texture combination 0 "Basic" | ace_firaga, ace_tri_beam_laser, ace_vermilion_attack_hand, ace_vermilion_bullet_card |
 | 221 | 40 % | approximation: corner-mean-rgb | ace_firaga, ace_tri_beam_laser, ace_vermilion_bullet_card, ace_vermilion_burst |
@@ -103,6 +103,7 @@ lightning, approximations.
 | 65 | 12 % | approximation: held-constant | ace_vermilion_burst, ace_vermilion_burst_ffbe, ace_vermilion_heat_card, ace_vermilion_jackpot_triad |
 | 63 | 12 % | approximation: empty-alpha-curve-as-constant | ace_thundaga, ace_vermilion_bullet_card, ace_wild_card, auron_magic_break |
 | 55 | 10 % | approximation: repeated-generation-played-once | ace_wild_card_hp_charge, ace_wild_card_mp_charge, aerith_remake_healing_wind_ffvii_remake, aerith_white_materia |
+| 53 | 10 % | approximation: weakness-overlay-member-skipped | ace_vermilion_bullet_card, ace_vermilion_burst, ace_vermilion_cyclone_card, ace_vermilion_freeze_card |
 | 51 | 9 % | approximation: process-branch-played-in-parallel | ace_vermilion_attack_hand, ace_vermilion_burst, ace_vermilion_freeze_card, ace_vermilion_spark_card |
 | 45 | 8 % | Particle: texture combination 0 "Basic" with texture 2 | ace_vermilion_burst, ace_vermilion_support_hand, ace_wild_card_burst, ace_wild_card_hp_charge |
 | 39 | 7 % | Quad: screen coverage (unit-quad) | ace_vermilion_jackpot_triad, ace_wild_card_jackpot_triad, ace_wild_card_misdirection, ace_wild_card_true_jackpot_shot |

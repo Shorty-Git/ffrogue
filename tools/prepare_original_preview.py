@@ -404,6 +404,14 @@ if __name__ == '__main__':
                     bmb_channels.APPROXIMATED_CURVES.append({'group': group['groupId'], 'treatment': f'group-anchor-{raw_anchor}-as-{mapped}'})
                     anchor = mapped
             for member in group['members']:
+                if a.approximate_unverified and re.match(r'eff_3029_weak_', member['originalFile']):
+                    # Adaptation: eff_3029_weak_* is FFBE's elemental-weakness hit overlay, a battle-system
+                    # effect the skill data lists next to the skill's own files. FFRogue has no FFBE weakness
+                    # presentation, and its front glows (scale 25 under a 10x Null, white glow_008 second
+                    # layer) wash most of the arena white with hard canvas edges in 53 scenes.
+                    bmb_channels.APPROXIMATED_CURVES.append({'group': group['groupId'], 'member': member['originalFile'],
+                                                             'treatment': 'weakness-overlay-member-skipped'})
+                    continue
                 rotation = [float(v) for v in member['transform']] if member['transform'] else [0, 0, 0]
                 if len(rotation) != 3:
                     raise ValueError('Unknown member transform')

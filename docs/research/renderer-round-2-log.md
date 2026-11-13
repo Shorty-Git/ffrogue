@@ -28,7 +28,7 @@ How to work (from round 1, see `docs/current-state.md` "Renderer completion sess
 | A4 emitters with an extent | open | |
 | A5 sort priority / type 7 | open | |
 | A6 RGB random range / random texture tint | partly: initial texture tint applied (with A1); random range and tint curves open | same commit |
-| B7 six scenes without visible effect | open | |
+| B7 six scenes without visible effect | resolved: not a bug (short generic hits between samples) | "weakness overlay" commit |
 | B8 known boxes | open | |
 | C9 triage of 161 candidates | open | |
 | C10 unlock | open | |
@@ -177,3 +177,26 @@ thinner), no new visible box. All accepted with `--force`, pins via `update_scen
 
 Next step when resuming: B7 (the 5 empty scenes) and the A1 side effect (stacked `glow_011` Particles
 saturating into bright squares, e.g. cecil_curaga frame 73, kain_darkness) - both visible bugs; then A4.
+
+### Weakness overlay and the "empty" scenes (2026-11-14, Claude Opus)
+
+- Bright glows of cecil_curaga / kain_darkness (A1 side effect): looked at the sheets; they are round,
+  coloured light orbs, not boxes. No change.
+- `eff_3029_weak_*` (53 scenes): FFBE's elemental-weakness hit overlay, listed in the skill data next to
+  the skill's own files. Its front node 29 (glow_011 scale 25 +- 12.5 under Null 26 scale 10 +- 5, five
+  generations, two-texture Add with a white glow_008 second layer, verified native SemiAdd = SrcAlpha/One)
+  stacked to 1,400-2,200 px white discs with hard canvas edges; several scenes had whole white frames
+  (terra_magitek_warrior_saint_riot, terra_fire, lightning_wondrous_flash_impulsestrike). Survey over all
+  5,798 authored Particles: radii above 200 units are common (821), so the size alone is no decoding error.
+  Adaptation (product decision, FFRogue has no FFBE weakness presentation): `prepare_original_preview.py`
+  skips `eff_3029_weak_*` members in approximation plans and records `weakness-overlay-member-skipped`.
+  `eff_3030_brave_*` (caster aura, 31 scenes) looked fine and stays. Re-prepared, republished, captured and
+  compared the 53 scenes: whiteouts gone, the skills' own effects remain; all accepted.
+- The 5 scenes "without a visible effect" (baron_marine_hack, garuda_skyfall, guard_scorpion_scorpion_tail,
+  magitek_axeman_spin_kick, vampire_thorn_vine_whip) are enemy moves that play one generic hit
+  (atk_stab1/atk_slash1/atk_blow1) of about 15 frames; `inspect_scene_frame.mjs --key garuda_skyfall
+  --frame 32` shows three 300 px bursts. Not a bug, the 12 samples miss them.
+- Counts: rectangle corners 171 -> 170; tests 365/365, scene-flash tests OK.
+
+Next step when resuming: B8 known boxes (edea_blizzaga, aerith_holy cloud edge, tsunami/tidal wave stripe,
+finishing touch tornado edge, onion knight boards), then A4 emitters with an extent.

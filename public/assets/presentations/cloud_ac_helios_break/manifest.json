@@ -8,7 +8,7 @@
   "durationFrames": 421,
   "provenance": {
     "planFile": "tools/data/full-import/cloud_ac/skills/helios_break/source/plan.json",
-    "planSha256": "04b4d979484ff7b5058c1553c33f6057da24ee7ef7baa6ff84246a8e7a650f8c",
+    "planSha256": "748f524a0263cad7714229fa70394d1302acb3412c4b600f0eb424de14fa37f2",
     "playerSha256": "c942e74668a439a8eca74f3e7eb033fb8979f7acec5589eb7eb4be3c80578669",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "e3ac13388e8918148181dd5afaae7727a4cde79aeb8320cf05a6e6c22fec1b96"
@@ -103111,70 +103111,6 @@
             40
           ]
         }
-      },
-      {
-        "effect": 3,
-        "startFrame": 40,
-        "anchor": "target",
-        "layer": "front",
-        "scalePercent": 100,
-        "rotation": [
-          0,
-          0,
-          0
-        ],
-        "rawGroupFields": [
-          "99999999",
-          "1",
-          "2",
-          "2",
-          "0",
-          "0"
-        ],
-        "compositionOrigin": "skill",
-        "placement": {
-          "rectangle": "target-unit",
-          "axisModes": [
-            2,
-            2
-          ],
-          "offset": [
-            0,
-            0
-          ]
-        }
-      },
-      {
-        "effect": 2,
-        "startFrame": 40,
-        "anchor": "target",
-        "layer": "back",
-        "scalePercent": 100,
-        "rotation": [
-          0,
-          0,
-          0
-        ],
-        "rawGroupFields": [
-          "99999999",
-          "1",
-          "2",
-          "2",
-          "0",
-          "0"
-        ],
-        "compositionOrigin": "skill",
-        "placement": {
-          "rectangle": "target-unit",
-          "axisModes": [
-            2,
-            2
-          ],
-          "offset": [
-            0,
-            0
-          ]
-        }
       }
     ],
     "audioGroupCoverage": "all-resolved-effect-groups-only",
@@ -117354,6 +117290,16 @@
           "placement": "anchor-mode-3",
           "scope": "single_enemy",
           "treatment": "caster-unit"
+        },
+        {
+          "group": 5028091,
+          "member": "eff_3029_weak_white_front.bmb",
+          "treatment": "weakness-overlay-member-skipped"
+        },
+        {
+          "group": 5028082,
+          "member": "eff_3029_weak_white_back.bmb",
+          "treatment": "weakness-overlay-member-skipped"
         },
         {
           "effectHorizon": 220,

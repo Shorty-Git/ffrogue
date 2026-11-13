@@ -8,7 +8,7 @@
   "durationFrames": 364,
   "provenance": {
     "planFile": "tools/data/full-import/ace_vermilion/skills/tornado/source/plan.json",
-    "planSha256": "b6bf247bcb950ed1b5aa5dd471de38f0f25490aac464445792944f8379dc1f70",
+    "planSha256": "0e665b4ba282beb6d35d73b95098c636320dc3b39a63bc623843ac9e9d6fee75",
     "playerSha256": "c942e74668a439a8eca74f3e7eb033fb8979f7acec5589eb7eb4be3c80578669",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "0e74a997cf78e2f0ff82c39d1761fc59074ad225f10609bea21f24e4b2df8559"
@@ -84817,68 +84817,6 @@
             150
           ]
         }
-      },
-      {
-        "effect": 2,
-        "startFrame": 40,
-        "anchor": "target",
-        "layer": "back",
-        "scalePercent": 100,
-        "rotation": [
-          0,
-          0,
-          0
-        ],
-        "rawGroupFields": [
-          "99999999",
-          "1",
-          "2",
-          "2",
-          "0",
-          "0"
-        ],
-        "placement": {
-          "rectangle": "target-unit",
-          "axisModes": [
-            2,
-            2
-          ],
-          "offset": [
-            0,
-            0
-          ]
-        }
-      },
-      {
-        "effect": 3,
-        "startFrame": 40,
-        "anchor": "target",
-        "layer": "front",
-        "scalePercent": 100,
-        "rotation": [
-          0,
-          0,
-          0
-        ],
-        "rawGroupFields": [
-          "99999999",
-          "1",
-          "2",
-          "2",
-          "0",
-          "0"
-        ],
-        "placement": {
-          "rectangle": "target-unit",
-          "axisModes": [
-            2,
-            2
-          ],
-          "offset": [
-            0,
-            0
-          ]
-        }
       }
     ],
     "audioGroupCoverage": "all-resolved-effect-groups-only",
@@ -88987,6 +88925,16 @@
         {
           "branch": 1,
           "treatment": "process-branch-played-in-parallel"
+        },
+        {
+          "group": 5027962,
+          "member": "eff_3029_weak_green_back.bmb",
+          "treatment": "weakness-overlay-member-skipped"
+        },
+        {
+          "group": 5027971,
+          "member": "eff_3029_weak_green_front.bmb",
+          "treatment": "weakness-overlay-member-skipped"
         },
         {
           "effectHorizon": 196,

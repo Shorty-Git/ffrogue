@@ -8,7 +8,7 @@
   "durationFrames": 421,
   "provenance": {
     "planFile": "tools/data/full-import/barret_remake/skills/flamethrower/source/plan.json",
-    "planSha256": "7b2c9dbd6f266b59cbfe12bc49b8932dcd683715ad5e0cba3460f6e2bd8b24d4",
+    "planSha256": "44dd154877a81bf9ea8bd6d3d0fadd084b88394560e7886c4410fe3af0a7aa1d",
     "playerSha256": "c942e74668a439a8eca74f3e7eb033fb8979f7acec5589eb7eb4be3c80578669",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "86191021f9b37747b813ea48b42550fd9a1094218137faaf30930bdd17eff701"
@@ -144777,70 +144777,6 @@
         }
       },
       {
-        "effect": 5,
-        "startFrame": 40,
-        "anchor": "target",
-        "layer": "front",
-        "scalePercent": 100,
-        "rotation": [
-          0,
-          0,
-          0
-        ],
-        "rawGroupFields": [
-          "99999999",
-          "1",
-          "2",
-          "2",
-          "0",
-          "0"
-        ],
-        "compositionOrigin": "skill",
-        "placement": {
-          "rectangle": "target-unit",
-          "axisModes": [
-            2,
-            2
-          ],
-          "offset": [
-            0,
-            0
-          ]
-        }
-      },
-      {
-        "effect": 4,
-        "startFrame": 40,
-        "anchor": "target",
-        "layer": "back",
-        "scalePercent": 100,
-        "rotation": [
-          0,
-          0,
-          0
-        ],
-        "rawGroupFields": [
-          "99999999",
-          "1",
-          "2",
-          "2",
-          "0",
-          "0"
-        ],
-        "compositionOrigin": "skill",
-        "placement": {
-          "rectangle": "target-unit",
-          "axisModes": [
-            2,
-            2
-          ],
-          "offset": [
-            0,
-            0
-          ]
-        }
-      },
-      {
         "effect": 8,
         "startFrame": 40,
         "anchor": "caster",
@@ -156181,6 +156117,16 @@
         {
           "branch": 1,
           "treatment": "process-branch-played-in-parallel"
+        },
+        {
+          "group": 5028071,
+          "member": "eff_3029_weak_red_front.bmb",
+          "treatment": "weakness-overlay-member-skipped"
+        },
+        {
+          "group": 5028062,
+          "member": "eff_3029_weak_red_back.bmb",
+          "treatment": "weakness-overlay-member-skipped"
         },
         {
           "placement": "anchor-mode-3",

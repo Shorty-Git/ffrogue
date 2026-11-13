@@ -8,7 +8,7 @@
   "durationFrames": 291,
   "provenance": {
     "planFile": "tools/data/full-import/noctis_true_king/skills/spectral_gleam/source/plan.json",
-    "planSha256": "d2ada2c6b36233a80b83fd87e700beb54ff67d10c3aca7c10001f4663bd90d2e",
+    "planSha256": "1e7ad4485716c05cee59203cabea70abada8850b1fe65896ca6df3de2e588d73",
     "playerSha256": "c942e74668a439a8eca74f3e7eb033fb8979f7acec5589eb7eb4be3c80578669",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "fefd93d03c9a726504ced191d691b4352d45222b9cefe9fe8a9ff72f91b12866"
@@ -57100,70 +57100,6 @@
             0
           ]
         }
-      },
-      {
-        "effect": 1,
-        "startFrame": 40,
-        "anchor": "target",
-        "layer": "back",
-        "scalePercent": 100,
-        "rotation": [
-          0,
-          0,
-          0
-        ],
-        "rawGroupFields": [
-          "99999999",
-          "1",
-          "2",
-          "2",
-          "0",
-          "0"
-        ],
-        "compositionOrigin": "skill",
-        "placement": {
-          "rectangle": "target-unit",
-          "axisModes": [
-            2,
-            2
-          ],
-          "offset": [
-            0,
-            0
-          ]
-        }
-      },
-      {
-        "effect": 2,
-        "startFrame": 40,
-        "anchor": "target",
-        "layer": "front",
-        "scalePercent": 100,
-        "rotation": [
-          0,
-          0,
-          0
-        ],
-        "rawGroupFields": [
-          "99999999",
-          "1",
-          "2",
-          "2",
-          "0",
-          "0"
-        ],
-        "compositionOrigin": "skill",
-        "placement": {
-          "rectangle": "target-unit",
-          "axisModes": [
-            2,
-            2
-          ],
-          "offset": [
-            0,
-            0
-          ]
-        }
       }
     ],
     "audioGroupCoverage": "all-resolved-effect-groups-only",
@@ -64125,6 +64061,16 @@
           "value": "NewtonDynamics",
           "corpusShare": 0.8134,
           "treatment": "authoring-free-corpus-default"
+        },
+        {
+          "group": 5028082,
+          "member": "eff_3029_weak_white_back.bmb",
+          "treatment": "weakness-overlay-member-skipped"
+        },
+        {
+          "group": 5028091,
+          "member": "eff_3029_weak_white_front.bmb",
+          "treatment": "weakness-overlay-member-skipped"
         }
       ],
       "boundary": "Visual approximation: these source curves are not evaluated; the effect is not a native-fidelity reconstruction."

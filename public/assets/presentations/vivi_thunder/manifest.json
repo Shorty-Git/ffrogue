@@ -8,7 +8,7 @@
   "durationFrames": 222,
   "provenance": {
     "planFile": "tools/data/full-import/vivi/skills/thunder/source/plan.json",
-    "planSha256": "007ab9305e623ba4beb21400365f8a32e5935af96b06102ef82aedebf6d963e2",
+    "planSha256": "bd23549b4243aff41d47ccdec5189b4a6798f293924e027d8ce4d5673565136c",
     "playerSha256": "c942e74668a439a8eca74f3e7eb033fb8979f7acec5589eb7eb4be3c80578669",
     "threeSha256": "613f93102cdd08ff32b0f9bfed0585ef29235e14d95bac63a0c89f166b308f1a",
     "recipeSha256": "9049c4b7ea890ad98a8ab742b737bc12e6e6ec0013f09882c0a5c4ad49a947b7"
@@ -82400,68 +82400,6 @@
         }
       },
       {
-        "effect": 1,
-        "startFrame": 40,
-        "anchor": "target",
-        "layer": "back",
-        "scalePercent": 100,
-        "rotation": [
-          0,
-          0,
-          0
-        ],
-        "rawGroupFields": [
-          "99999999",
-          "1",
-          "2",
-          "2",
-          "0",
-          "0"
-        ],
-        "placement": {
-          "rectangle": "target-unit",
-          "axisModes": [
-            2,
-            2
-          ],
-          "offset": [
-            0,
-            0
-          ]
-        }
-      },
-      {
-        "effect": 2,
-        "startFrame": 40,
-        "anchor": "target",
-        "layer": "front",
-        "scalePercent": 100,
-        "rotation": [
-          0,
-          0,
-          0
-        ],
-        "rawGroupFields": [
-          "99999999",
-          "1",
-          "2",
-          "2",
-          "0",
-          "0"
-        ],
-        "placement": {
-          "rectangle": "target-unit",
-          "axisModes": [
-            2,
-            2
-          ],
-          "offset": [
-            0,
-            0
-          ]
-        }
-      },
-      {
         "effect": 3,
         "startFrame": 40,
         "anchor": "caster",
@@ -92776,6 +92714,16 @@
             "initial native fragment is not the pinned Basic family"
           ],
           "treatment": "texture-tint-initial-value"
+        },
+        {
+          "group": 5028102,
+          "member": "eff_3029_weak_yellow_back.bmb",
+          "treatment": "weakness-overlay-member-skipped"
+        },
+        {
+          "group": 5028111,
+          "member": "eff_3029_weak_yellow_front.bmb",
+          "treatment": "weakness-overlay-member-skipped"
         },
         {
           "branch": 1,
