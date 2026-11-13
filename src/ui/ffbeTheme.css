@@ -307,3 +307,16 @@
 .hero-skills li span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .signature-tag{font-style:normal;font-size:.66rem;font-weight:700;letter-spacing:.12em;padding:0 .45em;margin-left:.4em;border-radius:3px;color:#1a0f02;background:linear-gradient(#ffe7a6,#d4a23f)}
 .weapon-line.is-signature{color:#ffe3a8}
+/* Run events (src/run/runEvents.mjs): camp, Moogle merchant, crystal shrine. */
+.gil-note{margin:0 auto 8px;width:fit-content;max-width:100%;padding:3px 12px;border:1px solid #e8c46a88;border-radius:4px;background:#1d1606cc;font-size:12px;color:#f4dc95;text-shadow:0 1px 2px #000}
+.event-party{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:0 auto 12px;max-width:760px}
+.event-member{display:flex;align-items:center;gap:8px;min-width:200px;flex:1 1 200px;max-width:250px;padding:6px 8px;border:1px solid #9fc0e044;border-radius:4px;background:#061226cc}
+.event-member>div{flex:1;min-width:0}.event-member strong{font-size:12px}
+.event-member.is-ko{opacity:.55;filter:grayscale(.8)}
+.event-member .portrait-frame{flex:none}
+#run-ui .event-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,270px));justify-content:center;gap:14px;max-width:760px;margin:0 auto}
+#run-ui .event-grid.is-shop{grid-template-columns:repeat(2,minmax(0,300px))}
+#run-ui .event-card h2{overflow-wrap:normal;word-break:normal;hyphens:manual}
+@media(max-width:620px){#run-ui .event-grid,#run-ui .event-grid.is-shop{grid-template-columns:1fr}}
+#run-ui .event-card[disabled]{opacity:.5;cursor:not-allowed;filter:grayscale(.6)}
+#run-ui .event-card{min-height:190px}

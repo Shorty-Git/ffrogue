@@ -1,5 +1,6 @@
 import type {RunCatalog,RunMember,RunState,Reward,AwakeningNotice} from '../run/runState.mjs';
 import {skillForRun,memberMaxMp,REVIVE_HP_SHARE,upcomingStage,encounters,AREA_CAMP} from '../run/runState.mjs';
+import {CAMP_REST,MERCHANT_RESTORE,SHRINE,GIL_REWARD,type MerchantWare} from '../run/runEvents.mjs';
 import {ELEMENT_LABELS,WARD_RESIST} from '../run/elementRules.mjs';
 import {elementChip,elementChips} from './elementChips';
 import {WEAPON_ELEMENT_RULE,WEAPON_GLYPHS,weaponSummary,isSignatureFor,type RunWeapon} from '../run/weapons.mjs';
@@ -166,8 +167,9 @@ export class RunUI{
    ['Choose your path','Two areas lead to the boss. Each holds a normal fight and an elite. Pick the one whose weaknesses suit your party.'],
    ['Fight','Pick a command below, then click an enemy in the arena. Hover a command to see what it does. Hitting a weakness deals extra damage; a full Limit gauge unlocks the Limit Burst.'],
    ['Grow stronger','After every win, choose one reward: new skills, skill ranks, weapons or an awakening. Crystals and new heroes stay with you after the run.'],
+   ['Stops on the road','Once per area you reach a campfire, a Moogle merchant (spend the Gil every win pays) or a crystal shrine that rewards a brave prayer, usually.'],
   ];
-  this.show(`${this.title('FIRST STEPS','HOW TO PLAY','Six battles, one boss. Every run draws a new party.')}<ol class="guide-steps">${steps.map(([t,d],i)=>`<li class="rpg-panel" style="--card-index:${i}"><span class="guide-number">${i+1}</span><div><h2>${esc(t)}</h2><p>${esc(d)}</p></div></li>`).join('')}</ol><div class="actions">${this.button(action,label)}</div>`,'guide');
+  this.show(`${this.title('FIRST STEPS','HOW TO PLAY','Six battles, three stops, one boss. Every run draws a new party.')}<ol class="guide-steps">${steps.map(([t,d],i)=>`<li class="rpg-panel" style="--card-index:${i}"><span class="guide-number">${i+1}</span><div><h2>${esc(t)}</h2><p>${esc(d)}</p></div></li>`).join('')}</ol><div class="actions">${this.button(action,label)}</div>`,'guide');
  }
  /** Path choice (2026-11-11): the final boss at the journey start, the next area before each seeded area.
   * Cards show the arena, who fights there, the enemies' weaknesses and the elements they attack with. */
@@ -292,9 +294,41 @@ export class RunUI{
   if(r.type==='weapon'&&r.weapon){const w=r.weapon;
    return `<span class="reward-portrait is-weapon">${w.icon?`<img src="${esc(w.icon)}" alt="${esc(w.name)}">`:`<b class="weapon-glyph" aria-hidden="true">${WEAPON_GLYPHS[w.category]??'⚔'}</b>`}<img class="hero-badge" src="${esc(c.portrait)}" alt="${esc(c.name)}"></span>`;}
   return `<span class="reward-portrait ${icon?'has-skill':''}"><img src="${esc(c.portrait)}" alt="${esc(c.name)}">${icon?`<img class="skill-badge" src="${esc(icon)}" alt="">`:''}</span>`;}
- rewards(run:RunState){this.show(`${this.title('VICTORY','THE SPOILS OF FATE','Choose one reward for your expedition.')}${campNote(run)?`<p class="camp-note">${esc(campNote(run)!)}</p>`:''}<div class="reward-grid">${run.offers.map((r,i)=>{const t=this.rewardText(r,run),m=run.party.find(m=>m.key===r.member);return `<article class="reward-option" style="--card-index:${i}"><button class="rpg-panel reward-card kind-${r.type} ${r.type==='weapon'&&isSignatureFor(m,r.weapon)?'is-signature':''}" data-action="reward-${i}" title="${esc(t.title+' — '+t.detail+('hint' in t&&t.hint?' '+t.hint:''))}"><span class="eyebrow">${t.tag}</span><span class="reward-head">${m?this.rewardArt(r,m):r.type==='ward'?`<span class="reward-portrait crystal-icon ward-icon">${elementChip(r.element!)}</span>`:'<span class="reward-portrait crystal-icon">✦</span>'}<h2>${esc(t.title)}</h2></span>${(els=>els.length?`<span class="reward-elements">${elementChips(els)}</span>`:'')(r.type==='weapon'?r.weapon?.elements??[]:(r.type==='learn'||r.type==='skill')&&m?skillElements(this.catalog[m.key].skills.find(x=>x.id===r.skill)!):[])}${r.type==='weapon'&&r.weapon?rarityBadge(r.weapon.rarity):''}<ul class="reward-lines">${t.detail.split(' · ').map(l=>`<li>${esc(l)}</li>`).join('')}</ul><span class="card-choose">CHOOSE →</span></button></article>`;}).join('')}</div>${PEEK_BUTTON}`,'rewards');this.bindPeek(run);
+ rewards(run:RunState){this.show(`${this.title('VICTORY','THE SPOILS OF FATE','Choose one reward for your expedition.')}${(earned=>earned?`<p class="gil-note">+${earned} Gil · purse ${run.gil??0} Gil</p>`:'')(GIL_REWARD[encounters(run.areas)[run.encounter]?.kind??'boss'])}${campNote(run)?`<p class="camp-note">${esc(campNote(run)!)}</p>`:''}<div class="reward-grid">${run.offers.map((r,i)=>{const t=this.rewardText(r,run),m=run.party.find(m=>m.key===r.member);return `<article class="reward-option" style="--card-index:${i}"><button class="rpg-panel reward-card kind-${r.type} ${r.type==='weapon'&&isSignatureFor(m,r.weapon)?'is-signature':''}" data-action="reward-${i}" title="${esc(t.title+' — '+t.detail+('hint' in t&&t.hint?' '+t.hint:''))}"><span class="eyebrow">${t.tag}</span><span class="reward-head">${m?this.rewardArt(r,m):r.type==='ward'?`<span class="reward-portrait crystal-icon ward-icon">${elementChip(r.element!)}</span>`:'<span class="reward-portrait crystal-icon">✦</span>'}<h2>${esc(t.title)}</h2></span>${(els=>els.length?`<span class="reward-elements">${elementChips(els)}</span>`:'')(r.type==='weapon'?r.weapon?.elements??[]:(r.type==='learn'||r.type==='skill')&&m?skillElements(this.catalog[m.key].skills.find(x=>x.id===r.skill)!):[])}${r.type==='weapon'&&r.weapon?rarityBadge(r.weapon.rarity):''}<ul class="reward-lines">${t.detail.split(' · ').map(l=>`<li>${esc(l)}</li>`).join('')}</ul><span class="card-choose">CHOOSE →</span></button></article>`;}).join('')}</div>${PEEK_BUTTON}`,'rewards');this.bindPeek(run);
  }
 
+ /** Run event between fights (src/run/runEvents.mjs): camp, Moogle merchant or crystal shrine. */
+ event(run:RunState){const e=run.event!,gil=run.gil??0,name=(key?:string)=>key?this.catalog[key]?.name??key:'',
+  skillName=(key?:string,id?:string)=>this.catalog[key??'']?.skills.find(s=>s.id===id)?.name??id??'',
+  level=(key?:string,id?:string)=>run.party.find(m=>m.key===key)?.skills.find(s=>s.id===id)?.level??1;
+  const party=`<div class="event-party">${run.party.map(m=>{const c=this.catalog[m.key];return `<div class="event-member${m.hp<=0?' is-ko':''}"><span class="portrait-frame"><img class="portrait" src="${esc(c.portrait)}" alt=""></span><div><strong>${esc(c.name)}</strong>${gaugeRow('hp',m.hp,Math.round(c.maxHp*m.stats.hp))}${gaugeRow('mp',m.mp,memberMaxMp(c,m))}</div></div>`;}).join('')}</div>`;
+  const card=(action:string,tag:string,icon:string,title:string,lines:string[],choose='CHOOSE →',disabled=false,i=0)=>`<article class="reward-option" style="--card-index:${i}"><button class="rpg-panel reward-card event-card" data-action="${action}" ${disabled?'disabled':''}><span class="eyebrow">${esc(tag)}</span><span class="reward-head"><span class="reward-portrait crystal-icon">${icon}</span><h2>${esc(title)}</h2></span><ul class="reward-lines">${lines.map(l=>`<li>${esc(l)}</li>`).join('')}</ul><span class="card-choose">${esc(choose)}</span></button></article>`;
+  const purse=`<p class="gil-note">Purse: <b>${gil} Gil</b></p>`;
+  if(e.kind==='camp'){
+   this.show(`${this.title('A QUIET CLEARING','CAMPFIRE','The fire crackles. Rest, or sharpen a technique before moving on.')}${party}<div class="reward-grid event-grid">${card('event-rest','PARTY RECOVERY','🔥','Rest by the Fire',[`Living allies recover ${Math.round(CAMP_REST*100)}% of their maximum HP and MP.`,'K.O. allies stay down.'],'REST →')}${e.train?card('event-train','TRAINING','⚔',`Train ${skillName(e.train.member,e.train.skill)}`,[`${name(e.train.member)} practises until dawn.`,`${skillName(e.train.member,e.train.skill)} Lv ${level(e.train.member,e.train.skill)} → Lv ${level(e.train.member,e.train.skill)+1}: 20% more power.`],'TRAIN →',false,1):''}</div>`,'event');
+   return;
+  }
+  if(e.kind==='merchant'){
+   const ware=(w:MerchantWare,i:number)=>{const sold=e.sold!.includes(i),short=gil<w.price;
+    const text:Record<MerchantWare['item'],[string,string,string[]]>={
+     potion:['🧪','Hi-Potion',[`Living allies recover ${Math.round(MERCHANT_RESTORE*100)}% of their maximum HP.`]],
+     ether:['💧','Ether Pack',[`Living allies recover ${Math.round(MERCHANT_RESTORE*100)}% of their maximum MP.`]],
+     phoenix:['🪶','Phoenix Down',[`Revive ${name(w.member)} with 50% HP.`]],
+     tome:['📖',`Tome of ${skillName(w.member,w.skill)}`,[`${name(w.member)}: ${skillName(w.member,w.skill)} Lv ${level(w.member,w.skill)} → Lv ${level(w.member,w.skill)+1} (20% more power).`]],
+     weapon:[WEAPON_GLYPHS[w.weapon?.category??'']??'⚔',w.weapon?.name??'Weapon',[`For ${name(w.member)}: ${w.weapon?weaponSummary(w.weapon):''}`,`${'★'.repeat(w.weapon?.rarity??0)} · replaces the current weapon`]]};
+    const [icon,title,lines]=text[w.item];
+    return card('event-buy-'+i,sold?'SOLD':`${w.price} GIL`,icon,title,lines,sold?'SOLD OUT':short?'NOT ENOUGH GIL':`BUY · ${w.price} GIL →`,sold||short,i);};
+   this.show(`${this.title('A TRAVELLING SHOP','MOOGLE MERCHANT','“Kupo! Fine wares for brave adventurers, kupo!”')}${purse}${party}<div class="reward-grid event-grid is-shop">${e.wares!.map(ware).join('')}</div><div class="actions">${this.button('event-leave','Move on')}</div>`,'event');
+   return;
+  }
+  const stat={attack:'attack power',magic:'magic power',defense:'damage resistance',hp:'maximum HP'}[e.stat!];
+  if(!e.result){
+   this.show(`${this.title('AN ANCIENT CRYSTAL','CRYSTAL SHRINE','A crystal hums with old power. It answers prayers, but not always kindly.')}${party}<div class="reward-grid event-grid">${card('event-pray','A GAMBLE','✦','Pray to the Crystal',[`${Math.round(SHRINE.chance*100)}%: every hero gains +${Math.round(SHRINE.bonus*100)}% ${stat} for this run.`,`${100-Math.round(SHRINE.chance*100)}%: living allies lose ${Math.round(SHRINE.curse*100)}% of their current HP.`],'PRAY →')}${card('event-leave','SAFE','➜','Move On',['Leave the crystal undisturbed.'],'LEAVE →',false,1)}</div>`,'event');
+   return;
+  }
+  const blessed=e.result==='blessing';
+  this.show(`${this.title('AN ANCIENT CRYSTAL',blessed?'THE CRYSTAL BLESSES YOU':'THE CRYSTAL TAKES ITS PRICE',blessed?`Every hero gains +${Math.round(SHRINE.bonus*100)}% ${stat} for this run.`:`Living allies lose ${Math.round(SHRINE.curse*100)}% of their current HP.`)}${party}<div class="actions">${this.button('event-leave','Continue')}</div>`,'event');
+ }
  replacement(run:RunState,index:number){const r=run.offers[index],m=run.party.find(m=>m.key===r.member)!,c=this.catalog[m.key],incoming=skillForRun(c.skills.find(s=>s.id===r.skill)!,m);
   this.show(`${this.title('SKILL SLOTS FULL','MAKE ROOM',`${c.name} can hold three skills. Choose one to forget, or keep the current skills and pick another reward.`)}
   <div class="rpg-panel swap-new"><span class="eyebrow">NEW SKILL · ${esc(c.name)}</span><h2>${skillIcon(incoming)}${esc(incoming.name)}</h2><p>${esc(skillDescription(incoming))}</p></div>

@@ -26,7 +26,9 @@ function loadModule(file) {
   const output = ts.transpileModule(fs.readFileSync(file, 'utf8'), {
     compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
   }).outputText;
+  // Registered before running so import cycles (runState <-> runEvents) resolve like CommonJS.
   const exports = {};
+  modules.set(file, exports);
   vm.runInNewContext(output, {
     exports,
     require: (name) => name === 'phaser'
@@ -35,7 +37,6 @@ function loadModule(file) {
     console,
     window:{matchMedia:()=>({matches:false})},
   }, { filename: file });
-  modules.set(file, exports);
   return exports;
 }
 const { BattleScene } = loadModule('src/scenes/BattleScene.ts');
@@ -95,7 +96,7 @@ test('victory cycle is driven by animation completion/repeat and detaches on sce
 test('stale reward clicks cannot apply twice, stop the next encounter or reopen an error screen',()=>{
  const {GameFlow}=loadModule('src/run/GameFlow.ts'),rules=loadModule('src/run/runState.mjs'),callbacks={};
  const catalog=Object.fromEntries(['a','b','c'].map(key=>[key,{key,identity:key,canonicalIdentity:key,unitId:key,rarity:5,form:key,maxHp:100,maxMp:50,skills:[{id:key+'-skill',damageMultiplier:1}]}]));
- const run=rules.confirmParty(rules.rollParty(rules.createRun('duplicate-reward',catalog),catalog));
+ const run=rules.confirmParty(rules.rollParty(rules.createRun('duplicate-reward',catalog,rules.courseAreas('duplicate-reward').map(a=>({...a,normals:4})))/* run event (runEvents.mjs) only before fight 3 */,catalog));
  const flow=Object.create(GameFlow.prototype);flow.catalog=catalog;flow.state=rules.completeBattle(run,catalog,run.party.map(m=>({key:m.key,hp:m.hp,mp:m.mp})),true);
  flow.state.offers[0]={type:'stat',member:run.party[0].key,stat:'attack'};let commits=0,stops=0,starts=0;
  flow.ui={rewards(){},overBattle(){},on(action,callback){callbacks[action]=callback;}};flow.rewardBounds=()=>({});

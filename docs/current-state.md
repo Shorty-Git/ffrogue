@@ -2,7 +2,35 @@
 
 Single entry point for any developer or AI picking up the project. Read this first, then
 `docs/vision.md` (goals), `AGENTS.md` (rules) and the specialised docs linked below.
-Last consolidated: 2026-11-07; newest section: renderer completion session 2026-11-11/12.
+Last consolidated: 2026-11-07; newest section: run events and gil 2026-11-14.
+
+## Run events and gil (2026-11-14)
+
+One stop per area between fights (`src/run/runEvents.mjs`, tests `tools/test_run_events.mjs`):
+- Timing: before fight `ceil(normals/2)` of a seeded area (with one normal fight: before the elite), before
+  the boss in the final area. Kind per area from a seeded order of camp / merchant / shrine; the final area
+  never gets the shrine. All choices are seeded hashes, no RNG stream draws, so reward/combat streams of
+  existing seeds are unchanged and a reload cannot reroll an event.
+- Gil: 50 per normal win, 120 per elite (`GIL_REWARD`), shown on the reward screen; `run.gil` is optional
+  in the save (RUN_VERSION stays 4).
+- Campfire: rest (living allies +50 % HP/MP) or train (lowest-level skill of a seeded living member +1 level).
+- Moogle merchant: Hi-Potion 60 (35 % HP), Ether Pack 50 (35 % MP) or Phoenix Down 100 when someone is K.O.,
+  Tome 150 (skill +1 level), one weapon of the next tier for a seeded member (30 Gil per star). Buy any
+  number, then "Move on".
+- Crystal shrine: pray (60 %: every hero +15 % of a seeded stat; 40 %: living allies lose 30 % of current HP,
+  never below 1) or move on. The outcome is fixed by the seed and shown before continuing.
+- Phase `event` in the save with `run.event`; `validateRun` checks it against the seeded kind and wave.
+  GameFlow: reward -> `startEvent` -> event screen (`RunUI.event`) -> next fight with the normal fade.
+- Checked: 6 unit tests; all three events played in the browser from in-game generated saves (buy,
+  pray, rest; each continues into the next fight without errors). Prices and shares are first guesses for
+  the balancing pass.
+- Test loader fix: `tools/test_combat_regressions.mjs` registers a module before running it, so import
+  cycles (runState <-> runEvents) resolve.
+
+Also 2026-11-14: Vaan's Red Spiral imported (player instance safety cap 4,096 -> 8,192; 50 of 52 heroes now
+have a Limit Burst, Aerith Cetra's support LB is a movie and stays out), and the FFBE weakness hit overlay
+is skipped in approximation plans (53 scenes lost white screen blobs). Details:
+`docs/research/renderer-round-2-log.md`.
 
 ## Renderer completion session (2026-11-11, brief: docs/briefs/renderer-completion.md)
 

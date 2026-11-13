@@ -5,6 +5,7 @@ import {skillElements} from './elementRules.mjs';
 import {isSignatureFor,memberPower,signatureWeaponFor,validWeapon,weaponsForTier} from './weapons.mjs';
 import {awakeningPath,formAt,formForLevel,levelOf,MAX_LEVEL} from './unitForms.mjs';
 import {carriedLimit,LB_MAX} from './limitGauge.mjs';
+import {gilFor,validEvent} from './runEvents.mjs';
 export const RUN_VERSION=4;
 export const SAVE_KEY='ffrogue.run.v1';
 /** Share of base max HP a 'revive' reward restores. */
@@ -239,6 +240,8 @@ export function completeBattle(input,catalog,snapshot,won){
   // The Limit gauge carries to the next battle for heroes who end it standing (src/run/limitGauge.mjs).
   const gauge=carriedLimit(catalog[m.key],m.hp,snapshot[i].limit);if(gauge>0)m.limit=gauge;else delete m.limit;});
  if(!won){run.phase='lost';return run;}
+ // Gil for the Moogle merchant (src/run/runEvents.mjs).
+ run.gil=(run.gil??0)+gilFor(encounters(run.areas)[run.encounter].kind);
  run.phase='rewards';const pool=rewardPool(run,catalog),boss=encounters(run.areas)[run.encounter].boss;
  const evolution=pool.filter(r=>r.type==='evolve'),revival=pool.filter(r=>r.type==='revive');
  const profile=stageElementProfile(upcomingStage(run)),weigh=r=>rewardWeight(run,catalog,r,profile);
@@ -328,7 +331,7 @@ export function migrateRun(input,catalog){
  return validateRun(upgradeToLevels(run,catalog),catalog);
 }
 export function validateRun(run,catalog){
- if(run?.version!==RUN_VERSION||typeof run.seed!=='string'||!['setup','battle','rewards','won','lost'].includes(run.phase)
+ if(run?.version!==RUN_VERSION||typeof run.seed!=='string'||!['setup','battle','rewards','event','won','lost'].includes(run.phase)
   ||!Number.isInteger(run.rerolls)||run.rerolls<0||run.rerolls>3||!Array.isArray(run.party)
   ||(run.phase==='setup'?![0,3].includes(run.party.length):run.party.length!==3)
   ||!Array.isArray(run.areas)||!run.areas.length||run.areas.length>3||run.areas.some(a=>!Number.isInteger(a.normals)||a.normals<1||a.normals>5||(a.final!==undefined&&a.final!==true))
@@ -342,11 +345,12 @@ export function validateRun(run,catalog){
  if(Object.hasOwn(run.rng,'forms')&&(!Number.isInteger(run.rng.forms)||run.rng.forms<0||run.rng.forms>0xffffffff))throw Error('Invalid saved form RNG');
  if(run.pendingAwakening){const p=run.pendingAwakening,c=catalog[p.member],m=run.party.find(m=>m.key===p.member),last=run.history.at(-1);
   const from=c&&formAt(c,p.from?.form),to=c&&formAt(c,p.to?.form);
-  if(!['battle','won'].includes(run.phase)||p.encounter!==run.encounter-1||p.id!==`${run.seed}:${p.encounter}:${p.member}:${p.to?.form}`
+  if(!['battle','event','won'].includes(run.phase)||p.encounter!==run.encounter-1||p.id!==`${run.seed}:${p.encounter}:${p.member}:${p.to?.form}`
    ||!from||!to||!(c.forms?.some(f=>f.awakensFrom)?awakeningPath(c,from).includes(to):to.rarity>from.rarity)||m?.form!==to.form||p.from.unitId!==from.unitId||p.from.rarity!==from.rarity
    ||p.to?.form!==m.form||p.to.unitId!==m.unitId||p.to.rarity!==m.rarity||last?.kind!=='reward'||last.encounter!==p.encounter
    ||last.reward?.type!=='evolve'||last.reward.member!==p.member||formForLevel(c,last.reward.level)?.form!==p.to.form)throw Error('Invalid saved awakening presentation');
  }
+ if(!validEvent(run))throw Error('Invalid saved event');
  if(new Set(run.party.map(m=>m.canonicalIdentity)).size!==run.party.length)throw Error('Saved party contains duplicate canonical characters. Start a new journey; original save is retained until discarded.');
  for(const m of run.party){const c=catalog[m.key],form=c&&formAt(c,m.form);if(!c||m.identity!==c.identity||!c.canonicalIdentity||m.canonicalIdentity!==c.canonicalIdentity||!c.skills.length||!form
    ||m.unitId!==form.unitId||m.rarity!==form.rarity||m.rank!==form.rank

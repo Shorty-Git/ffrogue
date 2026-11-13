@@ -3,6 +3,7 @@ import type {UnitManifest} from '../types/manifest';
 import type {RunState,RunRules} from './runState.mjs';
 import {RunStore,createRun,variantAreas,courseAreas,FINAL_STAGES,routeOptions,chooseRoute,rollParty,confirmParty,chooseStartSkill,completeBattle,chooseReward,encounters,acknowledgeAwakening} from './runState.mjs';
 import {runCatalog} from './catalog';
+import {startEvent,chooseEvent} from './runEvents.mjs';
 import {ProfileStore,chooseFavorite,favoriteChoices,MAX_FAVORITES,drawCatalog,lockedHeroes,settleRun,summonHero,summonPool,SUMMON_COST,type Profile} from './profile.mjs';
 import {RunUI} from '../ui/RunUI';
 import {EncounterTransition} from '../ui/EncounterTransition';
@@ -86,7 +87,7 @@ export class GameFlow{
  route(){if(!this.state)return this.menu();
   // On reload, resume AFTER the already saved upgrade; never replay its reward.
   if(this.state.pendingAwakening)this.commit(acknowledgeAwakening(this.state,this.state.pendingAwakening.id));
-  if(this.state.phase==='setup')this.setup();else if(this.state.phase==='battle')this.battle();else if(this.state.phase==='rewards')this.battle();else this.result();}
+  if(this.state.phase==='setup')this.setup();else if(this.state.phase==='battle')this.battle();else if(this.state.phase==='rewards')this.battle();else if(this.state.phase==='event')this.event();else this.result();}
  private setup(){void import('html2canvas').catch(()=>{});
   this.audio.setMusic(HOME_MUSIC_RESOURCE,'home');ALL_FATE_SOUNDS.forEach(sound=>this.audio.warmSample(fateSoundUrl(sound)));const draw=drawCatalog(this.profile,this.catalog),choices=Object.fromEntries(this.state!.party.filter(m=>draw[m.key]?.startSkillChoice).map(m=>[m.key,draw[m.key].skills.map(s=>({id:s.id,name:s.name}))]));
   this.ui.slots(this.state!,this.busy,choices);this.ui.on('spin',()=>this.spin());
@@ -259,10 +260,12 @@ export class GameFlow{
  private takeReward(index:number,replace?:string){if(this.state?.phase!=='rewards')return;try{
   const course=encounters(this.state.areas);
   const previous=course[this.state.encounter].area;
-  const next=chooseReward(this.state,index,this.catalog,replace);
+  // A run event (camp, merchant, shrine) may wait before the next fight (src/run/runEvents.mjs).
+  const next=startEvent(chooseReward(this.state,index,this.catalog,replace));
   this.commit(next);
   const enterArea=next.phase==='battle'&&course[next.encounter].area!==previous;
-  const advance=()=>{if(next.phase==='battle')this.battle(enterArea?'area':'cut');
+  const advance=()=>{if(next.phase==='event'){this.scene.scene.stop('BattleScene');this.event();}
+    else if(next.phase==='battle')this.battle(enterArea?'area':'cut');
     else{this.scene.scene.stop('BattleScene');this.route();}};
   const notice=this.state.pendingAwakening;
   if(notice){const slot=this.state.party.findIndex(m=>m.key===notice.member),anchor=this.scene.scene.isActive('BattleScene')?this.rewardBounds().party[slot]:undefined;
@@ -270,6 +273,15 @@ export class GameFlow{
     try{this.commit(acknowledgeAwakening(this.state,notice.id));advance();}catch(error){this.fail(error);}
    },anchor);return;}
   advance();}catch(error){this.fail(error);}}
+ /** Run event screen; every action is saved before the screen redraws. */
+ private event(){if(this.state?.phase!=='event'||!this.state.event)return this.route();
+  this.audio.setMusic(HOME_MUSIC_RESOURCE,'event');
+  this.ui.event(this.state);
+  const act=(action:string)=>{if(this.state?.phase!=='event')return;try{this.commit(chooseEvent(this.state,action,this.catalog));
+   if(this.state.phase==='event')this.event();else this.battle('cut');}catch(error){this.fail(error);}};
+  for(const action of ['rest','train','pray','leave'])this.ui.on('event-'+action,()=>act(action));
+  this.state.event.wares?.forEach((_,i)=>this.ui.on('event-buy-'+i,()=>act('buy-'+i)));
+ }
  private result(){this.audio.setMusic(this.state?.phase==='won'?VICTORY_FANFARE_RESOURCE:null,'result');
   // Crystals and unlocks are settled once per finished run (keyed by seed and history), then shown.
   const settled=settleRun(this.profile,this.state!,this.catalog);this.profile=this.profiles.save(settled.profile);
