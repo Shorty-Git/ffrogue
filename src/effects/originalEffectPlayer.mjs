@@ -276,6 +276,16 @@ export function approximateParticleDisplay(THREE,world) {
   return new THREE.Matrix4().compose(new THREE.Vector3().setFromMatrixPosition(world),
     new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,0,1),roll),new THREE.Vector3(2*sx,2*sy,1));
 }
+/** View-aligned frame for Billboard Quads and Models: world axis lengths as scale, in-plane direction of the world X axis as roll. */
+export function approximateBillboardDisplay(THREE,world) {
+  if(!world.elements.every(Number.isFinite))throw Error('Nonfinite billboard transform');
+  const x=new THREE.Vector3().setFromMatrixColumn(world,0),sx=x.length(),sy=new THREE.Vector3().setFromMatrixColumn(world,1).length();
+  const sz=new THREE.Vector3().setFromMatrixColumn(world,2).length();
+  if(!(sx>0)||!(sy>0))return null;
+  const roll=Math.hypot(x.x,x.y)>1e-9*sx?Math.atan2(x.y,x.x):0;
+  return new THREE.Matrix4().compose(new THREE.Vector3().setFromMatrixPosition(world),
+    new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,0,1),roll),new THREE.Vector3(sx,sy,sz>0?sz:1));
+}
 export function quadCornerColors(source) {
   if(source.mode!=='Constant')throw Error('Unsupported quad color mode');
   const names=['leftTop','rightTop','leftBottom','rightBottom'];
@@ -673,12 +683,18 @@ export function updateBasicTextureMap(map,node,item,age,useSource=false) {
     map.updateMatrix();
   }
 }
+/** Parent alpha influence; without metadata (legacy plans) the plain product is kept. */
+export function parentAlphaInfluence(own,parent,mode,rate) {
+  if(!Number.isFinite(rate))return own*parent;
+  return mode==='Lerp'?own+(parent-own)*rate:own*(1+(parent-1)*rate);
+}
 export function inheritanceLimitations(source) {
   if(!source)return ['inheritance metadata unavailable; legacy live TRS and multiplied alpha retained'];
   const issues=[];
   if(source.matrix!=='On'||!['On','OnGenerateTime'].includes(source.translation)||source.rotation!=='On'||source.scale!=='On')
     issues.push('unsupported parent transform combination; legacy live TRS retained');
-  if(source.alphaRate!==0)issues.push('nonzero parent alpha influence remains unverified; legacy multiplication retained');
+  // Multiply with rate 1 (the common authored case) is the product by definition of the two fields.
+  if(source.alphaRate!==0&&!(source.alphaMode==='Multiply'&&source.alphaRate===1))issues.push('parent alpha influence '+source.alphaMode+' with a rate other than 0 or Multiply/1 uses an unverified formula');
   if(source.colorRate!==0)issues.push('parent color influence remains unsupported');
   return issues;
 }
@@ -721,7 +737,9 @@ export function createTransformEvaluator(THREE,effect,built) {
         matrix=zScreenLocatorMatrix(THREE,worldPosition.toArray(),scale.toArray(),inheritedScale.toArray(),degrees[2]*Math.PI/180);
       }
       let alpha=localAlpha(node,age/item.life,useAppearance,useNativeAlpha&&nativeAlphaSupport.get(node.index));
-      if(parent&&source?.alphaRate!==0)alpha*=parent.alpha;
+      // Authoring knows Multiply (own alpha times the parent's, weighted by the rate) and Lerp (towards the
+      // parent's alpha by the rate). Multiply with rate 1 is the plain product this line always computed.
+      if(parent&&source?.alphaRate!==0)alpha=parentAlphaInfluence(alpha,parent.alpha,source?.alphaMode,source?.alphaRate);
       const result={matrix,alpha,age};cache.set(key,result);return result;
     }
     return built.map((_,i)=>resolve(i,frame));
@@ -1071,6 +1089,15 @@ export async function createEffectPlayer(THREE, scene, plan) {
               item.mesh.matrixAutoUpdate=false;item.mesh.matrix.identity();item.mesh.visible=true;
               const world=new THREE.Matrix4().multiplyMatrices(entry.root.matrixWorld,matrix);
               const display=approximateParticleDisplay(THREE,world);
+              if(display&&Math.abs(world.determinant())>1e-12)item.mesh.matrix.copy(world.clone().invert().multiply(display));
+              else item.mesh.visible=false;
+              item.mesh.matrixWorldNeedsUpdate=true;
+            } else if(approximateBillboards&&node.facing?.name==='Billboard'&&(node.typeId===2||node.typeId===6)) {
+              // Billboard Quads and Models (source facing type) are view-aligned too: scale and Z roll stay,
+              // tilts about X or Y are dropped. A Quad is a unit plane, so no radius factor.
+              item.mesh.matrixAutoUpdate=false;item.mesh.matrix.identity();item.mesh.visible=true;
+              const world=new THREE.Matrix4().multiplyMatrices(entry.root.matrixWorld,matrix);
+              const display=approximateBillboardDisplay(THREE,world);
               if(display&&Math.abs(world.determinant())>1e-12)item.mesh.matrix.copy(world.clone().invert().multiply(display));
               else item.mesh.visible=false;
               item.mesh.matrixWorldNeedsUpdate=true;

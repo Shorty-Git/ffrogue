@@ -23,8 +23,8 @@ How to work (from round 1, see `docs/current-state.md` "Renderer completion sess
 | Step | State | Commit |
 | --- | --- | --- |
 | A1 particle geometry / native X | done (generic billboard, radius one) | see git log "Renderer round 2 A1" |
-| A2 parent alpha / transform combinations | open | |
-| A3 particle facing / model billboard | open | |
+| A2 parent alpha / transform combinations | alpha done (Multiply/Lerp formula); transform combinations open | "Renderer round 2 A2/A3" |
+| A3 particle facing / model billboard | done (Quad +2120, Model +1896 decoded; Billboard drawn view-aligned) | "Renderer round 2 A2/A3" |
 | A4 emitters with an extent | open | |
 | A5 sort priority / type 7 | open | |
 | A6 RGB random range / random texture tint | partly: initial texture tint applied (with A1); random range and tint curves open | same commit |
@@ -162,3 +162,18 @@ tools module called from `prepare_original_preview.py`, test against matched aut
 Quads/Models view-aligned in the player for approximation plans), together with the A2 alpha formula;
 then one full cycle (re-prepare, republish, capture, compare, accept, `update_scene_pins.mjs`, tests, commit).
 
+
+### A2/A3 result (2026-11-14, finished and committed by Claude Opus after the Fable session ended)
+
+Fable left A2 (parent alpha formula) and A3 (`tools/bmb_facing.py`, Billboard Quads/Models view-aligned)
+implemented and republished but not captured. Cycle completed: `capture --to candidate`, `compare`
+(474 ok, 41 unchanged, 31 review, 0 errors). The 31 review scenes only had more detected corners; sheets
+of aerith_holy, cecil_shell, kefka_stonga, auron_hellstorm, squall_wind_barret and firion_fynn_briar were
+compared by eye: near identical (Shell/Protect hexagons now face the camera, Holy pillar slightly
+thinner), no new visible box. All accepted with `--force`, pins via `update_scene_pins.mjs`.
+- Tests: 365/365 node tests pass.
+- Counts: player issue causes 57 -> 53 (the 351-scene "parent alpha unverified" text is gone); scenes
+  with rectangle corners 169 -> 171; scenes without a visible effect 5.
+
+Next step when resuming: B7 (the 5 empty scenes) and the A1 side effect (stacked `glow_011` Particles
+saturating into bright squares, e.g. cecil_curaga frame 73, kain_darkness) - both visible bugs; then A4.

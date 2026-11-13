@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
-import {createTransformEvaluator,inheritanceLimitations,instances} from './original_effect_player.mjs';
+import {parentAlphaInfluence,createTransformEvaluator,inheritanceLimitations,instances} from './original_effect_player.mjs';
 const THREE={};
 vm.runInNewContext(fs.readFileSync('tools/bin/effekseer-webgl-1.80.7/Sample/three.min.js','utf8'),{exports:THREE,module:{exports:THREE},console});
 const modes={matrix:'On',translation:'On',rotation:'On',scale:'On',alphaRate:0,colorRate:0};
@@ -14,12 +14,20 @@ const node=(alpha=1,source=modes)=>({authoringInheritance:source,motionModes:{},
 const make=(nodes,items)=>createTransformEvaluator(THREE,{nodes},items.map((v,i)=>({...v,node:i})));
 const x=row=>row.matrix.elements[12];
 
-test('zero alpha influence preserves local alpha; unsupported rates preserve explicit legacy behavior',()=>{
+test('zero alpha influence preserves local alpha; Multiply/1 is the product, other combinations follow the two authoring fields',()=>{
  const evaluate=make([node(.4),node(.8),node(.8,{...modes,alphaRate:1})],[item(null,0),item(0,0),item(0,0)]);
  assert.equal(evaluate(10,true)[1].alpha,.8);
  assert.ok(Math.abs(evaluate(10,false)[1].alpha-.32)<1e-12);
  assert.ok(Math.abs(evaluate(10,true)[2].alpha-.32)<1e-12);
- assert.match(inheritanceLimitations({...modes,alphaRate:1}).join(),/nonzero/);
+ // Multiply with rate 1 is the product by definition; Lerp or a fractional rate uses an unverified formula.
+ assert.doesNotMatch(inheritanceLimitations({...modes,alphaMode:'Multiply',alphaRate:1}).join(),/alpha/);
+ assert.match(inheritanceLimitations({...modes,alphaMode:'Lerp',alphaRate:1}).join(),/unverified formula/);
+ assert.match(inheritanceLimitations({...modes,alphaMode:'Multiply',alphaRate:.5}).join(),/unverified formula/);
+ assert.ok(Math.abs(parentAlphaInfluence(.8,.4,'Multiply',1)-.32)<1e-12);
+ assert.ok(Math.abs(parentAlphaInfluence(.8,.4,'Multiply',.5)-.56)<1e-12);
+ assert.ok(Math.abs(parentAlphaInfluence(.8,.4,'Lerp',1)-.4)<1e-12);
+ assert.ok(Math.abs(parentAlphaInfluence(.8,.4,'Lerp',0)-.8)<1e-12);
+ assert.ok(Math.abs(parentAlphaInfluence(.8,.4,undefined,undefined)-.32)<1e-12);
  assert.match(inheritanceLimitations(null).join(),/unavailable/);
 });
 

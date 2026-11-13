@@ -238,6 +238,9 @@ if __name__ == '__main__':
         if a.approximate_unverified:
             from bmb_draw_priority import attach_draw_priorities
             attach_draw_priorities(raw, data)
+            # Quad/Model facing type (polygon in the hierarchy or view-aligned billboard), binary field.
+            from bmb_facing import attach_facing
+            attach_facing(raw, data)
         if a.quad_colors:
             if not a.distortion:raise ValueError('Quad-color experiment requires the supported distortion plan')
             attach_quad_colors(raw,data)
