@@ -451,6 +451,210 @@
         "sourceRange": "1",
         "note": "Original target 6 / range 1 (process 4); adapted to raise at 0.5 HP on fallen-ally."
       }
+    },
+    {
+      "id": "red_spiral",
+      "ffbeId": 212002607,
+      "name": "Red Spiral",
+      "rarity": 5,
+      "level": 1,
+      "type": "LIMIT",
+      "mpCost": 0,
+      "scope": "single_enemy",
+      "damageMultiplier": 6,
+      "hitCount": 31,
+      "attackFrames": [
+        108,
+        108,
+        108,
+        108,
+        108,
+        114,
+        120,
+        126,
+        132,
+        138,
+        144,
+        150,
+        156,
+        161,
+        167,
+        173,
+        179,
+        185,
+        191,
+        197,
+        203,
+        209,
+        214,
+        220,
+        226,
+        232,
+        238,
+        244,
+        250,
+        256,
+        262
+      ],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Limit Burst: Physical damage (6x) to one enemy",
+      "execution": "prepared-source",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "vaan_rabanastre_red_spiral",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/vaan_rabanastre/skills/red_spiral/source/skill-source.json",
+        "sha256": "7a10fa980c5de661ee89b8bf8a68206472494209b42769cbfdffe915c492716b"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "target",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "limit_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 1,
+          "sourceMoveType": 1,
+          "note": "Drafted from motion 1 / move 1: dash with limit_atk body (LB rows carry no motionType; reviewed adaptation)."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 108,
+          "weight": 0.2
+        },
+        {
+          "frame": 108,
+          "weight": 0.2
+        },
+        {
+          "frame": 108,
+          "weight": 0.2
+        },
+        {
+          "frame": 108,
+          "weight": 0.2
+        },
+        {
+          "frame": 108,
+          "weight": 0.004
+        },
+        {
+          "frame": 114,
+          "weight": 0.004
+        },
+        {
+          "frame": 120,
+          "weight": 0.004
+        },
+        {
+          "frame": 126,
+          "weight": 0.004
+        },
+        {
+          "frame": 132,
+          "weight": 0.004
+        },
+        {
+          "frame": 138,
+          "weight": 0.004
+        },
+        {
+          "frame": 144,
+          "weight": 0.004
+        },
+        {
+          "frame": 150,
+          "weight": 0.004
+        },
+        {
+          "frame": 156,
+          "weight": 0.004
+        },
+        {
+          "frame": 161,
+          "weight": 0.004
+        },
+        {
+          "frame": 167,
+          "weight": 0.004
+        },
+        {
+          "frame": 173,
+          "weight": 0.004
+        },
+        {
+          "frame": 179,
+          "weight": 0.004
+        },
+        {
+          "frame": 185,
+          "weight": 0.004
+        },
+        {
+          "frame": 191,
+          "weight": 0.004
+        },
+        {
+          "frame": 197,
+          "weight": 0.004
+        },
+        {
+          "frame": 203,
+          "weight": 0.004
+        },
+        {
+          "frame": 209,
+          "weight": 0.004
+        },
+        {
+          "frame": 214,
+          "weight": 0.004
+        },
+        {
+          "frame": 220,
+          "weight": 0.004
+        },
+        {
+          "frame": 226,
+          "weight": 0.004
+        },
+        {
+          "frame": 232,
+          "weight": 0.004
+        },
+        {
+          "frame": 238,
+          "weight": 0.004
+        },
+        {
+          "frame": 244,
+          "weight": 0.004
+        },
+        {
+          "frame": 250,
+          "weight": 0.004
+        },
+        {
+          "frame": 256,
+          "weight": 0.004
+        },
+        {
+          "frame": 262,
+          "weight": 0.096
+        }
+      ]
     }
   ],
   "portraitSource": "unit_icons/unit_icon_212002607.png"

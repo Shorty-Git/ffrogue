@@ -172,7 +172,7 @@ test('random ranges are repeatable and unsupported generation fails visibly', ()
   assert.notDeepEqual(instances(effect, 42), instances(effect, 99));
   assert.throws(() => instances({ nodes: [node([], { repeatCount: 2 })] }), /Repeated/);
   assert.throws(() => instances({ nodes: [node([], { duration: 3 })] }), /interval/);
-  assert.throws(() => instances({ nodes: [node([], { count: 4097 })] }), /limit/);
+  assert.throws(() => instances({ nodes: [node([], { count: 8193 })] }), /limit/);
 });
 
 test('fractional generator intervals retain distinct source birth times', () => {

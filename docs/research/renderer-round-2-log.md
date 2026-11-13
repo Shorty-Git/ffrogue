@@ -200,3 +200,17 @@ saturating into bright squares, e.g. cecil_curaga frame 73, kain_darkness) - bot
 
 Next step when resuming: B8 known boxes (edea_blizzaga, aerith_holy cloud edge, tsunami/tidal wave stripe,
 finishing touch tornado edge, onion knight boards), then A4 emitters with an extent.
+
+### Limit Burst coverage (2026-11-14, Claude Opus)
+
+50 of 52 roster units publish a Limit Burst (the "missing Limit Burst command profile" lines in
+ROSTER_SKILL_COVERAGE.md are stale; the full character importer drafts LBs). The two gaps:
+- vaan_rabanastre Red Spiral failed on the player's research instance cap (4,096): its
+  `eff_bg_cosmo_001_f240_yellow` backdrop spawns 5,040 instances. The cap is a safety value, raised to
+  8,192 (player change: all scenes republished and re-pinned; no published scene came near the old cap, so
+  their rendering is unchanged). Imported with `import_full_character.mjs --key vaan_rabanastre --unit
+  212002607 --skills 212002607`; checked in the training fight against Sephiroth (dash, cosmo backdrop,
+  fire pillar on the target, crits, no errors).
+- aerith_cetra Planet's Protection is a party support LB (processes 95/149/3/120: light imbue, element and
+  stat boosts) whose original presentation is a movie (`LB_LLF_lapis3.usm`); not imported (no support-LB
+  mechanic, no movies by product decision).

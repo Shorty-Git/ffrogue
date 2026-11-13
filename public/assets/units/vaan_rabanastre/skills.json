@@ -824,6 +824,261 @@
         ],
         "boundary": "Original process parameters and source markers do not execute as game balance rules"
       }
+    },
+    {
+      "id": "red_spiral",
+      "ffbeId": 212002607,
+      "name": "Red Spiral",
+      "rarity": 5,
+      "level": 1,
+      "type": "LIMIT",
+      "mpCost": 0,
+      "scope": "single_enemy",
+      "damageMultiplier": 6,
+      "hitCount": 31,
+      "attackFrames": [
+        108,
+        108,
+        108,
+        108,
+        108,
+        114,
+        120,
+        126,
+        132,
+        138,
+        144,
+        150,
+        156,
+        161,
+        167,
+        173,
+        179,
+        185,
+        191,
+        197,
+        203,
+        209,
+        214,
+        220,
+        226,
+        232,
+        238,
+        244,
+        250,
+        256,
+        262
+      ],
+      "moveType": "dash",
+      "motion": "atk",
+      "desc": "Limit Burst: Physical damage (6x) to one enemy",
+      "reviewNote": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+      "scenePresentation": "vaan_rabanastre_red_spiral",
+      "importStatus": "imported",
+      "requiresSourceScene": true,
+      "preparedSourceReceipt": {
+        "file": "tools/data/full-import/vaan_rabanastre/skills/red_spiral/source/skill-source.json",
+        "sha256": "7a10fa980c5de661ee89b8bf8a68206472494209b42769cbfdffe915c492716b"
+      },
+      "actionChoreography": {
+        "schema": "source-action-v1",
+        "movement": "target",
+        "travelTiming": "prepared",
+        "readiness": "none",
+        "body": {
+          "mode": "clips",
+          "phases": [
+            {
+              "frame": 0,
+              "clip": "limit_atk"
+            }
+          ]
+        },
+        "review": {
+          "basis": "reviewed-adaptation",
+          "sourceMotionType": 1,
+          "sourceMoveType": 1,
+          "note": "Drafted from motion 1 / move 1: dash with limit_atk body (LB rows carry no motionType; reviewed adaptation)."
+        }
+      },
+      "damageEvents": [
+        {
+          "frame": 108,
+          "weight": 0.2
+        },
+        {
+          "frame": 108,
+          "weight": 0.2
+        },
+        {
+          "frame": 108,
+          "weight": 0.2
+        },
+        {
+          "frame": 108,
+          "weight": 0.2
+        },
+        {
+          "frame": 108,
+          "weight": 0.004
+        },
+        {
+          "frame": 114,
+          "weight": 0.004
+        },
+        {
+          "frame": 120,
+          "weight": 0.004
+        },
+        {
+          "frame": 126,
+          "weight": 0.004
+        },
+        {
+          "frame": 132,
+          "weight": 0.004
+        },
+        {
+          "frame": 138,
+          "weight": 0.004
+        },
+        {
+          "frame": 144,
+          "weight": 0.004
+        },
+        {
+          "frame": 150,
+          "weight": 0.004
+        },
+        {
+          "frame": 156,
+          "weight": 0.004
+        },
+        {
+          "frame": 161,
+          "weight": 0.004
+        },
+        {
+          "frame": 167,
+          "weight": 0.004
+        },
+        {
+          "frame": 173,
+          "weight": 0.004
+        },
+        {
+          "frame": 179,
+          "weight": 0.004
+        },
+        {
+          "frame": 185,
+          "weight": 0.004
+        },
+        {
+          "frame": 191,
+          "weight": 0.004
+        },
+        {
+          "frame": 197,
+          "weight": 0.004
+        },
+        {
+          "frame": 203,
+          "weight": 0.004
+        },
+        {
+          "frame": 209,
+          "weight": 0.004
+        },
+        {
+          "frame": 214,
+          "weight": 0.004
+        },
+        {
+          "frame": 220,
+          "weight": 0.004
+        },
+        {
+          "frame": 226,
+          "weight": 0.004
+        },
+        {
+          "frame": 232,
+          "weight": 0.004
+        },
+        {
+          "frame": 238,
+          "weight": 0.004
+        },
+        {
+          "frame": 244,
+          "weight": 0.004
+        },
+        {
+          "frame": 250,
+          "weight": 0.004
+        },
+        {
+          "frame": 256,
+          "weight": 0.004
+        },
+        {
+          "frame": 262,
+          "weight": 0.096
+        }
+      ],
+      "originalCommand": {
+        "schema": "ffbe-command-source-v1",
+        "kind": "LIMIT",
+        "id": 212002607,
+        "database": {
+          "path": "rawdata/assets/static_data/ffbe-data.db",
+          "sha256": "ab176368d6a8faa9319f471f3f0138ec4c578cf131c759a593479dac9487183f"
+        },
+        "raw": {
+          "limitBurstId": 212002607,
+          "name": "Red Spiral",
+          "limitBurstType": 1,
+          "target": "1@2@2@1@1",
+          "targetRange": "1@2@2@1@1",
+          "element": "1,0,0,0,0,0,0,0",
+          "Isb1GDe2": 1,
+          "J35nicFV": 0,
+          "skillType": 1,
+          "aR5i4ewA": 0,
+          "KosY4a18": 2,
+          "Af2Pc0Jz": 1,
+          "processId": "24@92@93@33@1",
+          "PI18xnkD": "0@0@0@0@0",
+          "processParam": "0,-88,0,-87,3,1@5&145,-1,-1,-1,-1,-1,-1,-1,3,1@5&145,-1,-1,-1,-1,-1,-1,-1,3,1@-145,0,0,0,0,0,0,0,1,3@0,0,0,0,0,0,15000,0",
+          "H4zD2IQ5": 0,
+          "fileInfo": null,
+          "effectFrame": "0:5041901:2:4:0&0:5010810:2:4:0&270:5002090:2:4:0&0:8009074:1:1:0&270:5030821:1:1:0&270:5028062:2:1:0&270:5028071:1:1:0&0:5040430:1:4:0&0:5040435:1:4:0@320:5036640:2:2:0&320:5036650:1:2:0",
+          "attackFrames": "108:100:2:2@108:100:2:2@108:100:2:2@108:100:2:2@108:2:2:2-114:2:2:2-120:2:2:2-126:2:2:2-132:2:2:2-138:2:2:2-144:2:2:2-150:2:2:2-156:2:2:2-161:2:2:2-167:2:2:2-173:2:2:2-179:2:2:2-185:2:2:2-191:2:2:2-197:2:2:2-203:2:2:2-209:2:2:2-214:2:2:2-220:2:2:2-226:2:2:2-232:2:2:2-238:2:2:2-244:2:2:2-250:2:2:2-256:2:2:2-262:48:2:2",
+          "7irj9hAb": "0,0,1,0",
+          "iconId": 700000000,
+          "description": "Reduce DEF and SPR for one enemy, boost physical and magic damage against humans for all allies, and reduce fire resistance and deal fire damage to one enemy",
+          "58bfqWsR": 1,
+          "6ZEyK95f": null,
+          "effectFrames": "0:5041901:2:4:0&0:5010810:2:4:0&270:5002090:2:4:0&0:8009074:1:1:0&270:5030821:1:1:0&270:5028062:2:1:0&270:5028071:1:1:0&0:5040430:1:4:0&0:5040435:1:4:0@320:5036640:2:2:0&320:5036650:1:2:0"
+        }
+      },
+      "gameplayReview": {
+        "policy": "reviewed-roguelike",
+        "note": "Drafted by tools/draft_skill_entry.mjs from the staged original: source timing and visuals; gameplay values are provisional reviewed defaults.",
+        "ownedFields": [
+          "mpCost",
+          "damageMultiplier",
+          "damageType",
+          "hitCount",
+          "scope",
+          "damageEvents",
+          "supportEvents",
+          "allyEvents",
+          "actionChoreography"
+        ],
+        "boundary": "Original process parameters and source markers do not execute as game balance rules"
+      }
     }
   ]
 }

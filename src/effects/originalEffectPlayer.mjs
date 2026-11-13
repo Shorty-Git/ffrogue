@@ -634,7 +634,9 @@ export function instances(effect, seed = 1, horizon = 180, observe = null) {
         :g.start+Math.floor(draw*(g.startRange+1));
       const birth=parentBirth+offset+delay;
       if(birth>horizon) continue;
-      if(output.length>=4096) throw Error('Research instance limit exceeded');
+      // Safety cap, not a source value: full-screen backdrops such as eff_bg_cosmo_001 (Vaan's Red Spiral)
+      // legitimately spawn about 5,000 instances.
+      if(output.length>=8192) throw Error('Research instance limit exceeded');
       const sampled={};
       for(const [domain,groups] of Object.entries(node.staticVectors)) {
         sampled[domain]={};for(const [group,p] of Object.entries(groups)) {
