@@ -79,6 +79,19 @@ build-driven, and are usually lost the first few times.
   system (tokens, type, frames, motion), then all screens migrate. Starts after the run skeleton so no
   screen is polished before its content is settled.
 - The battle HUD must hold four heroes.
+- **Chosen direction (2026-11-14): "Arcade" with the Graphite palette.** Mockups (game size 1000×1100,
+  battle and act map): https://claude.ai/artifact/Pcs8wi5GWMvkPNxXwJMnDW (middle row; A and C kept for
+  reference). Character: bold, punchy, Balatro/Hades energy – thick dark outlines, chunky tiles with a hard
+  drop shadow, slightly tilted highlight states, big stroked damage numbers.
+  - Type: Archivo Black (headings, buttons, numbers), Archivo 400/600/800 (body, labels).
+  - Ground tokens: bg `#121316`, panel `#1f2126`, panel-2 `#2e3138`, info chip `#3f5f8a`, muted text
+    `#b6bac2`, outline/shadow `#08090a`, text `#fff8ec`.
+  - Accents: yellow `#ffd23f` (selection, gil, Limit), red `#ff4d5e` (boss, elite, Limit button, danger),
+    teal `#2ec4b6` (healing, camp, weakness), orange `#ff8a3d` (merchant, break), blue `#4d9dff` (MP),
+    green `#6ee36e` (HP), ice `#8fd3ff` (treasure, materia).
+  - Layout at game size: top bar 48 px; arena about 750 px; bottom HUD about 300 px with a 2×2 hero card grid
+    (left, about 560 px) and a 2×2 command grid plus the Limit button (right). The act map uses a map area
+    (left, 640 px) and a side panel (party, build, selected node with "GO!").
 
 ## Roadmap
 1. Run skeleton: act maps, elites with affixes, enemy scaling, boss rules, save per node, own damage
