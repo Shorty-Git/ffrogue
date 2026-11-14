@@ -208,7 +208,7 @@ export class BattleScene extends Phaser.Scene {
 
     // 4. Instantiate Party Units
     // Formation slots share the same viewport coordinates as movement and effects.
-    const slots=[layout.party.cloud,layout.party.aerith,layout.party.barret];
+    const slots=layout.party;
     this.turnOrder=this.runContext.state.party.map((member,i)=>{
       const def=this.cache.json.get(`character_${member.key}`) as CharacterDefinition;
       const manifest={...this.manifests[member.form],assetKey:member.form};

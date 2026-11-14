@@ -6,7 +6,12 @@ import {isSignatureFor,memberPower,signatureWeaponFor,validWeapon,weaponsForTier
 import {awakeningPath,formAt,formForLevel,levelOf,MAX_LEVEL} from './unitForms.mjs';
 import {carriedLimit,LB_MAX} from './limitGauge.mjs';
 import {gilFor,validEvent} from './runEvents.mjs';
-export const RUN_VERSION=4;
+import {ROLES,roleOf} from './roles.mjs';
+/** v5 (2026-11-15): four heroes, one per role (docs/game-design.md "Party"). Older saves hold three heroes and
+ * are rejected with a clear message (the title screen offers to discard them). */
+export const RUN_VERSION=5;
+export const PARTY_SIZE=4;
+export const LEGACY_SAVE_MESSAGE='This expedition was saved by an older version with a three-hero party. Start a new journey with four heroes.';
 export const SAVE_KEY='ffrogue.run.v1';
 /** Share of base max HP a 'revive' reward restores. */
 export const REVIVE_HP_SHARE=.5;
@@ -91,7 +96,7 @@ export function encounters(areas){return areas.flatMap((area,index)=>Array.from(
 export const ENCOUNTER_LABELS={normal:'Battle',elite:'Elite',boss:'Boss'};
 export function createRun(seed,catalog,areas=courseAreas(seed),rules){
  areas.forEach(stageForArea);
- if(new Set(Object.values(catalog).filter(c=>c.canonicalIdentity&&c.skills.length).map(c=>c.canonicalIdentity)).size<3)throw Error('Three reviewed canonical character identities required');
+ if(new Set(Object.values(catalog).filter(c=>c.canonicalIdentity&&c.skills.length).map(c=>c.canonicalIdentity)).size<PARTY_SIZE)throw Error('Four reviewed canonical character identities required');
  if(!String(seed).trim()||String(seed).length>64)throw Error('Seed must contain 1–64 characters');
  const run={version:RUN_VERSION,seed:String(seed),phase:'setup',party:[],rerolls:3,encounter:0,offers:[],history:[],areas:clone(areas),rng:{}};
  if(rules){if(!['sequential','highest-reviewed'].includes(rules.awakeningMode)||!validFormPolicy(rules.originalForms))throw Error('Unsupported run policy');run.rules=clone(rules);}
@@ -128,6 +133,10 @@ function newMember(run,key,catalog){
   skills:[{id:pick(run,'skills',character.skills).id,level:1}],
   stats,hp:Math.round(character.maxHp*stats.hp),mp:Math.round(character.maxMp*(stats.mp??1))};
 }
+/** Role of a catalog entry: the catalog carries it (catalog.ts), test catalogs derive it. */
+export const characterRole=character=>character.role??roleOf(character);
+/** Party draw (loop v2): one hero per role in ROLES order; a role without any eligible hero left falls
+ * back to any remaining hero, so the draw never fails while four identities exist. */
 export function rollParty(input,catalog){
  if(arguments.length>2)throw Error('Only full team draws are supported');
  if(input.phase!=='setup')throw Error('Party is locked');
@@ -140,15 +149,17 @@ export function rollParty(input,catalog){
  const identity=key=>catalog[key].canonicalIdentity;
  const keys=[];
  const drawn=new Set();
- for(let i=0;i<3;i++){
-  const key=pickHero(run,pool.filter(key=>!drawn.has(identity(key))),catalog);
+ for(let i=0;i<PARTY_SIZE;i++){
+  const free=pool.filter(key=>!drawn.has(identity(key))),ofRole=free.filter(key=>characterRole(catalog[key])===ROLES[i]);
+  const key=pickHero(run,ofRole.length?ofRole:free,catalog);
   keys.push(key);
   drawn.add(identity(key));
  }
  if(reroll&&input.party.every(member=>drawn.has(member.canonicalIdentity))){
   // Treat a reshuffle of the same identities as a repeat, even across variants.
   const alternatives=pool.filter(key=>!drawn.has(identity(key)));
-  if(alternatives.length)keys[pick(run,'roster',[0,1,2])]=pickHero(run,alternatives,catalog);
+  if(alternatives.length){const slot=pick(run,'roster',keys.map((_,i)=>i)),role=characterRole(catalog[keys[slot]]),same=alternatives.filter(key=>characterRole(catalog[key])===role);
+   keys[slot]=pickHero(run,same.length?same:alternatives,catalog);}
  }
  run.party=keys.map(key=>newMember(run,key,catalog));
  if(reroll)run.rerolls--;
@@ -163,7 +174,7 @@ export function chooseStartSkill(input,key,skillId,catalog){
  run.history.push({kind:'start-skill',member:key,skill:skillId});
  return run;
 }
-export function confirmParty(input){const run=clone(input);if(run.phase!=='setup'||run.party.length!==3||new Set(run.party.map(m=>m.canonicalIdentity)).size!==3||run.party.some(m=>!m.canonicalIdentity))throw Error('Roll three distinct canonical characters first');run.phase='battle';return run;}
+export function confirmParty(input){const run=clone(input);if(run.phase!=='setup'||run.party.length!==PARTY_SIZE||new Set(run.party.map(m=>m.canonicalIdentity)).size!==PARTY_SIZE||run.party.some(m=>!m.canonicalIdentity))throw Error('Roll four distinct canonical characters first');run.phase='battle';return run;}
 export function skillForRun(source,member){
  const skill=clone(source),level=member.skills.find(s=>s.id===source.id)?.level??1,boost=1+.2*(level-1);
  skill.damageMultiplier*=boost*memberPower(member,skill.damageType==='holy'?'magic':'attack');
@@ -235,7 +246,7 @@ export function rewardPool(run,catalog){
 }
 export function completeBattle(input,catalog,snapshot,won){
  const run=clone(input);if(run.phase!=='battle'||run.pendingAwakening)throw Error('Battle already settled or awaiting presentation');
- if(snapshot.length!==3||snapshot.some((s,i)=>s.key!==run.party[i].key))throw Error('Fixed party snapshot required');
+ if(snapshot.length!==run.party.length||snapshot.some((s,i)=>s.key!==run.party[i].key))throw Error('Fixed party snapshot required');
  run.party.forEach((m,i)=>{m.hp=Math.max(0,Math.min(Math.round(catalog[m.key].maxHp*m.stats.hp),snapshot[i].hp));m.mp=Math.max(0,Math.min(memberMaxMp(catalog[m.key],m),snapshot[i].mp));
   // The Limit gauge carries to the next battle for heroes who end it standing (src/run/limitGauge.mjs).
   const gauge=carriedLimit(catalog[m.key],m.hp,snapshot[i].limit);if(gauge>0)m.limit=gauge;else delete m.limit;});
@@ -302,38 +313,15 @@ export function chooseReward(input,index,catalog,replace){
 }
 /** Presentation acknowledgement never reapplies a reward or consumes RNG. */
 export function acknowledgeAwakening(input,id){const run=clone(input);if(run.pendingAwakening?.id!==id)throw Error('No matching saved awakening');delete run.pendingAwakening;return run;}
-/** v2 -> v3: members gain their level from the saved form; pending boss relics name the next level. */
-function upgradeToLevels(run,catalog){
- for(const m of run.party??[])if(m&&!Number.isInteger(m.level))m.level=levelOf(m);
- for(const offer of run.offers??[])if(offer?.type==='evolve'&&!Number.isInteger(offer.level)){
-  const m=run.party.find(p=>p.key===offer.member);delete offer.form;offer.level=(m?.level??0)+1;
- }
- for(const h of run.history??[])if(h?.reward?.type==='evolve'&&!Number.isInteger(h.reward.level)){
-  const c=catalog[h.reward.member],f=c&&formAt(c,h.reward.form);if(f)h.reward.level=levelOf(f);
- }
- run.version=RUN_VERSION;
- return run;
-}
 export function migrateRun(input,catalog){
- const obsolete=['stance','meleeStance','rangedStance','stanceSwitch'];
- const hasLegacy=row=>row&&typeof row==='object'&&obsolete.some(key=>Object.hasOwn(row,key));
- const legacy=hasLegacy(input)||(Array.isArray(input?.party)&&input.party.some(hasLegacy));
- // v3 -> v4 (2026-11-10): weapons and wards are optional fields; nothing to convert.
- if(input?.version===3&&!legacy)return validateRun({...clone(input),version:RUN_VERSION},catalog);
- if(input?.version===2&&!legacy)return validateRun(upgradeToLevels(clone(input),catalog),catalog);
- if(input?.version!==1&&!legacy)return validateRun(input,catalog);
- const run=clone(input);
- for(const row of [run,...(Array.isArray(run.party)?run.party:[])])if(hasLegacy(row))for(const key of obsolete)delete row[key];
- if(run.version===2)return validateRun(upgradeToLevels(run,catalog),catalog);
- if(run.version!==1)return validateRun(run,catalog);
- run.version=RUN_VERSION;
- for(const m of run.party??[]){const c=catalog[m.key];if(!c||m.identity!==c.identity||!c.canonicalIdentity)throw Error('Saved unit has no reviewed canonical identity');m.canonicalIdentity=c.canonicalIdentity;}
- return validateRun(upgradeToLevels(run,catalog),catalog);
+ // v1..v4 saves hold a three-hero party and the linear area course; they cannot become a four-hero run.
+ if(Number.isInteger(input?.version)&&input.version<RUN_VERSION)throw Error(LEGACY_SAVE_MESSAGE);
+ return validateRun(input,catalog);
 }
 export function validateRun(run,catalog){
  if(run?.version!==RUN_VERSION||typeof run.seed!=='string'||!['setup','battle','rewards','event','won','lost'].includes(run.phase)
   ||!Number.isInteger(run.rerolls)||run.rerolls<0||run.rerolls>3||!Array.isArray(run.party)
-  ||(run.phase==='setup'?![0,3].includes(run.party.length):run.party.length!==3)
+  ||(run.phase==='setup'?![0,PARTY_SIZE].includes(run.party.length):run.party.length!==PARTY_SIZE)
   ||!Array.isArray(run.areas)||!run.areas.length||run.areas.length>3||run.areas.some(a=>!Number.isInteger(a.normals)||a.normals<1||a.normals>5||(a.final!==undefined&&a.final!==true))
   ||run.areas.some((a,i)=>a.final&&i!==run.areas.length-1)
   ||!Number.isInteger(run.encounter)||run.encounter<0||run.encounter>encounters(run.areas).length

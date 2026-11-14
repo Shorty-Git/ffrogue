@@ -7,6 +7,7 @@ import {rankValue} from './unitForms.mjs';
 import {validateSceneAction} from '../effects/sceneProfile.mjs';
 import {validateBasicRepeat} from '../effects/basicRepeat.mjs';
 import {skillElements,elementNames} from './elementRules.mjs';
+import {roleOf} from './roles.mjs';
 export interface RunContent{schemaVersion:1;units:Record<string,{identity:string;unitId:string;rarity:number;rank?:'NV';canonicalIdentity:string;variantLabel?:string}>;canonicalCharacters:Record<string,{label:string}>;
  forms:{key:string;identityKey:string;identity:string;unitId:string;rarity:number;rank?:'NV';assetPath:string;awakensFrom:string}[];}
 export function runCatalog(scene:Phaser.Scene,manifests:Record<string,UnitManifest>):RunCatalog{
@@ -22,7 +23,7 @@ export function runCatalog(scene:Phaser.Scene,manifests:Record<string,UnitManife
   if(!meta.canonicalIdentity||!content.canonicalCharacters?.[meta.canonicalIdentity])throw Error('Reviewed canonical character identity required: '+key);
   published.forEach(s=>s.execution==='basic-attack-repeat'?validateBasicRepeat(s):validateSceneAction(scene.cache.json.get('scene_'+s.scenePresentation+'_manifest'),s));
   result[key]={key,name:def.battle.heroName??key,variantLabel:meta.variantLabel,identity:meta.identity,canonicalIdentity:meta.canonicalIdentity,unitId:meta.unitId,rarity:meta.rarity,...(meta.rank?{rank:meta.rank}:{}),form:key,
-   maxHp:def.battle.maxHp??3000,maxMp:def.battle.maxMp??100,skills,...(limitBurst?{limitBurst}:{}),magicAvailable:def.battle.attackType==='ranged',portrait:`/assets/units/${key}/${def.portrait??'portrait.png'}`};
+   role:roleOf({key,skills}),maxHp:def.battle.maxHp??3000,maxMp:def.battle.maxMp??100,skills,...(limitBurst?{limitBurst}:{}),magicAvailable:def.battle.attackType==='ranged',portrait:`/assets/units/${key}/${def.portrait??'portrait.png'}`};
   const candidates=content.forms.filter(f=>f.identityKey===key&&f.identity===meta.identity&&rankValue(f)>meta.rarity).sort((a,b)=>rankValue(a)-rankValue(b));
   const admitted=candidates.filter(form=>manifests[form.key]&&String(manifests[form.key].unitId)===form.unitId
     &&['idle','move','atk','dead','dying','win','win_before',...published.flatMap(s=>s.actionChoreography?.body.phases?.map(p=>p.clip)??[])].every(c=>!!manifests[form.key].animations[c]));

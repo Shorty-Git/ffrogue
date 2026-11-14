@@ -95,7 +95,7 @@ test('victory cycle is driven by animation completion/repeat and detaches on sce
 
 test('stale reward clicks cannot apply twice, stop the next encounter or reopen an error screen',()=>{
  const {GameFlow}=loadModule('src/run/GameFlow.ts'),rules=loadModule('src/run/runState.mjs'),callbacks={};
- const catalog=Object.fromEntries(['a','b','c'].map(key=>[key,{key,identity:key,canonicalIdentity:key,unitId:key,rarity:5,form:key,maxHp:100,maxMp:50,skills:[{id:key+'-skill',damageMultiplier:1}]}]));
+ const catalog=Object.fromEntries(['a','b','c','d'].map(key=>[key,{key,identity:key,canonicalIdentity:key,unitId:key,rarity:5,form:key,maxHp:100,maxMp:50,skills:[{id:key+'-skill',damageMultiplier:1}]}]));
  const run=rules.confirmParty(rules.rollParty(rules.createRun('duplicate-reward',catalog,rules.courseAreas('duplicate-reward').map(a=>({...a,normals:4})))/* run event (runEvents.mjs) only before fight 3 */,catalog));
  const flow=Object.create(GameFlow.prototype);flow.catalog=catalog;flow.state=rules.completeBattle(run,catalog,run.party.map(m=>({key:m.key,hp:m.hp,mp:m.mp})),true);
  flow.state.offers[0]={type:'stat',member:run.party[0].key,stat:'attack'};let commits=0,stops=0,starts=0;
@@ -586,14 +586,14 @@ test('melee attacks approach the selected row and return home in both arenas', (
   for (const arena of Object.values(BATTLE_ARENAS)) {
     const layout = getBattleLayout(1000, 1100, arena);
     for (const slot of Object.values(layout.enemies)) {
-      for (const [heroKey, offset, hitFrameIndex] of [['cloud', 90, 2], ['aerith', 200, 19]]) {
+      for (const [slotIndex, offset, hitFrameIndex] of [[0, 90, 2], [1, 200, 19]]) {
         const scene = battle();
         const target = { ...slot, currentHp: 3500, nameTag: 'Selected target' };
         scene.enemies = [target, { x: 900, y: 900, currentHp: 3500 }];
         scene.currentTarget = target;
         scene.combatState = 'HERO_ATTACKING';
         const actor = new EventEmitter();
-        actor.homeSlot = layout.party[heroKey];
+        actor.homeSlot = layout.party[slotIndex];
         actor.combatConfig = { attackType: 'melee', attackAnim: 'atk', targetOffsetX: offset, hitFrameIndex };
         actor.setDepthBoost = actor.playAnimation = actor.setFacingLeft = actor.playRestPose = () => {};
         const moves = [];
@@ -915,14 +915,20 @@ test('action banner preserves shared hero/enemy FIFO, ignores repeated notices a
  banner.clear();const count=texts.length;while(timers.length)timers.shift()();assert.equal(texts.length,count);assert.equal(banner.queue.length,0);
 });
 
-test('one party chevron for every arena: same columns, even step, feet above the HUD',()=>{
- const {getBattleLayout,PARTY_FEET_MARGIN}=loadModule('src/ui/battleLayout.ts'),{BATTLE_ARENAS}=loadModule('src/data/battleArenas.ts');
+test('one four-hero zigzag for every arena: two columns, even step, feet above the HUD',()=>{
+ const {getBattleLayout,PARTY_FEET_MARGIN,PARTY_SLOTS}=loadModule('src/ui/battleLayout.ts'),{BATTLE_ARENAS}=loadModule('src/data/battleArenas.ts');
  const shapes=new Set();
  for(const [key,arena] of Object.entries(BATTLE_ARENAS)){
-  const {party,partyTop}=getBattleLayout(1000,1100,arena),{cloud:front,aerith:upper,barret:lower}=party;
-  assert.equal(upper.x,lower.x,key+': back column');assert.ok(front.x<upper.x,key+': front hero nearer the enemies');
-  assert.equal(front.y-upper.y,lower.y-front.y,key+': even step');assert.ok(lower.y<=partyTop-PARTY_FEET_MARGIN,key+': feet above the HUD');
-  shapes.add(JSON.stringify([front.x,upper.x,front.y-upper.y]));
+  const {party,partyTop,enemies}=getBattleLayout(1000,1100,arena);
+  assert.equal(party.length,PARTY_SLOTS,key+': four slots');
+  const rows=[...party].sort((a,b)=>a.y-b.y);
+  const steps=rows.slice(1).map((p,i)=>p.y-rows[i].y);
+  assert.ok(steps.every(s=>Math.abs(s-steps[0])<=1&&s>0),key+': even step, no shared row');
+  assert.ok(rows.every((p,i)=>i===0||p.x!==rows[i-1].x),key+': neighbours alternate columns');
+  assert.equal(new Set(party.map(p=>p.x)).size,2,key+': two columns');
+  assert.ok(Math.min(...party.map(p=>p.x))>Math.max(...Object.values(enemies).map(e=>e.x)),key+': party right of the enemies');
+  assert.ok(rows.at(-1).y<=partyTop-PARTY_FEET_MARGIN,key+': feet above the HUD');
+  shapes.add(JSON.stringify(party.map(p=>[p.x,p.y-party[0].y])));
  }
  assert.equal(shapes.size,1,'same formation shape in every arena');
 });

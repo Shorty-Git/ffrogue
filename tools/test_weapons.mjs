@@ -36,11 +36,11 @@ test('weapon bonus lifts attack, its element reaches basic attacks and element-l
   assert.ok(Math.abs(skill.damageMultiplier - 2.6) < 1e-9);
 });
 
-test('weapon offers come from the save-recomputable pool, equip once and survive save migration', () => {
+test('weapon offers come from the save-recomputable pool and equip once; pre-v5 saves are rejected', () => {
   let run = confirmParty(rollParty(createRun('weapon-3', catalog), catalog));
   run = completeBattle(run, catalog, snapshot(run), true);
   const offers = rewardPool(run, catalog).filter(r => r.type === 'weapon');
-  assert.equal(offers.length, 3, 'one candidate per hero');
+  assert.equal(offers.length, run.party.length, 'one candidate per hero');
   assert.deepEqual(rewardPool(run, catalog).filter(r => r.type === 'weapon'), offers, 'no RNG consumed');
   run.offers = [offers[0], {type: 'rest'}, offers[1]];
   const after = chooseReward(validateRun(run, catalog), 0, catalog);
@@ -48,7 +48,7 @@ test('weapon offers come from the save-recomputable pool, equip once and survive
   assert.equal(validateRun(after, catalog).version, RUN_VERSION);
   assert.throws(() => validateRun({...after, party: after.party.map(m => m.weapon ? {...m, weapon: {...m.weapon, attack: 3}} : m)}, catalog), /Unsupported saved party/);
   const old = structuredClone(after); old.version = 3; for (const m of old.party) delete m.weapon;
-  assert.equal(migrateRun(old, catalog).version, RUN_VERSION, 'v3 saves load');
+  assert.throws(() => migrateRun(old, catalog), /three-hero party/, 'v3 saves are rejected clearly');
 });
 
 test('a signature weapon belongs to every variant of its character and adds SIGNATURE_BONUS', async () => {

@@ -42,7 +42,7 @@ test('two original-backed lineups use different arenas, bosses and declared futu
 });
 
 test('encounter selection is pure, independent of upgrades, keeps old saved areas/RNG intact',()=>{
- const catalog=Object.fromEntries(['a','b','c'].map(key=>[key,{key,identity:key,canonicalIdentity:key,unitId:key,rarity:5,form:key,maxHp:100,maxMp:50,skills:[{id:key+'-skill'}]}]));
+ const catalog=Object.fromEntries(['a','b','c','d'].map(key=>[key,{key,identity:key,canonicalIdentity:key,unitId:key,rarity:5,form:key,maxHp:100,maxMp:50,skills:[{id:key+'-skill'}]}]));
  // Fixed course (forest, reactor): seeds pick two of all stages, so the route is given explicitly.
  const areas=['whisperwood','mako_reactor'].map(id=>PROTOTYPE_AREAS.find(a=>a.stageId===id));
  let r=confirmParty(rollParty(createRun('stage-restore',catalog,areas),catalog));

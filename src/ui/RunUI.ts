@@ -1,5 +1,6 @@
 import type {RunCatalog,RunMember,RunState,Reward,AwakeningNotice} from '../run/runState.mjs';
-import {skillForRun,memberMaxMp,REVIVE_HP_SHARE,upcomingStage,encounters,AREA_CAMP} from '../run/runState.mjs';
+import {skillForRun,memberMaxMp,REVIVE_HP_SHARE,upcomingStage,encounters,AREA_CAMP,PARTY_SIZE,characterRole} from '../run/runState.mjs';
+import {ROLES,ROLE_LABELS} from '../run/roles.mjs';
 import {CAMP_REST,MERCHANT_RESTORE,SHRINE,GIL_REWARD,type MerchantWare} from '../run/runEvents.mjs';
 import {ELEMENT_LABELS,WARD_RESIST} from '../run/elementRules.mjs';
 import {elementChip,elementChips} from './elementChips';
@@ -139,7 +140,7 @@ export class RunUI{
  /** Title screen (2026-11-14, "Cinematic"): the current or last run's heroes stand on its arena; logo and
   * menu list on the left, progress below. Cinzel logo, Source Sans menu (docs/game-design.md, UI). */
  menu(hasSave:boolean,error:string|null,meta?:{crystals:number;unlocked:number;total:number;cost:number;canSummon:boolean},stage?:TitleStage){
-  const canStart=new Set(Object.values(this.catalog).map(c=>c.canonicalIdentity).filter(Boolean)).size>=3;
+  const canStart=new Set(Object.values(this.catalog).map(c=>c.canonicalIdentity).filter(Boolean)).size>=PARTY_SIZE;
   const item=(action:string,label:string,primary=false,disabled=false)=>`<button type="button" class="title-item ${primary?'is-primary':''}" data-action="${action}" ${disabled?'disabled':''}>${label}</button>`;
   // Up to four heroes in a chevron on the arena floor. Each spot is the hero's feet (clip pivot), so pose
   // changes never make the body jump (AGENTS.md, sprite rules).
@@ -204,7 +205,7 @@ export class RunUI{
  guide(action:string,label:string){
   const steps:[string,string][]=[
    ['Face your nemesis','Pick the final boss of the expedition. Unknown bosses stay hidden until you beat them once.'],
-   ['Pull the Fate Engine','It draws three random heroes from your roster. Not happy? Pull again: three rerolls per run.'],
+   ['Pull the Fate Engine','It draws four heroes from your roster, one per role: damage, healer, tank and support. Not happy? Pull again: three rerolls per run.'],
    ['Choose your path','Two areas lead to the boss. Each holds a normal fight and an elite. Pick the one whose weaknesses suit your party.'],
    ['Fight','Pick a command below, then click an enemy in the arena. Hover a command to see what it does. Hitting a weakness deals extra damage; a full Limit gauge unlocks the Limit Burst.'],
    ['Grow stronger','After every win, choose one reward: new skills, skill ranks, weapons or an awakening. Crystals and new heroes stay with you after the run.'],
@@ -269,7 +270,7 @@ export class RunUI{
  slots(run:RunState,busy:boolean,choices:Record<string,{id:string;name:string}[]>={}){
   const hasTeam=run.party.length>0;
   const exhausted=hasTeam&&run.rerolls===0;
-  const hint=busy?'The reels are turning…':!hasTeam?'Pull the crystal lever to summon your party. The first draw is free.':exhausted?'The Fate Engine is spent. Set out with this party.':'Pull again to redraw all three heroes, or set out with this party.';
+  const hint=busy?'The reels are turning…':!hasTeam?'Pull the crystal lever to summon your party. The first draw is free.':exhausted?'The Fate Engine is spent. Set out with this party.':'Pull again to redraw all four heroes, or set out with this party.';
   const roster=Object.values(this.catalog);
   // Each reel has its own tape; it stops (12 symbols = the -2040px keyframe) on the hero this reel draws,
   // so the last face before the reveal is that hero's (2026-11-11: every reel ended on the same head).
@@ -281,7 +282,7 @@ export class RunUI{
   // One scale on screen: a star per level, NV at the top level (src/run/unitForms.mjs MAX_LEVEL).
   const stars=(member:RunMember)=>member.level>=MAX_LEVEL?'<i class="nv-mark">NV</i>'
    :Array.from({length:member.level},(_,i)=>`<i style="--star:${i}">★</i>`).join('');
-  const reels=[0,1,2].map(i=>{
+  const reels=Array.from({length:PARTY_SIZE},(_,i)=>{
    const member=run.party[i];
    const character=member&&this.catalog[member.key];
    const skill=character?.skills.find(s=>s.id===member.skills[0].id);
@@ -292,6 +293,7 @@ export class RunUI{
     <div class="reel-window">${tape(i,member)}<span class="fate-burst" aria-hidden="true"></span><div class="final-symbol">${member?this.sprite(member,true):'<span class="unknown-crystal">◆</span>'}</div></div>
     <div class="reel-result">
      ${member?`<span class="fate-stars" aria-label="${levelLabel(member.level)}">${stars(member)}</span>`:'<span class="fate-stars" aria-hidden="true">&nbsp;</span>'}
+     ${character?`<span class="role-chip role-${characterRole(character)}">${ROLE_LABELS[characterRole(character)]}</span>`:`<span class="role-chip">${ROLE_LABELS[ROLES[i]]}</span>`}
      <b>${character?esc(character.name):'???'}</b>
      ${character?`<span class="reel-form">${levelLabel(member.level)}</span><span class="reel-variant" title="Original Unit ${esc(member.unitId)}">${esc(character.variantLabel??character.name)}</span>`:''}
      <span class="reel-detail">${skill?skillIcon(skill)+esc(skill.name):'Awaiting a hero'}</span>

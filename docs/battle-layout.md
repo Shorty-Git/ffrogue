@@ -12,7 +12,10 @@ Phaser draws the arena, actors, Source effects, damage numbers and action
 banners. The DOM `CombatHud` (`src/ui/CombatHud.ts`, `src/ui/combatHud.css`)
 tracks the canvas rectangle and draws everything interactive: the encounter
 caption, enemy HP plates, the target cursor, invisible enemy click areas and the
-bottom dock (three party cards, Attack plus up to three skills, the prompt line).
+bottom dock (four party cards in a 2×2 grid, Attack plus up to three skills, the prompt line).
+The party stands in a fixed four-slot zigzag (`src/ui/battleLayout.ts`, 2026-11-15): from top to bottom
+back, front, back, front column, one even step apart; slot i is party member i (draw order damage, healer,
+tank, support), checked for every arena by `tools/test_combat_regressions.mjs`.
 BattleScene rebuilds the HUD state every 80 ms; the HUD re-renders only when the
 state changes. Because the HUD is DOM, it never enters the canvas framebuffer that
 the Source review pages compare.

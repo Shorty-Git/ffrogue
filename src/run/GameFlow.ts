@@ -1,7 +1,7 @@
 import type Phaser from 'phaser';
 import type {UnitManifest} from '../types/manifest';
 import type {RunState,RunRules} from './runState.mjs';
-import {RunStore,createRun,variantAreas,courseAreas,FINAL_STAGES,routeOptions,chooseRoute,rollParty,confirmParty,chooseStartSkill,completeBattle,chooseReward,encounters,acknowledgeAwakening} from './runState.mjs';
+import {PARTY_SIZE,RunStore,createRun,variantAreas,courseAreas,FINAL_STAGES,routeOptions,chooseRoute,rollParty,confirmParty,chooseStartSkill,completeBattle,chooseReward,encounters,acknowledgeAwakening} from './runState.mjs';
 import {runCatalog} from './catalog';
 import {startEvent,chooseEvent} from './runEvents.mjs';
 import {ProfileStore,chooseFavorite,favoriteChoices,MAX_FAVORITES,drawCatalog,lockedHeroes,settleRun,summonHero,summonPool,SUMMON_COST,type Profile} from './profile.mjs';
@@ -123,7 +123,7 @@ export class GameFlow{
    const area=this.state.areas[fight.area];return {image:image(area.stageId),heroes:known(this.state.party),caption:`Your journey continues · ${area.name}`};}
   try{const last=JSON.parse(window.localStorage.getItem(LAST_RUN)??'null');
    if(last?.party?.length)return {image:image(last.stageId),heroes:known(last.party),caption:last.won?'Your last party prevailed.':'Your last party awaits a rematch.'};}catch{/* unreadable: fall through */}
-  return {image:image('nibelheim'),heroes:known(this.profile.unlocked.slice(0,3).map(key=>({key,form:key})))};
+  return {image:image('nibelheim'),heroes:known(this.profile.unlocked.slice(0,PARTY_SIZE).map(key=>({key,form:key})))};
  }
  private stageCard(stage:StageDefinition,eyebrow:string,title:string,lines:string[]):PathCard{
   const arena=BATTLE_ARENAS[stage.arena as BattleArenaKey] as {file:string}&Record<string,unknown>,profile=stageElementProfile(stage);

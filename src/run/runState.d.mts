@@ -3,6 +3,7 @@ export interface RunForm{form:string;unitId:string;rarity:number;rank?:'NV';iden
 export interface RunCharacter extends RunForm{canonicalIdentity:string;key:string;name:string;variantLabel?:string;maxHp:number;maxMp:number;skills:SkillConfig[];
   /** The form's Limit Burst (skill type LIMIT); used through the LB gauge, never offered as a skill. */
   limitBurst?:SkillConfig;portrait:string;evolution?:RunForm;
+  /** Party role (src/run/roles.mjs), set by catalog.ts. */role?:import('./roles.mjs').Role;
   /** Bond perks from profile.mjs drawCatalog (draw-time only). */bond?:number;drawWeight?:number;startSkillChoice?:boolean;minStartLevel?:number;forms?:RunForm[];magicAvailable?:boolean;}
 export type RunCatalog=Record<string,RunCharacter>;
 export interface RunMember extends RunForm{canonicalIdentity:string;key:string;
@@ -21,7 +22,8 @@ export interface RunState{version:number;seed:string;phase:'setup'|'battle'|'rew
   /** Gil for the Moogle merchant (src/run/runEvents.mjs). */gil?:number;
   /** The pending run event (phase 'event'). */event?:import('./runEvents.mjs').RunEvent;party:RunMember[];rerolls:number;encounter:number;offers:Reward[];history:unknown[];areas:AreaConfig[];routes?:(string|null)[];rng:Record<string,number>;pendingAwakening?:AwakeningNotice;rules?:RunRules;
   /** Party ward relics: +50 % resistance to each listed element (src/run/elementRules.mjs). */wards?:import('./elements.mjs').Element[];}
-export const RUN_VERSION:number;export const SAVE_KEY:string;export const REVIVE_HP_SHARE:number;export const PROTOTYPE_AREAS:AreaConfig[];export const FULL_AREAS:AreaConfig[];
+export const RUN_VERSION:number;export const PARTY_SIZE:number;export const LEGACY_SAVE_MESSAGE:string;
+export function characterRole(character:RunCharacter):import('./roles.mjs').Role;export const SAVE_KEY:string;export const REVIVE_HP_SHARE:number;export const PROTOTYPE_AREAS:AreaConfig[];export const FULL_AREAS:AreaConfig[];
 export function variantAreas(seed:string):AreaConfig[];
 export const COURSE_LENGTH:number;
 export function courseAreas(seed:string,finalStage?:string):AreaConfig[];

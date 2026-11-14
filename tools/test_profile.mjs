@@ -3,14 +3,17 @@ import assert from 'node:assert/strict';
 import {normalizeProfile,drawCatalog,lockedHeroes,settleRun,summonHero,summonPool,SUMMON_COST,CRYSTALS_PER_BATTLE,CRYSTALS_PER_EXPEDITION} from '../src/run/profile.mjs';
 // Base rarity drives summon weights; clive is an NV-only unit (rank NV).
 const hero = (key, canonical) => ({key, canonicalIdentity: canonical, skills: [{id: 's'}], rarity: key === 'clive' ? 7 : 5, ...(key === 'clive' ? {rank: 'NV'} : {})});
-const catalog = Object.fromEntries([['cloud', 'ff7:cloud'], ['cloud_ac', 'ff7:cloud'], ['aerith', 'ff7:aerith'], ['squall', 'ff8:squall'],
+const catalog = Object.fromEntries([['cloud', 'ff7:cloud'], ['cloud_ac', 'ff7:cloud'], ['aerith', 'ff7:aerith'], ['barret', 'ff7:barret'], ['squall', 'ff8:squall'],
   ['tidus', 'ff10:tidus'], ['clive', 'ff16:clive']].map(([k, c]) => [k, hero(k, c)]));
 const fresh = normalizeProfile(null, catalog);
-assert.deepEqual(fresh.unlocked, ['cloud', 'aerith', 'squall']);
-assert.deepEqual(Object.keys(drawCatalog(fresh, catalog)), ['cloud', 'aerith', 'squall']);
+assert.deepEqual(fresh.unlocked, ['cloud', 'aerith', 'barret', 'squall']);
+assert.deepEqual(Object.keys(drawCatalog(fresh, catalog)), ['cloud', 'aerith', 'barret', 'squall']);
 assert.deepEqual(lockedHeroes(fresh, catalog), ['cloud_ac', 'tidus', 'clive']);
-// A profile with too few identities is topped up so the Fate Engine can always draw three.
-assert.equal(new Set(normalizeProfile({version: 1, unlocked: ['cloud', 'cloud_ac']}, catalog).unlocked.map(k => catalog[k].canonicalIdentity)).size, 3);
+// A profile with too few identities is topped up (one variant per character) so a party of four can be drawn.
+assert.equal(new Set(normalizeProfile({version: 1, unlocked: ['cloud', 'cloud_ac']}, catalog).unlocked.map(k => catalog[k].canonicalIdentity)).size, 4);
+// Every role the catalog has joins the roster (loop v2): a healer-only catalog entry is unlocked even past four identities.
+{const withHealer={...catalog,mender:{...hero('mender','ff4:mender'),skills:[{id:'cure',allyEvents:[{effects:[{kind:'heal',amount:100}]}]}]}};
+ assert.ok(normalizeProfile(null,withHealer).unlocked.includes('mender'));}
 const reward = {kind: 'reward'};
 const lost = settleRun(fresh, {seed: 'a', phase: 'lost', history: [{kind: 'initial-party'}, reward, reward]}, catalog);
 assert.equal(lost.crystals, 2 * CRYSTALS_PER_BATTLE);
@@ -28,7 +31,7 @@ assert.deepEqual(normalizeProfile({version: 1, unlocked: ['cloud'], bosses: ['ni
 assert.throws(() => summonHero({...won.profile, crystals: SUMMON_COST - 1}, catalog, 'x'), /Not enough/);
 const summoned = summonHero({...won.profile, crystals: SUMMON_COST}, catalog, 'x');
 assert.equal(summoned.profile.crystals, 0);
-assert.equal(lockedHeroes(summoned.profile, catalog).length, summoned.unlocked ? 1 : 2);
+assert.equal(lockedHeroes(summoned.profile, catalog).length, lockedHeroes(won.profile, catalog).length - (summoned.unlocked ? 1 : 0));
 assert.ok(summoned.unlocked || summoned.bond === 1, 'a summon unlocks a hero or deepens Bond');
 assert.equal(settleRun(fresh, {seed: 'c', phase: 'battle', history: []}, catalog).crystals, 0, 'only finished runs settle');
 // Favourite game: a fresh profile starts from that game's heroes plus mixed top-ups; progress is kept.
@@ -60,7 +63,7 @@ import {createRun,rollParty,chooseStartSkill} from '../src/run/runState.mjs';
 {
   const skills = [{id: 'a', name: 'A'}, {id: 'b', name: 'B'}];
   // 3★ base units (base Lv 1), so the Bond floor is visible; z is a 5★ base unit (base Lv 3).
-  const cat = Object.fromEntries([['x', 'ff1:x'], ['y', 'ff2:y'], ['z', 'ff3:z']].map(([k, c]) => [k, {key: k, form: k, identity: k, unitId: k, rarity: k === 'z' ? 5 : 3,
+  const cat = Object.fromEntries([['x', 'ff1:x'], ['y', 'ff2:y'], ['z', 'ff3:z'], ['w', 'ff4:w']].map(([k, c]) => [k, {key: k, form: k, identity: k, unitId: k, rarity: k === 'z' ? 5 : 3,
     canonicalIdentity: c, skills, maxHp: 100, maxMp: 10}]));
   cat.x = {...cat.x, startSkillChoice: true, minStartLevel: 2};
   const rules = {awakeningMode: 'sequential', originalForms: {weights: {3: 1000000, 4: 1, 5: 1, 6: 1, 7: 1, NV: 1}, hpPerRank: .05, mpPerRank: .03, powerPerRank: .035, defensePerRank: .035}};

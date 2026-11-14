@@ -1,5 +1,6 @@
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';
-import {createRun,rollParty,confirmParty,RunStore,SAVE_KEY,completeBattle,chooseReward,rewardPool,skillForRun,validateRun,encounters,FULL_AREAS,migrateRun,acknowledgeAwakening,REVIVE_HP_SHARE}from '../src/run/runState.mjs';
+import {createRun,rollParty,confirmParty,RunStore,SAVE_KEY,completeBattle,chooseReward,rewardPool,skillForRun,validateRun,encounters,FULL_AREAS,migrateRun,acknowledgeAwakening,REVIVE_HP_SHARE,PARTY_SIZE,LEGACY_SAVE_MESSAGE,characterRole}from '../src/run/runState.mjs';
+import {ROLES,roleOf,deriveRole,ROLE_OVERRIDES}from '../src/run/roles.mjs';
 import {runEncounter}from '../src/run/runBalance.mjs';
 const read=p=>JSON.parse(fs.readFileSync(p,'utf8')),meta=read('public/assets/run-content.json');
 const catalog={};for(const key of read('public/assets/content.json').characters){const s=read(`public/assets/units/${key}/skills.json`).skills.filter(s=>s.scenePresentation&&s.importStatus==='imported');if(!s.length)continue;const d=read(`public/assets/units/${key}/character.json`),m=meta.units[key];catalog[key]={key,name:d.battle.heroName,identity:m.identity,canonicalIdentity:m.canonicalIdentity,unitId:m.unitId,rarity:m.rarity,form:key,maxHp:d.battle.maxHp,maxMp:d.battle.maxMp,skills:s};}
@@ -16,7 +17,7 @@ test('one free team draw and three full rerolls are deterministic and can each b
    a=rollParty(a,catalog);b=rollParty(b,catalog);
    assert.deepEqual(a,b);
    assert.equal(a.rerolls,3-draw);
-   assert.equal(a.party.length,3);
+   assert.equal(a.party.length,PARTY_SIZE);
    assert.ok(a.party.every(m=>m.skills.length===1&&catalog[m.key].unitId===m.unitId&&catalog[m.key].skills.some(s=>s.id===m.skills[0].id)));
    assert.equal(a.history.at(-1).slot,null);
    assert.notEqual(a.rng.skills,previous.rng.skills);
@@ -79,47 +80,45 @@ test('awakening commits once before presentation; reload acknowledgement preserv
 });
 
 test('canonical character families exclude all unit variants from initial draws and every reroll',()=>{
- for(let i=0;i<1000;i++){let run=initial('canonical-'+i);assert.equal(new Set(run.party.map(m=>m.canonicalIdentity)).size,3);
+ for(let i=0;i<1000;i++){let run=initial('canonical-'+i);assert.equal(new Set(run.party.map(m=>m.canonicalIdentity)).size,PARTY_SIZE);
   for(let draw=0;draw<3;draw++){
    const previous=run.party.map(m=>m.canonicalIdentity).sort();
    run=rollParty(run,catalog);
    assert.notDeepEqual(run.party.map(m=>m.canonicalIdentity).sort(),previous);
-   assert.equal(new Set(run.party.map(m=>m.canonicalIdentity)).size,3);
+   assert.equal(new Set(run.party.map(m=>m.canonicalIdentity)).size,PARTY_SIZE);
   }
  }
  assert.notEqual(catalog.cloud.identity,catalog.cloud_ac.identity);assert.equal(catalog.cloud.canonicalIdentity,catalog.cloud_ac.canonicalIdentity);
 });
-test('a three-identity pool can still redraw and has no role restrictions',()=>{
- const keys=['cloud','aerith','jack'],small=Object.fromEntries(keys.map(k=>[k,{...catalog[k],role:'healer'}]));
- const run=rollParty(createRun('three-healers',small),small);assert.equal(run.party.length,3);
+test('a four-identity pool without the other roles still draws and redraws a full party',()=>{
+ const keys=['cloud','aerith','jack','cecil'],small=Object.fromEntries(keys.map(k=>[k,{...catalog[k],role:'healer'}]));
+ const run=rollParty(createRun('four-healers',small),small);assert.equal(run.party.length,PARTY_SIZE);
  const redrawn=rollParty(run,small);
- assert.deepEqual(redrawn.party.map(m=>m.key).sort(),keys.sort());
+ assert.deepEqual(redrawn.party.map(m=>m.key).sort(),[...keys].sort());
  assert.equal(redrawn.rerolls,2);
- assert.throws(()=>createRun('too-small',{cloud:catalog.cloud,cloud_ac:catalog.cloud_ac,aerith:catalog.aerith}),/Three reviewed/);
+ assert.throws(()=>createRun('too-small',{cloud:catalog.cloud,cloud_ac:catalog.cloud_ac,aerith:catalog.aerith,jack:catalog.jack}),/Four reviewed/);
 });
-test('old valid saves gain explicit canonical identities without consuming RNG; old duplicate families fail closed',()=>{
- const original=initial('migration'),legacy=structuredClone(original);legacy.version=1;legacy.party.forEach(m=>delete m.canonicalIdentity);
- const migrated=migrateRun(legacy,catalog);assert.deepEqual(migrated,original);assert.equal(legacy.version,1);
- const rewards=completeBattle(confirmParty(original),catalog,snapshot(original),true),oldRewards=structuredClone(rewards);oldRewards.version=1;oldRewards.party.forEach(m=>delete m.canonicalIdentity);assert.deepEqual(migrateRun(oldRewards,catalog),rewards);
- const cloud=withCloud(),bad=structuredClone(cloud);bad.version=1;
- const base=bad.party.find(m=>m.key==='cloud'),other=bad.party.findIndex(m=>m!==base);bad.party[other]={...structuredClone(base),key:'cloud_ac',identity:catalog.cloud_ac.identity,form:'cloud_ac',unitId:catalog.cloud_ac.unitId,rarity:catalog.cloud_ac.rarity,skills:[{id:catalog.cloud_ac.skills[0].id,level:1}]};
- bad.party.forEach(m=>delete m.canonicalIdentity);assert.throws(()=>migrateRun(bad,catalog),/duplicate canonical/);
- const storage=memory();storage.setItem(SAVE_KEY,JSON.stringify(bad));const raw=storage.getItem(SAVE_KEY);assert.throws(()=>new RunStore(storage,catalog).load());assert.equal(storage.getItem(SAVE_KEY),raw);
+test('every hero has one of four roles; the draw fills damage, healer, tank and support in that order',()=>{
+ for(const c of Object.values(catalog))assert.ok(ROLES.includes(roleOf(c)),c.key);
+ for(const [key,role] of Object.entries(ROLE_OVERRIDES)){assert.ok(ROLES.includes(role));if(catalog[key])assert.notEqual(deriveRole({...catalog[key],skills:catalog[key].skills.filter(s=>s.type!=='LIMIT')}),role,key+': override must change the derived role');}
+ const byRole=role=>new Set(Object.values(catalog).filter(c=>characterRole(c)===role).map(c=>c.canonicalIdentity));
+ assert.ok(ROLES.every(role=>byRole(role).size>=1),'the published roster covers every role');
+ assert.equal(roleOf(catalog.aerith),'healer');assert.equal(roleOf(catalog.cloud),'damage');assert.equal(roleOf(catalog.cecil),'tank');assert.equal(roleOf(catalog.jack),'support');
+ for(let i=0;i<300;i++){let run=initial('roles-'+i);
+  for(let draw=0;draw<4;draw++){
+   assert.deepEqual(run.party.map(m=>characterRole(catalog[m.key])),ROLES,'seed roles-'+i+' draw '+draw);
+   if(draw<3)run=rollParty(run,catalog);
+  }
+ }
 });
-
-test('obsolete stance fields are discarded from a saved battle without changing its data',()=>{
- const run=confirmParty(withCloud());
- const saved=structuredClone(run);
- saved.stance='ranged';
- saved.party[0].meleeStance=true;
- saved.party[1].rangedStance=true;
- saved.party[2].stanceSwitch='magic';
- const storage=memory();
- storage.setItem(SAVE_KEY,JSON.stringify(saved));
- const store=new RunStore(storage,catalog);
- assert.deepEqual(store.load(),run);
- store.save(run);
- assert.deepEqual(JSON.parse(storage.getItem(SAVE_KEY)),run);
+test('saves from before v5 (three heroes, linear course) are rejected clearly and stay in storage',()=>{
+ const run=confirmParty(initial('legacy')),legacy=structuredClone(run);legacy.version=4;legacy.party=legacy.party.slice(0,3);
+ assert.throws(()=>migrateRun(legacy,catalog),new RegExp(LEGACY_SAVE_MESSAGE.slice(0,40)));
+ for(const version of [1,2,3])assert.throws(()=>migrateRun({...legacy,version},catalog),/three-hero party/);
+ const storage=memory();storage.setItem(SAVE_KEY,JSON.stringify(legacy));const raw=storage.getItem(SAVE_KEY);
+ assert.throws(()=>new RunStore(storage,catalog).load(),/three-hero party/);assert.equal(storage.getItem(SAVE_KEY),raw);
+ assert.deepEqual(migrateRun(structuredClone(run),catalog),run);
+ const three=structuredClone(run);three.party=three.party.slice(0,3);assert.throws(()=>validateRun(three,catalog),/Invalid or incompatible/);
 });
 test('the Limit gauge carries to the next battle only for standing heroes with a Limit Burst',()=>{
  const lbCatalog={...catalog,cloud:{...catalog.cloud,limitBurst:read('public/assets/units/cloud/skills.json').skills.find(s=>s.type==='LIMIT')}};

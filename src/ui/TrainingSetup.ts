@@ -9,6 +9,8 @@ export interface TrainingSelection{
 const STORAGE='ffrogue.training-setup';
 const esc=(s:unknown)=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
 export const MAX_TRAINING_SKILLS=3;
+/** Party slots: the run party size (four heroes, loop v2). */
+export const TRAINING_SLOTS=4;
 
 export function loadTrainingSelection():Partial<TrainingSelection>{
   try{return JSON.parse(localStorage.getItem(STORAGE)??'{}');}catch{return {};}
@@ -24,11 +26,11 @@ function saveTrainingSelection(selection:TrainingSelection){
 export function renderTrainingSetup(root:HTMLElement,catalog:RunCatalog,arenas:{key:string;label:string}[],
   opponents:{key:TrainingOpponent;label:string}[],start:(selection:TrainingSelection)=>void,back:()=>void):void{
   const saved=loadTrainingSelection();
-  // Three party slots, each a hero dropdown with that hero's form and skills below (2026-11-11 playtest:
+  // Four party slots, each a hero dropdown with that hero's form and skills below (2026-11-11 playtest:
   // the full hero grid was too large).
   const keys=Object.keys(catalog).sort((a,b)=>catalog[a].name.localeCompare(catalog[b].name)||(catalog[a].variantLabel??'').localeCompare(catalog[b].variantLabel??''));
-  const initial=(saved.party??[]).filter(h=>catalog[h.key]).slice(0,3);
-  if(!initial.length)keys.slice(0,3).forEach(key=>initial.push({key,form:key,skills:[]}));
+  const initial=(saved.party??[]).filter(h=>catalog[h.key]).slice(0,TRAINING_SLOTS);
+  if(!initial.length)keys.slice(0,TRAINING_SLOTS).forEach(key=>initial.push({key,form:key,skills:[]}));
   const details=(key:string,prior?:TrainingHero)=>{
     const c=catalog[key];
     const forms=[{form:key,label:rankLabel(c)},...(c.forms??[]).map(f=>({form:f.form,label:rankLabel(f)}))];
@@ -47,7 +49,7 @@ export function renderTrainingSetup(root:HTMLElement,catalog:RunCatalog,arenas:{
   root.innerHTML=`<div class="eyebrow">TRAINING GROUNDS</div><h1>TRAINING</h1>
    <p class="lead">Try any hero, form and skill. Nothing here touches your saved journey.</p>
    <p class="training-count" aria-live="polite"></p>
-   <div class="training-grid">${[0,1,2].map(slot).join('')}</div>
+   <div class="training-grid">${Array.from({length:TRAINING_SLOTS},(_,i)=>slot(i)).join('')}</div>
    <div class="rpg-panel training-options">
     <label>Arena <select data-arena>${arenas.map(a=>`<option value="${esc(a.key)}" ${saved.arena===a.key?'selected':''}>${esc(a.label)}</option>`).join('')}</select></label>
     <label>Opponent <select data-opponent>${opponents.map(o=>`<option value="${esc(o.key)}" ${saved.opponent===o.key?'selected':''}>${esc(o.label)}</option>`).join('')}</select></label>
@@ -70,7 +72,7 @@ export function renderTrainingSetup(root:HTMLElement,catalog:RunCatalog,arenas:{
     }
     const picked=slots().filter(heroOf);
     const ready=picked.length>=1&&picked.every(h=>Array.from(h.querySelectorAll<HTMLInputElement>('[data-skill]')).some(x=>x.checked));
-    root.querySelector('.training-count')!.textContent=`${picked.length} / 3 heroes chosen`+(ready?'':' · every chosen hero needs at least one skill');
+    root.querySelector('.training-count')!.textContent=`${picked.length} / ${TRAINING_SLOTS} heroes chosen`+(ready?'':' · every chosen hero needs at least one skill');
     root.querySelector<HTMLButtonElement>('[data-action=training-start]')!.disabled=!ready;
   };
   root.addEventListener('change',update);

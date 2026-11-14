@@ -1,8 +1,9 @@
 // Meta-progression between runs: which heroes the Fate Engine may draw, and the crystals that summon more.
 // Pure functions over a JSON profile; GameFlow persists it under PROFILE_KEY. Runs themselves stay
 // self-contained (runState.mjs): the profile only narrows the roster pool before a draw.
-import {seedHash} from './runState.mjs';
+import {seedHash,PARTY_SIZE} from './runState.mjs';
 import {summonWeight} from './unitForms.mjs';
+import {ROLES,roleOf} from './roles.mjs';
 export const PROFILE_KEY='ffrogue.profile.v1';
 /** Heroes every new profile starts with (the first reviewed roster). Missing keys are ignored. */
 export const STARTER_HEROES=['cloud','aerith','barret','squall','delita','jack','cloud_of_darkness'];
@@ -56,7 +57,7 @@ const drawable=catalog=>Object.keys(catalog).filter(key=>catalog[key].canonicalI
 export function newProfile(catalog){
  return {version:1,unlocked:STARTER_HEROES.filter(key=>catalog[key]),crystals:0,record:{won:0,lost:0},settled:[],bond:{},bosses:[]};
 }
-/** Unknown keys (characters removed from the build) are dropped; never fewer than three identities. */
+/** Unknown keys (characters removed from the build) are dropped; never fewer than four identities (one party). */
 export function normalizeProfile(input,catalog){
  const p=input?.version===1?structuredClone(input):newProfile(catalog);
  p.unlocked=[...new Set((Array.isArray(p.unlocked)?p.unlocked:[]).filter(key=>catalog[key]))];
@@ -68,10 +69,20 @@ export function normalizeProfile(input,catalog){
  if(Array.isArray(p.favorites))p.favorites=p.favorites.filter(g=>typeof g==='string').slice(0,MAX_FAVORITES);else if(p.favorite)p.favorites=[p.favorite];else delete p.favorites;
  // Final boss rooms already won: their boss is shown on the boss choice (2026-11-11), unknown ones as ???.
  p.bosses=[...new Set((Array.isArray(p.bosses)?p.bosses:[]).filter(id=>typeof id==='string'))];
- // Top up from the starters, then from the whole roster, until the Fate Engine can draw three heroes.
+ // Top up from the starters, then from the whole roster, until the Fate Engine can draw a full party.
+ const fresh=key=>catalog[key]&&!p.unlocked.some(k=>catalog[k]?.canonicalIdentity===catalog[key].canonicalIdentity);
  for(const key of [...STARTER_HEROES,...drawable(catalog)]){
-  if(identities(p,catalog)>=3)break;
-  if(catalog[key]&&!p.unlocked.includes(key))p.unlocked.push(key);
+  if(identities(p,catalog)>=PARTY_SIZE)break;
+  if(fresh(key))p.unlocked.push(key);
+ }
+ // Loop v2 (proposed 2026-11-15): the roster offers every role the published catalog has, so the role draw
+ // (runState.rollParty) can field damage, healer, tank and support; the first starter, else roster hero of a
+ // missing role joins.
+ const role=key=>catalog[key].role??roleOf(catalog[key]);
+ for(const wanted of ROLES){
+  if(p.unlocked.some(key=>drawable(catalog).includes(key)&&role(key)===wanted))continue;
+  const key=[...STARTER_HEROES,...drawable(catalog)].find(key=>drawable(catalog).includes(key)&&fresh(key)&&role(key)===wanted);
+  if(key)p.unlocked.push(key);
  }
  return p;
 }

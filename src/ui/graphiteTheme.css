@@ -218,3 +218,11 @@
 @media(max-width:700px){.title-shade{background:linear-gradient(180deg,#111215e0 0%,#11121580 50%,#111215 100%)}.title-hero{opacity:.6}}
 @media(prefers-reduced-motion:reduce){.title-arena,.gauge-limit .gauge-fill[data-level=full],.command.is-limit.is-ready{animation:none}}
 .title-menu p.muted{margin:8px 0 0 42px;font-size:13px;color:var(--g-dim)}
+
+/* Party roles (loop v2): a small uppercase chip per hero; the role colour is a hairline, not a fill. */
+.role-chip{display:inline-block;margin:2px auto 4px;padding:1px 7px;border:1px solid var(--role,var(--g-line));border-radius:3px;
+ font:600 9px/1.6 var(--g-type);letter-spacing:.14em;text-transform:uppercase;color:var(--role,var(--g-muted));font-variant-numeric:tabular-nums}
+.role-damage{--role:var(--g-red)}.role-healer{--role:var(--g-green)}.role-tank{--role:var(--g-blue)}.role-support{--role:var(--g-gold)}
+.reels{grid-template-columns:repeat(4,minmax(0,1fr))}
+.party-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media(max-width:520px){.reels{grid-template-columns:repeat(2,minmax(0,1fr))}.party-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}

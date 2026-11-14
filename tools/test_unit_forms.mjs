@@ -9,7 +9,7 @@ function catalog(){const r=read('public/assets/content.json'),content=read('publ
  return runCatalog({cache:{json:{get:k=>values[k]}}},m);
 }
 const c=catalog();
-function party(mode){for(let i=0;i<100;i++){const r=confirmParty(rollParty(createRun('form-path-'+i,c,undefined,mode?{awakeningMode:mode}:undefined),c));if(r.party.some(m=>m.key==='cloud'))return r;}throw Error('Seed');}
+function party(mode){for(let i=0;i<2000;i++){const r=confirmParty(rollParty(createRun('form-path-'+i,c,undefined,mode?{awakeningMode:mode}:undefined),c));if(r.party.some(m=>m.key==='cloud'))return r;}throw Error('Seed');}
 function bossReward(r){r.encounter=r.encounter<2?1:3;return completeBattle(r,c,r.party.map(m=>({key:m.key,hp:m.hp,mp:m.mp})),true);}
 test('levels 1-6 share one power scale; boss relics raise the level and the body follows original forms',()=>{
  assert.deepEqual([3,4,5,6,7].map(r=>levelOf({rarity:r})),[1,2,3,4,5]);assert.equal(levelOf({rarity:7,rank:'NV'}),6);
@@ -52,13 +52,14 @@ test('start levels roll one weight table, never below the base rarity level, and
  counts.forEach((n,i)=>{const p=weights[i]/sum;assert.ok(Math.abs(n/total-p)<Math.max(.01,4*Math.sqrt(p*(1-p)/total)),JSON.stringify(counts));});
  console.log('Start levels Lv1..6 over',total,'heroes:',counts);
 });
-test('maximum level heroes get other boss rewards and old v2 saves gain levels',()=>{
+test('maximum level heroes get other boss rewards; pre-v5 saves are rejected, not upgraded',()=>{
  let r=party('sequential'),m=r.party.find(m=>m.key==='cloud');
  m.level=MAX_LEVEL;const nv=formForLevel(c.cloud,MAX_LEVEL);Object.assign(m,{form:nv.form,unitId:nv.unitId,rarity:nv.rarity,rank:nv.rank});validateRun(r,c);
  const rewards=bossReward(r);assert.ok(rewards.offers.every(o=>o.member!=='cloud'||o.type!=='evolve'));
  const old=JSON.parse(JSON.stringify(party('sequential')));old.version=2;for(const p of old.party)delete p.level;
  let raw=JSON.stringify(old);const store=new RunStore({getItem:k=>k===SAVE_KEY?raw:null,setItem:(_k,v)=>{raw=v;}},c);
- const loaded=store.load();assert.equal(loaded.version,RUN_VERSION);for(const p of loaded.party)assert.equal(p.level,levelOf(p));
+ assert.throws(()=>store.load(),/three-hero party/);assert.equal(JSON.parse(raw).version,2);
+ assert.equal(new RunStore({getItem:()=>JSON.stringify(rewards),setItem:()=>{}},c).load().version,RUN_VERSION);
 });
 test('star and NV bodies have complete Source clips; shifted forms and unknown policies stay excluded',()=>{
  assert.equal(c.cloud.forms.at(-1).unitId,'207000117');assert.equal(c.aerith.forms.at(-1).unitId,'207000407');

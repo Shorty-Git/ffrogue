@@ -54,7 +54,7 @@ function merchantWares(run){
  wares.push({item:'potion',price:PRICES.potion});
  wares.push(knockedOut?{item:'phoenix',member:knockedOut.key,price:PRICES.phoenix}:{item:'ether',price:PRICES.ether});
  const tome=upgradeTarget(run,'tome');if(tome)wares.push({item:'tome',...tome,price:PRICES.tome});
- const armed=run.party[seedHash(run.seed+':merchant-member:'+run.encounter)%3];
+ const armed=run.party[seedHash(run.seed+':merchant-member:'+run.encounter)%run.party.length];
  const weapons=weaponsForTier(fight.area+1).filter(w=>w.id!==armed.weapon?.id);
  if(weapons.length){const weapon=weapons[seedHash(run.seed+':merchant-weapon:'+run.encounter)%weapons.length];
   wares.push({item:'weapon',member:armed.key,weapon:clone(weapon),price:PRICES.weaponPerRarity*weapon.rarity});}
