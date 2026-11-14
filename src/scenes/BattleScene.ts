@@ -1375,12 +1375,11 @@ export class BattleScene extends Phaser.Scene {
 
   private showCritPopup(x: number, y: number): void {
     const critText = this.add.text(x, y, 'CRITICAL!', {
-      fontFamily: 'monospace',
-      fontSize: '15px',
-      color: '#facc15',
-      fontStyle: 'bold',
-      stroke: '#713f12',
-      strokeThickness: 3,
+      fontFamily: '"Archivo Black", Arial, sans-serif',
+      fontSize: '17px',
+      color: '#ffd23f',
+      stroke: '#08090a',
+      strokeThickness: 5,
     }).setOrigin(0.5).setDepth(2000);
 
     this.tweens.add({
@@ -1811,7 +1810,7 @@ export class BattleScene extends Phaser.Scene {
 
   /** Short rising combat label (statuses, buffs); purely presentational. */
   private floatCombatText(x:number,y:number,label:string,color:string):void{
-    const text=this.add.text(x,y,label,{fontSize:'16px',color,fontFamily:'Arial'}).setOrigin(.5).setDepth(1200);
+    const text=this.add.text(x,y,label,{fontSize:'17px',color,fontFamily:'"Archivo Black", Arial, sans-serif',stroke:'#08090a',strokeThickness:5}).setOrigin(.5).setDepth(1200);
     this.tweens.add({targets:text,y:text.y-40,alpha:0,duration:900,onComplete:()=>text.destroy()});
   }
 

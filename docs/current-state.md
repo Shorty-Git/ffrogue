@@ -68,6 +68,23 @@ replaced.
 
 # Changelog (newest first)
 
+## Arcade UI theme (2026-11-14)
+
+The chosen UI direction (docs/game-design.md, UI: "Arcade" with the Graphite palette) is live for every
+existing screen. `src/ui/arcadeTheme.css` loads last (`src/main.ts`) and overrides the FFBE window style
+of ffbeTheme.css / combatHud.css: tokens on `:root` (`--ar-*`; `--rpg-type`/`--rpg-display` now map to
+Archivo / Archivo Black, self-hosted via @fontsource, no Google Fonts request), panels and cards with thick
+outlines and hard drop shadows, yellow primary buttons, flat CSS gauges instead of the FFBE gauge images,
+battle dock as party 2x2 (left) and command 2x2 plus a full-width Limit button (right), Arcade enemy plates,
+tooltip, caption and settings. Canvas-drawn parts changed too: the action banner is a drawn bar (dark with a
+yellow edge for heroes, red for enemies; no FFBE banner art); damage, heal, crit and status numbers use
+Archivo Black with a thick dark stroke and the palette colours (weakness teal on enemies).
+Checked: screenshots of title, heroes, training setup, guide, final-boss choice, favourites, rewards,
+merchant, shrine, party, result and a training battle (banner, numbers, tooltip); 371 node tests, build.
+Not yet restyled: the slot machine (leaves the main flow per loop v2), awakening sequence details, the
+title crystal (kept as the FF crystal motif). The older sheets still carry their layout rules; remove their
+FFBE look rules once nothing depends on them.
+
 ## Run events and gil (2026-11-14)
 
 One stop per area between fights (`src/run/runEvents.mjs`, tests `tools/test_run_events.mjs`):

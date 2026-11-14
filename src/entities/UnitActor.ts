@@ -156,12 +156,11 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
     const py = this.y - 70;
 
     const popup = this.scene.add.text(px, py, `-${damage}${tag === 'weak' ? ' WEAK' : tag === 'resist' ? ' RESIST' : ''}`, {
-      fontFamily: 'monospace',
-      fontSize: '20px',
-      color: tag === 'weak' ? '#fb923c' : tag === 'resist' ? '#94a3b8' : '#f87171',
-      stroke: tag === 'resist' ? '#1e293b' : '#450a0a',
-      strokeThickness: 3,
-      fontStyle: 'bold',
+      fontFamily: '"Archivo Black", Arial, sans-serif',
+      fontSize: '22px',
+      color: tag === 'weak' ? '#ff8a3d' : tag === 'resist' ? '#b6bac2' : '#ff4d5e',
+      stroke: '#08090a',
+      strokeThickness: 6,
     }).setOrigin(0.5);
     popup.setDepth(1600);
     popup.setScale(0.7);
@@ -250,12 +249,11 @@ export class UnitActor extends Phaser.GameObjects.Sprite {
     const py = this.y - 70;
 
     const popup = this.scene.add.text(px, py, `+${healAmount.toLocaleString()}`, {
-      fontFamily: 'monospace',
-      fontSize: '22px',
-      color: '#4ade80',
-      stroke: '#064e3b',
-      strokeThickness: 3,
-      fontStyle: 'bold',
+      fontFamily: '"Archivo Black", Arial, sans-serif',
+      fontSize: '24px',
+      color: '#6ee36e',
+      stroke: '#08090a',
+      strokeThickness: 6,
     }).setOrigin(0.5);
     popup.setDepth(1600);
     popup.setScale(0.7);

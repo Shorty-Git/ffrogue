@@ -231,29 +231,26 @@ export class TargetDummy extends Phaser.GameObjects.Container {
     const small = this.sprite.displayHeight < 200;
     const startY = this.y - (small ? 18 : 70), rise = small ? 26 : 45;
 
-    let color = '#ffffff';
-    let stroke = '#0f172a';
+    let color = '#fff8ec';
+    const stroke = '#08090a';
     let label = damage.toLocaleString();
 
     if (isCritical) {
-      color = '#fbbf24'; // Gold
-      stroke = '#78350f';
+      color = '#ffd23f'; // Arcade yellow
       label += ' CRIT!';
     } else if (damageType === 'holy') {
-      color = '#67e8f9'; // Bright Cyan
-      stroke = '#0e7490';
+      color = '#8fd3ff'; // Arcade ice
     }
     // Element tag: weaknesses glow orange, resisted hits turn steel grey.
-    if (tag === 'weak') { color = isCritical ? color : '#fb923c'; stroke = '#7c2d12'; label += ' WEAK'; }
-    else if (tag === 'resist') { color = '#94a3b8'; stroke = '#1e293b'; label += ' RESIST'; }
+    if (tag === 'weak') { color = isCritical ? color : '#2ec4b6'; label += ' WEAK'; }
+    else if (tag === 'resist') { color = '#b6bac2'; label += ' RESIST'; }
 
     const dmgText = this.scene.add.text(startX, startY, label, {
-      fontFamily: 'Arial, Helvetica, sans-serif',
-      fontSize: isCritical ? '26px' : '22px',
+      fontFamily: '"Archivo Black", Arial, sans-serif',
+      fontSize: isCritical ? '30px' : '24px',
       color: color,
-      fontStyle: 'bold',
       stroke: stroke,
-      strokeThickness: isCritical ? 5 : 4,
+      strokeThickness: isCritical ? 7 : 6,
     }).setOrigin(0.5).setDepth(2500).setScale(0.6);
 
     // Scale-Bounce: fast pop to 1.35x, then settle at 1.0x

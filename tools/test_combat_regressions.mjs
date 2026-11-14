@@ -904,10 +904,11 @@ test('verified resting victory pose releases rewards without stopping the origin
 
 test('action banner preserves shared hero/enemy FIFO, ignores repeated notices and never delays gameplay',()=>{
  const {ActionBanner}=loadModule('src/ui/ActionBanner.ts'),banner=Object.create(ActionBanner.prototype),texts=[],timers=[];
- const chain={setVisible(){return this;},setAlpha(){return this;},setX(){return this;},setTexture(){return this;},setDisplaySize(){return this;},setTint(){return this;}};
+ const chain={setVisible(){return this;},setAlpha(){return this;},setX(){return this;}};
+ const bar={clear(){return this;},fillStyle(){return this;},fillRect(){return this;}};
  Object.assign(banner,{queue:[],active:false,generation:0,lastSequence:0,
   scene:{scale:{width:1000},textures:{exists:()=>true},tweens:{add(config){timers.push(config.onComplete);return{stop(){}};}}},
-  root:chain,bar:chain,actor:{setText(s){texts.push(s);return this;}},label:{width:400,setText(s){texts.push(s);return this;},setScale(){}}});
+  root:chain,bar,width:1000,actor:{setText(s){texts.push(s);return this;},setColor(){return this;}},label:{width:400,setText(s){texts.push(s);return this;},setColor(){return this;},setScale(){}}});
  const first={sequence:1,actorName:'Cloud',abilityName:'Blade Beam',side:'hero',kind:'skill',origin:'source'};
  banner.enqueue(first);banner.enqueue(first);banner.enqueue({sequence:2,actorName:'Ochu',abilityName:'Bramble Surge',side:'enemy',kind:'prepare',origin:'ffrogue'});
  assert.deepEqual(texts,['Cloud','Blade Beam']);assert.equal(banner.queue.length,1);timers.shift()();timers.shift()();assert.deepEqual(texts,['Cloud','Blade Beam','Ochu is charging up','Bramble Surge']);
