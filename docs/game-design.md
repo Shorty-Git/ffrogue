@@ -32,6 +32,10 @@ build-driven, and are usually lost the first few times.
 - **Enemy scaling** per act and per node depth; the opening should be dangerous until the build forms.
 - **Saving:** the run is saved after every map node and every decision; closing the game mid-battle
   restarts that battle from its starting state on resume (same as Slay the Spire / Hades).
+- **Implemented 2026-11-15 (proposed details, awaiting review):** act maps of 6 rows + boss with fixed row
+  rules (first row battle, treasure mid-act, campfire before the boss), 2–3 fights per path below the boss;
+  elite affixes Enraged / Armored / Regenerating; boss rules Silence / Doom / Endurance; elites are bosses of
+  stages the run does not visit; act scaling per act and per row (`src/run/encounterRules.mjs`).
 
 ## Party
 - **Free choice:** the run starts with 4 heroes picked from the unlocked roster (no slot machine in the
@@ -39,6 +43,10 @@ build-driven, and are usually lost the first few times.
 - **Four heroes from the start (decided 2026-11-14 evening, replaces "3 + a fourth after act 1"):** the party
   is always four, one per role: damage dealer, healer, tank, supporter. Every hero carries a role (derived
   from its skills, reviewed per character); the party screen asks for one hero per role by default.
+- **Roles (implemented 2026-11-15, overrides proposed):** derived from the published skills (heal/raise →
+  healer, guard → tank, buffs/debuffs → support, else damage) with a reviewed override table in
+  `src/run/roles.mjs` (proposed: Cecil and Warrior of Light tank, Aerith Cetra support, Noctis True King damage).
+  Until the free party choice exists, the draw fills one hero per role.
 - **No rarity as power.** Every hero starts in the base form. 5★/6★/7★/NV bodies become in-run growth:
   levels and boss milestones awaken the hero into the higher original forms.
 - **Variants are aspects** (Hades weapon aspects): Cloud, Cloud AC and Cloud Remake are one hero with

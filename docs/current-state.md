@@ -2,7 +2,7 @@
 
 Single entry point for any developer or AI picking up the project. Read this first, then
 `docs/vision.md` (goals), `AGENTS.md` (rules) and the specialised docs linked below.
-Last consolidated: 2026-11-14 (see "Start here").
+Last consolidated: 2026-11-15 (see "Start here").
 
 ## Start here (consolidated 2026-11-14)
 
@@ -15,10 +15,12 @@ Reference sections in the changelog that stay valid: "Decisions that shape all w
 
 ### Product snapshot
 - Playable PC roguelike in the browser: title → favourite Final Fantasies (once per profile) → final-boss
-  choice (6 bosses, unknown ones veiled) → Fate Engine team draw (3 heroes, 3 rerolls) → two chosen route
-  areas (normal fights + elite) and the final boss room, one run event per area (camp, Moogle merchant,
-  crystal shrine; gil per win) → rewards after every win (skill / upgrade / weapon, awakening after
-  elites) → result with crystals and hero unlocks. Training grounds for free test fights.
+  choice (6 bosses, unknown ones veiled) → Fate Engine team draw (4 heroes, one per role: damage, healer,
+  tank, support; 3 rerolls) → three acts, each opened by a choice of two stages and played on a seeded
+  branching act map (battle, elite with an affix, event/shrine, Moogle merchant, campfire, treasure, act boss
+  with a rule; 10–13 fights per run) → the final boss room → result with crystals and hero unlocks. Rewards
+  after every win (skill / upgrade / weapon, awakening after elites and bosses); the run is saved at every
+  node (run save v5; older saves are rejected with a discard offer). Training grounds take up to 4 heroes.
 - Content: 51 published units (26 canonical characters, 72 original forms up to 7★/NV), 380 active skills
   plus 50 Limit Bursts, 547 published original-effect scenes, 17 stages (16 in the route pool after
   retiring Whisperwood, 6 of them final boss rooms), 48 monster bodies with original skills.
@@ -26,7 +28,8 @@ Reference sections in the changelog that stay valid: "Decisions that shape all w
   developer's explicit go (see memory/`docs/vision.md`).
 
 ### Where things live
-- Game: `src/` (Phaser 3 + DOM UI). Run rules `src/run/runState.mjs`, events `src/run/runEvents.mjs`,
+- Game: `src/` (Phaser 3 + DOM UI). Run rules `src/run/runState.mjs`, act maps `src/run/actMap.mjs`, elite
+  affixes / boss rules / scaling `src/run/encounterRules.mjs`, roles `src/run/roles.mjs`, events `src/run/runEvents.mjs`,
   battle `src/scenes/BattleScene.ts`, effect player `src/effects/originalEffectPlayer.mjs` (its hash is
   pinned in every scene manifest).
 - Pipelines (`tools/`, raw data only on the main PC in `rawdata/`): characters
@@ -55,9 +58,16 @@ boss rules, Materia/Espers/relics, free party choice instead of the slot machine
 new UI style). Its roadmap orders the work; the current slot-machine and 6-fight structure are legacy until
 replaced.
 
-### Open items (verified 2026-11-14)
-- Balancing pass with a run simulator (planned overnight; cloud needs a push first). Event prices and
-  shares, gil amounts and all drafted skill values are first guesses.
+### Open items (verified 2026-11-15)
+- Developer review of the loop-v2 night branch `claude/loop-v2-night` (party of four, act maps, map screen;
+  see the 2026-11-15 changelog entry and its proposed decisions).
+- Balancing pass with a run simulator. Act/depth scaling, elite HP, affix and rule numbers, event prices,
+  gil amounts and all drafted skill values are first guesses; a simulator can now walk the act maps
+  (`tools/run_walk.mjs` shows the pattern).
+- Tanks have no battle mechanic yet (provoke/cover); the roster's roles are uneven (3 tanks, 4 supports,
+  5 healers, the rest damage). The party screen still draws (Fate Engine) instead of the free choice per role.
+- Elite foes avoid stages planned at the time of the fight, but a later route choice can still pick the
+  stage whose boss was met as an elite.
 - New heroes for thinly covered Final Fantasies (one-command importer).
 - Renderer: known single-scene boxes (edea_blizzaga, aerith_holy cloud edge, chaos_tsunami /
   leviathan_tidal_wave water stripe, cloud_ac_finishing_touch tornado edge, onion_knight_awakened boards);
@@ -67,6 +77,61 @@ replaced.
 - Website: not yet updated with the 2026-11-12..14 work (renderer rounds, events, Red Spiral).
 
 # Changelog (newest first)
+
+## Loop v2 groundwork: party of four, act maps, map screen (2026-11-15, cloud night, branch `claude/loop-v2-night`)
+
+Built from `docs/briefs/overnight-loop-v2.md` in the cloud (no `rawdata/`, no `tools/data/`: no imports).
+
+Done:
+- **Roles and a party of four.** `src/run/roles.mjs` derives damage / healer / tank / support from the
+  published skills (heal/raise share ≥ 25% → healer; guard skills vs. buff/debuff skills → tank or support,
+  a tie goes to support; else damage) with a reviewed override table; the run catalog carries `role`.
+  `rollParty` fills the four roles in order (fallback: any free hero), `PARTY_SIZE` 4 everywhere (run state,
+  validation, battle snapshot, merchant, title, training grounds). Profiles top up to four identities without
+  duplicate variants and add one hero for each role the roster misses. Battle formation: four-slot zigzag
+  (`src/ui/battleLayout.ts`, back/front columns, even step, feet above the HUD; regression test for every
+  arena). Fate Engine shows four reels with role chips.
+- **Run skeleton.** `src/run/actMap.mjs`: per act 6 rows + boss, 4 columns, 4 non-crossing paths, row rules
+  (row 0 battle; row 1 battle/event; rows 2 and 4 battle/elite/event/merchant; row 3 treasure; row 5 campfire),
+  constructive typing so every path has 2–3 fights below the boss (10–13 fights per run), ≤ 1 elite per path
+  in act 1 (2 later), never two elites in a row, every map with an elite, event and merchant. Maps are
+  recomputed from the seed, never stored. `src/run/encounterRules.mjs`: act scaling (HP 1 / 1.4 / 1.85 / 2.3,
+  damage 1 / 1.2 / 1.42 / 1.65) plus 3% per row; elite affixes Enraged (+35% damage), Armored (+60% HP),
+  Regenerating (6% per round); boss rules Silence (MP ×2), Doom (12 rounds), Endurance (5% per round),
+  never the same rule twice in a row. Run save v5: `map {act, at, trail}`, phase `map`, `chooseNode`; a boss
+  closes the act (camp heal, next act's route choice), the last boss wins. Events are map nodes (campfire →
+  camp, merchant, event → shrine, new treasure chest with gil and an optional weapon), seeded per node.
+  Elites are single foes: the boss of a stage the run does not visit, with elite HP and the affix.
+  BattleScene applies Silence, Doom and regeneration; the caption shows kind, act and the affix/rule.
+- **Map screen** (`RunUI.actMap`, styles in `src/ui/graphiteTheme.css`): FF Graphite take on mockup
+  "B · Act map": top bar (act, stage, fights won, gil), map left (reachable nodes with gold edges, walked
+  path as a gold line, boss block with its rule), right side party with roles and gauges, stage weaknesses,
+  "Next stop" panel with the node's one-line rules and Fight/Go. Single options (boss row, final room) are
+  preselected. Guide copy updated.
+- **Research note** `docs/research/roguelike-loop-references.md` (Slay the Spire, Hades, Balatro, Across the
+  Obelisk; search-result sources only, fetches were blocked).
+
+Decisions taken in the night, **proposed** for developer review:
+- Role overrides: Cecil and Warrior of Light → tank, Aerith (Cetra) → support, Noctis (True King) → damage.
+- Party index order = role order (damage, healer, tank, support); the formation puts the damage dealer
+  front-top and the tank front-bottom.
+- Pre-v5 saves are rejected (not migrated): a three-hero linear run cannot become a four-hero map run.
+- Elites reuse bosses of unvisited stages; awakening rewards stay after elites and bosses (relics do not
+  exist yet). Act bosses pay 150 gil; treasure chests 60–110 gil.
+- Treasure is a new event kind; the event node is always the crystal shrine for now.
+
+Not done: free party choice per role (the draw stays), tank mechanics, Materia/Espers/relics, interest,
+balancing, act-1-only mild rule pool, mobile layout polish of the map.
+
+Checks run: `npx tsc --noEmit` clean; `npm test` 204 pass / 56 fail / 18 skipped — the 56 failures are the
+same set as on `main` before this work, all from missing local data (`tools/data/…` ENOENT, `rawdata`
+databases, effekseer sample files); no new failure. `npm run build` green. `npm run test:py` not run (needs
+`FFROGUE_PYTHON` and local data). Headless Chromium screenshots (1000×1100) checked: four-hero training
+battle, title → favourites → final boss → Fate Engine → route choice → act map → first fight, an elite
+(Kain, Armored), an act boss (X-ATM092, Doom countdown), the final boss with Silence (Fated Circle 20 → 40
+MP), the act-2 map with a walked path, the final room and the treasure screen. Not checked in the browser:
+a whole run played to the end (covered by node tests that play full runs), merchant/shrine/camp screens
+after the change, the narrow (<760 px) layout.
 
 ## "FF Graphite" UI revision (2026-11-14)
 

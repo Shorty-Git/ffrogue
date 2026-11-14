@@ -282,3 +282,5 @@
 .map-actions{display:flex;justify-content:flex-end}
 .caption-rule{margin-left:.6em;padding:0 .45em;border:1px solid var(--g-red);border-radius:3px;color:var(--g-red);font-size:.8em;letter-spacing:.1em;text-transform:uppercase;pointer-events:auto;cursor:help}
 @media(max-width:760px){.map-screen{grid-template-columns:1fr;grid-template-areas:"top" "board" "side"}.map-board{min-height:560px}.map-node{width:52px;height:52px}.map-boss{width:120px;height:84px}}
+.event-party{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));max-width:980px}
+@media(max-width:760px){.event-party{grid-template-columns:repeat(2,minmax(0,1fr))}}
