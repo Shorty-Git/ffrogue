@@ -5,9 +5,10 @@ export interface CombatActionNotice {
   side:'hero'|'enemy';kind:'attack'|'skill'|'prepare';origin:'source'|'ffrogue'|'basic';
 }
 
-/** Arcade banner colours (docs/game-design.md, UI): hero actions dark with a yellow edge, enemy actions red. */
-const STYLE={hero:{fill:0x1f2126,edge:0xffd23f,name:'#fff8ec',actor:'#b6bac2'},enemy:{fill:0xff4d5e,edge:0x08090a,name:'#1a0610',actor:'#3a0610'}} as const;
-const BANNER_FONT='"Archivo Black", "Archivo", Arial, sans-serif';
+/** Banner colours (docs/game-design.md, UI "FF Graphite"): a dark band with gold hairlines for the party,
+ * deep red with red hairlines for enemies. */
+const STYLE={hero:{fill:0x111215,edge:0xe2c26b,name:'#f2efe8',actor:'#e2c26b'},enemy:{fill:0x2a0f12,edge:0xe5534b,name:'#f6dcd8',actor:'#e5534b'}} as const;
+const NAME_FONT='Cinzel, Georgia, serif',ACTOR_FONT='"Source Sans 3", "Segoe UI", sans-serif';
 
 /**
  * Action banner across the top of the arena: a chunky Arcade bar with the ability name large and
@@ -29,8 +30,8 @@ export class ActionBanner {
     this.root=scene.add.container(0,96).setDepth(1800).setVisible(false);
     this.width=width;
     this.bar=scene.add.graphics();
-    this.actor=scene.add.text(46,-30,'',{fontFamily:BANNER_FONT,fontSize:'14px',color:STYLE.hero.actor}).setOrigin(0,0);
-    this.label=scene.add.text(44,-14,'',{fontFamily:BANNER_FONT,fontSize:'32px',color:STYLE.hero.name}).setOrigin(0,0);
+    this.actor=scene.add.text(48,-30,'',{fontFamily:ACTOR_FONT,fontSize:'13px',fontStyle:'bold',color:STYLE.hero.actor}).setOrigin(0,0).setLetterSpacing(3);
+    this.label=scene.add.text(46,-12,'',{fontFamily:NAME_FONT,fontSize:'32px',fontStyle:'600',color:STYLE.hero.name}).setOrigin(0,0).setShadow(0,2,'#000000',8,false,true);
     this.root.add([this.bar,this.actor,this.label]);
     scene.events.on('combat-action',this.enqueue,this);
     scene.events.once('shutdown',()=>{this.clear();scene.events.off('combat-action',this.enqueue,this);});
@@ -40,13 +41,12 @@ export class ActionBanner {
     if(this.active||!this.queue.length)return;
     const notice=this.queue.shift()!,generation=this.generation;this.active=true;
     const style=STYLE[notice.side];
-    // A tilted tile with a hard drop shadow; the edge sits on its bottom.
+    // Translucent band fading out to the right, hairlines above and below.
     this.bar.clear();
-    this.bar.fillStyle(0x08090a,1).fillRect(-20,-30,this.width+40,74);
-    this.bar.fillStyle(style.fill,1).fillRect(-20,-38,this.width+40,70);
-    this.bar.fillStyle(style.edge,1).fillRect(-20,28,this.width+40,4);
+    this.bar.fillGradientStyle(style.fill,style.fill,style.fill,style.fill,.94,.15,.94,.15).fillRect(0,-38,this.width,70);
+    this.bar.fillGradientStyle(style.edge,style.edge,style.edge,style.edge,.9,0,.9,0).fillRect(0,-38,this.width,1).fillRect(0,31,this.width,1);
     this.actor.setColor(style.actor);this.label.setColor(style.name);
-    this.actor.setText(notice.kind==='prepare'?`${notice.actorName} is charging up`:notice.actorName);
+    this.actor.setText((notice.kind==='prepare'?`${notice.actorName} is charging up`:notice.actorName).toUpperCase());
     this.label.setText(notice.abilityName);
     this.label.setScale(Math.min(1,(this.scene.scale.width-90)/Math.max(1,this.label.width)));
     const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;

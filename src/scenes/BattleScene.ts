@@ -1810,7 +1810,7 @@ export class BattleScene extends Phaser.Scene {
 
   /** Short rising combat label (statuses, buffs); purely presentational. */
   private floatCombatText(x:number,y:number,label:string,color:string):void{
-    const text=this.add.text(x,y,label,{fontSize:'17px',color,fontFamily:'"Archivo Black", Arial, sans-serif',stroke:'#08090a',strokeThickness:5}).setOrigin(.5).setDepth(1200);
+    const text=this.add.text(x,y,label,{fontSize:'17px',color,fontFamily:'"Source Sans 3", "Segoe UI", sans-serif',fontStyle:'bold',stroke:'#0b0c0e',strokeThickness:5}).setOrigin(.5).setDepth(1200);
     this.tweens.add({targets:text,y:text.y-40,alpha:0,duration:900,onComplete:()=>text.destroy()});
   }
 

@@ -68,6 +68,18 @@ replaced.
 
 # Changelog (newest first)
 
+## "FF Graphite" UI revision (2026-11-14)
+
+The developer found the Arcade pass too comic for Final Fantasy. `src/ui/arcadeTheme.css` became
+`src/ui/graphiteTheme.css` with a calmer language (docs/game-design.md, UI): double-line windows, Cinzel for
+titles/names/banner, Source Sans 3 for controls, one muted gold accent, no tilts or hard shadows. Archivo is
+only loaded as Archivo Black for canvas damage numbers. Action banner: translucent dark band with gold
+hairlines (enemy: deep red), Cinzel ability name, actor in spaced caps. Title screen heroes are pivot-anchored
+(`.title-hero` is the feet point) and alive: idle loops, `win_before`→`win` when an entry is hovered or
+focused, `dying` pose after 40 s without input (FF V/VI PS1 title screens, from the FF Wiki "Title screen"
+page); the menu uses the FF pointing-hand cursor. Checked by screenshots (title with and without save, hover
+pose sequence, battle, banner, all menus); tests and build.
+
 ## Cinematic title screen (2026-11-14)
 
 Developer choice from the title mockups ("Title 1 · Cinematic", https://claude.ai/artifact/Pcs8wi5GWMvkPNxXwJMnDW):

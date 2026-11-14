@@ -79,19 +79,23 @@ build-driven, and are usually lost the first few times.
   system (tokens, type, frames, motion), then all screens migrate. Starts after the run skeleton so no
   screen is polished before its content is settled.
 - The battle HUD must hold four heroes.
-- **Chosen direction (2026-11-14): "Arcade" with the Graphite palette.** Mockups (game size 1000×1100,
-  battle and act map): https://claude.ai/artifact/Pcs8wi5GWMvkPNxXwJMnDW (middle row; A and C kept for
-  reference). Character: bold, punchy, Balatro/Hades energy – thick dark outlines, chunky tiles with a hard
-  drop shadow, slightly tilted highlight states, big stroked damage numbers.
-  - Type: Archivo Black (headings, buttons, numbers), Archivo 400/600/800 (body, labels).
-  - Ground tokens: bg `#121316`, panel `#1f2126`, panel-2 `#2e3138`, info chip `#3f5f8a`, muted text
-    `#b6bac2`, outline/shadow `#08090a`, text `#fff8ec`.
-  - Accents: yellow `#ffd23f` (selection, gil, Limit), red `#ff4d5e` (boss, elite, Limit button, danger),
-    teal `#2ec4b6` (healing, camp, weakness), orange `#ff8a3d` (merchant, break), blue `#4d9dff` (MP),
-    green `#6ee36e` (HP), ice `#8fd3ff` (treasure, materia).
-  - Layout at game size: top bar 48 px; arena about 750 px; bottom HUD about 300 px with a 2×2 hero card grid
-    (left, about 560 px) and a 2×2 command grid plus the Limit button (right). The act map uses a map area
-    (left, 640 px) and a side panel (party, build, selected node with "GO!").
+- **Chosen direction (2026-11-14, revised the same day): "FF Graphite".** The first pass ("Arcade",
+  mockups at https://claude.ai/artifact/Pcs8wi5GWMvkPNxXwJMnDW) was too comic for Final Fantasy; the developer
+  kept its layout and palette idea but asked for a calmer, cohesive look that does not read as generic AI UI.
+  - Windows: fine double frame (1 px hairline outside, faint inner line), radius 4–6 px, soft deep shadow;
+    no thick outlines, no hard offset shadows, no tilts, no glass or glow washes.
+  - Type: Cinzel for titles, names, the action banner and the logo; Source Sans 3 for everything operated
+    (uppercase, letter-spaced labels; tabular numbers). Archivo Black only for canvas damage numbers, which
+    keep their punch.
+  - Tokens (`src/ui/graphiteTheme.css`): bg `#111215`, panel `#1a1c20`, panel-2 `#24272d`, hairline
+    `#ffffff1f`, text `#f2efe8`, muted `#a9adb5`; accent gold `#e2c26b` (selection, progress, Limit); red
+    `#e5534b` (boss, danger), teal `#3fb8a9`, blue `#5aa2f0` (MP), green `#6fd37a` (HP), ice, orange.
+  - Selection: gold edge and a lighter fill (a 3 px gold inner bar on the active hero and chosen command).
+  - Layout at game size: top bar; arena about 750 px; bottom HUD about 300 px with a 2×2 hero grid (left)
+    and a 2×2 command grid plus a full-width Limit row (right).
+  - Title screen "Cinematic": the current/last party on its arena, alive (idle loops, a victory pose when an
+    entry is chosen, a tired kneel after 40 s idle, after the FF V/VI PS1 title screens), Cinzel logo,
+    uppercase Source Sans list with the classic FF pointing-hand cursor.
 
 ## Roadmap
 1. Run skeleton: act maps, elites with affixes, enemy scaling, boss rules, save per node, own damage

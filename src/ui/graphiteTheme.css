@@ -1,0 +1,220 @@
+/* FFRogue "FF Graphite" theme (docs/game-design.md, UI; revised 2026-11-14 after the Arcade pass).
+   Loaded last: replaces the FFBE window art of ffbeTheme.css / combatHud.css. Language:
+   - windows with a fine double frame (the classic FF window line, modern), small radius, soft deep shadow;
+   - Cinzel for titles, names and the action banner; Source Sans 3 for everything you operate;
+   - one muted gold accent for selection and progress; red, teal, blue, green carry fixed meanings;
+   - no tilts, no hard comic shadows; only damage numbers keep their punch (canvas, Archivo Black).
+   Layout rules of the older sheets stay. */
+:root{
+  --g-bg:#111215;--g-panel:#1a1c20;--g-panel2:#24272d;--g-line:#ffffff1f;--g-line2:#ffffff0f;--g-text:#f2efe8;--g-muted:#a9adb5;--g-dim:#71757d;
+  --g-gold:#e2c26b;--g-gold-soft:#e2c26b2e;--g-red:#e5534b;--g-teal:#3fb8a9;--g-blue:#5aa2f0;--g-green:#6fd37a;--g-ice:#9fd2f2;--g-orange:#e8894a;
+  --g-display:Cinzel,Georgia,serif;--g-type:"Source Sans 3","Segoe UI",sans-serif;
+  --g-frame:inset 0 0 0 3px var(--g-panel),inset 0 0 0 4px var(--g-line2),0 14px 30px #0009;
+  /* Older sheets read these. */
+  --rpg-type:var(--g-type);--rpg-display:var(--g-display);--rpg-ink:var(--g-text);--rpg-muted:var(--g-muted)}
+
+/* ---------- Screens ---------- */
+.run-overlay,#run-ui.run-overlay{background:radial-gradient(ellipse at 50% -10%,#23252b 0,var(--g-bg) 60%);color:var(--g-text);font-family:var(--g-type)}
+.run-overlay::before,.run-overlay:not(.victory-overlay):not(.awakening-overlay)::before{display:none}
+#run-ui h1{font:600 var(--type-title)/1.12 var(--g-display);letter-spacing:.07em;text-transform:none;background:none;-webkit-text-fill-color:var(--g-text);color:var(--g-text);filter:none;text-shadow:0 2px 12px #000a}
+#run-ui h1 em{-webkit-text-fill-color:var(--g-gold);color:var(--g-gold);font-style:normal}
+.rpg-shell>h1::after{content:'';display:block;width:64px;height:2px;margin:.6rem auto .2rem;background:var(--g-gold);border:0;-webkit-text-fill-color:initial}
+.victory-overlay h1::after,.awakening-overlay h1::after{display:none}
+.eyebrow{font:700 var(--type-caption)/1.25 var(--g-type);letter-spacing:.18em;text-transform:uppercase;color:var(--g-gold)}
+.lead,.muted,footer{color:var(--g-muted)}
+#run-ui h2{font-family:var(--g-display);font-weight:600;letter-spacing:.04em}
+
+/* Windows: dark fill, hairline outer border and a faint inner line. */
+.rpg-panel,#run-ui .reward-card,.path-card,.favorite-card,.hero-tile,.guide-steps li,.swap-card,.hero-detail,.event-member,.start-row,.training-slot,.training-options{
+  background:var(--g-panel);border:1px solid var(--g-line);border-image:none;border-radius:6px;box-shadow:var(--g-frame);color:var(--g-text)}
+.audio-controls.rpg-panel,.run-toolbar .rpg-panel{padding:6px 10px}
+#run-ui .reward-card,.path-card,.favorite-card,.hero-tile,.swap-card{transition:transform .15s,border-color .15s,background-color .15s}
+#run-ui .reward-card:hover:not(:disabled),.path-card:hover,.path-card:focus-visible,.favorite-card:hover,.favorite-card:focus-visible,.hero-tile:hover,.hero-tile:focus-visible,.swap-card:hover,.swap-card:focus-visible{
+  transform:translateY(-2px);border-color:#e2c26b99;filter:none;background-color:var(--g-panel2)}
+.favorite-card[aria-pressed=true],.hero-tile.is-selected,.training-slot.is-chosen{border-color:var(--g-gold);background-color:var(--g-panel2)}
+#run-ui .reward-card .eyebrow,.card-choose{color:var(--g-gold)}
+.card-choose{font:700 var(--type-caption)/1.2 var(--g-type);letter-spacing:.14em;text-transform:uppercase}
+#run-ui .reward-card.is-signature{border-color:var(--g-gold)}
+#run-ui .reward-lines li::before{color:var(--g-gold)}
+.reward-portrait,.reward-portrait.crystal-icon{background:var(--g-bg);border:1px solid var(--g-line);border-radius:4px;box-shadow:none}
+.portrait-frame{background:var(--g-bg);border:1px solid var(--g-line);border-radius:4px;box-shadow:none}
+
+/* Buttons: gold primary, outlined secondary; uppercase Source Sans. */
+.rpg-button{font:700 .95rem/1.2 var(--g-type);letter-spacing:.14em;text-transform:uppercase;color:#1b1406;text-shadow:none;
+  background:linear-gradient(180deg,#ecd187,#d4af55);border:1px solid #00000066;border-radius:4px;box-shadow:0 6px 16px #0007,inset 0 1px 0 #fff6;padding:.75rem 1.6rem;transition:filter .12s,transform .12s}
+.rpg-button.secondary{background:#ffffff08;color:var(--g-text);border-color:var(--g-line);box-shadow:none}
+.rpg-button:hover:not(:disabled){filter:brightness(1.08);transform:translateY(-1px)}
+.rpg-button.secondary:hover:not(:disabled){border-color:#e2c26b99;color:#fff;filter:none}
+.rpg-button:active:not(:disabled){transform:translateY(1px)}
+.rpg-button:disabled{opacity:.4;cursor:not-allowed}
+.rpg-button:focus-visible,#run-ui .reward-card:focus-visible,select:focus-visible{outline:2px solid var(--g-gold);outline-offset:3px}
+#run-ui input,#run-ui select{background:var(--g-bg);border:1px solid var(--g-line);border-radius:4px;color:var(--g-text)}
+
+/* Chips and notes. */
+.gil-note,.camp-note{border:1px solid var(--g-line);border-radius:4px;background:var(--g-panel);color:var(--g-muted);font:600 13px/1.3 var(--g-type);letter-spacing:.04em;text-shadow:none;box-shadow:none}
+.gil-note b{color:var(--g-gold)}
+.profile-line span{color:var(--g-muted)}.profile-line span:first-child{color:var(--g-gold)}
+.el-chip{border-radius:3px}
+
+/* Path choice and guide. */
+.path-art::after{background:linear-gradient(180deg,#11121500 40%,var(--g-panel) 100%)}
+.guide-number{background:none;color:var(--g-gold);border:1px solid var(--g-gold);font-family:var(--g-display)}
+
+/* Heroes collection. */
+.hero-tile{border-radius:4px}
+.hero-tile.is-locked{background:var(--g-bg);color:var(--g-dim)}
+.hero-tile.is-locked img{filter:brightness(0) drop-shadow(0 0 1px #a9adb566);opacity:.8}
+.hero-tile .hero-name{font:600 11px/1.15 var(--g-type);letter-spacing:.06em;text-transform:uppercase}
+.hero-tile .hero-bond{color:var(--g-gold)}
+.hero-tip{background:var(--g-panel);border:1px solid var(--g-gold);border-radius:6px;box-shadow:0 14px 30px #000a}
+.level-pips i{border:1px solid var(--g-line);border-radius:3px;color:var(--g-dim);background:var(--g-bg)}
+.level-pips i.reach{color:var(--g-text);border-color:#e2c26b66;background:#e2c26b1f}
+.level-pips i.start{box-shadow:none;background:var(--g-gold);color:#1b1406;border-color:var(--g-gold)}
+
+/* Training setup. */
+.training-skills{border:1px solid var(--g-line);border-radius:4px}
+.training-skills legend,.training-head small,.training-pick small{color:var(--g-muted)}
+
+/* Run events. */
+#run-ui .event-card[disabled]{filter:grayscale(.7);opacity:.5}
+.event-member.is-ko{filter:grayscale(1);opacity:.55}
+
+/* Gauges: thin bars on a dark track. */
+.gauge{--track:1;height:.5em;aspect-ratio:auto;background:#00000080;border-radius:2px;overflow:hidden;box-shadow:inset 0 0 0 1px #ffffff10}
+.gauge-fill,.gauge-trail{left:0;top:0;height:100%;border-radius:inherit;background-image:none}
+.gauge-hp :is(.gauge-fill,.gauge-trail),.gauge-mp .gauge-fill,.gauge-enemy :is(.gauge-fill,.gauge-trail),.gauge-limit .gauge-fill{left:0;top:0;height:100%}
+.gauge-trail{background:#e5534b99}
+.gauge-hp .gauge-fill[data-level=high]{background:linear-gradient(180deg,#8fe69a,#53b965)}
+.gauge-hp .gauge-fill[data-level=mid]{background:linear-gradient(180deg,#f0d48a,#cfa64a)}
+.gauge-hp .gauge-fill[data-level=low]{background:linear-gradient(180deg,#f07a72,#c63e37)}
+.gauge-mp{height:.36em}.gauge-mp .gauge-fill{background:linear-gradient(180deg,#86bdf6,#3d84d6)}
+.gauge-enemy{height:.55em}.gauge-enemy .gauge-fill{background:linear-gradient(180deg,#f07a72,#c63e37)}
+.gauge-limit{height:.36em;width:auto;flex:1}
+.gauge-limit .gauge-fill,.gauge-limit .gauge-fill[data-level=charging]{background:linear-gradient(180deg,#ecd187,#c99a3c)}
+.gauge-limit .gauge-fill[data-level=full]{background:linear-gradient(90deg,#c99a3c,#fff0b8,#c99a3c);background-size:200% 100%;animation:g-shimmer 1.6s linear infinite}
+.limit-row.is-full .gauge-limit{filter:none}
+@keyframes g-shimmer{from{background-position:200% 0}to{background-position:0 0}}
+.gauge-row{display:grid;gap:2px}
+.gauge-value{position:static;justify-self:end;font:600 .72em/1 var(--g-type);font-variant-numeric:tabular-nums;color:var(--g-muted);text-shadow:none}
+.gauge-value b{color:var(--g-text)}
+.limit-value{font:700 .68em/1 var(--g-type);letter-spacing:.1em;color:var(--g-gold);text-shadow:none}
+.limit-row.is-full .limit-value{color:#fff0b8;text-shadow:0 0 8px #e2c26b88}
+
+/* ---------- Battle HUD ---------- */
+.combat-ui{font-family:var(--g-type);color:var(--g-text)}
+.combat-ui kbd{font:600 .66em var(--g-type);color:var(--g-dim)}
+.combat-ui button:focus-visible{outline:2px solid var(--g-gold);outline-offset:2px}
+
+/* Caption chip. */
+.combat-caption{border:1px solid var(--g-line);border-image:none;border-radius:4px;background:#111215d9;box-shadow:inset 0 0 0 2px #111215,inset 0 0 0 3px var(--g-line2);padding:.25em .7em}
+.combat-caption strong{font:600 1em/1.2 var(--g-display);letter-spacing:.06em;text-shadow:none}
+.combat-caption span{color:var(--g-muted);font-weight:600;letter-spacing:.14em}
+
+/* Dock: party left, commands right, prompt below; a gold hairline on top. */
+.combat-dock{border:0;border-image:none;background:linear-gradient(180deg,#151619,#111215);box-shadow:inset 0 1px 0 #e2c26b40;padding:.75em .95em .45em;gap:.5em .85em;
+  grid-template-columns:minmax(0,56fr) minmax(0,44fr);grid-template-areas:"party commands" "prompt prompt" "keys keys";max-height:38%}
+.combat-party{grid-area:party;grid-template-columns:repeat(2,minmax(0,1fr));gap:.5em;align-content:start}
+.ribbon-commands{grid-area:commands;grid-template-columns:repeat(2,minmax(0,1fr));gap:.5em;align-content:start}
+.ribbon-prompt{grid-area:prompt;font-size:.85em;color:var(--g-muted);text-shadow:none;letter-spacing:.04em}
+.ribbon-prompt [role=status]::before,.ribbon-prompt [role=status]::after{color:var(--g-gold)}
+.ribbon-keys{grid-area:keys;color:var(--g-dim);opacity:.8}
+.ribbon-keys kbd{background:var(--g-panel);border:1px solid var(--g-line);color:var(--g-muted)}
+.prompt-cancel{border:1px solid var(--g-line);border-radius:4px;background:var(--g-panel)}
+
+/* Party cards: a gold edge marks the hero whose turn it is. */
+.party-card{background:var(--g-panel);border:1px solid var(--g-line);border-radius:5px;box-shadow:inset 0 0 0 2px var(--g-panel),inset 0 0 0 3px var(--g-line2);padding:.4em .55em .4em .4em;transition:background-color .15s,border-color .15s}
+.party-card:hover:not(:disabled){filter:none;border-color:#ffffff38}
+.party-card.is-active{border-color:#e2c26bcc;background:var(--g-panel2);box-shadow:inset 3px 0 0 var(--g-gold),inset 0 0 0 2px var(--g-panel2),inset 0 0 0 3px var(--g-line2)}
+.party-card.is-acted{filter:saturate(.4) brightness(.7)}
+.party-card.is-ko{filter:grayscale(1) brightness(.5)}
+.party-card.is-target{border-color:var(--g-teal);animation:none}
+.party-card .portrait-frame{width:3.1em}
+.party-head strong{font:600 1em/1.15 var(--g-display);letter-spacing:.05em;text-transform:none;text-shadow:none}
+.party-head small{color:var(--g-dim);font-weight:700;letter-spacing:.12em}
+.party-card.is-active .party-head small{color:var(--g-gold)}
+.party-card.is-ko .party-head small{color:var(--g-red)}
+.party-info{gap:.22em}
+
+/* Commands: framed tiles; the chosen one gets the gold edge, the Limit spans the row. */
+.command{background:var(--g-panel);border:1px solid var(--g-line);border-radius:5px;box-shadow:inset 0 0 0 2px var(--g-panel),inset 0 0 0 3px var(--g-line2);min-height:3.1em;padding:.3em .55em .3em .35em;transition:background-color .12s,border-color .12s}
+.command:hover:not(:disabled){filter:none;border-color:#ffffff40;background:var(--g-panel2)}
+.command[aria-pressed=true]{background:#e2c26b17;border-color:var(--g-gold);box-shadow:inset 3px 0 0 var(--g-gold),inset 0 0 0 2px #1e1d1c,inset 0 0 0 3px var(--g-line2);transform:none}
+.command:disabled{filter:grayscale(.6) brightness(.6)}
+.command-text strong{font:700 .95em/1.15 var(--g-type);letter-spacing:.06em;text-transform:uppercase;text-shadow:none}
+.command-text small{color:var(--g-muted);font-weight:600;letter-spacing:.04em}
+.command[aria-pressed=true] .command-text small{color:var(--g-gold)}
+.command-icon.is-skill{border-radius:4px;background:var(--g-bg);box-shadow:inset 0 0 0 1px var(--g-line)}
+.command.is-limit{grid-column:1/-1;background:var(--g-panel)}
+.command.is-limit .command-text strong{font-family:var(--g-display);font-weight:600;letter-spacing:.12em;color:var(--g-muted)}
+.command.is-limit .command-text small{color:var(--g-dim)}
+.command.is-limit.is-ready:not(:disabled){border-color:var(--g-gold);background:linear-gradient(90deg,#e2c26b26,#e5534b26);box-shadow:inset 0 0 0 2px #1d1b1a,inset 0 0 0 3px #e2c26b40,0 0 18px #e2c26b33;animation:g-limit 1.4s ease-in-out infinite alternate}
+.command.is-limit.is-ready:not(:disabled) .command-text strong{color:#fff0b8}
+.command.is-limit.is-ready:not(:disabled) .command-text small{color:var(--g-gold)}
+@keyframes g-limit{from{box-shadow:inset 0 0 0 2px #1d1b1a,inset 0 0 0 3px #e2c26b40,0 0 10px #e2c26b22}to{box-shadow:inset 0 0 0 2px #1d1b1a,inset 0 0 0 3px #e2c26b66,0 0 22px #e2c26b55}}
+.command.is-empty{border:1px dashed var(--g-line);background:transparent;box-shadow:none}
+
+/* Command tooltip. */
+.command-tip{background:var(--g-panel);border:1px solid var(--g-line);border-top:2px solid var(--g-gold);border-radius:5px;box-shadow:0 14px 30px #000b;color:var(--g-text)}
+.command-tip header{border-bottom:1px solid var(--g-line)}
+.command-tip header strong{font:600 1.05em/1.2 var(--g-display);color:var(--g-text);letter-spacing:.05em}
+.command-tip header span{color:var(--g-gold);font-weight:700}
+.command-tip li::before{color:var(--g-gold)}
+
+/* Enemy plates. */
+.arena-health{background:#111215e0;border:1px solid var(--g-line);border-radius:5px;box-shadow:inset 0 0 0 2px #111215,inset 0 0 0 3px var(--g-line2),0 10px 22px #0008;padding:.35em 0 .4em;gap:.28em}
+.arena-health .gauge-enemy{margin:0 .6em;width:auto}
+.enemy-head{text-shadow:none}
+.enemy-head strong{font:600 1em/1.25 var(--g-display);letter-spacing:.05em}
+.enemy-head span{color:var(--g-muted);font-weight:600;font-variant-numeric:tabular-nums}
+.arena-health.is-boss .enemy-head strong{color:var(--g-text)}
+.arena-actor.is-targeted .arena-health{border-color:var(--g-gold)}
+.arena-actor.is-targeted .enemy-head strong{color:#fff0b8;text-shadow:none}
+.arena-health small{color:var(--g-orange);text-shadow:none;font-weight:600}
+.enemy-rank{font:700 .66em/1.6 var(--g-type);letter-spacing:.14em;border-radius:3px;color:var(--g-gold);background:none;box-shadow:inset 0 0 0 1px var(--g-gold)}
+.enemy-rank.is-boss{color:#fff;background:var(--g-red);box-shadow:none}
+.combat-ui button.arena-hit:hover:not(:disabled){background:radial-gradient(closest-side,#e2c26b1f,#e2c26b00)}
+.target-cursor{filter:drop-shadow(0 0 6px #e2c26b88) drop-shadow(0 2px 2px #000a)}
+.status-badge b{background:#111215;border:1px solid var(--g-line);border-radius:3px}
+
+/* Battle settings toolbar. */
+.combat-settings[open]{background:var(--g-panel);border:1px solid var(--g-line);border-radius:6px;box-shadow:var(--g-frame)}
+.run-toolbar .rpg-button{padding:.45rem .8rem;font-size:.72rem}
+
+/* ---------- Title screen "Cinematic" (2026-11-14): Cinzel logo, Source Sans menu ---------- */
+#run-ui.is-title{padding:0;overflow:hidden}
+#run-ui.is-title .rpg-shell{width:100%;max-width:none;height:100%;padding:0;margin:0}
+.title-scene{position:absolute;inset:0;overflow:hidden;font-family:var(--g-type);color:var(--g-text)}
+.title-arena{position:absolute;inset:-2%;background:center 62%/cover no-repeat;filter:saturate(.8) brightness(.72);animation:g-drift 40s ease-in-out infinite alternate}
+@keyframes g-drift{from{transform:scale(1.02) translateX(0)}to{transform:scale(1.06) translateX(-1.5%)}}
+.title-shade{position:absolute;inset:-6%;background:linear-gradient(90deg,#111215 0%,#111215e8 30%,#11121500 66%),linear-gradient(180deg,#11121500 62%,#111215 100%)}
+.title-hero{position:absolute;width:0;height:0}
+.title-hero .title-hero-body{position:absolute;image-rendering:pixelated;filter:drop-shadow(0 6px 6px #000a)}
+.title-brand{position:absolute;left:clamp(24px,8vw,96px);top:clamp(40px,12vh,150px);text-align:left}
+.title-ff{display:block;font:600 clamp(14px,2vw,22px)/1 var(--g-display);letter-spacing:.5em;color:#d8d3c7}
+#run-ui .title-brand .title-logo{margin:.1em 0 0;font:600 clamp(64px,10vw,112px)/.95 var(--g-display);letter-spacing:.06em;text-transform:none;color:var(--g-text);-webkit-text-fill-color:var(--g-text);text-shadow:0 3px 18px #000c;background:none;filter:none}
+#run-ui .title-brand .title-logo::after{display:none}
+.title-rule{display:block;width:120px;height:2px;margin-top:18px;background:var(--g-gold)}
+.title-brand p{margin:14px 0 0;font-size:15px;color:var(--g-muted);letter-spacing:.03em}
+#run-ui .title-menu.menu-panel{position:absolute;left:clamp(24px,8vw,96px);top:clamp(300px,42vh,470px);display:flex;flex-direction:column;align-items:flex-start;gap:2px;
+  width:min(360px,80vw);padding:0;background:none;border:0;box-shadow:none;border-radius:0}
+.title-item{display:flex;align-items:center;gap:14px;padding:9px 0 9px 42px;border:0;background:none;color:#d8d3c7;cursor:pointer;
+  font:600 clamp(16px,1.9vw,20px)/1.2 var(--g-type);letter-spacing:.16em;text-transform:uppercase;text-align:left;transition:color .15s}
+/* The classic FF pointing-hand cursor marks the entry. */
+.title-item::before{content:'';width:28px;height:20px;margin-left:-42px;opacity:0;transform:translateX(-6px);transition:opacity .15s,transform .15s;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 20'%3E%3Cpath d='M2 7h13a2 2 0 0 1 0 4h-2.5a2 2 0 0 1 0 4H11a2 2 0 0 1 0 3H5c-2 0-3-1.5-3-3.5z' fill='%23f2efe8' stroke='%23111215' stroke-width='1.4'/%3E%3Cpath d='M12 7h12.5a2 2 0 0 1 0 4H13' fill='%23f2efe8' stroke='%23111215' stroke-width='1.4'/%3E%3C/svg%3E") center/contain no-repeat;filter:drop-shadow(0 1px 1px #000)}
+.title-item:hover:not(:disabled),.title-item:focus-visible,.title-item.is-primary{color:#fff}
+.title-item:hover:not(:disabled)::before,.title-item:focus-visible::before,.title-item.is-primary::before{opacity:1;transform:none;animation:g-point 1s ease-in-out infinite alternate}
+@keyframes g-point{from{translate:0 0}to{translate:-4px 0}}
+.title-item.is-primary{font-weight:700;font-size:clamp(18px,2.2vw,23px)}
+.title-menu:hover .title-item.is-primary:not(:hover)::before{opacity:0}
+.title-menu:hover .title-item.is-primary:not(:hover){color:#d8d3c7}
+.title-item:focus-visible{outline:none}
+.title-item:disabled{color:#5f636b;cursor:not-allowed}
+.title-menu .seed-details,.title-menu .audio-controls,.title-menu>p{margin:10px 0 0 42px;font-family:var(--g-type)}
+.title-menu .seed-details summary,.title-menu .audio-controls summary{color:var(--g-dim);letter-spacing:.14em;text-transform:uppercase;font-size:12px;cursor:pointer}
+.title-menu .audio-controls{background:none;border:0;box-shadow:none;padding:0;color:var(--g-muted)}
+.title-progress{position:absolute;left:clamp(24px,8vw,96px);bottom:clamp(24px,6vh,60px);display:flex;gap:28px;font:400 13px/1.2 var(--g-type);letter-spacing:.08em;text-transform:uppercase;color:var(--g-muted)}
+.title-progress b{color:var(--g-text);font-weight:700}.title-progress b.is-gold{color:var(--g-gold)}
+@media(max-width:700px){.title-shade{background:linear-gradient(180deg,#111215e0 0%,#11121580 50%,#111215 100%)}.title-hero{opacity:.6}}
+@media(prefers-reduced-motion:reduce){.title-arena,.gauge-limit .gauge-fill[data-level=full],.command.is-limit.is-ready{animation:none}}
+.title-menu p.muted{margin:8px 0 0 42px;font-size:13px;color:var(--g-dim)}

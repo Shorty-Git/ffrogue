@@ -141,12 +141,12 @@ export class RunUI{
  menu(hasSave:boolean,error:string|null,meta?:{crystals:number;unlocked:number;total:number;cost:number;canSummon:boolean},stage?:TitleStage){
   const canStart=new Set(Object.values(this.catalog).map(c=>c.canonicalIdentity).filter(Boolean)).size>=3;
   const item=(action:string,label:string,primary=false,disabled=false)=>`<button type="button" class="title-item ${primary?'is-primary':''}" data-action="${action}" ${disabled?'disabled':''}>${label}</button>`;
-  // Up to four heroes in a chevron on the arena floor, the first nearest the viewer's left.
+  // Up to four heroes in a chevron on the arena floor. Each spot is the hero's feet (clip pivot), so pose
+  // changes never make the body jump (AGENTS.md, sprite rules).
   const spots=[[.58,.64],[.76,.58],[.66,.80],[.84,.75]];
-  const heroes=(stage?.heroes??[]).slice(0,4).map((member,i)=>{const m=this.manifests[member.form]??this.manifests[member.key];if(!m)return '';
-   const a=m.animations.idle,path=member.form===member.key||!this.manifests[member.form]?`units/${member.key}`:`forms/${member.form}`,scale=Math.min(3,190/a.frameHeight);
-   const [x,y]=spots[i];
-   return bodyPreview('/assets/'+path,a,'pixel-sprite title-hero',`left:${x*100}%;top:${y*100}%;width:${a.frameWidth*scale}px;height:${a.frameHeight*scale}px;background-size:${a.frameWidth*a.frameCount*scale}px ${a.frameHeight*scale}px;background-position:${-a.frames[0].index*a.frameWidth*scale}px 0`).html;}).join('');
+  const cast=(stage?.heroes??[]).slice(0,4).flatMap(member=>{const m=this.manifests[member.form]??this.manifests[member.key];if(!m)return [];
+   return [{m,root:'/assets/'+(member.form===member.key||!this.manifests[member.form]?`units/${member.key}`:`forms/${member.form}`),scale:Math.min(3,190/m.animations.idle.frameHeight)}];});
+  const heroes=cast.map((_,i)=>`<div class="title-hero" style="left:${spots[i][0]*100}%;top:${spots[i][1]*100}%"></div>`).join('');
   this.show(`<div class="title-scene">${stage?.image?`<div class="title-arena" style="background-image:url('${esc(stage.image)}')"></div>`:''}<div class="title-shade"></div>${heroes}
    <header class="title-brand"><span class="title-ff">FINAL FANTASY</span><h1 class="title-logo">ROGUE</h1><span class="title-rule"></span><p>${esc(stage?.caption??'Every run, a new legend.')}</p></header>
    <nav class="menu-panel title-menu" aria-label="Main menu">${hasSave?item('continue','Continue',true):''}${item('play',hasSave?'New Journey':'Begin',!hasSave,!canStart)}${item('heroes','Heroes')}${item('training','Training Grounds',false,!canStart)}${item('guide','How to Play')}${meta?item('summon',`Summon · ${meta.cost} ◆`,false,!meta.canSummon):''}
@@ -154,6 +154,29 @@ export class RunUI{
     <details class="seed-details"><summary>Fate seed</summary><input id="run-seed" maxlength="64" placeholder="Random" autocomplete="off" aria-label="Fate seed"></details></nav>
    ${meta?`<footer class="title-progress"><span><b class="is-gold">◆ ${meta.crystals}</b> crystals</span><span><b>${meta.unlocked} / ${meta.total}</b> heroes</span></footer>`:''}</div>`,'menu');
   this.root.classList.add('is-title');
+  // The party lives (FF V/VI PS1 title screens): idle loops on the original frame timings, a victory pose
+  // when a menu entry is chosen, and a tired kneel after 40 s without input.
+  const still=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const timers:number[]=[],busy:boolean[]=[],elements=Array.from(this.root.querySelectorAll<HTMLElement>('.title-hero'));
+  const play=(i:number,names:string[],after?:()=>void,offset=0)=>{const hero=cast[i],name=names.find(n=>hero.m.animations[n]),clip=name?hero.m.animations[name]:hero.m.animations.idle,scale=hero.scale;
+   clearTimeout(timers[i]);
+   elements[i].innerHTML=bodyPreview(hero.root,clip,'pixel-sprite title-hero-body',`left:${-clip.pivotX*clip.frameWidth*scale}px;top:${-clip.pivotY*clip.frameHeight*scale}px;width:${clip.frameWidth*scale}px;height:${clip.frameHeight*scale}px;background-size:${clip.frameWidth*clip.frameCount*scale}px ${clip.frameHeight*scale}px`).html;
+   const layers=Array.from(elements[i].querySelectorAll<HTMLElement>('.title-hero-body,.title-hero-body .body-emission'));let frame=offset;
+   const step=()=>{const f=clip.frames[frame%clip.frames.length];layers.forEach(l=>l.style.backgroundPosition=`${-f.index*clip.frameWidth*scale}px 0`);frame++;
+    if(after&&frame>=clip.frames.length){timers[i]=window.setTimeout(after,Math.max(30,f.durationMs));return;}
+    if(!still&&clip.frames.length>1)timers[i]=window.setTimeout(step,Math.max(30,f.durationMs));};
+   step();};
+  const idle=(i:number)=>{busy[i]=false;play(i,['idle'],undefined,i*2);};
+  cast.forEach((_,i)=>idle(i));
+  if(!still){
+   // Choosing an entry: one hero (by entry order) celebrates, then settles back.
+   this.root.querySelectorAll<HTMLElement>('.title-item').forEach((entry,n)=>{const cheer=()=>{const i=n%Math.max(1,cast.length);if(!cast.length||busy[i])return;busy[i]=true;
+    play(i,['win_before'],()=>play(i,['win'],()=>idle(i)));};entry.addEventListener('pointerenter',cheer);entry.addEventListener('focus',cheer);});
+   let tired=false,rest=0;
+   const wake=()=>{window.clearTimeout(rest);if(tired){tired=false;cast.forEach((_,i)=>idle(i));}rest=window.setTimeout(()=>{tired=true;cast.forEach((_,i)=>{busy[i]=true;play(i,['dying','standby']);});},40000);};
+   const events=['pointermove','keydown','pointerdown'];events.forEach(e=>window.addEventListener(e,wake));wake();
+   this.heroAnimation=()=>{timers.forEach(clearTimeout);window.clearTimeout(rest);events.forEach(e=>window.removeEventListener(e,wake));};
+  }else this.heroAnimation=()=>timers.forEach(clearTimeout);
  }
  /** Peek (2026-11-11 playtest): hide the reward cards to look at the party and its gear, then bring them back. */
  bindPeek(run:RunState){const button=this.root.querySelector<HTMLButtonElement>('.reward-peek');if(!button)return;
