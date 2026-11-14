@@ -49,6 +49,12 @@ Reference sections in the changelog that stay valid: "Decisions that shape all w
    compare | accept`, then `node tools/update_scene_pins.mjs` (dev server on 3001 required).
 4. Visual: headless screenshots of the changed flow; the developer accepts visuals.
 
+### Direction and roadmap
+Since 2026-11-14 the product direction is [docs/game-design.md](game-design.md) (loop v2: act maps, elites,
+boss rules, Materia/Espers/relics, free party choice instead of the slot machine, no rarities as power,
+new UI style). Its roadmap orders the work; the current slot-machine and 6-fight structure are legacy until
+replaced.
+
 ### Open items (verified 2026-11-14)
 - Balancing pass with a run simulator (planned overnight; cloud needs a push first). Event prices and
   shares, gil amounts and all drafted skill values are first guesses.

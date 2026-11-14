@@ -398,3 +398,20 @@ Aus dem Gespräch mit dem Entwickler (Stand nach Abschluss des Debug-Pfad-Cleanu
   aus anderen Roguelikes); Runs dürfen weder zu leicht noch langweilig sein.
 - **Reihenfolge:** Polishing (Gegner-Treffer-Feedback, Aktions-Banner, einheitliche Weichzeichnung,
   Musik) → Charakter-Importer komplett → Stage-/Musik-Importer → Run-Twists.
+
+## Präzisierungen 2026-11-14 (Kurswechsel Gameplay-Loop)
+
+Verbindlich ab jetzt; Details in [docs/game-design.md](game-design.md). Ersetzt die Aussagen zu
+Slot-Machine, Seltenheiten, Run-Aufbau und FFBE-UI-Stil in Abschnitt 2 und 6.
+
+- **Von FFBE nur die Optik:** Sprites, Skill-Effekte, Sounds, Musik, Arenen, Gegner und Bosse stammen aus
+  den Originalen. Schadenszahlen, Kosten, Effekte, Status, KI und Fortschritt bestimmt FFRogue selbst.
+- **Schwere, build-getriebene Runs** nach dem Vorbild von Balatro, Hades, PokeRogue und Slay the Spire:
+  drei Akte mit verzweigter Karte, Elite-Kämpfe, Bosse mit Spezialregel, Materia und Esper als
+  Build-Systeme, Relikte, Gil-Wirtschaft, Schwierigkeitsleiter nach dem ersten Sieg. Ziel: etwa
+  30 Minuten pro Run, erster Sieg nach etwa 3–6 Versuchen, jederzeit fortsetzbar.
+- **Party frei wählen statt Slot-Machine:** 3 Helden zum Start, ein vierter nach dem ersten Akt-Boss.
+  Keine Seltenheiten als Machtstufe; die höheren Originalformen sind Wachstum im Run. Varianten werden
+  Aspekte eines Helden. Freischalten über Erfolge und gezielten Kristall-Kauf, nicht per Zufall.
+- **Neues, modernes UI** statt FFBE-Stil; erst Stil-Entwürfe zur Auswahl, dann Design-System.
+  Hochformat am PC bleibt.
