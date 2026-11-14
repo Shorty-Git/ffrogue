@@ -34,10 +34,11 @@ build-driven, and are usually lost the first few times.
   restarts that battle from its starting state on resume (same as Slay the Spire / Hades).
 
 ## Party
-- **Free choice:** the run starts with 3 heroes picked from the unlocked roster (no slot machine in the
+- **Free choice:** the run starts with 4 heroes picked from the unlocked roster (no slot machine in the
   main flow; one canonical character at most once).
-- **Fourth hero:** after the act-1 boss a fourth hero joins, chosen from 3 candidates. Four slots map to
-  roles (tank, healer, damage, support).
+- **Four heroes from the start (decided 2026-11-14 evening, replaces "3 + a fourth after act 1"):** the party
+  is always four, one per role: damage dealer, healer, tank, supporter. Every hero carries a role (derived
+  from its skills, reviewed per character); the party screen asks for one hero per role by default.
 - **No rarity as power.** Every hero starts in the base form. 5★/6★/7★/NV bodies become in-run growth:
   levels and boss milestones awaken the hero into the higher original forms.
 - **Variants are aspects** (Hades weapon aspects): Cloud, Cloud AC and Cloud Remake are one hero with
