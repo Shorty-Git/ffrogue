@@ -32,3 +32,7 @@ class FlatQuadColorTests(unittest.TestCase):
         altered = ET.tostring(xml)
         with self.assertRaises(ValueError):
             attach_flat_quad_color(raw, read_bmb(raw), altered)
+
+
+if __name__ == '__main__':
+    unittest.main()

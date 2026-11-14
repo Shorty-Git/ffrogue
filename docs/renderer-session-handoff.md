@@ -1,5 +1,7 @@
 # Renderer session handoff
 
+> **Historical log (2026-10 to 2026-11-07). Its "Current:" headings describe their own date, not today. Current state: [docs/current-state.md](current-state.md) "Start here".**
+
 ## Current: FFBE style across all menus (2026-11-07)
 
 src/ui/ffbeTheme.css brings the battle HUD's FFBE window frame, button plate,
@@ -5112,7 +5114,7 @@ library SHA-256 is 6c7e501c98939581528df3d712ff1f58afcfd392160f1e71ef1f903d49926
 The exact APK/package hashes and GL table hash are in the research reports and
 generated plans. Raw sources, prepared research plans, receipts and screenshots
 remain ignored. Preserve tools/data as well as the large local source folders
-when moving PCs; see [the two-PC guide](two-pc-handoff.md).
+when moving PCs; (two-PC setup retired 2026-11).
 
 The working tree contains substantial accumulated modified/untracked files
 (65 status entries before this handoff was added). No commit or push was performed for these latest

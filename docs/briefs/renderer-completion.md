@@ -1,5 +1,7 @@
 # Brief: renderer completion and scene re-baseline (2026-11-11)
 
+> **Completed brief (2026-11-11/12); results in the current-state changelog. Current state: [docs/current-state.md](../current-state.md) "Start here".**
+
 Goal: make the FFRogue effect renderer as complete as possible, fix known display bugs generically, find
 further bugs on its own, then re-publish and re-accept every published scene. Small verified steps, commit at
 milestones. Do not push, do not deploy the website.

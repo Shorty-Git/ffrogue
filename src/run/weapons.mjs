@@ -60,7 +60,6 @@ export function memberPower(member,stat){
 }
 /** Long form for tooltips. */
 export const WEAPON_ELEMENT_RULE='A weapon element applies to basic attacks, Barrage repeats and physical skills without an own element.';
-export function weaponLabel(w){return `${w.name} (${w.category}, ${'★'.repeat(w.rarity)})`;}
 export function weaponSummary(w){
  const parts=[];if(w.attack)parts.push(`+${Math.round(w.attack*100)}% attack`);if(w.magic)parts.push(`+${Math.round(w.magic*100)}% magic`);
  if(w.elements.length)parts.push(`${w.elements.map(e=>e[0].toUpperCase()+e.slice(1)).join('/')} attacks`);

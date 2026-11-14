@@ -9,7 +9,6 @@ export function weaponPool():RunWeapon[];
 export function weaponsForTier(tier:number):RunWeapon[];
 export function validWeapon(w:unknown):boolean;
 export function memberPower(member:{stats?:Record<string,number|undefined>;weapon?:RunWeapon;canonicalIdentity?:string}|undefined,stat:'attack'|'magic'|'defense'|'hp'):number;
-export function weaponLabel(w:RunWeapon):string;
 export function weaponSummary(w:RunWeapon):string;
 export const WEAPON_ELEMENT_RULE:string;
 export const SIGNATURE_BONUS:number;

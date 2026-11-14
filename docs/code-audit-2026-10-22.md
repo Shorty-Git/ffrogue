@@ -1,5 +1,7 @@
 # Combat audit — 2026-10-22
 
+> **Historical audit (2026-10-22). Current state: [docs/current-state.md](current-state.md) "Start here".**
+
 ## Fixes
 
 - `BattleScene.ts`: lock commands while encounters spawn; exclude unused pooled enemies from combat by clearing their HP; cancel overlapping target-marker tweens.

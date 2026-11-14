@@ -13,6 +13,8 @@
     "character:import": "node tools/import_character.mjs",
     "effect:bake": "node tools/export_effect.mjs",
     "skills:batch": "node tools/batch_skills.mjs",
+    "test": "node --test --experimental-strip-types tools/test_*.mjs",
+    "test:py": "node tools/run_python_tests.mjs",
     "test:pipeline": "node --test tools/test_character_pipeline.mjs"
   },
   "dependencies": {

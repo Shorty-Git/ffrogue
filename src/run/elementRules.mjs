@@ -9,7 +9,6 @@ export const ELEMENT_MIN=.25;
 export const ELEMENT_MAX=2;
 export const ELEMENT_LABELS={fire:'Fire',ice:'Ice',lightning:'Lightning',water:'Water',wind:'Wind',earth:'Earth',light:'Light',dark:'Dark'};
 /** Small glyphs for tooltips and tags (text only, no icon assets yet). */
-export const ELEMENT_GLYPHS={fire:'🔥',ice:'❄',lightning:'⚡',water:'💧',wind:'🌀',earth:'⛰',light:'✦',dark:'☾'};
 /** Elements of an FFBE flag string ("1,0,0,0,0,0,0,0", FFBE order); the first '@' branch counts. */
 export function parseElementFlags(raw){
  if(typeof raw!=='string'||!raw)return [];
@@ -44,10 +43,6 @@ export function elementTag(multiplier){return multiplier>1.001?'weak':multiplier
 /** Weak / resisted elements of an enemy, sorted by strength (for name plate tooltips and rewards). */
 export function enemyAffinities(enemyKey){
  const resist=ENEMY_ELEMENT_RESIST[enemyKey]??{};
- return {weak:ELEMENTS.filter(e=>(resist[e]??0)<0),resist:ELEMENTS.filter(e=>(resist[e]??0)>0)};
-}
-export function heroAffinities(heroKey){
- const resist=HERO_ELEMENT_RESIST[heroKey]??{};
  return {weak:ELEMENTS.filter(e=>(resist[e]??0)<0),resist:ELEMENTS.filter(e=>(resist[e]??0)>0)};
 }
 export const elementNames=elements=>(elements??[]).map(e=>ELEMENT_LABELS[e]??e).join(' / ');

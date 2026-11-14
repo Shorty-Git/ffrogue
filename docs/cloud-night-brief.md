@@ -1,5 +1,7 @@
 # Cloud night brief (2026-11-10)
 
+> **Completed brief (2026-11-10); results in the current-state changelog. Current state: [docs/current-state.md](current-state.md) "Start here".**
+
 Autonomous overnight session. Read `AGENTS.md`, `docs/current-state.md` (newest sections first) and
 `docs/vision.md` before starting. Work on branch `claude/night-2026-11-10` (from `main`).
 

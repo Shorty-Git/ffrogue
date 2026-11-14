@@ -1710,10 +1710,9 @@ These are concrete work items, not requirements to reverse-engineer the entire
 original engine before importing another supported skill. Pick one shared
 capability, verify it on appropriate fixtures, and retain explicit limits.
 
-## Verification and two-PC handoff
+## Verification
 
-For the concrete USB folder list and second-PC setup, use the
-[two-PC handoff](two-pc-handoff.md).
+Work happens on the main PC only (raw data lives there); there is no second-PC setup any more.
 
 Run commands from the repository root in PowerShell. The character workflow
 describes Node.js 24, Python/Pillow, `FFROGUE_PYTHON`, ffbetool and the local effect

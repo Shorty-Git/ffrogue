@@ -7,7 +7,7 @@ import ts from 'typescript';
 const hash=value=>createHash('sha256').update(value).digest('hex');
 const modules=['src/scenes/BattleScene.ts','src/entities/UnitActor.ts','src/effects/PreparedSceneBridge.mjs',
  'src/effects/originalEffectPlayer.mjs','src/effects/sceneProfile.mjs','src/effects/previewRandomStreams.mjs',
- 'src/effects/actionChoreography.mjs','src/effects/skillDamageTimeline.mjs','src/effects/sourceQuadColor.mjs','src/effects/enemyInstant.mjs','src/run/runState.mjs','src/run/runBalance.mjs','src/run/catalog.ts','src/run/GameFlow.ts','src/ui/RunUI.ts','src/scenes/BootScene.ts','src/scenes/PreloadScene.ts','src/main.ts','src/ui/designTokens.ts','src/ui/rpgPanel.ts','src/ui/rewardLayout.mjs',
+ 'src/effects/actionChoreography.mjs','src/effects/skillDamageTimeline.mjs','src/effects/sourceQuadColor.mjs','src/effects/enemyInstant.mjs','src/run/runState.mjs','src/run/runBalance.mjs','src/run/catalog.ts','src/run/GameFlow.ts','src/ui/RunUI.ts','src/scenes/BootScene.ts','src/scenes/PreloadScene.ts','src/main.ts','src/ui/designTokens.ts','src/ui/rewardLayout.mjs',
  'src/entities/TargetDummy.ts','src/run/stageContent.mjs','src/run/trainingRun.ts','src/ui/ActionBanner.ts',
  'src/data/bodyAssets.mjs','src/scenes/bodyLoading.ts','src/stages/StageAnimation.ts','src/ui/SlotLever.ts','src/run/unitForms.mjs'];
 export function moduleBody(source) {

@@ -2,7 +2,65 @@
 
 Single entry point for any developer or AI picking up the project. Read this first, then
 `docs/vision.md` (goals), `AGENTS.md` (rules) and the specialised docs linked below.
-Last consolidated: 2026-11-07; newest section: run events and gil 2026-11-14.
+Last consolidated: 2026-11-14 (see "Start here").
+
+## Start here (consolidated 2026-11-14)
+
+This block is the current truth. Everything below it is a **changelog, newest first**: each entry
+describes its own date and may be outdated by later work. Verify against the code before acting on an
+older entry; never pick up an "open" or "next" item from the changelog without checking this block.
+
+Reference sections in the changelog that stay valid: "Decisions that shape all work", "Pipelines" and
+"Environment and tools".
+
+### Product snapshot
+- Playable PC roguelike in the browser: title → favourite Final Fantasies (once per profile) → final-boss
+  choice (6 bosses, unknown ones veiled) → Fate Engine team draw (3 heroes, 3 rerolls) → two chosen route
+  areas (normal fights + elite) and the final boss room, one run event per area (camp, Moogle merchant,
+  crystal shrine; gil per win) → rewards after every win (skill / upgrade / weapon, awakening after
+  elites) → result with crystals and hero unlocks. Training grounds for free test fights.
+- Content: 51 published units (26 canonical characters, 72 original forms up to 7★/NV), 380 active skills
+  plus 50 Limit Bursts, 547 published original-effect scenes, 17 stages (16 in the route pool after
+  retiring Whisperwood, 6 of them final boss rooms), 48 monster bodies with original skills.
+- Alpha website: https://ffrogue.pages.dev (password gate). Deploy and GitHub push only on the
+  developer's explicit go (see memory/`docs/vision.md`).
+
+### Where things live
+- Game: `src/` (Phaser 3 + DOM UI). Run rules `src/run/runState.mjs`, events `src/run/runEvents.mjs`,
+  battle `src/scenes/BattleScene.ts`, effect player `src/effects/originalEffectPlayer.mjs` (its hash is
+  pinned in every scene manifest).
+- Pipelines (`tools/`, raw data only on the main PC in `rawdata/`): characters
+  (`import_full_character.mjs`, `docs/character-import-workflow.md`), stages (`import_stage.mjs`,
+  `docs/background-import-workflow.md`), enemy skills (`import_enemy_skills.mjs`,
+  `docs/enemy-import-workflow.md`), scenes (`prepare_original_preview.py` → `publish_scene_presentations`).
+  Cross-pipeline entry: `docs/asset-pipeline-handbook.md`.
+- Renderer work: `docs/research/renderer-round-2-log.md` (current hand-off log),
+  `docs/research/player-issue-inventory.md`, `docs/research/box-detector-report.md`.
+- Dormant legacy: the converted-effect sprite-sheet path (`tools/export_effect.mjs`,
+  `tools/batch_skills.mjs`, `tools/effects/*.json`, `public/assets/effects/`) is no longer loaded by the
+  game (`content.json` registers no effects); it stays only because pipeline tests and research notes
+  use it. Do not extend it.
+
+### Verification routine
+1. `npx tsc --noEmit`, `npm run build` (or `npm run build:web` for the website build).
+2. `npm test` (all `tools/test_*.mjs`) and `npm run test:py` (all `tools/test_*.py`; needs
+   `FFROGUE_PYTHON`, see Environment and tools). Both are expected to pass completely.
+3. Renderer or scene changes: `node tools/rebaseline_scenes.mjs republish | capture --to candidate |
+   compare | accept`, then `node tools/update_scene_pins.mjs` (dev server on 3001 required).
+4. Visual: headless screenshots of the changed flow; the developer accepts visuals.
+
+### Open items (verified 2026-11-14)
+- Balancing pass with a run simulator (planned overnight; cloud needs a push first). Event prices and
+  shares, gil amounts and all drafted skill values are first guesses.
+- New heroes for thinly covered Final Fantasies (one-command importer).
+- Renderer: known single-scene boxes (edea_blizzaga, aerith_holy cloud edge, chaos_tsunami /
+  leviathan_tidal_wave water stripe, cloud_ac_finishing_touch tornado edge, onion_knight_awakened boards);
+  phase-A gaps A4 (emitters with an extent) and A5 (sort priority, type 7). See the round-2 log.
+- Aerith Cetra has no Limit Burst (Planet's Protection is a support LB shown as a movie).
+- Limit gauge oddity at LB start for Cloud/Barret: not reproduced, waiting for a screenshot.
+- Website: not yet updated with the 2026-11-12..14 work (renderer rounds, events, Red Spiral).
+
+# Changelog (newest first)
 
 ## Run events and gil (2026-11-14)
 
@@ -562,12 +620,7 @@ data or pin hashes of local-only files; no new failures), `npx tsc --noEmit -p .
   compare ms/frame; if confirmed, a bridge-side cap (e.g. particle quad size relative to the arena) is the
   candidate, the frozen player stays untouched. Nothing changed.
 
-### Not done / open after the night
-- Sephiroth's Firaga/Blizzaga are imported but not in his reviewed pattern (needs `tools/import_stage.mjs`
-  with local data). Weapon ailment chances are not used. Fate Engine levels are measured, not listened to.
-  A Limit Burst in the moved Altissia layout was not captured on screen. Push happens once at the end.
-
-## Product state
+## Product state (snapshot 2026-11-09; numbers superseded by "Start here")
 
 - Playable PC roguelike prototype: title → slot-machine team draw (3 heroes, rerolls) →
   expedition (since 2026-11-10: two seeded areas ending in elites, then Nibelheim with boss Sephiroth;
@@ -946,36 +999,6 @@ Next: music transitions (menu → battle → victory) are not smooth yet (develo
 - Manual pages: `/tools/test-source-scene.html` (Source review checks),
   `/tools/test-source-limit-burst.html` (Limit Burst playground), `?gallery=arenas`.
 
-## Verification routine (what "done" means)
-
-1. `npx tsc --noEmit`, `npm run build`.
-2. All `tools/test_*.mjs` (node) and `tools/test_*.py` (project Python, run from repo root).
-   All tests are expected to pass (since 2026-11-08). `test_scene_migration.mjs` pins the VISUAL
-   data of the accepted Cloud manifests (JSON without audioSource) and the effect player bytes, so
-   sound can improve freely; a visual change there must be deliberate and noted next to the pin.
-3. Source review: Vite 3001 + receipt 3163, then
-   `node tools/data/cleanup-20261107/review_all.mjs <out.json>`; compare with
-   `tools/data/cleanup-20261107/baseline.json` (FAILs saying "requires", "needs an imported",
-   "needs its registered", "default party" are not-applicable). Expect 19 applicable PASS.
-4. Visual: headless screenshots / video of the changed flow; technical checks are not visual
-   acceptance – the developer accepts visuals.
-
-## Next steps (handoff, 2026-11-08 evening)
-
-GitHub account is suspended (appeal pending / maybe a new account): commit locally only, push later.
-DONE (2026-11-08): all raw sources moved into rawdata/ (one folder per source; identical files hard-linked,
-legacy recorded paths resolved by tools/lib/raw-paths.mjs). See asset_structure.md "Raw-data layout".
-DONE (2026-11-08): raw-data audit plus a sixth source (Memorial download cache, holds la842 and ~286 BGM banks).
-There is little byte duplication (2.2 of 30 GB), so the sources were not moved; source priority rules apply instead.
-Details: docs/asset_structure.md "Raw-data sources and duplicate audit". Cleanup (developer-approved):
-tools/data shrank from 92 to 37 GB; all 92 tests and tsc pass afterwards.
-Then, in order (scene transition DONE; one-command character importer DONE 2026-11-08 with Squall, see character-import-workflow.md top; one-command stage importer DONE with Dollet/FFVIII, see background-import-workflow.md top; original monster skills DONE 2026-11-09, see enemy-import-workflow.md top; six stages since 2026-11-09: Whisperwood, Mako Reactor, Dollet, Besaid, Altissia, Fabul; NEXT: enemy support skills/debuffs, jump, FFIX once its battle theme is downloaded, run twists) →
-complete character importer (one command: body, poses, all skills via import_skill_batch +
-admit_skill_audio + icons + LB + forms; test on a new character, e.g. Tifa AC) → stage importer
-(stage + SSPB animations + original music + world enemies/bosses with their skills, mainline FF I–XVI
-and Tactics only) → run twists. Remaining skill gaps: type 7 ribbons without FieldGoal, Banishga/Dispelga
-(BR3M mesh), support skills without mechanics (Esunaga, Protect, Blind, Store, Speed Drink).
-
 ## Basic attack sounds and Limit Burst placement (2026-11-08)
 
 - Basic attacks: `node tools/export_basic_attack_cues.mjs` regenerates src/audio/basicAttackCues.ts for
@@ -1041,41 +1064,3 @@ badges read well; skill visuals and sounds approved). Polish before the next cha
    e) Page jump fixed: the reel results, verdict and skills panel reserve their space before the first
       draw (the centred layout changed height by ~110 px before).
 
-## Open items
-
-- More Limit Bursts (limit_atk bodies exist for Barret, Aerith, Jack, CoD) and the remaining
-  abilities blocked only by missing authoring (ROSTER_SKILL_COVERAGE.md); other gates are
-  unknown node types 4/7/15, non-file groups and conditional branches.
-- Banish, Holy and Northswain's Strike await the developer's acceptance (GIFs sent 2026-11-07);
-  only Meteor Rain was compared with the BlueStacks original so far.
-- Motion 8 (Barret's ranged commands) = stationary atk body, zero-prefix timing, from the native
-  body observer (SKILL_RECONSTRUCTION_MAP). Big Shot compared with the BlueStacks original
-  (charge flash, orange blast/explosion on the target) — matches.
-- Open import gates (roster scan 2026-11-08, tools/data/wave2-20261107/stage.json): BMB node
-  type 7 (1856-byte records, NOT a Particle variant: Particle offsets read garbage; no BMSLN
-  name in the 3957-project corpus) blocks ~25 roster skills and is the biggest next lever;
-  type 4 = EmitterSimpleParticle (592 bytes, verified on 163 CPK pairs, no decoder yet);
-  type 15 = FieldGoal (208 bytes, particle attractor). Type 7 = lightning emitter, drawn as approximate bolts by
-  src/effects/lightningLayer.mjs when it has FieldGoal children (docs/research/bmb-node-type-7-lightning.md). Also: Warring Slash needs repeated
-  generation in the frozen player; commands without effect timelines (Limit Braver etc.).
-- Batch import: `sh tools/import_skill_batch.sh <batch.txt> tools/data/<run>` (lines:
-  `character skillId id key [--heal N|--buff X|--mult X|--mp N]`) composes/stages, drafts the
-  recipe entry (`tools/draft_skill_entry.mjs`, provisional gameplay values), prepares in
-  approximation mode, publishes and runs import_character per character. Review GIFs after.
-- Unsupported node types 7/4/15 are omitted with their subtrees in approximation mode
-  (`tools/bmb_prune.py`, listed in plan.approximations). Type 7 + FieldGoal children = lightning/
-  line emitters: lightning-centred skills (Thundara/Thundaga/Thundaga Blade) stay unimported.
-  Multi-process hit strings ("@", e.g. Spin Drive) split weights per process. Still open: another generation mode
-  (Ancient Holy), authoring-comparison mismatches (Finishing Touch, Fusion Sword 2nd/4th).
-- Party buffs (Fury Brand, Cheer) reuse the existing physical-boost status (x1.3, 3 rounds,
-  allyTargeting living-allies) and need a `friendlyTargetReview` with the source target/range.
-  Support skills without a game mechanic (Speed Drink, Store, Return) stay unimported. Reraise now
-  has a game mechanic (`auto-revive`, see Product state) but still needs single-ally scope in the
-  presentation pipeline and its own Source review before import.
-- Balance values from 2026-11-08 are simulator-based and await play-testing by the developer.
-- All Cloud forms use the 5★ Omnislash.
-- Several node tests pin manifest SHA-256 values of Windows (CRLF) checkouts
-  (test_body_assets, test_stage_content, test_victory_poses); on a Linux/LF checkout they fail
-  without any content change (verified for test_body_assets: every mismatch matches after CRLF
-  conversion).
-- Cinzel name font: developer mildly unsure, kept for now.

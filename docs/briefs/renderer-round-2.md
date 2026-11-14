@@ -1,5 +1,7 @@
 # Brief: renderer round 2 - native gaps first, then visual triage (2026-11-13)
 
+> **Partly completed (A1-A3, B7 done by 2026-11-14); progress and next step: [renderer-round-2-log.md](../research/renderer-round-2-log.md). Current state: [docs/current-state.md](../current-state.md) "Start here".**
+
 Goal: close the remaining renderer gaps so that most published skills look convincing (bar from
 `docs/vision.md`: convincing and visibly on target; pixel fidelity is not a goal). Builds on round 1
 (`docs/briefs/renderer-completion.md`, `docs/current-state.md` section "Renderer completion session").

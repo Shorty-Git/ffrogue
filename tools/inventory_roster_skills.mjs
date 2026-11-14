@@ -68,7 +68,7 @@ for(const unit of roster){
   lines.push(`| ${esc(s.name)} | ${s.kind} ${s.id} | ${s.formLearning.status} | ${s.indexedOriginalCount}/${s.sourceFiles.length}; ${s.matchedAuthoringFiles.length} | ${status} | ${esc(s.published?s.scene:s.blockers.length?s.blockers.join('; '):'No full battle/choreography approval; inspect exact current-form composition')} |`);
  }
  const lb=unit.currentFormLimitBurst;
- lines.push('',`Current-form Limit Burst: ${lb?`${lb.name} (${lb.id}); ${lb.indexedOriginalCount}/${lb.originalFiles.length} indexed originals; blocked by missing Limit Burst command profile.`:'No reliable master-row link resolved.'}`,
+ lines.push('',`Current-form Limit Burst: ${lb?`${lb.name} (${lb.id}); ${lb.indexedOriginalCount}/${lb.originalFiles.length} indexed originals; imported by import_full_character.mjs when its scene is supported.`:'No reliable master-row link resolved.'}`,
   `Other series Limit Burst variants: ${unit.allSeriesLimitBursts.filter(b=>b.id!==lb?.id).map(b=>`${b.name} (${b.id})`).join(', ')||'none'}.`,'');
 }
 fs.writeFileSync(output+'/coverage.md',lines.join('\n').trimEnd()+'\n');console.log(JSON.stringify(summary));

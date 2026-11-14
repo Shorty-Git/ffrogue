@@ -1,5 +1,7 @@
 # Existing roster skill coverage
 
+> **Snapshot from 2026-11-01. The "blocked by missing Limit Burst command profile" lines are outdated: import_full_character.mjs drafts Limit Bursts, and 50 of 51 published units have one (2026-11-14). Current state: [docs/current-state.md](../current-state.md) "Start here".**
+
 ## Active project: run roster, not a new skill-import wave (2026-11-01)
 
 All15 Source definitions and published VFX are preserved. Six eligible original
