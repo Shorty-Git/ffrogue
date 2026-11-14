@@ -1,9 +1,9 @@
 import type Phaser from 'phaser';
 import type {UnitManifest} from '../types/manifest';
 import type {RunState,RunRules} from './runState.mjs';
-import {PARTY_SIZE,RunStore,createRun,variantAreas,courseAreas,FINAL_STAGES,routeOptions,chooseRoute,rollParty,confirmParty,chooseStartSkill,completeBattle,chooseReward,encounters,acknowledgeAwakening} from './runState.mjs';
+import {PARTY_SIZE,RunStore,createRun,variantAreas,courseAreas,FINAL_STAGES,routeOptions,chooseRoute,rollParty,confirmParty,chooseStartSkill,completeBattle,chooseReward,chooseNode,mapOptions,currentFight,acknowledgeAwakening} from './runState.mjs';
 import {runCatalog} from './catalog';
-import {startEvent,chooseEvent} from './runEvents.mjs';
+import {chooseEvent} from './runEvents.mjs';
 import {ProfileStore,chooseFavorite,favoriteChoices,MAX_FAVORITES,drawCatalog,lockedHeroes,settleRun,summonHero,summonPool,SUMMON_COST,type Profile} from './profile.mjs';
 import {RunUI} from '../ui/RunUI';
 import {EncounterTransition} from '../ui/EncounterTransition';
@@ -89,11 +89,11 @@ export class GameFlow{
  route(){if(!this.state)return this.menu();
   // On reload, resume AFTER the already saved upgrade; never replay its reward.
   if(this.state.pendingAwakening)this.commit(acknowledgeAwakening(this.state,this.state.pendingAwakening.id));
-  if(this.state.phase==='setup')this.setup();else if(this.state.phase==='battle')this.battle();else if(this.state.phase==='rewards')this.battle();else if(this.state.phase==='event')this.event();else this.result();}
+  if(this.state.phase==='setup')this.setup();else if(this.state.phase==='map')this.map();else if(this.state.phase==='battle')this.battle();else if(this.state.phase==='rewards')this.battle();else if(this.state.phase==='event')this.event();else this.result();}
  private setup(){void import('html2canvas').catch(()=>{});
   this.audio.setMusic(HOME_MUSIC_RESOURCE,'home');ALL_FATE_SOUNDS.forEach(sound=>this.audio.warmSample(fateSoundUrl(sound)));const draw=drawCatalog(this.profile,this.catalog),choices=Object.fromEntries(this.state!.party.filter(m=>draw[m.key]?.startSkillChoice).map(m=>[m.key,draw[m.key].skills.map(s=>({id:s.id,name:s.name}))]));
   this.ui.slots(this.state!,this.busy,choices);this.ui.on('spin',()=>this.spin());
-  for(const [key,skills] of Object.entries(choices))skills.forEach((skill,i)=>this.ui.on(`start-skill-${key}-${i}`,()=>{if(this.busy||this.state?.phase!=='setup')return;try{this.commit(chooseStartSkill(this.state,key,skill.id,draw));this.audio.playUi('select');this.setup();}catch(error){this.fail(error);}}));this.ui.on('skip',()=>this.finishSpin());this.ui.on('menu',()=>this.menu());this.ui.on('confirm',()=>{if(this.busy||this.state?.phase!=='setup')return;this.commit(confirmParty(this.state!));this.battle('start');});}
+  for(const [key,skills] of Object.entries(choices))skills.forEach((skill,i)=>this.ui.on(`start-skill-${key}-${i}`,()=>{if(this.busy||this.state?.phase!=='setup')return;try{this.commit(chooseStartSkill(this.state,key,skill.id,draw));this.audio.playUi('select');this.setup();}catch(error){this.fail(error);}}));this.ui.on('skip',()=>this.finishSpin());this.ui.on('menu',()=>this.menu());this.ui.on('confirm',()=>{if(this.busy||this.state?.phase!=='setup')return;this.commit(confirmParty(this.state!));this.map();});}
  private spin(){
   if(this.busy||this.state?.phase!=='setup'||(this.state.party.length>0&&this.state.rerolls===0))return;
   try{
@@ -119,8 +119,7 @@ export class GameFlow{
    const arena=BATTLE_ARENAS[stage.arena as BattleArenaKey] as {file:string}&Record<string,unknown>|undefined;if(!arena)return undefined;
    return 'status' in arena?`assets/stages/${stage.arena}/${arena.file}`:`assets/backgrounds/${arena.file}`;};
   const known=(members:{key:string;form:string}[])=>members.filter(m=>this.manifests[m.form]||this.manifests[m.key]);
-  if(this.state?.party.length){const fight=encounters(this.state.areas)[Math.min(this.state.encounter,encounters(this.state.areas).length-1)];
-   const area=this.state.areas[fight.area];return {image:image(area.stageId),heroes:known(this.state.party),caption:`Your journey continues · ${area.name}`};}
+  if(this.state?.party.length){const area=this.state.areas[this.state.map.act];return {image:image(area.stageId),heroes:known(this.state.party),caption:`Your journey continues · ${area.name}`};}
   try{const last=JSON.parse(window.localStorage.getItem(LAST_RUN)??'null');
    if(last?.party?.length)return {image:image(last.stageId),heroes:known(last.party),caption:last.won?'Your last party prevailed.':'Your last party awaits a rematch.'};}catch{/* unreadable: fall through */}
   return {image:image('nibelheim'),heroes:known(this.profile.unlocked.slice(0,PARTY_SIZE).map(key=>({key,form:key})))};
@@ -146,21 +145,36 @@ export class GameFlow{
  }
  private chooseNextArea(route:{area:number;options:{stageId?:string}[]},next:()=>void){
   const state=this.state!,cards=route.options.map(o=>STAGE_CONTENT[o.stageId!]).map(stage=>this.stageCard(stage,stage.theme,stage.name,
-   [`Enemies: ${[...new Set(stage.enemyPool)].map(k=>ENEMY_CONTENT[k]?.name??k).join(', ')}`,`Elite: ${ENEMY_CONTENT[stage.bossId]?.name??stage.bossId}`]));
+   [`Enemies: ${[...new Set(stage.enemyPool)].map(k=>ENEMY_CONTENT[k]?.name??k).join(', ')}`,`Act boss: ${ENEMY_CONTENT[stage.bossId]?.name??stage.bossId}`]));
   const final=state.areas.at(-1);
-  this.ui.pathChoice(`AREA ${route.area+1} OF ${state.areas.length}`,'CHOOSE YOUR PATH',`Where does the journey lead next? ${final&&this.profile.bosses.includes(final.stageId??'')?final.name+' awaits at the end.':'The final boss awaits at the end.'}`,cards);
+  this.ui.pathChoice(`ACT ${route.area+1} OF ${state.areas.filter(a=>!a.final).length}`,'CHOOSE YOUR PATH',`Where does the journey lead next? ${final&&this.profile.bosses.includes(final.stageId??'')?final.name+' awaits at the end.':'The final boss awaits at the end.'}`,cards);
   for(const card of cards)this.ui.on('path-'+card.id,()=>{try{this.commit(chooseRoute(state,card.id));next();}catch(e){this.fail(e);}});
  }
- private battle(entryKind?:'start'|'area'|'cut'){if(!this.state||this.entry)return;
-  // Before each seeded area the player picks where to go next (2026-11-11).
+ /** Act map (loop v2): the route choice opens each act, then the player walks node to node. Every choice is
+  * saved before its node opens, so a reload resumes on the map, in the fight or at the event. */
+ private map(selected:string|null=null){if(!this.state||this.state.phase!=='map')return this.route();
+  this.closeEntry();clearTimeout(this.animationTimer);this.busy=false;
+  if(this.scene.scene.isActive('BattleScene'))this.scene.scene.stop('BattleScene');
+  this.audio.setMusic(HOME_MUSIC_RESOURCE,'map');
   const route=routeOptions(this.state);
-  if(route){this.chooseNextArea(route,()=>this.battle(entryKind));return;}
+  if(route){this.chooseNextArea(route,()=>this.map());return;}
+  const options=mapOptions(this.state);
+  // A single way forward (the boss row, the final room) is chosen for the player; the button still confirms.
+  const chosen=selected??(options.length===1?options[0].id:null);
+  this.ui.actMap(this.state,chosen);
+  for(const node of options)this.ui.on('map-node-'+node.id,()=>this.map(node.id));
+  this.ui.on('menu',()=>this.menu());
+  this.ui.on('map-go',()=>{if(!chosen||this.state?.phase!=='map')return;
+   try{const fresh=this.state.map.trail.length===0,next=chooseNode(this.state,chosen);this.commit(next);
+    if(next.phase==='event')this.event();else this.battle(this.state.map.act===0&&fresh?'start':fresh?'area':'cut');}catch(error){this.fail(error);}});
+ }
+ private battle(entryKind?:'start'|'area'|'cut'){if(!this.state||this.entry)return;
   const state=this.state;
   this.audio.warmCombat();
   const encounter=runEncounter(state);
   const stage=STAGE_CONTENT[encounter.stageId];
   const music=stage.audio.musicSeries?recommendMusic(stage.audio.musicSeries,encounter.boss?'boss':'normal',stage.audio.bossMusicResourceId):stage.audio.musicResourceId;
-  const startMusic=()=>this.audio.setMusic(music,JSON.stringify([state.seed,encounters(state.areas)[state.encounter].area]));
+  const startMusic=()=>this.audio.setMusic(music,JSON.stringify([state.seed,state.map.act]));
   const start=(entryReady?: (error?:Error)=>void)=>{
   this.ui.hide();
   this.scene.scene.start('BattleScene',{manifests:this.manifests,runContext:{state,catalog:this.catalog,
@@ -273,15 +287,10 @@ export class GameFlow{
   else this.takeReward(i);
  });}
  private takeReward(index:number,replace?:string){if(this.state?.phase!=='rewards')return;try{
-  const course=encounters(this.state.areas);
-  const previous=course[this.state.encounter].area;
-  // A run event (camp, merchant, shrine) may wait before the next fight (src/run/runEvents.mjs).
-  const next=startEvent(chooseReward(this.state,index,this.catalog,replace));
+  // After the reward the run returns to the act map (src/run/runState.mjs chooseReward).
+  const next=chooseReward(this.state,index,this.catalog,replace);
   this.commit(next);
-  const enterArea=next.phase==='battle'&&course[next.encounter].area!==previous;
-  const advance=()=>{if(next.phase==='event'){this.scene.scene.stop('BattleScene');this.event();}
-    else if(next.phase==='battle')this.battle(enterArea?'area':'cut');
-    else{this.scene.scene.stop('BattleScene');this.route();}};
+  const advance=()=>{this.scene.scene.stop('BattleScene');this.route();};
   const notice=this.state.pendingAwakening;
   if(notice){const slot=this.state.party.findIndex(m=>m.key===notice.member),anchor=this.scene.scene.isActive('BattleScene')?this.rewardBounds().party[slot]:undefined;
    this.ui.awakening(notice,()=>{if(this.state?.pendingAwakening?.id!==notice.id)return;
@@ -293,14 +302,14 @@ export class GameFlow{
   this.audio.setMusic(HOME_MUSIC_RESOURCE,'event');
   this.ui.event(this.state);
   const act=(action:string)=>{if(this.state?.phase!=='event')return;try{this.commit(chooseEvent(this.state,action,this.catalog));
-   if(this.state.phase==='event')this.event();else this.battle('cut');}catch(error){this.fail(error);}};
-  for(const action of ['rest','train','pray','leave'])this.ui.on('event-'+action,()=>act(action));
+   if(this.state.phase==='event')this.event();else this.route();}catch(error){this.fail(error);}};
+  for(const action of ['rest','train','pray','take','leave'])this.ui.on('event-'+action,()=>act(action));
   this.state.event.wares?.forEach((_,i)=>this.ui.on('event-buy-'+i,()=>act('buy-'+i)));
  }
  private result(){
   // Remember the party and where it stood for the title screen (no run save remains after this screen).
-  try{const s=this.state!,fight=encounters(s.areas)[Math.min(s.encounter,encounters(s.areas).length-1)];
-   window.localStorage.setItem(LAST_RUN,JSON.stringify({party:s.party.map(m=>({key:m.key,form:m.form})),stageId:s.areas[fight.area].stageId,won:s.phase==='won'}));}catch{/* storage unavailable */}
+  try{const s=this.state!;
+   window.localStorage.setItem(LAST_RUN,JSON.stringify({party:s.party.map(m=>({key:m.key,form:m.form})),stageId:s.areas[s.map.act].stageId,won:s.phase==='won'}));}catch{/* storage unavailable */}
   this.audio.setMusic(this.state?.phase==='won'?VICTORY_FANFARE_RESOURCE:null,'result');
   // Crystals and unlocks are settled once per finished run (keyed by seed and history), then shown.
   const settled=settleRun(this.profile,this.state!,this.catalog);this.profile=this.profiles.save(settled.profile);
@@ -309,5 +318,5 @@ export class GameFlow{
   this.profile=this.profiles.save(result.profile);
   // The roulette plays its own landing cue from the Fate Engine samples.
   this.ui.summoned(result.hero,this.profile.crystals,result.bond,result.refund,summonPool(this.catalog));this.ui.on('close',()=>this.menu());}catch(error){this.fail(error);}}
- snapshot(){return {state:this.state,total:this.state?encounters(this.state.areas).length:0,busy:this.busy};}
+ snapshot(){return {state:this.state,fight:this.state?currentFight(this.state):null,options:this.state?mapOptions(this.state).map(n=>n.id):[],busy:this.busy};}
 }

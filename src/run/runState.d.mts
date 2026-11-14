@@ -18,7 +18,11 @@ export interface Reward{type:'learn'|'skill'|'stat'|'evolve'|'rest'|'revive'|'wa
 export interface AwakeningNotice{id:string;member:string;encounter:number;from:{form:string;unitId:string;rarity:number};to:{form:string;unitId:string;rarity:number};}
 export interface FormPolicy{weights:Record<string,number>;pathWeights?:Record<string,number[]>;hpPerRank:number;mpPerRank:number;powerPerRank:number;defensePerRank:number;}
 export interface RunRules{awakeningMode:'sequential'|'highest-reviewed';originalForms?:FormPolicy;}
-export interface RunState{version:number;seed:string;phase:'setup'|'battle'|'rewards'|'event'|'won'|'lost';
+export interface MapPosition{act:number;at:string|null;trail:string[];}
+export type RunPhase='setup'|'map'|'battle'|'rewards'|'event'|'won'|'lost';
+export const RUN_PHASES:RunPhase[];
+export interface RunState{version:number;seed:string;phase:RunPhase;
+  /** Act-map position (src/run/actMap.mjs): act index, current node and the trail walked in this act. */map:MapPosition;
   /** Gil for the Moogle merchant (src/run/runEvents.mjs). */gil?:number;
   /** The pending run event (phase 'event'). */event?:import('./runEvents.mjs').RunEvent;party:RunMember[];rerolls:number;encounter:number;offers:Reward[];history:unknown[];areas:AreaConfig[];routes?:(string|null)[];rng:Record<string,number>;pendingAwakening?:AwakeningNotice;rules?:RunRules;
   /** Party ward relics: +50 % resistance to each listed element (src/run/elementRules.mjs). */wards?:import('./elements.mjs').Element[];}
@@ -33,7 +37,12 @@ export function nextRandom(run:RunState,stream:string):number;
 export type EncounterKind='normal'|'elite'|'boss';
 export const ENCOUNTER_LABELS:Record<EncounterKind,string>;
 export const FINAL_STAGE:string;
-export function encounters(areas:AreaConfig[]):{area:number;name:string;arena:string;boss:boolean;kind:EncounterKind;wave:number}[];
+export interface RunFight{area:number;name:string;arena:string;boss:boolean;kind:EncounterKind;wave:number;node:string;final:boolean;}
+export function runMap(run:RunState,act?:number):import('./actMap.mjs').ActMap;
+export function currentNode(run:RunState):import('./actMap.mjs').MapNode|null;
+export function mapOptions(run:RunState|null|undefined):import('./actMap.mjs').MapNode[];
+export function currentFight(run:RunState):RunFight|null;
+export function chooseNode(run:RunState,id:string):RunState;
 export function createRun(seed:string,catalog:RunCatalog,areas?:AreaConfig[],rules?:RunRules):RunState;
 export function migrateRun(run:unknown,catalog:RunCatalog):RunState;
 export function rollParty(run:RunState,catalog:RunCatalog):RunState;

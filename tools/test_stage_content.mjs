@@ -6,7 +6,8 @@ import fs from 'node:fs';
 import {createHash} from 'node:crypto';
 import {ENEMY_CONTENT,STAGE_CONTENT,stageForArea,enemyAction} from '../src/run/stageContent.mjs';
 import {runEncounter} from '../src/run/runBalance.mjs';
-import {createRun,validateRun,rollParty,confirmParty,variantAreas,encounters,PROTOTYPE_AREAS,FINAL_STAGES,courseAreas,routeOptions,chooseRoute,stageFamily} from '../src/run/runState.mjs';
+import {createRun,validateRun,rollParty,confirmParty,variantAreas,PROTOTYPE_AREAS,FINAL_STAGES,courseAreas,routeOptions,chooseRoute,stageFamily,COURSE_LENGTH} from '../src/run/runState.mjs';
+import {toFight,win} from './run_walk.mjs';
 const read=p=>JSON.parse(fs.readFileSync(p,'utf8'));
 const hash=p=>createHash('sha256').update(fs.readFileSync(p)).digest('hex');
 
@@ -43,14 +44,15 @@ test('two original-backed lineups use different arenas, bosses and declared futu
 
 test('encounter selection is pure, independent of upgrades, keeps old saved areas/RNG intact',()=>{
  const catalog=Object.fromEntries(['a','b','c','d'].map(key=>[key,{key,identity:key,canonicalIdentity:key,unitId:key,rarity:5,form:key,maxHp:100,maxMp:50,skills:[{id:key+'-skill'}]}]));
- // Fixed course (forest, reactor): seeds pick two of all stages, so the route is given explicitly.
+ // Fixed course (forest, reactor) without route choice: act 1 Whisperwood, act 2 Mako Reactor.
  const areas=['whisperwood','mako_reactor'].map(id=>PROTOTYPE_AREAS.find(a=>a.stageId===id));
- let r=confirmParty(rollParty(createRun('stage-restore',catalog,areas),catalog));
+ let r=confirmParty(rollParty(createRun('stage-restore',catalog,areas),catalog));r.routes=['whisperwood','mako_reactor'];
+ r=toFight(r,catalog,['battle']);
  const before=JSON.stringify(r);assert.equal(runEncounter(r).enemies[0].key,'microchu');assert.equal(JSON.stringify(r),before);
- r.encounter=1;assert.equal(runEncounter(r).enemies[0].key,'ochu');
- r.encounter=2;assert.deepEqual(runEncounter(r).enemies.map(e=>e.key),['sweeper','sweeper']);
- r.encounter=3;assert.equal(runEncounter(r).enemies[0].key,'guard_scorpion');
- const old=structuredClone(r);old.areas.forEach(a=>delete a.stageId);const serialized=JSON.stringify(old);validateRun(old,catalog);assert.equal(runEncounter(old).stageId,'mako_reactor');assert.equal(JSON.stringify(old),serialized);
+ r=toFight(win(r,catalog),catalog,['boss']);assert.equal(runEncounter(r).enemies[0].key,'ochu');
+ r=toFight(win(r,catalog),catalog,['battle']);assert.deepEqual(runEncounter(r).enemies.map(e=>e.key),['sweeper','sweeper']);
+ const old=structuredClone(r);old.areas.forEach(a=>delete a.stageId);delete old.routes;validateRun(old,catalog);assert.equal(runEncounter(old).stageId,'mako_reactor');
+ r=toFight(win(r,catalog),catalog,['boss']);assert.equal(runEncounter(r).enemies[0].key,'guard_scorpion');
  r.areas[0].stageId='unpublished';assert.throws(()=>validateRun(r,catalog));
 });
 
@@ -67,19 +69,17 @@ test('boss warning and party burst stay ordered across stopped phases; low HP ch
 
 // Run structure since 2026-11-10: two seeded areas (normal fight, then elite) and always the final
 // Nibelheim area (normal fight, then the boss Sephiroth).
-test('each seed picks two stages by difficulty, then the final boss room, with seeded reactor variants',()=>{
+test('each seed picks three stages by difficulty, then the final boss room, with seeded reactor variants',()=>{
  const variants=new Set(),stages=new Set();
  for(let i=0;i<64;i++){
   const seed='arena-'+i;
   const areas=variantAreas(seed);
   assert.deepEqual(areas,variantAreas(seed));
-  assert.equal(areas.length,3);assert.equal(areas[2].stageId,'nibelheim');assert.equal(areas[2].final,true);
-  assert.equal(new Set(areas.slice(0,2).map(a=>stageFamily(a.stageId))).size,2);assert.ok(!areas.slice(0,2).some(a=>a.stageId==='nibelheim'||a.final));
-  const difficulty=areas.slice(0,2).map(a=>STAGE_CONTENT[a.stageId].difficulty);
-  assert.ok(difficulty[0]<=difficulty[1]);
-  const fights=encounters(areas);
-  assert.equal(fights.length,6);
-  assert.deepEqual(fights.map(fight=>fight.kind),['normal','elite','normal','elite','normal','boss']);
+  assert.equal(areas.length,COURSE_LENGTH+1);assert.equal(areas.at(-1).stageId,'nibelheim');assert.equal(areas.at(-1).final,true);
+  const acts=areas.slice(0,-1);
+  assert.equal(new Set(acts.map(a=>stageFamily(a.stageId))).size,COURSE_LENGTH);assert.ok(!acts.some(a=>a.stageId==='nibelheim'||a.final));
+  const difficulty=acts.map(a=>STAGE_CONTENT[a.stageId].difficulty);
+  assert.ok(difficulty.every((d,i)=>i===0||difficulty[i-1]<=d),'acts climb in difficulty');
   areas.forEach(a=>stages.add(a.stageId));
   for(const a of areas)if(a.stageId==='mako_reactor')variants.add(a.arena);
  }
@@ -101,21 +101,23 @@ test('music recommendations separate normal, boss and special roles',()=>{
  assert.equal(recommendMusic('FFVII','area'),null);
 });
 
-test('the player picks the final boss room and, before each seeded area, one of two routes',()=>{
+test('the player picks the final boss room and, before each act, one of two routes',()=>{
  assert.deepEqual(FINAL_STAGES,['nibelheim','vector','big_bridge','castle_exdeath','deling_city','chaos_shrine']);
  const kefka=courseAreas('pick-1','vector');assert.equal(kefka.at(-1).stageId,'vector');assert.equal(kefka.at(-1).final,true);
- assert.ok(kefka.slice(0,2).every(a=>!FINAL_STAGES.includes(a.stageId)));assert.throws(()=>courseAreas('x','besaid'),/final boss room/);
+ assert.ok(kefka.slice(0,-1).every(a=>!FINAL_STAGES.includes(a.stageId)));assert.throws(()=>courseAreas('x','besaid'),/final boss room/);
  const catalog=JSON.parse(JSON.stringify({}));
- let run={phase:'battle',seed:'pick-1',encounter:0,areas:kefka};
+ let run={phase:'map',seed:'pick-1',encounter:0,areas:kefka,map:{act:0,at:null,trail:[]}};
  const first=routeOptions(run);assert.equal(first.area,0);assert.equal(first.options.length,2);
  assert.deepEqual(routeOptions(run),first,'same options for the same save');
  assert.ok(first.options.every(o=>!FINAL_STAGES.includes(o.stageId)));
  run=chooseRoute(run,first.options[1].stageId);assert.equal(run.areas[0].stageId,first.options[1].stageId);assert.equal(routeOptions(run),null);
  assert.throws(()=>chooseRoute({...run,routes:[]},'vector'),/route option/);
- run.encounter=encounters(run.areas).findIndex(f=>f.area===1);
+ assert.equal(routeOptions({...run,map:{act:0,at:'a0r0c0',trail:['a0r0c0']}}),null,'only at the start of an act');
+ run.map={act:1,at:null,trail:[]};
  const second=routeOptions(run);assert.equal(second.area,1);assert.ok(second.options.every(o=>stageFamily(o.stageId)!==stageFamily(run.routes[0])),'a chosen stage (or its family) is not offered again');
- for(let i=0;i<40;i++){const r={phase:'battle',seed:'fam-'+i,encounter:0,areas:courseAreas('fam-'+i)};const o=routeOptions(r).options.map(a=>stageFamily(a.stageId));assert.equal(new Set(o).size,o.length);assert.ok(!o.includes('whisperwood'));}
+ for(let i=0;i<40;i++){const r={phase:'map',seed:'fam-'+i,encounter:0,areas:courseAreas('fam-'+i),map:{act:0,at:null,trail:[]}};const o=routeOptions(r).options.map(a=>stageFamily(a.stageId));assert.equal(new Set(o).size,o.length);assert.ok(!o.includes('whisperwood'));}
  run=chooseRoute(run,second.options[0].stageId);
- run.encounter=encounters(run.areas).findIndex(f=>f.area===2);assert.equal(routeOptions(run),null,'the final room is fixed');
+ run.map={act:2,at:null,trail:[]};const third=routeOptions(run);assert.equal(third.area,2);run=chooseRoute(run,third.options[0].stageId);
+ run.map={act:3,at:null,trail:[]};assert.equal(routeOptions(run),null,'the final room is fixed');
  void catalog;
 });

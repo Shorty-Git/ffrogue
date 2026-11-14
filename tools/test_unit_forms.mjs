@@ -1,5 +1,6 @@
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';
-import {createRun,rollParty,confirmParty,completeBattle,chooseReward,acknowledgeAwakening,validateRun,RunStore,SAVE_KEY,RUN_VERSION} from '../src/run/runState.mjs';
+import {createRun,rollParty,confirmParty,completeBattle,chooseReward,acknowledgeAwakening,validateRun,RunStore,SAVE_KEY,RUN_VERSION,routeOptions,chooseRoute,runMap} from '../src/run/runState.mjs';
+import {mapPaths} from '../src/run/actMap.mjs';
 import {runCatalog}from '../src/run/catalog.ts';
 import {formForLevel,levelOf,MAX_LEVEL}from '../src/run/unitForms.mjs';
 const read=p=>JSON.parse(fs.readFileSync(p,'utf8'));
@@ -10,7 +11,13 @@ function catalog(){const r=read('public/assets/content.json'),content=read('publ
 }
 const c=catalog();
 function party(mode){for(let i=0;i<2000;i++){const r=confirmParty(rollParty(createRun('form-path-'+i,c,undefined,mode?{awakeningMode:mode}:undefined),c));if(r.party.some(m=>m.key==='cloud'))return r;}throw Error('Seed');}
-function bossReward(r){r.encounter=r.encounter<2?1:3;return completeBattle(r,c,r.party.map(m=>({key:m.key,hp:m.hp,mp:m.mp})),true);}
+/** Places the run on an elite node of the current act (a valid saved position) and wins that fight. */
+function bossReward(r){
+ r=routeOptions(r)?chooseRoute(r,routeOptions(r).options[0].stageId):structuredClone(r);
+ const path=mapPaths(runMap(r)).find(p=>p.some(n=>n.type==='elite')),at=path.findIndex(n=>n.type==='elite');
+ r.map={...r.map,trail:path.slice(0,at+1).map(n=>n.id),at:path[at].id};r.phase='battle';
+ return completeBattle(r,c,r.party.map(m=>({key:m.key,hp:m.hp,mp:m.mp})),true);
+}
 test('levels 1-6 share one power scale; boss relics raise the level and the body follows original forms',()=>{
  assert.deepEqual([3,4,5,6,7].map(r=>levelOf({rarity:r})),[1,2,3,4,5]);assert.equal(levelOf({rarity:7,rank:'NV'}),6);
  // Cloud (5★ base): Lv 1-3 keep the 5★ body, then 6★, 7★ and NV.

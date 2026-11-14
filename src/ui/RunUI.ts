@@ -1,7 +1,11 @@
 import type {RunCatalog,RunMember,RunState,Reward,AwakeningNotice} from '../run/runState.mjs';
-import {skillForRun,memberMaxMp,REVIVE_HP_SHARE,upcomingStage,encounters,AREA_CAMP,PARTY_SIZE,characterRole} from '../run/runState.mjs';
+import {skillForRun,memberMaxMp,REVIVE_HP_SHARE,upcomingStage,currentFight,mapOptions,runMap,AREA_CAMP,PARTY_SIZE,characterRole} from '../run/runState.mjs';
+import {NODE_LABELS,COMBAT_NODES,type MapNode,type NodeType} from '../run/actMap.mjs';
+import {eliteAffix,bossRule} from '../run/encounterRules.mjs';
+import {eliteEnemyKey} from '../run/runBalance.mjs';
+import {stageForArea,ENEMY_CONTENT,stageElementProfile} from '../run/stageContent.mjs';
 import {ROLES,ROLE_LABELS} from '../run/roles.mjs';
-import {CAMP_REST,MERCHANT_RESTORE,SHRINE,GIL_REWARD,type MerchantWare} from '../run/runEvents.mjs';
+import {CAMP_REST,MERCHANT_RESTORE,SHRINE,GIL_REWARD,TREASURE_GIL,type MerchantWare} from '../run/runEvents.mjs';
 import {ELEMENT_LABELS,WARD_RESIST} from '../run/elementRules.mjs';
 import {elementChip,elementChips} from './elementChips';
 import {WEAPON_ELEMENT_RULE,WEAPON_GLYPHS,weaponSummary,isSignatureFor,type RunWeapon} from '../run/weapons.mjs';
@@ -206,12 +210,12 @@ export class RunUI{
   const steps:[string,string][]=[
    ['Face your nemesis','Pick the final boss of the expedition. Unknown bosses stay hidden until you beat them once.'],
    ['Pull the Fate Engine','It draws four heroes from your roster, one per role: damage, healer, tank and support. Not happy? Pull again: three rerolls per run.'],
-   ['Choose your path','Two areas lead to the boss. Each holds a normal fight and an elite. Pick the one whose weaknesses suit your party.'],
+   ['Choose your path','Three acts lead to the final boss. Each act starts with a choice of two lands, then a map: battles, optional elites, events, a merchant, campfires and treasure. A boss with a special rule closes every act.'],
    ['Fight','Pick a command below, then click an enemy in the arena. Hover a command to see what it does. Hitting a weakness deals extra damage; a full Limit gauge unlocks the Limit Burst.'],
    ['Grow stronger','After every win, choose one reward: new skills, skill ranks, weapons or an awakening. Crystals and new heroes stay with you after the run.'],
-   ['Stops on the road','Once per area you reach a campfire, a Moogle merchant (spend the Gil every win pays) or a crystal shrine that rewards a brave prayer, usually.'],
+   ['Stops on the road','Campfires heal or train, the Moogle merchant takes the Gil every win pays, the crystal shrine rewards a brave prayer, usually. The run is saved after every stop.'],
   ];
-  this.show(`${this.title('FIRST STEPS','HOW TO PLAY','Six battles, three stops, one boss. Every run draws a new party.')}<ol class="guide-steps">${steps.map(([t,d],i)=>`<li class="rpg-panel" style="--card-index:${i}"><span class="guide-number">${i+1}</span><div><h2>${esc(t)}</h2><p>${esc(d)}</p></div></li>`).join('')}</ol><div class="actions">${this.button(action,label)}</div>`,'guide');
+  this.show(`${this.title('FIRST STEPS','HOW TO PLAY','Three acts, ten to thirteen fights, one final boss. Every run draws a new party of four.')}<ol class="guide-steps">${steps.map(([t,d],i)=>`<li class="rpg-panel" style="--card-index:${i}"><span class="guide-number">${i+1}</span><div><h2>${esc(t)}</h2><p>${esc(d)}</p></div></li>`).join('')}</ol><div class="actions">${this.button(action,label)}</div>`,'guide');
  }
  /** Path choice (2026-11-11): the final boss at the journey start, the next area before each seeded area.
   * Cards show the arena, who fights there, the enemies' weaknesses and the elements they attack with. */
@@ -337,9 +341,65 @@ export class RunUI{
   if(r.type==='weapon'&&r.weapon){const w=r.weapon;
    return `<span class="reward-portrait is-weapon">${w.icon?`<img src="${esc(w.icon)}" alt="${esc(w.name)}">`:`<b class="weapon-glyph" aria-hidden="true">${WEAPON_GLYPHS[w.category]??'⚔'}</b>`}<img class="hero-badge" src="${esc(c.portrait)}" alt="${esc(c.name)}"></span>`;}
   return `<span class="reward-portrait ${icon?'has-skill':''}"><img src="${esc(c.portrait)}" alt="${esc(c.name)}">${icon?`<img class="skill-badge" src="${esc(icon)}" alt="">`:''}</span>`;}
- rewards(run:RunState){this.show(`${this.title('VICTORY','THE SPOILS OF FATE','Choose one reward for your expedition.')}${(earned=>earned?`<p class="gil-note">+${earned} Gil · purse ${run.gil??0} Gil</p>`:'')(GIL_REWARD[encounters(run.areas)[run.encounter]?.kind??'boss'])}${campNote(run)?`<p class="camp-note">${esc(campNote(run)!)}</p>`:''}<div class="reward-grid">${run.offers.map((r,i)=>{const t=this.rewardText(r,run),m=run.party.find(m=>m.key===r.member);return `<article class="reward-option" style="--card-index:${i}"><button class="rpg-panel reward-card kind-${r.type} ${r.type==='weapon'&&isSignatureFor(m,r.weapon)?'is-signature':''}" data-action="reward-${i}" title="${esc(t.title+' — '+t.detail+('hint' in t&&t.hint?' '+t.hint:''))}"><span class="eyebrow">${t.tag}</span><span class="reward-head">${m?this.rewardArt(r,m):r.type==='ward'?`<span class="reward-portrait crystal-icon ward-icon">${elementChip(r.element!)}</span>`:'<span class="reward-portrait crystal-icon">✦</span>'}<h2>${esc(t.title)}</h2></span>${(els=>els.length?`<span class="reward-elements">${elementChips(els)}</span>`:'')(r.type==='weapon'?r.weapon?.elements??[]:(r.type==='learn'||r.type==='skill')&&m?skillElements(this.catalog[m.key].skills.find(x=>x.id===r.skill)!):[])}${r.type==='weapon'&&r.weapon?rarityBadge(r.weapon.rarity):''}<ul class="reward-lines">${t.detail.split(' · ').map(l=>`<li>${esc(l)}</li>`).join('')}</ul><span class="card-choose">CHOOSE →</span></button></article>`;}).join('')}</div>${PEEK_BUTTON}`,'rewards');this.bindPeek(run);
+ rewards(run:RunState){this.show(`${this.title('VICTORY','THE SPOILS OF FATE','Choose one reward for your expedition.')}${(earned=>earned?`<p class="gil-note">+${earned} Gil · purse ${run.gil??0} Gil</p>`:'')(GIL_REWARD[currentFight(run)?.kind??'normal'])}${campNote(run)?`<p class="camp-note">${esc(campNote(run)!)}</p>`:''}<div class="reward-grid">${run.offers.map((r,i)=>{const t=this.rewardText(r,run),m=run.party.find(m=>m.key===r.member);return `<article class="reward-option" style="--card-index:${i}"><button class="rpg-panel reward-card kind-${r.type} ${r.type==='weapon'&&isSignatureFor(m,r.weapon)?'is-signature':''}" data-action="reward-${i}" title="${esc(t.title+' — '+t.detail+('hint' in t&&t.hint?' '+t.hint:''))}"><span class="eyebrow">${t.tag}</span><span class="reward-head">${m?this.rewardArt(r,m):r.type==='ward'?`<span class="reward-portrait crystal-icon ward-icon">${elementChip(r.element!)}</span>`:'<span class="reward-portrait crystal-icon">✦</span>'}<h2>${esc(t.title)}</h2></span>${(els=>els.length?`<span class="reward-elements">${elementChips(els)}</span>`:'')(r.type==='weapon'?r.weapon?.elements??[]:(r.type==='learn'||r.type==='skill')&&m?skillElements(this.catalog[m.key].skills.find(x=>x.id===r.skill)!):[])}${r.type==='weapon'&&r.weapon?rarityBadge(r.weapon.rarity):''}<ul class="reward-lines">${t.detail.split(' · ').map(l=>`<li>${esc(l)}</li>`).join('')}</ul><span class="card-choose">CHOOSE →</span></button></article>`;}).join('')}</div>${PEEK_BUTTON}`,'rewards');this.bindPeek(run);
  }
 
+ /** What a map node holds, for the side panel and the node's tooltip (one line each). */
+ nodeDetail(run:RunState,node:MapNode){
+  const stage=stageForArea(run.areas[run.map.act]),name=(key:string)=>ENEMY_CONTENT[key]?.name??key;
+  switch(node.type){
+   case 'battle':return {title:'Battle',lines:[`Enemies: ${[...new Set(stage.enemyPool)].map(name).join(', ')}`,`Win: +${GIL_REWARD.normal} Gil and one reward`]};
+   case 'elite':{const affix=eliteAffix(run.seed,node.id);return {title:`Elite · ${name(eliteEnemyKey(run,node.id,stage))}`,tag:affix.name,tagText:affix.text,
+    lines:[`${affix.name}: ${affix.text}`,`Win: +${GIL_REWARD.elite} Gil, an awakening among the rewards`]};}
+   case 'boss':{const rule=bossRule(run.seed,run.map.act),final=!!run.areas[run.map.act].final;return {title:`${final?'Final boss':'Boss'} · ${name(stage.bossId)}`,tag:rule.name,tagText:rule.text,
+    lines:[`Rule · ${rule.name}: ${rule.text}`,final?'Defeat it to end the journey':`Win: +${GIL_REWARD.boss} Gil, an awakening, then the next act`]};}
+   case 'event':return {title:'Crystal shrine',lines:['Pray for a blessing for every hero, or risk a curse.']};
+   case 'merchant':return {title:'Moogle merchant',lines:['Spend Gil on potions, tomes and weapons.']};
+   case 'campfire':return {title:'Campfire',lines:[`Rest (living allies recover ${Math.round(CAMP_REST*100)}% HP and MP) or train a skill.`]};
+   case 'treasure':return {title:'Treasure',lines:[`A chest with ${TREASURE_GIL.min}–${TREASURE_GIL.max} Gil, often a weapon.`]};
+  }
+ }
+ /** Act map (loop v2, "FF Graphite", mockup B · Act map): the map left, party and the chosen node right.
+  * Reachable nodes are buttons (map-node-<id>); the chosen one is entered with map-go. */
+ actMap(run:RunState,selected:string|null){
+  const map=runMap(run),options=new Set(mapOptions(run).map(n=>n.id)),trail=new Set(run.map.trail),at=run.map.at;
+  const area=run.areas[run.map.act],stage=stageForArea(area),final=!!area.final,acts=run.areas.filter(a=>!a.final).length;
+  // Board coordinates in percent: four columns, rows from the bottom; the boss sits on top (centre for the final room).
+  const pos=(n:MapNode)=>n.type==='boss'?{x:50,y:final?50:14}:{x:13+n.col*(74/3),y:91-n.row*11.4};
+  const byId=new Map(map.nodes.map(n=>[n.id,n]));
+  const edges=map.nodes.flatMap(n=>n.next.map(id=>{const a=pos(n),b=pos(byId.get(id)!),walked=trail.has(n.id)&&trail.has(id);
+   const open=n.id===at&&options.has(id);
+   return `<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" class="${walked?'is-walked':open?'is-open':''}"/>`;})).join('');
+  const node=(n:MapNode)=>{const p=pos(n),state=n.id===at?'is-current':trail.has(n.id)?'is-visited':options.has(n.id)?'is-open':'is-locked';
+   const detail=this.nodeDetail(run,n),label=`${detail.title}${options.has(n.id)?'':state==='is-visited'||state==='is-current'?' (visited)':' (not reachable yet)'}`;
+   if(n.type==='boss'){const rule=bossRule(run.seed,run.map.act);
+    return `<button type="button" class="map-node map-boss ${state} ${selected===n.id?'is-selected':''}" style="left:${p.x}%;top:${p.y}%" data-action="map-node-${n.id}" aria-label="${esc(label)}" ${options.has(n.id)?'':'aria-disabled="true"'}>
+     ${nodeIcon('boss')}<b>${esc(ENEMY_CONTENT[stage.bossId]?.name??'Boss')}</b><small title="${esc(rule.text)}">Rule · ${esc(rule.name)}</small></button>`;}
+   return `<button type="button" class="map-node type-${n.type} ${state} ${selected===n.id?'is-selected':''}" style="left:${p.x}%;top:${p.y}%" data-action="map-node-${n.id}" aria-label="${esc(label)}" title="${esc(detail.lines.join(' · '))}" ${options.has(n.id)?'':'aria-disabled="true"'}>${nodeIcon(n.type)}<span>${esc(NODE_LABELS[n.type].replace('Moogle ',''))}</span></button>`;};
+  const chosen=selected?byId.get(selected):undefined,detail=chosen&&this.nodeDetail(run,chosen);
+  const profile=stageElementProfile(stage);
+  const party=run.party.map(m=>{const c=this.catalog[m.key],role=characterRole(c);
+   return `<li class="map-member${m.hp<=0?' is-ko':''}"><span class="portrait-frame"><img class="portrait" src="${esc(c.portrait)}" alt=""></span><div><p class="map-member-head"><strong>${esc(c.name)}</strong><span class="role-chip role-${role}">${ROLE_LABELS[role]}</span><small>${esc(levelLabel(m.level))}</small></p>${gaugeRow('hp',m.hp,Math.round(c.maxHp*m.stats.hp))}${gaugeRow('mp',m.mp,memberMaxMp(c,m))}</div></li>`;}).join('');
+  const fights=run.history.filter(h=>(h as {kind?:string}).kind==='reward').length;
+  this.show(`<div class="map-screen">
+   <header class="map-top"><span class="act-chip">${final?'FINAL ROOM':`ACT ${run.map.act+1} OF ${acts}`}</span><span class="map-meta">${esc(area.name)} · ${fights} fight${fights===1?'':'s'} won</span><span class="map-gil">${run.gil??0} Gil</span></header>
+   <section class="map-board rpg-panel" aria-label="Act map">
+    <h1 class="map-heading">${final?'The final room':'Choose your path'}</h1>
+    <svg class="map-edges" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${edges}</svg>
+    ${map.nodes.map(node).join('')}
+   </section>
+   <aside class="map-side">
+    <section class="rpg-panel map-panel"><h2 class="panel-label">Party</h2><ul class="map-party">${party}</ul></section>
+    <section class="rpg-panel map-panel"><h2 class="panel-label">${esc(stage.name)}</h2><p class="map-stage">${esc(stage.theme)}</p>
+     ${profile.weak.length?`<p class="map-elements">Weak to ${elementChips(profile.weak as Element[])}</p>`:''}${profile.attack.length?`<p class="map-elements">Attacks with ${elementChips(profile.attack as Element[])}</p>`:''}</section>
+    <section class="rpg-panel map-panel map-selected ${detail?'has-node':''}">${detail&&chosen?`<h2 class="panel-label">Next stop</h2><h3>${nodeIcon(chosen.type)}${esc(detail.title)}</h3>${'tag' in detail&&detail.tag?`<span class="rule-chip" title="${esc(detail.tagText??'')}">${esc(detail.tag)}</span>`:''}<ul>${detail.lines.map(l=>`<li>${esc(l)}</li>`).join('')}</ul>${this.button('map-go',COMBAT_NODES.has(chosen.type)?'Fight':'Go')}`
+     :`<h2 class="panel-label">Next stop</h2><p class="muted">Choose a glowing node on the map. The run is saved after every stop.</p>`}</section>
+    <div class="map-actions">${this.button('menu','Save and quit',true)}</div>
+   </aside>
+  </div>`,'map');
+  if(chosen)this.root.querySelector<HTMLElement>('[data-action=map-go]')?.focus();
+  else this.root.querySelector<HTMLElement>('.map-node.is-open')?.focus();
+ }
  /** Run event between fights (src/run/runEvents.mjs): camp, Moogle merchant or crystal shrine. */
  event(run:RunState){const e=run.event!,gil=run.gil??0,name=(key?:string)=>key?this.catalog[key]?.name??key:'',
   skillName=(key?:string,id?:string)=>this.catalog[key??'']?.skills.find(s=>s.id===id)?.name??id??'',
@@ -362,6 +422,10 @@ export class RunUI{
     const [icon,title,lines]=text[w.item];
     return card('event-buy-'+i,sold?'SOLD':`${w.price} GIL`,icon,title,lines,sold?'SOLD OUT':short?'NOT ENOUGH GIL':`BUY · ${w.price} GIL →`,sold||short,i);};
    this.show(`${this.title('A TRAVELLING SHOP','MOOGLE MERCHANT','“Kupo! Fine wares for brave adventurers, kupo!”')}${purse}${party}<div class="reward-grid event-grid is-shop">${e.wares!.map(ware).join('')}</div><div class="actions">${this.button('event-leave','Move on')}</div>`,'event');
+   return;
+  }
+  if(e.kind==='treasure'){const t=e.treasure!,w=t.weapon;
+   this.show(`${this.title('A FORGOTTEN CACHE','TREASURE',`The chest holds ${t.gil} Gil${w?' and a weapon':''}.`)}${purse}${party}<div class="reward-grid event-grid">${w?card('event-take','WEAPON','⚔',w.name,[`For ${name(t.member)}: ${weaponSummary(w)}`,`${'★'.repeat(w.rarity)} · replaces the current weapon`,`+${t.gil} Gil`],'TAKE ALL →'):''}${card('event-leave','GIL ONLY','◆',`${t.gil} Gil`,[w?'Pocket the Gil and leave the weapon.':'Pocket the Gil.'],'TAKE GIL →',false,1)}</div>`,'event');
    return;
   }
   const stat={attack:'attack power',magic:'magic power',defense:'damage resistance',hp:'maximum HP'}[e.stat!];
@@ -454,7 +518,18 @@ export function rarityBadge(rarity:number){const tier=rarity>=7?'prism':rarity>=
 /** Signature weapons (the hero's own trust weapon) get a gold SIGNATURE tag when the member is known. */
 export function weaponLine(w:RunWeapon,m?:RunMember){const own=!!m&&isSignatureFor(m,w);return `<p class="weapon-line${own?' is-signature':''}" title="${esc(weaponSummary(w))}"><span class="weapon-glyph" aria-hidden="true">${WEAPON_GLYPHS[w.category]??'⚔'}</span><span>${esc(w.name)}</span><small>${'★'.repeat(w.rarity)}</small>${own?'<em class="signature-tag">SIGNATURE</em>':''}${elementChips(w.elements)}</p>`;}
 
-/** After an area's closing fight: the next area starts with a camp (runState.mjs AREA_CAMP). */
-function campNote(run:RunState){const list=encounters(run.areas),now=list[run.encounter],next=list[run.encounter+1];
- if(!now||!next||next.area===now.area)return null;
- return `Area cleared · camp before ${next.name}: living allies recover ${Math.round(AREA_CAMP.hp*100)}% HP and ${Math.round(AREA_CAMP.mp*100)}% MP.`;}
+/** After an act boss: the next act starts with a camp (runState.mjs AREA_CAMP). */
+function campNote(run:RunState){const fight=currentFight(run),next=fight&&run.areas[fight.area+1];
+ if(fight?.kind!=='boss'||!next)return null;
+ return `Act cleared · camp before ${next.name}: living allies recover ${Math.round(AREA_CAMP.hp*100)}% HP and ${Math.round(AREA_CAMP.mp*100)}% MP.`;}
+/** Map node glyphs: inline stroke icons (24-unit box), coloured by the node's CSS. */
+const NODE_ICONS:Record<NodeType,string>={
+ battle:'<path d="M5 19 19 5M14 5h5v5M19 19 5 5M5 10V5h5"/>',
+ elite:'<path d="M12 3 4 7v5c0 4.5 3.4 8 8 9 4.6-1 8-4.5 8-9V7z"/><path d="m9 11 3 3 3-3"/>',
+ event:'<path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6V14"/><path d="M12 17.5v.5"/><circle cx="12" cy="12" r="9"/>',
+ merchant:'<path d="M6 8h12l-1 12H7z"/><path d="M9 8a3 3 0 0 1 6 0"/>',
+ campfire:'<path d="M12 3c2 3 5 5 5 9a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3-1-5 1-8z"/><path d="M5 21h14"/>',
+ treasure:'<rect x="4" y="9" width="16" height="11" rx="1"/><path d="M4 13h16M12 12v3M5 9c0-3 3-5 7-5s7 2 7 5"/>',
+ boss:'<path d="m4 8 4 4 4-7 4 7 4-4-2 11H6z"/>',
+};
+const nodeIcon=(type:NodeType)=>`<svg class="node-icon" viewBox="0 0 24 24" aria-hidden="true">${NODE_ICONS[type]}</svg>`;

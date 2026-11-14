@@ -1,6 +1,7 @@
 // Weapons as run rewards (src/run/weapons.mjs): curated pool, bounded bonus, elements, saves.
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';
 import {setWeaponData,weaponPool,weaponsForTier,weaponForRun,memberPower,validWeapon,WEAPON_BONUS_MAX,WEAPON_BONUS_PER_RARITY,WEAPON_TIERS} from '../src/run/weapons.mjs';
+import {toFight} from './run_walk.mjs';
 import {createRun,rollParty,confirmParty,completeBattle,chooseReward,rewardPool,validateRun,migrateRun,skillForRun,RUN_VERSION} from '../src/run/runState.mjs';
 import {actionElements,heroElementMultiplier} from '../src/run/elementRules.mjs';
 const read=p=>JSON.parse(fs.readFileSync(p,'utf8')),meta=read('public/assets/run-content.json'),data=read('public/assets/items/weapons.json');
@@ -37,7 +38,7 @@ test('weapon bonus lifts attack, its element reaches basic attacks and element-l
 });
 
 test('weapon offers come from the save-recomputable pool and equip once; pre-v5 saves are rejected', () => {
-  let run = confirmParty(rollParty(createRun('weapon-3', catalog), catalog));
+  let run = toFight(confirmParty(rollParty(createRun('weapon-3', catalog), catalog)), catalog, ['battle']);
   run = completeBattle(run, catalog, snapshot(run), true);
   const offers = rewardPool(run, catalog).filter(r => r.type === 'weapon');
   assert.equal(offers.length, run.party.length, 'one candidate per hero');

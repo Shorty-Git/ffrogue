@@ -226,3 +226,59 @@
 .reels{grid-template-columns:repeat(4,minmax(0,1fr))}
 .party-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
 @media(max-width:520px){.reels{grid-template-columns:repeat(2,minmax(0,1fr))}.party-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Act map (loop v2, mockup "B · Act map" in the Graphite language): map left, side panel right. Nodes are
+   small double-framed tiles; reachable ones carry the gold edge, the walked path is a gold line. */
+.run-overlay[data-phase=map] .rpg-shell{width:min(100%,1180px)!important;text-align:left}
+.map-screen{display:grid;grid-template-columns:minmax(0,1fr) 320px;grid-template-rows:auto 1fr;grid-template-areas:"top top" "board side";gap:14px;min-height:min(1000px,calc(100vh - 48px))}
+.map-top{grid-area:top;display:flex;align-items:center;gap:14px;padding:8px 14px;border-bottom:1px solid var(--g-line);font:600 13px var(--g-type);letter-spacing:.14em;text-transform:uppercase;color:var(--g-muted)}
+.act-chip{padding:3px 10px;border:1px solid var(--g-gold);border-radius:4px;color:var(--g-gold);font-family:var(--g-display);letter-spacing:.1em}
+.map-gil{margin-left:auto;color:var(--g-gold);font-variant-numeric:tabular-nums}
+.map-board{grid-area:board;position:relative;min-height:640px;overflow:hidden;padding:0;
+  background:radial-gradient(ellipse at 50% 35%,#202228 0,var(--g-panel) 70%)}
+#run-ui .map-heading{position:absolute;left:18px;top:14px;margin:0;font:600 18px var(--g-display);letter-spacing:.08em;color:var(--g-muted);text-align:left}
+#run-ui .map-heading::after{display:none}
+.map-edges{position:absolute;inset:0;width:100%;height:100%}
+.map-edges line{stroke:var(--g-line);stroke-width:2;vector-effect:non-scaling-stroke;stroke-linecap:round}
+.map-edges line.is-open{stroke:var(--g-gold);stroke-opacity:.55;stroke-dasharray:6 6}
+.map-edges line.is-walked{stroke:var(--g-gold);stroke-width:3}
+.map-node{position:absolute;transform:translate(-50%,-50%);width:64px;height:64px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  padding:0;border:1px solid var(--g-line);border-radius:6px;background:var(--g-panel2);box-shadow:var(--g-frame);color:var(--g-muted);
+  font:600 9px var(--g-type);letter-spacing:.12em;text-transform:uppercase;cursor:default;transition:border-color .15s,background-color .15s,transform .15s}
+.node-icon{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.map-node.type-elite{color:var(--g-red)}.map-node.type-event{color:var(--g-teal)}.map-node.type-merchant{color:var(--g-orange)}
+.map-node.type-campfire{color:var(--g-green)}.map-node.type-treasure{color:var(--g-ice)}.map-node.type-battle{color:var(--g-text)}
+.map-node.is-locked{opacity:.45}
+.map-node.is-visited{opacity:.75;border-color:#e2c26b66}
+.map-node.is-current{border-color:var(--g-gold);box-shadow:var(--g-frame),inset 0 -3px 0 var(--g-gold)}
+.map-node.is-open{cursor:pointer;border-color:var(--g-gold);background:#2b2a26}
+.map-node.is-open:hover,.map-node.is-open:focus-visible{transform:translate(-50%,-50%) scale(1.06);outline:none;background:#34322b}
+.map-node.is-selected{background:var(--g-gold-soft);box-shadow:var(--g-frame),inset 0 -3px 0 var(--g-gold)}
+.map-node[aria-disabled=true]{pointer-events:none}
+.map-boss{width:150px;height:96px;color:var(--g-red);border-color:#e5534b88;background:#231a1b}
+.map-boss .node-icon{width:28px;height:28px}
+.map-boss b{font:600 15px var(--g-display);letter-spacing:.04em;text-transform:none;color:var(--g-text)}
+.map-boss small{font:600 10px var(--g-type);letter-spacing:.12em;color:var(--g-red)}
+.map-boss.is-open{border-color:var(--g-red);background:#2c1d1e}
+.map-side{grid-area:side;display:flex;flex-direction:column;gap:12px}
+.map-panel{padding:12px 14px}
+.panel-label,#run-ui .panel-label{margin:0 0 8px;font:600 11px var(--g-type);letter-spacing:.16em;text-transform:uppercase;color:var(--g-muted)}
+.map-party{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.map-member{display:grid;grid-template-columns:40px 1fr;gap:8px;align-items:center}
+.map-member .portrait-frame{width:40px;height:40px;display:grid;place-items:center}
+.map-member.is-ko{opacity:.5}
+.map-member-head{display:flex;align-items:center;gap:6px;margin:0 0 3px;font-size:13px}
+.map-member-head strong{font-family:var(--g-display);font-weight:600}
+.map-member-head small{margin-left:auto;color:var(--g-muted);font-variant-numeric:tabular-nums}
+.map-member .role-chip{margin:0}
+.map-stage{margin:0 0 6px;color:var(--g-muted);font-size:13px}
+.map-elements{display:flex;flex-wrap:wrap;align-items:center;gap:4px;margin:4px 0 0;font-size:12px;color:var(--g-muted)}
+.map-selected{margin-top:auto}
+.map-selected.has-node{border-color:var(--g-gold);box-shadow:var(--g-frame),inset 3px 0 0 var(--g-gold)}
+.map-selected h3{display:flex;align-items:center;gap:8px;margin:0 0 6px;font:600 18px var(--g-display)}
+.map-selected ul{margin:8px 0 12px;padding-left:18px;color:var(--g-muted);font-size:13px;line-height:1.5}
+.map-selected .rpg-button{width:100%}
+.rule-chip{display:inline-block;padding:2px 8px;border:1px solid var(--g-red);border-radius:3px;color:var(--g-red);font:600 10px var(--g-type);letter-spacing:.14em;text-transform:uppercase}
+.map-actions{display:flex;justify-content:flex-end}
+.caption-rule{margin-left:.6em;padding:0 .45em;border:1px solid var(--g-red);border-radius:3px;color:var(--g-red);font-size:.8em;letter-spacing:.1em;text-transform:uppercase;pointer-events:auto;cursor:help}
+@media(max-width:760px){.map-screen{grid-template-columns:1fr;grid-template-areas:"top" "board" "side"}.map-board{min-height:560px}.map-node{width:52px;height:52px}.map-boss{width:120px;height:84px}}

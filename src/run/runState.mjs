@@ -5,10 +5,12 @@ import {skillElements} from './elementRules.mjs';
 import {isSignatureFor,memberPower,signatureWeaponFor,validWeapon,weaponsForTier} from './weapons.mjs';
 import {awakeningPath,formAt,formForLevel,levelOf,MAX_LEVEL} from './unitForms.mjs';
 import {carriedLimit,LB_MAX} from './limitGauge.mjs';
-import {gilFor,validEvent} from './runEvents.mjs';
+import {gilFor,validEvent,openEvent} from './runEvents.mjs';
+import {actMap,mapNode,nextNodes,validTrail,COMBAT_NODES} from './actMap.mjs';
 import {ROLES,roleOf} from './roles.mjs';
-/** v5 (2026-11-15): four heroes, one per role (docs/game-design.md "Party"). Older saves hold three heroes and
- * are rejected with a clear message (the title screen offers to discard them). */
+/** v5 (2026-11-15): four heroes, one per role, and the act-map run skeleton (docs/game-design.md "Party",
+ * "Run structure"). Older saves hold three heroes on a linear course and are rejected with a clear message
+ * (the title screen offers to discard them). */
 export const RUN_VERSION=5;
 export const PARTY_SIZE=4;
 export const LEGACY_SAVE_MESSAGE='This expedition was saved by an older version with a three-hero party. Start a new journey with four heroes.';
@@ -20,8 +22,9 @@ export const AREA_CAMP={hp:.3,mp:.3};
 export const PROTOTYPE_AREAS=Object.values(STAGE_CONTENT).map(s=>({stageId:s.id,name:s.name,arena:s.arena,normals:s.normalFights}));
 export const FULL_AREAS=[{name:'Whisperwood',arena:'forest',normals:5},{name:'Mako Outskirts',arena:'reactor',normals:5},{name:'Final Rift',arena:'forest',normals:5}];
 export function seedHash(value){let h=2166136261;for(const c of String(value)){h^=c.charCodeAt(0);h=Math.imul(h,16777619);}return h>>>0;}
-/** Seeded areas before the final one; the seed picks which stages and the route climbs in difficulty. */
-export const COURSE_LENGTH=2;
+/** Acts before the final boss room (loop v2: three acts); the seed plans their stages, the route choice before
+ * each act may replace them. */
+export const COURSE_LENGTH=3;
 /** Developer decision 2026-11-10: every run ends in a final boss room. Since 2026-11-11 the player picks
  * it when the journey starts (Nibelheim / Sephiroth, Vector / Kefka); Nibelheim stays the default. */
 export const FINAL_STAGE='nibelheim';
@@ -35,7 +38,7 @@ const routePool=()=>Object.values(STAGE_CONTENT).filter(s=>!FINAL_STAGES.include
 /** Seed-ordered stages, one per family. */
 const distinctFamilies=stages=>{const seen=new Set();return stages.filter(s=>{const f=stageFamily(s.id);if(seen.has(f))return false;seen.add(f);return true;});};
 const areaOf=stage=>({stageId:stage.id,name:stage.name,arena:stage.arena,normals:stage.normalFights});
-/** Run structure: each seeded area ends in an elite fight, the final area in the boss fight. */
+/** Run structure: one area per act (its stage gives arena, enemies and act boss), then the final boss room. */
 export function courseAreas(seed,finalStage=FINAL_STAGE){
  if(!FINAL_STAGES.includes(finalStage))throw Error('Unknown final boss room: '+finalStage);
  const pool=routePool();
@@ -48,9 +51,9 @@ export function courseAreas(seed,finalStage=FINAL_STAGE){
  * (seeded per run and area, never a stage chosen earlier). The pick replaces the planned area. */
 export const ROUTE_CHOICES=2;
 export function routeOptions(run){
- if(!run||!['battle'].includes(run.phase))return null;
- const fight=encounters(run.areas)[run.encounter];
- if(!fight||fight.wave!==0||run.areas[fight.area].final||run.routes?.[fight.area])return null;
+ if(!run||run.phase!=='map'||!run.map||run.map.at!==null)return null;
+ const fight={area:run.map.act};
+ if(!run.areas[fight.area]||run.areas[fight.area].final||run.routes?.[fight.area])return null;
  const taken=new Set((run.routes??[]).filter(Boolean).map(stageFamily));
  const options=distinctFamilies(routePool().filter(s=>!taken.has(stageFamily(s.id)))
   .sort((a,b)=>seedHash(run.seed+':route:'+fight.area+':'+a.id)-seedHash(run.seed+':route:'+fight.area+':'+b.id))).slice(0,ROUTE_CHOICES);
@@ -89,16 +92,32 @@ function validFormPolicy(policy){
    &&Number.isFinite(weights.reduce((sum,w)=>sum+w,0)))
   &&['hpPerRank','mpPerRank','powerPerRank','defensePerRank'].every(key=>Number.isFinite(policy[key])&&policy[key]>=0&&policy[key]<=.2);
 }
-/** `boss` marks an area's closing fight (relic rewards, single strong enemy); `kind` names it for the
- * player: 'normal', 'elite' (closing fight of a seeded area) or 'boss' (closing fight of the final area). */
-export function encounters(areas){return areas.flatMap((area,index)=>Array.from({length:area.normals+1},(_,wave)=>{const last=wave===area.normals;
- return {area:index,name:area.name,arena:area.arena,boss:last,kind:last?(area.final?'boss':'elite'):'normal',wave};}));}
+/** The current act's map (src/run/actMap.mjs), recomputed from the seed; the final boss room is one node. */
+export function runMap(run,act=run.map?.act??0){return actMap(run.seed,act,!!run.areas[act]?.final);}
+/** The node the party stands on (null before the first node of an act). */
+export function currentNode(run){return run.map?.at?mapNode(runMap(run),run.map.at):null;}
+/** Nodes the party may enter now (phase 'map', after the route choice of the act). */
+export function mapOptions(run){
+ if(run?.phase!=='map'||routeOptions(run))return [];
+ const node=currentNode(run);
+ if(node?.type==='boss')return [];
+ return nextNodes(runMap(run),run.map.at);
+}
+/** The fight on the current node: `boss` marks elites and bosses (single strong foe, awakening reward);
+ * `kind` names it for the player: 'normal', 'elite' or 'boss'; `wave` is the map row. */
+export function currentFight(run){
+ const node=currentNode(run);
+ if(!node||!COMBAT_NODES.has(node.type))return null;
+ const area=run.areas[run.map.act],kind=node.type==='battle'?'normal':node.type;
+ return {area:run.map.act,name:area.name,arena:area.arena,boss:kind!=='normal',kind,wave:node.row,node:node.id,final:!!area.final};
+}
 export const ENCOUNTER_LABELS={normal:'Battle',elite:'Elite',boss:'Boss'};
+const lastAct=run=>run.areas.length-1;
 export function createRun(seed,catalog,areas=courseAreas(seed),rules){
  areas.forEach(stageForArea);
  if(new Set(Object.values(catalog).filter(c=>c.canonicalIdentity&&c.skills.length).map(c=>c.canonicalIdentity)).size<PARTY_SIZE)throw Error('Four reviewed canonical character identities required');
  if(!String(seed).trim()||String(seed).length>64)throw Error('Seed must contain 1–64 characters');
- const run={version:RUN_VERSION,seed:String(seed),phase:'setup',party:[],rerolls:3,encounter:0,offers:[],history:[],areas:clone(areas),rng:{}};
+ const run={version:RUN_VERSION,seed:String(seed),phase:'setup',party:[],rerolls:3,encounter:0,offers:[],history:[],areas:clone(areas),rng:{},map:{act:0,at:null,trail:[]}};
  if(rules){if(!['sequential','highest-reviewed'].includes(rules.awakeningMode)||!validFormPolicy(rules.originalForms))throw Error('Unsupported run policy');run.rules=clone(rules);}
  for(const s of ['roster','skills','rewards','combat'])run.rng[s]=seedHash(seed+':'+s);
  return run;
@@ -174,7 +193,18 @@ export function chooseStartSkill(input,key,skillId,catalog){
  run.history.push({kind:'start-skill',member:key,skill:skillId});
  return run;
 }
-export function confirmParty(input){const run=clone(input);if(run.phase!=='setup'||run.party.length!==PARTY_SIZE||new Set(run.party.map(m=>m.canonicalIdentity)).size!==PARTY_SIZE||run.party.some(m=>!m.canonicalIdentity))throw Error('Roll four distinct canonical characters first');run.phase='battle';return run;}
+export function confirmParty(input){const run=clone(input);if(run.phase!=='setup'||run.party.length!==PARTY_SIZE||new Set(run.party.map(m=>m.canonicalIdentity)).size!==PARTY_SIZE||run.party.some(m=>!m.canonicalIdentity))throw Error('Roll four distinct canonical characters first');run.phase='map';return run;}
+/** Enters a map node (saved before anything happens there): fights open phase 'battle', every other node its
+ * event (src/run/runEvents.mjs). */
+export function chooseNode(input,id){
+ const run=clone(input);
+ if(!mapOptions(run).some(n=>n.id===id))throw Error('Not a reachable map node: '+id);
+ run.map.at=id;run.map.trail.push(id);
+ const node=currentNode(run);
+ run.history.push({kind:'node',act:run.map.act,node:id,type:node.type});
+ if(COMBAT_NODES.has(node.type)){run.phase='battle';return run;}
+ return openEvent(run);
+}
 export function skillForRun(source,member){
  const skill=clone(source),level=member.skills.find(s=>s.id===source.id)?.level??1,boost=1+.2*(level-1);
  skill.damageMultiplier*=boost*memberPower(member,skill.damageType==='holy'?'magic':'attack');
@@ -191,9 +221,11 @@ export function skillForRun(source,member){
 }
 /** Stage of the fight after the current one (the current stage after the last fight). */
 export function upcomingStage(run){
- const list=encounters(run.areas),next=list[run.encounter+1]??list[run.encounter];
- return stageForArea(run.areas[next.area]);
+ const act=currentNode(run)?.type==='boss'?Math.min(run.map.act+1,lastAct(run)):run.map.act;
+ return stageForArea(run.areas[act]);
 }
+/** Act of the next fight: the next act after a boss, otherwise the current one. */
+const upcomingAct=run=>currentNode(run)?.type==='boss'?Math.min(run.map.act+1,lastAct(run)):run.map.act;
 /** Reward weights (one RNG draw per pick either way): skills whose element hits a weakness of the
  * next stage's enemies and wards against elements they use are offered more often. */
 export const REWARD_WEIGHTS={learnOnWeakness:3,ward:2,weapon:1,weaponOnWeakness:2,signatureWeapon:3,default:1};
@@ -217,7 +249,7 @@ function pickWeighted(run,stream,values,weight){
 export const REWARD_KINDS=['skill','upgrade','weapon'];
 export function rewardKind(reward){return reward.type==='learn'||reward.type==='skill'?'skill':reward.type==='weapon'?'weapon':'upgrade';}
 export function rewardPool(run,catalog){
- const pool=[],e=encounters(run.areas)[run.encounter];
+ const pool=[],e=currentFight(run)??{boss:false};
  for(const m of run.party){const c=catalog[m.key];
   for(const s of c.skills)if(!m.skills.some(a=>a.id===s.id))pool.push({type:'learn',member:m.key,skill:s.id});
   for(const s of m.skills)if(s.level<3)pool.push({type:'skill',member:m.key,skill:s.id});
@@ -230,13 +262,13 @@ export function rewardPool(run,catalog){
  // Weapons: one candidate per hero from the next area's rarity tier, chosen by seed hash (no RNG draw),
  // so the pool can be recomputed for save validation. Half the heroes look first at weapons whose
  // element hits a weakness of the next stage.
- const next=encounters(run.areas)[run.encounter+1]??e,profile=stageElementProfile(upcomingStage(run));
+ const nextArea=upcomingAct(run),profile=stageElementProfile(upcomingStage(run));
  for(const m of run.party){
-  const candidates=weaponsForTier(next.area).filter(w=>w.id!==m.weapon?.id);if(!candidates.length)continue;
+  const candidates=weaponsForTier(nextArea).filter(w=>w.id!==m.weapon?.id);if(!candidates.length)continue;
   const h=seedHash(`${run.seed}:${run.encounter}:${m.key}:weapon`),weak=candidates.filter(w=>w.elements.some(x=>profile.weak.includes(x)));
   // From the second area on, one hash in three offers the hero's own signature weapon (if it has one).
   const signature=signatureWeaponFor(m);
-  if(next.area>=1&&signature&&!isSignatureFor(m,m.weapon)&&(h>>>3)%3===0){pool.push({type:'weapon',member:m.key,weapon:signature});continue;}
+  if(nextArea>=1&&signature&&!isSignatureFor(m,m.weapon)&&(h>>>3)%3===0){pool.push({type:'weapon',member:m.key,weapon:signature});continue;}
   const list=h%2===0&&weak.length?weak:candidates;
   pool.push({type:'weapon',member:m.key,weapon:list[(h>>>1)%list.length]});
  }
@@ -245,15 +277,16 @@ export function rewardPool(run,catalog){
  pool.push({type:'rest'});return pool;
 }
 export function completeBattle(input,catalog,snapshot,won){
- const run=clone(input);if(run.phase!=='battle'||run.pendingAwakening)throw Error('Battle already settled or awaiting presentation');
+ const run=clone(input);if(run.phase!=='battle'||run.pendingAwakening||!currentFight(run))throw Error('Battle already settled or awaiting presentation');
  if(snapshot.length!==run.party.length||snapshot.some((s,i)=>s.key!==run.party[i].key))throw Error('Fixed party snapshot required');
  run.party.forEach((m,i)=>{m.hp=Math.max(0,Math.min(Math.round(catalog[m.key].maxHp*m.stats.hp),snapshot[i].hp));m.mp=Math.max(0,Math.min(memberMaxMp(catalog[m.key],m),snapshot[i].mp));
   // The Limit gauge carries to the next battle for heroes who end it standing (src/run/limitGauge.mjs).
   const gauge=carriedLimit(catalog[m.key],m.hp,snapshot[i].limit);if(gauge>0)m.limit=gauge;else delete m.limit;});
  if(!won){run.phase='lost';return run;}
  // Gil for the Moogle merchant (src/run/runEvents.mjs).
- run.gil=(run.gil??0)+gilFor(encounters(run.areas)[run.encounter].kind);
- run.phase='rewards';const pool=rewardPool(run,catalog),boss=encounters(run.areas)[run.encounter].boss;
+ const fight=currentFight(run);
+ run.gil=(run.gil??0)+gilFor(fight.kind);
+ run.phase='rewards';const pool=rewardPool(run,catalog),boss=fight.boss;
  const evolution=pool.filter(r=>r.type==='evolve'),revival=pool.filter(r=>r.type==='revive');
  const profile=stageElementProfile(upcomingStage(run)),weigh=r=>rewardWeight(run,catalog,r,profile);
  // Reward mix (cloud night 2026-11-10): one card per kind, always in this order: a skill, an upgrade,
@@ -304,12 +337,16 @@ export function chooseReward(input,index,catalog,replace){
  else if(r.type==='rest'){for(const a of run.party)if(a.hp>0){const c=catalog[a.key];a.hp=Math.min(Math.round(c.maxHp*a.stats.hp),a.hp+Math.round(c.maxHp*.4));a.mp=Math.min(memberMaxMp(c,a),a.mp+Math.round(c.maxMp*.4));}}
  else throw Error('Unknown reward');
  run.history.push({kind:'reward',encounter:run.encounter,reward:r,replace:replace??null});run.encounter++;run.offers=[];
- // Camp between areas (cloud night 2026-11-10): entering a new area restores a share of base HP and
- // max MP to living members; K.O. stays K.O. No RNG.
- const list=encounters(run.areas);
- if(list[run.encounter]&&list[run.encounter].area!==list[run.encounter-1].area)for(const a of run.party)if(a.hp>0){const c=catalog[a.key];
-  a.hp=Math.min(Math.round(c.maxHp*a.stats.hp),a.hp+Math.round(c.maxHp*a.stats.hp*AREA_CAMP.hp));a.mp=Math.min(memberMaxMp(c,a),a.mp+Math.round(memberMaxMp(c,a)*AREA_CAMP.mp));}
- run.phase=run.encounter===encounters(run.areas).length?'won':'battle';return run;
+ // Back to the map; a defeated boss closes the act (or wins the run in the last area).
+ if(currentNode(run).type==='boss'){
+  if(run.map.act===lastAct(run)){run.phase='won';return run;}
+  // Camp between acts (cloud night 2026-11-10): a new act restores a share of base HP and max MP to living
+  // members; K.O. stays K.O. No RNG.
+  for(const a of run.party)if(a.hp>0){const c=catalog[a.key];
+   a.hp=Math.min(Math.round(c.maxHp*a.stats.hp),a.hp+Math.round(c.maxHp*a.stats.hp*AREA_CAMP.hp));a.mp=Math.min(memberMaxMp(c,a),a.mp+Math.round(memberMaxMp(c,a)*AREA_CAMP.mp));}
+  run.map={act:run.map.act+1,at:null,trail:[]};
+ }
+ run.phase='map';return run;
 }
 /** Presentation acknowledgement never reapplies a reward or consumes RNG. */
 export function acknowledgeAwakening(input,id){const run=clone(input);if(run.pendingAwakening?.id!==id)throw Error('No matching saved awakening');delete run.pendingAwakening;return run;}
@@ -318,13 +355,29 @@ export function migrateRun(input,catalog){
  if(Number.isInteger(input?.version)&&input.version<RUN_VERSION)throw Error(LEGACY_SAVE_MESSAGE);
  return validateRun(input,catalog);
 }
+export const RUN_PHASES=['setup','map','battle','rewards','event','won','lost'];
+/** Map position checks: the act exists, the trail follows the act map and ends on the current node, and the
+ * phase fits the node (fights for battle/rewards, other nodes for events, the last boss for a won run). */
+function validMap(run){
+ const m=run.map;
+ if(!m||!Number.isInteger(m.act)||m.act<0||m.act>lastAct(run)||!Array.isArray(m.trail)||(m.at!==null&&typeof m.at!=='string'))return false;
+ const map=runMap(run);
+ if(!validTrail(map,m.trail)||(m.trail.at(-1)??null)!==m.at)return false;
+ const node=m.at?mapNode(map,m.at):null;
+ if(run.phase==='setup')return m.act===0&&m.at===null;
+ if(['battle','rewards'].includes(run.phase))return !!node&&COMBAT_NODES.has(node.type);
+ if(run.phase==='event')return !!node&&!COMBAT_NODES.has(node.type);
+ if(run.phase==='won')return node?.type==='boss'&&m.act===lastAct(run);
+ if(run.phase==='map')return node?.type!=='boss';
+ return true;
+}
 export function validateRun(run,catalog){
- if(run?.version!==RUN_VERSION||typeof run.seed!=='string'||!['setup','battle','rewards','event','won','lost'].includes(run.phase)
+ if(run?.version!==RUN_VERSION||typeof run.seed!=='string'||!RUN_PHASES.includes(run.phase)
   ||!Number.isInteger(run.rerolls)||run.rerolls<0||run.rerolls>3||!Array.isArray(run.party)
   ||(run.phase==='setup'?![0,PARTY_SIZE].includes(run.party.length):run.party.length!==PARTY_SIZE)
-  ||!Array.isArray(run.areas)||!run.areas.length||run.areas.length>3||run.areas.some(a=>!Number.isInteger(a.normals)||a.normals<1||a.normals>5||(a.final!==undefined&&a.final!==true))
+  ||!Array.isArray(run.areas)||!run.areas.length||run.areas.length>COURSE_LENGTH+1||run.areas.some(a=>a.final!==undefined&&a.final!==true)
   ||run.areas.some((a,i)=>a.final&&i!==run.areas.length-1)
-  ||!Number.isInteger(run.encounter)||run.encounter<0||run.encounter>encounters(run.areas).length
+  ||!Number.isInteger(run.encounter)||run.encounter<0||!validMap(run)
   ||!Array.isArray(run.offers)||!Array.isArray(run.history)||!run.rng||['roster','skills','rewards','combat'].some(k=>!Number.isInteger(run.rng[k])||run.rng[k]<0||run.rng[k]>0xffffffff))throw Error('Invalid or incompatible run save');
  run.areas.forEach(stageForArea);
  if(run.rules&&(!['sequential','highest-reviewed'].includes(run.rules.awakeningMode)||!validFormPolicy(run.rules.originalForms)))throw Error('Unsupported saved run rules');
@@ -333,7 +386,7 @@ export function validateRun(run,catalog){
  if(Object.hasOwn(run.rng,'forms')&&(!Number.isInteger(run.rng.forms)||run.rng.forms<0||run.rng.forms>0xffffffff))throw Error('Invalid saved form RNG');
  if(run.pendingAwakening){const p=run.pendingAwakening,c=catalog[p.member],m=run.party.find(m=>m.key===p.member),last=run.history.at(-1);
   const from=c&&formAt(c,p.from?.form),to=c&&formAt(c,p.to?.form);
-  if(!['battle','event','won'].includes(run.phase)||p.encounter!==run.encounter-1||p.id!==`${run.seed}:${p.encounter}:${p.member}:${p.to?.form}`
+  if(!['map','battle','event','won'].includes(run.phase)||p.encounter!==run.encounter-1||p.id!==`${run.seed}:${p.encounter}:${p.member}:${p.to?.form}`
    ||!from||!to||!(c.forms?.some(f=>f.awakensFrom)?awakeningPath(c,from).includes(to):to.rarity>from.rarity)||m?.form!==to.form||p.from.unitId!==from.unitId||p.from.rarity!==from.rarity
    ||p.to?.form!==m.form||p.to.unitId!==m.unitId||p.to.rarity!==m.rarity||last?.kind!=='reward'||last.encounter!==p.encounter
    ||last.reward?.type!=='evolve'||last.reward.member!==p.member||formForLevel(c,last.reward.level)?.form!==p.to.form)throw Error('Invalid saved awakening presentation');
@@ -351,7 +404,6 @@ export function validateRun(run,catalog){
    ||(m.weapon!==undefined&&!validWeapon(m.weapon))
    ||!Number.isFinite(m.hp)||m.hp<0||m.hp>Math.ceil(c.maxHp*m.stats.hp)||!Number.isFinite(m.mp)||m.mp<0||m.mp>memberMaxMp(c,m))throw Error('Unsupported saved party/skill/form');}
  if(run.phase==='rewards'&&(run.offers.length!==3||run.offers.some(r=>!rewardPool(run,catalog).some(p=>JSON.stringify(p)===JSON.stringify(r)))))throw Error('Invalid saved rewards');
- if(run.phase==='won'?run.encounter!==encounters(run.areas).length:run.encounter>=encounters(run.areas).length)throw Error('Invalid encounter checkpoint');
  return run;
 }
 export class RunStore{

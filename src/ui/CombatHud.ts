@@ -18,6 +18,7 @@ type ArenaActor = {id:number; name:string; hp?:number; maxHp?:number; status?:st
   x:number; y:number; width:number; height:number};
 export type CombatHudState = {
   area:string; phase:string; message:string;
+  /** Elite affix or boss rule (src/run/encounterRules.mjs), shown beside the caption with its rule text. */ modifier?:{name:string;text:string};
   /** Party ward relics (elements), shown beside the caption. */ wards?:Element[]; pending:boolean; party:PartyEntry[]; commands:(Command|null)[]; actors:ArenaActor[];
 };
 
@@ -137,7 +138,7 @@ export class CombatHud {
     }).join('');
 
     const shown=captureGauges(this.root);
-    this.root.innerHTML=`<div class="combat-caption"><strong>${escapeHtml(state.area)}</strong><span>${escapeHtml(state.phase)}</span>${state.wards?.length?`<span class="caption-wards" title="Party wards: ${escapeHtml(state.wards.join(', '))} damage taken -50%">Ward ${elementChips(state.wards)}</span>`:''}</div>
+    this.root.innerHTML=`<div class="combat-caption"><strong>${escapeHtml(state.area)}</strong><span>${escapeHtml(state.phase)}</span>${state.modifier?`<span class="caption-rule" title="${escapeHtml(state.modifier.text)}">${escapeHtml(state.modifier.name)}</span>`:''}${state.wards?.length?`<span class="caption-wards" title="Party wards: ${escapeHtml(state.wards.join(', '))} damage taken -50%">Ward ${elementChips(state.wards)}</span>`:''}</div>
       ${actors}<div class="combat-dock"><div class="combat-party">${party}</div><div class="ribbon-commands" style="--commands:${state.commands.length}">${commands}</div>
       <div class="ribbon-prompt"><span role="status">${escapeHtml(state.message)}</span>${state.pending?`<button type="button" class="prompt-cancel" ${attrs('clear',0)}>Cancel <kbd>Esc</kbd></button>`:''}</div>
       <p class="ribbon-keys" aria-hidden="true"><kbd>1</kbd>–<kbd>${state.commands.length}</kbd> command · <kbd>←</kbd><kbd>→</kbd> target · <kbd>Esc</kbd> cancel · hover a command for details</p></div><div class="command-tip" role="tooltip" hidden></div>`;

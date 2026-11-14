@@ -96,13 +96,15 @@ test('victory cycle is driven by animation completion/repeat and detaches on sce
 test('stale reward clicks cannot apply twice, stop the next encounter or reopen an error screen',()=>{
  const {GameFlow}=loadModule('src/run/GameFlow.ts'),rules=loadModule('src/run/runState.mjs'),callbacks={};
  const catalog=Object.fromEntries(['a','b','c','d'].map(key=>[key,{key,identity:key,canonicalIdentity:key,unitId:key,rarity:5,form:key,maxHp:100,maxMp:50,skills:[{id:key+'-skill',damageMultiplier:1}]}]));
- const run=rules.confirmParty(rules.rollParty(rules.createRun('duplicate-reward',catalog,rules.courseAreas('duplicate-reward').map(a=>({...a,normals:4})))/* run event (runEvents.mjs) only before fight 3 */,catalog));
+ let run=rules.confirmParty(rules.rollParty(rules.createRun('duplicate-reward',catalog),catalog));
+ run=rules.chooseRoute(run,rules.routeOptions(run).options[0].stageId);run=rules.chooseNode(run,rules.mapOptions(run)[0].id);
  const flow=Object.create(GameFlow.prototype);flow.catalog=catalog;flow.state=rules.completeBattle(run,catalog,run.party.map(m=>({key:m.key,hp:m.hp,mp:m.mp})),true);
- flow.state.offers[0]={type:'stat',member:run.party[0].key,stat:'attack'};let commits=0,stops=0,starts=0;
+ flow.state.offers[0]={type:'stat',member:run.party[0].key,stat:'attack'};let commits=0,stops=0,routes=0;
  flow.ui={rewards(){},overBattle(){},on(action,callback){callbacks[action]=callback;}};flow.rewardBounds=()=>({});
  flow.commit=n=>{commits++;flow.state=n;};flow.scene={scene:{stop(){stops++;}}};
- flow.battle=entry=>{assert.equal(entry,'cut');starts++;};
- flow.rewards();callbacks['reward-0']();callbacks['reward-0']();assert.equal(commits,1);assert.equal(stops,0);assert.equal(starts,1);assert.equal(flow.state.encounter,1);
+ // After the reward the run returns to the act map (GameFlow.route -> map).
+ flow.route=()=>{assert.equal(flow.state.phase,'map');routes++;};
+ flow.rewards();callbacks['reward-0']();callbacks['reward-0']();assert.equal(commits,1);assert.equal(stops,1);assert.equal(routes,1);assert.equal(flow.state.encounter,1);
 });
 
 test('evolved form animation namespace keeps base identity and does not overwrite base texture animations',()=>{
@@ -820,7 +822,7 @@ test('prepared boss charge deals no damage, burst hits each living hero once wit
  const s=battle(),timers=[],messages=[];s.events=new EventEmitter();s.updateStatus=m=>messages.push(m);
  const actors=[1000,1000,0].map((hp,i)=>({unitKey:'unit'+i,currentHp:hp,get isDead(){return this.currentHp<=0;},applyDamage(n){this.currentHp=Math.max(0,this.currentHp-n);}}));
  s.turnOrder=actors;s.cloud=actors[0];s.startRound=()=>{};s.time.delayedCall=(_ms,cb)=>{timers.push(cb);};
- s.runContext={state:{areas:[{arena:'reactor',name:'Mako Reactor',normals:1}],encounter:1,party:[{key:'unit0',stats:{defense:1}},{key:'unit1',stats:{defense:2}}]}};
+ s.runContext={encounter:{damage:420,enemies:[],boss:true,kind:'boss'},state:{areas:[{arena:'reactor',name:'Mako Reactor'}],encounter:1,party:[{key:'unit0',stats:{defense:1}},{key:'unit1',stats:{defense:2}}]}};
  let attacks=0;const e={assetKey:'guard_scorpion',nameTag:'Guard Scorpion',isBoss:true,maxHp:1000,currentHp:500,actionCursor:1,statusEffects:[],executeAttack(_x,_y,impact,done){attacks++;impact();done();}};s.enemies=[e];
  // Without a prepared scene the burst stays the labelled FFRogue attack (fallback path).
  s.preparedScenes=undefined;
@@ -829,8 +831,8 @@ test('prepared boss charge deals no damage, burst hits each living hero once wit
  e.statusEffects=[{kind:'stop',phases:1,chance:1}];s.combatState='ENEMY_TURN';s.executeEnemyTurn();while(timers.length)timers.shift()();assert.equal(e.actionCursor,2);assert.equal(attacks,0);
  s.combatState='ENEMY_TURN';s.executeEnemyTurn();while(timers.length)timers.shift()();
  assert.equal(e.actionCursor,3);assert.equal(attacks,1);
- // Encounter 1 damage = RUN_BALANCE.damage + damagePerEncounter x burst 1.3 x overdrive 1.25, divided by defense.
- const {RUN_BALANCE}=loadModule('src/run/runBalance.mjs'),burst=(RUN_BALANCE.damage+RUN_BALANCE.damagePerEncounter)*1.3*1.25;
+ // The encounter's action damage (420 here) x burst 1.3 x overdrive 1.25, divided by defense.
+ const burst=420*1.3*1.25;
  assert.deepEqual(actors.map(a=>a.currentHp),[1000-Math.round(burst),1000-Math.round(burst/2),0]);
 });
 
@@ -838,7 +840,7 @@ test('an original enemy skill splits the action damage over its source hit frame
  const s=battle(),timers=[];s.events=new EventEmitter();
  const actors=[1000,1000].map((hp,i)=>({unitKey:'unit'+i,x:0,y:0,maxHp:1000,currentHp:hp,limitGauge:0,get isDead(){return this.currentHp<=0;},applyDamage(n){this.currentHp=Math.max(0,this.currentHp-n);}}));
  s.turnOrder=actors;s.time.delayedCall=(_ms,cb)=>{timers.push(cb);return {remove(){}};};s.playHeroHitFeedback=()=>{};
- s.runContext={state:{areas:[{arena:'reactor',name:'Mako Reactor',normals:1}],encounter:1,party:[{key:'unit0',stats:{defense:1}},{key:'unit1',stats:{defense:2}}]}};
+ s.runContext={encounter:{damage:420,enemies:[],boss:true,kind:'boss'},state:{areas:[{arena:'reactor',name:'Mako Reactor'}],encounter:1,party:[{key:'unit0',stats:{defense:1}},{key:'unit1',stats:{defense:2}}]}};
  let scene;s.playPreparedScene=(key,caster,targets,done)=>{scene={key,targets:targets.length,done};};
  const enemy={assetKey:'sweeper',x:0,setDepthBoost(){},playCastBody(){}};
  const action={kind:'attack',name:'Double Barrel',multiplier:1,scope:'party',presentation:'sweeper_double_barrel',phase:'',
@@ -848,7 +850,7 @@ test('an original enemy skill splits the action damage over its source hit frame
  // Two hit timers, then the settle beat: the turn moves on without waiting for the scene's decorative tail.
  timers.shift()();timers.shift()();assert.equal(completed,0);assert.equal(timers.length,1);
  timers.shift()();assert.equal(completed,1);scene.done();assert.equal(completed,1);
- const {RUN_BALANCE}=loadModule('src/run/runBalance.mjs'),damage=RUN_BALANCE.damage+RUN_BALANCE.damagePerEncounter;
+ const damage=420;
  assert.deepEqual(actors.map(a=>a.currentHp),[1000-2*Math.round(damage*.5),1000-2*Math.round(damage/2*.5)]);
 });
 
@@ -860,7 +862,7 @@ test('a lethal enemy hit consumes auto-revive at once, so the party is not defea
  actors[0].sourceBuffs=[{kind:'physical-boost',multiplier:1.3,expiresAfterRound:2},{kind:'auto-revive',hpFraction:.25,expiresAfterRound:2}];
  let defeats=0;s.triggerDefeat=()=>defeats++;
  s.turnOrder=actors;s.startRound=()=>{};s.time.delayedCall=(_ms,cb)=>{timers.push(cb);};s.currentRound=2;
- s.runContext={state:{areas:[{arena:'forest',name:'Whisperwood',normals:1}],encounter:0,party:[{key:'unit0',stats:{defense:1}}]}};
+ s.runContext={encounter:{damage:390,enemies:[],boss:false,kind:'normal'},state:{areas:[{arena:'forest',name:'Whisperwood'}],encounter:0,party:[{key:'unit0',stats:{defense:1}}]}};
  const e={assetKey:'microchu',nameTag:'Microchu',maxHp:900,currentHp:900,actionCursor:0,statusEffects:[],executeAttack(_x,_y,impact,done){impact();done();}};s.enemies=[e];
  s.combatState='ENEMY_TURN';s.executeEnemyTurn();while(timers.length)timers.shift()();
  assert.equal(defeats,0);assert.equal(actors[0].currentHp,250);assert.deepEqual(JSON.parse(JSON.stringify(revived)),[{unit:'unit0',hp:250,round:2}]);

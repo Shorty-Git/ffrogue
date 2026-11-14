@@ -20,7 +20,8 @@ import { BLIND_MISS_CHANCE, applyHeroBuffs, cleanseHeroDebuffs, consumeAutoReviv
 import {resolveEnemyInstant} from '../effects/enemyInstant.mjs';
 import {validateActionChoreography,actionTravel} from '../effects/actionChoreography.mjs';
 import type {RunBattleContext} from '../run/battleContext';
-import {nextRandom,skillForRun,memberMaxMp,encounters,ENCOUNTER_LABELS} from '../run/runState.mjs';
+import {nextRandom,skillForRun,memberMaxMp,currentFight,ENCOUNTER_LABELS} from '../run/runState.mjs';
+import {ruleMpCost,ruleRegen,doomFalls} from '../run/encounterRules.mjs';
 import {skillDescription} from '../run/catalog';
 import {runEncounter} from '../run/runBalance.mjs';
 import {ENEMY_CONTENT,enemyAction,type EnemyAction} from '../run/stageContent.mjs';
@@ -164,8 +165,10 @@ export class BattleScene extends Phaser.Scene {
     this.enemyEventRandom=()=>this.randomValue();
     this.limitBursts={};this.limitCasters.clear();
     for(const m of this.runContext.state.party){const lb=this.runContext.catalog[m.key].limitBurst;if(lb)this.limitBursts[m.key]=lb;}
+    // Boss rule Silence (src/run/encounterRules.mjs) raises every skill's MP cost for this fight.
+    const rule=this.currentEncounter().rule;
     for(const m of this.runContext.state.party)this.unitSkills[m.key]=this.runContext.catalog[m.key].skills
-      .filter(s=>m.skills.some(a=>a.id===s.id)).map(s=>skillForRun(s,m));
+      .filter(s=>m.skills.some(a=>a.id===s.id)).map(s=>{const skill=skillForRun(s,m);skill.mpCost=ruleMpCost(skill.mpCost,rule);return skill;});
     // Only the scenes this battle can play are prepared: the party's chosen skills and Limit Bursts plus
     // every presentation the encounter's enemies reference. Preparing the whole registry (hundreds of
     // scenes, three target variants each) delayed late entries for minutes as the roster grew.
@@ -279,6 +282,19 @@ export class BattleScene extends Phaser.Scene {
   }
 
   private currentEncounter(){return this.runContext.encounter??runEncounter(this.runContext.state);}
+  /** Caption: encounter kind and act on the run map (training fights only count up). */
+  private encounterPhase(stage:ReturnType<BattleScene['currentEncounter']>):string{
+    const label=ENCOUNTER_LABELS[stage.kind??(stage.boss?'boss':'normal')];
+    const fight=this.runContext.state.map?currentFight(this.runContext.state):null;
+    if(!fight)return `${label} ${this.fightNumber}`;
+    return fight.final?`Final ${label}`:`${label} · Act ${fight.area+1}`;
+  }
+  /** The elite affix or boss rule of this fight for the caption (Doom counts its rounds down). */
+  private encounterModifier(stage:ReturnType<BattleScene['currentEncounter']>){
+    const m=stage.affix??stage.rule;if(!m)return undefined;
+    const left=m.roundLimit?Math.max(0,m.roundLimit-this.currentRound+1):undefined;
+    return {name:left!==undefined?`${m.name} · ${left} round${left===1?'':'s'} left`:m.name,text:m.text};
+  }
   private randomValue():number{return nextRandom(this.runContext.state,'combat');}
   private randomBetween(min:number,max:number):number{return min+Math.floor(this.randomValue()*(max-min+1));}
   public runArenaBounds(){return getBattleLayout(this.scale.width,this.scale.height).arena;}
@@ -451,7 +467,7 @@ export class BattleScene extends Phaser.Scene {
     });
     const skills=hero?(this.unitSkills[hero.unitKey]??[]).slice(0,3):[];
     this.combatHud.render({
-      area:stage.title,wards:this.runContext.state.wards,phase:`${ENCOUNTER_LABELS[stage.kind??(stage.boss?'boss':'normal')]} ${this.fightNumber} / ${encounters(this.runContext.state.areas).length}`,pending:!!plan,
+      area:stage.title,wards:this.runContext.state.wards,phase:this.encounterPhase(stage),modifier:this.encounterModifier(stage),pending:!!plan,
       message:plan?`${skill?.name??'Attack'} · ${scope==='single_ally'?'Choose an ally':'Choose an enemy'}`:
         available?`Round ${this.currentRound} · ${hero.heroName} → ${this.currentTarget?.nameTag??'no target'}`:this.statusMessage,
       actors:[...actors,...this.turnOrder.flatMap((ally,i)=>{
@@ -1649,7 +1665,11 @@ export class BattleScene extends Phaser.Scene {
         if (stillAlive.length === 0) {
           this.triggerDefeat();
         } else {
+          // End of round: regeneration (elite affix Regenerating, boss rule Endurance), then Doom's limit.
+          const encounter=this.currentEncounter(),modifier=encounter.affix??encounter.rule;
+          for(const foe of this.enemies){const amount=foe.currentHp>0?ruleRegen(foe.maxHp,modifier):0;if(amount)foe.recover(amount);}
           this.currentRound++;
+          if(doomFalls(this.currentRound,encounter.rule)){this.updateStatus(`${encounter.rule!.name}: the party falls.`);this.triggerDefeat();return;}
           this.time.delayedCall(450, () => this.startRound());
         }
         return;

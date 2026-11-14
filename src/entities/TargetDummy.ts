@@ -225,6 +225,20 @@ export class TargetDummy extends Phaser.GameObjects.Container {
 
   }
 
+  /** Regeneration (elite affix / boss rule, src/run/encounterRules.mjs): restores HP up to the maximum and
+   * floats a green number. Returns the HP actually restored. */
+  public recover(amount: number): number {
+    if (this.currentHp <= 0 || amount <= 0) return 0;
+    const restored = Math.min(amount, this.maxHp - this.currentHp);
+    if (restored <= 0) return 0;
+    this.currentHp += restored;
+    const text = this.scene.add.text(this.x, this.y - (this.sprite.displayHeight < 200 ? 18 : 70), '+' + restored.toLocaleString(), {
+      fontFamily: '"Archivo Black", Arial, sans-serif', fontSize: '22px', color: '#6fd37a', stroke: '#08090a', strokeThickness: 6,
+    }).setOrigin(0.5).setDepth(2500);
+    this.scene.tweens.add({ targets: text, y: text.y - 40, alpha: 0, duration: 900, ease: 'Cubic.easeOut', onComplete: () => text.destroy() });
+    return restored;
+  }
+
   private spawnDamagePopup(damage: number, isCritical: boolean, damageType: 'physical' | 'holy' | 'unmitigated', tag: 'weak' | 'resist' | null = null): void {
     const startX = this.x + Phaser.Math.Between(-14, 14);
     // Small enemies: start low and rise less, so the DOM name plate above them never covers the number.

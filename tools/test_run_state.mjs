@@ -1,7 +1,10 @@
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';
-import {createRun,rollParty,confirmParty,RunStore,SAVE_KEY,completeBattle,chooseReward,rewardPool,skillForRun,validateRun,encounters,FULL_AREAS,migrateRun,acknowledgeAwakening,REVIVE_HP_SHARE,PARTY_SIZE,LEGACY_SAVE_MESSAGE,characterRole}from '../src/run/runState.mjs';
+import {createRun,rollParty,confirmParty,RunStore,SAVE_KEY,completeBattle,chooseReward,rewardPool,skillForRun,validateRun,currentFight,currentNode,chooseNode,chooseRoute,routeOptions,mapOptions,runMap,COURSE_LENGTH,migrateRun,acknowledgeAwakening,REVIVE_HP_SHARE,PARTY_SIZE,LEGACY_SAVE_MESSAGE,characterRole}from '../src/run/runState.mjs';
 import {ROLES,roleOf,deriveRole,ROLE_OVERRIDES}from '../src/run/roles.mjs';
-import {runEncounter}from '../src/run/runBalance.mjs';
+import {runEncounter,RUN_BALANCE}from '../src/run/runBalance.mjs';
+import {toFight,playThrough,step,win,settleEvent}from './run_walk.mjs';
+import {COMBAT_NODES}from '../src/run/actMap.mjs';
+import {STAGE_CONTENT}from '../src/run/stageContent.mjs';
 const read=p=>JSON.parse(fs.readFileSync(p,'utf8')),meta=read('public/assets/run-content.json');
 const catalog={};for(const key of read('public/assets/content.json').characters){const s=read(`public/assets/units/${key}/skills.json`).skills.filter(s=>s.scenePresentation&&s.importStatus==='imported');if(!s.length)continue;const d=read(`public/assets/units/${key}/character.json`),m=meta.units[key];catalog[key]={key,name:d.battle.heroName,identity:m.identity,canonicalIdentity:m.canonicalIdentity,unitId:m.unitId,rarity:m.rarity,form:key,maxHp:d.battle.maxHp,maxMp:d.battle.maxMp,skills:s};}
 catalog.cloud.evolution={identity:'207000105',form:'cloud_form6',unitId:'207000106',rarity:6};
@@ -42,34 +45,36 @@ test('persisted results survive reload and stale tabs cannot restore rerolls',()
  storage.setItem(SAVE_KEY,'{"version":99}');assert.throws(()=>new RunStore(storage,catalog).load());
 });
 test('reward settlement is one-shot, three saved offers do not reroll, next encounter keeps gains',()=>{
- const r=confirmParty(initial('reward')),pool=completeBattle(r,catalog,snapshot(r),true);assert.equal(pool.offers.length,3);assert.equal(new Set(pool.offers.map(JSON.stringify)).size,3);
+ const r=toFight(confirmParty(initial('reward')),catalog),pool=completeBattle(r,catalog,snapshot(r),true);assert.equal(pool.offers.length,3);assert.equal(new Set(pool.offers.map(JSON.stringify)).size,3);
  assert.throws(()=>completeBattle(pool,catalog,snapshot(pool),true));const storage=memory(),store=new RunStore(storage,catalog);store.save(pool);assert.deepEqual(new RunStore(storage,catalog).load().offers,pool.offers);
  const offer=rewardPool(pool,catalog).find(o=>o.type==='stat'&&o.stat==='attack');pool.offers[0]=offer;
- const next=chooseReward(pool,0,catalog);assert.equal(next.encounter,1);assert.equal(next.phase,'battle');assert.equal(next.party.find(m=>m.key===offer.member).stats.attack,1.2);assert.throws(()=>chooseReward(next,0,catalog));validateRun(next,catalog);
+ const next=chooseReward(pool,0,catalog);assert.equal(next.encounter,1);assert.equal(next.phase,'map');assert.equal(next.party.find(m=>m.key===offer.member).stats.attack,1.2);assert.throws(()=>chooseReward(next,0,catalog));validateRun(next,catalog);
 });
 test('full skill slots require an explicit replacement and preserve immutable source definitions',()=>{
- let r=withCloud();r.phase='rewards';const m=r.party.find(m=>m.key==='cloud');m.skills=catalog.cloud.skills.slice(0,3).map(s=>({id:s.id,level:1}));const next=catalog.cloud.skills.find(s=>!m.skills.some(a=>a.id===s.id));
+ let r=toFight(confirmParty(withCloud()),catalog);r.phase='rewards';const m=r.party.find(m=>m.key==='cloud');m.skills=catalog.cloud.skills.slice(0,3).map(s=>({id:s.id,level:1}));const next=catalog.cloud.skills.find(s=>!m.skills.some(a=>a.id===s.id));
  r.offers=[{type:'learn',member:'cloud',skill:next.id},...rewardPool(r,catalog).filter(o=>o.type==='stat').slice(0,2)];const before=JSON.stringify(r);assert.throws(()=>chooseReward(r,0,catalog));assert.equal(JSON.stringify(r),before);
  const applied=chooseReward(r,0,catalog,m.skills[1].id);assert.equal(applied.party.find(m=>m.key==='cloud').skills.length,3);assert.ok(applied.party.find(m=>m.key==='cloud').skills.some(s=>s.id===next.id));
  const seal=catalog.aerith.skills.find(s=>s.id==='seal_evil'),original=JSON.stringify(seal),member={skills:[{id:seal.id,level:2}],stats:{attack:1.2,magic:1.2}};
  assert.ok(skillForRun(seal,member).supportEvents[0].effects[0].phases>seal.supportEvents[0].effects[0].phases);assert.equal(JSON.stringify(seal),original);
 });
 test('boss evolution retains identity and skills; fixed party survives all configurable encounters',()=>{
- let r=confirmParty(withCloud());const keys=r.party.map(m=>m.key);r=chooseReward(completeBattle(r,catalog,snapshot(r),true),0,catalog);r=completeBattle(r,catalog,snapshot(r),true);
+ let r=toFight(confirmParty(withCloud()),catalog,['elite']);const keys=r.party.map(m=>m.key);r=completeBattle(r,catalog,snapshot(r),true);
  assert.ok(r.offers.some(o=>o.type==='evolve'));const old=r.party.find(m=>m.key==='cloud'),skills=structuredClone(old.skills);let ix=r.offers.findIndex(o=>o.type==='evolve'&&o.member==='cloud');if(ix<0){r.offers[0]={type:'evolve',member:'cloud',level:old.level+1};ix=0;}r=chooseReward(r,ix,catalog);
  const evolved=r.party.find(m=>m.key==='cloud');assert.equal(evolved.unitId,'207000106');assert.equal(evolved.identity,'207000105');assert.deepEqual(evolved.skills,skills);assert.deepEqual(r.party.map(m=>m.key),keys);validateRun(r,catalog);
  r=acknowledgeAwakening(r,r.pendingAwakening.id);
- while(r.phase==='battle'){const p=completeBattle(r,catalog,snapshot(r),true);let at=p.offers.findIndex(o=>o.type!=='learn');r=chooseReward(p,at,catalog);}
- assert.equal(r.phase,'won');assert.equal(r.encounter,encounters(r.areas).length);assert.equal(r.areas.at(-1).stageId,'nibelheim');assert.deepEqual(encounters(r.areas).map(e=>e.kind),['normal','elite','normal','elite','normal','boss']);assert.equal(encounters(FULL_AREAS).length,18);
+ r=playThrough(r,catalog).at(-1);
+ assert.equal(r.phase,'won');assert.equal(r.areas.length,COURSE_LENGTH+1);assert.equal(r.areas.at(-1).stageId,'nibelheim');assert.deepEqual(r.party.map(m=>m.key),keys);
+ const fights=r.history.filter(h=>h.kind==='node'&&COMBAT_NODES.has(h.type));assert.equal(r.encounter,fights.length);
+ assert.ok(fights.length>=10&&fights.length<=13,'10-13 fights per run: '+fights.length);assert.equal(fights.filter(h=>h.type==='boss').length,COURSE_LENGTH+1);
  const bad=structuredClone(r);bad.party.find(m=>m.key==='cloud').form='cloud_ac';assert.throws(()=>validateRun(bad,catalog));
 });
 test('loss ends progress and encounter difficulty depends on stage rather than reward strength',()=>{
- const r=confirmParty(initial('loss')),before=runEncounter(r),b=structuredClone(r);b.party[0].stats.attack=2;assert.deepEqual(runEncounter(b),before);
+ const r=toFight(confirmParty(initial('loss')),catalog),before=runEncounter(r),b=structuredClone(r);b.party[0].stats.attack=2;assert.deepEqual(runEncounter(b),before);
  const lost=completeBattle(r,catalog,snapshot(r).map(m=>({...m,hp:0})),false);assert.equal(lost.phase,'lost');assert.throws(()=>chooseReward(lost,0,catalog));assert.throws(()=>rollParty(lost,catalog));
 });
 
 test('awakening commits once before presentation; reload acknowledgement preserves upgrades/RNG and rejects forged notices',()=>{
- let r=confirmParty(withCloud());r.encounter=1;r=completeBattle(r,catalog,snapshot(r),true);
+ let r=toFight(confirmParty(withCloud()),catalog,['elite']);r=completeBattle(r,catalog,snapshot(r),true);
  let ix=r.offers.findIndex(o=>o.type==='evolve'&&o.member==='cloud');if(ix<0){r.offers[0]={type:'evolve',member:'cloud',level:r.party.find(m=>m.key==='cloud').level+1};ix=0;}
  const before=JSON.stringify(r);const next=chooseReward(r,ix,catalog),notice=next.pendingAwakening;
  assert.equal(JSON.stringify(r),before);assert.equal(next.party.find(m=>m.key==='cloud').form,'cloud_form6');assert.equal(next.party.find(m=>m.key==='cloud').stats.hp,1.15);
@@ -122,7 +127,7 @@ test('saves from before v5 (three heroes, linear course) are rejected clearly an
 });
 test('the Limit gauge carries to the next battle only for standing heroes with a Limit Burst',()=>{
  const lbCatalog={...catalog,cloud:{...catalog.cloud,limitBurst:read('public/assets/units/cloud/skills.json').skills.find(s=>s.type==='LIMIT')}};
- const r=confirmParty(withCloud()),at=r.party.findIndex(m=>m.key==='cloud');
+ const r=toFight(confirmParty(withCloud()),catalog),at=r.party.findIndex(m=>m.key==='cloud');
  const shot=snapshot(r).map((s,i)=>({...s,limit:i===at?73.4:60}));
  const next=completeBattle(r,lbCatalog,shot,true);
  assert.equal(next.party[at].limit,73);
@@ -137,7 +142,7 @@ test('the Limit gauge carries to the next battle only for standing heroes with a
 });
 test('a K.O. member survives the victory as K.O. and is always offered exactly one revival',()=>{
  for(let i=0;i<30;i++){
-  const start=confirmParty(initial('revive-'+i)),fallen=start.party[1].key;
+  const start=toFight(confirmParty(initial('revive-'+i)),catalog),fallen=start.party[1].key;
   const ko=snapshot(start).map((s,j)=>j===1?{...s,hp:0}:s);
   const won=completeBattle(start,catalog,ko,true);
   assert.equal(won.party[1].hp,0);
@@ -149,20 +154,62 @@ test('a K.O. member survives the victory as K.O. and is always offered exactly o
   assert.equal(m.hp,Math.round(catalog[fallen].maxHp*m.stats.hp*REVIVE_HP_SHARE));
   assert.equal(m.mp,won.party[1].mp,'revival restores HP only');
   assert.deepEqual(next.party.filter((_,j)=>j!==1),won.party.filter((_,j)=>j!==1));
-  assert.equal(next.phase,'battle');validateRun(next,catalog);
+  assert.equal(next.phase,'map');validateRun(next,catalog);
   // Field Rest still never revives.
   const rest=won.offers.findIndex(r=>r.type==='rest');
   if(rest>=0)assert.equal(chooseReward(won,rest,catalog).party[1].hp,0);
  }
- const healthy=completeBattle(confirmParty(initial('revive-none')),catalog,snapshot(confirmParty(initial('revive-none'))),true);
+ const calm=toFight(confirmParty(initial('revive-none')),catalog),healthy=completeBattle(calm,catalog,snapshot(calm),true);
  assert.ok(healthy.offers.every(r=>r.type!=='revive'),'no revival without a K.O. member');
  const forged=structuredClone(healthy);forged.offers[0]={type:'revive',member:forged.party[0].key};
  assert.throws(()=>validateRun(forged,catalog),/Invalid saved rewards/);
  assert.throws(()=>chooseReward(forged,0,catalog),/K.O. member/);
  // At a boss, the guaranteed awakening and the guaranteed revival share the three offers.
- const boss={...confirmParty(withCloud()),encounter:1};
+ const boss=toFight(confirmParty(withCloud()),catalog,['elite','boss']);
  const bossWon=completeBattle(boss,catalog,snapshot(boss).map((s,j)=>j===0?{...s,hp:0}:s),true);
- assert.equal(encounters(boss.areas)[1].boss,true);
+ assert.equal(currentFight(boss).boss,true);
  assert.equal(bossWon.offers.filter(r=>r.type==='revive').length,1);
  assert.ok(bossWon.offers.some(r=>r.type==='evolve'));
+});
+
+test('the run is saved after every node: every state of a played run validates and survives a reload',()=>{
+ for(const seed of ['walk-a','walk-b','walk-c']){
+  const states=playThrough(confirmParty(initial(seed)),catalog);
+  for(const state of states){
+   validateRun(state,catalog);
+   const storage=memory();new RunStore(storage,catalog).save(state);assert.deepEqual(new RunStore(storage,catalog).load(),state);
+  }
+  const phases=new Set(states.map(s=>s.phase));for(const p of ['map','battle','event','won'])assert.ok(phases.has(p),seed+' visits '+p);
+ }
+});
+test('the map: route choice first, only reachable nodes, a boss closes the act with a camp, the final boss wins',()=>{
+ let r=confirmParty(initial('map-rules'));
+ assert.equal(r.phase,'map');assert.deepEqual(r.map,{act:0,at:null,trail:[]});
+ const route=routeOptions(r);assert.ok(route&&route.area===0);assert.deepEqual(mapOptions(r),[],'the route choice comes first');
+ assert.throws(()=>chooseNode(r,runMap(r).nodes[0].id),/Not a reachable/);
+ r=chooseRoute(r,route.options[1].stageId);assert.equal(r.areas[0].stageId,route.options[1].stageId);
+ const starts=mapOptions(r);assert.ok(starts.length>=2&&starts.every(n=>n.row===0));
+ assert.throws(()=>chooseNode(r,runMap(r).nodes.find(n=>n.row===1).id),/Not a reachable/);
+ r=chooseNode(r,starts[0].id);assert.equal(r.phase,'battle');assert.equal(currentFight(r).kind,'normal');assert.deepEqual(r.history.at(-1),{kind:'node',act:0,node:starts[0].id,type:'battle'});
+ const forged=structuredClone(r);forged.map.trail=[runMap(r).nodes.find(n=>n.row===1).id];forged.map.at=forged.map.trail[0];assert.throws(()=>validateRun(forged,catalog),/Invalid or incompatible/);
+ r=toFight(win(r,catalog),catalog,['boss']);
+ assert.equal(currentFight(r).kind,'boss');assert.ok(runEncounter(r).rule);assert.equal(runEncounter(r).enemies.length,1);
+ for(const m of r.party){m.hp=1;m.mp=0;}
+ const after=chooseReward(completeBattle(r,catalog,snapshot(r),true),0,catalog);
+ assert.equal(after.phase,'map');assert.deepEqual(after.map,{act:1,at:null,trail:[]});assert.ok(after.party.every(m=>m.hp>1&&m.mp>0),'camp between acts');
+ assert.ok(routeOptions(after),'the next act opens with its route choice');
+ const done=playThrough(after,catalog).at(-1);assert.equal(done.map.act,COURSE_LENGTH);assert.equal(currentNode(done).type,'boss');assert.equal(done.areas[done.map.act].final,true);
+ assert.throws(()=>chooseNode(done,currentNode(done).id));
+});
+test('encounters scale per act and depth; elites are single foes with an affix from another stage',()=>{
+ const states=playThrough(confirmParty(initial('scaling')),catalog,['elite','battle','boss']);
+ const fights=states.filter(s=>s.phase==='battle').map(s=>({kind:currentFight(s).kind,act:s.map.act,row:currentFight(s).wave,e:runEncounter(s),areas:s.areas}));
+ const elites=fights.filter(f=>f.kind==='elite');assert.ok(elites.length>=1,'elites taken');
+ for(const f of elites){assert.equal(f.e.enemies.length,1);assert.ok(f.e.affix?.name);
+  assert.ok(!f.areas.some(a=>STAGE_CONTENT[a.stageId].bossId===f.e.enemies[0].key),'elite foe is no boss of a planned stage');}
+ const bosses=fights.filter(f=>f.kind==='boss');assert.equal(bosses.length,COURSE_LENGTH+1);
+ bosses.forEach((b,i)=>{assert.ok(b.e.rule?.name);if(i)assert.ok(b.e.enemies[0].hp>bosses[i-1].e.enemies[0].hp,'bosses grow per act');});
+ const normals=fights.filter(f=>f.kind==='normal'),first=normals[0],later=normals.findLast(f=>f.act>first.act);
+ assert.ok(later.e.damage>first.e.damage,'enemy damage grows with the act');
+ assert.equal(bosses[0].e.enemies[0].hp,RUN_BALANCE.bossHp*(1+.03*6));
 });
