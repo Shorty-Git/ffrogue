@@ -16,12 +16,14 @@ import {GameAudio,HOME_MUSIC_RESOURCE,VICTORY_FANFARE_RESOURCE,battleCursorProfi
 import type {CombatCue} from '../audio/combatCues';
 import {runEncounter} from './runBalance.mjs';
 import {STAGE_CONTENT,ENEMY_CONTENT,stageElementProfile,type StageDefinition} from './stageContent.mjs';
-import type {PathCard} from '../ui/RunUI';
+import type {PathCard,TitleStage} from '../ui/RunUI';
 import {createTrainingRun,type TrainingOpponent} from './trainingRun';
 import {renderTrainingSetup,type TrainingSelection} from '../ui/TrainingSetup';
 import {BATTLE_ARENAS,type BattleArenaKey} from '../data/battleArenas';
 
 const GUIDE_SEEN='ffrogue.guide.v1';
+/** The last finished run's party and stage, shown on the title screen while no run is saved. */
+const LAST_RUN='ffrogue.last-run.v1';
 const readFlag=(key:string)=>{try{return window.localStorage.getItem(key)==='1';}catch{return false;}};
 const writeFlag=(key:string)=>{try{window.localStorage.setItem(key,'1');}catch{/* private mode: the guide may show again */}};
 export class GameFlow{
@@ -35,7 +37,7 @@ export class GameFlow{
  private fail(error:unknown){this.closeEntry();this.audio.setMusic(null);clearTimeout(this.animationTimer);this.busy=false;this.scene.scene.stop('BattleScene');this.ui.error(String(error));this.ui.on('reload',()=>location.reload());}
  private commit(next:RunState){this.store.save(next);this.state=next;}
  menu(){this.closeEntry();this.audio.setMusic(HOME_MUSIC_RESOURCE,'home');if(this.scene.scene.isActive('BattleScene'))this.scene.scene.stop('BattleScene');this.busy=false;clearTimeout(this.animationTimer);
-  try{this.state=this.store.load();const drawable=this.profile.unlocked.length+lockedHeroes(this.profile,this.catalog).length;this.ui.menu(!!this.state,null,{crystals:this.profile.crystals,unlocked:this.profile.unlocked.length,total:drawable,cost:SUMMON_COST,canSummon:this.profile.crystals>=SUMMON_COST});this.audioControls();if(this.state?.phase==='battle'){const note=document.createElement('p');note.className='muted';note.textContent='Continue restarts the current encounter from its saved starting state.';this.ui.root.querySelector('.menu-panel')?.append(note);}}catch(error){this.ui.error(String(error),true);this.ui.on('reload',()=>location.reload());this.ui.on('discard',()=>{this.store.clear();this.state=null;this.menu();});return;}
+  try{this.state=this.store.load();const drawable=this.profile.unlocked.length+lockedHeroes(this.profile,this.catalog).length;this.ui.menu(!!this.state,null,{crystals:this.profile.crystals,unlocked:this.profile.unlocked.length,total:drawable,cost:SUMMON_COST,canSummon:this.profile.crystals>=SUMMON_COST},this.titleStage());this.audioControls();if(this.state?.phase==='battle'){const note=document.createElement('p');note.className='muted';note.textContent='Continue restarts the current encounter from its saved starting state.';this.ui.root.querySelector('.menu-panel')?.append(note);}}catch(error){this.ui.error(String(error),true);this.ui.on('reload',()=>location.reload());this.ui.on('discard',()=>{this.store.clear();this.state=null;this.menu();});return;}
   this.ui.on('training',()=>this.training());
   this.ui.on('heroes',()=>{this.ui.heroes(this.profile);this.ui.on('menu',()=>this.menu());});
   this.ui.on('summon',()=>this.summon());
@@ -110,6 +112,19 @@ export class GameFlow{
  }
  private finishSpin(){if(!this.busy)return;
   clearTimeout(this.animationTimer);this.busy=false;if(this.state?.phase==='setup')this.setup();}
+ /** Title backdrop: the saved run's party on its current arena, else the last finished run, else the first
+  * unlocked heroes (favourite Final Fantasies) in Nibelheim. */
+ private titleStage():TitleStage{
+  const image=(stageId?:string)=>{const stage=STAGE_CONTENT[stageId??'']??STAGE_CONTENT.nibelheim;if(!stage)return undefined;
+   const arena=BATTLE_ARENAS[stage.arena as BattleArenaKey] as {file:string}&Record<string,unknown>|undefined;if(!arena)return undefined;
+   return 'status' in arena?`assets/stages/${stage.arena}/${arena.file}`:`assets/backgrounds/${arena.file}`;};
+  const known=(members:{key:string;form:string}[])=>members.filter(m=>this.manifests[m.form]||this.manifests[m.key]);
+  if(this.state?.party.length){const fight=encounters(this.state.areas)[Math.min(this.state.encounter,encounters(this.state.areas).length-1)];
+   const area=this.state.areas[fight.area];return {image:image(area.stageId),heroes:known(this.state.party),caption:`Your journey continues · ${area.name}`};}
+  try{const last=JSON.parse(window.localStorage.getItem(LAST_RUN)??'null');
+   if(last?.party?.length)return {image:image(last.stageId),heroes:known(last.party),caption:last.won?'Your last party prevailed.':'Your last party awaits a rematch.'};}catch{/* unreadable: fall through */}
+  return {image:image('nibelheim'),heroes:known(this.profile.unlocked.slice(0,3).map(key=>({key,form:key})))};
+ }
  private stageCard(stage:StageDefinition,eyebrow:string,title:string,lines:string[]):PathCard{
   const arena=BATTLE_ARENAS[stage.arena as BattleArenaKey] as {file:string}&Record<string,unknown>,profile=stageElementProfile(stage);
   const image='status' in arena?`assets/stages/${stage.arena}/${arena.file}`:`assets/backgrounds/${arena.file}`;
@@ -282,7 +297,11 @@ export class GameFlow{
   for(const action of ['rest','train','pray','leave'])this.ui.on('event-'+action,()=>act(action));
   this.state.event.wares?.forEach((_,i)=>this.ui.on('event-buy-'+i,()=>act('buy-'+i)));
  }
- private result(){this.audio.setMusic(this.state?.phase==='won'?VICTORY_FANFARE_RESOURCE:null,'result');
+ private result(){
+  // Remember the party and where it stood for the title screen (no run save remains after this screen).
+  try{const s=this.state!,fight=encounters(s.areas)[Math.min(s.encounter,encounters(s.areas).length-1)];
+   window.localStorage.setItem(LAST_RUN,JSON.stringify({party:s.party.map(m=>({key:m.key,form:m.form})),stageId:s.areas[fight.area].stageId,won:s.phase==='won'}));}catch{/* storage unavailable */}
+  this.audio.setMusic(this.state?.phase==='won'?VICTORY_FANFARE_RESOURCE:null,'result');
   // Crystals and unlocks are settled once per finished run (keyed by seed and history), then shown.
   const settled=settleRun(this.profile,this.state!,this.catalog);this.profile=this.profiles.save(settled.profile);
   this.ui.result(this.state!,settled.crystals||settled.unlocked?{crystals:settled.crystals,unlocked:settled.unlocked}:undefined);this.ui.on('new',()=>{this.store.clear();this.state=null;this.menu();});}

@@ -13,12 +13,12 @@ import type {RewardStageBounds} from './rewardLayout.mjs';
 import type {AnimationMeta,UnitManifest} from '../types/manifest';
 import {bindSlotLever} from './SlotLever';
 import {fateTier,fateTimeline,fateVerdict,isShowTier,FATE_SOUND,FATE_GAIN,FATE_TAIL_FADE,type FateTier,type FateSound} from './fateEngine';
-import {startCrystalSparks} from './CrystalSparks';
-import {startTitleCrystal,titleCrystalMarkup} from './TitleCrystal';
 import {formAt,formForLevel,rankLabel,levelLabel,levelOf,MAX_LEVEL} from '../run/unitForms.mjs';
 import type {Profile} from '../run/profile.mjs';
 import {skillElements} from '../run/elementRules.mjs';
 import type {Element} from '../run/elementRules.mjs';
+/** Title screen backdrop: an arena picture, up to four heroes (form bodies) and a caption line. */
+export interface TitleStage{image?:string;heroes:Pick<RunMember,'key'|'form'>[];caption?:string;}
 /** One option of a path choice (final boss or next area). */
 export interface PathCard{id:string;image:string;eyebrow:string;title:string;lines:string[];weak:Element[];attack:Element[];mystery?:boolean;silhouette?:{url:string;frames:number;index:number;width:number;height:number};}
 const esc=(s:unknown)=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
@@ -136,7 +136,25 @@ export class RunUI{
  memberLine(m:RunMember){const c=this.catalog[m.key];return `<div class="start-row"><span class="portrait-frame"><img class="portrait" src="${esc(c.portrait)}" alt=""></span><div><strong>${esc(c.name)}</strong> <span class="stars">${levelLabel(m.level)}</span>${m.weapon?weaponLine(m.weapon,m):''}${m.skills.map(a=>{const s=skillForRun(c.skills.find(s=>s.id===a.id)!,m);return `<p>${skillIcon(s)}<b>${esc(s.name)}</b> ${esc(skillDescription(s))}</p>`;}).join('')}${c.limitBurst?`<p class="start-lb"><b>Limit Burst</b> ${esc(c.limitBurst.name)}</p>`:''}</div></div>`;}
  member(m:RunMember){const c=this.catalog[m.key];return `<article class="rpg-panel member-card"><header class="member-head"><span class="portrait-frame"><img class="portrait" src="${esc(c.portrait)}" alt="${esc(c.name)}"></span><span class="member-title"><strong>${esc(c.name)}</strong><span class="stars">${levelLabel(m.level)}</span></span></header>${this.sprite(m)}<div class="member-gauges">${gaugeRow('hp',m.hp,Math.round(c.maxHp*m.stats.hp))}${gaugeRow('mp',m.mp,memberMaxMp(c,m))}</div>${m.weapon?weaponLine(m.weapon,m):''}${m.skills.map(a=>{const s=skillForRun(c.skills.find(s=>s.id===a.id)!,m);return `<div class="skill-copy"><b>${skillIcon(s)}${esc(s.name)}${a.level>1?' +'+(a.level-1):''}</b><p>${esc(skillDescription(s))}</p></div>`;}).join('')}</article>`;}
  title(kicker:string,title:string,subtitle:string){return `<div class="eyebrow">${esc(kicker)}</div><h1>${title}</h1><p class="lead">${esc(subtitle)}</p>`;}
- menu(hasSave:boolean,error:string|null,meta?:{crystals:number;unlocked:number;total:number;cost:number;canSummon:boolean}){const canStart=new Set(Object.values(this.catalog).map(c=>c.canonicalIdentity).filter(Boolean)).size>=3;this.show(`<h1 class="title-logo">FINAL FANTASY<br><em>ROGUE</em></h1><div class="crystal-stage" aria-hidden="true">${titleCrystalMarkup()}<span class="crystal-sparks"></span></div><div class="rpg-panel menu-panel">${hasSave?this.button('continue','Continue'):''}${this.button('play',hasSave?'New Journey':'Begin',false,!canStart)}${this.button('heroes','Heroes',true)}${this.button('training','Training Grounds',true,!canStart)}${this.button('guide','How to Play',true)}${meta?`<div class="profile-line"><span title="Crystals: 10 per battle won, 60 per expedition">◆ ${meta.crystals}</span><span title="Unlocked heroes the Fate Engine can draw">Heroes ${meta.unlocked}/${meta.total}</span></div>${this.button('summon',`Summon · ${meta.cost} ◆`,true,!meta.canSummon)}`:''}${!canStart?'<p class="muted">Three distinct heroes are required to begin.</p>':''}${error?`<p role="alert" class="error">${esc(error)}</p>`:''}<details class="seed-details"><summary>Fate seed</summary><input id="run-seed" maxlength="64" placeholder="Random" autocomplete="off" aria-label="Fate seed"></details></div>`,'menu');{const stopSparks=startCrystalSparks(this.root.querySelector<HTMLElement>('.crystal-sparks')!),stopCrystal=startTitleCrystal(this.root.querySelector<HTMLElement>('.crystal-stage')!);this.crystalCleanup=()=>{stopSparks();stopCrystal();};}}
+ /** Title screen (2026-11-14, "Cinematic"): the current or last run's heroes stand on its arena; logo and
+  * menu list on the left, progress below. Cinzel logo, Source Sans menu (docs/game-design.md, UI). */
+ menu(hasSave:boolean,error:string|null,meta?:{crystals:number;unlocked:number;total:number;cost:number;canSummon:boolean},stage?:TitleStage){
+  const canStart=new Set(Object.values(this.catalog).map(c=>c.canonicalIdentity).filter(Boolean)).size>=3;
+  const item=(action:string,label:string,primary=false,disabled=false)=>`<button type="button" class="title-item ${primary?'is-primary':''}" data-action="${action}" ${disabled?'disabled':''}>${label}</button>`;
+  // Up to four heroes in a chevron on the arena floor, the first nearest the viewer's left.
+  const spots=[[.58,.64],[.76,.58],[.66,.80],[.84,.75]];
+  const heroes=(stage?.heroes??[]).slice(0,4).map((member,i)=>{const m=this.manifests[member.form]??this.manifests[member.key];if(!m)return '';
+   const a=m.animations.idle,path=member.form===member.key||!this.manifests[member.form]?`units/${member.key}`:`forms/${member.form}`,scale=Math.min(3,190/a.frameHeight);
+   const [x,y]=spots[i];
+   return bodyPreview('/assets/'+path,a,'pixel-sprite title-hero',`left:${x*100}%;top:${y*100}%;width:${a.frameWidth*scale}px;height:${a.frameHeight*scale}px;background-size:${a.frameWidth*a.frameCount*scale}px ${a.frameHeight*scale}px;background-position:${-a.frames[0].index*a.frameWidth*scale}px 0`).html;}).join('');
+  this.show(`<div class="title-scene">${stage?.image?`<div class="title-arena" style="background-image:url('${esc(stage.image)}')"></div>`:''}<div class="title-shade"></div>${heroes}
+   <header class="title-brand"><span class="title-ff">FINAL FANTASY</span><h1 class="title-logo">ROGUE</h1><span class="title-rule"></span><p>${esc(stage?.caption??'Every run, a new legend.')}</p></header>
+   <nav class="menu-panel title-menu" aria-label="Main menu">${hasSave?item('continue','Continue',true):''}${item('play',hasSave?'New Journey':'Begin',!hasSave,!canStart)}${item('heroes','Heroes')}${item('training','Training Grounds',false,!canStart)}${item('guide','How to Play')}${meta?item('summon',`Summon · ${meta.cost} ◆`,false,!meta.canSummon):''}
+    ${!canStart?'<p class="muted">Three distinct heroes are required to begin.</p>':''}${error?`<p role="alert" class="error">${esc(error)}</p>`:''}
+    <details class="seed-details"><summary>Fate seed</summary><input id="run-seed" maxlength="64" placeholder="Random" autocomplete="off" aria-label="Fate seed"></details></nav>
+   ${meta?`<footer class="title-progress"><span><b class="is-gold">◆ ${meta.crystals}</b> crystals</span><span><b>${meta.unlocked} / ${meta.total}</b> heroes</span></footer>`:''}</div>`,'menu');
+  this.root.classList.add('is-title');
+ }
  /** Peek (2026-11-11 playtest): hide the reward cards to look at the party and its gear, then bring them back. */
  bindPeek(run:RunState){const button=this.root.querySelector<HTMLButtonElement>('.reward-peek');if(!button)return;
   const panel=document.createElement('div');panel.className='rpg-panel peek-party';

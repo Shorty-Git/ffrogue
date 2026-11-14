@@ -4,7 +4,6 @@ import './ui/interfaceTheme.css';
 import './ui/combatHud.css';
 import './ui/ffbeTheme.css';
 import './ui/fateEngine.css';
-import './ui/titleCrystal.css';
 import './ui/trainingSetup.css';
 import '@fontsource/archivo/400.css';
 import '@fontsource/archivo/600.css';

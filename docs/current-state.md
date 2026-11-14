@@ -68,6 +68,17 @@ replaced.
 
 # Changelog (newest first)
 
+## Cinematic title screen (2026-11-14)
+
+Developer choice from the title mockups ("Title 1 · Cinematic", https://claude.ai/artifact/Pcs8wi5GWMvkPNxXwJMnDW):
+the title screen (`RunUI.menu`, `GameFlow.titleStage`) shows the saved run's party on its current arena;
+without a save the last finished run's party and stage (`localStorage` `ffrogue.last-run.v1`, written in
+`GameFlow.result`); on a fresh profile the first unlocked heroes in Nibelheim. Logo in Cinzel, menu as an
+uppercase Source Sans text list with a yellow marker (the developer prefers the first title screen's type
+over Archivo Black for menus; battle keeps Archivo). The old FFBE title crystal (TitleCrystal.ts,
+CrystalSparks.ts, titleCrystal.css) is removed. Checked by screenshots at 1000×1100 and 1600×900 with and
+without a save; 371 tests, build.
+
 ## Arcade UI theme (2026-11-14)
 
 The chosen UI direction (docs/game-design.md, UI: "Arcade" with the Graphite palette) is live for every
