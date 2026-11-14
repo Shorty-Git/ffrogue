@@ -1,0 +1,11 @@
+export interface EncounterModifier{id:string;name:string;text:string;hp?:number;damage?:number;regen?:number;mpCostMultiplier?:number;roundLimit?:number;}
+export const ACT_SCALING:{hp:number;damage:number}[];
+export const DEPTH_SCALING:number;
+export function actScaling(act:number,row?:number):{hp:number;damage:number};
+export const ELITE_AFFIXES:Record<string,EncounterModifier>;
+export const BOSS_RULES:Record<string,EncounterModifier>;
+export function eliteAffix(seed:string,nodeId:string):EncounterModifier;
+export function bossRule(seed:string,act:number):EncounterModifier;
+export function ruleMpCost(cost:number,rule?:EncounterModifier|null):number;
+export function ruleRegen(maxHp:number,modifier?:EncounterModifier|null):number;
+export function doomFalls(round:number,rule?:EncounterModifier|null):boolean;
